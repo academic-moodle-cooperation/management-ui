@@ -1,0 +1,26 @@
+{
+  "extends": "@workspace/typescript-config/react-application.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@monorepo-apps/*": [
+        "../../apps/*"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "vite-env.d.ts",
+    "vite.config.ts",
+    "postcss.config.mjs",
+    "tailwind.config.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".turbo"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "seriesInfo": {
+    "heading": "Serieninfo",
+    "title": "Titel",
+    "description": "Beschreibung",
+    "contributor": "Mitwirkende",
+    "subject": "Betreff",
+    "rightsHolder": "Rechteinhaber*in",
+    "publisher": "Herausgeber*in",
+    "license": "Lizenz",
+    "language": "Sprache",
+    "identifier": "Serien-ID",
+    "identifierCopied": "Serien-ID kopiert",
+    "creator": "Organisator*in",
+    "episodes": "Videos",
+    "created": "Erstellt",
+    "creator2": "Ersteller*in",
+    "required": "* Pflichtfeld",
+    "noData": "Keine Daten vorhanden"
+  },
+  "seriesTable": {
+    "heading": {
+      "title": "Serie",
+      "created": "Erstellt",
+      "description": "Beschreibung",
+      "creator": "Ersteller*in",
+      "contributors": "Mitwirkende",
+      "actions": {
+        "title": "Aktionen",
+        "info": "Jede Person, die zu einer Serie berechtigt ist, kann diese Serie und die zugehörigen Videos bearbeiten. Die Änderungen sind für alle sichtbar."
+      },
+      "episodes": "Videos"
+    },
+    "action": {
+      "editData": "Serie bearbeiten",
+      "upload": "Upload",
+      "studio": "Studio",
+      "playlist": "Serien Playlist",
+      "episodes": "Zu den Videos der Serie"
+    },
+    "notification": {
+      "changesSaved": "Änderungen wurden gespeichert",
+      "changesFailed": "Änderungen konnten nicht gespeichert werden",
+      "fieldRequiredEmpty": "Leeres Pflichtfeld"
+    }
+  },
+  "noSeriesAvailable": {
+    "title": "Keine Serie vorhanden",
+    "text": "Derzeit haben Sie noch keine Serie angemeldet. Um eine neue Serie anzumelden, gehen Sie bitte auf die Web-Oberfläche. Weitere Informationen zur Anmeldung einer Serie finden Sie in der Anleitung."
+  }
+}

@@ -1,0 +1,48 @@
+---
+
+- hosts: opencast
+  become: true
+  remote_user: ${RUNNER_ANSIBLE_REMOTE_USER}
+  tasks:
+
+    - name: "Playbook | Include variables"
+      ansible.builtin.include_vars:
+        dir: "{{ playbook_dir }}/vars"
+        ignore_unknown_extensions: true
+
+    - name: "Playbook | Debug"
+      ansible.builtin.debug:
+        msg: "asset_url: {{ asset_url }}"
+
+    - name: "Playbook | Dowload tarball"
+      ansible.builtin.get_url:
+        url: "{{ asset_url }}"
+        url_username: "PRIVATE-TOKEN"
+        url_password: "${API_PRIVATE_TOKEN}"
+        dest: "/tmp/{{ asset_url | urlsplit('path') | basename }}"
+        owner: "{{ opencast.daemon.user | default('opencast') }}"
+        group: "{{ opencast.daemon.group | default('opencast') }}"
+        force: true
+        mode: 0644
+
+    - name: "Playbook | Find jars."
+      ansible.builtin.find:
+        path: "{{ opencast.path.runtime | default('/opt/opencast') }}/deploy/"
+        pattern: 'management-*.jar'
+        recurse: true
+      register: __management_tool_jars
+
+    - name: "Playbook | Remove jars."
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ __management_tool_jars.files }}"
+
+    - name: "Playbook | Unarchive"
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ asset_url|urlsplit('path') | basename }}"
+        dest: "{{ opencast.path.runtime | default('/opt/opencast') }}/deploy/"
+        owner: "{{ opencast.daemon.user | default('opencast') }}"
+        group: "{{ opencast.daemon.group | default('opencast') }}"
+        mode: 0644
+        remote_src: true

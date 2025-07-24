@@ -1,0 +1,26 @@
+{
+  "name": "@workspace/utils",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.tsx"
+  },
+  "scripts": {
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf node_modules",
+    "lint": "eslint . --ext .ts,.js --report-unused-disable-directives --max-warnings 0",
+    "check-types": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "crypto-js": "^4.2.0",
+    "tinyduration": "^3.3.0"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "eslint": "^9.9.0",
+    "typescript": "~5.5.4"
+  }
+}

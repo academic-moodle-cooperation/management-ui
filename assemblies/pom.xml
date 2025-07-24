@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.amc.management</groupId>
+    <artifactId>management-tool</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.amc.management.assemblies</groupId>
+  <artifactId>management-assemblies</artifactId>
+  <name>Assemblies</name>
+  <packaging>pom</packaging>
+
+  <properties>
+    <opencast.basedir>${project.basedir}/..</opencast.basedir>
+  </properties>
+
+  <modules>
+    <module>management-ui-feature</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.amc.management</groupId>
+            <artifactId>management-frontend</artifactId>
+            <type>pom</type>
+            <version>${project.version}</version>
+            <scope>import</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.amc.management</groupId>
+          <artifactId>management-backend</artifactId>
+          <type>pom</type>
+          <version>${project.version}</version>
+          <scope>import</scope>
+        </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+</project>

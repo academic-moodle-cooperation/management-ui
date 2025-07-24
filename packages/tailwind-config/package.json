@@ -1,0 +1,26 @@
+{
+  "name": "@workspace/tailwind-config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./tailwind.config.ts",
+    "./preset": "./src/shadcn-preset.ts",
+    "./plugin": "./src/shadcn-plugin.ts"
+  },
+  "scripts": {
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf target && rm -rf node_modules",
+    "lint": "eslint . --ext .ts,.js --report-unused-disable-directives --max-warnings 0",
+    "check-types": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "eslint": "^9.27.0",
+    "typescript": "~5.5.4"
+  },
+  "dependencies": {
+    "tailwindcss": "^4.1.7",
+    "tailwindcss-animate": "^1.0.7"
+  }
+}

@@ -1,0 +1,107 @@
+// Shared types for ui-config package
+
+export interface MetadataField {
+  show: boolean;
+  readonly: boolean;
+}
+
+export interface ColumnsField {
+  show: boolean;
+}
+
+// Keep these as flexible types since the actual structure varies
+export type MetadataItem = Record<string, MetadataField>;
+
+export interface SeriesInfo {
+  metadata: unknown[]; // Make this flexible to accept actual structure
+}
+
+export interface SeriesTable {
+  columns: unknown[]; // Make this flexible to accept actual structure  
+}
+
+export interface EpisodeInfo {
+  metadata: unknown[]; // Make this flexible to accept actual structure
+}
+
+export interface EpisodesTable {
+  columns: unknown[]; // Make this flexible to accept actual structure
+}
+
+export interface UploadConfig {
+  location: string;
+  workflowId: string;
+  whitelist: string[];
+}
+
+// Simplified protection: just public or protected
+export interface AppProtectionConfig {
+  public?: boolean; // If true, app is publicly accessible. If false/undefined, requires authentication
+}
+
+// Make PluginsConfig more flexible to accept any plugin structure
+export interface PluginsConfig {
+  "management-ui-series"?: {
+    seriesInfo?: SeriesInfo;
+    seriesTable?: SeriesTable;
+    protection?: AppProtectionConfig;
+  };
+  "management-ui-episodes"?: {
+    episodeInfo?: EpisodeInfo;
+    episodesTable?: EpisodesTable;
+    protection?: AppProtectionConfig;
+  };
+  "management-ui-upload"?: UploadConfig & {
+    protection?: AppProtectionConfig;
+  };
+  [key: string]: unknown; // Allow any plugin structure
+}
+
+// Plugin control types for granular activation/deactivation
+export interface PluginNamespaceConfig {
+  types?: string[]; // Array of type names to enable, if omitted = enable all
+}
+
+// Plugin namespace item can be either a string (enable all) or object (granular control)
+export type PluginNamespaceItem = string | Record<string, PluginNamespaceConfig>;
+
+export interface AppConfig {
+  productionConfigUrl: string;
+  productionAppPluginUrl: string;
+  app: {
+    title: string;
+    appName: string;
+    version: string;
+    locale: string;
+    HtmlDocumentTitle: string;
+    appTitle: string;
+    logoUrl?: string;
+    orgLogoUrl?: string;
+    organizationUrls?: {
+      main: string;
+      support?: string;
+    };
+    theme: string;
+    pluginNamespace: PluginNamespaceItem[]; // New clean array-based approach
+  };
+  auth: {
+    loginUrl: string;
+    logoutUrl: string;
+    loginUrlDev?: string;
+    logoutUrlDev?: string;
+    tokenRefreshUrl?: string;
+  };
+  plugins: PluginsConfig;
+  api: {
+    baseUrl: string;
+    timeout?: number;
+    graphqlEndpoint: string;
+  };
+  features: Record<string, boolean>;
+  apiBaseUrl?: string;
+  timeouts?: {
+    request?: number;
+    session?: number;
+  };
+  [key: string]: unknown; // Allow plugin-provided config keys
+} 

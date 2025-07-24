@@ -1,0 +1,26 @@
+{
+  "metadataTab": "Metadaten",
+  "accessTab": "Zugriff",
+  "accessPolicy": "Zugriffsrichtlinie",
+  "addUser": "Benutzer hinzufügen",
+  "accessList": "Zugriffsliste",
+  "read": "Lesen",
+  "write": "Schreiben",
+  "actions": "Aktionen",
+  "selectAccessPolicy": "Wählen Sie eine Zugriffsrichtlinie",
+  "searchUser": "Weitere User zum hinzufügen suchen...",
+  "loading": "Lädt...",
+  "errorLoadingUsers": "Fehler beim Laden von Benutzern.",
+  "noUsersFound": "Keine Benutzer gefunden.",
+  "noEntries": "Keine Einträge.",
+  "changesSaved": "Änderungen wurden gespeichert!",
+  "cannotEdit": "Dieses Video wird derzeit verarbeitet und kann nicht bearbeitet werden.",
+  "noPolicy": "Keine Richtlinie",
+  "acls": {
+    "authenticated": "Authentifiziert",
+    "private": "Nicht gelistet",
+    "public": "Öffentlich",
+    "tuw": "TU Wien",
+    "tuwel": "TUWEL-Kurs"
+  }
+}

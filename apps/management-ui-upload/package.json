@@ -1,0 +1,47 @@
+{
+  "name": "management-ui-upload",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf target && rm -rf node_modules",
+    "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
+    "check-types": "tsc --noEmit -p tsconfig.json",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "lucide-react": "^0.417.0",
+    "mustache": "^4.2.0",
+    "@workspace/ui": "workspace:*",
+    "@workspace/i18n": "workspace:*",
+    "@workspace/query": "workspace:*",
+    "@workspace/router": "workspace:*",
+    "@workspace/utils": "workspace:*",
+    "@workspace/store": "workspace:*",
+    "@workspace/ui-config": "workspace:*",
+    "@workspace/providers": "workspace:*",
+    "@workspace/plugin-system": "workspace:*",
+    "@workspace/plugins": "workspace:*",
+    "@tanstack/react-table": "^8.19.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@types/mustache": "^4.2.5",
+    "@typescript-eslint/eslint-plugin": "^7.13.1",
+    "@typescript-eslint/parser": "^7.13.1",
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "@workspace/vite-config": "workspace:*",
+    "@vitejs/plugin-react-swc": "^3.9.0",
+    "eslint": "^9.9.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "typescript": "~5.5.4",
+    "vite": "^6.3.5"
+  }
+}

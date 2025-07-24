@@ -1,0 +1,16 @@
+{
+  "heading1": "Willkommen bei LectureTube!",
+  "heading2": "",
+  "text": "Mit LectureTube haben Mitarbeiter der TU Wien Zugang zu einer leistungsstarken Plattform, die es ihnen ermöglicht, Vorlesungen in ausgewählten Hörsälen einfach aufzuzeichnen und live zu streamen. Darüber hinaus können Benutzer vorhandene Videos hochladen oder neue Inhalte direkt in der Plattform erstellen. Alle aufgezeichneten Videos können nahtlos in Moodle-Kurse integriert oder auf Websites gehostet werden, um sie auf Abruf anzusehen. Die LectureTube-Verwaltungsschnittstelle bietet Benutzern einen umfassenden Überblick über ihre Videoserien und einzelne Videos und ermöglicht eine einfache Bearbeitung und Verwaltung von Inhalten.",
+  "cta_title": "Loslegen",
+  "cta_upload": "Video hochladen",
+  "cta_studio": "Video aufnehmen",
+  "kb_title": "Knowledge Base",
+  "kb_subtitle": "Brauchen Sie Hilfe?",
+  "kb_link": "https://colab.tuwien.ac.at/lecturetube/de",
+  "kb_info": "Besuchen Sie unsere <kb_link>Knowledge Base</kb_link> für Tutorials, FAQs und Support-Artikel, die Ihnen helfen, das Meiste aus LectureTube herauszuholen.",
+  "ups": "Aufnehmen - Streamen - Interagieren",
+  "ups_intro": "LectureTube ist die Videoplattform für Angehörige der TU Wien, die ihnen hilft, Videoinhalte zu erstellen, zu teilen und zu verwalten.",
+  "features_header": "Funktionen",
+  "features": "<li><strong>Vorlesungsaufzeichnung:</strong> Nehmen Sie Vorlesungen in dafür vorgesehenen Hörsälen auf.</li><li><strong>Live-Streaming:</strong> Streamen Sie Ihre Vorlesungen in Echtzeit.</li><li><strong>Inhaltserstellung:</strong> Laden Sie vorhandene Videos hoch oder erstellen Sie neue Inhalte.</li><li><strong>Nahtlose Integration:</strong> Integrieren Sie Videos nahtlos in TUWEL-Kurse oder Webseiten.</li><li><strong>Einfache Verwaltung:</strong> Bearbeiten und verwalten Sie Ihre Inhalte mit einer benutzerfreundlichen Oberfläche.</li>"
+}

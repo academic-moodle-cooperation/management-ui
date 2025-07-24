@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.amc.management</groupId>
+    <artifactId>management-tool</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>management-backend</artifactId>
+
+  <name>Opencast Management Tool :: Backend</name>
+  <packaging>pom</packaging>
+
+  <properties>
+    <opencast.basedir>${project.basedir}/..</opencast.basedir>
+  </properties>
+
+  <modules>
+    <module>management-config</module>
+    <module>management-graphql</module>
+  </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

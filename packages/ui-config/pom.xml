@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>management-frontend-packages</artifactId>
+    <groupId>org.amc.management</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>management-frontend-ui-config</artifactId>
+  <packaging>pom</packaging>
+
+  <properties>
+    <opencast.basedir>${project.basedir}/../..</opencast.basedir>
+  </properties>
+
+
+  <name>Opencast Management Tool :: UI CONFIG</name>
+ 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+          </instructions>
+        </configuration>
+      </plugin>
+       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-config-to-opencast-config-dir</id>
+            <phase>install</phase>
+            <configuration>
+              <target if="deployTo">
+                <copy file="./src/config.json" 
+                    todir="${deployTo}/etc/ui-config/mh_default_org/management-ui"
+                    failonerror="false"
+                />
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

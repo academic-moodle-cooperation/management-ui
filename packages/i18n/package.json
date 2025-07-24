@@ -1,0 +1,37 @@
+{
+  "name": "@workspace/i18n",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.tsx"
+  },
+  "scripts": {
+    "build": "tsc --build && cp -r src/locales dist/",
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf node_modules",
+    "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
+    "check-types": "tsc --noEmit -p tsconfig.json"
+  },
+  "files": [
+    "dist",
+    "src/locales"
+  ],
+  "dependencies": {
+    "i18next": "^23.10.0",
+    "i18next-browser-languagedetector": "^7.2.0",
+    "i18next-http-backend": "^2.5.0",
+    "react-i18next": "^14.0.5"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0 || ^19.0.0",
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "eslint": "^9.9.0",
+    "typescript": "~5.5.4",
+    "vite": "^6.3.5"
+  }
+}

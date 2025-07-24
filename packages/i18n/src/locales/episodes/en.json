@@ -1,0 +1,106 @@
+{
+  "episodesInfo": {
+    "heading": "Videoinfo",
+    "title": "Title",
+    "identifier": "Video ID",
+    "identifierCopied": "Video ID copied",
+    "isPartOf": "Series",
+    "description": "Description",
+    "language": "Language",
+    "creator": "Presenter",
+    "contributor": "Contributor",
+    "startDate": "Date",
+    "created": "Created",
+    "location": "Origin",
+    "status": "State",
+    "duration": "Duration",
+    "publisher": "Creator",
+    "license": "License",
+    "rightsHolder": "Rightsholder",
+    "source": "Source",
+    "subject": "Subject",
+    "creator2": "Creator",
+    "required": "* required",
+    "noData": "No data available",
+    "tabs": {
+      "metadata": "Metadata",
+      "access": "Access"
+    }
+  },
+  "episodesTable": {
+    "heading": {
+      "title": "Title",
+      "video": "Video",
+      "series": "Series",
+      "description": "Description",
+      "contributors": "Contributors",
+      "creator": "Creator",
+      "created": "Created",
+      "status": "Status",
+      "duration": "Duration",
+      "location": "Origin",
+      "presenters": "Presenter",
+      "startDate": "Date",
+      "dateAndLocation": "Date and Location",
+      "access": "Access",
+      "actions": {
+        "title": "Actions",
+        "info": "Each person who is entitled to a series can edit this series and the associated videos. The changes are visible to everyone."
+      }
+    },
+    "accessState": {
+      "public": "Public access",
+      "private": "Restricted access"
+    },
+    "action": {
+      "editData": "Edit Data",
+      "editVideo": "Edit Video",
+      "play": "Play Video",
+      "download": "Download",
+      "delete": "Delete Video",
+      "flavor": {
+        "presentation": "Display",
+        "presenter": "Camera",
+        "subtitles": "Subtitles"
+      },
+      "selectDownloadVersion": "Select version"
+    },
+    "notification": {
+      "changesSaved": "Changes have been saved!",
+      "changesFailed": "Changes failed to save!",
+      "fieldRequiredEmpty": "Required field is empty",
+      "deleteSuccess": "The video has been deleted!",
+      "deleteError": "The video could not be deleted!"
+    },
+    "deleteDialogue": {
+      "heading": "Delete Video?",
+      "text": "Do you really want to delete the video {{title}} <strong>permanently</strong> and <strong>irreversibly</strong>? All publications of this video will be invalidated.",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "status": {
+      "pending": "Processing pending",
+      "processing": "Processing",
+      "processing_cancelled": "Processing cancelled",
+      "paused": "Processing paused",
+      "processed": "Processed",
+      "processing_failure": "Processing failure",
+      "scheduled": "Scheduled",
+      "ingesting": "Ingesting",
+      "recording": "Recording"
+    }
+  },
+  "status": {
+    "PENDING": "Processing pending",
+    "PROCESSING": "Processing",
+    "PROCESSING_CANCELLED": "Processing cancelled",
+    "PAUSED": "Processing paused",
+    "PROCESSED": "Processed",
+    "PROCESSING_FAILURE": "Processing failure",
+    "SCHEDULED": "Scheduled",
+    "INGESTING": "Ingesting",
+    "RECORDING": "Recording"
+  },
+  "noVideos": "There are currently no videos available.",
+  "notEditable": "This video is currently being processed and cannot be edited."
+}

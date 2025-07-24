@@ -1,0 +1,103 @@
+---
+
+variables:
+  API_BASE: "${CI_API_V4_URL}/projects"
+  MANAGEMENT_TOOL_REPO_ID: 2027
+  PACKAGE_REGISTRY_URL: "${API_BASE}/${MANAGEMENT_TOOL_REPO_ID}/packages/generic"
+  PACKAGENAME: management-ui
+
+
+stages:
+  - build
+  - deploy
+
+
+.deploy:
+  stage: deploy
+  tags:
+    - ags
+    - shell
+  needs:
+    - job: management-tool-build
+  script:
+    - '${CI_PROJECT_DIR}/.gitlab-ci/deploy.sh'
+
+
+management-tool-build:
+  stage: build
+  image:
+    name: openjdk:17-jdk-slim
+    pull_policy: always
+  variables:
+    NEXUS_REPO: opencast
+    MAVEN_OPTS: "-Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository"
+    MAVEN_CLI_OPTS: "-U -B -DskipTests=true -DskipJasmineTests=true -DskipNexusStagingDeployMojo=true -s ${CI_PROJECT_DIR}/settings.xml"
+    MAVEN_REACTOR_OPTS: "-pl !assemblies/dist-admin -pl !assemblies/dist-allinone -pl !assemblies/dist-worker -pl !assemblies/dist-presentation -pl !assemblies/dist-ingest -pl !assemblies/dist-adminpresentation"
+  cache:
+    paths:
+      - ${CI_PROJECT_DIR}/.m2/repository/
+  tags:
+    - ags
+    - kubernetes
+  before_script:
+    - apt-get update && apt-get -y install gettext-base jq git curl
+    - envsubst < ${CI_PROJECT_DIR}/.gitlab-ci/maven/settings.xml.tmpl > ${CI_PROJECT_DIR}/settings.xml
+  script:
+    - 'cd ${CI_PROJECT_DIR}'
+    - './mvnw clean install ${MAVEN_CLI_OPTS}'
+    - '${CI_PROJECT_DIR}/.gitlab-ci/install-release-cli.sh'
+    - '${CI_PROJECT_DIR}/.gitlab-ci/release-delete.sh'
+    - '${CI_PROJECT_DIR}/.gitlab-ci/release-upload.sh'
+    - '${CI_PROJECT_DIR}/.gitlab-ci/release-create.sh'
+  artifacts:
+    name: "management-tool-$CI_COMMIT_REF_SLUG"
+    paths:
+      - build/*.jar
+  needs: []
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - when: always
+
+
+deploy-dev:
+  extends: .deploy
+  environment:
+    name: development
+    url: https://${OC_HOST}/management-ui/
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_PIPELINE_TRIGGERED
+      when: never
+    - when: always
+      allow_failure: true
+
+
+deploy-staging:
+  extends: .deploy
+  environment:
+    name: staging
+    url: https://${OC_HOST}/management-ui/
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_PIPELINE_TRIGGERED
+      when: never
+    - when: manual
+      allow_failure: true
+
+
+deploy-production:
+  extends: .deploy
+  environment:
+    name: production
+    url: https://${OC_HOST}/management-ui/
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_PIPELINE_TRIGGERED
+      when: never
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: manual
+      allow_failure: true

@@ -1,0 +1,92 @@
+import path from 'node:path';
+import type { UserConfig, BuildOptions } from 'vite';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
+import { createBaseConfig, type CreateBaseConfigOptions } from './base.config.js';
+import { getAppBasePath, DEFAULT_SHELL_APP_PORT } from './ports.js';
+import { createProxyConfig } from './proxy.js';
+
+export interface CreateShellAppViteConfigOptions {
+  packageName: string;
+  mode: string; // 'development', 'production', etc.
+  env: Record<string, string>; // Loaded environment variables
+  invokerDir: string; // __dirname of the vite.config.ts file calling this
+}
+
+export const createShellAppViteConfig = (
+  options: CreateShellAppViteConfigOptions
+): UserConfig => {
+  const { mode, env, invokerDir } = options;
+  const isProduction = mode === 'production';
+
+  const monorepoRootPath = path.resolve(invokerDir, '../..');
+  const appsPath = path.resolve(invokerDir, '../../apps'); // For @monorepo-apps alias
+
+  // Create locale copying plugin for i18n support
+  const localesCopyPlugin = viteStaticCopy({
+    targets: [
+      // Core i18n locales
+      {
+        src: path.resolve(monorepoRootPath, 'packages/i18n/locales/**/*'),
+        dest: 'locales'
+      },
+      // Plugin locales (from packages)
+      {
+        src: path.resolve(monorepoRootPath, 'packages/**/locales/**/*'),
+        dest: 'locales'
+      },
+      // All plugin implementations from unified plugins directory
+      {
+        src: path.resolve(monorepoRootPath, 'plugins/**/locales/**/*'),
+        dest: 'locales'
+      }
+    ]
+  });
+
+  const baseConfigOptions: CreateBaseConfigOptions = {
+    isProduction,
+    plugins: [localesCopyPlugin], // Add locale copying plugin
+    resolveAliases: {
+      '@': path.resolve(invokerDir, 'src'), // Standard alias for app's src
+      '@monorepo-apps': appsPath,
+    },
+    serverOptions: {
+      fs: {
+        allow: [monorepoRootPath],
+      },
+    },
+    buildOptions: {
+      // Shell-specific build options can go here
+    },
+  };
+
+  const baseSettings = createBaseConfig(baseConfigOptions);
+  const shellBasePath = getAppBasePath(isProduction, env.VITE_APP_BASE_PATH);
+  const proxyConfiguration = createProxyConfig({
+    isProduction,
+    target: env.VITE_PROXY_TARGET,
+    // customProxies: { ... } // if shell needs specific proxies from env or hardcoded
+  });
+
+  // baseSettings.build will have defaults from createBaseConfig.
+  // We are relying on the top-level 'base' property for most path resolutions during build.
+  const finalBuildOptions: BuildOptions = {
+    ...baseSettings.build,
+    // base: shellBasePath, // Removed to avoid persistent linter issue; top-level base should cover most cases.
+  };
+
+  return {
+    ...baseSettings,
+    base: shellBasePath, // Top-level base for dev server and asset paths
+    server: {
+      ...(baseSettings.server || {}),
+      port: DEFAULT_SHELL_APP_PORT,
+      proxy: proxyConfiguration,
+    },
+    preview: {
+      ...(baseSettings.preview || {}),
+      port: DEFAULT_SHELL_APP_PORT, // Can be the same or different
+      proxy: proxyConfiguration,
+    },
+    build: finalBuildOptions,
+  };
+}; 

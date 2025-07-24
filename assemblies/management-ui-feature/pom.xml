@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <groupId>org.amc.management.assemblies</groupId>
+    <artifactId>management-assemblies</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>management-ui-feature</artifactId>
+  <packaging>feature</packaging>
+
+  <name>Opencast Management Tool :: UI Feature</name>
+
+  <properties>
+    <opencast.basedir>${project.basedir}/../..</opencast.basedir>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+        <version>${karaf.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <primaryFeatureName>opencast-management-ui</primaryFeatureName>
+          <includeTransitiveDependency>false</includeTransitiveDependency>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.amc.management</groupId>
+      <artifactId>management-ui-config</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.amc.management</groupId>
+      <artifactId>management-ui-graphql</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.amc.management</groupId>
+      <artifactId>management-ui-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.amc.management</groupId>
+      <artifactId>management-ui-plugin-test</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!--
+    <dependency>
+      <groupId>org.amc.management</groupId>
+      <artifactId>management-ui-plugin-episodes</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.amc.management</groupId>
+      <artifactId>management-ui-plugin-series</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.amc.management</groupId>
+      <artifactId>management-ui-plugin-upload</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    -->
+  </dependencies>
+</project>

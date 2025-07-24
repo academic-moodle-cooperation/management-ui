@@ -1,0 +1,51 @@
+{
+  "seriesInfo": {
+    "heading": "Series Info",
+    "title": "Title",
+    "description": "Description",
+    "contributor": "Contributors",
+    "subject": "Subject",
+    "rightsHolder": "Rightsholder",
+    "publisher": "Publisher",
+    "license": "License",
+    "language": "Language",
+    "identifier": "Series ID",
+    "identifierCopied": "Series ID copied",
+    "creator": "Organizer",
+    "episodes": "Videos",
+    "created": "Created",
+    "creator2": "Creator",
+    "required": "* required",
+    "noData": "No data available"
+  },
+  "seriesTable": {
+    "heading": {
+      "title": "Series",
+      "created": "Created",
+      "description": "Description",
+      "creator": "Creator",
+      "contributors": "Contributors",
+      "actions": {
+        "title": "Actions",
+        "info": "Each person who is entitled to a series can edit this series and the associated videos. The changes are visible to everyone."
+      },
+      "episodes": "Videos"
+    },
+    "action": {
+      "editData": "Edit Series",
+      "upload": "Upload",
+      "studio": "Studio",
+      "playlist": "Series Playlist",
+      "episodes": "Go to video playlist for this series"
+    },
+    "notification": {
+      "changesSaved": "Changes have been saved!",
+      "changesFailed": "Changes failed to save!",
+      "fieldRequiredEmpty": "Required field is empty"
+    }
+  },
+  "noSeriesAvailable": {
+    "title": "No series available",
+    "text": "You have not registered a series yet. To register a new series, please visit the web interface. For further information on registering a series, please consult the registration and administration guide."
+  }
+}

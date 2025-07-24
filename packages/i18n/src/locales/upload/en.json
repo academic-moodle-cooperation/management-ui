@@ -1,0 +1,43 @@
+{
+  "heading": "Upload",
+  "description": "",
+  "headingList": "Uploadlist",
+  "descriptionList": "",
+  "uploadButton": {
+    "completed": "Completed",
+    "loading": "Loading...",
+    "upload": "Upload"
+  },
+  "deleteButton": "Delete list",
+  "series": "Series",
+  "selectSeries": "Select Series",
+  "noSeries": "No series selected",
+  "noSeriesAvailable": {
+    "title": "No series available",
+    "text": "You have not registered a series yet. To register a new series, please visit the web interface. For further information on registering a series, please consult the registration and administration guide."
+  },
+  "selectFiles": "Select Files",
+  "dndSection": {
+    "info1": "Click to upload",
+    "info2": "or drag and drop",
+    "info3": "Audio and Video files only"
+  },
+  "lastUploads": "Recently uploaded",
+  "access": "Access",
+  "dialog": {
+    "completed": {
+      "heading": "Upload completed",
+      "text": "The files were successfully uploaded. They are now being prepared for streaming. Once the processing is complete, you will receive an email for each file with information about the publishing options. Please note that depending on the length and size of the uploaded videos, processing may take several hours.",
+      "close": "Close"
+    }
+  },
+  "toast": {
+    "success": "File successfully uploaded",
+    "aborted": "File upload aborted",
+    "error": "File upload failed"
+  },
+  "alert": {
+    "title": "Invalid File Format",
+    "text": "The file format is not supported. Please upload only audio and video files."
+  }
+}

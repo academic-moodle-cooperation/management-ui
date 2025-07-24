@@ -1,0 +1,487 @@
+### ---------------------------------------------------------------------------------------------
+## Queries
+### ---------------------------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------------------------
+## User
+# -----------------------------------------------------------------------------------------------
+query User {
+  currentUser {
+    email
+    name
+    username
+    userRole
+  }
+}
+
+query SearchUser($limit: Int, $offset: Int, $query: String!) {
+  searchUser(limit: $limit, offset: $offset, query: $query) {
+    totalCount
+    nodes {
+      email
+      name
+      provider
+      roles
+      userRole
+      username
+    }
+    pageInfo {
+      limit
+      offset
+      pageCount
+    }
+  }
+}
+
+# -----------------------------------------------------------------------------------------------
+## Series
+# -----------------------------------------------------------------------------------------------
+
+fragment SeriesData on Series {
+  __typename
+  id
+  contributors
+  created
+  creator
+  description
+  title
+  events {
+    nodes {
+      id
+      title
+    }
+    totalCount
+  }
+  muiSeriesInfo {
+    isPublic
+    managedAclId
+  }
+}
+
+query GetMySeries(
+  $limit: Int
+  $offset: Int
+  $orderBy: SeriesOrderByInput
+  $query: String
+) {
+  currentUser {
+    mySeries(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
+      totalCount
+      nodes {
+        ...SeriesData
+      }
+    }
+  }
+}
+
+query GetSeriesInfo($seriesId: String!) {
+  seriesById(id: $seriesId) {
+    contributors
+    created
+    creator
+    description
+    events {
+      nodes {
+        id
+      }
+      totalCount
+    }
+    id
+    license
+    organizers
+    publishers
+    rightsHolder
+    title
+  }
+}
+
+fragment GetInputFieldsMetaData on JsonMetadataField {
+  collectionId
+  collection
+  id
+  label
+  listProvider
+  order
+  readOnly
+  required
+  type
+  value
+}
+
+fragment GetListInputFieldsMetaData on ListMetadataField {
+  collectionId
+  collection
+  id
+  label
+  listProvider
+  order
+  readOnly
+  required
+  type
+  value
+}
+
+fragment GetStringInputFieldsMetaData on StringMetadataField {
+  collectionId
+  collection
+  id
+  label
+  listProvider
+  order
+  readOnly
+  required
+  type
+  value
+}
+
+fragment GetDurationInputFieldsMetaData on DurationMetadataField {
+  collectionId
+  collection
+  id
+  label
+  listProvider
+  order
+  readOnly
+  required
+  type
+  value
+}
+
+fragment GetDateTimeInputFieldsMetaData on DateTimeMetadataField {
+  collectionId
+  collection
+  id
+  label
+  listProvider
+  order
+  readOnly
+  required
+  type
+  value
+}
+
+query GetSeriesByIdInputFields($seriesId: String!) {
+  seriesById(id: $seriesId) {
+    commonMetadataV2 {
+      contributor {
+        ...GetListInputFieldsMetaData
+      }
+      title {
+        ...GetStringInputFieldsMetaData
+      }
+      subject {
+        ...GetStringInputFieldsMetaData
+      }
+      rightsHolder {
+        ...GetStringInputFieldsMetaData
+      }
+      publisher {
+        ...GetListInputFieldsMetaData
+      }
+      license {
+        ...GetStringInputFieldsMetaData
+      }
+      language {
+        ...GetStringInputFieldsMetaData
+      }
+      identifier {
+        ...GetStringInputFieldsMetaData
+      }
+      description {
+        ...GetStringInputFieldsMetaData
+      }
+      creator {
+        ...GetListInputFieldsMetaData
+      }
+    }
+  }
+}
+
+query GetMySeriesNameAndId(
+  $limit: Int
+  $offset: Int
+  $orderBy: SeriesOrderByInput
+  $query: String
+) {
+  currentUser {
+    mySeries(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
+      nodes {
+        id
+        title
+      }
+    }
+  }
+}
+
+
+query GetSeriesNameById($seriesId: String!) {
+  seriesById(id: $seriesId) {
+    title
+  }
+}
+
+# -----------------------------------------------------------------------------------------------
+## Events
+# -----------------------------------------------------------------------------------------------
+
+fragment EventsData on Event {
+  __typename
+  contributors
+  seriesName
+  seriesId
+  title
+  creator
+  created
+  description
+  displayableStatus
+  eventStatus
+  duration
+  hasPreview
+  id
+  location
+  presenters
+  startDate
+  publications(channel: "engage-player") {
+    uri
+    tracks(tags: "engage-download") {
+      width
+      uri
+      tags
+      mimeType
+      logicalName
+      isLive
+      height
+      frameRate
+      flavor
+    }
+  }
+  hasPreview
+  muiEventInfo {
+    isPublic
+    managedAclId
+    publishUrl
+    thumbnailUrl
+  }
+}
+
+query EventsFromSeries(
+  $seriesId: String!
+  $limit: Int
+  $offset: Int
+  $orderBy: EventOrderByInput
+  $query: String
+) {
+  seriesById(id: $seriesId) {
+    id
+    title
+    events(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
+      totalCount
+      nodes {
+        ...EventsData
+      }
+    }
+  }
+}
+
+query GetMyEvents(
+  $limit: Int
+  $offset: Int
+  $orderBy: EventOrderByInput
+  $query: String
+) {
+  currentUser {
+    myEvents(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
+      totalCount
+      nodes {
+        ...EventsData
+      }
+    }
+  }
+}
+
+query GetEventByIdInputFields($eventId: String!) {
+  eventById(id: $eventId) {
+    commonMetadataV2 {
+      contributor {
+        ...GetListInputFieldsMetaData
+      }
+      created {
+        ...GetDateTimeInputFieldsMetaData
+      }
+      creator {
+        ...GetListInputFieldsMetaData
+      }
+      description {
+        ...GetStringInputFieldsMetaData
+      }
+      duration {
+        ...GetDurationInputFieldsMetaData
+      }
+      identifier {
+        ...GetStringInputFieldsMetaData
+      }
+      isPartOf {
+        ...GetStringInputFieldsMetaData
+      }
+      language {
+        ...GetStringInputFieldsMetaData
+      }
+      license {
+        ...GetStringInputFieldsMetaData
+      }
+      location {
+        ...GetStringInputFieldsMetaData
+      }
+      publisher {
+        ...GetStringInputFieldsMetaData
+      }
+      rightsHolder {
+        ...GetStringInputFieldsMetaData
+      }
+      source {
+        ...GetStringInputFieldsMetaData
+      }
+      startDate {
+        ...GetDateTimeInputFieldsMetaData
+      }
+      subject {
+        ...GetStringInputFieldsMetaData
+      }
+      title {
+        ...GetStringInputFieldsMetaData
+      }
+    }
+  }
+}
+
+# -----------------------------------------------------------------------------------------------
+## ACLs
+# -----------------------------------------------------------------------------------------------
+
+query GetAllManagedAcls {
+  managedAcls {
+    nodes {
+      name
+      id
+      acl {
+        entries {
+          role
+          action
+        }
+      }
+    }
+  }
+}
+
+query GetManagedAclsWithEventId($id: String!) {
+	managedAcls {
+    nodes {
+      name
+      id
+      acl {
+        entries {
+          role
+          action
+        }
+      }
+    }
+  }
+  ...EventsAclData
+}
+
+query GetManagedAclsWithSeriesid($id: String!) {
+	managedAcls {
+    nodes {
+      name
+      id
+      acl {
+        entries {
+          role
+          action
+        }
+      }
+    }
+  }
+  ...SeriesAclData
+}
+
+fragment EventsAclData on Query {
+	eventById(id: $id) {
+      acl {
+      users {
+        role
+        label
+        action
+      }
+    }
+  }
+}
+
+fragment SeriesAclData on Query {
+	seriesById(id: $id) {
+      acl {
+      users {
+        role
+        label
+        action
+      }
+    }
+  }
+}
+
+
+### ---------------------------------------------------------------------------------------------
+## MUTATIONS
+### ---------------------------------------------------------------------------------------------
+
+mutation CreateSeries(
+  $acl: AccessControlListInput!
+  $metadata: CommonSeriesMetadataInput!
+) {
+  createSeries(acl: $acl, metadata: $metadata) {
+    ...SeriesData
+  }
+}
+
+mutation UpdateSeries(
+  $seriesId: String!
+  $metadata: CommonSeriesMetadataInput!
+) {
+  updateSeries(id: $seriesId, metadata: $metadata) {
+    ...SeriesData
+  }
+}
+
+mutation UpdateEvent($eventId: String!, $metadata: CommonEventMetadataInput!) {
+  mui {
+    updateEvent(id: $eventId, metadata: $metadata) {
+      ...EventsData
+    }
+  }
+}
+
+mutation DeleteEvent($eventId: String!) {
+  mui {
+    deleteEvent(id: $eventId) {
+      id
+    }
+  }
+}
+
+mutation UpdateEventAcl($eventId: String!, $acl: AccessControlListInput!) {
+  mui {
+    updateEventAcl(id: $eventId, acl: $acl) {
+      muiEventInfo {
+        managedAclId
+      }
+    }
+  }
+}
+
+mutation UpdateSeriesAcl($seriesId: String!, $acl: AccessControlListInput!) {
+    updateSeriesAcl(id: $seriesId, acl: $acl) {
+      muiSeriesInfo {
+        managedAclId
+      }
+    }
+}

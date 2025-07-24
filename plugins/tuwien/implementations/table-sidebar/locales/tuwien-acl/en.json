@@ -1,0 +1,26 @@
+{
+  "metadataTab": "Metadata",
+  "accessTab": "Access",
+  "accessPolicy": "Access Policy",
+  "addUser": "Add User",
+  "accessList": "Access List",
+  "read": "Read",
+  "write": "Write",
+  "actions": "Actions",
+  "selectAccessPolicy": "Select an Access Policy",
+  "searchUser": "Search for additional user...",
+  "loading": "Loading...",
+  "errorLoadingUsers": "Error loading users.",
+  "noUsersFound": "No users found.",
+  "noEntries": "No entries.",
+  "changesSaved": "Changes have been saved!",
+  "cannotEdit": "This video is currently being processed and cannot be edited.",
+  "noPolicy": "No Policy",
+  "acls": {
+    "authenticated": "Authenticated",
+    "private": "Not listed",
+    "public": "Public",
+    "tuw": "TU Wien",
+    "tuwel": "TUWEL course"
+  }
+}

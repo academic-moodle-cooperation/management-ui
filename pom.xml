@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.opencastproject</groupId>
+    <artifactId>base</artifactId>
+    <version>17-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.amc.management</groupId>
+  <artifactId>management-tool</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0-SNAPSHOT</version>
+
+  <name>Opencast Management Tool</name>
+  <description>The Opencast Management Tool is an additional module for Opencast to allow video management related tasks.</description>
+  <inceptionYear>2021</inceptionYear>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <opencast.version>17-SNAPSHOT</opencast.version>
+  </properties>
+
+  <modules>
+    <module>apps</module>
+    <module>backend</module>
+    <module>assemblies</module>
+  </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-to-opencast-deploy-dir</id>
+            <phase>install</phase>
+            <configuration>
+              <target if="deployTo">
+                <delete dir="${deployTo}/deploy/${project.build.finalName}" />
+                <copy file="${project.build.directory}/${project.build.finalName}.jar" todir="${deployTo}/deploy"
+                      failonerror="false" />
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <versionRange>[1.0.0,)</versionRange>
+                    <goals>
+                      <goal>check</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <execute/>
+                  </action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>com.github.eirslett</groupId>
+                    <artifactId>frontend-maven-plugin</artifactId>
+                    <versionRange>[1.7.6,)</versionRange>
+                    <goals>
+                      <goal>install-node-and-pnpm</goal>
+                      <goal>pnpm</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <inherited>true</inherited>
+          <configuration>
+            <instructions>
+              <Bundle-Category>opencastproject</Bundle-Category>
+              <Bundle-DocURL>https://opencast.org/</Bundle-DocURL>
+              <Bundle-Vendor>The Opencast Project</Bundle-Vendor>
+              <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+            </instructions>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>com.github.eirslett</groupId>
+          <artifactId>frontend-maven-plugin</artifactId>
+          <version>1.15.0</version>
+          <configuration>
+            <nodeVersion>v20.16.0</nodeVersion>
+            <pnpmVersion>v9.0.6</pnpmVersion>
+            <installDirectory>${project.build.directory}</installDirectory>
+          </configuration>
+          <executions>
+            <execution>
+              <id>install node and pnpm</id>
+              <goals>
+                <goal>install-node-and-pnpm</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>pnpm install</id>
+              <goals>
+                <goal>pnpm</goal>
+              </goals>
+              <configuration>
+                <arguments>install</arguments>
+              </configuration>
+            </execution>
+            <execution>
+              <id>pnpm run build</id>
+              <goals>
+                <goal>pnpm</goal>
+              </goals>
+              <phase>generate-resources</phase>
+              <configuration>
+                <arguments>run build</arguments>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.opencastproject</groupId>
+        <artifactId>opencast-asset-manager-api</artifactId>
+        <version>${opencast.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opencastproject</groupId>
+        <artifactId>opencast-shared-filesystem-utils</artifactId>
+        <version>${opencast.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opencastproject</groupId>
+        <artifactId>opencast-graphql</artifactId>
+        <version>${opencast.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opencastproject</groupId>
+        <artifactId>opencast-elasticsearch-api</artifactId>
+        <version>${opencast.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opencastproject</groupId>
+        <artifactId>opencast-elasticsearch-index</artifactId>
+        <version>${opencast.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opencastproject</groupId>
+        <artifactId>opencast-workflow-service-api</artifactId>
+        <version>${opencast.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opencastproject</groupId>
+        <artifactId>opencast-dublincore</artifactId>
+        <version>${opencast.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opencastproject</groupId>
+        <artifactId>opencast-index-service</artifactId>
+        <version>${opencast.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opencastproject</groupId>
+        <artifactId>opencast-common</artifactId>
+        <version>${opencast.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <!-- All non-build related project data below here -->
+
+  <organization>
+    <name>Academic Moodle Cooperation</name>
+    <url>https://academic-moodle-cooperation.org</url>
+  </organization>
+  <repositories>
+      <repository>
+          <id>opencast</id>
+          <name>Opencast</name>
+          <url>https://nexus.elearn.univie.ac.at/repository/opencast/</url>
+          <releases>
+              <enabled>true</enabled>
+          </releases>
+          <snapshots>
+              <enabled>true</enabled>
+          </snapshots>
+      </repository>
+  </repositories>
+  <distributionManagement>
+    <repository>
+      <id>gitlab-maven</id>
+      <url>https://gitlab.tuwien.ac.at/api/v4/projects/2027/packages/maven</url>
+    </repository>
+    <snapshotRepository>
+      <id>gitlab-maven</id>
+      <url>https://gitlab.tuwien.ac.at/api/v4/projects/2027/packages/maven</url>
+    </snapshotRepository>
+  </distributionManagement>
+</project>

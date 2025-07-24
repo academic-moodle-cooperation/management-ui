@@ -1,0 +1,21 @@
+{
+  "name": "@workspace/typescript-config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    "./base.json": "./base.json",
+    "./node-esm-library.json": "./node-esm-library.json", 
+    "./react-application.json": "./react-application.json",
+    "./react-library.json": "./react-library.json"
+  },
+  "files": [
+    "*.json"
+  ],
+  "scripts": {
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf target && rm -rf node_modules"
+  }
+}

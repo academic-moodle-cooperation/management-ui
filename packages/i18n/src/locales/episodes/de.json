@@ -1,0 +1,106 @@
+{
+  "episodesInfo": {
+    "heading": "Videoinfo",
+    "title": "Titel",
+    "identifier": "Video-ID",
+    "identifierCopied": "Video-ID kopiert",
+    "isPartOf": "Serie",
+    "description": "Beschreibung",
+    "language": "Sprache",
+    "creator": "Vortragende*r",
+    "contributor": "Mitwirkende",
+    "startDate": "Datum",
+    "created": "Erstellt",
+    "location": "Herkunft",
+    "status": "Status",
+    "duration": "Dauer",
+    "publisher": "Ersteller*in",
+    "license": "Lizenz",
+    "rightsHolder": "Rechteinhaber*in",
+    "source": "Quelle",
+    "subject": "Betreff",
+    "creator2": "Ersteller*in",
+    "required": "* Pflichtfeld",
+    "noData": "Keine Daten vorhanden",
+    "tabs": {
+      "metadata": "Metadaten",
+      "access": "Zugriff"
+    }
+  },
+  "episodesTable": {
+    "heading": {
+      "title": "Titel",
+      "video": "Video",
+      "series": "Serie",
+      "description": "Beschreibung",
+      "contributors": "Mitwirkende",
+      "creator": "Ersteller*in",
+      "created": "Erstellt",
+      "status": "Status",
+      "duration": "Dauer",
+      "location": "Herkunft",
+      "presenters": "Vortragende*r",
+      "startDate": "Datum",
+      "dateAndLocation": "Datum und Ort",
+      "access": "Zugriff",
+      "actions": {
+        "title": "Aktionen",
+        "info": "Jede Person, die zu einer Serie berechtigt ist, kann diese Serie und die zugehörigen Videos bearbeiten. Die Änderungen sind für alle sichtbar."
+      }
+    },
+    "accessState": {
+      "public": "Öffentlicher Zugriff",
+      "private": "Beschränkter Zugriff"
+    },
+    "action": {
+      "editData": "Daten bearbeiten",
+      "editVideo": "Video bearbeiten",
+      "play": "Video abspielen",
+      "download": "Download",
+      "delete": "Video löschen",
+      "flavor": {
+        "presentation": "Bildschirm",
+        "presenter": "Kamera",
+        "subtitles": "Untertitel"
+      },
+      "selectDownloadVersion": "Version auswählen"
+    },
+    "notification": {
+      "changesSaved": "Änderungen wurden gespeichert",
+      "changesFailed": "Änderungen konnten nicht gespeichert werden",
+      "deleteSuccess": "Video wurde gelöscht",
+      "deleteError": "Video konnte nicht gelöscht werden",
+      "fieldRequiredEmpty": "Leeres Pflichtfeld"
+    },
+    "deleteDialogue": {
+      "heading": "Video löschen?",
+      "text": "Wollen Sie das Video {{title}} wirklich <strong>dauerhaft</strong> und <strong>irreversibel</strong> löschen? Alle Veröffentlichungen dieses Videos werden dadurch ungültig.",
+      "cancel": "Abbrechen",
+      "delete": "Löschen"
+    },
+    "status": {
+      "pending": "Verarbeitung ausstehend",
+      "processing": "In Verarbeitung",
+      "processing_cancelled": "Verarbeitung abgebrochen",
+      "paused": "Verarbeitung pausiert",
+      "processed": "Verarbeitet",
+      "processing_failure": "Verarbeitungsfehler",
+      "scheduled": "Geplant",
+      "ingesting": "Ingesting",
+      "recording": "Zeichnet auf"
+    }
+  },
+  "status": {
+    "PENDING": "Verarbeitung ausstehend",
+    "PROCESSING": "In Verarbeitung",
+    "PROCESSING_CANCELLED": "Verarbeitung abgebrochen",
+    "PAUSED": "Verarbeitung pausiert",
+    "PROCESSED": "Verarbeitet",
+    "PROCESSING_FAILURE": "Verarbeitungsfehler",
+    "SCHEDULED": "Geplant",
+    "INGESTING": "Ingesting",
+    "RECORDING": "Zeichnet auf"
+  },
+  "noVideos": "Derzeit sind noch keine Videos vorhanden.",
+  "notEditable": "Dieses Video wird derzeit verarbeitet und kann nicht bearbeitet werden."
+}

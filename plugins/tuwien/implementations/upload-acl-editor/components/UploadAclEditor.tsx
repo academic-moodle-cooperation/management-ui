@@ -1,0 +1,80 @@
+import React, { useEffect, useState } from "react";
+import { AclEditor, ManagedACLEntry, ACLEntry, AclData } from "@workspace/ui/components";
+import { useGetAllManagedAclsQuery } from "@workspace/query";
+
+export interface UploadAclEditorProps {
+  aclData?: AclData | null;
+  onAclDataChange: (aclData: AclData, managedAclId: string) => void;
+  // selectedSeries: Series;
+  disabled: boolean;
+  refetch: () => void;
+}
+
+export const UploadAclEditor: React.FC<UploadAclEditorProps> = ({
+  aclData,
+  onAclDataChange,
+  // selectedSeries,
+  disabled = false,
+  refetch = () => { },
+}) => {
+
+  const [hasChanges, setHasChanges] = useState(false);
+  const [managedAclId, setManagedAclId] = useState<string | undefined>(undefined);
+  const [entries, setEntries] = useState<ACLEntry[]>([]);
+  const [managedAcls, setManagedAcls] = useState<any[]>([]);
+  const [managedAclEntries, setManagedAclEntries] = useState<ManagedACLEntry[]>([]);
+
+  // Fetch managed ACLs
+  const { data: managedAclsData } = useGetAllManagedAclsQuery();
+  useEffect(() => {
+    setManagedAcls(managedAclsData?.managedAcls?.nodes ?? []);
+  }, [managedAclsData]);
+
+  // When managed ACL changes, update entries
+  const onManagedAclChange = (aclId: string) => {
+    setManagedAclId(aclId);
+    const selectedAcl = managedAcls.find((acl) => acl.id === aclId);
+    setManagedAclEntries(selectedAcl?.acl?.entries || []);
+  };
+
+  const onAclChange = (entries: ACLEntry[]) => {
+    setEntries(entries);
+  };
+
+  const onHasChangesChange = (hasChanges: boolean) => {
+    setHasChanges(hasChanges);
+  };
+
+  useEffect(() => {
+    onAclDataChange(
+      {
+        entries,
+        managedAclEntries,
+        managedAclId: managedAclId ?? ""
+      },
+      managedAclId ?? ""
+    );
+  }, [managedAclId, entries, managedAclEntries]);
+
+  return (
+    <div className="h-full">
+      <AclEditor
+        aclEntries={aclData?.entries.map((entry) => ({
+          role: entry.role,
+          action: entry.action,
+          label: entry.label,
+          userId: "",
+        })) ?? []}
+        managedAclId={managedAclId}
+        hasChanges={hasChanges}
+        refetch={refetch}
+        onClose={() => { }}
+        showUpdateButton={false}
+        onAclChange={onAclChange}
+        onManagedAclChange={onManagedAclChange}
+        onHasChangesChange={onHasChangesChange}
+        disabled={disabled}
+      />
+    </div>
+  );
+};

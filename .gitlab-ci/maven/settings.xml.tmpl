@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+  <servers>
+    <server>
+      <id>amc</id>
+      <username>${NEXUS_USER}</username>
+      <password>${NEXUS_PASS}</password>
+    </server>
+  </servers>
+
+  <mirrors>
+    <mirror>
+      <id>univie</id>
+      <name>Mirror Repository Uni Wien</name>
+      <url>${NEXUS_HOST}/repository/i3v/</url>
+      <mirrorOf>univie</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>central</id>
+      <name>Mirror Maven Central</name>
+      <url>${NEXUS_HOST}/repository/maven-central/</url>
+      <mirrorOf>central</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>opencast</id>
+      <name>Mirror Opencast AMC</name>
+      <url>${NEXUS_HOST}/repository/opencast/</url>
+      <mirrorOf>opencast</mirrorOf>
+    </mirror>
+  </mirrors>
+
+  <proxies>
+  </proxies>
+
+  <profiles>
+  </profiles>
+
+</settings>

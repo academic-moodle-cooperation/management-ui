@@ -1,0 +1,16 @@
+{
+  "heading1": "Welcome to LectureTube!",
+  "heading2": "",
+  "text": "With LectureTube, employees of the TU Wien have access to a powerful platform that enables them to easily record and livestream lectures in specially designated lecture halls. Additionally, users can upload existing videos or create new content directly within the platform. All recorded videos can be seamlessly integrated into Moodle courses or hosted on websites for on-demand viewing. The LectureTube administration interface provides users with a comprehensive overview of their video series and individual videos, allowing for easy editing and management of content.",
+  "cta_title": "Get Started",
+  "cta_upload": "Upload Video",
+  "cta_studio": "Record Video",
+  "kb_title": "Knowledge Base",
+  "kb_subtitle": "Need Help?",
+  "kb_link": "https://colab.tuwien.ac.at/lecturetube/en",
+  "kb_info": "Visit our <kb_link>Knowledge Base</kb_link> for tutorials, FAQs, and support articles to help you get the most out of LectureTube.",
+  "ups": "Capture - Stream - Engage",
+  "ups_intro": "LectureTube is the video platform for members of TU Wien, designed to help you create, share, and manage video content.",
+  "features_header": "Features",
+  "features": "<li><strong>Capture Lectures:</strong> Record lectures in designated halls.</li><li><strong>Live Streaming:</strong> Stream your lessons in real-time.</li><li><strong>Content Creation:</strong> Upload existing videos or create new content.</li><li><strong>Seamless Integration:</strong> Integrate videos into TUWEL courses or websites.</li><li><strong>Easy Administration:</strong> Edit and manage your content with a user-friendly interface.</li>"
+}
