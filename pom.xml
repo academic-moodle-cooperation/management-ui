@@ -25,6 +25,7 @@
   </properties>
 
   <modules>
+    <module>packages</module>
     <module>apps</module>
     <module>backend</module>
     <module>assemblies</module>

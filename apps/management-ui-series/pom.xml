@@ -61,7 +61,7 @@
         <configuration>
           <instructions>
             <Private-Package>ui.*</Private-Package>
-            <Management-Plugin>test</Management-Plugin>
+            <Management-Plugin>series</Management-Plugin>
             <Fragment-Host>management-ui-core</Fragment-Host>
           </instructions>
         </configuration>
