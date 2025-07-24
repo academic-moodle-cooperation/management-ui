@@ -117,7 +117,7 @@ const getDynamicModules = async (): Promise<ClientDynamicModule[]> => {
     const appConfig = await getCachedAppConfig(); // Use the cached getter
     const productionAppPluginUrl = appConfig?.productionAppPluginUrl;
     // Ensure no double slashes if baseUrl ends with / and the path doesn't need an initial one
-    const dynamicModulesUrl = isDev ? `${baseUrl.replace(/\/$/, '')}/dynamic-modules.json` : `${baseUrl.replace(/\/$/, '')}${productionAppPluginUrl}`;
+    const dynamicModulesUrl = isDev ? `${baseUrl.replace(/\/$/, '')}/dynamic-modules.json` : `${productionAppPluginUrl}`;
 
     const response = await fetch(dynamicModulesUrl);
     if (!response.ok) {

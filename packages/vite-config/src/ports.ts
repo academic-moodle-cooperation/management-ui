@@ -40,7 +40,7 @@ export const getPluginBasePath = (
   shellAppBasePath: string = "/management-ui/"
 ): string => {
   // Derives "test" from "management-ui-test"
-  const pluginShortName = pluginPackageName.replace(/^management-ui-plugin-/, "").replace(/^management-ui-/, "");
+  const pluginShortName = pluginPackageName.replace(/^management-ui-/, "");
   const ensuredShellBase = shellAppBasePath === "/" ? "/" : (shellAppBasePath.endsWith("/") ? shellAppBasePath : `${shellAppBasePath}/`);
 
   if (isProduction) {
