@@ -9,7 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>management-ui-plugin-episodes</artifactId>
+  <artifactId>management-ui-episodes</artifactId>
   <packaging>bundle</packaging>
 
   <name>Opencast Management Tool :: UI :: Plugin episodes</name>

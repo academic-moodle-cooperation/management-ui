@@ -9,7 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>management-ui-plugin-test</artifactId>
+  <artifactId>management-ui-test</artifactId>
   <packaging>bundle</packaging>
 
   <name>Opencast Management Tool :: UI :: Plugin test</name>

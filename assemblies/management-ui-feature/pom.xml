@@ -50,25 +50,8 @@
     </dependency>
     <dependency>
       <groupId>org.amc.management</groupId>
-      <artifactId>management-ui-plugin-test</artifactId>
+      <artifactId>management-ui-test</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!--
-    <dependency>
-      <groupId>org.amc.management</groupId>
-      <artifactId>management-ui-plugin-episodes</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.amc.management</groupId>
-      <artifactId>management-ui-plugin-series</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.amc.management</groupId>
-      <artifactId>management-ui-plugin-upload</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    -->
   </dependencies>
 </project>
