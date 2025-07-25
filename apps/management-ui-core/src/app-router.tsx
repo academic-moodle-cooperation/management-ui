@@ -24,17 +24,7 @@ const appCoreRootRoute = createRootRoute({
 
 // Example: Static routes that are part of the core application
 // We will re-introduce ComponentShowcase here for now
-const ComponentShowcase = lazy(() => import('./pages/ComponentShowcase').then(m => ({ default: m.ComponentShowcase })));
 
-const showcaseRoute = createRoute({
-  getParentRoute: () => appCoreRootRoute,
-  path: '/component-showcase', // Changed path
-  component: () => (
-    <Suspense fallback={<AppLoader />}>
-      <ComponentShowcase />
-    </Suspense>
-  ),
-});
 
 const defaultLandingRoute = createRoute({ // New route for DefaultLandingPage
   getParentRoute: () => appCoreRootRoute,
@@ -229,7 +219,7 @@ export const createDynamicRouter = async () => {
 
   const allChildRoutes = [
     defaultLandingRoute, // Use the new default route
-    showcaseRoute,       // Keep showcase route at its new path
+    // showcaseRoute,       // Keep showcase route at its new path
     loginRoute,
     logoutRoute,
     ...dynamicRoutes
