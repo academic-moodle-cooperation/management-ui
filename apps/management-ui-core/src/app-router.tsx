@@ -24,34 +24,37 @@ const appCoreRootRoute = createRootRoute({
 
 // Example: Static routes that are part of the core application
 // We will re-introduce ComponentShowcase here for now
-const ComponentShowcase = lazy(() => import('./pages/ComponentShowcase').then(m => ({ default: m.ComponentShowcase })));
 
-const showcaseRoute = createRoute({
-  getParentRoute: () => appCoreRootRoute,
-  path: '/component-showcase', // Changed path
-  component: () => (
-    <Suspense fallback={<AppLoader />}>
-      <ComponentShowcase />
-    </Suspense>
-  ),
-});
+const DefaultLandingComponent = () => (
+  <Suspense fallback={<AppLoader />}>
+    <Container className="flex justify-center">
+      <ComponentResolver
+        componentType="appshell:landing-page"
+        defaultComponent={DefaultLandingPage}
+        componentProps={{}}
+        loadingBehavior="loader"
+        useOverridePrefix={true}
+      />
+    </Container>
+  </Suspense>
+);
 
-const defaultLandingRoute = createRoute({ // New route for DefaultLandingPage
+const rootLandingRoute = createRoute({
   getParentRoute: () => appCoreRootRoute,
   path: '/',
-  component: () => (
-    <Suspense fallback={<AppLoader />}>
-      <Container className="flex justify-center">
-        <ComponentResolver
-          componentType="appshell:landing-page"
-          defaultComponent={DefaultLandingPage}
-          componentProps={{}}
-          loadingBehavior="loader"
-          useOverridePrefix={true}
-        />
-      </Container>
-    </Suspense>
-  ),
+  component: DefaultLandingComponent,
+});
+
+const homeLandingRoute = createRoute({
+  getParentRoute: () => appCoreRootRoute,
+  path: '/home',
+  component: DefaultLandingComponent,
+});
+
+const indexHtmlLandingRoute = createRoute({
+  getParentRoute: () => appCoreRootRoute,
+  path: '/index.html',
+  component: DefaultLandingComponent,
 });
 
 const loginRoute = createRoute({
@@ -227,9 +230,11 @@ export const createDynamicRouter = async () => {
     return dynamicRoute;
   });
 
+  // Remove the old defaultLandingRoute and update allChildRoutes
   const allChildRoutes = [
-    defaultLandingRoute, // Use the new default route
-    showcaseRoute,       // Keep showcase route at its new path
+    rootLandingRoute,
+    homeLandingRoute,
+    indexHtmlLandingRoute,
     loginRoute,
     logoutRoute,
     ...dynamicRoutes
