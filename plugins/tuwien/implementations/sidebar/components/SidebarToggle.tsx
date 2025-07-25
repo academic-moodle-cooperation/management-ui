@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@workspace/ui/components";
+import { Button, useSidebar } from "@workspace/ui/components";
 import { ChevronsRight } from "@workspace/ui/components/icons";
 import { cn } from "@workspace/ui/lib/utils";
 
@@ -7,7 +7,9 @@ import { cn } from "@workspace/ui/lib/utils";
  * TU Wien Sidebar Toggle Component
  * Toggle button for expanding/collapsing the sidebar
  */
-export const SidebarToggle = ({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) => {
+export const SidebarToggle = () => {
+  const { open, setOpen } = useSidebar();
+
   return (
     <div className={cn("hidden md:flex",
       open ? "justify-end" : "flex justify-center"
