@@ -50,6 +50,9 @@ cd management-ui
 # Install dependencies
 pnpm install
 
+# Build applications and packages
+pnpm build
+
 # Start development servers
 pnpm dev
 ```
@@ -239,4 +242,3 @@ This project is maintained by educational institutions and follows open source p
 
 ---
 
-**Built with ❤️ for educational content management**
