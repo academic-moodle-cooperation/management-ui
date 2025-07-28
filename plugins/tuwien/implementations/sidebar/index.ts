@@ -5,6 +5,7 @@ import { SidebarHeader } from './components/SidebarHeader';
 import { SidebarUserMenu } from './components/SidebarUserMenu';
 import { SidebarToggle } from './components/SidebarToggle';
 import React from 'react';
+import { Video } from '@workspace/ui/components/icons';
 
 // Wrapper components that don't need props directly from the plugin system
 const CustomNavMainWrapper = (props: { open?: boolean; items?: any[] }) => {
@@ -71,5 +72,31 @@ export const tuwienSidebarImplementation = createPlugin({
 
   deactivate() {
     console.log('TU Wien Sidebar Implementation deactivated');
+  }
+});
+
+export const studioNavImplementation = createPlugin({
+  namespace: 'tuwien',
+  type: 'navigation',
+  version: '1.0.0',
+
+  initialize(manager: PluginManager) {
+
+    manager.registerObject('sidebar:nav-items', 'studio', {
+      title: 'Studio',
+      path: 'https://studio.tuwien.ac.at',
+      target: '_blank',
+      icon: Video,
+      order: 50,
+      permissions: [],
+      featureFlags: [],
+      category: 'studio'
+    });
+  },
+
+  activate() {
+  },
+
+  deactivate() {
   }
 }); 
