@@ -2,40 +2,59 @@
 
 This package defines and provides access to UI-related configurations for the video management platform.
 
+**Post-Refactoring Architecture**: Following PR #31, this package works in tandem with `@workspace/query`:
+- **`@workspace/ui-config`**: Provides configuration schema, types, and default values
+- **`@workspace/query`**: Handles configuration loading, merging, caching, and provides the `useAppConfig` hook
+
 It includes:
 -   `AppConfig` interface: Defines the shape of the configuration object.
 -   `defaultConfig`: Provides sensible default values for the application with generic, customizable themes.
--   `getAppConfig(instanceConfig?: Partial<AppConfig>): AppConfig`: A function to retrieve the configuration, allowing for instance-specific overrides to be merged with the defaults.
--   `ConfigProvider`: React context provider for application configuration.
--   `useAppConfig`: React hook to access configuration within components.
+-   `getAppConfig(instanceConfig?: Partial<AppConfig>): AppConfig`: A legacy function for configuration merging (use `useAppConfig` from `@workspace/query` instead).
+-   Legacy exports for backward compatibility (migration to `@workspace/query` recommended).
 
 ## Usage
 
+### Current Architecture (Post-Refactoring)
+
+**Important**: Following the configuration system refactoring in PR #31, the `useAppConfig` hook has been moved to `@workspace/query`. This package now primarily serves as the configuration schema and utilities provider.
+
 ### Development Mode
 
-In development, the system uses the `defaultConfig` plus any plugin-provided configurations for hot reloading:
+In development, the `@workspace/query` package handles configuration loading and merging:
 
 ```typescript
-import { defaultConfig, getAppConfig } from '@workspace/ui-config';
+import { useAppConfig } from '@workspace/query'; // ← NEW LOCATION
 
-// Development mode automatically merges defaultConfig with plugin configurations
+// The hook automatically merges defaultConfig with plugin configurations
 // Supports hot reloading when changes are made to plugin configurations
-const config = getAppConfig(); // Uses defaultConfig + plugin configs
+const { config, isLoading, isError } = useAppConfig();
 ```
 
 ### Production Mode
 
-Applications or modules can import configuration utilities to access the current configuration:
+Applications should import the hook from the new location:
+
+```typescript
+import { useAppConfig } from '@workspace/query'; // ← NEW LOCATION
+import type { AppConfig } from '@workspace/ui-config'; // ← Types still available here
+
+// Get the configuration with automatic merging and caching
+const { config, isLoading, isError } = useAppConfig();
+
+console.log(config.app.appName);
+```
+
+### Legacy Configuration Utilities (Deprecated)
+
+For backward compatibility, configuration utilities are still available, but **not recommended for new code**:
 
 ```typescript
 import { getAppConfig, AppConfig } from '@workspace/ui-config';
 
-// Get the default config merged with any potential instance-specific values
+// Legacy approach - use useAppConfig from @workspace/query instead
 const config: AppConfig = getAppConfig(); 
 
-console.log(config.app.appName);
-
-// If you have instance-specific values, e.g., from an environment variable or a specific setup file:
+// Legacy instance-specific configuration - handled automatically by useAppConfig now
 const instanceSpecificValues = {
   app: {
     appName: 'My Custom Video Hub',
@@ -44,7 +63,6 @@ const instanceSpecificValues = {
   },
 };
 const customConfig = getAppConfig(instanceSpecificValues);
-console.log(customConfig.app.appName);
 ```
 
 ## Configuration Structure
@@ -153,23 +171,106 @@ The merged config is provided to the app via `ConfigProvider` and is available e
 
 ```ts
 // In an institution-specific component
+import { useAppConfig } from '@workspace/query'; // ← NEW LOCATION
+
 const { config } = useAppConfig();
 const customUrl = config.institutionUrl; // Provided by institution config plugin
 ```
+
+## Migration Guide
+
+### Breaking Changes in PR #31
+
+The configuration system was refactored to consolidate data management and configuration under `@workspace/query`. Here are the key changes:
+
+#### 1. Import Location Change
+**Before:**
+```typescript
+import { useAppConfig } from '@workspace/ui-config';
+```
+
+**After:**
+```typescript
+import { useAppConfig } from '@workspace/query';
+```
+
+#### 2. Simplified App Setup
+**Before:**
+```typescript
+import { ConfigProvider, defaultConfig } from '@workspace/ui-config';
+
+// Manual setup required
+<ConfigProvider
+  configData={defaultConfig}
+  isLoading={false}
+  isError={false}
+  error={null}
+  isFetched={true}
+>
+  <App />
+</ConfigProvider>
+```
+
+**After:**
+```typescript
+import { QueryProvider } from '@workspace/query';
+
+// Configuration handled internally - no ConfigProvider needed
+<QueryProvider>
+  <App />
+</QueryProvider>
+```
+
+#### 3. Removed Hooks and Patterns
+- ❌ `ConfigProvider` wrapper is no longer needed
+- ❌ `useMergedAppConfig` hook has been removed
+- ❌ Manual config passing to providers is no longer required
+
+#### 4. Updated Package Responsibilities
+- **`@workspace/ui-config`**: Configuration schema, types, and default values
+- **`@workspace/query`**: Configuration loading, merging, caching, and the `useAppConfig` hook
+
+### Migration Steps
+
+1. **Update imports** in all files using `useAppConfig`:
+   ```typescript
+   // Change this:
+   import { useAppConfig } from '@workspace/ui-config';
+   
+   // To this:
+   import { useAppConfig } from '@workspace/query';
+   ```
+
+2. **Remove ConfigProvider** wrapper if present:
+   ```typescript
+   // Remove ConfigProvider wrapper - configuration is handled internally
+   // by QueryProvider and useAppConfig hook
+   ```
+
+3. **Update component usage** (API remains the same):
+   ```typescript
+   const { config, isLoading, isError } = useAppConfig(); // Same API
+   ```
+
+4. **Keep type imports** from ui-config if needed:
+   ```typescript
+   import type { AppConfig } from '@workspace/ui-config'; // Types still here
+   ```
 
 ### Configuration Loading Flow
 
 ```mermaid
 graph TD
-    A[App Start] --> B{Development Mode?}
-    B -->|Yes| C[Use defaultConfig]
-    B -->|No| D[Fetch config.json]
-    C --> E[Merge with defaultConfig]
-    D --> E
-    E --> F[Initialize Plugin System]
-    F --> G[Collect Plugin Configs]
-    G --> H[Deep Merge All Configs]
-    H --> I[Provide via ConfigProvider]
+    A[App Start] --> B[QueryProvider Initialized]
+    B --> C[useAppConfig Hook Called]
+    C --> D{Development Mode?}
+    D -->|Yes| E[Use defaultConfig from @workspace/ui-config]
+    D -->|No| F[Fetch config.json via React Query]
+    E --> G[Initialize Plugin System]
+    F --> G
+    G --> H[Collect Plugin Configs from Registry]
+    H --> I[Deep Merge: Base Config + Plugin Configs]
+    I --> J[Return Merged Config with Loading State]
 ```
 
 ### FAQ
@@ -191,5 +292,5 @@ graph TD
 
 ## References
 - See plugin system documentation for object registration patterns.
-- See `ConfigProvider.tsx` for how config is provided to the app.
-- See `apps/management-ui-core/src/main.tsx` for the merging logic. 
+- Configuration loading and merging logic is now handled in `@workspace/query` package.
+- See `useAppConfig` hook implementation in `packages/query/src/hooks/useAppConfig.ts` for current merging logic. 
