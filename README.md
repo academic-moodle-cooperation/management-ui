@@ -127,7 +127,7 @@ For detailed plugin development, see [`packages/plugin-system/docs/README.md`](.
 |---------|---------|-------------|
 | **plugin-system** | Plugin Architecture | Core plugin loading, management, and extension point system |
 | **ui** | Component Library | Shared React components, design system, and UI patterns |
-| **query** | Data Management | GraphQL client, state management, and data fetching |
+| **query** | Data Management & Configuration | GraphQL client, state management, data fetching, and application configuration |
 | **router** | Navigation | Application routing with plugin-aware route management |
 | **i18n** | Internationalization | Multi-language support and localization |
 
