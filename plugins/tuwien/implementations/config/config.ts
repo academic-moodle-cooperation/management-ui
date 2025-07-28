@@ -18,11 +18,13 @@ export const config = {
             "header",
             "landing-page",
             "sidebar",
-            "table-sidebar"
+            "table-sidebar",
+            "navigation"
           ]
         }
       }
     ]
   },
   tobiraUrl: 'https://video.tuwien.ac.at',
+  studioUrl: 'https://studio.tuwien.ac.at'
 };

@@ -10,7 +10,7 @@ export { tuwienConfigPlugin } from './config';
 export { tuwienFooterImplementation } from './footer';
 export { tuwienHeaderImplementation } from './header';
 export { tuwienLandingPageImplementation } from './landing-page';
-export { tuwienSidebarImplementation } from './sidebar';
+export { tuwienSidebarImplementation, studioNavImplementation } from './sidebar';
 export { tuwienTableSidebarImplementation } from './table-sidebar';
 export { tuwienUploadAclEditorImplementation } from './upload-acl-editor';
 
