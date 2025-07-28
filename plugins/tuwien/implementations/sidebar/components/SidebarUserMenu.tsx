@@ -12,7 +12,7 @@ import {
 import { useGetCurrentUser } from "@workspace/query";
 import { LogIn, LogOut } from "@workspace/ui/components/icons";
 import { cn } from "@workspace/ui/lib/utils";
-import { useAppConfig } from "@workspace/ui-config";
+import { useAppConfig } from "@workspace/query";
 import { Link } from "@workspace/router";
 import { NavMain } from "@workspace/ui/components/appshell/components/nav-main";
 

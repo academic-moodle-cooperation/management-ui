@@ -5,7 +5,7 @@ import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/c
 import { MonitorPlay } from '@workspace/ui/components/icons';
 import { createOrganizationNamespace, usePluginTranslation } from '@workspace/i18n';
 import { Link } from '@workspace/router';
-import { useAppConfig } from '@workspace/ui-config';
+import { useAppConfig } from '@workspace/query';
 
 // Custom TU Wien actions component that enhances the default actions
 const TUWienEpisodesActions = ({

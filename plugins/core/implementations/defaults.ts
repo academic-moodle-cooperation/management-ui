@@ -24,27 +24,6 @@ export const coreDefaultImplementations = createPlugin({
       category: 'core'
     });
 
-    // Default app configuration
-    manager.registerObject('app:config', 'default-config', {
-      organizationName: 'Management UI',
-      organizationUrl: '#',
-      supportEmail: 'support@example.com',
-      features: {
-        enablePlugins: true,
-        enableAuth: true,
-        newUploadInterface: true,
-        seriesManagement: true
-      }
-    });
-
-    // Default basic branding
-    manager.registerObject('app:branding', 'default-branding', {
-      primaryColor: '#0066CC',
-      secondaryColor: '#004499',
-      logoUrl: '/default-logo.png',
-      faviconUrl: '/favicon.ico'
-    });
-
   },
 
   activate() {

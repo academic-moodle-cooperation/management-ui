@@ -13,7 +13,6 @@
     "check-types": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@workspace/ui-config": "workspace:*",
     "@workspace/router": "workspace:*",
     "@workspace/ui": "workspace:*",
     "@tanstack/react-router": "^1.46.0",

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '@workspace/router';
 import { useGetCurrentUser } from '@workspace/query';
-import { useAppConfig } from '@workspace/ui-config';
+import { useAppConfig } from '@workspace/query';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 

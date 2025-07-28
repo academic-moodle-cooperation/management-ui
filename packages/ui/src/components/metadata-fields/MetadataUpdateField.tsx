@@ -38,7 +38,7 @@ import {
   Series,
 } from "@workspace/query";
 import { useI18n } from "@workspace/i18n";
-import { useAppConfig } from "@workspace/ui-config";
+import { useAppConfig } from "@workspace/query";
 import { ChevronDown } from "lucide-react";
 
 type MetadataUpdateFieldProps = MetadataFieldType & {

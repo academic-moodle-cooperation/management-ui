@@ -1,7 +1,6 @@
 import React, { type FC } from 'react';
 import { createOrganizationNamespace, usePluginTranslation } from '@workspace/i18n';
-import { useGetCurrentUser } from '@workspace/query';
-import { useAppConfig } from '@workspace/ui-config';
+import { useGetCurrentUser, useAppConfig } from '@workspace/query';
 // Import the SVG as a URL
 import univieLogoUrl from './assets/univie_logo.svg?url';
 

@@ -97,11 +97,5 @@ export interface AppConfig {
     timeout?: number;
     graphqlEndpoint: string;
   };
-  features: Record<string, boolean>;
-  apiBaseUrl?: string;
-  timeouts?: {
-    request?: number;
-    session?: number;
-  };
   [key: string]: unknown; // Allow plugin-provided config keys
 } 

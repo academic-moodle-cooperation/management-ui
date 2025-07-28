@@ -1,6 +1,6 @@
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import { gql } from "graphql-request";
-import { useAppConfig } from "@workspace/ui-config";
+import { useAppConfig } from "@workspace/query";
 import { createGraphQLClient } from "../client";
 
 // Define the structure of the user data returned by the GraphQL query

@@ -38,7 +38,7 @@ import { LinkText, Trans, useI18n } from "@workspace/i18n";
 import { UploadList } from "./components/UploadList";
 import { useLoaderData, useNavigate, useParams, useRouter } from "@workspace/router";
 import { AclEditor, type AclData, type SelectedElement } from "@workspace/ui/components";
-import { useAppConfig } from "@workspace/ui-config";
+import { useAppConfig } from "@workspace/query";
 import { usePluginManager, ComponentResolver } from "@workspace/plugin-system";
 import {
   uploadExtensionPoints,

@@ -5,7 +5,7 @@ import { AppProviders } from '@workspace/providers';
 import { createDynamicRouter } from './app-router';
 import type { AnyRouter } from '@tanstack/react-router';
 import { AppLoader } from '@workspace/ui/components';
-import { useMergedAppConfig } from '../src/useMergedAppConfig';
+import { useAppConfig } from '@workspace/query';
 import { QueryProvider } from '@workspace/query';
 import { PluginInitializer } from './components/PluginInitializer';
 import { PluginProvider } from '@workspace/plugin-system';
@@ -38,7 +38,7 @@ const AppContent = () => {
 };
 
 const AppWithConfig = ({ router }: { router: AnyRouter }) => {
-  const { config, isLoading, isError, error, isFetched } = useMergedAppConfig();
+  const { config, isLoading } = useAppConfig();
 
   useEffect(() => {
     const themeName = config.app.theme || 'default';
@@ -52,18 +52,11 @@ const AppWithConfig = ({ router }: { router: AnyRouter }) => {
   }, [config]);
 
   // If config is not ready, show a loading state
-  if (isLoading) return( <AppLoader >Loading configuration...</AppLoader> );
+  if (isLoading) return (<AppLoader >Loading configuration...</AppLoader>);
 
   return (
     <PluginInitializer config={config}>
-      <AppProviders
-        router={router}
-        configData={config}
-        isConfigLoading={isLoading}
-        isConfigError={isError}
-        configError={error}
-        isConfigFetched={isFetched}
-      />
+      <AppProviders router={router} />
     </PluginInitializer>
   );
 };

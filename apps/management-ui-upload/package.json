@@ -22,7 +22,6 @@
     "@workspace/router": "workspace:*",
     "@workspace/utils": "workspace:*",
     "@workspace/store": "workspace:*",
-    "@workspace/ui-config": "workspace:*",
     "@workspace/providers": "workspace:*",
     "@workspace/plugin-system": "workspace:*",
     "@workspace/plugins": "workspace:*",

@@ -19,7 +19,8 @@
     "@tanstack/react-query-devtools": "^5.51.15",
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.0",
-    "@workspace/ui-config": "workspace:*"
+    "@workspace/ui-config": "workspace:*",
+    "@workspace/plugin-system": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"
