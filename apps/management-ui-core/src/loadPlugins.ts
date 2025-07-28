@@ -1,5 +1,5 @@
 import { Plugin } from '@workspace/plugin-system';
-import type { AppConfig, PluginNamespaceItem } from '@workspace/ui-config';
+import type { AppConfig, PluginNamespaceItem } from '@workspace/query';
 import * as AllPlugins from '@workspace/plugins';
 
 // Helper function to check if an object is a valid plugin
@@ -81,7 +81,7 @@ export const loadAllAvailablePlugins = async (): Promise<Plugin[]> => {
     // Load all available plugins and filter for Plugin type
     const allModules = Object.values(AllPlugins);
     const allPlugins = allModules.filter(isPlugin);
-    
+
     return allPlugins;
   } catch (error) {
     console.error('CRITICAL ERROR in loadAllAvailablePlugins:', error);
@@ -99,7 +99,7 @@ export const loadAllPlugins = async (config?: AppConfig): Promise<Plugin[]> => {
     // Load all available plugins and filter for Plugin type
     const allModules = Object.values(AllPlugins);
     const allPlugins = allModules.filter(isPlugin);
-    
+
     // Filter plugins based on array configuration
     const filteredPlugins = allPlugins.filter(plugin => {
       const shouldLoad = shouldLoadPlugin(plugin, config);

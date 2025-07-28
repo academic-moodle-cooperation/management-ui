@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createObjectRegistryPlugin, createRendererPlugin, usePluginManager, type Plugin } from '@workspace/plugin-system';
 import { AppLoader } from '@workspace/ui/components';
 import { loadAllAvailablePlugins } from '../loadPlugins';
-import type { AppConfig } from '@workspace/ui-config';
+import type { AppConfig } from '@workspace/query';
 
 interface PluginInitializerProps {
   children: React.ReactNode;
@@ -19,13 +19,13 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
     if (initializationStarted.current) {
       return;
     }
-    
+
     // If plugins are already ready, just sync local state
     if (manager.arePluginsReady) {
       setPluginsReady(true);
       return;
     }
-    
+
     initializationStarted.current = true;
     let didUnmount = false;
     const registeredPluginNames: string[] = [];
@@ -42,7 +42,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           manager.register(objectRegistryPlugin);
           registeredPluginNames.push(objectRegistryPlugin.name);
         }
-        
+
         if (!manager.plugins.has(rendererPlugin.name)) {
           manager.register(rendererPlugin);
           registeredPluginNames.push(rendererPlugin.name);
@@ -50,10 +50,10 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
 
         // 2. Load ALL available plugins without filtering first
         const allAvailablePlugins: Plugin[] = await loadAllAvailablePlugins();
-        
+
         // 3. Register config plugins first to establish configuration
         const configPlugins = allAvailablePlugins.filter(plugin => plugin.name.endsWith(':config'));
-        
+
         configPlugins.forEach(plugin => {
           if (plugin && plugin.name) {
             if (!manager.plugins.has(plugin.name)) {
@@ -78,13 +78,13 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
 
         // 5. Filter and load remaining plugins with the merged configuration
         const remainingPlugins = allAvailablePlugins.filter(plugin => !plugin.name.endsWith(':config'));
-        
+
         remainingPlugins.forEach(plugin => {
           if (plugin && plugin.name) {
             // Re-evaluate if plugin should be loaded with merged config
             const [pluginNamespace, pluginType] = plugin.name.split(':');
             const pluginConfig = mergedConfig?.app?.pluginNamespace || [];
-            
+
             // Parse config to check if plugin should be loaded
             let shouldLoad = false;
             for (const item of pluginConfig) {

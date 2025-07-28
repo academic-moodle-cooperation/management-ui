@@ -3,8 +3,7 @@ import { createRouter, createRoute, Outlet, createRootRoute, Navigate, useRouter
 import type { AnyRoute } from '@tanstack/react-router';
 // Types for dynamic modules - will eventually come from a more robust system
 // For now, let's assume a structure similar to what useGetInstalledApps might provide.
-import type { AppConfig } from '@workspace/ui-config'; // For login/logout redirects
-import { useAppConfig } from '@workspace/ui-config'; // For login/logout redirects
+import { useAppConfig } from '@workspace/query'; // For login/logout redirects
 // Import components from the new organized structure
 import { ErrorBoundary, ModuleErrorFallback, NotFoundError, CoreAppShellLayout } from './components';
 import { DefaultLandingPage, AppLoader, Container } from '@workspace/ui/components'; // Import DefaultLandingPage

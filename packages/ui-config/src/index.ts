@@ -1,6 +1,5 @@
 // Export types from types file
 export * from "./types";
-export * from "./ConfigProvider";
 import type { AppConfig } from "./types";
 
 // Default or base configuration, adapted from old defaultConfig and new AppConfig
@@ -121,17 +120,6 @@ export const defaultConfig = {
     timeout: 30000,
     graphqlEndpoint: '/graphql'
   },
-  features: {
-    enablePlugins: true,
-    enableAuth: true,
-    newUploadInterface: true,
-    seriesManagement: true,
-  },
-  apiBaseUrl: '/api/v1',
-  timeouts: {
-    request: 30000,
-    session: 1800000,
-  },
 };
 
 // Updated Function to load and merge instance-specific configurations
@@ -160,15 +148,6 @@ export const getAppConfig = (instanceConfig?: Partial<AppConfig>) => {
     api: {
       ...defaultConfig.api,
       ...(instanceConfig?.api || {}),
-    },
-    features: {
-      ...defaultConfig.features,
-      ...(instanceConfig?.features || {}),
-    },
-    apiBaseUrl: instanceConfig?.apiBaseUrl ?? defaultConfig.apiBaseUrl,
-    timeouts: {
-      ...defaultConfig.timeouts,
-      ...(instanceConfig?.timeouts || {}),
     },
   };
 

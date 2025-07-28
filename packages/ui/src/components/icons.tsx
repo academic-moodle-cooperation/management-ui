@@ -19,6 +19,7 @@ export {
   Archive,
   Bell,
   MonitorPlay,
+  Video,
   type LucideIcon
 } from 'lucide-react';
 

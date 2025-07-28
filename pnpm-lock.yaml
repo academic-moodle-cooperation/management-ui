@@ -23,9 +23,6 @@ importers:
 
   apps/management-ui-core:
     dependencies:
-      '@tanstack/react-query':
-        specifier: ^5.80.6
-        version: 5.82.0(react@19.1.0)
       '@tanstack/react-router':
         specifier: ^1.115.8
         version: 1.125.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -50,9 +47,6 @@ importers:
       '@workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@workspace/ui-config':
-        specifier: workspace:*
-        version: link:../../packages/ui-config
       react:
         specifier: ^19.1.0
         version: 19.1.0
@@ -63,9 +57,6 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.1.7
         version: 4.1.11(vite@6.3.5(@types/node@20.19.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
-      '@tanstack/react-query-devtools':
-        specifier: ^5.80.6
-        version: 5.82.0(@tanstack/react-query@5.82.0(react@19.1.0))(react@19.1.0)
       '@tanstack/router-devtools':
         specifier: ^1.125.6
         version: 1.125.6(@tanstack/react-router@1.125.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@tanstack/router-core@1.125.4)(csstype@3.1.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.7)(tiny-invariant@1.3.3)
@@ -208,9 +199,6 @@ importers:
       '@workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@workspace/ui-config':
-        specifier: workspace:*
-        version: link:../../packages/ui-config
       '@workspace/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -345,9 +333,6 @@ importers:
       '@workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@workspace/ui-config':
-        specifier: workspace:*
-        version: link:../../packages/ui-config
       '@workspace/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -525,9 +510,6 @@ importers:
       '@workspace/ui':
         specifier: workspace:*
         version: link:../ui
-      '@workspace/ui-config':
-        specifier: workspace:*
-        version: link:../ui-config
       react:
         specifier: ^18.0.0 || ^19.0.0
         version: 19.1.0
@@ -562,6 +544,9 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.51.15
         version: 5.82.0(@tanstack/react-query@5.82.0(react@19.1.0))(react@19.1.0)
+      '@workspace/plugin-system':
+        specifier: workspace:*
+        version: link:../plugin-system
       '@workspace/ui-config':
         specifier: workspace:*
         version: link:../ui-config
@@ -620,9 +605,9 @@ importers:
       '@tanstack/router-core':
         specifier: ^1.120.10
         version: 1.125.4
-      '@workspace/ui-config':
+      '@workspace/query':
         specifier: workspace:*
-        version: link:../ui-config
+        version: link:../query
       react:
         specifier: ^18.0.0 || ^19.0.0
         version: 19.1.0
@@ -636,9 +621,6 @@ importers:
       '@workspace/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@workspace/query':
-        specifier: workspace:*
-        version: link:../query
       '@workspace/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
@@ -956,9 +938,6 @@ importers:
       '@workspace/ui':
         specifier: workspace:*
         version: link:../packages/ui
-      '@workspace/ui-config':
-        specifier: workspace:*
-        version: link:../packages/ui-config
       '@workspace/utils':
         specifier: workspace:*
         version: link:../packages/utils

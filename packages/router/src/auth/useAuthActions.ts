@@ -1,4 +1,4 @@
-import { useAppConfig } from '@workspace/ui-config';
+import { useAppConfig } from '@workspace/query';
 import { useCallback } from 'react';
 
 export interface AuthActions {

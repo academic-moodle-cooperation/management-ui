@@ -12,7 +12,6 @@
     "check-types": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.80.6",
     "@tanstack/react-router": "^1.115.8",
     "@workspace/i18n": "workspace:*",
     "@workspace/plugin-system": "workspace:*",
@@ -20,7 +19,6 @@
     "@workspace/providers": "workspace:*",
     "@workspace/query": "workspace:*",
     "@workspace/ui": "workspace:*",
-    "@workspace/ui-config": "workspace:*",
     "@workspace/router": "workspace:*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
@@ -28,7 +26,6 @@
   "devDependencies": {
     "@tanstack/router-devtools": "^1.125.6",
     "@tailwindcss/vite": "^4.1.7",
-    "@tanstack/react-query-devtools": "^5.80.6",
     "@types/react": "^18.0.0 || ^19.0.0",
     "@types/react-dom": "^18.0.0 || ^19.0.0",
     "@vitejs/plugin-react-swc": "^3.9.0",
