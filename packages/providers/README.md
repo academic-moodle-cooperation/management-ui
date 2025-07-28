@@ -7,11 +7,12 @@ This package provides the core React context providers for the management UI app
 The `AppProviders` component composes the following providers in this order:
 
 1. **ErrorBoundary** (@workspace/ui) - Catches application errors gracefully
-2. **ConfigProvider** (@workspace/ui-config) - Provides application configuration context
-3. **RendererProvider** (@workspace/plugin-system) - Provides legacy plugin rendering context (deprecated)
-4. **AuthProvider** (@workspace/router) - Provides authentication context
-5. **AuthInitializer** (@workspace/router) - Initializes authentication data
-6. **RouterProvider** (@workspace/router) - Provides TanStack routing context (innermost)
+2. **RendererProvider** (@workspace/plugin-system) - Provides legacy plugin rendering context (deprecated)
+3. **AuthProvider** (@workspace/router) - Provides authentication context
+4. **AuthInitializer** (@workspace/router) - Initializes authentication data
+5. **RouterProvider** (@workspace/router) - Provides TanStack routing context (innermost)
+
+**Note**: Configuration is now handled automatically by the `useAppConfig` hook from `@workspace/query`, eliminating the need for a separate `ConfigProvider`.
 
 ## Usage
 
@@ -20,13 +21,10 @@ import { AppProviders } from '@workspace/providers';
 
 <AppProviders
   router={router}
-  configData={config}
-  isConfigLoading={isLoading}
-  isConfigError={isError}
-  configError={error}
-  isConfigFetched={isFetched}
 />
 ```
+
+**Migration Note**: The `configData`, `isConfigLoading`, `isConfigError`, `configError`, and `isConfigFetched` props are no longer needed as configuration is handled internally by `@workspace/query`.
 
 ## Error Handling
 
@@ -42,6 +40,7 @@ The providers work seamlessly with the plugin system:
 ## Migration Notes
 
 - `RendererProvider` is deprecated in favor of `ComponentResolver`
+- `ConfigProvider` has been removed - configuration is now handled by `useAppConfig` hook from `@workspace/query`
 - All debug logging and development-specific code has been removed for production readiness
 - Single error boundary provides application-level error handling
 
@@ -50,14 +49,13 @@ The providers work seamlessly with the plugin system:
 ```
 React.StrictMode
 ├── PluginProvider (outer level)
-└── QueryProvider (outer level)
+└── QueryProvider (outer level) - handles configuration via useAppConfig hook
     └── PluginInitializer
         └── AppProviders
             └── ErrorBoundary (@workspace/ui)
-                ├── ConfigProvider
-                │   ├── RendererProvider (deprecated)
-                │   │   ├── AuthProvider
-                │   │   │   └── AuthInitializer
-                │   │   │       └── RouterProvider
-                │   │   │           └── [Your App Components]
+                ├── RendererProvider (deprecated)
+                │   ├── AuthProvider
+                │   │   └── AuthInitializer
+                │   │       └── RouterProvider
+                │   │           └── [Your App Components]
 ``` 
