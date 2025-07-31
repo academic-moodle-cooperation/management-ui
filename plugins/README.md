@@ -188,6 +188,78 @@ When migrating from the old mixed system:
 4. **Test implementations** against new extension points
 5. **Update university extensions** to use new APIs
 
+## Custom Assets Support
+
+The plugins system supports custom assets (favicons, fonts, logos) that are automatically copied to the core app during the build process.
+
+### Asset Directory Structure
+
+```
+plugins/
+├── assets/
+│   ├── favicons/        ← Custom favicon files (.ico, .png, .svg)
+│   ├── fonts/           ← Custom font files (.woff, .woff2, .ttf, .otf)
+│   └── logos/           ← Custom logo files (.svg, .png, .jpg)
+├── core/
+├── example-university/
+├── tuwien/
+└── univie/
+```
+
+### How Asset Copying Works
+
+During the build process, the `viteStaticCopy` plugin automatically:
+
+1. **Scans** the `plugins/assets/` directory for custom assets
+2. **Copies** them to the core app's `public/assets/` folder
+3. **Maintains** the directory structure (favicons/, fonts/, logos/)
+4. **Preserves** existing fallback assets if no custom assets are provided
+
+### Adding Custom Assets
+
+To add custom assets for your organization:
+
+1. **Create the directory structure** (if it doesn't exist):
+   ```bash
+   mkdir -p plugins/assets/{favicons,fonts,logos}
+   ```
+
+2. **Add your assets** to the appropriate directories:
+   ```bash
+   # Example favicon
+   cp your-favicon.ico plugins/assets/favicons/
+   
+   # Example custom font
+   cp your-font.woff2 plugins/assets/fonts/
+   
+   # Example logo
+   cp your-logo.svg plugins/assets/logos/
+   ```
+
+3. **Build the application** - assets are automatically copied:
+   ```bash
+   pnpm run build
+   ```
+
+4. **Access assets** in your application using standard paths:
+   ```typescript
+   // In your React components
+   <img src="/assets/logos/your-logo.svg" alt="Logo" />
+   <link rel="icon" href="/assets/favicons/your-favicon.ico" />
+   ```
+
+### Supported File Types
+
+- **Favicons**: `.ico`, `.png`, `.svg`
+- **Fonts**: `.woff`, `.woff2`, `.ttf`, `.otf`
+- **Logos**: `.svg`, `.png`, `.jpg`, `.jpeg`
+
+### Fallback Behavior
+
+- If no custom assets are provided in `plugins/assets/`, the build process continues normally
+- Existing fallback assets in the core app's `public/` folder remain intact
+- The build process is fault-tolerant and won't fail if asset directories are empty
+
 ## Real-World Example
 
 **Before (Mixed):**
@@ -199,6 +271,7 @@ plugins/navigation-plugin.ts ← Implementation mixed with definition
 ```
 plugins/sidebar-extension-points.ts ← Defines where nav items can go
 extensions/university-navigation.ts ← University implements nav items
+plugins/assets/logos/university-logo.svg ← Custom branding assets
 ```
 
 This separation ensures universities can customize navigation while the core system controls how navigation works. 
