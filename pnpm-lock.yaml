@@ -406,6 +406,9 @@ importers:
       '@workspace/query':
         specifier: workspace:*
         version: link:../query
+      '@workspace/router':
+        specifier: workspace:*
+        version: link:../router
       '@workspace/ui':
         specifier: workspace:*
         version: link:../ui
