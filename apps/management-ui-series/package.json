@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@workspace/app-runtime": "workspace:*",
     "@workspace/i18n": "workspace:*",
     "@workspace/providers": "workspace:*",
     "@workspace/plugin-system": "workspace:*",
