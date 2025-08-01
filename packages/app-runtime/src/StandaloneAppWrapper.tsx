@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { QueryProvider } from '@workspace/query';
 import { PluginProvider, RendererProvider } from '@workspace/plugin-system';
-import { AuthProvider, AuthInitializer, RouterProvider, createAppRouter } from '@workspace/router';
+import { AuthProvider, AuthInitializer, RouterProvider, createStandaloneRouter } from '@workspace/router';
 import { ErrorBoundary } from '@workspace/ui/components/errors/general-error';
 import type { RouteComponent } from '@tanstack/react-router';
 import { AppRuntimeProvider, useAppRuntime } from './AppRuntimeProvider';
@@ -27,8 +27,11 @@ export const StandaloneAppWrapper: React.FC<StandaloneAppWrapperProps> = ({
 }) => {
   const baseUrl = (import.meta as any)?.env?.BASE_URL || '/';
   
-  // Create a router if none provided
-  const router = providedRouter || createAppRouter(() => <>{children}</>, { basePath: baseUrl });
+  // Create a router if none provided - use a simple router that renders children
+  const router = providedRouter || createStandaloneRouter({
+    basePath: baseUrl,
+    defaultComponent: () => <>{children}</>,
+  });
   
   const runtimeConfig: AppRuntimeConfig = {
     isStandalone: true,
@@ -72,15 +75,16 @@ export const bootstrapStandaloneApp = (
 
   const baseUrl = (import.meta as any)?.env?.BASE_URL || '/';
   
-  // Create a router specifically for this app
-  const router = createAppRouter(AppComponent, { basePath: baseUrl });
+  // Create a router that will render the AppComponent for all routes
+  const router = createStandaloneRouter({
+    basePath: baseUrl,
+    defaultComponent: AppComponent,
+  });
 
   const root = ReactDOM.createRoot(container);
   root.render(
     <React.StrictMode>
-      <StandaloneAppWrapper config={config} router={router}>
-        <AppComponent />
-      </StandaloneAppWrapper>
+      <StandaloneAppWrapper config={config} router={router} />
     </React.StrictMode>
   );
 

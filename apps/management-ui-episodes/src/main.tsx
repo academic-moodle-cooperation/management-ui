@@ -1,10 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { bootstrapStandaloneApp } from '@workspace/app-runtime';
 import App from './App';
-import '@workspace/ui/globals.css' // Assuming shared styles
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-) 
+// Bootstrap the app for standalone execution with full provider context
+bootstrapStandaloneApp(App); 

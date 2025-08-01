@@ -102,6 +102,9 @@ importers:
 
   apps/management-ui-episodes:
     dependencies:
+      '@workspace/app-runtime':
+        specifier: workspace:*
+        version: link:../../packages/app-runtime
       '@workspace/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
@@ -178,6 +181,9 @@ importers:
 
   apps/management-ui-series:
     dependencies:
+      '@workspace/app-runtime':
+        specifier: workspace:*
+        version: link:../../packages/app-runtime
       '@workspace/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
@@ -312,6 +318,9 @@ importers:
       '@tanstack/react-table':
         specifier: ^8.19.3
         version: 8.21.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@workspace/app-runtime':
+        specifier: workspace:*
+        version: link:../../packages/app-runtime
       '@workspace/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n

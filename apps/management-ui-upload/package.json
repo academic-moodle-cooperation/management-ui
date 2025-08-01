@@ -16,6 +16,7 @@
     "react-dom": "^19.1.0",
     "lucide-react": "^0.417.0",
     "mustache": "^4.2.0",
+    "@workspace/app-runtime": "workspace:*",
     "@workspace/ui": "workspace:*",
     "@workspace/i18n": "workspace:*",
     "@workspace/query": "workspace:*",
