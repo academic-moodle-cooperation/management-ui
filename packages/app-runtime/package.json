@@ -18,6 +18,7 @@
     "@workspace/query": "workspace:*",
     "@workspace/ui": "workspace:*",
     "@workspace/plugin-system": "workspace:*",
+    "@workspace/router": "workspace:*",
     "@tanstack/react-router": "^1.46.0"
   },
   "devDependencies": {

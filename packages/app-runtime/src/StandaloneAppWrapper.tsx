@@ -1,45 +1,67 @@
 import React, { ReactNode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { QueryProvider } from '@workspace/query';
+import { PluginProvider, RendererProvider } from '@workspace/plugin-system';
+import { AuthProvider, AuthInitializer, RouterProvider, createAppRouter } from '@workspace/router';
+import { ErrorBoundary } from '@workspace/ui/components/errors/general-error';
+import type { RouteComponent } from '@tanstack/react-router';
 import { AppRuntimeProvider, useAppRuntime } from './AppRuntimeProvider';
 import type { AppRuntimeConfig } from './types';
+import type { AnyRouter } from '@tanstack/react-router';
 import '@workspace/ui/globals.css';
 
 interface StandaloneAppWrapperProps {
   children: ReactNode;
   config?: Partial<AppRuntimeConfig>;
+  router?: AnyRouter;
 }
 
 /**
- * Wrapper component that provides necessary providers for standalone app execution
- * Note: This provides minimal context for standalone apps. 
- * For full functionality when integrated with core, additional providers are needed.
+ * Wrapper component that provides the same provider hierarchy as AppProviders
+ * but optimized for standalone app execution with automatic router creation
  */
 export const StandaloneAppWrapper: React.FC<StandaloneAppWrapperProps> = ({ 
   children, 
-  config = {} 
+  config = {},
+  router: providedRouter
 }) => {
+  const baseUrl = (import.meta as any)?.env?.BASE_URL || '/';
+  
+  // Create a router if none provided
+  const router = providedRouter || createAppRouter(() => <>{children}</>, { basePath: baseUrl });
+  
   const runtimeConfig: AppRuntimeConfig = {
     isStandalone: true,
-    baseUrl: typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.BASE_URL : '/',
+    baseUrl,
+    router,
     ...config,
   };
 
   return (
-    <QueryProvider>
-      <AppRuntimeProvider config={runtimeConfig}>
-        {children}
-      </AppRuntimeProvider>
-    </QueryProvider>
+    <ErrorBoundary>
+      <PluginProvider>
+        <QueryProvider>
+          <AppRuntimeProvider config={runtimeConfig}>
+            <RendererProvider>
+              <AuthProvider>
+                <AuthInitializer>
+                  <RouterProvider router={router} />
+                </AuthInitializer>
+              </AuthProvider>
+            </RendererProvider>
+          </AppRuntimeProvider>
+        </QueryProvider>
+      </PluginProvider>
+    </ErrorBoundary>
   );
 };
 
 /**
- * Utility function to bootstrap a standalone app
+ * Utility function to bootstrap a standalone app with full provider context
  * This handles the common pattern of rendering an app with all required providers
  */
 export const bootstrapStandaloneApp = (
-  AppComponent: React.ComponentType,
+  AppComponent: RouteComponent,
   containerId = 'root',
   config?: Partial<AppRuntimeConfig>
 ) => {
@@ -48,10 +70,15 @@ export const bootstrapStandaloneApp = (
     throw new Error(`Container element with id "${containerId}" not found`);
   }
 
+  const baseUrl = (import.meta as any)?.env?.BASE_URL || '/';
+  
+  // Create a router specifically for this app
+  const router = createAppRouter(AppComponent, { basePath: baseUrl });
+
   const root = ReactDOM.createRoot(container);
   root.render(
     <React.StrictMode>
-      <StandaloneAppWrapper config={config}>
+      <StandaloneAppWrapper config={config} router={router}>
         <AppComponent />
       </StandaloneAppWrapper>
     </React.StrictMode>
@@ -88,7 +115,7 @@ export const AdaptiveAppWrapper: React.FC<AdaptiveAppWrapperProps> = ({
     return <>{children}</>;
   }
 
-  // We need to provide standalone context
+  // We need to provide standalone context with full provider hierarchy
   return (
     <StandaloneAppWrapper config={fallbackConfig}>
       {children}
