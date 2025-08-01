@@ -31,22 +31,31 @@ export const createStandaloneRouter = (options: {
   basePath?: string;
   defaultComponent?: RouteComponent;
   routes?: AnyRoute[];
+  appName?: string;
+  appConfig?: any; // Configuration data for the app
 } = {}) => {
   const { 
     basePath = '/', 
     defaultComponent = () => <div>Standalone App</div>,
-    routes = []
+    routes = [],
+    appName,
+    appConfig
   } = options;
+
+  // Get the app config for the specific app if appName is provided
+  const getAppLoaderData = async () => {
+    if (appName && appConfig && appConfig[appName]) {
+      return appConfig[appName];
+    }
+    return {};
+  };
 
   // Create a catch-all route that renders the app component
   const defaultRoute = createRoute({
     getParentRoute: () => standaloneRootRoute,
     path: '/',
     component: defaultComponent,
-    loader: async () => {
-      // Provide empty loader data for compatibility
-      return {};
-    },
+    loader: getAppLoaderData,
   });
 
   // Create a catch-all route for any path
@@ -54,14 +63,38 @@ export const createStandaloneRouter = (options: {
     getParentRoute: () => standaloneRootRoute,
     path: '$',
     component: defaultComponent,
-    loader: async () => {
-      // Provide empty loader data for compatibility
-      return {};
-    },
+    loader: getAppLoaderData,
   });
 
+  // If we have an appName, create a specific route for it (e.g., /episodes)
+  const specificRoutes: AnyRoute[] = [];
+  if (appName) {
+    // Extract the route path from app name (e.g., management-ui-episodes -> /episodes)
+    const routePath = appName.replace('management-ui-', '');
+    
+    // Create the specific route (e.g., /episodes)
+    const specificRoute = createRoute({
+      getParentRoute: () => standaloneRootRoute,
+      path: `/${routePath}`,
+      component: defaultComponent,
+      loader: getAppLoaderData,
+    });
+
+    // Create a subpath route for handling additional path segments
+    const specificSubRoute = createRoute({
+      getParentRoute: () => specificRoute,
+      path: '$routeSubPath',
+      component: defaultComponent,
+      loader: getAppLoaderData,
+    });
+
+    // Add the subpath route as a child
+    specificRoute.addChildren([specificSubRoute]);
+    specificRoutes.push(specificRoute);
+  }
+
   // Combine provided routes with default routes
-  const allRoutes = [defaultRoute, catchAllRoute, ...routes];
+  const allRoutes = [defaultRoute, catchAllRoute, ...specificRoutes, ...routes];
   
   const routeTree = standaloneRootRoute.addChildren(allRoutes);
 
@@ -80,13 +113,17 @@ export const createAppRouter = (
   options: {
     basePath?: string;
     loaderData?: Record<string, any>;
+    appName?: string;
+    appConfig?: any;
   } = {}
 ) => {
-  const { basePath = '/', loaderData = {} } = options;
+  const { basePath = '/', loaderData = {}, appName, appConfig } = options;
 
   return createStandaloneRouter({
     basePath,
     defaultComponent: AppComponent,
-    routes: []
+    routes: [],
+    appName,
+    appConfig
   });
 };
