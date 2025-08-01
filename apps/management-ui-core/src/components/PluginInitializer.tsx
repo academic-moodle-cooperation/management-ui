@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { createObjectRegistryPlugin, createRendererPlugin, usePluginManager, type Plugin } from '@workspace/plugin-system';
+import { createObjectRegistryPlugin, createRendererPlugin, usePluginManager, type Plugin, createAppRegistryPlugin } from '@workspace/plugin-system';
 import { AppLoader } from '@workspace/ui/components';
 import { loadAllAvailablePlugins } from '../loadPlugins';
 import type { AppConfig } from '@workspace/query';
@@ -37,6 +37,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
         // 1. Create and register core plugins
         const objectRegistryPlugin = createObjectRegistryPlugin();
         const rendererPlugin = createRendererPlugin();
+        const appRegistryPlugin = createAppRegistryPlugin();
 
         if (!manager.plugins.has(objectRegistryPlugin.name)) {
           manager.register(objectRegistryPlugin);
@@ -46,6 +47,11 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
         if (!manager.plugins.has(rendererPlugin.name)) {
           manager.register(rendererPlugin);
           registeredPluginNames.push(rendererPlugin.name);
+        }
+
+        if (!manager.plugins.has(appRegistryPlugin.name)) {
+          manager.register(appRegistryPlugin);
+          registeredPluginNames.push(appRegistryPlugin.name);
         }
 
         // 2. Load ALL available plugins without filtering first

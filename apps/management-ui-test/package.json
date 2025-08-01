@@ -14,7 +14,8 @@
   "dependencies": {
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "@workspace/ui": "workspace:*"
+    "@workspace/ui": "workspace:*",
+    "@workspace/app-runtime": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19.1.2",
