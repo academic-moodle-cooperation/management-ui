@@ -1,5 +1,5 @@
 import path from 'node:path';
-import type { UserConfig, BuildOptions } from 'vite';
+import type { UserConfig, BuildOptions, Plugin } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { createBaseConfig, type CreateBaseConfigOptions } from './base.config.js';
 import { getAppBasePath, DEFAULT_SHELL_APP_PORT } from './ports.js';
@@ -21,8 +21,10 @@ export const createShellAppViteConfig = (
   const monorepoRootPath = path.resolve(invokerDir, '../..');
   const appsPath = path.resolve(invokerDir, '../../apps'); // For @monorepo-apps alias
 
-  // Create locale copying plugin for i18n support
-  const localesCopyPlugin = viteStaticCopy({
+
+
+  // Create static assets copying plugin for i18n and custom assets support
+  const staticAssetsCopyPlugin = viteStaticCopy({
     targets: [
       // Core i18n locales
       {
@@ -38,13 +40,19 @@ export const createShellAppViteConfig = (
       {
         src: path.resolve(monorepoRootPath, 'plugins/**/locales/**/*'),
         dest: 'locales'
+      },
+      // Plugin assets
+      {
+        src: path.resolve(monorepoRootPath, 'plugins/assets/*'),
+        dest: 'assets'
       }
+
     ]
   });
 
   const baseConfigOptions: CreateBaseConfigOptions = {
     isProduction,
-    plugins: [localesCopyPlugin], // Add locale copying plugin
+    plugins: [staticAssetsCopyPlugin], // Add static assets copying plugin
     resolveAliases: {
       '@': path.resolve(invokerDir, 'src'), // Standard alias for app's src
       '@monorepo-apps': appsPath,

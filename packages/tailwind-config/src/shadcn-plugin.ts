@@ -87,6 +87,7 @@ export const shadcnPlugin = plugin(function () { }, {
         mono: ["JetBrains_Mono", ...defaultTheme.fontFamily.mono],
         geist: ["Geist", ...defaultTheme.fontFamily.sans],
         "geist-mono": ["Geist-Mono", ...defaultTheme.fontFamily.mono],
+        roboto: ["Roboto", ...defaultTheme.fontFamily.sans],
       },
       keyframes: {
         "accordion-down": {

@@ -39,16 +39,26 @@ const AppContent = () => {
 
 const AppWithConfig = ({ router }: { router: AnyRouter }) => {
   const { config, isLoading } = useAppConfig();
+  const themeModules = import.meta.glob(
+    '../../../plugins/themes/*.css',
+    { eager: false, query: '?rcss' }
+  );
 
   useEffect(() => {
     const themeName = config.app.theme || 'default';
     document.title = `${import.meta.env.DEV ? "[DEV] " : ""}${config.app.HtmlDocumentTitle || "Management UI"}`;
-    import(`./themes/${themeName}.css`)
-      .catch(() => {
-        if (themeName !== 'default') {
-          import('./themes/default.css');
-        }
-      });
+
+    const key = `../../../plugins/themes/${themeName}.css`;
+    const loader = themeModules[key];
+
+    if (loader) {
+      loader()
+        .catch(() => import('../../../plugins/themes/default.css'));
+    } else if (themeName !== 'default') {
+      import('../../../plugins/themes/default.css');
+    }
+
+
   }, [config]);
 
   // If config is not ready, show a loading state
