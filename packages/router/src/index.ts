@@ -1,4 +1,5 @@
 export * from './RouterProvider';
+export * from './standalone-router';
 
 export {
   Route,
