@@ -20,6 +20,9 @@ export { tuwienEpisodesActionsImplementation } from './episodes/custom-actions-p
 // Series implementations
 export { tuwienSeriesActionsImplementation } from './series/custom-actions-plugin';
 
+// Custom apps
+export * from '../apps';
+
 // Future TU Wien implementations would go here:
 // export { tuwienBrandingImplementation } from './branding';
 // export { tuwienAnalyticsImplementation } from './analytics'; 

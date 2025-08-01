@@ -69,6 +69,63 @@ export const MyPlugin = createPlugin({
       }
     ]
   },
+  {
+    type: 'app',
+    namespace: 'apps',
+    description: 'Register full applications that can be loaded by the core shell',
+    extensionPoints: [
+      {
+        id: 'apps:definitions',
+        description: 'Application definitions for dynamic loading',
+        accepts: 'object',
+        schema: {
+          id: 'string',
+          name: 'string',
+          routePath: 'string',
+          component: 'React.ComponentType',
+          navigation: 'object',
+          loader: 'function',
+          version: 'string',
+          description: 'string'
+        }
+      }
+    ],
+    examples: [
+      {
+        title: 'Registering an application',
+        code: `
+import { createPlugin } from '@workspace/plugin-system';
+import { MyAppComponent } from './MyAppComponent';
+
+export const MyAppPlugin = createPlugin({
+  namespace: 'my-university',
+  type: 'app',
+  version: '1.0.0',
+  
+  initialize(manager) {
+    manager.registerObject('apps:definitions', 'my-app', {
+      id: 'my-app',
+      name: 'My Custom App',
+      routePath: '/my-app',
+      component: MyAppComponent,
+      navigation: {
+        title: 'My App',
+        icon: 'app-window',
+        order: 100,
+        permissions: ['access_my_app']
+      },
+      version: '1.0.0',
+      description: 'A custom application for my university'
+    });
+  },
+  
+  activate() { /* Plugin activated */ },
+  deactivate() { /* Plugin deactivated */ }
+});
+        `
+      }
+    ]
+  },
   // Add more plugin types...
 ];
 

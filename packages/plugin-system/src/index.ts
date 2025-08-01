@@ -4,6 +4,7 @@ export * from './pluginManager';
 export * from './pluginFactory';
 export * from './pluginTypes';
 export * from './types';
+export * from './appTypes';
 
 // Export plugin system components
 export * from './PluginProvider';
@@ -15,3 +16,4 @@ export { PluginComponent } from './PluginComponent';
 export * from './plugins/renderer';
 export * from './plugins/objectRegistry';
 export * from './plugins/objectRegistry/hooks/useRegistry';
+export * from './plugins/appRegistry';
