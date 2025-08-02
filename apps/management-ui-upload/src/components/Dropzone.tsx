@@ -17,6 +17,7 @@ import { useI18n } from "@workspace/i18n";
 import { UploadFileBlob, UploadListType } from "@workspace/store";
 
 import { useFileHandler } from "../uploadservice/fileHandler";
+import { useAppConfig } from "@workspace/query";
 import { useLoaderData } from "@workspace/router";
 
 interface DropzoneProps {
@@ -35,7 +36,9 @@ const Dropzone: FC<DropzoneProps> = ({
   zustandupload,
 }) => {
   const { t } = useI18n();
-  const { whitelist } = useLoaderData({ from: "/upload" }) || [];
+  const { config } = useAppConfig();
+  const uploadConfig = config.plugins?.["management-ui-upload"] as { whitelist?: string[] } || {};
+  const { whitelist = [] } = uploadConfig;
 
   const [onFileDrop, setOnFileDrop] = useState(false);
   const [open, setOpen] = React.useState(false);
@@ -54,13 +57,16 @@ const Dropzone: FC<DropzoneProps> = ({
       zustandupload
     );
   };
+
   const fileValidation = (files: FileList) => {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
+      if (!file) continue; // Skip if file is undefined
+
       const extension = file.name.split(".").pop();
       const type = file.type.split("/")[0];
 
-      if (type !== "video" && type !== "audio" && !whitelist.includes(extension!.toLowerCase())) {
+      if (type !== "video" && type !== "audio" && !whitelist.includes(extension?.toLowerCase() || "")) {
         setOpen(true);
         return false;
       }
@@ -128,7 +134,7 @@ const Dropzone: FC<DropzoneProps> = ({
                 type="file"
                 className="hidden"
                 accept={`audio/*,video/*${whitelist
-                  ?.map((e) => ",." + e)
+                  ?.map((ext: string) => ",." + ext)
                   .join("")}`}
                 multiple
                 onChange={useChangeHandler}
@@ -151,7 +157,7 @@ const Dropzone: FC<DropzoneProps> = ({
             id="dropzone-filebutton"
             type="file"
             className="absolute inset-0 overflow-hidden opacity-0 cursor-pointer"
-            accept={`audio/*,video/*${whitelist?.map((e) => ",." + e).join("")}`}
+            accept={`audio/*,video/*${whitelist?.map((ext: string) => ",." + ext).join("")}`}
             multiple
             onChange={useChangeHandler}
             onClick={(event: React.MouseEvent<HTMLInputElement, MouseEvent>) =>

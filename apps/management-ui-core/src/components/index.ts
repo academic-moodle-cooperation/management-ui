@@ -5,4 +5,7 @@ export { ErrorBoundary, ModuleErrorFallback, NotFoundError } from './errors/Erro
 export { CoreAppShellLayout } from './layout/CoreAppShellLayout';
 
 // Plugin components
-export { PluginInitializer } from './PluginInitializer'; 
+export { PluginInitializer } from './PluginInitializer';
+
+// Router components
+export { DynamicRouterProvider } from './DynamicRouterProvider'; 

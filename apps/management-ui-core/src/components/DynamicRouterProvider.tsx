@@ -1,0 +1,348 @@
+import React, { useState, useEffect, lazy, Suspense } from 'react';
+import { createRouter, createRoute, createRootRoute, Outlet, useRouterState } from '@tanstack/react-router';
+import type { AnyRoute } from '@tanstack/react-router';
+import { usePluginManager, getAllApps } from '@workspace/plugin-system';
+import { useAppConfig } from '@workspace/query';
+import { getCachedAppConfig } from '@workspace/query';
+import { ProtectedRoute } from '@workspace/router';
+import { ComponentResolver } from '@workspace/plugin-system';
+
+// Import components from the core app
+import { ErrorBoundary, ModuleErrorFallback, NotFoundError, CoreAppShellLayout } from './index';
+import { DefaultLandingPage, AppLoader, Container } from '@workspace/ui/components';
+
+// Base root route for the application
+const appCoreRootRoute = createRootRoute({
+  component: CoreAppShellLayout,
+  notFoundComponent: NotFoundError,
+});
+
+// Static routes
+const DefaultLandingComponent = () => (
+  <Suspense fallback={<AppLoader />}>
+    <Container className="flex justify-center">
+      <ComponentResolver
+        componentType="appshell:landing-page"
+        defaultComponent={DefaultLandingPage}
+        componentProps={{}}
+        loadingBehavior="loader"
+        useOverridePrefix={true}
+      />
+    </Container>
+  </Suspense>
+);
+
+const rootLandingRoute = createRoute({
+  getParentRoute: () => appCoreRootRoute,
+  path: '/',
+  component: DefaultLandingComponent,
+});
+
+const homeLandingRoute = createRoute({
+  getParentRoute: () => appCoreRootRoute,
+  path: '/home',
+  component: DefaultLandingComponent,
+});
+
+const indexHtmlLandingRoute = createRoute({
+  getParentRoute: () => appCoreRootRoute,
+  path: '/index.html',
+  component: DefaultLandingComponent,
+});
+
+const loginRoute = createRoute({
+  getParentRoute: () => appCoreRootRoute,
+  path: '/login',
+  component: () => {
+    const { config, isLoading, isError } = useAppConfig();
+    const routerState = useRouterState();
+
+    if (isLoading) return <AppLoader />;
+    if (isError || !config) return <div>Error loading login configuration.</div>;
+
+    const loginUrl = (import.meta.env.DEV && config.auth.loginUrlDev) ? config.auth.loginUrlDev : config.auth.loginUrl;
+    const redirectParam = (routerState.location.search as Record<string, unknown>).redirect || '/';
+
+    window.location.href = `${loginUrl}?redirect=${encodeURIComponent(window.location.origin + redirectParam)}`;
+    return <AppLoader />;
+  },
+});
+
+const logoutRoute = createRoute({
+  getParentRoute: () => appCoreRootRoute,
+  path: '/logout',
+  component: () => {
+    const { config, isLoading, isError } = useAppConfig();
+
+    if (isLoading) return <AppLoader />;
+    if (isError || !config) return <div>Error loading logout configuration.</div>;
+
+    const logoutUrl = (import.meta.env.DEV && config.auth.logoutUrlDev) ? config.auth.logoutUrlDev : config.auth.logoutUrl;
+    window.location.href = logoutUrl;
+    return <AppLoader />;
+  },
+});
+
+// Interfaces for dynamic modules
+interface ClientDynamicModule {
+  routePath: string;
+  componentName: string;
+  componentImportPath: string;
+  isPluginApp?: boolean;
+  appDefinition?: any;
+}
+
+interface FetchedPluginConfig {
+  name: string;
+  path: string;
+  scope: string;
+}
+
+interface FetchedModulesConfig {
+  plugins: FetchedPluginConfig[];
+}
+
+// Get dynamic modules from dynamic-modules.json
+const getDynamicModules = async (): Promise<ClientDynamicModule[]> => {
+  try {
+    const baseUrl = import.meta.env.BASE_URL;
+    const isDev = import.meta.env.DEV;
+    const appConfig = await getCachedAppConfig();
+    const productionAppPluginUrl = appConfig?.productionAppPluginUrl;
+    const dynamicModulesUrl = isDev ? `${baseUrl.replace(/\/$/, '')}/dynamic-modules.json` : `${productionAppPluginUrl}`;
+
+    const response = await fetch(dynamicModulesUrl);
+    if (!response.ok) {
+      console.error('Failed to fetch dynamic modules configuration:', response.statusText);
+      return [];
+    }
+    const config: FetchedModulesConfig = await response.json();
+
+    return config.plugins.map((plugin) => {
+      const routePath = plugin.path.replace('/static/plugins', '');
+      const componentImportPath = /* @vite-ignore */ `@monorepo-apps/${plugin.name}/src/App`;
+
+      return {
+        routePath,
+        componentName: 'default',
+        componentImportPath: componentImportPath,
+        isPluginApp: false,
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching or parsing dynamic modules configuration:', error);
+    return [];
+  }
+};
+
+// Get plugin-based apps from the plugin system
+const getPluginBasedApps = (manager: any): ClientDynamicModule[] => {
+  try {
+    const pluginApps = getAllApps(manager);
+
+    return pluginApps.map((app) => ({
+      routePath: app.routePath,
+      componentName: 'default',
+      componentImportPath: '', // Not used for plugin apps
+      isPluginApp: true,
+      appDefinition: app,
+    }));
+  } catch (error) {
+    console.error('Error getting plugin-based apps:', error);
+    return [];
+  }
+};
+
+// Create routes from all apps
+const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
+  return allApps.map((app) => {
+    if (app.isPluginApp) {
+      // Handle plugin-based apps
+      const PluginAppComponent = app.appDefinition.component;
+
+      const pluginRoute = createRoute({
+        getParentRoute: () => appCoreRootRoute,
+        path: app.routePath,
+        staticData: {
+          appName: app.appDefinition.id,
+        },
+        component: () => (
+          <ProtectedRoute loadingComponent={AppLoader}>
+            <ErrorBoundary fallback={<ModuleErrorFallback name={app.appDefinition.name} />}>
+              <Suspense fallback={<AppLoader />}>
+                <PluginAppComponent />
+              </Suspense>
+            </ErrorBoundary>
+          </ProtectedRoute>
+        ),
+        loader: async () => {
+          try {
+            const config = await getCachedAppConfig();
+            const pluginConfig = config?.plugins?.[app.appDefinition.id];
+            return pluginConfig;
+          } catch (err) {
+            console.error(`Error fetching/processing config for plugin app ${app.appDefinition.id} in loader:`, err);
+            throw err;
+          }
+        },
+      });
+
+      // Create a subpath route for handling additional path segments
+      const pluginSubRoute = createRoute({
+        getParentRoute: () => pluginRoute,
+        path: '$routeSubPath',
+        component: () => (
+          <ProtectedRoute loadingComponent={AppLoader}>
+            <ErrorBoundary fallback={<ModuleErrorFallback name={app.appDefinition.name} />}>
+              <Suspense fallback={<AppLoader />}>
+                <PluginAppComponent />
+              </Suspense>
+            </ErrorBoundary>
+          </ProtectedRoute>
+        ),
+      });
+
+      // Add the subpath route as a child
+      pluginRoute.addChildren([pluginSubRoute]);
+
+      return pluginRoute;
+    } else {
+      // Handle dynamic modules (existing logic)
+      const parts = app.componentImportPath.split('/');
+      const pluginname = parts.length > 1 ? parts[1] : "";
+
+      const DynamicComponent = lazy(async () => {
+        if (!pluginname) {
+          const errorMsg = `Could not derive plugin name from path: ${app.componentImportPath}`;
+          console.error(errorMsg);
+          return { default: () => <ModuleErrorFallback name={errorMsg} /> };
+        }
+
+        const importPathForLogging = `@monorepo-apps/${pluginname}/src/App.tsx`;
+        try {
+          return await import(`@monorepo-apps/${pluginname}/src/App.tsx`);
+        } catch (err: unknown) {
+          const error = err instanceof Error ? err : new Error(String(err));
+          console.error(`Failed to load module for plugin ${pluginname} from ${importPathForLogging}:`, error);
+          return { default: () => <ModuleErrorFallback name={`Plugin: ${pluginname}, Error: ${error.message}`} /> };
+        }
+      });
+
+      const dynamicRoute = createRoute({
+        getParentRoute: () => appCoreRootRoute,
+        path: app.routePath,
+        staticData: {
+          appName: pluginname,
+        },
+        component: () => (
+          <ProtectedRoute loadingComponent={AppLoader}>
+            <ErrorBoundary fallback={<ModuleErrorFallback name={app.componentName} />}>
+              <Suspense fallback={<AppLoader />}>
+                <DynamicComponent />
+              </Suspense>
+            </ErrorBoundary>
+          </ProtectedRoute>
+        ),
+        loader: async () => {
+          if (!pluginname) {
+            console.error("Could not determine plugin name for route, cannot load config:", app.routePath);
+            throw new Error(`Could not determine plugin name for route: ${app.routePath}`);
+          }
+          try {
+            const config = await getCachedAppConfig();
+            const pluginConfig = config?.plugins?.[pluginname];
+            return pluginConfig;
+          } catch (err) {
+            console.error(`Error fetching/processing config for plugin ${pluginname} in loader:`, err);
+            throw err;
+          }
+        },
+      });
+
+      // Create a subpath route for handling additional path segments
+      const dynamicSubRoute = createRoute({
+        getParentRoute: () => dynamicRoute,
+        path: '$routeSubPath',
+        component: () => (
+          <ProtectedRoute loadingComponent={AppLoader}>
+            <ErrorBoundary fallback={<ModuleErrorFallback name={app.componentName} />}>
+              <Suspense fallback={<AppLoader />}>
+                <DynamicComponent />
+              </Suspense>
+            </ErrorBoundary>
+          </ProtectedRoute>
+        ),
+      });
+
+      // Add the subpath route as a child
+      dynamicRoute.addChildren([dynamicSubRoute]);
+
+      return dynamicRoute;
+    }
+  });
+};
+
+interface DynamicRouterProviderProps {
+  children: (router: any) => React.ReactNode;
+}
+
+export const DynamicRouterProvider: React.FC<DynamicRouterProviderProps> = ({ children }) => {
+  const manager = usePluginManager();
+  const [router, setRouter] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const createRouterWithPlugins = async () => {
+      if (!manager.arePluginsReady) {
+        return; // Wait for plugins to be ready
+      }
+
+      try {
+        // Get apps from both sources
+        const dynamicModules = await getDynamicModules();
+        const pluginApps = getPluginBasedApps(manager);
+
+        console.log('Dynamic modules:', dynamicModules);
+        console.log('Plugin apps:', pluginApps);
+
+        // Combine all apps
+        const allApps = [...dynamicModules, ...pluginApps];
+
+        // Create routes from all apps
+        const dynamicRoutes = createRoutesFromApps(allApps);
+
+        // Combine with static routes
+        const allChildRoutes = [
+          rootLandingRoute,
+          homeLandingRoute,
+          indexHtmlLandingRoute,
+          loginRoute,
+          logoutRoute,
+          ...dynamicRoutes
+        ];
+
+        const routeTree = appCoreRootRoute.addChildren(allChildRoutes);
+
+        const newRouter = createRouter({
+          routeTree,
+          basepath: import.meta.env.BASE_URL,
+        });
+
+        setRouter(newRouter);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error creating dynamic router:', error);
+        setIsLoading(false);
+      }
+    };
+
+    createRouterWithPlugins();
+  }, [manager.arePluginsReady]);
+
+  if (isLoading || !router) {
+    return <AppLoader />;
+  }
+
+  // Use render prop pattern to pass router to children
+  return <>{children(router)}</>;
+}; 

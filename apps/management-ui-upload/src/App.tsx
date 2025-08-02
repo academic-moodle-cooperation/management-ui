@@ -84,8 +84,9 @@ export const App = () => {
 
   const { t } = useI18n();
   const { config } = useAppConfig();
-  const { location, workflowId } =
-    useLoaderData({ from: "/upload" }) || "";
+  // Get upload-specific config from the real config system
+  const uploadConfig = config.plugins?.["management-ui-upload"] || {};
+  const { location, workflowId } = uploadConfig;
 
   // Plugin system integration
   const manager = usePluginManager();
