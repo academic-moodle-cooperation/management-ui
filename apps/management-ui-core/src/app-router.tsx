@@ -194,16 +194,15 @@ export const createDynamicRouter = async () => {
       loader: async () => {
         if (!pluginname) {
           console.error("Could not determine plugin name for route, cannot load config:", mod.routePath);
-          // Optionally, throw an error or return a specific error state
           throw new Error(`Could not determine plugin name for route: ${mod.routePath}`);
         }
         try {
-          const config = await getCachedAppConfig(); // Use the cached getter
+          const config = await getCachedAppConfig();
           const pluginConfig = config?.plugins?.[pluginname];
           return pluginConfig;
         } catch (err) {
           console.error(`Error fetching/processing config for plugin ${pluginname} in loader:`, err);
-          throw err; // Propagate error for TanStack Router to handle
+          throw err;
         }
       },
     });

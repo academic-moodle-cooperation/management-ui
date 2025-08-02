@@ -11,6 +11,9 @@ export * from './core/apps/index.js';
 export * from './univie/implementations/index.js';
 export * from './tuwien/implementations/index.js';
 
+// Export university apps (production)
+export * from './tuwien/apps/index.js';
+
 // Export example university implementations (for development and learning)
 export * from './example-university/implementations/index.js';
 

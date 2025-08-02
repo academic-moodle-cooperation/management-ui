@@ -2,117 +2,122 @@ import React, { ReactNode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { QueryProvider } from '@workspace/query';
 import { PluginProvider, RendererProvider } from '@workspace/plugin-system';
-import { AuthProvider, AuthInitializer, RouterProvider, createStandaloneRouter } from '@workspace/router';
+import { AuthProvider, AuthInitializer, RouterProvider } from '@workspace/router';
 import { ErrorBoundary } from '@workspace/ui/components/errors/general-error';
 import type { RouteComponent } from '@tanstack/react-router';
 import { AppRuntimeProvider, useAppRuntime } from './AppRuntimeProvider';
 import type { AppRuntimeConfig } from './types';
 import type { AnyRouter } from '@tanstack/react-router';
+import { createRouter, createRoute, createRootRoute, Outlet } from '@tanstack/react-router';
+import { AppLoader } from '@workspace/ui/components';
 import '@workspace/ui/globals.css';
 
-// Default configuration for standalone apps - minimal version to avoid import issues
-const standaloneAppConfig = {
-  "management-ui-episodes": {
-    protection: { public: false },
-    episodeInfo: {
-      metadata: [
-        { title: { show: true, readonly: false } },
-        { subject: { show: true, readonly: false } },
-        { startDate: { show: true, readonly: false } },
-        { source: { show: true, readonly: false } },
-        { rightsHolder: { show: true, readonly: false } },
-        { publisher: { show: true, readonly: true } },
-        { location: { show: true, readonly: false } },
-        { license: { show: true, readonly: false } },
-        { language: { show: true, readonly: false } },
-        { isPartOf: { show: true, readonly: false } },
-        { identifier: { show: true, readonly: true } },
-        { duration: { show: true, readonly: false } },
-        { description: { show: true, readonly: false } },
-        { creator: { show: true, readonly: true } },
-        { created: { show: true, readonly: true } },
-        { contributor: { show: true, readonly: false } }
-      ]
-    },
-    episodesTable: {
-      columns: [
-        { title: { show: true } },
-        { seriesName: { show: true } },
-        { description: { show: true } },
-        { contributors: { show: true } },
-        { creator: { show: true } },
-        { created: { show: true } },
-        { eventStatus: { show: true } },
-        { duration: { show: true } },
-        { location: { show: true } },
-        { presenters: { show: true } },
-        { startDate: { show: true } },
-        { actions: { show: true } }
-      ]
-    }
-  },
-  "management-ui-series": {
-    protection: { public: false },
-    seriesInfo: {
-      metadata: [
-        { title: { show: true, readonly: false } },
-        { subject: { show: true, readonly: false } },
-        { rightsHolder: { show: true, readonly: false } },
-        { publisher: { show: true, readonly: false } },
-        { license: { show: true, readonly: false } },
-        { language: { show: true, readonly: false } },
-        { identifier: { show: true, readonly: true } },
-        { description: { show: true, readonly: false } },
-        { creator: { show: true, readonly: true } },
-        { contributor: { show: true, readonly: false } }
-      ]
-    },
-    seriesTable: {
-      columns: [
-        { title: { show: true } },
-        { created: { show: true } },
-        { description: { show: true } },
-        { creator: { show: true } },
-        { contributors: { show: true } },
-        { events: { show: true } },
-        { actions: { show: true } }
-      ]
-    }
-  },
-  "management-ui-upload": {
-    location: "Upload",
-    workflowId: "ingest-upload",
-    whitelist: ["h264", "mov", "mp4", "mp3", "wav", "avi", "m4a", "wmv", "mkv", "ac3", "webm", "ts", "ogg", "opus", "aiff", "hevc", "m2t", "mjp", "mts", "mxf", "ogv", "rm", "vob", "wtv", "swf", "3gp", "asf", "f4v", "m2v", "flv"],
-    protection: { public: false }
-  },
-  "management-ui-test": {
-    protection: { public: false }
-  }
-};
-
 interface StandaloneAppWrapperProps {
-  children: ReactNode;
+  children?: ReactNode;
   config?: Partial<AppRuntimeConfig>;
   router?: AnyRouter;
 }
 
 /**
+ * Creates a simplified router for standalone apps using the same architecture as DynamicRouterProvider
+ */
+const createStandaloneDynamicRouter = (
+  AppComponent: RouteComponent,
+  appName?: string,
+  basePath: string = '/'
+) => {
+  // Simple root route for standalone apps
+  const standaloneRootRoute = createRootRoute({
+    component: () => (
+      <div>
+        <main>
+          <Outlet />
+        </main>
+      </div>
+    ),
+    notFoundComponent: () => <div>Not Found</div>,
+  });
+
+  // Create routes for the specific app
+  const appRoutes: any[] = [];
+
+  // Main route that renders the app component
+  const mainRoute = createRoute({
+    getParentRoute: () => standaloneRootRoute,
+    path: '/',
+    component: AppComponent,
+    loader: async () => {
+      // Return empty object - app can use useAppConfig for real config
+      return {};
+    },
+  });
+
+  // Catch-all route for any path
+  const catchAllRoute = createRoute({
+    getParentRoute: () => standaloneRootRoute,
+    path: '$',
+    component: AppComponent,
+    loader: async () => {
+      return {};
+    },
+  });
+
+  appRoutes.push(mainRoute, catchAllRoute);
+
+  // If we have an appName, create a specific route for it (e.g., /episodes)
+  if (appName) {
+    const routePath = appName.replace('management-ui-', '');
+
+    const specificRoute = createRoute({
+      getParentRoute: () => standaloneRootRoute,
+      path: `/${routePath}`,
+      component: AppComponent,
+      loader: async () => {
+        return {};
+      },
+    });
+
+    // Create a subpath route for handling additional path segments
+    const specificSubRoute = createRoute({
+      getParentRoute: () => specificRoute,
+      path: '$routeSubPath',
+      component: AppComponent,
+      loader: async () => {
+        return {};
+      },
+    });
+
+    // Add the subpath route as a child
+    specificRoute.addChildren([specificSubRoute]);
+    appRoutes.push(specificRoute);
+  }
+
+  const routeTree = standaloneRootRoute.addChildren(appRoutes);
+
+  return createRouter({
+    routeTree,
+    basepath: basePath,
+  });
+};
+
+/**
  * Wrapper component that provides the same provider hierarchy as AppProviders
  * but optimized for standalone app execution with automatic router creation
  */
-export const StandaloneAppWrapper: React.FC<StandaloneAppWrapperProps> = ({ 
-  children, 
+export const StandaloneAppWrapper: React.FC<StandaloneAppWrapperProps> = ({
+  children,
   config = {},
   router: providedRouter
 }) => {
   const baseUrl = (import.meta as any)?.env?.BASE_URL || '/';
-  
-  // Create a router if none provided - use a simple router that renders children
-  const router = providedRouter || createStandaloneRouter({
-    basePath: baseUrl,
-    defaultComponent: () => <>{children}</>,
-  });
-  
+
+  // Create a router if none provided - use the unified dynamic router approach
+  const router = providedRouter || createStandaloneDynamicRouter(
+    () => <>{children}</>,
+    undefined,
+    baseUrl
+  );
+
   const runtimeConfig: AppRuntimeConfig = {
     isStandalone: true,
     baseUrl,
@@ -154,17 +159,12 @@ export const bootstrapStandaloneApp = (
   }
 
   const baseUrl = (import.meta as any)?.env?.BASE_URL || '/';
-  
+
   // Try to determine app name from the current URL or package name
   const appName = determineAppName();
-  
-  // Create a router that will render the AppComponent for all routes
-  const router = createStandaloneRouter({
-    basePath: baseUrl,
-    defaultComponent: AppComponent,
-    appName,
-    appConfig: standaloneAppConfig // Pass the hardcoded config
-  });
+
+  // Create a router using the unified dynamic router approach
+  const router = createStandaloneDynamicRouter(AppComponent, appName, baseUrl);
 
   const root = ReactDOM.createRoot(container);
   root.render(
@@ -188,12 +188,12 @@ function determineAppName(): string | undefined {
     if (match) {
       return `management-ui-${match[1]}`;
     }
-    
+
     // Check port numbers for development
     const port = window.location.port;
     const portToApp: Record<string, string> = {
       '3001': 'management-ui-series',
-      '3002': 'management-ui-episodes', 
+      '3002': 'management-ui-episodes',
       '3003': 'management-ui-upload',
       '3004': 'management-ui-test'
     };
@@ -201,7 +201,7 @@ function determineAppName(): string | undefined {
       return portToApp[port];
     }
   }
-  
+
   return undefined;
 }
 
@@ -214,9 +214,9 @@ interface AdaptiveAppWrapperProps {
   fallbackConfig?: Partial<AppRuntimeConfig>;
 }
 
-export const AdaptiveAppWrapper: React.FC<AdaptiveAppWrapperProps> = ({ 
-  children, 
-  fallbackConfig = {} 
+export const AdaptiveAppWrapper: React.FC<AdaptiveAppWrapperProps> = ({
+  children,
+  fallbackConfig = {}
 }) => {
   // Try to detect if we're already within an AppRuntimeProvider
   let isInCoreShell = false;

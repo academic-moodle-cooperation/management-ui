@@ -12,6 +12,7 @@ export const config = {
         "tuwien": {
           "types": [
             "config",
+            "app",
             "episodes-actions",
             "series-actions",
             "footer",
