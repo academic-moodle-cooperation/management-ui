@@ -20,6 +20,7 @@ apps/           ← Content management applications
 
 packages/       ← Shared infrastructure libraries
 ├─ plugin-system/  ← Plugin architecture and runtime
+├─ app-runtime/    ← Standalone app execution and runtime abstraction
 ├─ ui/             ← Shared component library
 ├─ query/          ← Data fetching and state management
 ├─ router/         ← Application routing
@@ -57,6 +58,27 @@ pnpm build
 pnpm dev
 ```
 
+### Standalone App Development
+
+Applications can now run independently for focused development:
+
+```bash
+# Run individual apps standalone
+cd apps/management-ui-episodes
+pnpm dev    # http://localhost:3002
+
+cd apps/management-ui-series  
+pnpm dev    # http://localhost:3001
+
+cd apps/management-ui-upload
+pnpm dev    # http://localhost:3003
+
+cd apps/management-ui-test
+pnpm dev    # http://localhost:3004
+```
+
+Standalone apps have full provider context including router, authentication, and plugin system support.
+
 ### Development Commands
 
 ```bash
@@ -78,6 +100,38 @@ The Management UI features a sophisticated plugin system that allows institution
 - **Content Management**: Add custom metadata fields, validation rules, and workflows
 - **User Interface**: Override components with institution-specific implementations
 - **Data Processing**: Extend content transformation and processing pipelines
+- **App Registration**: Register new applications that integrate with the core shell
+
+### App Registration
+
+Plugins can now register complete applications that appear in the main navigation:
+
+```typescript
+import { createPlugin } from '@workspace/plugin-system';
+import { MyCustomApp } from './MyCustomApp';
+
+export const MyUniversityAppPlugin = createPlugin({
+  namespace: 'myuni',
+  type: 'app',
+  version: '1.0.0',
+  
+  initialize(manager) {
+    // Register a new application
+    manager.registerObject('apps:definitions', 'my-custom-app', {
+      id: 'my-custom-app',
+      name: 'My Custom App',
+      routePath: '/my-custom',
+      component: MyCustomApp,
+      navigation: {
+        title: 'Custom App',
+        icon: 'star',
+        order: 100,
+        permissions: ['access.custom.app']
+      }
+    });
+  }
+});
+```
 
 ### Example Plugin
 
@@ -109,6 +163,58 @@ export const MyUniversityPlugin = createPlugin({
 
 For detailed plugin development, see [`packages/plugin-system/docs/README.md`](./packages/plugin-system/docs/README.md).
 
+## 🚀 Standalone App Development
+
+Applications in Management UI can run both within the core shell and as standalone development servers. This dual-mode capability accelerates development and testing.
+
+### Creating Standalone Apps
+
+Use the app runtime system to bootstrap standalone applications:
+
+```typescript
+// apps/my-app/src/main.tsx
+import { bootstrapStandaloneApp } from '@workspace/app-runtime';
+import App from './App';
+
+// Provides full context: router, auth, plugins, query client
+bootstrapStandaloneApp(App);
+```
+
+### Adaptive App Components
+
+Apps can automatically adapt to their execution context:
+
+```typescript
+// apps/my-app/src/App.tsx
+import { AdaptiveAppWrapper } from '@workspace/app-runtime';
+
+const App = () => (
+  <AdaptiveAppWrapper>
+    <MyAppContent />
+  </AdaptiveAppWrapper>
+);
+```
+
+### Standalone Development Workflow
+
+```bash
+# Develop app in isolation
+cd apps/management-ui-episodes
+pnpm dev    # Runs on http://localhost:3002
+
+# Test in core shell context  
+cd apps/management-ui-core
+pnpm dev    # Access at http://localhost:3000/episodes
+```
+
+### Benefits
+
+- **Faster Development**: Focus on single app without loading entire shell
+- **Full Context**: Router, authentication, and plugin system available
+- **Hot Reload**: Fast refresh for individual app changes
+- **Easy Testing**: Test app behavior in isolation
+- **Plugin Development**: Test app registration and integration
+
 ## 📦 Applications
 
 ### Core Applications
@@ -126,6 +232,7 @@ For detailed plugin development, see [`packages/plugin-system/docs/README.md`](.
 | Package | Purpose | Description |
 |---------|---------|-------------|
 | **plugin-system** | Plugin Architecture | Core plugin loading, management, and extension point system |
+| **app-runtime** | Standalone Apps | Runtime abstraction for standalone app execution and provider hierarchy |
 | **ui** | Component Library | Shared React components, design system, and UI patterns |
 | **query** | Data Management & Configuration | GraphQL client, state management, data fetching, and application configuration |
 | **router** | Navigation | Application routing with plugin-aware route management |
@@ -189,12 +296,73 @@ cd packages/my-new-package
 pnpm init
 ```
 
+### Adding New Apps
+
+```bash
+# Create new app
+mkdir apps/my-new-app
+cd apps/my-new-app
+
+# Initialize with standalone support
+pnpm init
+# Add @workspace/app-runtime dependency
+# Use bootstrapStandaloneApp in main.tsx
+```
+
+### App Development Patterns
+
+**Standalone Bootstrap Pattern**:
+```typescript
+// main.tsx - supports both standalone and core shell execution
+import { bootstrapStandaloneApp } from '@workspace/app-runtime';
+import App from './App';
+
+bootstrapStandaloneApp(App);
+```
+
+**Adaptive Component Pattern**:
+```typescript
+// App.tsx - automatically adapts to execution context
+import { AdaptiveAppWrapper } from '@workspace/app-runtime';
+
+const App = () => (
+  <AdaptiveAppWrapper>
+    <MyAppContent />
+  </AdaptiveAppWrapper>
+);
+```
+
 ### Plugin Development
 
 1. **Define Extension Points**: Create plugin definitions in `plugins/`
 2. **Implement Extensions**: Add university-specific implementations
 3. **Register Components**: Use the plugin manager to register functionality
-4. **Test Integration**: Verify plugins work with core applications
+4. **Register Apps**: Add complete applications via the plugin system
+5. **Test Integration**: Verify plugins work with core applications
+
+**App Registration Pattern**:
+```typescript
+// plugins/myuni/apps/my-app-plugin.ts
+export const myAppPlugin = createPlugin({
+  namespace: 'myuni',
+  type: 'app',
+  version: '1.0.0',
+  
+  initialize(manager) {
+    manager.registerObject('apps:definitions', 'my-app', {
+      id: 'my-app',
+      name: 'My Custom App',
+      routePath: '/my-app',
+      component: MyAppComponent,
+      navigation: {
+        title: 'My App',
+        icon: 'app-window',
+        order: 200
+      }
+    });
+  }
+});
+```
 
 ## 🚦 Deployment
 
@@ -206,6 +374,10 @@ pnpm build
 
 # Preview production build
 pnpm preview
+
+# Test standalone apps
+cd apps/management-ui-episodes && pnpm dev
+cd apps/management-ui-series && pnpm dev
 ```
 
 ### Configuration
@@ -219,6 +391,8 @@ The system supports environment-specific configuration:
 ## 📚 Documentation
 
 - **Plugin System**: [`packages/plugin-system/docs/README.md`](./packages/plugin-system/docs/README.md)
+- **Standalone Apps**: [`STANDALONE_PROVIDER_IMPLEMENTATION.md`](./STANDALONE_PROVIDER_IMPLEMENTATION.md)
+- **Implementation Details**: [`IMPLEMENTATION_SUMMARY.md`](./IMPLEMENTATION_SUMMARY.md)
 - **Core Application**: [`apps/management-ui-core/README.md`](./apps/management-ui-core/README.md)
 - **Archived Documentation**: [`docs/archive/`](./docs/archive/) - Historical technical documentation
 
