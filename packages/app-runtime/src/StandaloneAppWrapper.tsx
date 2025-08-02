@@ -218,15 +218,9 @@ export const AdaptiveAppWrapper: React.FC<AdaptiveAppWrapperProps> = ({
   children,
   fallbackConfig = {}
 }) => {
-  // Try to detect if we're already within an AppRuntimeProvider
-  let isInCoreShell = false;
-  try {
-    useAppRuntime();
-    isInCoreShell = true;
-  } catch {
-    // We're not in a core shell, need to provide standalone context
-    isInCoreShell = false;
-  }
+  // Detect if we're already within an AppRuntimeProvider by checking context value
+  const runtimeContext = React.useContext(AppRuntimeContext);
+  const isInCoreShell = runtimeContext !== undefined && runtimeContext !== null;
 
   if (isInCoreShell) {
     // We're already in the core shell, just render children
