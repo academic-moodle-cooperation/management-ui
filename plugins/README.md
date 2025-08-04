@@ -24,13 +24,9 @@ plugins/
 ├── univie/                 # University of Vienna plugins
 │   ├── package.json        # Univie dependencies (port 3006)
 │   └── implementations/   # Univie specific implementations
-├── example-university/     # Example implementations
-│   ├── package.json        # Example dependencies (port 3007)
-│   └── implementations/   # Example implementations
-└── shared/                 # Shared configuration files
-    ├── package.json        # Legacy shared package
-    ├── tsconfig.json       # Legacy shared config
-    └── README.md           # Legacy documentation
+└── example-university/     # Example implementations
+    ├── package.json        # Example dependencies (port 3007)
+    └── implementations/   # Example implementations
 ```
 
 ## Standalone Plugin Apps
@@ -58,18 +54,22 @@ The app automatically appears in the core shell navigation at `/tuwien-custom` w
 
 ### Port Assignment
 
-Each plugin package gets its own dedicated port:
+Each plugin package gets its own dedicated port through dynamic discovery. The port assignment system automatically scans the plugins directory and assigns ports based on package.json files:
 
 | Plugin | Development Port | Preview Port | Base URL |
 |--------|------------------|--------------|----------|
 | Core Shell | 3000 | 3090 | `/management-ui/` |
+| **Core Apps (Dynamically Assigned)** | | | |
 | Series App | 3001 | 3101 | `/series` |
 | Episodes App | 3002 | 3102 | `/episodes` |
 | Upload App | 3003 | 3103 | `/upload` |
 | Test App | 3004 | 3104 | `/test` |
+| **Plugin Apps (Dynamically Discovered)** | | | |
 | **TU Wien Plugin** | **3005** | **3105** | `/tuwien-custom` |
 | **Univie Plugin** | **3006** | **3106** | `/univie-custom` |
 | **Example Plugin** | **3007** | **3107** | `/example-custom` |
+
+Ports are automatically assigned by scanning the `plugins/` directory and reading each package's `package.json` file. New plugins are automatically discovered and assigned the next available port.
 
 ## Creating New Plugin Apps
 
@@ -180,15 +180,13 @@ export const myUniversityAppPlugin = createPlugin({
 
 ### 6. Update Port Configuration
 
-Add your plugin to the port assignment:
+Ports are now automatically discovered - you don't need to manually update any configuration files. The system will:
 
-```typescript
-// packages/vite-config/src/ports.ts
-const KNOWN_PLUGIN_PACKAGE_NAMES = [
-  // ... existing plugins
-  "plugin-my-university", // My University plugin (port 3008)
-];
-```
+1. Scan the `plugins/` directory for subdirectories
+2. Read each `package.json` file to get the actual package name
+3. Automatically assign the next available port starting from 3005 (after core apps)
+
+The dynamic discovery system handles port assignment automatically, so simply creating your plugin package is sufficient.
 
 ## Benefits of New Structure
 
@@ -219,7 +217,7 @@ const KNOWN_PLUGIN_PACKAGE_NAMES = [
 
 ## Migration from Old Structure
 
-The old structure with shared `plugins` package has been moved to `plugins/shared/` for reference. New development should use the individual plugin packages.
+The plugin system has been restructured to provide independent plugin packages with dedicated ports and standalone execution capabilities. Each university now has its own package with proper dependency management and development workflow.
 
 ## Development Workflow
 
