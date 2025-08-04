@@ -12,6 +12,8 @@ export interface AppRuntimeConfig {
   isStandalone: boolean;
   /** Base URL for the app */
   baseUrl?: string;
+  /** App name */
+  appName?: string;
   /** Router instance (if available) */
   router?: AnyRouter;
   /** App-specific configuration */

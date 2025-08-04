@@ -92,7 +92,31 @@ pnpm clean        # Clean build artifacts and dependencies
 
 ## 🧩 Plugin System
 
-The Management UI features a sophisticated plugin system that allows institutions to customize functionality without modifying core code:
+The Management UI features a sophisticated plugin system that allows institutions to customize functionality without modifying core code. Each university now has its own independent plugin package with standalone execution capabilities.
+
+### Plugin Structure
+
+```
+plugins/
+├── core/                    # Core extension points and implementations
+├── tuwien/                  # TU Wien specific plugins and apps (Port 3005)
+├── univie/                  # University of Vienna plugins (Port 3006)
+└── example-university/      # Example implementations (Port 3007)
+```
+
+### Standalone Plugin Apps
+
+Each university can create standalone applications that run independently:
+
+```bash
+# TU Wien plugin app
+cd plugins/tuwien
+pnpm dev    # Runs on http://localhost:3005
+
+# University of Vienna plugin app  
+cd plugins/univie
+pnpm dev    # Runs on http://localhost:3006
+```
 
 ### Extension Points
 
@@ -104,7 +128,7 @@ The Management UI features a sophisticated plugin system that allows institution
 
 ### App Registration
 
-Plugins can now register complete applications that appear in the main navigation:
+Plugins can register complete applications that appear in the main navigation:
 
 ```typescript
 import { createPlugin } from '@workspace/plugin-system';
@@ -133,35 +157,35 @@ export const MyUniversityAppPlugin = createPlugin({
 });
 ```
 
-### Example Plugin
+### Standalone Plugin Development
+
+Plugin apps can run both within the core shell and as standalone applications:
 
 ```typescript
-import { createPlugin } from '@workspace/plugin-system';
+// plugins/my-university/main.tsx
+import { bootstrapStandaloneApp } from '@workspace/app-runtime';
+import { MyUniversityApp } from './apps/MyUniversityApp';
 
-export const MyUniversityPlugin = createPlugin({
-  namespace: 'myuni',
-  type: 'university-extension',
-  version: '1.0.0',
-  
-  initialize(manager) {
-    // Add custom navigation item
-    manager.registerObject('sidebar:nav-items', 'university-policies', {
-      title: 'University Policies',
-      path: '/policies',
-      icon: 'shield-check',
-      order: 80
-    });
-    
-    // Custom branding
-    manager.registerObject('app:branding', 'university-theme', {
-      primaryColor: '#003366',
-      logoUrl: '/assets/university-logo.png'
-    });
-  }
-});
+const config = {
+  baseUrl: "/my-university",
+  appName: "plugin-my-university",
+};
+
+bootstrapStandaloneApp(MyUniversityApp, "root", config);
 ```
 
-For detailed plugin development, see [`packages/plugin-system/docs/README.md`](./packages/plugin-system/docs/README.md).
+```typescript
+// plugins/my-university/apps/MyUniversityApp.tsx
+import { AdaptiveAppWrapper } from '@workspace/app-runtime';
+
+export const MyUniversityApp: React.FC = () => (
+  <AdaptiveAppWrapper>
+    <MyAppContent />
+  </AdaptiveAppWrapper>
+);
+```
+
+For detailed plugin development, see [`plugins/README.md`](./plugins/README.md).
 
 ## 🚀 Standalone App Development
 
@@ -176,9 +200,20 @@ Use the app runtime system to bootstrap standalone applications:
 import { bootstrapStandaloneApp } from '@workspace/app-runtime';
 import App from './App';
 
+// Configure the app for standalone execution
+const config = {
+  baseUrl: "/my-app",
+  appName: "management-ui-my-app",
+};
+
 // Provides full context: router, auth, plugins, query client
-bootstrapStandaloneApp(App);
+bootstrapStandaloneApp(App, "root", config);
 ```
+
+The `bootstrapStandaloneApp` function now requires a configuration object that specifies:
+- `baseUrl`: The base URL path for the app (e.g., "/episodes", "/series")
+- `appName`: The application name for identification and routing
+- Additional runtime configuration options as needed
 
 ### Adaptive App Components
 
@@ -317,7 +352,12 @@ pnpm init
 import { bootstrapStandaloneApp } from '@workspace/app-runtime';
 import App from './App';
 
-bootstrapStandaloneApp(App);
+const config = {
+  baseUrl: "/my-app",
+  appName: "management-ui-my-app",
+};
+
+bootstrapStandaloneApp(App, "root", config);
 ```
 
 **Adaptive Component Pattern**:
