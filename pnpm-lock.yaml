@@ -1092,6 +1092,18 @@ importers:
 
   plugins/univie:
     dependencies:
+      '@workspace/app-runtime':
+        specifier: workspace:*
+        version: link:../../packages/app-runtime
+      '@workspace/plugin-system':
+        specifier: workspace:*
+        version: link:../../packages/plugin-system
+      '@workspace/query':
+        specifier: workspace:*
+        version: link:../../packages/query
+      '@workspace/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       react:
         specifier: ^18.0.0 || ^19.0.0
         version: 19.1.0
