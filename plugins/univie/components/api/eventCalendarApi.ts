@@ -9,7 +9,7 @@ const DEFAULT_CONFIG: EventCalendarConfig = {
   // Example room IDs - in production this should be configurable
   allowedRoomIds: [1001, 1002, 1003, 2001, 2002], 
   // This should be configurable via environment variable
-  apiBaseUrl: process.env.VITE_UNIVIE_API_BASE_URL || 'https://api.example.com'
+  apiBaseUrl: import.meta.env?.VITE_UNIVIE_API_BASE_URL || 'https://api.example.com'
 };
 
 /**
@@ -55,15 +55,61 @@ export function formatDateForApi(date: Date): string {
  * Fetch all rooms from the API
  */
 async function fetchRooms(config: EventCalendarConfig = DEFAULT_CONFIG): Promise<Room[]> {
-  const response = await fetch(`${config.apiBaseUrl}/digitalsignage/v1/getAllRaeume`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch rooms: ${response.statusText}`);
-  }
+  // For demo purposes, return mock data
+  // In production, this would call: const response = await fetch(`${config.apiBaseUrl}/digitalsignage/v1/getAllRaeume`);
   
-  const data = await response.json();
+  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate loading
+  
+  const mockRooms: Room[] = [
+    {
+      extRaumId: 1001,
+      nummer: "HS 1",
+      stockwerk: "1",
+      raumArtNeuCode: "HS",
+      raumArtNeuBezeichnung: "Hörsaal",
+      extGebaeudeId: 100,
+      gebaeudeName: "Hauptgebäude",
+      gebaeudeNummer: "01",
+      gebaeudeStrasse: "Universitätsring 1",
+      gebaeudePlz: "1010",
+      gebaeudeOrt: "Wien",
+      gebaeudeLand: "Austria",
+      uscreenRaum: "main-hs1"
+    },
+    {
+      extRaumId: 1002,
+      nummer: "HS 2",
+      stockwerk: "1",
+      raumArtNeuCode: "HS",
+      raumArtNeuBezeichnung: "Hörsaal",
+      extGebaeudeId: 100,
+      gebaeudeName: "Hauptgebäude",
+      gebaeudeNummer: "01",
+      gebaeudeStrasse: "Universitätsring 1",
+      gebaeudePlz: "1010",
+      gebaeudeOrt: "Wien",
+      gebaeudeLand: "Austria",
+      uscreenRaum: "main-hs2"
+    },
+    {
+      extRaumId: 2001,
+      nummer: "SR 101",
+      stockwerk: "1",
+      raumArtNeuCode: "SR",
+      raumArtNeuBezeichnung: "Seminarraum",
+      extGebaeudeId: 200,
+      gebaeudeName: "Nebengebäude",
+      gebaeudeNummer: "02",
+      gebaeudeStrasse: "Universitätsring 2",
+      gebaeudePlz: "1010",
+      gebaeudeOrt: "Wien",
+      gebaeudeLand: "Austria",
+      uscreenRaum: "side-sr101"
+    }
+  ];
   
   // Filter rooms to only allowed room IDs
-  return data.filter((room: Room) => config.allowedRoomIds.includes(room.extRaumId));
+  return mockRooms.filter((room: Room) => config.allowedRoomIds.includes(room.extRaumId));
 }
 
 /**
@@ -73,15 +119,64 @@ async function fetchEventsByDays(
   days: number = 1, 
   config: EventCalendarConfig = DEFAULT_CONFIG
 ): Promise<ParsedEvent[]> {
-  const response = await fetch(`${config.apiBaseUrl}/digitalsignage/v1/findRaumbelegungenByDays?days=${days}`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch events: ${response.statusText}`);
-  }
+  // For demo purposes, return mock data
+  // In production, this would call: const response = await fetch(`${config.apiBaseUrl}/digitalsignage/v1/findRaumbelegungenByDays?days=${days}`);
   
-  const data: Event[] = await response.json();
+  await new Promise(resolve => setTimeout(resolve, 800)); // Simulate loading
+  
+  const today = new Date();
+  const todayStr = formatDateForApi(today);
+  
+  const mockEvents: Event[] = [
+    {
+      extRaumId: 1001,
+      datum: todayStr,
+      beginn: "09.00",
+      ende: "11.00",
+      relationenName: "Prof. Dr. Müller, Studiengang Informatik",
+      name: "Einführung in die Informatik",
+      lvKategorie: "Vorlesung"
+    },
+    {
+      extRaumId: 1001,
+      datum: todayStr,
+      beginn: "14.00",
+      ende: "16.00",
+      relationenName: "Dr. Schmidt, Studiengang Mathematik",
+      name: "Algorithmen und Datenstrukturen",
+      lvKategorie: "Vorlesung"
+    },
+    {
+      extRaumId: 1002,
+      datum: todayStr,
+      beginn: "10.00",
+      ende: "12.00",
+      relationenName: "Prof. Dr. Weber, Studiengang Physik",
+      name: "Quantenmechanik",
+      lvKategorie: "Vorlesung"
+    },
+    {
+      extRaumId: 2001,
+      datum: todayStr,
+      beginn: "13.00",
+      ende: "15.00",
+      relationenName: "Mag. Fischer, Studiengang Psychologie",
+      name: "Statistik für Psychologen",
+      lvKategorie: "Seminar"
+    },
+    {
+      extRaumId: 2001,
+      datum: todayStr,
+      beginn: "15.30",
+      ende: "17.30",
+      relationenName: "Dr. Bauer, Studiengang Psychologie",
+      name: "Experimentalpsychologie Übung",
+      lvKategorie: "Übung"
+    }
+  ];
   
   // Filter events to only allowed room IDs and parse dates
-  return data
+  return mockEvents
     .filter((event: Event) => config.allowedRoomIds.includes(event.extRaumId))
     .map(parseEventDates);
 }

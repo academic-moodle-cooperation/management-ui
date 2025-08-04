@@ -1,7 +1,7 @@
 import React from 'react';
 import { ParsedEvent, Room } from '../types/eventCalendar';
 import { Card, Badge } from '@workspace/ui/components';
-import { Clock, MapPin, Users } from '@workspace/ui/components/icons';
+import { Clock, MapPin, Users } from 'lucide-react';
 
 interface EventCardProps {
   event: ParsedEvent;

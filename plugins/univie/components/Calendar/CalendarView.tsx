@@ -4,7 +4,7 @@ import { EventCard } from './EventCard';
 import { RoomFilter } from './RoomFilter';
 import { Card, Button, Skeleton } from '@workspace/ui/components';
 import { DatePicker } from '@workspace/ui/components';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, RefreshCw } from '@workspace/ui/components/icons';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, RefreshCw } from 'lucide-react';
 import { useEventsByDate, useRooms, getRoomById, getEventsForRoom } from '../api/eventCalendarApi';
 
 interface CalendarViewProps {
@@ -79,7 +79,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
 
   const handleSelectAllRooms = () => {
     if (rooms) {
-      setSelectedRoomIds(rooms.map(room => room.extRaumId));
+      setSelectedRoomIds(rooms.map(room => room.extRoomId));
     }
   };
 
