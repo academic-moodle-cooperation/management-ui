@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import type { AppRuntimeContext, AppRuntimeConfig } from './types';
 import type { AppDefinition } from '@workspace/plugin-system';
 
-const AppRuntimeContextProvider = createContext<AppRuntimeContext | null>(null);
+export const AppRuntimeContextProvider = createContext<AppRuntimeContext | null>(null);
 
 interface AppRuntimeProviderProps {
   children: ReactNode;
@@ -13,9 +13,9 @@ interface AppRuntimeProviderProps {
  * Provider for app runtime context
  * Manages app registration and provides runtime configuration
  */
-export const AppRuntimeProvider: React.FC<AppRuntimeProviderProps> = ({ 
-  children, 
-  config 
+export const AppRuntimeProvider: React.FC<AppRuntimeProviderProps> = ({
+  children,
+  config
 }) => {
   const [registeredApps, setRegisteredApps] = useState<AppDefinition[]>([]);
 

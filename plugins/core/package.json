@@ -1,19 +1,20 @@
 {
-  "name": "@workspace/plugins",
+  "name": "plugin-core",
   "version": "1.0.0",
   "type": "module",
   "private": true,
-  "exports": {
-    ".": "./index.ts"
-  },
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "check-types": "tsc --noEmit"
   },
+  "dependencies": {
+    "@workspace/plugin-system": "workspace:*",
+    "@workspace/ui": "workspace:*",
+    "react": "^18.0.0 || ^19.0.0"
+  },
   "devDependencies": {
-    "@workspace/eslint-config": "workspace:*",
-    "@workspace/typescript-config": "workspace:*",
     "@types/node": "^20.14.12",
+    "@types/react": "^18.0.0 || ^19.0.0",
     "eslint": "^9.9.0",
     "typescript": "~5.5.4"
   }

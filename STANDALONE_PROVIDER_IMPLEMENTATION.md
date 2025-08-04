@@ -37,7 +37,7 @@ Created `createStandaloneRouter` in `@workspace/router` that provides:
 
 ### 3. Simplified App Bootstrap
 
-All apps now use the unified `bootstrapStandaloneApp` pattern:
+All apps now use the unified `bootstrapStandaloneApp` pattern with explicit configuration:
 
 ```tsx
 // Before (episodes app)
@@ -51,15 +51,43 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 import { bootstrapStandaloneApp } from '@workspace/app-runtime';
 import App from './App';
 
-bootstrapStandaloneApp(App);
+const config = {
+  baseUrl: "/episodes",
+  appName: "management-ui-episodes",
+};
+
+bootstrapStandaloneApp(App, "root", config);
 ```
+
+### 4. Enhanced Context Detection
+
+Improved `AdaptiveAppWrapper` to use React context for more reliable detection:
+
+```tsx
+// Before: Used try-catch with useAppRuntime hook
+let isInCoreShell = false;
+try {
+  useAppRuntime();
+  isInCoreShell = true;
+} catch {
+  isInCoreShell = false;
+}
+
+// After: Direct context check
+const runtimeContext = React.useContext(AppRuntimeContextProvider);
+const isInCoreShell = runtimeContext !== undefined && runtimeContext !== null;
+```
+
+This approach is more performant and reliable than the previous try-catch mechanism.
 
 ## Key Benefits
 
 ✅ **Router Context Available**: Apps can now use `useLoaderData`, `useParams`, etc. without errors  
 ✅ **Full Provider Context**: Same providers available in standalone as in core shell  
 ✅ **Backward Compatible**: Core shell integration continues to work unchanged  
-✅ **Consistent Experience**: All apps use the same bootstrap pattern  
+✅ **Consistent Experience**: All apps use the same bootstrap pattern with explicit configuration  
+✅ **Improved Reliability**: Better context detection using React context instead of try-catch  
+✅ **Explicit Configuration**: Clear and predictable app configuration with `baseUrl` and `appName`
 
 ## Testing Results
 
