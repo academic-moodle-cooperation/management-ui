@@ -431,8 +431,7 @@ The system supports environment-specific configuration:
 ## 📚 Documentation
 
 - **Plugin System**: [`packages/plugin-system/docs/README.md`](./packages/plugin-system/docs/README.md)
-- **Standalone Apps**: [`STANDALONE_PROVIDER_IMPLEMENTATION.md`](./STANDALONE_PROVIDER_IMPLEMENTATION.md)
-- **Implementation Details**: [`IMPLEMENTATION_SUMMARY.md`](./IMPLEMENTATION_SUMMARY.md)
+- **Plugin Development**: [`plugins/README.md`](./plugins/README.md)
 - **Core Application**: [`apps/management-ui-core/README.md`](./apps/management-ui-core/README.md)
 - **Archived Documentation**: [`docs/archive/`](./docs/archive/) - Historical technical documentation
 
