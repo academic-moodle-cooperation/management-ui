@@ -11,6 +11,7 @@ import type { AnyRouter } from '@tanstack/react-router';
 import { createRouter, createRoute, createRootRoute, Outlet } from '@tanstack/react-router';
 import { AppLoader } from '@workspace/ui/components';
 import '@workspace/ui/globals.css';
+import { AppRuntimeContextProvider } from './AppRuntimeProvider';
 
 interface StandaloneAppWrapperProps {
   children?: ReactNode;
@@ -151,17 +152,15 @@ export const StandaloneAppWrapper: React.FC<StandaloneAppWrapperProps> = ({
 export const bootstrapStandaloneApp = (
   AppComponent: RouteComponent,
   containerId = 'root',
-  config?: Partial<AppRuntimeConfig>
+  config: Partial<AppRuntimeConfig>
 ) => {
   const container = document.getElementById(containerId);
   if (!container) {
     throw new Error(`Container element with id "${containerId}" not found`);
   }
 
-  const baseUrl = (import.meta as any)?.env?.BASE_URL || '/';
-
-  // Try to determine app name from the current URL or package name
-  const appName = determineAppName();
+  const baseUrl = config.baseUrl || '/';
+  const appName = config.appName || undefined;
 
   // Create a router using the unified dynamic router approach
   const router = createStandaloneDynamicRouter(AppComponent, appName, baseUrl);
@@ -176,34 +175,6 @@ export const bootstrapStandaloneApp = (
   return root;
 };
 
-/**
- * Determines the app name from various sources
- */
-function determineAppName(): string | undefined {
-  // Try to get from package.json name if available
-  if (typeof window !== 'undefined') {
-    // Check if we're on a specific app URL pattern
-    const pathname = window.location.pathname;
-    const match = pathname.match(/^.*\/(episodes|series|upload|test)($|\/)/);
-    if (match) {
-      return `management-ui-${match[1]}`;
-    }
-
-    // Check port numbers for development
-    const port = window.location.port;
-    const portToApp: Record<string, string> = {
-      '3001': 'management-ui-series',
-      '3002': 'management-ui-episodes',
-      '3003': 'management-ui-upload',
-      '3004': 'management-ui-test'
-    };
-    if (port && portToApp[port]) {
-      return portToApp[port];
-    }
-  }
-
-  return undefined;
-}
 
 /**
  * Component that automatically detects if running standalone or within core
@@ -219,14 +190,8 @@ export const AdaptiveAppWrapper: React.FC<AdaptiveAppWrapperProps> = ({
   fallbackConfig = {}
 }) => {
   // Try to detect if we're already within an AppRuntimeProvider
-  let isInCoreShell = false;
-  try {
-    useAppRuntime();
-    isInCoreShell = true;
-  } catch {
-    // We're not in a core shell, need to provide standalone context
-    isInCoreShell = false;
-  }
+  const runtimeContext = React.useContext(AppRuntimeContextProvider);
+  const isInCoreShell = runtimeContext !== undefined && runtimeContext !== null;
 
   if (isInCoreShell) {
     // We're already in the core shell, just render children

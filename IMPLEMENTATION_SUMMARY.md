@@ -134,8 +134,13 @@ export const tuWienCustomAppPlugin = createPlugin({
 
 ### ✅ Apps Can Run Standalone
 - **Before**: Apps like `management-ui-test` required core shell providers to function
-- **After**: Apps can be executed independently with `pnpm dev` using the app runtime system
-- **Evidence**: Test app successfully builds and runs on http://localhost:3004/
+- **After**: Apps can be executed independently with `pnpm dev` using the app runtime system with explicit configuration
+- **Evidence**: Test app successfully builds and runs on http://localhost:3004/ with proper routing and context
+
+### ✅ Enhanced Configuration Support
+- **Before**: Apps relied on automatic detection of app names and base URLs
+- **After**: Explicit configuration with `baseUrl` and `appName` parameters for better control and reliability
+- **Evidence**: All apps now use explicit configuration patterns for consistent behavior
 
 ### ✅ Plugin-Based App Registration
 - **Before**: No mechanism for plugins to register new apps
@@ -167,7 +172,8 @@ export const tuWienCustomAppPlugin = createPlugin({
 ### Provider Architecture
 - `StandaloneAppWrapper` provides minimal context (Query, AppRuntime)
 - Core shell provides full context (Query, AppRuntime, Auth, Router, Plugin system)
-- `AdaptiveAppWrapper` automatically detects and adapts to execution context
+- `AdaptiveAppWrapper` automatically detects and adapts to execution context using React context instead of try-catch
+- Improved reliability and performance in context detection
 
 ### Plugin System Integration
 - Extended existing plugin types to include 'app' type
@@ -198,7 +204,12 @@ const App = () => (
 );
 
 // 2. Support standalone execution in main.tsx
-bootstrapStandaloneApp(App);
+const config = {
+  baseUrl: "/my-app",
+  appName: "management-ui-my-app",
+};
+
+bootstrapStandaloneApp(App, "root", config);
 ```
 
 ### For Client Customizations
@@ -229,3 +240,27 @@ pnpm build  # All packages and apps build successfully
 ```
 
 This implementation successfully addresses all core requirements while maintaining backward compatibility and providing clear patterns for future development.
+
+## Recent Improvements (Latest Updates)
+
+### Enhanced Configuration System
+- **Explicit Configuration**: `bootstrapStandaloneApp` now requires a configuration object with `baseUrl` and `appName`
+- **Better Control**: Apps have explicit control over their routing and identification
+- **Consistent Pattern**: All apps follow the same configuration pattern for reliability
+
+### Improved Context Detection
+- **React Context**: `AdaptiveAppWrapper` now uses direct React context checking instead of try-catch
+- **Better Performance**: More efficient detection of core shell vs standalone execution
+- **Enhanced Reliability**: Eliminates potential issues with hook usage in conditional contexts
+
+### Updated App Configurations
+All apps have been updated to use the new configuration pattern:
+- `management-ui-test`: `baseUrl: "/test"`, `appName: "management-ui-test"`
+- `management-ui-episodes`: `baseUrl: "/episodes"`, `appName: "management-ui-episodes"`
+- `management-ui-series`: `baseUrl: "/series"`, `appName: "management-ui-series"`
+- `management-ui-upload`: `baseUrl: "/upload"`, `appName: "management-ui-upload"`
+
+### Type System Enhancements
+- Added `appName?: string` to `AppRuntimeConfig` interface
+- Better TypeScript support for app identification and routing
+- Improved developer experience with explicit configuration requirements
