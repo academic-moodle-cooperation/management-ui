@@ -1055,6 +1055,9 @@ importers:
 
   plugins/tuwien:
     dependencies:
+      '@workspace/app-runtime':
+        specifier: workspace:*
+        version: link:../../packages/app-runtime
       react:
         specifier: ^18.0.0 || ^19.0.0
         version: 19.1.0
