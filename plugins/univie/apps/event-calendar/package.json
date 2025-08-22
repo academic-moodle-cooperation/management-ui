@@ -1,16 +1,21 @@
 {
-  "name": "plugin-univie",
+  "name": "@univie/event-calendar",
   "version": "1.0.0",
   "type": "module",
   "private": true,
-  "workspaces": [
-    "apps/*"
+  "main": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./components": "./dist/components.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
   ],
   "scripts": {
-    "build": "turbo run build --filter=./apps/*",
-    "dev:calendar": "pnpm --filter @univie/event-calendar dev",
-    "build:calendar": "pnpm --filter @univie/event-calendar build",
-    "preview:calendar": "pnpm --filter @univie/event-calendar preview",
+    "dev": "vite --port 3006",
+    "build": "vite build",
+    "preview": "vite preview",
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "check-types": "tsc --noEmit"
   },
@@ -18,7 +23,6 @@
     "@workspace/app-runtime": "workspace:*",
     "@workspace/ui": "workspace:*",
     "@workspace/query": "workspace:*",
-    "@workspace/plugin-system": "workspace:*",
     "lucide-react": "^0.417.0",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"

@@ -61,6 +61,7 @@ export const createShellAppViteConfig = (
       fs: {
         allow: [monorepoRootPath],
       },
+      host: '127.0.0.1',
     },
     buildOptions: {
       // Shell-specific build options can go here
