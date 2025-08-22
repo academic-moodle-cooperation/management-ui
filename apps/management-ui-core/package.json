@@ -20,6 +20,7 @@
     "@workspace/query": "workspace:*",
     "@workspace/ui": "workspace:*",
     "@workspace/router": "workspace:*",
+    "@workspace/vite-config": "workspace:*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
@@ -31,7 +32,6 @@
     "@vitejs/plugin-react-swc": "^3.9.0",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
-    "@workspace/vite-config": "workspace:*",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.20.0",
     "eslint-plugin-react-refresh": "^0.4.19",
