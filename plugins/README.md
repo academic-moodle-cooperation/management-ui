@@ -44,9 +44,9 @@ The TU Wien plugin demonstrates how to create standalone plugin apps:
 **Development:**
 ```bash
 cd plugins/tuwien
-pnpm dev          # Runs on http://localhost:3005
+pnpm dev          # Runs on http://127.0.0.1:3005
 pnpm build        # Build for production
-pnpm preview      # Preview on http://localhost:3105
+pnpm preview      # Preview on http://127.0.0.1:3105
 ```
 
 **Core Shell Integration:**
@@ -235,7 +235,7 @@ The plugin system has been restructured to provide independent plugin packages w
 
 ## Examples
 
-- **TU Wien**: Complete example with standalone app at http://localhost:3005
+- **TU Wien**: Complete example with standalone app at http://127.0.0.1:3005
 - **University of Vienna**: Basic plugin structure
 - **Example University**: Reference implementations for learning
 

@@ -24,7 +24,7 @@ pnpm install
 pnpm dev
 ```
 
-The app will be available at: http://localhost:3005
+The app will be available at: http://127.0.0.1:3005
 
 ### Core Shell Integration
 
@@ -85,7 +85,7 @@ The plugin uses workspace dependencies for seamless integration:
 ```bash
 cd plugins/tuwien
 pnpm dev
-# Visit http://localhost:3005
+# Visit http://127.0.0.1:3005
 ```
 
 ### Building for Production
@@ -94,7 +94,7 @@ pnpm dev
 cd plugins/tuwien
 pnpm build
 pnpm preview
-# Visit http://localhost:3105
+# Visit http://127.0.0.1:3105
 ```
 
 ### Integration with Core Shell
