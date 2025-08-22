@@ -29,6 +29,7 @@ export const createPluginAppViteConfig = (
       fs: {
         allow: [monorepoRootPath], // Allow access to monorepo root for imports if necessary
       },
+      host: '127.0.0.1',
     },
     buildOptions: {
       // Plugin-specific build options can go here

@@ -65,13 +65,13 @@ Applications can now run independently for focused development:
 ```bash
 # Run individual apps standalone
 cd apps/management-ui-episodes
-pnpm dev    # http://localhost:3002
+pnpm dev    # http://127.0.0.1:3002
 
 cd apps/management-ui-series  
-pnpm dev    # http://localhost:3001
+pnpm dev    # http://127.0.0.1:3001
 
 cd apps/management-ui-upload
-pnpm dev    # http://localhost:3003
+pnpm dev    # http://127.0.0.1:3003
 
 cd apps/management-ui-test
 pnpm dev    # http://localhost:3004
@@ -111,11 +111,11 @@ Each university can create standalone applications that run independently:
 ```bash
 # TU Wien plugin app
 cd plugins/tuwien
-pnpm dev    # Runs on http://localhost:3005
+pnpm dev    # Runs on http://127.0.0.1:3005
 
 # University of Vienna plugin app  
 cd plugins/univie
-pnpm dev    # Runs on http://localhost:3006
+pnpm dev    # Runs on http://127.0.0.1:3006
 ```
 
 ### Extension Points
@@ -235,11 +235,11 @@ const App = () => (
 ```bash
 # Develop app in isolation
 cd apps/management-ui-episodes
-pnpm dev    # Runs on http://localhost:3002
+pnpm dev    # Runs on http://127.0.0.1:3002
 
 # Test in core shell context  
 cd apps/management-ui-core
-pnpm dev    # Access at http://localhost:3000/episodes
+pnpm dev    # Access at http://127.0.0.1:3000/episodes
 ```
 
 ### Benefits
