@@ -20,6 +20,17 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
   const { data: rooms, isLoading: roomsLoading, error: roomsError } = useRooms();
   const { data: events, isLoading: eventsLoading, error: eventsError, refetch } = useEventsByDate(selectedDate);
 
+  // Debug logging
+  React.useEffect(() => {
+    if (rooms) {
+      console.log('🏢 Rooms loaded:', {
+        totalRooms: rooms.length,
+        roomIds: rooms.map(r => r.extRaumId).sort((a, b) => a - b),
+        sampleRoom: rooms[0]
+      });
+    }
+  }, [rooms]);
+
   // Initialize selected rooms when rooms are loaded
   React.useEffect(() => {
     if (rooms && rooms.length > 0 && selectedRoomIds.length === 0) {
@@ -40,14 +51,17 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
       if (!grouped[event.extRaumId]) {
         grouped[event.extRaumId] = [];
       }
-      grouped[event.extRaumId].push(event);
+      grouped[event.extRaumId]!.push(event);
     });
-    
+
     // Sort events by start time within each room
     Object.keys(grouped).forEach(roomId => {
-      grouped[parseInt(roomId)].sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
+      const roomEvents = grouped[parseInt(roomId)];
+      if (roomEvents) {
+        roomEvents.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
+      }
     });
-    
+
     return grouped;
   }, [filteredEvents]);
 
@@ -70,8 +84,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
 
   // Room selection handlers
   const handleRoomToggle = (roomId: number) => {
-    setSelectedRoomIds(prev => 
-      prev.includes(roomId) 
+    setSelectedRoomIds(prev =>
+      prev.includes(roomId)
         ? prev.filter(id => id !== roomId)
         : [...prev, roomId]
     );
@@ -79,7 +93,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
 
   const handleSelectAllRooms = () => {
     if (rooms) {
-      setSelectedRoomIds(rooms.map(room => room.extRoomId));
+      setSelectedRoomIds(rooms.map(room => room.extRaumId));
     }
   };
 
@@ -131,13 +145,13 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
               )}
             </p>
           </div>
-          
+
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-1">
               <Button variant="outline" size="sm" onClick={goToPreviousDay}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              
+
               <DatePicker
                 date={selectedDate}
                 onDateChange={(date) => date && setSelectedDate(date)}
@@ -145,24 +159,24 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
                 <CalendarIcon className="h-4 w-4 mr-2" />
                 Select Date
               </DatePicker>
-              
+
               <Button variant="outline" size="sm" onClick={goToNextDay}>
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
-            
+
             <Button variant="outline" size="sm" onClick={goToToday} disabled={isToday(selectedDate)}>
               Today
             </Button>
-            
-            <Button 
-              variant="outline" 
-              size="sm" 
+
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => setShowRoomFilter(!showRoomFilter)}
             >
               Filter Rooms ({selectedRoomIds.length})
             </Button>
-            
+
             <Button variant="outline" size="sm" onClick={() => refetch()}>
               <RefreshCw className="h-4 w-4" />
             </Button>
@@ -221,9 +235,9 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
                 {selectedRoomIds.map(roomId => {
                   const room = getRoomById(rooms || [], roomId);
                   const roomEvents = eventsByRoom[roomId] || [];
-                  
+
                   if (roomEvents.length === 0) return null;
-                  
+
                   return (
                     <Card key={roomId} className="p-6">
                       <div className="space-y-4">
@@ -242,12 +256,12 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
                             {roomEvents.length} event{roomEvents.length !== 1 ? 's' : ''}
                           </p>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                           {roomEvents.map((event, index) => (
-                            <EventCard 
+                            <EventCard
                               key={`${event.extRaumId}-${event.originalDatum}-${event.originalBeginn}-${index}`}
-                              event={event} 
+                              event={event}
                               room={room}
                             />
                           ))}

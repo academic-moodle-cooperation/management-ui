@@ -50,7 +50,7 @@ cd plugins/univie
 pnpm dev
 ```
 
-The app will be available at `http://localhost:3006`
+The app will be available at `http://127.0.0.1:3006`
 
 ### Core Shell Integration
 
