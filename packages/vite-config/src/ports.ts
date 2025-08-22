@@ -9,40 +9,9 @@ const CORE_APP_NAMES = [
   "management-ui-test",
 ];
 
-// Dynamically discover plugin packages from the filesystem
+// Known plugin packages - simplified to avoid dynamic discovery issues
 const discoverPluginPackages = (): string[] => {
-  try {
-    // In a Node.js environment (build time), we can scan the plugins directory
-    if (typeof process !== 'undefined' && process.cwd) {
-      const fs = require('fs');
-      const path = require('path');
-
-      const pluginsDir = path.join(process.cwd(), 'plugins');
-      if (fs.existsSync(pluginsDir)) {
-        const pluginDirs = fs.readdirSync(pluginsDir, { withFileTypes: true })
-          .filter((dirent: any) => dirent.isDirectory())
-          .map((dirent: any) => dirent.name);
-
-        // Read package.json files to get actual package names
-        return pluginDirs.map((dir: string) => {
-          const packageJsonPath = path.join(pluginsDir, dir, 'package.json');
-          if (fs.existsSync(packageJsonPath)) {
-            try {
-              const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-              return packageJson.name;
-            } catch {
-              return `plugin-${dir}`; // Fallback to directory name
-            }
-          }
-          return `plugin-${dir}`; // Fallback to directory name
-        });
-      }
-    }
-  } catch (error) {
-    console.warn('[vite-config] Could not discover plugin packages dynamically:', error);
-  }
-
-  // Fallback to known plugins if dynamic discovery fails
+  // Fallback to known plugins
   return [
     "plugin-tuwien",
     "plugin-univie",
