@@ -11,7 +11,6 @@ const CORE_APP_NAMES = [
 
 // Known plugin packages - simplified to avoid dynamic discovery issues
 const discoverPluginPackages = (): string[] => {
-  // Fallback to known plugins
   return [
     "plugin-tuwien",
     "plugin-univie",
