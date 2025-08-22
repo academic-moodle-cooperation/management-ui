@@ -72,9 +72,6 @@ pnpm dev    # http://127.0.0.1:3001
 
 cd apps/management-ui-upload
 pnpm dev    # http://127.0.0.1:3003
-
-cd apps/management-ui-test
-pnpm dev    # http://localhost:3004
 ```
 
 Standalone apps have full provider context including router, authentication, and plugin system support.
