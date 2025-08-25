@@ -3,7 +3,7 @@ export * from "./types";
 import type { AppConfig } from "./types";
 
 // Default or base configuration, adapted from old defaultConfig and new AppConfig
-export const defaultConfig = {
+export const defaultConfig: AppConfig = {
   productionConfigUrl: "/ui/config/management-ui/config.json",
   productionAppPluginUrl: "/management-tool/ui/config/plugins.json",
   app: {
@@ -27,10 +27,10 @@ export const defaultConfig = {
     ]
   },
   auth: {
-    loginUrl: "/auth/login",
-    logoutUrl: "/auth/logout",
-    loginUrlDev: "/dev/login",
-    logoutUrlDev: "/dev/logout",
+    loginUrl: "/Shibboleth.sso/Login?target=/management-ui",
+    logoutUrl: "/Shibboleth.sso/Logout?return=/management-ui",
+    loginUrlDev: "/j_spring_security_login",
+    logoutUrlDev: "/j_spring_security_logout",
   },
   plugins: {
     "management-ui-series": {
@@ -131,7 +131,7 @@ export const getAppConfig = (instanceConfig?: Partial<AppConfig>) => {
       ...defaultConfig.app,
       ...(instanceConfig?.app || {}),
       organizationUrls: {
-        main: instanceConfig?.app?.organizationUrls?.main ?? defaultConfig.app.organizationUrls.main,
+        main: instanceConfig?.app?.organizationUrls?.main ?? defaultConfig.app.organizationUrls?.main ?? '',
         ...(instanceConfig?.app?.organizationUrls?.support && { support: instanceConfig.app.organizationUrls.support }),
       },
       // Merge pluginNamespace without duplicates

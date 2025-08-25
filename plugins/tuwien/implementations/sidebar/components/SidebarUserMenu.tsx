@@ -24,10 +24,7 @@ const SidebarUserMenu = ({ open }: { open: boolean }) => {
   const { data, isLoading } = useGetCurrentUser();
   const { config } = useAppConfig();
 
-  const loginUrlDev = config.auth.loginUrlDev;
-  const logoutUrlDev = config.auth.logoutUrlDev;
-  const loginUrl = config.auth.loginUrl;
-  const logoutUrl = config.auth.logoutUrl;
+  // Using standardized routes instead of direct config URLs
 
   return (
     <>
@@ -81,7 +78,7 @@ const SidebarUserMenu = ({ open }: { open: boolean }) => {
                   "flex gap-4 px-4"
                 )} items={[{
                   title: "Logout",
-                  url: logoutUrlDev || logoutUrl,
+                  url: "/logout",
                   icon: LogOut
                 }]}
                 menuItemClassName={cn(!open && 'flex justify-center')}
@@ -92,12 +89,12 @@ const SidebarUserMenu = ({ open }: { open: boolean }) => {
         </Accordion>
       ) : (
         <Container className="py-2 border-b border-foreground">
-          <div className="flex items-center text-sm font-semibold leading-6 gap-x-4 text-sidebar-foreground">
-            <SidebarMenuButton asChild className="justify-center">
-              <a href={loginUrlDev || loginUrl}>
+          <div className="flex items-center justify-center text-sm font-semibold leading-6 gap-x-4 text-sidebar-foreground">
+            <SidebarMenuButton asChild className="justify-center" tooltip="Login">
+              <Link to="/login">
                 <LogIn className="w-6 h-6" />
                 {open && <span>Login</span>}
-              </a>
+              </Link>
             </SidebarMenuButton>
           </div>
         </Container>

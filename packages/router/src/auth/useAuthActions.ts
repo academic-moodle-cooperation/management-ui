@@ -9,45 +9,24 @@ export interface AuthActions {
 }
 
 /**
- * Hook that provides login/logout actions using URLs directly from app config.
- * This allows you to bypass the /login and /logout routes and use the 
- * configured authentication URLs directly.
+ * Hook that provides login/logout actions using standardized routes.
+ * Uses /login and /logout routes which handle environment selection,
+ * redirect parameters, and error handling consistently.
  */
 export const useAuthActions = (): AuthActions => {
   const { config, isLoading, isError } = useAppConfig();
 
   const login = useCallback((redirectTo?: string) => {
-    if (!config?.auth) {
-      return;
-    }
-
-    // Choose the appropriate login URL based on environment
-    const loginUrl = (import.meta.env.DEV && config.auth.loginUrlDev)
-      ? config.auth.loginUrlDev
-      : config.auth.loginUrl;
-
-    // Determine redirect URL
+    // Use standardized /login route instead of direct config URLs
     const redirect = redirectTo || window.location.pathname;
-    const fullRedirectUrl = `${window.location.origin}${redirect}`;
-
-    // Redirect to the configured login URL with redirect parameter
-    const finalLoginUrl = `${loginUrl}?redirect=${encodeURIComponent(fullRedirectUrl)}`;
-
-    window.location.href = finalLoginUrl;
-  }, [config]);
+    const loginUrl = `/login?redirect=${encodeURIComponent(redirect)}`;
+    window.location.href = loginUrl;
+  }, []);
 
   const logout = useCallback(() => {
-    if (!config?.auth) {
-      return;
-    }
-
-    // Choose the appropriate logout URL based on environment
-    const logoutUrl = (import.meta.env.DEV && config.auth.logoutUrlDev)
-      ? config.auth.logoutUrlDev
-      : config.auth.logoutUrl;
-
-    window.location.href = logoutUrl;
-  }, [config]);
+    // Use standardized /logout route instead of direct config URLs
+    window.location.href = '/logout';
+  }, []);
 
   return {
     login,
