@@ -6,30 +6,31 @@ import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
 
 /**
- * AuthMethodsDemo component that demonstrates both authentication methods:
- * 1. Direct config URLs (using useAuthActions)
- * 2. Route-based authentication (using /login and /logout routes)
+ * AuthMethodsDemo component that demonstrates the standardized authentication approach.
+ * All authentication now uses the /login and /logout routes consistently.
+ * 
+ * The useAuthActions hook now uses these routes internally for consistency.
  */
 export const AuthMethodsDemo: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
   const { login, logout, isLoading: authActionsLoading } = useAuthActions();
 
-  // Method 1: Direct config URLs
-  const handleDirectLogin = () => {
-    login(); // Uses config URLs directly
+  // Method 1: Using useAuthActions hook (now uses standardized routes internally)
+  const handleHookLogin = () => {
+    login(); // Now routes through /login internally
   };
 
-  const handleDirectLogout = () => {
-    logout(); // Uses config URLs directly
+  const handleHookLogout = () => {
+    logout(); // Now routes through /logout internally
   };
 
-  // Method 2: Route-based (through /login and /logout routes)
-  const handleRouteLogin = () => {
-    window.location.href = '/login'; // Goes through route that redirects to config URL
+  // Method 2: Direct route navigation (same result as Method 1)
+  const handleDirectRouteLogin = () => {
+    window.location.href = '/login';
   };
 
-  const handleRouteLogout = () => {
-    window.location.href = '/logout'; // Goes through route that redirects to config URL
+  const handleDirectRouteLogout = () => {
+    window.location.href = '/logout';
   };
 
   return (
@@ -54,29 +55,29 @@ export const AuthMethodsDemo: React.FC = () => {
 
         <Separator />
 
-        {/* Method 1: Direct Config URLs */}
+        {/* Method 1: useAuthActions Hook */}
         <div className="space-y-3">
-          <h4 className="font-medium">Method 1: Direct Config URLs</h4>
+          <h4 className="font-medium">Method 1: useAuthActions Hook</h4>
           <p className="text-sm text-muted-foreground">
-            Uses useAuthActions hook to directly access login/logout URLs from app config
+            Uses useAuthActions hook (now internally routes through /login and /logout)
           </p>
           <div className="flex gap-2">
             {isAuthenticated ? (
               <Button
-                onClick={handleDirectLogout}
+                onClick={handleHookLogout}
                 variant="outline"
                 disabled={authActionsLoading}
                 size="sm"
               >
-                {authActionsLoading ? 'Loading...' : 'Direct Logout'}
+                {authActionsLoading ? 'Loading...' : 'Hook Logout'}
               </Button>
             ) : (
               <Button
-                onClick={handleDirectLogin}
+                onClick={handleHookLogin}
                 disabled={authActionsLoading}
                 size="sm"
               >
-                {authActionsLoading ? 'Loading...' : 'Direct Login'}
+                {authActionsLoading ? 'Loading...' : 'Hook Login'}
               </Button>
             )}
           </div>
@@ -84,16 +85,16 @@ export const AuthMethodsDemo: React.FC = () => {
 
         <Separator />
 
-        {/* Method 2: Route-based */}
+        {/* Method 2: Direct Route Navigation */}
         <div className="space-y-3">
-          <h4 className="font-medium">Method 2: Route-based</h4>
+          <h4 className="font-medium">Method 2: Direct Route Navigation</h4>
           <p className="text-sm text-muted-foreground">
-            Uses /login and /logout routes which then redirect to config URLs
+            Direct navigation to /login and /logout routes (same result as Method 1)
           </p>
           <div className="flex gap-2">
             {isAuthenticated ? (
               <Button
-                onClick={handleRouteLogout}
+                onClick={handleDirectRouteLogout}
                 variant="outline"
                 size="sm"
               >
@@ -101,7 +102,7 @@ export const AuthMethodsDemo: React.FC = () => {
               </Button>
             ) : (
               <Button
-                onClick={handleRouteLogin}
+                onClick={handleDirectRouteLogin}
                 size="sm"
               >
                 Route Login
@@ -111,8 +112,8 @@ export const AuthMethodsDemo: React.FC = () => {
         </div>
 
         <div className="text-xs text-muted-foreground space-y-1">
-          <p><strong>Direct method:</strong> Faster, fewer redirects</p>
-          <p><strong>Route method:</strong> Consistent with TanStack Router patterns</p>
+          <p><strong>Note:</strong> Both methods now use the same standardized routes internally</p>
+          <p><strong>Benefit:</strong> Consistent behavior, centralized auth logic, proper redirect handling</p>
         </div>
       </CardContent>
     </Card>

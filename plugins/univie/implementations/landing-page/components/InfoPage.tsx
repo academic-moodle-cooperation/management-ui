@@ -50,7 +50,7 @@ const InfoPage: FC = () => {
           <div className="flex items-center justify-center mt-10 gap-x-6">
             {data?.currentUser.username === "anonymous" && (
               <a
-                href={import.meta.env.DEV ? config?.auth?.loginUrlDev : config?.auth?.loginUrl}
+                href="/login"
                 className="rounded-md bg-sky-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-sky-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 Login
