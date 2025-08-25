@@ -10,6 +10,7 @@ import { ComponentResolver } from '@workspace/plugin-system';
 // Import components from the core app
 import { ErrorBoundary, ModuleErrorFallback, NotFoundError, CoreAppShellLayout } from './index';
 import { DefaultLandingPage, AppLoader, Container } from '@workspace/ui/components';
+import { createCommonRoutes } from '../shared/commonRoutes';
 
 // Base root route for the application
 const appCoreRootRoute = createRootRoute({
@@ -17,71 +18,18 @@ const appCoreRootRoute = createRootRoute({
   notFoundComponent: NotFoundError,
 });
 
-// Static routes
-const DefaultLandingComponent = () => (
-  <Suspense fallback={<AppLoader />}>
-    <Container className="flex justify-center">
-      <ComponentResolver
-        componentType="appshell:landing-page"
-        defaultComponent={DefaultLandingPage}
-        componentProps={{}}
-        loadingBehavior="loader"
-        useOverridePrefix={true}
-      />
-    </Container>
-  </Suspense>
-);
+// Create common routes using shared utility
+const commonRoutes = createCommonRoutes(appCoreRootRoute);
 
-const rootLandingRoute = createRoute({
-  getParentRoute: () => appCoreRootRoute,
-  path: '/',
-  component: DefaultLandingComponent,
-});
 
-const homeLandingRoute = createRoute({
-  getParentRoute: () => appCoreRootRoute,
-  path: '/home',
-  component: DefaultLandingComponent,
-});
 
-const indexHtmlLandingRoute = createRoute({
-  getParentRoute: () => appCoreRootRoute,
-  path: '/index.html',
-  component: DefaultLandingComponent,
-});
 
-const loginRoute = createRoute({
-  getParentRoute: () => appCoreRootRoute,
-  path: '/login',
-  component: () => {
-    const { config, isLoading, isError } = useAppConfig();
-    const routerState = useRouterState();
 
-    if (isLoading) return <AppLoader />;
-    if (isError || !config) return <div>Error loading login configuration.</div>;
 
-    const loginUrl = (import.meta.env.DEV && config.auth.loginUrlDev) ? config.auth.loginUrlDev : config.auth.loginUrl;
-    const redirectParam = (routerState.location.search as Record<string, unknown>).redirect || '/';
 
-    window.location.href = `${loginUrl}?redirect=${encodeURIComponent(window.location.origin + redirectParam)}`;
-    return <AppLoader />;
-  },
-});
 
-const logoutRoute = createRoute({
-  getParentRoute: () => appCoreRootRoute,
-  path: '/logout',
-  component: () => {
-    const { config, isLoading, isError } = useAppConfig();
 
-    if (isLoading) return <AppLoader />;
-    if (isError || !config) return <div>Error loading logout configuration.</div>;
 
-    const logoutUrl = (import.meta.env.DEV && config.auth.logoutUrlDev) ? config.auth.logoutUrlDev : config.auth.logoutUrl;
-    window.location.href = logoutUrl;
-    return <AppLoader />;
-  },
-});
 
 // Interfaces for dynamic modules
 interface ClientDynamicModule {
@@ -313,11 +261,11 @@ export const DynamicRouterProvider: React.FC<DynamicRouterProviderProps> = ({ ch
 
         // Combine with static routes
         const allChildRoutes = [
-          rootLandingRoute,
-          homeLandingRoute,
-          indexHtmlLandingRoute,
-          loginRoute,
-          logoutRoute,
+          commonRoutes.rootLandingRoute,
+          commonRoutes.homeLandingRoute,
+          commonRoutes.indexHtmlLandingRoute,
+          commonRoutes.loginRoute,
+          commonRoutes.logoutRoute,
           ...dynamicRoutes
         ];
 

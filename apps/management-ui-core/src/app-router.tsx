@@ -10,6 +10,7 @@ import { DefaultLandingPage, AppLoader, Container } from '@workspace/ui/componen
 import { getCachedAppConfig } from '@workspace/query'; // Import the new utility
 import { ProtectedRoute } from '@workspace/router'; // Import ProtectedRoute for route-level protection
 import { ComponentResolver } from '@workspace/plugin-system'; // Import ComponentResolver for landing page overrides
+import { createCommonRoutes } from './shared/commonRoutes'; // Import shared route definitions
 
 // Local temporary placeholders are no longer needed and will be removed.
 
@@ -21,76 +22,8 @@ const appCoreRootRoute = createRootRoute({
   notFoundComponent: NotFoundError,
 });
 
-// Example: Static routes that are part of the core application
-// We will re-introduce ComponentShowcase here for now
-
-const DefaultLandingComponent = () => (
-  <Suspense fallback={<AppLoader />}>
-    <Container className="flex justify-center">
-      <ComponentResolver
-        componentType="appshell:landing-page"
-        defaultComponent={DefaultLandingPage}
-        componentProps={{}}
-        loadingBehavior="loader"
-        useOverridePrefix={true}
-      />
-    </Container>
-  </Suspense>
-);
-
-const rootLandingRoute = createRoute({
-  getParentRoute: () => appCoreRootRoute,
-  path: '/',
-  component: DefaultLandingComponent,
-});
-
-const homeLandingRoute = createRoute({
-  getParentRoute: () => appCoreRootRoute,
-  path: '/home',
-  component: DefaultLandingComponent,
-});
-
-const indexHtmlLandingRoute = createRoute({
-  getParentRoute: () => appCoreRootRoute,
-  path: '/index.html',
-  component: DefaultLandingComponent,
-});
-
-const loginRoute = createRoute({
-  getParentRoute: () => appCoreRootRoute,
-  path: '/login',
-  component: () => {
-    const { config, isLoading, isError } = useAppConfig();
-    const routerState = useRouterState();
-
-    if (isLoading) return <AppLoader />;
-    if (isError || !config) return <div>Error loading login configuration.</div>;
-
-    const loginUrl = (import.meta.env.DEV && config.auth.loginUrlDev) ? config.auth.loginUrlDev : config.auth.loginUrl;
-    const redirectParam = (routerState.location.search as Record<string, unknown>).redirect || '/';
-
-    window.location.href = `${loginUrl}?redirect=${encodeURIComponent(window.location.origin + redirectParam)}`;
-    return <AppLoader />;
-  },
-});
-
-const logoutRoute = createRoute({
-  getParentRoute: () => appCoreRootRoute,
-  path: '/logout',
-  component: () => {
-    const { config, isLoading, isError } = useAppConfig();
-
-    if (isLoading) return <AppLoader />;
-    if (isError || !config) return <div>Error loading logout configuration.</div>;
-
-    const logoutUrl = (import.meta.env.DEV && config.auth.logoutUrlDev) ? config.auth.logoutUrlDev : config.auth.logoutUrl;
-    // For logout, we usually redirect to the login page or home page after logout is complete server-side.
-    // The actual logout mechanism might involve clearing tokens and then redirecting.
-    // Here, we assume the logoutUrl handles session termination and redirects appropriately.
-    window.location.href = logoutUrl;
-    return <AppLoader />;
-  },
-});
+// Create common routes using shared utility
+const commonRoutes = createCommonRoutes(appCoreRootRoute);
 
 // This is the internal representation for client-side route generation
 interface ClientDynamicModule {
@@ -228,13 +161,13 @@ export const createDynamicRouter = async () => {
     return dynamicRoute;
   });
 
-  // Remove the old defaultLandingRoute and update allChildRoutes
+  // Use common routes to eliminate duplication
   const allChildRoutes = [
-    rootLandingRoute,
-    homeLandingRoute,
-    indexHtmlLandingRoute,
-    loginRoute,
-    logoutRoute,
+    commonRoutes.rootLandingRoute,
+    commonRoutes.homeLandingRoute,
+    commonRoutes.indexHtmlLandingRoute,
+    commonRoutes.loginRoute,
+    commonRoutes.logoutRoute,
     ...dynamicRoutes
   ];
 
