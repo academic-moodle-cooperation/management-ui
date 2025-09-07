@@ -68,7 +68,7 @@ public class MuiMoveToTrashEventCommand extends AbstractCommand<GqlDeleteEventPa
 
     Workflows workflows = new Workflows(assetManager, workflowService);
     ConfiguredWorkflow configuredWorkflow = new ConfiguredWorkflow(workflowDefinition, Collections.emptyMap());
-    var partialResult = workflows.applyWorkflowToLatestVersion(Collections.singleton(id), configuredWorkflow).toList();
+    var partialResult = workflows.applyWorkflowToLatestVersion(Collections.singleton(id), configuredWorkflow);
     if (partialResult.size() != 1) {
       throw new GraphQLRuntimeException(
           "Expected 1 result, got " + partialResult.size(),
