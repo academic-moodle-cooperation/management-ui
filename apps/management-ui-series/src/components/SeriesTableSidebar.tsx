@@ -12,7 +12,7 @@ import {
   TabsContent,
 } from "@workspace/ui/components";
 import { useClickOutside } from "@workspace/ui/hooks";
-import { GetSeriesByIdInputFieldsQuery, useUpdateSeriesMutation } from "@workspace/query";
+import { GetSeriesByIdInputFieldsQuery, useUpdateSeriesMutation, SeriesDataFragment } from "@workspace/query";
 import { usePluginManager } from "@workspace/plugin-system";
 import { SeriesInfoContent } from "./SeriesInfoContent";
 import { SeriesInfoFooter } from "./SeriesInfoFooter";
@@ -39,6 +39,7 @@ interface SeriesTableSidebarProps {
   setIsEditing: (value: boolean) => void;
   sidebarInfo?: string;
   tableRef: RefObject<HTMLDivElement | null>;
+  currentSeries?: SeriesDataFragment | null;
 }
 
 /**
@@ -64,6 +65,7 @@ export const SeriesTableSidebar: React.FC<SeriesTableSidebarProps> = ({
   setIsEditing,
   sidebarInfo,
   tableRef,
+  currentSeries,
 }) => {
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const { t } = useTranslation();
@@ -148,8 +150,6 @@ export const SeriesTableSidebar: React.FC<SeriesTableSidebarProps> = ({
 
                 {sortedTabComponents.map((tabComponent) => {
                   const TabComponent = tabComponent.component;
-                  // Extract series data from seriesInputFields for plugin components
-                  const currentSeries = seriesInputFields?.seriesById;
                   return (
                     <TabsContent
                       key={tabComponent.key}

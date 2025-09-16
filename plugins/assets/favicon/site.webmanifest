@@ -4,7 +4,7 @@
   "description": "Core management interface for the application",
   "icons": [
     {
-      "src": "/assets/favicon/favicon.svg",
+      "src": "assets/favicon/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"

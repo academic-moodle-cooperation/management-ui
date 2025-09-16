@@ -22,6 +22,11 @@ export const config = {
             "table-sidebar",
             "navigation"
           ]
+        },
+        "univie": {
+          "types": [
+            "app",
+          ]
         }
       }
     ]

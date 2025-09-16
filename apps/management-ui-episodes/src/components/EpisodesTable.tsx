@@ -2,8 +2,9 @@ import React, { useMemo, useEffect, useCallback, useRef } from "react";
 import { type ColumnDef, MUITable, createMetadataHelpers, Button, Row } from "@workspace/ui/components";
 import { AppLoader } from "@workspace/ui/components";
 import { LayoutGrid, List } from "lucide-react";
-import { EventsDataFragment, useUpdateEventMutation } from "@workspace/query";
-import { useLoaderData, useNavigate } from "@workspace/router";
+import { EventsDataFragment, useUpdateEventMutation, useAppConfig } from "@workspace/query";
+import { useNavigate } from "@workspace/router";
+import type { MetadataItem, ColumnsField } from "@workspace/ui-config";
 import { useI18n } from "@workspace/i18n";
 import { createColumns } from "../columns";
 import { useEpisodesTable } from "../hooks";
@@ -19,7 +20,7 @@ interface EpisodesTableProps {
  */
 const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   const { t } = useI18n();
-  const loaderData = useLoaderData({ from: "/episodes" });
+  const { config } = useAppConfig();
   const navigate = useNavigate({
     from: `${import.meta.env.BASE_URL}/episodes`,
   });
@@ -78,19 +79,16 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   // Create columns with the current layout and refetch function
   const columns: ColumnDef<EventsDataFragment>[] = useMemo(() => createColumns(refetch, layout), [refetch, layout]);
 
-  const { isReadOnly } = createMetadataHelpers(loaderData?.episodeInfo?.metadata);
+  const metadata = (config?.plugins?.["management-ui-episodes"]?.episodeInfo?.metadata || []) as MetadataItem[];
+  const { isReadOnly } = createMetadataHelpers(metadata);
 
   // Create a mechanism to ensure data is loaded when the sidebar is opened from the edit button
   useEffect(() => {
     // Only proceed if the sidebar is open, editing is true, and we don't have data yet
-    if (isOpen && isEditing && selectedId && !episodesUpdateData) {
-      // Add debug logging
-      console.log("EpisodesTable - Sidebar opened in edit mode");
-      console.log("episodesInputFields:", episodesInputFields);
-
+    if (isOpen && isEditing && selectedId && episodesInputFields && !episodesUpdateData) {
       // Here we'll use the existing input fields data to populate the sidebar
       if (episodesInputFields?.eventById?.commonMetadataV2) {
-        const formattedData: Record<string, any> = {};
+        const formattedData: Record<string, string | string[]> = {};
         try {
           // Process each metadata field in eventById.commonMetadataV2
           const metadataFields = episodesInputFields.eventById.commonMetadataV2;
@@ -102,20 +100,15 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
             }
           });
 
-          console.log("EpisodesTable - Formatted data:", formattedData);
-
           if (Object.keys(formattedData).length > 0) {
             setEpisodesUpdateData(formattedData);
           }
         } catch (error) {
           console.error("Error formatting episodes data:", error);
         }
-      } else {
-        console.log("EpisodesTable - No episodesInputFields.eventById.commonMetadataV2 found");
-        console.log("episodesInputFields full structure:", JSON.stringify(episodesInputFields, null, 2));
       }
     }
-  }, [isOpen, isEditing, selectedId, episodesUpdateData, episodesInputFields, setEpisodesUpdateData]);
+  }, [isOpen, isEditing, selectedId, episodesUpdateData, episodesInputFields, setEpisodesUpdateData, isReadOnly]);
 
   // Mutation hook for updating episodes
   const saveEpisodeUpdate = useUpdateEventMutation();
@@ -171,9 +164,30 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
 
 
 
-  // Get visible columns from loader data - simplified to avoid TypeScript issues
-  const visibleColumns = loaderData?.episodesTable?.columns || [];
-  const sortedColumns = columns; // Use default columns for now
+  // Get visible columns from app config with proper type safety
+  const configColumns = config?.plugins?.["management-ui-episodes"]?.episodesTable?.columns || [];
+  const visibleColumns = (configColumns as Record<string, ColumnsField>[]).filter((column) => {
+    if (!column || typeof column !== 'object') return false;
+    const key = Object.keys(column)[0];
+    if (!key) return false;
+    const field = column[key];
+    return field?.show === true;
+  });
+
+  const columnsKeys = visibleColumns
+    .map((column) => Object.keys(column)[0])
+    .filter((key): key is string => Boolean(key));
+
+  const sortedColumns = columnsKeys.length > 0
+    ? columnsKeys
+      .map((columnsKey) =>
+        columns.find((column) => {
+          const col = column as any; // TanStack table column types are complex, using any for access
+          return col.accessorKey === columnsKey || col.id === columnsKey;
+        })
+      )
+      .filter((column): column is NonNullable<typeof column> => Boolean(column))
+    : columns;
 
   // Error handling
   if (error && typeof error === 'object' && 'message' in error) {

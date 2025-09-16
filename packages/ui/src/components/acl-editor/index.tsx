@@ -34,6 +34,7 @@ import {
   useGetManagedAclsWithSeriesIdQuery,
   useSearchUserQuery,
   SearchUserQuery,
+  useQueryClient,
 } from "@workspace/query";
 import { useI18n, loadNamespace } from "@workspace/i18n";
 import { AclData, ACLEntry, SelectedElement } from "./types";
@@ -72,6 +73,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   const updateEventAcl = useUpdateEventAclMutation();
   const updateSeriesAcl = useUpdateSeriesAclMutation();
   const { t, i18n } = useI18n();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const loadTranslations = async () => {
@@ -167,17 +169,16 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   };
 
   const handleUpdate = () => {
+
     // Convert UI ACLEntry to API ACLEntryInput (remove UI-only fields)
     const entries = aclEntries.map((entry) => ({
       role: entry.role ?? '',
       action: entry.action ?? [],
-      label: entry.label ?? '',
-      userId: entry.userId ?? '',
     }));
 
     const aclData: AclData = {
       managedAclId: managedAclId || undefined,
-      entries,
+      entries: entries as ACLEntry[],
     };
 
     if (selectedElement?.__typename === "Event") {
@@ -189,6 +190,10 @@ export const AclEditor: React.FC<AclEditorProps> = ({
         {
           onSuccess: () => {
             toast.success(t("muitable-sidebar:changesSaved"));
+            // Invalidate all event-related queries
+            queryClient.invalidateQueries({ queryKey: ['GetMyEvents'] });
+            queryClient.invalidateQueries({ queryKey: ['EventsFromSeries'] });
+            queryClient.invalidateQueries({ queryKey: ['GetManagedAclsWithEventId'] });
             refetch();
             // Do NOT call onClose or onEditClose here
           },
@@ -204,8 +209,16 @@ export const AclEditor: React.FC<AclEditorProps> = ({
         {
           onSuccess: () => {
             toast.success(t("muitable-sidebar:changesSaved"));
+            // Invalidate all series-related queries
+            queryClient.invalidateQueries({ queryKey: ['GetMySeries'] });
+            queryClient.invalidateQueries({ queryKey: ['GetSeriesInfo'] });
+            queryClient.invalidateQueries({ queryKey: ['GetManagedAclsWithSeriesId'] });
             refetch();
             // Do NOT call onClose or onEditClose here
+          },
+          onError: (error) => {
+            toast.error(t("muitable-sidebar:changesFailed"));
+            console.error("Error updating series ACL:", error);
           },
         }
       );

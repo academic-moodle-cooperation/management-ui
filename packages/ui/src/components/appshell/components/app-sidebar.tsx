@@ -96,7 +96,9 @@ export function AppSidebar({
       </SidebarFooter>
       <MobileCloseButton />
 
-      <SidebarRail />
+      {/* Disable sidebar rail for now because of glitchy behavior 
+        <SidebarRail /> 
+      */}
     </Sidebar>
   )
 } 
