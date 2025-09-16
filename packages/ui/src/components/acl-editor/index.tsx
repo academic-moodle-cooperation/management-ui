@@ -178,7 +178,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
 
     const aclData: AclData = {
       managedAclId: managedAclId || undefined,
-      entries,
+      entries: entries as ACLEntry[],
     };
 
     if (selectedElement?.__typename === "Event") {
