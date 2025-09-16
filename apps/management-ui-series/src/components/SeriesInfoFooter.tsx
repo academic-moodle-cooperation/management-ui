@@ -41,7 +41,25 @@ const SeriesInfoFooter = ({
       (field) => field?.required
     ).map((field) => field?.id).filter(Boolean) as string[];
 
-    return (requiredFields && requiredFields.length === 0) || (requiredFields && requiredFields.every((fieldId: string) => metadata[fieldId]));
+    // If no required fields, validation passes
+    if (!requiredFields || requiredFields.length === 0) {
+      return true;
+    }
+
+    // Check that all required fields have non-empty values
+    return requiredFields.every((fieldId: string) => {
+      const value = metadata[fieldId];
+      // Check for null, undefined, empty string, or empty array
+      if (value === null || value === undefined || value === '') {
+        return false;
+      }
+      // For arrays, check if they have content
+      if (Array.isArray(value)) {
+        return value.length > 0 && value.some(item => item !== null && item !== undefined && String(item).trim() !== '');
+      }
+      // For strings, check if they're not just whitespace
+      return String(value).trim() !== '';
+    });
   };
 
   // Check if data has actually changed from original values
@@ -117,8 +135,9 @@ const SeriesInfoFooter = ({
     const normalizedMetadata = normalizeMetadataObject(metadata);
 
     // Ensure title is always present for the mutation
+    // Use the normalized metadata (which includes seriesUpdateData) and only fallback to original if truly missing
     const metadataWithTitle = {
-      title: seriesInputFields?.seriesById?.commonMetadataV2?.title?.value || "",
+      title: normalizedMetadata.title || seriesInputFields?.seriesById?.commonMetadataV2?.title?.value || "",
       ...normalizedMetadata,
     };
 
@@ -126,7 +145,9 @@ const SeriesInfoFooter = ({
     const { identifier, ...finalMetadata } = metadataWithTitle as any;
 
 
-    if (!checkIfRequiredFieldsAreFilled(finalMetadata)) {
+    // IMPORTANT: Validate the merged metadata BEFORE normalization, because normalizeMetadataObject removes empty values
+    // but we need to validate that required fields are not empty
+    if (!checkIfRequiredFieldsAreFilled(metadata)) {
       toast.error(t("series:seriesTable.notification.fieldRequiredEmpty"));
     } else {
       saveSeriesUpdate.mutate(

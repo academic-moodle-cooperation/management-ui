@@ -124,7 +124,7 @@ export const MetadataUpdateField = ({
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, pages, lastPageParam) => {
-      if (lastPage?.length && lastPage.length === 0) {
+      if (!lastPage || lastPage.length === 0 || lastPage.length < 10) {
         return undefined;
       }
       return lastPageParam + 10;
@@ -172,7 +172,7 @@ export const MetadataUpdateField = ({
                   <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+              <PopoverContent className="w-[--radix-popover-trigger-width] sidebar-portal-inside p-0">
                 <Command
                   filter={(value, search) => {
                     // Convert both the translated value and search to lowercase for case-insensitive comparison
@@ -224,7 +224,7 @@ export const MetadataUpdateField = ({
                 </SelectValue>
               </SelectTrigger>
 
-              <SelectContent>
+              <SelectContent className="sidebar-portal-inside">
                 {Object.values(collection).length ? (
                   Object.values(collection).map((item, index) => (
                     <SelectItem

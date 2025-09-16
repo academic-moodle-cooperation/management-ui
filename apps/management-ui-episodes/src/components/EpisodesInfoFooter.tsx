@@ -47,7 +47,26 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
       (field) => field?.required
     ).map((field) => field?.id).filter(Boolean) as string[];
 
-    return (requiredFields && requiredFields.length === 0) || (requiredFields && requiredFields.every((fieldId: string) => metadata[fieldId]));
+    // If no required fields, validation passes
+    if (!requiredFields || requiredFields.length === 0) {
+      return true;
+    }
+
+    // Check that all required fields have non-empty values
+    return requiredFields.every((fieldId: string) => {
+      const value = metadata[fieldId];
+      // Check for null, undefined, empty string, or empty array
+      if (value === null || value === undefined || value === '') {
+        console.log("🎯 EpisodesInfoFooter: value is null, undefined, or empty", value);
+        return false;
+      }
+      // For arrays, check if they have content
+      if (Array.isArray(value)) {
+        return value.length > 0 && value.some(item => item !== null && item !== undefined && String(item).trim() !== '');
+      }
+      // For strings, check if they're not just whitespace
+      return String(value).trim() !== '';
+    });
   };
 
   // Check if data has actually changed from original values
@@ -59,21 +78,24 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
     const originalData = episodesInputFields.eventById.commonMetadataV2;
 
     // Compare each field in episodesUpdateData with original values
-    return Object.entries(episodesUpdateData).some(([key, newValue]) => {
+    const result = Object.entries(episodesUpdateData).some(([key, newValue]) => {
       const originalField = (originalData as any)[key];
       const originalValue = originalField?.value;
 
       // Handle different value types and normalize for comparison
       if (originalValue === undefined || originalValue === null) {
-        return newValue !== "" && newValue !== undefined && newValue !== null;
+        const hasChanged = newValue !== "" && newValue !== undefined && newValue !== null;
+        return hasChanged;
       }
 
       // Convert both to strings for comparison to handle different types
       const normalizedOriginal = Array.isArray(originalValue) ? originalValue.join(',') : String(originalValue);
       const normalizedNew = Array.isArray(newValue) ? newValue.join(',') : String(newValue);
 
-      return normalizedOriginal !== normalizedNew;
+      const hasChanged = normalizedOriginal !== normalizedNew;
+      return hasChanged;
     });
+    return result;
   }, [episodesUpdateData, episodesInputFields]);
 
   // Check if episode is editable based on status
@@ -131,9 +153,8 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
     // Normalize metadata to handle null/empty values consistently
     const normalizedMetadata = normalizeMetadataObject(metadata);
 
-    // Ensure title is always present for the mutation
+    // Use the normalized metadata directly - don't override with original values
     const metadataWithTitle = {
-      title: episodesInputFields?.eventById?.commonMetadataV2?.title?.value || "",
       ...normalizedMetadata,
     };
 
@@ -141,7 +162,9 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
     const { identifier, ...finalMetadata } = metadataWithTitle as any;
 
 
-    if (!checkIfRequiredFieldsAreFilled(finalMetadata)) {
+    // IMPORTANT: Validate the merged metadata BEFORE normalization, because normalizeMetadataObject removes empty values
+    // but we need to validate that required fields are not empty
+    if (!checkIfRequiredFieldsAreFilled(metadata)) {
       toast.error(t("episodes:episodesTable.notification.fieldRequiredEmpty"))
     } else {
       saveEpisodeUpdate.mutate(

@@ -20,6 +20,7 @@
     "@workspace/router": "workspace:*",
     "@workspace/store": "workspace:*",
     "@workspace/ui": "workspace:*",
+    "@workspace/ui-config": "workspace:*",
     "@workspace/utils": "workspace:*",
     "lucide-react": "^0.417.0",
     "react": "^19.1.0",
