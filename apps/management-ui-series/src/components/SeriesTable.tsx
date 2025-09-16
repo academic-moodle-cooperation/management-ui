@@ -1,8 +1,9 @@
-import React, { useMemo, useEffect, useCallback, useRef } from "react";
-import { MUITable, createMetadataHelpers, Row } from "@workspace/ui/components";
+import React, { useMemo, useEffect, useCallback, useRef, useState } from "react";
+import { MUITable, createMetadataHelpers, Row, type ColumnDef } from "@workspace/ui/components";
 import { AppLoader } from "@workspace/ui/components";
-import { useUpdateSeriesMutation, SeriesDataFragment } from "@workspace/query";
-import { useLoaderData, useNavigate } from "@workspace/router";
+import { useUpdateSeriesMutation, SeriesDataFragment, useAppConfig } from "@workspace/query";
+import { useNavigate } from "@workspace/router";
+import type { MetadataItem, ColumnsField } from "@workspace/ui-config";
 import { useI18n } from "@workspace/i18n";
 
 import { createColumns } from "../columns";
@@ -15,7 +16,7 @@ import { useSidebarStore } from "../stores/sidebarStore";
  */
 const SeriesTable = () => {
   const { t } = useI18n();
-  const loaderData = useLoaderData({ from: "/series" });
+  const { config } = useAppConfig();
   const navigate = useNavigate({
     from: `${import.meta.env.BASE_URL}/series`,
   });
@@ -72,7 +73,8 @@ const SeriesTable = () => {
   // Create columns with the store's setIsEditing function
   const columns = useMemo(() => createColumns(setIsEditing), [setIsEditing]);
 
-  const { isReadOnly } = createMetadataHelpers(loaderData?.seriesInfo?.metadata);
+  const metadata = (config?.plugins?.["management-ui-series"]?.seriesInfo?.metadata || []) as MetadataItem[];
+  const { isReadOnly } = createMetadataHelpers(metadata);
 
   // Create a mechanism to ensure data is loaded when the sidebar is opened from the edit button
   useEffect(() => {
@@ -140,16 +142,33 @@ const SeriesTable = () => {
     [data]
   );
 
-  // Get visible columns from loader data
-  const visibleColumns = loaderData?.seriesTable?.columns?.filter(
-    (column) => column[Object.keys(column)[0]].show
-  );
+  // Get the current series from the table data
+  const currentSeries = useMemo(() => {
+    return seriesData?.find(series => series?.id === selectedId);
+  }, [seriesData, selectedId]);
 
-  const columnsKeys = visibleColumns?.map((column) => Object.keys(column)[0]);
+  // Get visible columns from app config - use the columns configuration or fallback to all columns
+  const configColumns = config?.plugins?.["management-ui-series"]?.seriesTable?.columns || [];
+  const visibleColumns = (configColumns as Record<string, ColumnsField>[]).filter((column) => {
+    if (!column || typeof column !== 'object') return false;
+    const key = Object.keys(column)[0];
+    if (!key) return false;
+    const field = column[key];
+    return field?.show === true;
+  });
 
-  const sortedColumns = columnsKeys?.map((columnsKey) =>
-    columns.find((column) => (column["accessorKey"] || column["id"]) === columnsKey)
-  );
+  const columnsKeys = visibleColumns
+    .map((column) => Object.keys(column)[0])
+    .filter((key): key is string => Boolean(key));
+
+  const sortedColumns = columnsKeys
+    .map((columnsKey) =>
+      columns.find((column) => {
+        const col = column as any; // TanStack table column types are complex, using any for access
+        return col.accessorKey === columnsKey || col.id === columnsKey;
+      })
+    )
+    .filter((column): column is NonNullable<typeof column> => Boolean(column));
 
   // Error handling
   if (error && typeof error === 'object' && 'message' in error) {
@@ -168,7 +187,7 @@ const SeriesTable = () => {
       {/* Main table with ref */}
       <div ref={tableRef}>
         <MUITable
-          columns={sortedColumns || columns}
+          columns={sortedColumns.length > 0 ? (sortedColumns as any) : columns}
           data={(seriesData?.filter(Boolean) as SeriesDataFragment[]) || []}
           selectedId={selectedId}
           refetch={refetch}
@@ -212,6 +231,7 @@ const SeriesTable = () => {
         setIsEditing={setIsEditing}
         sidebarInfo={t(`series:seriesInfo.required`)}
         tableRef={tableRef} // Pass the table ref to the sidebar
+        currentSeries={currentSeries || undefined} // Pass the current series data
       />
     </>
   );

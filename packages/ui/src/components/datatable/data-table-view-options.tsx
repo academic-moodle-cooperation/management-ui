@@ -48,7 +48,7 @@ export function DataTableViewOptions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-[150px]"
+        className="w-[150px] sidebar-portal-inside"
         // TODO: This is a workaround to prevent the dropdown menu from closing when the user clicks on the table
         // still needed?
         onClick={() => {

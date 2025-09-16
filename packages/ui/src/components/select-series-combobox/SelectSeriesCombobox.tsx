@@ -59,9 +59,7 @@ const SelectSeriesCombobox = ({
 
   useEffect(() => {
     setSeriesListFiltered(seriesList);
-    if (hasNextPage) {
-      setHasMore(hasNextPage);
-    }
+    setHasMore(hasNextPage || false);
   }, [seriesList, hasNextPage]);
 
   const next = async () => {
@@ -101,7 +99,7 @@ const SelectSeriesCombobox = ({
           </SelectValue>
         </SelectTrigger>
 
-        <SelectContent>
+        <SelectContent className="sidebar-portal-inside">
           <Command className="h-auto">
             {!disableSearch && (
               <CommandInput

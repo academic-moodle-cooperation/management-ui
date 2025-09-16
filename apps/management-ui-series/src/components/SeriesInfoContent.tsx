@@ -11,9 +11,10 @@ import { useI18n } from "@workspace/i18n";
 import {
   GetSeriesByIdInputFieldsQuery,
   GetInputFieldsMetaDataFragment,
+  useAppConfig,
 } from "@workspace/query";
+import type { MetadataItem } from "@workspace/ui-config";
 import { CopyIcon, PencilIcon } from "@workspace/ui/components";
-import { useLoaderData } from "@workspace/router";
 import { copyText } from "@workspace/utils";
 
 type SeriesUpdateData = {
@@ -42,8 +43,8 @@ const SeriesInfoContent = ({
   setTextCopied,
 }: SeriesInfoContentProps) => {
   const { t } = useI18n();
-  const loaderData = useLoaderData({ from: "/series" });
-  const metadata = loaderData?.seriesInfo?.metadata;
+  const { config } = useAppConfig();
+  const metadata = (config?.plugins?.["management-ui-series"]?.seriesInfo?.metadata || []) as MetadataItem[];
 
   // Use the createMetadataHelpers function to get visibility helpers
   const { isVisible, isReadOnly } = createMetadataHelpers(metadata);
