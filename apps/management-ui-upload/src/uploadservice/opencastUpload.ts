@@ -2,7 +2,7 @@ import Mustache from "mustache";
 
 import onProgress from "./onProgress";
 import { UploadFileBlob } from "@workspace/store";
-import { toast, type AclData } from "@workspace/ui/components";
+import { toast, type AclData, type ACLEntryInput } from "@workspace/ui/components";
 import { i18next } from "@workspace/i18n";
 
 type UploadSettings = {
@@ -260,15 +260,13 @@ const constructAcl = (template: string, currentUser: User) => {
 // Function to generate ACL XML from aclData
 const constructAclFromData = (aclData: AclData) => {
 
-  // Convert managed ACL entries to ACL entries format
-  const managedEntries = (aclData?.managedAclEntries || []).map(entry => ({
+  // Convert managed ACL entries to API-facing entries (role/action only)
+  const managedEntries: ACLEntryInput[] = (aclData?.managedAclEntries || []).map(entry => ({
     role: entry.role || '',
-    label: entry.role || '',
-    userId: '',
     action: entry.action?.filter((a): a is string => a !== null) || []
   }));
 
-  const entries = aclData.entries.concat(managedEntries);
+  const entries: ACLEntryInput[] = (aclData.entries || []).concat(managedEntries);
 
   // If entries are provided, construct the ACL XML dynamically
   if (entries && entries.length > 0) {

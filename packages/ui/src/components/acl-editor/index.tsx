@@ -37,7 +37,7 @@ import {
   useQueryClient,
 } from "@workspace/query";
 import { useI18n, loadNamespace } from "@workspace/i18n";
-import { AclData, ACLEntry, SelectedElement } from "./types";
+import { AclData, ACLEntry, ACLEntryInput, SelectedElement } from "./types";
 
 type UserSearchResult = NonNullable<NonNullable<SearchUserQuery['searchUser']>['nodes']>[number];
 
@@ -171,7 +171,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   const handleUpdate = () => {
 
     // Convert UI ACLEntry to API ACLEntryInput (remove UI-only fields)
-    const entries = aclEntries.map((entry) => ({
+    const entries: ACLEntryInput[] = aclEntries.map((entry) => ({
       role: entry.role ?? '',
       action: entry.action ?? [],
     }));
@@ -443,4 +443,4 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   );
 };
 
-export { type AclData, type ACLEntry, type SelectedElement, type ManagedACLEntry } from "./types";
+export { type AclData, type ACLEntry, type ACLEntryInput, type SelectedElement, type ManagedACLEntry } from "./types";

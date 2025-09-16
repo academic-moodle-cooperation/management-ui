@@ -48,9 +48,9 @@ export const UploadAclEditor: React.FC<UploadAclEditorProps> = ({
   useEffect(() => {
     onAclDataChange(
       {
-        entries,
+        entries: entries.map((e) => ({ role: e.role, action: e.action })),
         managedAclEntries,
-        managedAclId: managedAclId ?? ""
+        managedAclId: managedAclId ?? "",
       },
       managedAclId ?? ""
     );
@@ -62,7 +62,7 @@ export const UploadAclEditor: React.FC<UploadAclEditorProps> = ({
         aclEntries={aclData?.entries.map((entry) => ({
           role: entry.role,
           action: entry.action,
-          label: entry.label,
+          label: entry.role,
           userId: "",
         })) ?? []}
         managedAclId={managedAclId}

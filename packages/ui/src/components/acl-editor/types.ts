@@ -19,7 +19,7 @@ export interface ACLEntryInput {
 export interface AclData {
   managedAclId: string | undefined; // ID of the managed ACL policy, if any
   managedAclEntries?: ManagedACLEntry[] | undefined; // Array of ACL entries
-  entries: ACLEntry[]; // Array of ACL entries for API calls
+  entries: ACLEntryInput[]; // API-facing ACL entries (UI-only fields removed)
 }
 
 export interface SelectedElement {
