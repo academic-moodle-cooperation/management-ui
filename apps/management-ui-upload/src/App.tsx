@@ -460,8 +460,6 @@ export const App = () => {
       entries: newAclData?.entries?.map((entry) => ({
         role: entry.role,
         action: entry.action,
-        label: entry.label,
-        userId: entry.userId,
       })) ?? [],
       managedAclEntries: newAclData?.managedAclEntries?.map((entry) => ({
         role: entry.role,
