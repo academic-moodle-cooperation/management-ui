@@ -28,6 +28,7 @@ export const createBaseConfig = ({
       alias: {
         ...resolveAliases, // Specific aliases like '@monorepo-apps' or '@/' are set by the calling config creator.
       },
+      dedupe: ['lucide-react', 'react', 'react-dom'],
     },
     server: {
       // Specific fs.allow settings are handled by the calling config creator.
@@ -44,6 +45,13 @@ export const createBaseConfig = ({
       sourcemap: !isProduction,
       minify: isProduction,
       cssCodeSplit: true,
+      rollupOptions: {
+        external: (id) => {
+          // Don't externalize lucide-react - we want it bundled
+          if (id === 'lucide-react') return false;
+          return false;
+        },
+      },
       ...buildOptions, // Merges with build options; 'base' is explicitly set by the caller.
     },
     // The 'base' property for Vite (both for dev and build) is NOT set here.

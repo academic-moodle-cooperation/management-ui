@@ -3,11 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "private": true,
-  "workspaces": [
-    "apps/*"
-  ],
   "scripts": {
-    "build": "turbo run build --filter=./apps/*",
+    "build": "turbo run build --filter=@univie/*",
     "dev:calendar": "pnpm --filter @univie/event-calendar dev",
     "build:calendar": "pnpm --filter @univie/event-calendar build",
     "preview:calendar": "pnpm --filter @univie/event-calendar preview",
