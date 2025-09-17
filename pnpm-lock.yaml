@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      lucide-react:
+        specifier: ^0.417.0
+        version: 0.417.0(react@19.1.0)
     devDependencies:
       '@swc/helpers':
         specifier: ^0.5.17
