@@ -65,6 +65,9 @@ docs/archive
 # Npm
 package-lock.json
 
+# Node
+node/
+
 # Personal workflow tools
 git-workflow.sh
 GIT_WORKFLOW.md
