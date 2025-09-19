@@ -25,7 +25,27 @@
         <artifactId>exec-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>pnpm run build</id>
+            <id>pnpm run build workspace packages</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${maven.multiModuleProjectDirectory}/node/node</executable>
+              <arguments>
+                <argument>${maven.multiModuleProjectDirectory}/node/node_modules/pnpm/bin/pnpm.cjs</argument>
+                <argument>run</argument>
+                <argument>build</argument>
+                <argument>--filter=@workspace/*</argument>
+              </arguments>
+              <workingDirectory>${maven.multiModuleProjectDirectory}</workingDirectory>
+              <environmentVariables>
+                <PATH>${maven.multiModuleProjectDirectory}/node:${env.PATH}</PATH>
+              </environmentVariables>
+            </configuration>
+          </execution>
+          <execution>
+            <id>pnpm run build app</id>
             <phase>generate-resources</phase>
             <goals>
               <goal>exec</goal>
