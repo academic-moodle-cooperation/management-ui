@@ -30,8 +30,9 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>${maven.multiModuleProjectDirectory}/node/node_modules/pnpm/bin/pnpm.cjs</executable>
+              <executable>${maven.multiModuleProjectDirectory}/node/node</executable>
               <arguments>
+                <argument>${maven.multiModuleProjectDirectory}/node/node_modules/pnpm/bin/pnpm.cjs</argument>
                 <argument>run</argument>
                 <argument>build</argument>
                 <argument>--filter=management-ui-upload</argument>
