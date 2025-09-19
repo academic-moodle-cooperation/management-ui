@@ -39,6 +39,9 @@
                 <argument>--filter=management-ui-core</argument>
               </arguments>
               <workingDirectory>${maven.multiModuleProjectDirectory}</workingDirectory>
+              <environmentVariables>
+                <PATH>${maven.multiModuleProjectDirectory}/node:${env.PATH}</PATH>
+              </environmentVariables>
             </configuration>
           </execution>
         </executions>
