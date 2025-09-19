@@ -143,8 +143,8 @@
           <configuration>
             <nodeVersion>v20.16.0</nodeVersion>
             <pnpmVersion>v10.4.1</pnpmVersion>
-            <workingDirectory>${project.basedir}</workingDirectory>
-            <installDirectory>${project.basedir}</installDirectory>
+            <workingDirectory>${maven.multiModuleProjectDirectory}</workingDirectory>
+            <installDirectory>${maven.multiModuleProjectDirectory}</installDirectory>
           </configuration>
         </plugin>
       </plugins>
