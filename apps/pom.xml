@@ -41,10 +41,6 @@
             <goals>
               <goal>install-node-and-pnpm</goal>
             </goals>
-            <configuration>
-              <workingDirectory>${project.basedir}/..</workingDirectory>
-              <installDirectory>${project.basedir}/..</installDirectory>
-            </configuration>
           </execution>
           <execution>
             <id>pnpm install</id>
@@ -53,9 +49,7 @@
               <goal>pnpm</goal>
             </goals>
             <configuration>
-              <arguments>install</arguments>
-              <workingDirectory>${project.basedir}/..</workingDirectory>
-              <installDirectory>${project.basedir}/..</installDirectory>
+              <arguments>install --engine-strict</arguments>
             </configuration>
           </execution>
         </executions>
