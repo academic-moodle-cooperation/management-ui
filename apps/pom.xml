@@ -42,14 +42,26 @@
               <goal>install-node-and-pnpm</goal>
             </goals>
           </execution>
+        </executions>
+        <inherited>false</inherited>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
           <execution>
             <id>pnpm install</id>
             <phase>initialize</phase>
             <goals>
-              <goal>pnpm</goal>
+              <goal>exec</goal>
             </goals>
             <configuration>
-              <arguments>install --engine-strict</arguments>
+              <executable>${maven.multiModuleProjectDirectory}/node/node_modules/pnpm/bin/pnpm.cjs</executable>
+              <arguments>
+                <argument>install</argument>
+                <argument>--engine-strict</argument>
+              </arguments>
+              <workingDirectory>${maven.multiModuleProjectDirectory}</workingDirectory>
             </configuration>
           </execution>
         </executions>
