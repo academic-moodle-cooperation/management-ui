@@ -3,6 +3,8 @@
   "extends": "./base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "composite": true,
     "declaration": true,
     "declarationMap": true,
