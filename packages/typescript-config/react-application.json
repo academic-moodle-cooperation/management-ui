@@ -1,9 +1,13 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "./react-library.json",
+  "extends": "./base.json",
   "compilerOptions": {
-    "composite": false,
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "composite": false,
     "incremental": false,
     "declaration": false,
     "declarationMap": false
