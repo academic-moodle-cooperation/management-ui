@@ -54,8 +54,18 @@ export const createShellAppViteConfig = (
     isProduction,
     plugins: [staticAssetsCopyPlugin], // Add static assets copying plugin
     resolveAliases: {
-      '@': path.resolve(invokerDir, 'src'), // Standard alias for app's src
+      '@': path.resolve(invokerDir, 'src'),
       '@monorepo-apps': appsPath,
+      // Minimal generic roots for workspace packages used in plugin code
+      '@workspace/i18n': path.resolve(monorepoRootPath, 'packages/i18n/src'),
+      '@workspace/ui/globals.css': path.resolve(monorepoRootPath, 'packages/ui/src/styles/globals.css'),
+      '@workspace/utils': path.resolve(monorepoRootPath, 'packages/utils/src'),
+      '@workspace/router': path.resolve(monorepoRootPath, 'packages/router/src'),
+      '@workspace/plugin-system': path.resolve(monorepoRootPath, 'packages/plugin-system/src'),
+      '@workspace/ui': path.resolve(monorepoRootPath, 'packages/ui/src'),
+      '@workspace/query': path.resolve(monorepoRootPath, 'packages/query/src'),
+      '@workspace/providers': path.resolve(monorepoRootPath, 'packages/providers/src'),
+      '@workspace/plugins': path.resolve(monorepoRootPath, 'plugins'),
     },
     serverOptions: {
       fs: {

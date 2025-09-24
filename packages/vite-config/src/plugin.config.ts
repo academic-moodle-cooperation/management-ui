@@ -23,7 +23,16 @@ export const createPluginAppViteConfig = (
     isProduction,
     resolveAliases: {
       '@': path.resolve(invokerDir, 'src'),
-      // Plugins might not typically need @monorepo-apps, but can be added if a specific plugin requires it.
+      // Minimal generic roots for workspace packages used in plugin code
+      '@workspace/ui/globals.css': path.resolve(monorepoRootPath, 'packages/ui/src/styles/globals.css'),
+      '@workspace/i18n': path.resolve(monorepoRootPath, 'packages/i18n/src'),
+      '@workspace/router': path.resolve(monorepoRootPath, 'packages/router/src'),
+      '@workspace/plugin-system': path.resolve(monorepoRootPath, 'packages/plugin-system/src'),
+      '@workspace/ui': path.resolve(monorepoRootPath, 'packages/ui/src'),
+      '@workspace/query': path.resolve(monorepoRootPath, 'packages/query/src'),
+      '@workspace/providers': path.resolve(monorepoRootPath, 'packages/providers/src'),
+      '@workspace/utils': path.resolve(monorepoRootPath, 'packages/utils/src'),
+      '@workspace/plugins': path.resolve(monorepoRootPath, 'plugins'),
     },
     serverOptions: {
       fs: {

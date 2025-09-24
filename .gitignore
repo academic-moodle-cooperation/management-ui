@@ -65,6 +65,9 @@ docs/archive
 # Npm
 package-lock.json
 
+# Pnpm
+.pnpm-store/*
+
 # Node
 node/
 
