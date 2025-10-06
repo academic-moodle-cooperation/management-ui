@@ -1,0 +1,19 @@
+{
+  "name": "Management UI",
+  "short_name": "Management UI",
+  "icons": [
+    {
+      "src": "/management-ui/assets/favicon/favicon.ico",
+      "sizes": "16x16 32x32",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/management-ui/assets/favicon/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}

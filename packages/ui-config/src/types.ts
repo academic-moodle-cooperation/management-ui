@@ -77,6 +77,7 @@ export interface AppConfig {
     appTitle: string;
     logoUrl?: string;
     orgLogoUrl?: string;
+    faviconUrl?: string; // URL to favicon (SVG preferred)
     organizationUrls?: {
       main: string;
       support?: string;
