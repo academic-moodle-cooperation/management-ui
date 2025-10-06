@@ -1,6 +1,7 @@
 export const config = {
   app: {
     theme: 'tuwien',
+    faviconUrl: '/management-ui/assets/favicon/favicon.svg', // TU Wien custom favicon
     pluginNamespace: [
       // Core namespaces needed for navigation
       "core",

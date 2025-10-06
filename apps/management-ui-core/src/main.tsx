@@ -34,6 +34,28 @@ const AppWithConfig = () => {
     const themeName = config.app.theme || 'default';
     document.title = `${import.meta.env.DEV ? "[DEV] " : ""}${config.app.HtmlDocumentTitle || "Management UI"}`;
 
+    // Set favicon dynamically from config
+    if (config.app.faviconUrl) {
+      // Remove existing favicon links
+      const existingFavicons = document.querySelectorAll('link[rel*="icon"]');
+      existingFavicons.forEach(link => link.remove());
+
+      // Add new favicon
+      const faviconLink = document.createElement('link');
+      faviconLink.rel = 'icon';
+      faviconLink.type = 'image/svg+xml';
+      faviconLink.href = config.app.faviconUrl;
+      document.head.appendChild(faviconLink);
+
+      // Add fallback ICO favicon if available
+      const icoUrl = config.app.faviconUrl.replace('.svg', '.ico');
+      const icoLink = document.createElement('link');
+      icoLink.rel = 'icon';
+      icoLink.type = 'image/x-icon';
+      icoLink.href = icoUrl;
+      document.head.appendChild(icoLink);
+    }
+
     const key = `../../../plugins/themes/${themeName}.css`;
     const loader = themeModules[key];
 

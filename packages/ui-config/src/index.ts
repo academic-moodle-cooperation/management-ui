@@ -15,6 +15,7 @@ export const defaultConfig: AppConfig = {
     appTitle: "",
     logoUrl: "/assets/logo.png",
     orgLogoUrl: "",
+    faviconUrl: "/management-ui/assets/favicon/favicon.svg",
     organizationUrls: {
       main: 'https://example.com',
     },
