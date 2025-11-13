@@ -2,36 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { defaultConfig, type AppConfig, type PluginNamespaceItem, getAppConfig } from '@workspace/ui-config';
 import { useRegistry } from '@workspace/plugin-system';
 import { useMemo } from 'react';
+import { deepMerge } from '@workspace/utils';
 
 const CONFIG_QUERY_KEY = ['appConfig'];
-
-// Immutable deep merge for objects (no lodash, relaxed type)
-function deepMerge(target: Record<string, any>, ...sources: Record<string, any>[]): Record<string, any> {
-  return sources.reduce((acc, source) => {
-    if (!source) return acc;
-    Object.keys(source).forEach((key) => {
-      const sourceValue = source[key];
-      const accValue = acc[key];
-      if (
-        Array.isArray(accValue) && Array.isArray(sourceValue)
-      ) {
-        acc[key] = sourceValue;
-      } else if (
-        accValue &&
-        typeof accValue === 'object' &&
-        sourceValue &&
-        typeof sourceValue === 'object' &&
-        !Array.isArray(accValue) &&
-        !Array.isArray(sourceValue)
-      ) {
-        acc[key] = deepMerge({ ...accValue }, sourceValue);
-      } else if (sourceValue !== undefined) {
-        acc[key] = sourceValue;
-      }
-    });
-    return acc;
-  }, { ...target });
-}
 
 const fetchAndMergeConfig = async (configUrl?: string): Promise<AppConfig> => {
   if (!configUrl) return { ...defaultConfig };
@@ -70,11 +43,11 @@ export function useAppConfig() {
   const configUrl = defaultConfig.productionConfigUrl || undefined;
   const isDev = import.meta.env.DEV;
 
-  // Always get plugin configs
+  // Get plugin configs (only used in dev mode)
   const { items: pluginConfigObjects } = useRegistry('app:config');
 
-  // In production, fetch and cache config, then merge in plugin configs
-  // In dev, just use defaultConfig and merge in plugin configs
+  // In production, fetch pre-merged config.json (no runtime merging needed)
+  // In dev, use defaultConfig and merge plugin configs at runtime
   const queryResult = useQuery({
     queryKey: CONFIG_QUERY_KEY,
     queryFn: () => fetchAndMergeConfig(configUrl),
@@ -83,14 +56,22 @@ export function useAppConfig() {
     staleTime: Infinity,
   });
 
-  // Always merge plugin configs last, so they can override
+  // In dev mode: merge plugin configs at runtime (same order as build)
+  // In prod mode: use pre-merged config.json as-is (no additional merging)
   const mergedConfig = useMemo(
-    () =>
-      deepMerge(
-        queryResult.data ?? { ...defaultConfig },
-        ...((pluginConfigObjects as Record<string, any>[]) || [])
-      ) as AppConfig,
-    [queryResult.data, pluginConfigObjects]
+    () => {
+      if (isDev) {
+        // Dev: Runtime merging with explicit order
+        return deepMerge(
+          queryResult.data ?? { ...defaultConfig },
+          ...((pluginConfigObjects as Record<string, any>[]) || [])
+        ) as AppConfig;
+      } else {
+        // Prod: Use pre-merged config.json directly
+        return (queryResult.data ?? { ...defaultConfig }) as AppConfig;
+      }
+    },
+    [queryResult.data, pluginConfigObjects, isDev]
   );
 
   // Emulate loading/error state logic as before

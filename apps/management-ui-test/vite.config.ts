@@ -1,12 +1,12 @@
 import { defineConfig, loadEnv } from 'vite';
-import { createShellAppViteConfig } from '@workspace/vite-config';
+import { createPluginAppViteConfig } from '@workspace/vite-config';
 
 const packageName = process.env.npm_package_name || 'management-ui-test';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
-  return createShellAppViteConfig({
+  return createPluginAppViteConfig({
     packageName,
     mode,
     env,

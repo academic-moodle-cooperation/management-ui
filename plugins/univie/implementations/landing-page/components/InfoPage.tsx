@@ -17,7 +17,7 @@ const InfoPage: FC = () => {
   const { t } = usePluginTranslation([namespace]);
 
   return (
-    <div className="h-full bg-white">
+    <div className="h-full w-full bg-white">
       <div className="relative h-full px-6 isolate sm:py-40 lg:px-8">
         {/* University of Vienna logo background */}
         <div

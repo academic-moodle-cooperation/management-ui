@@ -2,6 +2,7 @@ import React from 'react';
 import { Home } from '@workspace/ui/components/icons';
 import { cn } from "@workspace/ui/lib/utils";
 import { useAppConfig } from "@workspace/query";
+import { resolveFirstAssetUrl } from "@workspace/ui/lib";
 
 /**
  * University of Vienna Sidebar Header Logo Component
@@ -16,6 +17,11 @@ type SidebarHeaderLogoProps = {
 
 export const SidebarHeaderLogo = ({ collapsed }: SidebarHeaderLogoProps) => {
   const { config } = useAppConfig();
+
+  const preferredSrc = resolveFirstAssetUrl(
+    [config.app.orgLogoUrl, config.app.logoUrl],
+    'assets/favicon/favicon.svg'
+  );
 
   return (
     <div
@@ -40,9 +46,30 @@ export const SidebarHeaderLogo = ({ collapsed }: SidebarHeaderLogoProps) => {
               config.app.appTitle
             ) : (
               <img
-                src={config.app.logoUrl}
+                src={preferredSrc}
                 alt="Logo"
                 className="mx-auto h-10 w-auto"
+                onError={(e) => {
+                  // Fallback: if dev serves assets under /dist/, try inserting /dist/ before assets/locales
+                  try {
+                    const current = e.currentTarget.src;
+                    const url = new URL(current, window.location.origin);
+                    if (!/\/dist\/(assets|locales)\//.test(url.pathname) && /\/(assets|locales)\//.test(url.pathname)) {
+                      url.pathname = url.pathname.replace(/\/(assets|locales)\//, '/dist/$1/');
+                      const candidate = url.toString();
+                      if (candidate !== current) {
+                        e.currentTarget.src = candidate;
+                        return;
+                      }
+                    }
+                  } catch {
+                    // ignore and fall through to favicon fallback
+                  }
+                  const favicon = resolveFirstAssetUrl([], 'assets/favicon/favicon.svg');
+                  if (e.currentTarget.src !== favicon) {
+                    e.currentTarget.src = favicon;
+                  }
+                }}
               />
             )}
           </span>

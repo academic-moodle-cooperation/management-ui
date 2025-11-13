@@ -11,7 +11,7 @@ import { createLoginRoute, createLogoutRoute } from '@workspace/router';
 
 const DefaultLandingComponent = () => (
   <Suspense fallback={<AppLoader />}>
-    <Container className="flex justify-center">
+    <Container className="flex justify-center h-full w-full">
       <ComponentResolver
         componentType="appshell:landing-page"
         defaultComponent={DefaultLandingPage}
@@ -43,12 +43,12 @@ export const createCommonRoutes = (parentRoute: any) => {
   });
 
   // Create auth routes with AppLoader as the loading component
-  const loginRoute = createLoginRoute(parentRoute, { 
-    loadingComponent: AppLoader 
+  const loginRoute = createLoginRoute(parentRoute, {
+    loadingComponent: AppLoader
   });
-  
-  const logoutRoute = createLogoutRoute(parentRoute, { 
-    loadingComponent: AppLoader 
+
+  const logoutRoute = createLogoutRoute(parentRoute, {
+    loadingComponent: AppLoader
   });
 
   return {

@@ -13,9 +13,9 @@ export const defaultConfig: AppConfig = {
     locale: 'en',
     HtmlDocumentTitle: "Management UI",
     appTitle: "",
-    logoUrl: "/assets/logo.png",
+    logoUrl: "assets/default/logo.svg",
     orgLogoUrl: "",
-    faviconUrl: "/management-ui/assets/favicon/favicon.svg",
+    faviconUrl: "assets/favicon/favicon.svg",
     organizationUrls: {
       main: 'https://example.com',
     },

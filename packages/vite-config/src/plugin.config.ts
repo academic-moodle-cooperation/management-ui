@@ -19,9 +19,11 @@ export const createPluginAppViteConfig = (
 
   // For event-calendar which is at plugins/univie/apps/event-calendar/, we need to go up 4 levels
   // For other plugins at plugins/plugin-name/, we need to go up 2 levels
-  const monorepoRootPath = invokerDir.includes('/apps/')
-    ? path.resolve(invokerDir, '../../../..')
-    : path.resolve(invokerDir, '../..');
+  const isInsidePlugins = invokerDir.includes(`${path.sep}plugins${path.sep}`);
+  const isPluginApp = isInsidePlugins && invokerDir.includes(`${path.sep}apps${path.sep}`);
+  const monorepoRootPath = isPluginApp
+    ? path.resolve(invokerDir, '../../../..') // e.g., plugins/<name>/apps/<app> -> repo root
+    : path.resolve(invokerDir, '../..');      // e.g., apps/<app> or plugins/<name> -> repo root
 
   const baseConfigOptions: CreateBaseConfigOptions = {
     isProduction,
