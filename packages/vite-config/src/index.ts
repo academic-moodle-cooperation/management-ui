@@ -7,4 +7,5 @@ export {
   getPluginBasePath      // For plugins
 } from './ports.js';
 export { createShellAppViteConfig, type CreateShellAppViteConfigOptions } from './shell.config.js';
-export { createPluginAppViteConfig, type CreatePluginAppViteConfigOptions } from './plugin.config.js'; 
+export { createPluginAppViteConfig, type CreatePluginAppViteConfigOptions } from './plugin.config.js';
+export { generateConfigPlugin, type GenerateConfigPluginOptions } from './generate-config-plugin.js'; 

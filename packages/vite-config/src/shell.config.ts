@@ -1,9 +1,11 @@
 import path from 'node:path';
+import fs from 'node:fs';
 import type { UserConfig, BuildOptions, Plugin } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { createBaseConfig, type CreateBaseConfigOptions } from './base.config.js';
 import { getAppBasePath, DEFAULT_SHELL_APP_PORT } from './ports.js';
 import { createProxyConfig } from './proxy.js';
+import { generateConfigPlugin } from './generate-config-plugin.js';
 
 export interface CreateShellAppViteConfigOptions {
   packageName: string;
@@ -23,6 +25,23 @@ export const createShellAppViteConfig = (
 
 
 
+  // Discover per-plugin asset directories (e.g., plugins/<plugin>/assets/**/*)
+  const pluginsRoot = path.resolve(monorepoRootPath, 'plugins');
+  let perPluginAssetTargets: { src: string; dest: string }[] = [];
+  try {
+    const pluginEntries = fs.readdirSync(pluginsRoot, { withFileTypes: true });
+    perPluginAssetTargets = pluginEntries
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name)
+      .filter((pluginDirName) => fs.existsSync(path.resolve(pluginsRoot, pluginDirName, 'assets')))
+      .map((pluginDirName) => ({
+        src: path.resolve(pluginsRoot, pluginDirName, 'assets/**/*'),
+        dest: `assets/${pluginDirName}`,
+      }));
+  } catch {
+    // Silently ignore if plugins directory does not exist in certain environments
+  }
+
   // Create static assets copying plugin for i18n and custom assets support
   const staticAssetsCopyPlugin = viteStaticCopy({
     targets: [
@@ -41,11 +60,13 @@ export const createShellAppViteConfig = (
         src: path.resolve(monorepoRootPath, 'plugins/**/locales/**/*'),
         dest: 'locales'
       },
-      // Plugin assets
+      // Shared plugin assets (global)
       {
         src: path.resolve(monorepoRootPath, 'plugins/assets/*'),
         dest: 'assets'
-      }
+      },
+      // Per-plugin assets (encapsulated under /assets/<plugin>/...)
+      ...perPluginAssetTargets,
 
     ]
   });

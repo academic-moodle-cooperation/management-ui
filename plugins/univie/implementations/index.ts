@@ -10,6 +10,7 @@ export { univieFooterImplementation } from './footer';
 export { univieSidebarImplementation } from './sidebar';
 export { univieLandingPageImplementation } from './landing-page';
 export * from './empty-state';
+export { univieConfigPlugin } from './config';
 
 // Future University of Vienna implementations would go here:
 // export { univieHeaderImplementation } from './header';
