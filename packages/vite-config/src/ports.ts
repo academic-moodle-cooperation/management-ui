@@ -30,24 +30,40 @@ interface PluginPorts {
 
 /**
  * Gets assigned development and preview ports for a given plugin package name.
+ * Core apps get ports 3001-3004, plugin packages get ports 3005+.
  */
 export const getPluginPorts = (pluginPackageName: string): PluginPorts | undefined => {
-  const pluginIndex = KNOWN_PLUGIN_PACKAGE_NAMES.indexOf(pluginPackageName);
-  if (pluginIndex === -1) {
-    console.warn(`[vite-config] Plugin "${pluginPackageName}" not found in known plugin list for port assignment.`);
-    return undefined;
+  // Check if it's a core app first
+  const coreAppIndex = CORE_APP_NAMES.indexOf(pluginPackageName);
+  if (coreAppIndex !== -1) {
+    // Core apps get ports 3001-3004
+    const devPort = PLUGIN_DEV_PORT_START + coreAppIndex;
+    return {
+      dev: devPort,
+      preview: devPort + 100,
+    };
   }
-  const devPort = PLUGIN_DEV_PORT_START + pluginIndex;
-  return {
-    dev: devPort,
-    preview: devPort + 100, // Preview ports start 100 above their dev counterparts
-  };
+
+  // Check if it's a plugin package
+  const pluginPackages = discoverPluginPackages();
+  const pluginIndex = pluginPackages.indexOf(pluginPackageName);
+  if (pluginIndex !== -1) {
+    // Plugin packages get ports starting after core apps (3005+)
+    const devPort = PLUGIN_DEV_PORT_START + CORE_APP_NAMES.length + pluginIndex;
+    return {
+      dev: devPort,
+      preview: devPort + 100,
+    };
+  }
+
+  console.warn(`[vite-config] Plugin "${pluginPackageName}" not found in known plugin list for port assignment.`);
+  return undefined;
 };
 
 /**
  * Generates the base path for a plugin.
  * - Production/Preview: /<shell-base-path>/static/plugins/<plugin-short-name>/
- * - Development (if served standalone): /<plugin-short-name>/
+ * - Development: /<shell-base-path>/ for management-ui apps, /<plugin-short-name>/ for other plugins
  */
 export const getPluginBasePath = (
   isProduction: boolean,
@@ -61,7 +77,13 @@ export const getPluginBasePath = (
   if (isProduction) {
     return `${ensuredShellBase}static/plugins/${pluginShortName}/`;
   }
-  // Development (standalone plugin): serve from root of its port
+
+  // Development: management-ui apps should use the shell base path for consistent asset loading
+  if (pluginPackageName.startsWith('management-ui-')) {
+    return ensuredShellBase;
+  }
+
+  // Other plugins serve from root of their port
   return "/";
 };
 

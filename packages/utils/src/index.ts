@@ -130,4 +130,7 @@ export function normalizeMetadataObject(metadata: Record<string, unknown>): Reco
   });
 
   return normalized;
-} 
+}
+
+export { resolveAssetUrl, resolveFirstAssetUrl } from './assetUrl';
+export { deepMerge } from './deepMerge';

@@ -1,242 +1,95 @@
-# Plugin System - Standalone Plugin Apps
+# Plugin Assets Customization
 
-This directory contains the plugin system for the Management UI, now restructured to support standalone plugin apps with dedicated ports and independent development.
+This document explains how universities can customize their favicons and fonts through the plugin system.
 
-## New Structure
+## How It Works
 
-Each university/organization now has its own package with independent configuration:
+The build system automatically copies assets from the `plugins/assets/` directory to the final build output. This allows universities to override default assets by placing their custom files in the appropriate plugin directories.
+
+## Directory Structure
 
 ```
 plugins/
-├── core/                    # Core extension points and implementations
-│   ├── package.json        # Core plugin dependencies
-│   ├── extension-points/   # What CAN be customized
-│   ├── implementations/    # Default implementations
-│   └── apps/              # Core app plugins
-├── tuwien/                 # TU Wien specific plugins and apps
-│   ├── package.json        # TU Wien dependencies (port 3005)
-│   ├── main.tsx           # Standalone entry point
-│   ├── index.html         # HTML template
-│   ├── vite.config.ts     # Vite configuration
-│   ├── tsconfig.json      # TypeScript configuration
-│   ├── implementations/   # TU Wien specific implementations
-│   └── apps/              # TU Wien custom apps
-├── univie/                 # University of Vienna plugins
-│   ├── package.json        # Univie dependencies (port 3006)
-│   └── implementations/   # Univie specific implementations
-└── example-university/     # Example implementations
-    ├── package.json        # Example dependencies (port 3007)
-    └── implementations/   # Example implementations
+├── assets/                    # Default/fallback assets
+│   ├── favicon/
+│   │   ├── favicon.svg
+│   │   ├── favicon.ico
+│   │   └── site.webmanifest
+│   └── fonts/
+│       └── roboto/
+│           ├── roboto-v20-latin-100.woff
+│           ├── roboto-v20-latin-100.woff2
+│           └── ... (other font files)
+├── tuwien/                    # TU Wien plugin
+│   └── assets/
+│       ├── favicon/
+│       │   └── favicon.svg    # TU Wien custom favicon
+│       └── fonts/
+│           └── custom-fonts/ # TU Wien custom fonts
+└── univie/                    # University of Vienna plugin
+    └── assets/
+        ├── favicon/
+        │   └── favicon.svg    # UniVie custom favicon
+        └── fonts/
+            └── custom-fonts/  # UniVie custom fonts
 ```
 
-## Standalone Plugin Apps
+## Customizing Favicons
 
-### TU Wien Custom App
+To customize favicons for a specific university:
 
-The TU Wien plugin demonstrates how to create standalone plugin apps:
+1. Create the favicon files in your plugin's `assets/favicon/` directory:
+   - `favicon.svg` - Modern SVG favicon
+   - `favicon.ico` - Fallback for older browsers
+   - `site.webmanifest` - Web app manifest
 
-**Features:**
-- ✅ **Dual Execution**: Runs in core shell or standalone
-- ✅ **Dedicated Port**: Port 3005 for standalone development
-- ✅ **Full Provider Context**: Router, auth, plugins, query client
-- ✅ **Independent Development**: Can be developed without loading core shell
+2. The build system will automatically use these files instead of the default ones.
 
-**Development:**
-```bash
-cd plugins/tuwien
-pnpm dev          # Runs on http://127.0.0.1:3005
-pnpm build        # Build for production
-pnpm preview      # Preview on http://127.0.0.1:3105
-```
+## Customizing Fonts
 
-**Core Shell Integration:**
-The app automatically appears in the core shell navigation at `/tuwien-custom` when the TU Wien plugin is loaded.
+To customize fonts for a specific university:
 
-### Port Assignment
+1. Place your custom font files in your plugin's `assets/fonts/` directory
+2. Update your CSS to reference the fonts using the `/management-ui/assets/fonts/` path
+3. The build system will copy your custom fonts to the build output
 
-Each plugin package gets its own dedicated port through dynamic discovery. The port assignment system automatically scans the plugins directory and assigns ports based on package.json files:
-
-| Plugin | Development Port | Preview Port | Base URL |
-|--------|------------------|--------------|----------|
-| Core Shell | 3000 | 3090 | `/management-ui/` |
-| **Core Apps (Dynamically Assigned)** | | | |
-| Series App | 3001 | 3101 | `/series` |
-| Episodes App | 3002 | 3102 | `/episodes` |
-| Upload App | 3003 | 3103 | `/upload` |
-| Test App | 3004 | 3104 | `/test` |
-| **Plugin Apps (Dynamically Discovered)** | | | |
-| **TU Wien Plugin** | **3005** | **3105** | `/tuwien-custom` |
-| **Univie Plugin** | **3006** | **3106** | `/univie-custom` |
-| **Example Plugin** | **3007** | **3107** | `/example-custom` |
-
-Ports are automatically assigned by scanning the `plugins/` directory and reading each package's `package.json` file. New plugins are automatically discovered and assigned the next available port.
-
-## Creating New Plugin Apps
-
-### 1. Create Plugin Package Structure
+## Example: TU Wien Customization
 
 ```bash
-mkdir plugins/my-university
-cd plugins/my-university
+# Create TU Wien custom favicon
+mkdir -p plugins/tuwien/assets/favicon/
+# Add your custom favicon.svg, favicon.ico, and site.webmanifest
+
+# Create TU Wien custom fonts
+mkdir -p plugins/tuwien/assets/fonts/custom-fonts/
+# Add your custom font files
 ```
 
-### 2. Create Package Configuration
+## Build Process
 
-```json
-// plugins/my-university/package.json
+The `viteStaticCopy` plugin in `packages/vite-config/src/shell.config.ts` handles copying assets:
+
+```typescript
 {
-  "name": "@workspace/plugin-my-university",
-  "version": "1.0.0",
-  "type": "module",
-  "private": true,
-  "scripts": {
-    "dev": "vite --port 3008",
-    "build": "vite build",
-    "preview": "vite preview --port 3108"
-  },
-  "dependencies": {
-    "@workspace/plugin-system": "workspace:*",
-    "@workspace/ui": "workspace:*",
-    "@workspace/app-runtime": "workspace:*",
-    "@workspace/router": "workspace:*",
-    "@workspace/query": "workspace:*",
-    "@workspace/i18n": "workspace:*",
-    "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
-  },
-  "devDependencies": {
-    "@workspace/vite-config": "workspace:*",
-    "@vitejs/plugin-react": "^4.2.0",
-    "vite": "^6.3.5",
-    "typescript": "~5.5.4"
-  }
+  src: path.resolve(monorepoRootPath, 'plugins/assets/*'),
+  dest: 'assets'
 }
 ```
 
-### 3. Create Standalone Entry Point
+This copies all files from `plugins/assets/` to the build output's `assets/` directory.
 
-```typescript
-// plugins/my-university/main.tsx
-import React from 'react';
-import { bootstrapStandaloneApp } from '@workspace/app-runtime';
-import { MyUniversityApp } from './apps/MyUniversityApp';
+## Accessing Assets
 
-const config = {
-  baseUrl: "/my-university",
-  appName: "plugin-my-university",
-};
+In your application, reference assets using the base path:
 
-bootstrapStandaloneApp(MyUniversityApp, "root", config);
-```
+- Favicons: `/management-ui/assets/favicon/favicon.svg`
+- Fonts: `/management-ui/assets/fonts/roboto/roboto-v20-latin-regular.woff2`
 
-### 4. Create App Component
+## Priority Order
 
-```typescript
-// plugins/my-university/apps/MyUniversityApp.tsx
-import React from 'react';
-import { AdaptiveAppWrapper } from '@workspace/app-runtime';
-import { Container } from '@workspace/ui/components';
+The system uses the following priority order for assets:
 
-export const MyUniversityApp: React.FC = () => {
-  return (
-    <AdaptiveAppWrapper>
-      <Container className="p-6">
-        <h1>My University Custom App</h1>
-        {/* Your app content */}
-      </Container>
-    </AdaptiveAppWrapper>
-  );
-};
-```
+1. Plugin-specific assets (e.g., `plugins/tuwien/assets/`)
+2. Default plugin assets (e.g., `plugins/assets/`)
 
-### 5. Create Plugin Registration
-
-```typescript
-// plugins/my-university/apps/my-university-plugin.ts
-import { createPlugin } from '@workspace/plugin-system';
-import { MyUniversityApp } from './MyUniversityApp';
-
-export const myUniversityAppPlugin = createPlugin({
-  namespace: 'myuniversity',
-  type: 'app',
-  version: '1.0.0',
-  
-  initialize(manager) {
-    manager.registerObject('apps:definitions', 'my-university-app', {
-      id: 'my-university-app',
-      name: 'My University App',
-      routePath: '/my-university',
-      component: MyUniversityApp,
-      navigation: {
-        title: 'My University',
-        icon: 'building',
-        order: 200,
-        permissions: ['access_my_university']
-      }
-    });
-  }
-});
-```
-
-### 6. Update Port Configuration
-
-Ports are now automatically discovered - you don't need to manually update any configuration files. The system will:
-
-1. Scan the `plugins/` directory for subdirectories
-2. Read each `package.json` file to get the actual package name
-3. Automatically assign the next available port starting from 3005 (after core apps)
-
-The dynamic discovery system handles port assignment automatically, so simply creating your plugin package is sufficient.
-
-## Benefits of New Structure
-
-### ✅ **Independent Development**
-- Each university can develop their plugins independently
-- No interference between different university implementations
-- Dedicated ports prevent conflicts
-
-### ✅ **Proper Package Management**
-- Each plugin has its own `package.json` and dependencies
-- Workspace dependencies work correctly
-- Proper TypeScript configuration per plugin
-
-### ✅ **Standalone Execution**
-- Plugin apps can run independently with `pnpm dev`
-- Full provider context (router, auth, plugins, query)
-- Same functionality as core apps
-
-### ✅ **Core Shell Integration**
-- Plugin apps automatically appear in core shell navigation
-- Seamless integration with existing architecture
-- No changes needed to core system
-
-### ✅ **Scalability**
-- Easy to add new universities
-- Clear separation of concerns
-- Maintainable codebase
-
-## Migration from Old Structure
-
-The plugin system has been restructured to provide independent plugin packages with dedicated ports and standalone execution capabilities. Each university now has its own package with proper dependency management and development workflow.
-
-## Development Workflow
-
-### For Plugin Developers
-
-1. **Standalone Development**: Develop and test your plugin app independently
-2. **Core Integration**: Test integration with core shell
-3. **Deployment**: Deploy as standalone app or integrated with core
-
-### For Core Developers
-
-1. **Plugin Discovery**: Plugins are automatically discovered and loaded
-2. **Navigation**: Plugin apps appear in navigation automatically
-3. **Testing**: Test plugin integration in core shell
-
-## Examples
-
-- **TU Wien**: Complete example with standalone app at http://127.0.0.1:3005
-- **University of Vienna**: Basic plugin structure
-- **Example University**: Reference implementations for learning
-
-This new structure provides the flexibility and independence needed for university-specific customizations while maintaining the benefits of the shared plugin architecture. 
+This allows for both university-specific customizations and fallback to default assets.
