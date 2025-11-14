@@ -19,13 +19,13 @@ export const useAuthActions = (): AuthActions => {
   const login = useCallback((redirectTo?: string) => {
     // Use standardized /login route instead of direct config URLs
     const redirect = redirectTo || window.location.pathname;
-    const loginUrl = `/login?redirect=${encodeURIComponent(redirect)}`;
+    const loginUrl = `login?redirect=${encodeURIComponent(redirect)}`;
     window.location.href = loginUrl;
   }, []);
 
   const logout = useCallback(() => {
     // Use standardized /logout route instead of direct config URLs
-    window.location.href = '/logout';
+    window.location.href = 'logout';
   }, []);
 
   return {
