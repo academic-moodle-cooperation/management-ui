@@ -66,10 +66,6 @@
       <groupId>org.opencastproject</groupId>
       <artifactId>opencast-common</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.entwinemedia.common</groupId>
-      <artifactId>functional</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>org.opencastproject</groupId>
