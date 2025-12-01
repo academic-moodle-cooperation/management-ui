@@ -19,6 +19,7 @@ import { MobileCloseButton } from "./mobile-closebutton"
 interface SidebarConfig {
   title: string;
   path: string;
+  target?: string;
   icon: LucideIcon;
   order?: number;
   permissions?: string[];
@@ -45,6 +46,8 @@ const useSidebarItems = () => {
       title: config.title,
       url: config.path,
       icon: config.icon,
+      isExternal: config.path?.startsWith('http://') || config.path?.startsWith('https://'),
+      target: config.target,
     }));
   }, [sidebarNavItems]);
 };

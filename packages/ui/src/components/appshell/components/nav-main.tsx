@@ -30,6 +30,8 @@ export type NavMainProps = {
     url: string
     icon?: LucideIcon
     isActive?: boolean
+    isExternal?: boolean
+    target?: string
     items?: {
       title: string
       url: string
@@ -93,28 +95,44 @@ export function NavMain({
                   </CollapsibleContent>
                 </>
                 :
-                <Link to={item.url} activeOptions={{
-                  exact: item.url === "/" ? true : false,
-                }}>
-                  {({ isActive }) => (
-                    <SidebarMenuButton
-                      tooltip={item.title}
-                      isActive={isActive}
-                      className={cn(
-                        "hover:bg-sidebar-accent hover:text-sidebar-accent-forground",
-                        (isActive && !open) ? "outline-1 outline-primary outline-offset-0" : "",
-                        customItemStyles,
-                        customActiveStyles
-                      )}
-                    >
-                      <>
-                        {renderActiveIndicator(isActive, !!open)}
-                        {renderItemIcon(item.icon)}
-                        <span>{item.title}</span>
-                      </>
-                    </SidebarMenuButton>
-                  )}
-                </Link>
+                item.isExternal ? (
+                  <SidebarMenuButton
+                    asChild
+                    tooltip={item.title}
+                    className={cn(
+                      "hover:bg-sidebar-accent hover:text-sidebar-accent-forground",
+                      customItemStyles
+                    )}
+                  >
+                    <a href={item.url} target={item.target || '_blank'} rel="noopener noreferrer">
+                      {renderItemIcon(item.icon)}
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                ) : (
+                  <Link to={item.url} activeOptions={{
+                    exact: item.url === "/" ? true : false,
+                  }}>
+                    {({ isActive }) => (
+                      <SidebarMenuButton
+                        tooltip={item.title}
+                        isActive={isActive}
+                        className={cn(
+                          "hover:bg-sidebar-accent hover:text-sidebar-accent-forground",
+                          (isActive && !open) ? "outline-1 outline-primary outline-offset-0" : "",
+                          customItemStyles,
+                          customActiveStyles
+                        )}
+                      >
+                        <>
+                          {renderActiveIndicator(isActive, !!open)}
+                          {renderItemIcon(item.icon)}
+                          <span>{item.title}</span>
+                        </>
+                      </SidebarMenuButton>
+                    )}
+                  </Link>
+                )
               }
             </SidebarMenuItem>
           </Collapsible>
