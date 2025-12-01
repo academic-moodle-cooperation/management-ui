@@ -1,16 +1,24 @@
 import type { AppConfig } from '@workspace/ui-config';
+import { defaultConfig } from '@workspace/ui-config';
 
 let configPromise: Promise<AppConfig> | null = null;
 
 /**
- * Fetches the application configuration from "/ui/config/management-ui/config.json".
+ * Fetches the application configuration from the configured productionConfigUrl.
  * Caches the promise of the fetch request, so subsequent calls return the cached data/promise
  * without re-fetching.
  * If a fetch fails, the cache is cleared to allow for retries on subsequent calls.
  */
 export const getCachedAppConfig = (): Promise<AppConfig> => {
   if (!configPromise) {
-    configPromise = fetch("/ui/config/management-ui/config.json")
+    // Use productionConfigUrl from defaultConfig directly
+    // Note: Config is served by OSGi at a different path than regular assets
+    // (e.g., /ui/config/... instead of /management-ui/assets/...)
+    // so we DON'T use resolveAssetUrl here
+    const configUrl = defaultConfig.productionConfigUrl.startsWith('/')
+      ? defaultConfig.productionConfigUrl
+      : `/${defaultConfig.productionConfigUrl}`;
+    configPromise = fetch(configUrl)
       .then((res) => {
         if (!res.ok) {
           // Reset promise on error so retries are possible

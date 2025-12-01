@@ -2,13 +2,17 @@ import { useQuery } from '@tanstack/react-query';
 import { defaultConfig, type AppConfig, type PluginNamespaceItem, getAppConfig } from '@workspace/ui-config';
 import { useRegistry } from '@workspace/plugin-system';
 import { useMemo } from 'react';
-import { deepMerge } from '@workspace/utils';
+import { deepMerge, resolveAssetUrl } from '@workspace/utils';
 
 const CONFIG_QUERY_KEY = ['appConfig'];
 
 const fetchAndMergeConfig = async (configUrl?: string): Promise<AppConfig> => {
   if (!configUrl) return { ...defaultConfig };
-  const response = await fetch(configUrl);
+  // Note: Config is served by OSGi at a different path than regular assets
+  // (e.g., /ui/config/... instead of /management-ui/assets/...)
+  // so we DON'T use resolveAssetUrl here - use the URL as-is
+  const resolvedUrl = configUrl.startsWith('/') ? configUrl : `/${configUrl}`;
+  const response = await fetch(resolvedUrl);
   if (!response.ok) throw new Error(`Failed to fetch config: ${response.statusText}`);
   const customConfig = await response.json();
   return getAppConfig(customConfig);
