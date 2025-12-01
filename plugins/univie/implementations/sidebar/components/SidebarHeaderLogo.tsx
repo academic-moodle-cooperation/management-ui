@@ -50,25 +50,15 @@ export const SidebarHeaderLogo = ({ collapsed }: SidebarHeaderLogoProps) => {
                 alt="Logo"
                 className="mx-auto h-10 w-auto"
                 onError={(e) => {
-                  // Fallback: if dev serves assets under /dist/, try inserting /dist/ before assets/locales
-                  try {
-                    const current = e.currentTarget.src;
-                    const url = new URL(current, window.location.origin);
-                    if (!/\/dist\/(assets|locales)\//.test(url.pathname) && /\/(assets|locales)\//.test(url.pathname)) {
-                      url.pathname = url.pathname.replace(/\/(assets|locales)\//, '/dist/$1/');
-                      const candidate = url.toString();
-                      if (candidate !== current) {
-                        e.currentTarget.src = candidate;
-                        return;
-                      }
-                    }
-                  } catch {
-                    // ignore and fall through to favicon fallback
+                  // Prevent infinite loop by tracking if we've already tried fallback
+                  if (e.currentTarget.dataset.errorHandled === 'true') {
+                    return; // Already tried fallback, don't retry
                   }
+                  e.currentTarget.dataset.errorHandled = 'true';
+                  
+                  // Try favicon as fallback
                   const favicon = resolveFirstAssetUrl([], 'assets/favicon/favicon.svg');
-                  if (e.currentTarget.src !== favicon) {
-                    e.currentTarget.src = favicon;
-                  }
+                  e.currentTarget.src = favicon;
                 }}
               />
             )}

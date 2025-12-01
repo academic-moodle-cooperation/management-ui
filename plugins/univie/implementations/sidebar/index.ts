@@ -4,6 +4,7 @@ import { CustomNavMain } from './components/CustomNavMain';
 import { SidebarHeaderLogo } from './components/SidebarHeaderLogo';
 import { SidebarFooter } from './components/SidebarFooter';
 import React from 'react';
+import { Video } from '@workspace/ui/components/icons';
 
 /**
  * University of Vienna Custom Sidebar Implementation Plugin
@@ -72,4 +73,43 @@ export const univieSidebarImplementation = createPlugin({
   deactivate() {
 
   }
-}); 
+});
+
+export const studioUnivieNavImplementation = createPlugin({
+  namespace: 'univie',
+  type: 'navigation',
+  version: '1.0.0',
+
+  initialize(manager: PluginManager) {
+    // Get all config objects from the plugin manager and merge them
+    const configObjects = manager.getObjects<any>('app:config');
+
+    // Merge all configs (similar to how PluginInitializer does it)
+    const mergedConfig = configObjects.reduce((acc: any, obj: any) => {
+      return { ...acc, ...obj };
+    }, {});
+
+    // Get Studio URL from merged config
+    const studioUrl = mergedConfig?.app?.studioUrl || mergedConfig?.studioUrl || '/studio';
+
+    // Register a plain object (not a React component)
+    manager.registerObject('sidebar:nav-items', 'studio', {
+      title: 'Studio',
+      path: studioUrl,
+      target: '_blank',
+      icon: Video,
+      order: 50,
+      permissions: [],
+      featureFlags: [],
+      category: 'studio'
+    });
+  },
+
+  activate() {
+    console.log('[univie:navigation] Plugin activated');
+  },
+
+  deactivate() {
+    console.log('[univie:navigation] Plugin deactivated');
+  }
+});
