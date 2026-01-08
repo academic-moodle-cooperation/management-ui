@@ -2,10 +2,23 @@ import React from "react";
 import { NavMain, NavMainProps } from "@workspace/ui/components/appshell/components/nav-main";
 import { LucideIcon } from "@workspace/ui/components/icons";
 import { cn } from "@workspace/ui/lib/utils";
-
-
+import { usePluginTranslation, createOrganizationNamespace } from "@workspace/i18n";
 
 export const CustomNavMain = (props: NavMainProps) => {
+  const namespace = createOrganizationNamespace('univie', 'sidebar');
+  const { t } = usePluginTranslation([namespace]);
+
+  // Translate titles that are i18n keys (starting with namespace prefix)
+  const translatedItems = React.useMemo(() => {
+    return props.items?.map(item => {
+      // Check if title is an i18n key (format: "namespace:key")
+      if (item.title.includes(':')) {
+        const translatedTitle = t(item.title) || item.title;
+        return { ...item, title: translatedTitle };
+      }
+      return item;
+    }) || [];
+  }, [props.items, t]);
 
   return (
     <NavMain
@@ -22,7 +35,9 @@ export const CustomNavMain = (props: NavMainProps) => {
         (isActive && open) && <div className="absolute inset-y-0 left-0 w-2 bg-primary " />
       )}
       customActiveStyles={"data-[active=true]:bg-sidebar-primary"}
-      {...props} />
+      {...props}
+      items={translatedItems}
+    />
   );
 };
 
