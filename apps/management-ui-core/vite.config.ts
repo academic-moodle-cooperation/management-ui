@@ -1,3 +1,4 @@
+import path from 'node:path'
 import { defineConfig, loadEnv } from 'vite'
 import { createShellAppViteConfig, generateConfigPlugin } from '@workspace/vite-config'
 import { defaultConfig } from '../../packages/ui-config/src/index'
@@ -27,7 +28,9 @@ const PLUGIN_CONFIGS = [
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '') // Load all env variables
+  // Calculate monorepo root path (two levels up from apps/management-ui-core)
+  const monorepoRootPath = path.resolve(__dirname, '../..');
+  const env = loadEnv(mode, monorepoRootPath, '') // Load all env variables from monorepo root
 
   const baseConfig = createShellAppViteConfig({
     packageName,

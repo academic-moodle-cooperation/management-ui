@@ -1,6 +1,8 @@
 import React, { type FC } from 'react';
 import { createOrganizationNamespace, usePluginTranslation } from '@workspace/i18n';
 import { useGetCurrentUser, useAppConfig } from '@workspace/query';
+import { useAuthActions } from '@workspace/router';
+import { Button } from '@workspace/ui/components';
 // Import the SVG as a URL
 import univieLogoUrl from './assets/univie_logo.svg?url';
 
@@ -12,6 +14,7 @@ import univieLogoUrl from './assets/univie_logo.svg?url';
 const InfoPage: FC = () => {
   const { data } = useGetCurrentUser();
   const { config } = useAppConfig();
+  const { login } = useAuthActions();
   const namespace = createOrganizationNamespace('univie', 'landing-page');
 
   const { t } = usePluginTranslation([namespace]);
@@ -21,13 +24,13 @@ const InfoPage: FC = () => {
       <div className="relative h-full px-6 isolate sm:py-40 lg:px-8">
         {/* University of Vienna logo background */}
         <div
-          className="absolute inset-0 object-cover w-full z-100 bg-no-repeat h-full bg-[right_-12rem_bottom_-12rem] opacity-50"
+          className="absolute inset-0 object-cover w-full z-100 bg-no-repeat h-full bg-[right_-12rem_bottom_-12rem] opacity-50 pointer-events-none"
           style={{
             backgroundImage: `url(${univieLogoUrl})`
           }}
         />
 
-        <div className="absolute inset-0 bg-white [mask-image:radial-gradient(150%_250%_at_top_left,white,transparent)]" />
+        <div className="absolute inset-0 bg-white [mask-image:radial-gradient(150%_250%_at_top_left,white,transparent)] pointer-events-none" />
 
         <div
           className="absolute inset-x-0 flex justify-center overflow-hidden top-10 -z-10 transform-gpu blur-3xl"
@@ -41,7 +44,7 @@ const InfoPage: FC = () => {
             }}
           />
         </div>
-        <div className="relative flex flex-col max-w-3xl mx-auto text-center gap-y-6">
+        <div className="relative z-10 flex flex-col max-w-3xl mx-auto text-center gap-y-6">
           <h1 className="inline mt-10 text-4xl font-bold tracking-tight text-sky-700 sm:text-6xl font-display">
             {t(`${namespace}:heading1`)} {t(`${namespace}:heading2`)}
           </h1>
@@ -49,12 +52,13 @@ const InfoPage: FC = () => {
           <p className="mt-6 text-lg leading-8 text-black">{t(`${namespace}:text`)}</p>
           <div className="flex items-center justify-center mt-10 gap-x-6">
             {data?.currentUser.username === "anonymous" && (
-              <a
-                href="/login"
-                className="rounded-md bg-sky-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-sky-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              <Button
+                type="button"
+                onClick={() => login()}
+                className="bg-sky-700 hover:bg-sky-600 text-white"
               >
                 Login
-              </a>
+              </Button>
             )}
 
             <div className="hidden sm:flex sm:justify-center">

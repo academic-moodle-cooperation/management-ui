@@ -1102,12 +1102,18 @@ importers:
       '@workspace/app-runtime':
         specifier: workspace:*
         version: link:../../packages/app-runtime
+      '@workspace/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
       '@workspace/plugin-system':
         specifier: workspace:*
         version: link:../../packages/plugin-system
       '@workspace/query':
         specifier: workspace:*
         version: link:../../packages/query
+      '@workspace/router':
+        specifier: workspace:*
+        version: link:../../packages/router
       '@workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
