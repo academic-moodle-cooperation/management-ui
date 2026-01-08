@@ -3,6 +3,7 @@ export const config = {
     theme: 'univie',
     orgLogoUrl: 'assets/univie/logo.png',
     studioUrl: 'https://admin.oc.univie.ac.at/studio',
+    captureUrl: 'https://admin.oc.univie.ac.at/capture-ui',
     pluginNamespace: [
       'core',
       'episodes',

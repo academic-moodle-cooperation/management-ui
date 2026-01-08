@@ -20,6 +20,7 @@ export {
   Bell,
   MonitorPlay,
   Video,
+  ExternalLink,
   type LucideIcon
 } from 'lucide-react';
 

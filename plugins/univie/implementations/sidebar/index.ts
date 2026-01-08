@@ -4,7 +4,7 @@ import { CustomNavMain } from './components/CustomNavMain';
 import { SidebarHeaderLogo } from './components/SidebarHeaderLogo';
 import { SidebarFooter } from './components/SidebarFooter';
 import React from 'react';
-import { Video } from '@workspace/ui/components/icons';
+import { Video, ExternalLink } from '@workspace/ui/components/icons';
 
 /**
  * University of Vienna Custom Sidebar Implementation Plugin
@@ -111,5 +111,45 @@ export const studioUnivieNavImplementation = createPlugin({
 
   deactivate() {
     console.log('[univie:navigation] Plugin deactivated');
+  }
+});
+
+export const captureUnivieNavImplementation = createPlugin({
+  namespace: 'univie',
+  type: 'navigation',
+  version: '1.0.0',
+
+  initialize(manager: PluginManager) {
+    // Get all config objects from the plugin manager and merge them
+    const configObjects = manager.getObjects<any>('app:config');
+
+    // Merge all configs (similar to how PluginInitializer does it)
+    const mergedConfig = configObjects.reduce((acc: any, obj: any) => {
+      return { ...acc, ...obj };
+    }, {});
+
+    // Get Capture URL from merged config
+    const captureUrl = mergedConfig?.app?.captureUrl || mergedConfig?.captureUrl || '/capture';
+
+    // Register a plain object (not a React component)
+    // Title will be translated in CustomNavMain component
+    manager.registerObject('sidebar:nav-items', 'capture', {
+      title: 'univie-sidebar:capture', // i18n key
+      path: captureUrl,
+      target: '_blank',
+      icon: ExternalLink,
+      order: 51,
+      permissions: [],
+      featureFlags: [],
+      category: 'capture'
+    });
+  },
+
+  activate() {
+    console.log('[univie:navigation:capture] Plugin activated');
+  },
+
+  deactivate() {
+    console.log('[univie:navigation:capture] Plugin deactivated');
   }
 });
