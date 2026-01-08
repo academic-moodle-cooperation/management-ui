@@ -195,6 +195,26 @@ export const createColumns = (refetch: () => void, layout: 'list' | 'gallery' = 
         translatedTitle: "episodesTable.heading.presenters",
       },
     }),
+    columnHelper.accessor("location", {
+      header: ({ column }: { column: Column<EventsDataFragment> }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={i18next.t("episodes:episodesTable.heading.location")}
+        />
+      ),
+      cell: (data) => {
+        return (
+          <div className="flex space-x-2">
+            <OverflowTooltip className="max-w-[200px] truncate">
+              {data.getValue() as string || ''}
+            </OverflowTooltip>
+          </div>
+        );
+      },
+      meta: {
+        translatedTitle: "episodesTable.heading.location",
+      },
+    }),
     columnHelper.accessor(
       (row) => row.muiEventInfo?.isPublic, {
       id: "isPublic",
