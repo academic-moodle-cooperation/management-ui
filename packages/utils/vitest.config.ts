@@ -4,7 +4,7 @@ import path from "path";
 export default defineConfig({
   test: {
     globals: true,
-    environment: "node",
+    environment: "jsdom", // Use jsdom for browser API testing
     setupFiles: ["../../vitest.setup.ts"],
     include: ["**/*.test.ts", "**/*.test.tsx"],
   },
