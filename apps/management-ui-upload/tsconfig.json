@@ -3,7 +3,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@workspace/utils": ["../../packages/utils/src/index.ts"],
+      "@workspace/utils/*": ["../../packages/utils/src/*"],
+      "@workspace/app-runtime": ["../../packages/app-runtime/src/index.ts"],
+      "@workspace/app-runtime/*": ["../../packages/app-runtime/src/*"]
     }
   },
   "include": ["src", "vite-env.d.ts", "vite.config.ts", "tailwind.config.js", "postcss.config.mjs"],
