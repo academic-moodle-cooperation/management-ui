@@ -85,8 +85,8 @@ export const copyText = async (text: string) => {
   });
 };
 
-export { resolveAssetUrl, resolveFirstAssetUrl } from "./assetUrl";
-export { deepMerge } from "./deepMerge";
-export { logger, Logger } from "./logger";
-export type { LogLevel, LogContext } from "./logger";
-export { normalizeMetadataValue, normalizeMetadataObject } from "./normalizeMetadata";
+export { resolveAssetUrl, resolveFirstAssetUrl } from "./assetUrl.js";
+export { deepMerge } from "./deepMerge.js";
+export { logger, Logger } from "./logger.js";
+export type { LogLevel, LogContext } from "./logger.js";
+export { normalizeMetadataValue, normalizeMetadataObject } from "./normalizeMetadata.js";

@@ -1,6 +1,7 @@
 import type { Plugin } from "vite";
 import fs from "fs";
 import path from "path";
+import { logger } from "@workspace/utils";
 
 export interface GenerateConfigPluginOptions {
   /** Path to output the config.json file (relative to outDir) */

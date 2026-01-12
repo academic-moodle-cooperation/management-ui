@@ -16,11 +16,23 @@ class Logger {
   private isDevelopment: boolean;
 
   constructor() {
-    this.isDevelopment =
+    // Check Node.js environment first (for build-time packages like vite-config)
+    const nodeEnv =
       typeof process !== "undefined" &&
-      (process.env.NODE_ENV === "development" ||
-        process.env.DEV === "true" ||
-        import.meta.env?.DEV === true);
+      (process.env.NODE_ENV === "development" || process.env.DEV === "true");
+
+    // Check Vite environment (for runtime packages)
+    let viteEnv = false;
+    try {
+      // Use type assertion to avoid TypeScript errors in Node.js environments
+      const meta = import.meta as { env?: { DEV?: boolean } };
+      viteEnv = meta.env?.DEV === true;
+    } catch {
+      // import.meta.env not available (e.g., in Node.js build context)
+      viteEnv = false;
+    }
+
+    this.isDevelopment = nodeEnv || viteEnv;
   }
 
   /**
