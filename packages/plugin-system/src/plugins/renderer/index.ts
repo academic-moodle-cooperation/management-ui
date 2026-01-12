@@ -1,5 +1,6 @@
 import { Plugin } from "../../IPlugin";
 import { RendererComponent } from "./types";
+import { logger } from "@workspace/utils";
 
 export const createRendererPlugin = (): Plugin => {
   const components = new Map<string, RendererComponent[]>();
@@ -26,15 +27,17 @@ export const createRendererPlugin = (): Plugin => {
               );
               if (topComponents.length > 1 && position.startsWith("component-override:")) {
                 const keys = topComponents.map((c) => c.key).join(", ");
-                console.warn(
-                  `[plugin-system][renderer] Multiple components registered with the same priority (order ${minOrder}) for "${position}". The first registered will be used. Conflicting keys: ${keys}`
+                logger.warn(
+                  `[plugin-system][renderer] Multiple components registered with the same priority (order ${minOrder}) for "${position}". The first registered will be used. Conflicting keys: ${keys}`,
+                  { position, minOrder, keys: topComponents.map((c) => c.key) }
                 );
               }
             }
           } catch (e) {
-            console.error(
-              "[plugin-system][renderer] Failed to evaluate component priorities for warning:",
-              e
+            logger.error(
+              "[plugin-system][renderer] Failed to evaluate component priorities for warning",
+              e instanceof Error ? e : new Error(String(e)),
+              { position }
             );
           }
           manager.dispatchEvent("renderer.componentUpdated", { position });
