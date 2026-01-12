@@ -31,6 +31,20 @@ The shadcn configuration is in `packages/ui/components.json`.
 
 **DO edit `components.json`** if you need to change shadcn settings, but **DO NOT edit** the component files in this folder.
 
+## Referenced Files/Folders in `components.json`
+
+The aliases in `components.json` reference these paths:
+
+| Alias | Path | Auto-Generated? | Notes |
+|-------|------|-----------------|-------|
+| `ui` | `@workspace/ui/components/ui` | ✅ **YES** | Component files in this folder are auto-generated |
+| `utils` | `@workspace/ui/lib/utils` | ❌ **NO** | Must exist manually - contains `cn()` function |
+| `hooks` | `@workspace/ui/hooks` | ❌ **NO** | Manual hooks (not shadcn-generated) |
+| `lib` | `@workspace/ui/lib` | ❌ **NO** | Manual utility library |
+| `components` | `@workspace/ui/components` | ❌ **NO** | Parent folder (contains both auto-generated `ui/` and manual components) |
+
+**Key Point:** Only the `ui` alias points to auto-generated files. All other aliases reference manually maintained code that shadcn components will import from.
+
 ## Adding New Components
 
 To add a new shadcn component:
