@@ -16,6 +16,7 @@ import { createColumns } from "../columns";
 import { useEpisodesTable } from "../hooks";
 import { EpisodesTableSidebar } from "./EpisodesTableSidebar";
 import { useSidebarStore } from "../stores/sidebarStore";
+import { logger } from "@workspace/utils";
 
 interface EpisodesTableProps {
   seriesId?: string;
@@ -111,7 +112,11 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
             setEpisodesUpdateData(formattedData);
           }
         } catch (error) {
-          console.error("Error formatting episodes data:", error);
+          logger.error(
+            "Error formatting episodes data",
+            error instanceof Error ? error : new Error(String(error)),
+            { selectedId, isEditing }
+          );
         }
       }
     }
@@ -131,7 +136,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   // Modified row click handler to pass inputFields directly
   const handleRowClick = useCallback(
     (event: React.MouseEvent, row: Row<EventsDataFragment>) => {
-      console.log("EpisodesTable - Row clicked, row data:", row.original);
+      logger.debug("EpisodesTable - Row clicked", { rowId: row.original.id, seriesId });
 
       // Reset edit state when clicking on a different row
       if (isEditing && selectedId !== row.original.id) {

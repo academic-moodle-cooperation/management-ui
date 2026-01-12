@@ -35,6 +35,7 @@ import { useAppConfig } from "@workspace/query";
 import { usePluginManager, ComponentResolver } from "@workspace/plugin-system";
 import { uploadExtensionPoints, tuwienUploadAclEditorImplementation } from "@workspace/plugins";
 import { EmptyState } from "./components/EmptyState";
+import { logger } from "@workspace/utils";
 
 export const App = () => {
   const [fileWaitingList, setFileWaitingList] = useState<UploadFileBlob[]>([]);
@@ -81,7 +82,7 @@ export const App = () => {
 
   // Register plugins on mount
   useEffect(() => {
-    console.log("🔌 Registering upload plugins...");
+    logger.debug("Registering upload plugins");
 
     // Register extension points first
     manager.register(uploadExtensionPoints);
@@ -89,10 +90,10 @@ export const App = () => {
     // Register TUWien ACL Editor implementation
     manager.register(tuwienUploadAclEditorImplementation);
 
-    console.log("✅ Upload plugins registered");
+    logger.debug("Upload plugins registered");
 
     return () => {
-      console.log("🔌 Deregistering upload plugins...");
+      logger.debug("Deregistering upload plugins");
       manager.deregister(uploadExtensionPoints.name);
       manager.deregister(tuwienUploadAclEditorImplementation.name);
     };
@@ -437,7 +438,7 @@ export const App = () => {
 
   // Handle ACL data changes from the plugin
   const onAclDataChange = useCallback((newAclData: AclData, managedAclId: string) => {
-    console.log("🔒 ACL data changed:", newAclData);
+    logger.debug("ACL data changed", { newAclData, managedAclId });
     setAclData({
       entries:
         newAclData?.entries?.map((entry) => ({
@@ -455,7 +456,7 @@ export const App = () => {
 
   // Refetch function for ACL editor
   const handleRefetch = useCallback(() => {
-    console.log("🔄 Refetching data...");
+    logger.debug("Refetching data");
     // Add any refetch logic here if needed
   }, []);
 

@@ -4,6 +4,7 @@ import onProgress from "./onProgress";
 import { UploadFileBlob } from "@workspace/store";
 import { toast, type AclData, type ACLEntryInput } from "@workspace/ui/components";
 import { i18next } from "@workspace/i18n";
+import { logger } from "@workspace/utils";
 
 type UploadSettings = {
   seriesId: string;
@@ -88,7 +89,13 @@ export const opencastUpload = async (
     .then((response) => {
       return response?.text() || "";
     })
-    .catch((err) => console.log("error", err.message));
+    .catch((err) => {
+      logger.error(
+        "Error creating media package",
+        err instanceof Error ? err : new Error(String(err))
+      );
+      return "";
+    });
 
   if (!mediaPackage) return;
 
@@ -175,7 +182,10 @@ const addDcCatalog = async ({
 
   return await request("/ingest/addDCCatalog", { method: "post", body }, setUploadError)
     .then((response) => response?.text())
-    .catch((err) => console.log("error", err.message));
+    .catch((err) => {
+      logger.error("Error adding DC catalog", err instanceof Error ? err : new Error(String(err)));
+      return "";
+    });
 };
 
 const constructDcc = (
@@ -218,7 +228,10 @@ const attachAcl = async ({
 
   return await request("/ingest/addAttachment", { method: "post", body }, setUploadError)
     .then((response) => response?.text())
-    .catch((err) => console.log("error", err.message));
+    .catch((err) => {
+      logger.error("Error adding attachment", err instanceof Error ? err : new Error(String(err)));
+      return "";
+    });
 };
 
 const constructAcl = (template: string, currentUser: User) => {
@@ -405,7 +418,7 @@ const uploadTracks = async (
         resolve(xhr.responseText);
       };
       xhr.onloadend = () => {
-        console.log(xhr.responseText);
+        logger.debug("File upload response", { responseText: xhr.responseText });
       };
       xhr.onerror = () => {
         updateFile({
@@ -442,7 +455,10 @@ const uploadTracks = async (
           ...selectedFile,
           status: "error",
         });
-        reject(console.log(url, e));
+        logger.error("Error uploading file", e instanceof Error ? e : new Error(String(e)), {
+          url,
+        });
+        reject(e);
       }
     });
 
@@ -465,9 +481,9 @@ const finishIngest = async (
     body.append("workflowDefinitionId", workflowId);
   }
 
-  await request("/ingest/ingest", { method: "post", body }, setUploadError).catch((err) =>
-    console.log("error", err.message)
-  );
+  await request("/ingest/ingest", { method: "post", body }, setUploadError).catch((err) => {
+    logger.error("Error ingesting media", err instanceof Error ? err : new Error(String(err)));
+  });
 };
 
 const request = async (path: string, options = {}, setUploadError: (e: Error) => void) => {

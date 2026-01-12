@@ -8,7 +8,7 @@ import {
   EventsDataFragment,
 } from "@workspace/query";
 import { MetadataField } from "@workspace/ui-config";
-import { normalizeMetadataObject } from "@workspace/utils";
+import { normalizeMetadataObject, logger } from "@workspace/utils";
 
 type EpisodesUpdateData = {
   [T: string]: string | string[];
@@ -58,7 +58,7 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
       const value = metadata[fieldId];
       // Check for null, undefined, empty string, or empty array
       if (value === null || value === undefined || value === "") {
-        console.log("🎯 EpisodesInfoFooter: value is null, undefined, or empty", value);
+        logger.debug("EpisodesInfoFooter: value is null, undefined, or empty", { fieldId, value });
         return false;
       }
       // For arrays, check if they have content

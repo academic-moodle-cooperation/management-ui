@@ -22,6 +22,7 @@ import { SeriesInfoContent } from "./SeriesInfoContent";
 import { SeriesInfoFooter } from "./SeriesInfoFooter";
 import { SeriesUpdateData } from "../stores/sidebarStore";
 import { useTranslation } from "@workspace/i18n";
+import { logger } from "@workspace/utils";
 
 interface SeriesTableSidebarProps {
   isOpen: boolean;
@@ -92,9 +93,10 @@ export const SeriesTableSidebar: React.FC<SeriesTableSidebarProps> = ({
   const sortedTabComponents = tabComponents.sort((a, b) => (a.order || 100) - (b.order || 100));
   const hasTabPlugins = sortedTabComponents.length > 0;
 
-  console.log(
-    `🎯 SeriesTableSidebar: Found ${sortedTabComponents.length} tab plugins, hasTabPlugins: ${hasTabPlugins}`
-  );
+  logger.debug("SeriesTableSidebar: Tab plugins found", {
+    count: sortedTabComponents.length,
+    hasTabPlugins,
+  });
 
   return (
     <Sheet modal={false} open={isOpen}>

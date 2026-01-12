@@ -2,6 +2,7 @@ import { useReducer, useMemo, useCallback, useEffect } from "react";
 import { atomWithStorage, useAtomValue, useSetAtom } from "@workspace/store";
 import { useMatch } from "@workspace/router";
 import { OnChangeFn, SortingState, VisibilityState } from "@workspace/ui/components";
+import { logger } from "@workspace/utils";
 
 export interface TableBaseState {
   pageIndex: number;
@@ -72,8 +73,8 @@ export function useTableState<State extends TableBaseState, Action extends Table
   );
 
   useEffect(() => {
-    console.log("state", state);
-  }, [state]);
+    logger.debug("Table state updated", { state, appName });
+  }, [state, appName]);
 
   return {
     state,

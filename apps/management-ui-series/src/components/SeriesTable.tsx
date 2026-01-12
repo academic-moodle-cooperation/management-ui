@@ -10,6 +10,7 @@ import { createColumns } from "../columns";
 import { useSeriesTable } from "../hooks";
 import { SeriesTableSidebar } from "./SeriesTableSidebar";
 import { useSidebarStore } from "../stores/sidebarStore";
+import { logger } from "@workspace/utils";
 
 /**
  * Component for displaying and managing series data
@@ -72,9 +73,7 @@ const SeriesTable = () => {
   useEffect(() => {
     // Only proceed if the sidebar is open, editing is true, and we don't have data yet
     if (isOpen && isEditing && selectedId && !seriesUpdateData) {
-      // Add debug logging
-      console.log("SeriesTable - Sidebar opened in edit mode");
-      console.log("seriesInputFields:", seriesInputFields);
+      logger.debug("SeriesTable - Sidebar opened in edit mode", { selectedId });
 
       // Here we'll use the existing input fields data to populate the sidebar
       if (seriesInputFields?.seriesById?.commonMetadataV2) {
@@ -96,20 +95,23 @@ const SeriesTable = () => {
             }
           });
 
-          console.log("SeriesTable - Formatted data:", formattedData);
+          logger.debug("SeriesTable - Formatted data", { formattedData, selectedId });
 
           if (Object.keys(formattedData).length > 0) {
             setSeriesUpdateData(formattedData);
           }
         } catch (error) {
-          console.error("Error formatting series data:", error);
+          logger.error(
+            "Error formatting series data",
+            error instanceof Error ? error : new Error(String(error)),
+            { selectedId }
+          );
         }
       } else {
-        console.log("SeriesTable - No seriesInputFields.seriesById.commonMetadataV2 found");
-        console.log(
-          "seriesInputFields full structure:",
-          JSON.stringify(seriesInputFields, null, 2)
-        );
+        logger.debug("SeriesTable - No seriesInputFields.seriesById.commonMetadataV2 found", {
+          selectedId,
+          hasSeriesInputFields: !!seriesInputFields,
+        });
       }
     }
   }, [isOpen, isEditing, selectedId, seriesUpdateData, seriesInputFields, setSeriesUpdateData]);
@@ -120,7 +122,7 @@ const SeriesTable = () => {
   // Modified row click handler to pass inputFields directly
   const handleRowClick = useCallback(
     (event: React.MouseEvent, row: Row<Record<string, unknown>>) => {
-      console.log("SeriesTable - Row clicked, row data:", row.original);
+      logger.debug("SeriesTable - Row clicked", { rowId: row.original.id });
 
       // Reset edit state when clicking on a different row
       if (isEditing && selectedId !== row.original.id) {
