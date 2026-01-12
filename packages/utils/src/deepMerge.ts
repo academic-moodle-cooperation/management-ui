@@ -11,19 +11,20 @@
  * @param sources - One or more source objects to merge
  * @returns A new merged object
  */
-export function deepMerge(
-  target: Record<string, any>,
-  ...sources: Record<string, any>[]
-): Record<string, any> {
+export function deepMerge<T extends Record<string, unknown>>(
+  target: T,
+  ...sources: Array<Partial<T> | Record<string, unknown>>
+): T {
   return sources.reduce(
     (acc, source) => {
       if (!source) return acc;
-      Object.keys(source).forEach((key) => {
-        const sourceValue = source[key];
+      const sourceRecord = source as Record<string, unknown>;
+      Object.keys(sourceRecord).forEach((key) => {
+        const sourceValue = sourceRecord[key];
         const accValue = acc[key];
         if (Array.isArray(accValue) && Array.isArray(sourceValue)) {
           // Replace arrays (don't merge them)
-          acc[key] = sourceValue;
+          (acc as Record<string, unknown>)[key] = sourceValue;
         } else if (
           accValue &&
           typeof accValue === "object" &&
@@ -33,14 +34,17 @@ export function deepMerge(
           !Array.isArray(sourceValue)
         ) {
           // Recursively merge objects
-          acc[key] = deepMerge({ ...accValue }, sourceValue);
+          (acc as Record<string, unknown>)[key] = deepMerge(
+            { ...(accValue as Record<string, unknown>) },
+            sourceValue as Record<string, unknown>
+          );
         } else if (sourceValue !== undefined) {
           // Replace primitive values
-          acc[key] = sourceValue;
+          (acc as Record<string, unknown>)[key] = sourceValue;
         }
       });
       return acc;
     },
     { ...target }
-  );
+  ) as T;
 }
