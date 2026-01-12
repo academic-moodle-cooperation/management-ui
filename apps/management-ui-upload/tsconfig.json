@@ -4,10 +4,27 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      "@workspace/i18n": ["../../packages/i18n/src/index.ts"],
+      "@workspace/i18n/*": ["../../packages/i18n/src/*"],
+      "@workspace/plugin-system": ["../../packages/plugin-system/src/index.ts"],
+      "@workspace/plugin-system/*": ["../../packages/plugin-system/src/*"],
+      "@workspace/ui": ["../../packages/ui/src/index.ts"],
+      "@workspace/ui/*": ["../../packages/ui/src/*"],
+      "@workspace/router": ["../../packages/router/src/index.ts"],
+      "@workspace/router/*": ["../../packages/router/src/*"],
+      "@workspace/query": ["../../packages/query/src/index.ts"],
+      "@workspace/query/*": ["../../packages/query/src/*"],
+      "@workspace/providers": ["../../packages/providers/src/index.ts"],
+      "@workspace/providers/*": ["../../packages/providers/src/*"],
       "@workspace/utils": ["../../packages/utils/src/index.ts"],
       "@workspace/utils/*": ["../../packages/utils/src/*"],
+      "@workspace/ui-config": ["../../packages/ui-config/src/index.ts"],
+      "@workspace/ui-config/*": ["../../packages/ui-config/src/*"],
       "@workspace/app-runtime": ["../../packages/app-runtime/src/index.ts"],
-      "@workspace/app-runtime/*": ["../../packages/app-runtime/src/*"]
+      "@workspace/app-runtime/*": ["../../packages/app-runtime/src/*"],
+      "@workspace/vite-config": ["../../packages/vite-config/src/index.ts"],
+      "@workspace/vite-config/*": ["../../packages/vite-config/src/*"],
+      "@workspace/plugins": ["../../plugins/index.ts"]
     }
   },
   "include": ["src", "vite-env.d.ts", "vite.config.ts", "tailwind.config.js", "postcss.config.mjs"],
