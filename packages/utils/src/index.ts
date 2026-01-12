@@ -134,3 +134,5 @@ export function normalizeMetadataObject(metadata: Record<string, unknown>): Reco
 
 export { resolveAssetUrl, resolveFirstAssetUrl } from './assetUrl';
 export { deepMerge } from './deepMerge';
+export { logger, Logger } from './logger';
+export type { LogLevel, LogContext } from './logger';
