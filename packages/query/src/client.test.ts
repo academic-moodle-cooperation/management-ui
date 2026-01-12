@@ -4,21 +4,22 @@ import {
   createQueryClient,
 } from "./client";
 
-// Create a proper mock class for GraphQLClient
-class MockGraphQLClient {
-  url: string;
-  request = vi.fn();
-  setHeader = vi.fn();
+// Mock graphql-request - define class inside factory to avoid hoisting issues
+vi.mock("graphql-request", () => {
+  class MockGraphQLClient {
+    url: string;
+    request = vi.fn();
+    setHeader = vi.fn();
 
-  constructor(url: string) {
-    this.url = url;
+    constructor(url: string) {
+      this.url = url;
+    }
   }
-}
 
-// Mock graphql-request
-vi.mock("graphql-request", () => ({
-  GraphQLClient: MockGraphQLClient,
-}));
+  return {
+    GraphQLClient: MockGraphQLClient,
+  };
+});
 
 describe("client", () => {
   beforeEach(() => {
