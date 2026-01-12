@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { createObjectRegistryPlugin } from "./index";
+import { createObjectRegistryPlugin, type RegistryObject } from "./index";
 import { createPluginManager } from "../../pluginManager";
 import type { PluginManager } from "../../pluginManager";
 import React from "react";
@@ -11,8 +11,12 @@ describe("ObjectRegistryPlugin", () => {
   beforeEach(() => {
     manager = createPluginManager();
     registryPlugin = createObjectRegistryPlugin();
-    registryPlugin.initialize(manager);
-    registryPlugin.activate();
+    if (registryPlugin?.initialize) {
+      registryPlugin.initialize(manager);
+    }
+    if (registryPlugin?.activate) {
+      registryPlugin.activate();
+    }
   });
 
   describe("registerObject", () => {
@@ -20,7 +24,7 @@ describe("ObjectRegistryPlugin", () => {
       const testData = { name: "test", value: 123 };
       manager.executeFunction("registry.addObject", "test:type", "test-id", testData);
 
-      const result = manager.executeFunction("registry.getObject", "test:type", "test-id");
+      const result = manager.executeFunction<RegistryObject | null>("registry.getObject", "test:type", "test-id");
       expect(result).toBeDefined();
       expect(result?.data).toEqual(testData);
     });
@@ -29,7 +33,7 @@ describe("ObjectRegistryPlugin", () => {
       manager.executeFunction("registry.addObject", "test:type", "id1", { value: 1 });
       manager.executeFunction("registry.addObject", "test:type", "id2", { value: 2 });
 
-      const objects = manager.executeFunction("registry.getObjects", "test:type");
+      const objects = manager.executeFunction<RegistryObject[]>("registry.getObjects", "test:type");
       expect(objects).toHaveLength(2);
     });
 
@@ -37,7 +41,7 @@ describe("ObjectRegistryPlugin", () => {
       manager.executeFunction("registry.addObject", "test:type", "test-id", { value: 1 });
       manager.executeFunction("registry.addObject", "test:type", "test-id", { value: 2 });
 
-      const result = manager.executeFunction("registry.getObject", "test:type", "test-id");
+      const result = manager.executeFunction<RegistryObject | null>("registry.getObject", "test:type", "test-id");
       expect(result?.data).toEqual({ value: 2 });
     });
 
@@ -45,14 +49,14 @@ describe("ObjectRegistryPlugin", () => {
       const metadata = { created: "2024-01-01", author: "test" };
       manager.executeFunction("registry.addObject", "test:type", "test-id", { value: 1 }, metadata);
 
-      const result = manager.executeFunction("registry.getObject", "test:type", "test-id");
+      const result = manager.executeFunction<RegistryObject | null>("registry.getObject", "test:type", "test-id");
       expect(result?.metadata).toEqual(metadata);
     });
   });
 
   describe("getObject", () => {
     it("should return null for non-existent object", () => {
-      const result = manager.executeFunction("registry.getObject", "test:type", "non-existent");
+      const result = manager.executeFunction<RegistryObject | null>("registry.getObject", "test:type", "non-existent");
       expect(result).toBeNull();
     });
 
@@ -60,14 +64,14 @@ describe("ObjectRegistryPlugin", () => {
       const testData = { name: "test" };
       manager.executeFunction("registry.addObject", "test:type", "test-id", testData);
 
-      const result = manager.executeFunction("registry.getObject", "test:type", "test-id");
+      const result = manager.executeFunction<RegistryObject | null>("registry.getObject", "test:type", "test-id");
       expect(result?.data).toEqual(testData);
     });
   });
 
   describe("getObjects", () => {
     it("should return empty array for non-existent type", () => {
-      const result = manager.executeFunction("registry.getObjects", "non-existent:type");
+      const result = manager.executeFunction<RegistryObject[]>("registry.getObjects", "non-existent:type");
       expect(result).toEqual([]);
     });
 
@@ -76,25 +80,25 @@ describe("ObjectRegistryPlugin", () => {
       manager.executeFunction("registry.addObject", "test:type", "id2", { value: 2 });
       manager.executeFunction("registry.addObject", "other:type", "id3", { value: 3 });
 
-      const result = manager.executeFunction("registry.getObjects", "test:type");
+      const result = manager.executeFunction<RegistryObject[]>("registry.getObjects", "test:type");
       expect(result).toHaveLength(2);
-      expect(result.map((r: any) => r.data.value)).toEqual([1, 2]);
+      expect(result.map((r) => r.data as { value: number }).map((r) => r.value)).toEqual([1, 2]);
     });
   });
 
   describe("removeObject", () => {
     it("should return false for non-existent object", () => {
-      const result = manager.executeFunction("registry.removeObject", "test:type", "non-existent");
+      const result = manager.executeFunction<boolean>("registry.removeObject", "test:type", "non-existent");
       expect(result).toBe(false);
     });
 
     it("should remove an object and return true", () => {
       manager.executeFunction("registry.addObject", "test:type", "test-id", { value: 1 });
 
-      const result = manager.executeFunction("registry.removeObject", "test:type", "test-id");
+      const result = manager.executeFunction<boolean>("registry.removeObject", "test:type", "test-id");
       expect(result).toBe(true);
 
-      const getResult = manager.executeFunction("registry.getObject", "test:type", "test-id");
+      const getResult = manager.executeFunction<RegistryObject | null>("registry.getObject", "test:type", "test-id");
       expect(getResult).toBeNull();
     });
 
@@ -104,9 +108,9 @@ describe("ObjectRegistryPlugin", () => {
 
       manager.executeFunction("registry.removeObject", "test:type", "id1");
 
-      const remaining = manager.executeFunction("registry.getObjects", "test:type");
+      const remaining = manager.executeFunction<RegistryObject[]>("registry.getObjects", "test:type");
       expect(remaining).toHaveLength(1);
-      expect(remaining[0].data.value).toBe(2);
+      expect((remaining[0]?.data as { value: number })?.value).toBe(2);
     });
   });
 });

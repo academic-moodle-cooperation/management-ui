@@ -239,8 +239,12 @@ describe("PluginManager", () => {
     beforeEach(() => {
       // Initialize object registry plugin
       const registryPlugin = createObjectRegistryPlugin();
-      registryPlugin.initialize(manager);
-      registryPlugin.activate();
+      if (registryPlugin?.initialize) {
+        registryPlugin.initialize(manager);
+      }
+      if (registryPlugin?.activate) {
+        registryPlugin.activate();
+      }
     });
 
     it("should register and retrieve objects", () => {
@@ -272,8 +276,12 @@ describe("PluginManager", () => {
     beforeEach(() => {
       // Initialize renderer plugin
       const rendererPlugin = createRendererPlugin();
-      rendererPlugin.initialize(manager);
-      rendererPlugin.activate();
+      if (rendererPlugin?.initialize) {
+        rendererPlugin.initialize(manager);
+      }
+      if (rendererPlugin?.activate) {
+        rendererPlugin.activate();
+      }
     });
 
     it("should register components with extension points", () => {
@@ -288,9 +296,9 @@ describe("PluginManager", () => {
       manager.register(plugin);
       manager.registerComponent("test:position", TestComponent, { key: "test-key" });
 
-      const components = manager.executeFunction("renderer.getComponents", "test:position");
+      const components = manager.executeFunction<unknown[]>("renderer.getComponents", "test:position");
       expect(components).toBeDefined();
-      expect(components.length).toBeGreaterThan(0);
+      expect(Array.isArray(components) && components.length).toBeGreaterThan(0);
     });
   });
 });
