@@ -6,6 +6,7 @@ import { SidebarUserMenu } from "./components/SidebarUserMenu";
 import { SidebarToggle } from "./components/SidebarToggle";
 import React from "react";
 import { Video } from "@workspace/ui/components/icons";
+import { logger } from "@workspace/utils";
 
 // Wrapper components that don't need props directly from the plugin system
 const CustomNavMainWrapper = (props: { open?: boolean; items?: any[] }) => {
@@ -35,7 +36,7 @@ export const tuwienSidebarImplementation = createPlugin({
   version: "1.0.0",
 
   initialize(manager: PluginManager) {
-    console.log("Initializing TU Wien Sidebar Implementation");
+    logger.debug("Initializing TU Wien Sidebar Implementation");
 
     // Register TU Wien sidebar components with higher priority than core defaults
     manager.registerComponent("component-override:appshell:sidebar:content", CustomNavMainWrapper, {
@@ -53,15 +54,15 @@ export const tuwienSidebarImplementation = createPlugin({
       order: 50, // Higher priority than core default (100)
     });
 
-    console.log("TU Wien sidebar components registered");
+    logger.debug("TU Wien sidebar components registered");
   },
 
   activate() {
-    console.log("TU Wien Sidebar Implementation activated");
+    logger.debug("TU Wien Sidebar Implementation activated");
   },
 
   deactivate() {
-    console.log("TU Wien Sidebar Implementation deactivated");
+    logger.debug("TU Wien Sidebar Implementation deactivated");
   },
 });
 

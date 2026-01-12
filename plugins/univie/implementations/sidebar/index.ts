@@ -5,6 +5,7 @@ import { SidebarHeaderLogo } from "./components/SidebarHeaderLogo";
 import { SidebarFooter } from "./components/SidebarFooter";
 import React from "react";
 import { Video, ExternalLink } from "@workspace/ui/components/icons";
+import { logger } from "@workspace/utils";
 
 /**
  * University of Vienna Custom Sidebar Implementation Plugin
@@ -92,11 +93,11 @@ export const studioUnivieNavImplementation = createPlugin({
   },
 
   activate() {
-    console.log("[univie:navigation] Plugin activated");
+    logger.debug("[univie:navigation] Plugin activated");
   },
 
   deactivate() {
-    console.log("[univie:navigation] Plugin deactivated");
+    logger.debug("[univie:navigation] Plugin deactivated");
   },
 });
 
@@ -132,10 +133,10 @@ export const captureUnivieNavImplementation = createPlugin({
   },
 
   activate() {
-    console.log("[univie:navigation:capture] Plugin activated");
+    logger.debug("[univie:navigation:capture] Plugin activated");
   },
 
   deactivate() {
-    console.log("[univie:navigation:capture] Plugin deactivated");
+    logger.debug("[univie:navigation:capture] Plugin deactivated");
   },
 });

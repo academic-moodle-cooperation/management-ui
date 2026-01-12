@@ -6,6 +6,7 @@ import { Card, Button, Skeleton } from "@workspace/ui/components";
 import { DatePicker } from "@workspace/ui/components";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, RefreshCw } from "lucide-react";
 import { useEventsByDate, useRooms, getRoomById, getEventsForRoom } from "../api/eventCalendarApi";
+import { logger } from "@workspace/utils";
 
 interface CalendarViewProps {
   className?: string;
@@ -28,7 +29,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
   // Debug logging
   React.useEffect(() => {
     if (rooms) {
-      console.log("🏢 Rooms loaded:", {
+      logger.debug("Rooms loaded", {
         totalRooms: rooms.length,
         roomIds: rooms.map((r) => r.extRaumId).sort((a, b) => a - b),
         sampleRoom: rooms[0],

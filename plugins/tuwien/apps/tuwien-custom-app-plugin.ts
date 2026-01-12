@@ -1,5 +1,6 @@
 import { createPlugin } from "@workspace/plugin-system";
 import { TuWienCustomApp } from "./TuWienCustomApp";
+import { logger } from "@workspace/utils";
 
 /**
  * TU Wien custom app plugin
@@ -27,14 +28,14 @@ export const tuWienCustomAppPlugin = createPlugin({
       description: "Custom application for TU Wien with university-specific features",
     });
 
-    console.log("TU Wien custom app plugin initialized");
+    logger.debug("TU Wien custom app plugin initialized");
   },
 
   activate() {
-    console.log("TU Wien custom app plugin activated");
+    logger.debug("TU Wien custom app plugin activated");
   },
 
   deactivate() {
-    console.log("TU Wien custom app plugin deactivated");
+    logger.debug("TU Wien custom app plugin deactivated");
   },
 });

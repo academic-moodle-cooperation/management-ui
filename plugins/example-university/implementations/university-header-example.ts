@@ -1,4 +1,5 @@
 import { createPlugin, type PluginManager } from "@workspace/plugin-system";
+import { logger } from "@workspace/utils";
 
 /**
  * Example University Header Extension
@@ -19,7 +20,7 @@ export const universityHeaderExample = createPlugin({
   version: "1.0.0",
 
   initialize(manager: PluginManager) {
-    console.log("🏛️ Initializing University Header Extension");
+    logger.debug("Initializing University Header Extension");
 
     // Add university logo to the header (appears on left side)
     // The default header only provides language switcher + login button
@@ -31,15 +32,15 @@ export const universityHeaderExample = createPlugin({
       href: import.meta.env.VITE_INSTITUTION_WEBSITE || "/",
     });
 
-    console.log("✅ University header extension registered (logo only)");
+    logger.debug("University header extension registered (logo only)");
   },
 
   activate() {
-    console.log("🏛️ University Header Extension activated");
+    logger.debug("University Header Extension activated");
   },
 
   deactivate() {
-    console.log("🏛️ University Header Extension deactivated");
+    logger.debug("University Header Extension deactivated");
   },
 });
 

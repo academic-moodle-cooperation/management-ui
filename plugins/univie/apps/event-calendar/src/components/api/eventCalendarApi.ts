@@ -1,6 +1,7 @@
 import { useQuery, UseQueryResult } from "@workspace/query";
 import { Room, Event, ParsedEvent, EventCalendarConfig } from "../types/eventCalendar";
 import { allowedRoomIds } from "./allowedRoomIds";
+import { logger } from "@workspace/utils";
 /**
  * Default configuration for the event calendar
  * TODO: Future improvement - make this configurable via environment variables or settings
@@ -13,7 +14,7 @@ const DEFAULT_CONFIG: EventCalendarConfig = {
   apiBaseUrl: import.meta.env?.VITE_UNIVIE_API_BASE_URL || "https://api.example.com",
 };
 
-console.log("🔧 Event Calendar API Configuration:", {
+logger.debug("Event Calendar API Configuration", {
   apiBaseUrl: DEFAULT_CONFIG.apiBaseUrl,
   allowedRoomCount: DEFAULT_CONFIG.allowedRoomIds.length,
   usingMockData:
@@ -75,10 +76,10 @@ export function formatDateForApi(date: Date): string {
  */
 async function fetchRooms(config: EventCalendarConfig = DEFAULT_CONFIG): Promise<Room[]> {
   // Check if we're in production mode (API URL is set)
-  console.log("config.apiBaseUrl", config.apiBaseUrl);
+  logger.debug("Fetching rooms", { apiBaseUrl: config.apiBaseUrl });
   if (config.apiBaseUrl && config.apiBaseUrl !== "https://api.example.com") {
     try {
-      console.log("Fetching rooms from API...");
+      logger.debug("Fetching rooms from API");
       const response = await fetch(`${config.apiBaseUrl}/digitalsignage/v1/getAllRaeume`);
 
       if (!response.ok) {
@@ -86,14 +87,14 @@ async function fetchRooms(config: EventCalendarConfig = DEFAULT_CONFIG): Promise
       }
 
       const allRooms: Room[] = await response.json();
-      console.log(`📡 Fetched ${allRooms.length} rooms from API`);
+      logger.debug(`Fetched ${allRooms.length} rooms from API`, { roomCount: allRooms.length });
 
       // Filter rooms to only allowed room IDs
       const filteredRooms = allRooms.filter((room: Room) =>
         config.allowedRoomIds.includes(room.extRaumId)
       );
 
-      console.log("🔍 Room filtering results:", {
+      logger.debug("Room filtering results", {
         totalFromAPI: allRooms.length,
         allowedRoomIds: config.allowedRoomIds.length,
         matchingRooms: filteredRooms.length,
@@ -105,7 +106,10 @@ async function fetchRooms(config: EventCalendarConfig = DEFAULT_CONFIG): Promise
 
       return filteredRooms;
     } catch (error) {
-      console.error("Error fetching rooms from API:", error);
+      logger.error(
+        "Error fetching rooms from API",
+        error instanceof Error ? error : new Error(String(error))
+      );
       throw error;
     }
   }
@@ -190,7 +194,10 @@ async function fetchEventsByDays(
         .filter((event: Event) => config.allowedRoomIds.includes(event.extRaumId))
         .map(parseEventDates);
     } catch (error) {
-      console.error("Error fetching events from API:", error);
+      logger.error(
+        "Error fetching events from API",
+        error instanceof Error ? error : new Error(String(error))
+      );
       throw error;
     }
   }
@@ -325,9 +332,10 @@ async function fetchEventsByDate(
   // For future dates, we use the calculated offset
   const daysToFetch = Math.max(1, apiDays);
 
-  console.log(
-    `Fetching events for date: ${formatDateForApi(date)}, calculated days offset: ${daysToFetch}`
-  );
+  logger.debug("Fetching events for date", {
+    date: formatDateForApi(date),
+    calculatedDaysOffset: daysToFetch,
+  });
 
   const events = await fetchEventsByDays(daysToFetch, config);
 
@@ -397,7 +405,7 @@ export function getRoomById(rooms: Room[], roomId: number): Room | undefined {
  * You can use queryClient.invalidateQueries(['univie-rooms']) to clear the cache.
  */
 export function clearRoomsCache(): void {
-  console.warn("clearRoomsCache is deprecated. Use TanStack Query cache invalidation instead.");
+  logger.warn("clearRoomsCache is deprecated. Use TanStack Query cache invalidation instead.");
 }
 
 /**

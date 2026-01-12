@@ -6,6 +6,7 @@ import { MonitorPlay } from "@workspace/ui/components/icons";
 import { createOrganizationNamespace, i18next, usePluginTranslation } from "@workspace/i18n";
 import { Link } from "@workspace/router";
 import { useAppConfig } from "@workspace/query";
+import { logger } from "@workspace/utils";
 
 // Custom TU Wien actions component that enhances the default series actions
 const TUWienSeriesActions = ({ series, children }: any) => {
@@ -60,7 +61,7 @@ export const tuwienSeriesActionsImplementation = createPlugin({
   version: "1.0.0",
 
   initialize(manager: PluginManager) {
-    console.log("🎯 Initializing TU Wien Series Actions Implementation");
+    logger.debug("Initializing TU Wien Series Actions Implementation");
 
     // Register TU Wien series actions with higher priority than core default
     manager.registerComponent("series:table:actions", TUWienSeriesActions, {
@@ -68,14 +69,14 @@ export const tuwienSeriesActionsImplementation = createPlugin({
       order: 50, // Higher priority than core default (100)
     });
 
-    console.log("✅ TU Wien series actions implementation registered");
+    logger.debug("TU Wien series actions implementation registered");
   },
 
   activate() {
-    console.log("🎯 TU Wien Series Actions Implementation activated");
+    logger.debug("TU Wien Series Actions Implementation activated");
   },
 
   deactivate() {
-    console.log("🎯 TU Wien Series Actions Implementation deactivated");
+    logger.debug("TU Wien Series Actions Implementation deactivated");
   },
 });

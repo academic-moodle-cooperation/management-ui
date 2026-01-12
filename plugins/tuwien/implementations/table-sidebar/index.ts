@@ -1,6 +1,7 @@
 import { createPlugin } from "@workspace/plugin-system";
 import { AclEditorTab } from "./components/AclEditorTab";
 import { PluginManager } from "@workspace/plugin-system";
+import { logger } from "@workspace/utils";
 
 /**
  * TU Wien Table Sidebar Implementation Plugin
@@ -12,7 +13,7 @@ export const tuwienTableSidebarImplementation = createPlugin({
   version: "1.0.0",
 
   initialize(manager: PluginManager) {
-    console.log("🎯 Initializing TU Wien Table Sidebar Implementation");
+    logger.debug("Initializing TU Wien Table Sidebar Implementation");
 
     // Register ACL editor tab for episodes tables
     manager.registerComponent("table-sidebar:episodes:tabs", AclEditorTab, {
@@ -26,14 +27,14 @@ export const tuwienTableSidebarImplementation = createPlugin({
       order: 20, // Show after info tab (order 10)
     });
 
-    console.log("✅ TU Wien table sidebar tabs registered for episodes and series");
+    logger.debug("TU Wien table sidebar tabs registered for episodes and series");
   },
 
   activate() {
-    console.log("🎯 TU Wien Table Sidebar Implementation activated");
+    logger.debug("TU Wien Table Sidebar Implementation activated");
   },
 
   deactivate() {
-    console.log("🎯 TU Wien Table Sidebar Implementation deactivated");
+    logger.debug("TU Wien Table Sidebar Implementation deactivated");
   },
 });

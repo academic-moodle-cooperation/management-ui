@@ -1,5 +1,6 @@
 import { createPlugin } from "@workspace/plugin-system";
 import { CalendarView } from "./event-calendar/src/components/Calendar/CalendarView";
+import { logger } from "@workspace/utils";
 
 /**
  * UniVie Event Calendar plugin
@@ -27,14 +28,14 @@ export const univieEventCalendarPlugin = createPlugin({
       description: "Event calendar application for University of Vienna",
     });
 
-    console.log("UniVie Event Calendar plugin initialized");
+    logger.debug("UniVie Event Calendar plugin initialized");
   },
 
   activate() {
-    console.log("UniVie Event Calendar plugin activated");
+    logger.debug("UniVie Event Calendar plugin activated");
   },
 
   deactivate() {
-    console.log("UniVie Event Calendar plugin deactivated");
+    logger.debug("UniVie Event Calendar plugin deactivated");
   },
 });
