@@ -96,6 +96,109 @@ describe("PluginManager", () => {
       expect(result).toBe(10);
       expect(testFn).toHaveBeenCalledWith(5);
     });
+
+    it("should return undefined if function not found", () => {
+      const result = manager.executeFunction("nonexistent:function");
+      expect(result).toBeUndefined();
+    });
+
+    it("should warn when overwriting existing function", () => {
+      const fn1 = vi.fn();
+      const fn2 = vi.fn();
+
+      manager.addFunction("test:function", fn1);
+      manager.addFunction("test:function", fn2);
+
+      expect(manager.functions.get("test:function")).toBe(fn2);
+    });
+
+    it("should remove functions", () => {
+      const testFn = vi.fn();
+      manager.addFunction("test:function", testFn);
+      manager.removeFunction("test:function");
+
+      expect(manager.functions.has("test:function")).toBe(false);
+    });
+  });
+
+  describe("checkDependencies", () => {
+    it("should return true if plugin has no dependencies", () => {
+      const plugin: Plugin = {
+        name: "test:plugin",
+        version: "1.0.0",
+        activate: vi.fn(),
+        deactivate: vi.fn(),
+      };
+
+      const result = manager.checkDependencies(plugin);
+      expect(result).toBe(true);
+    });
+
+    it("should return true if all dependencies are registered", () => {
+      const depPlugin: Plugin = {
+        name: "dep:plugin",
+        version: "1.0.0",
+        activate: vi.fn(),
+        deactivate: vi.fn(),
+      };
+
+      const plugin: Plugin = {
+        name: "test:plugin",
+        version: "1.0.0",
+        activate: vi.fn(),
+        deactivate: vi.fn(),
+        dependencies: ["dep:plugin"],
+      };
+
+      manager.register(depPlugin);
+      const result = manager.checkDependencies(plugin);
+      expect(result).toBe(true);
+    });
+
+    it("should return false if dependencies are missing", () => {
+      const plugin: Plugin = {
+        name: "test:plugin",
+        version: "1.0.0",
+        activate: vi.fn(),
+        deactivate: vi.fn(),
+        dependencies: ["missing:plugin"],
+      };
+
+      const result = manager.checkDependencies(plugin);
+      expect(result).toBe(false);
+    });
+
+    it("should handle dependencies with version specifiers", () => {
+      const depPlugin: Plugin = {
+        name: "dep:plugin",
+        version: "1.0.0",
+        activate: vi.fn(),
+        deactivate: vi.fn(),
+      };
+
+      const plugin: Plugin = {
+        name: "test:plugin",
+        version: "1.0.0",
+        activate: vi.fn(),
+        deactivate: vi.fn(),
+        dependencies: ["dep:plugin@1.0.0"],
+      };
+
+      manager.register(depPlugin);
+      const result = manager.checkDependencies(plugin);
+      expect(result).toBe(true);
+    });
+  });
+
+  describe("arePluginsReady", () => {
+    it("should be false initially", () => {
+      expect(manager.arePluginsReady).toBe(false);
+    });
+
+    it("should be true after markPluginsAsReady", () => {
+      manager.markPluginsAsReady();
+      expect(manager.arePluginsReady).toBe(true);
+    });
   });
 
   describe("events", () => {
