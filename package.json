@@ -7,14 +7,24 @@
     "clean": "turbo run clean && rm -rf .turbo && rm -rf dist && rm -rf target && rm -rf node_modules",
     "preview": "turbo run preview",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,scss,md,html,yaml,yml,graphql}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,scss,md,html,yaml,yml,graphql}\"",
+    "check-types": "turbo run check-types",
+    "test": "turbo run test",
+    "test:watch": "turbo run test:watch",
+    "test:coverage": "turbo run test:coverage"
   },
   "devDependencies": {
     "@swc/helpers": "^0.5.17",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
+    "@testing-library/user-event": "^14.6.1",
+    "@vitest/ui": "^4.0.17",
+    "jsdom": "^27.4.0",
     "prettier": "^3.5.3",
     "turbo": "^2.5.5",
-    "typescript": "5.8.2"
+    "typescript": "5.8.2",
+    "vitest": "^4.0.17"
   },
   "packageManager": "pnpm@10.4.1",
   "engines": {
@@ -22,5 +32,17 @@
   },
   "dependencies": {
     "lucide-react": "^0.417.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@eslint/plugin-kit@<0.3.4": ">=0.3.4",
+      "vite-plugin-static-copy@>=0.4.3 <=2.3.1": ">=2.3.2",
+      "vite@>=6.0.0 <=6.3.5": ">=6.3.6",
+      "vite@>=6.0.0 <=6.4.0": ">=6.4.1",
+      "tmp@<=0.2.3": ">=0.2.4",
+      "postcss@<8.4.31": ">=8.4.31",
+      "js-yaml@>=4.0.0 <4.1.1": ">=4.1.1",
+      "glob@>=10.2.0 <10.5.0": ">=10.5.0"
+    }
   }
 }

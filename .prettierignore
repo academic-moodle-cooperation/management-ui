@@ -1,0 +1,42 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Build outputs
+dist
+build
+.turbo
+out
+.next
+
+# Generated files
+*.tsbuildinfo
+*.generated.ts
+gql-generated.ts
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Maven
+target
+
+# IDE
+.idea
+.vscode
+.cursor
+
+# Lock files
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Config files that shouldn't be formatted
+.prettierrc.json
+
+# Temporary files
+*.tmp
+*.temp
