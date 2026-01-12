@@ -1,4 +1,4 @@
-import { createPlugin } from "@workspace/plugin-system";
+import { createPlugin, type PluginManager } from "@workspace/plugin-system";
 import { TuWienCustomApp } from "./TuWienCustomApp";
 import { logger } from "@workspace/utils";
 
@@ -11,7 +11,7 @@ export const tuWienCustomAppPlugin = createPlugin({
   type: "app",
   version: "1.0.0",
 
-  initialize(manager) {
+  initialize(manager: PluginManager) {
     // Register the custom app through the plugin system
     manager.registerObject("apps:definitions", "tuwien-custom-app", {
       id: "tuwien-custom-app",
