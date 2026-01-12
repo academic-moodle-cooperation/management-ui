@@ -15,7 +15,6 @@ export * from "./icons";
 export * from "./datetime-picker";
 export * from "./infinite-scroll";
 export * from "./overflow-tooltip";
-export * from "./auth-status";
 export * from "./appLoader";
 export * from "./acl-editor"
 

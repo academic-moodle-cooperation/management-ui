@@ -5,7 +5,9 @@
   "private": true,
   "exports": {
     ".": "./index.tsx",
-    "./*": "./*.ts"
+    "./atoms": "./atoms.ts",
+    "./useStore": "./useStore.ts",
+    "./useTableStore": "./useTableStore.ts"
   },
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf dist && rm -rf node_modules",
