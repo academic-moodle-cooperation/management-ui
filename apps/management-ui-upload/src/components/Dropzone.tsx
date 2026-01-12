@@ -37,7 +37,7 @@ const Dropzone: FC<DropzoneProps> = ({
 }) => {
   const { t } = useI18n();
   const { config } = useAppConfig();
-  const uploadConfig = config.plugins?.["management-ui-upload"] as { whitelist?: string[] } || {};
+  const uploadConfig = (config.plugins?.["management-ui-upload"] as { whitelist?: string[] }) || {};
   const { whitelist = [] } = uploadConfig;
 
   const [onFileDrop, setOnFileDrop] = useState(false);
@@ -49,13 +49,7 @@ const Dropzone: FC<DropzoneProps> = ({
   };
 
   const useChangeHandler = (event: { target: HTMLInputElement }) => {
-    useFileHandler(
-      event.target.files!,
-      fileWaitingList,
-      seriesId,
-      setUpload,
-      zustandupload
-    );
+    useFileHandler(event.target.files!, fileWaitingList, seriesId, setUpload, zustandupload);
   };
 
   const fileValidation = (files: FileList) => {
@@ -66,7 +60,11 @@ const Dropzone: FC<DropzoneProps> = ({
       const extension = file.name.split(".").pop();
       const type = file.type.split("/")[0];
 
-      if (type !== "video" && type !== "audio" && !whitelist.includes(extension?.toLowerCase() || "")) {
+      if (
+        type !== "video" &&
+        type !== "audio" &&
+        !whitelist.includes(extension?.toLowerCase() || "")
+      ) {
         setOpen(true);
         return false;
       }
@@ -121,9 +119,7 @@ const Dropzone: FC<DropzoneProps> = ({
                 ></path>
               </svg>
               <p className="mb-2 text-sm text-center text-foreground">
-                <span className="font-semibold">
-                  {t("upload:dndSection.info1")}
-                </span>{" "}
+                <span className="font-semibold">{t("upload:dndSection.info1")}</span>{" "}
                 {t("upload:dndSection.info2")}
               </p>
               <p className="text-xs text-center text-muted-foreground">
@@ -133,20 +129,18 @@ const Dropzone: FC<DropzoneProps> = ({
                 id="dropzone-file"
                 type="file"
                 className="hidden"
-                accept={`audio/*,video/*${whitelist
-                  ?.map((ext: string) => ",." + ext)
-                  .join("")}`}
+                accept={`audio/*,video/*${whitelist?.map((ext: string) => ",." + ext).join("")}`}
                 multiple
                 onChange={useChangeHandler}
-                onClick={(
-                  event: React.MouseEvent<HTMLInputElement, MouseEvent>
-                ) => ((event.target as HTMLInputElement).value = "")}
+                onClick={(event: React.MouseEvent<HTMLInputElement, MouseEvent>) =>
+                  ((event.target as HTMLInputElement).value = "")
+                }
               />
             </>
           </Label>
         </Card>
         <Button
-          onClick={() => { }}
+          onClick={() => {}}
           color="primary"
           variant={"default"}
           size={"sm"}
@@ -169,9 +163,7 @@ const Dropzone: FC<DropzoneProps> = ({
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>{t("upload:alert.title")}</AlertDialogTitle>
-              <AlertDialogDescription>
-                {t("upload:alert.text")}
-              </AlertDialogDescription>
+              <AlertDialogDescription>{t("upload:alert.text")}</AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>OK</AlertDialogCancel>

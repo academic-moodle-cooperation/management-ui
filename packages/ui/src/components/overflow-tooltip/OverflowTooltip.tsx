@@ -8,20 +8,14 @@ interface OverflowTooltipProps {
   text?: string;
 }
 
-const OverflowTooltip: FC<OverflowTooltipProps> = ({
-  className,
-  children,
-  text,
-  ...props
-}) => {
+const OverflowTooltip: FC<OverflowTooltipProps> = ({ className, children, text, ...props }) => {
   const [needsTooltip, setNeedsTooltip] = useState(false);
   const [overflowingVertical, setOverflowingVertical] = useState(false);
 
   const checkOverflow = (el: HTMLElement | null) => {
     if (el) {
       const isOverflowingVertical = el.clientHeight < el.scrollHeight;
-      const isOverflowing =
-        el.clientWidth < el.scrollWidth || isOverflowingVertical;
+      const isOverflowing = el.clientWidth < el.scrollWidth || isOverflowingVertical;
       if (isOverflowing) {
         setNeedsTooltip(true);
         setOverflowingVertical(isOverflowingVertical);
@@ -40,10 +34,7 @@ const OverflowTooltip: FC<OverflowTooltipProps> = ({
       <Tooltip>
         <TooltipTrigger asChild>
           <span
-            className={cn(
-              className,
-              overflowingVertical && "underline decoration-dotted"
-            )}
+            className={cn(className, overflowingVertical && "underline decoration-dotted")}
             ref={(el) => {
               checkOverflow(el);
             }}
@@ -51,9 +42,7 @@ const OverflowTooltip: FC<OverflowTooltipProps> = ({
             {children}
           </span>
         </TooltipTrigger>
-        <TooltipContent className="block whitespace-pre w-auto">
-          {text || children}
-        </TooltipContent>
+        <TooltipContent className="block whitespace-pre w-auto">{text || children}</TooltipContent>
       </Tooltip>
     );
   }

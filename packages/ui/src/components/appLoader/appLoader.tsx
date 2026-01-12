@@ -1,12 +1,6 @@
 import { cn } from "@workspace/ui/lib/utils";
 
-const AppLoader = ({
-  className,
-  children,
-}: {
-  className?: string;
-  children?: React.ReactNode;
-}) => {
+const AppLoader = ({ className, children }: { className?: string; children?: React.ReactNode }) => {
   return (
     <section
       className={cn(

@@ -29,9 +29,7 @@ export function useTheme(): Theme {
   return useContext(ThemeContext)?.theme || defaultTheme;
 }
 
-export function useComponentTheme<C extends keyof ThemeComponents>(
-  component: C
-) {
+export function useComponentTheme<C extends keyof ThemeComponents>(component: C) {
   const theme = useTheme();
 
   return theme.components[component];

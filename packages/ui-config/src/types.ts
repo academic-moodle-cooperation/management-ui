@@ -17,7 +17,7 @@ export interface SeriesInfo {
 }
 
 export interface SeriesTable {
-  columns: unknown[]; // Make this flexible to accept actual structure  
+  columns: unknown[]; // Make this flexible to accept actual structure
 }
 
 export interface EpisodeInfo {
@@ -99,4 +99,4 @@ export interface AppConfig {
     graphqlEndpoint: string;
   };
   [key: string]: unknown; // Allow plugin-provided config keys
-} 
+}

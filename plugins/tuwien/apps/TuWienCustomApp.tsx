@@ -1,6 +1,6 @@
-import React from 'react';
-import { Button, Container } from '@workspace/ui/components';
-import { AdaptiveAppWrapper } from '@workspace/app-runtime';
+import React from "react";
+import { Button, Container } from "@workspace/ui/components";
+import { AdaptiveAppWrapper } from "@workspace/app-runtime";
 
 /**
  * Example TU Wien custom app component
@@ -34,14 +34,14 @@ export const TuWienCustomApp: React.FC = () => {
               <h2 className="text-xl font-semibold mb-3">Actions</h2>
               <div className="space-y-3">
                 <Button
-                  onClick={() => alert('TU Wien specific action executed!')}
+                  onClick={() => alert("TU Wien specific action executed!")}
                   className="w-full"
                 >
                   Execute TU Wien Action
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => alert('Another custom feature!')}
+                  onClick={() => alert("Another custom feature!")}
                   className="w-full"
                 >
                   Custom Feature
@@ -55,7 +55,8 @@ export const TuWienCustomApp: React.FC = () => {
             <p className="text-sm text-gray-700">
               This app is registered through the plugin system and can be developed independently
               from the core application. It can access all the same providers (auth, query, theme)
-              and UI components as core apps. It can run standalone on port 3005 or within the core shell.
+              and UI components as core apps. It can run standalone on port 3005 or within the core
+              shell.
             </p>
           </div>
         </div>

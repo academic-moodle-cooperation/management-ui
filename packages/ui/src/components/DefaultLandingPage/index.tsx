@@ -1,8 +1,8 @@
-import type { FC } from 'react';
-import { Badge } from '@workspace/ui/components';
-import { Button } from '@workspace/ui/components';
+import type { FC } from "react";
+import { Badge } from "@workspace/ui/components";
+import { Button } from "@workspace/ui/components";
 // import { ArrowRight, LogIn, Github } from 'lucide-react';
-import { Icons, ArrowRight, LogIn, } from '@workspace/ui/components';
+import { Icons, ArrowRight, LogIn } from "@workspace/ui/components";
 
 const DefaultLandingPage: FC = () => {
   return (
@@ -11,11 +11,21 @@ const DefaultLandingPage: FC = () => {
         <div className="w-[108rem] flex-none flex justify-end">
           <picture>
             <source srcSet="./docs@30.8b9a76a2.avif" type="image/avif" />
-            <img src="./docs@tinypng.d9e4dcdc.png" alt="" className="w-[71.75rem] flex-none max-w-none dark:hidden" decoding="async" />
+            <img
+              src="./docs@tinypng.d9e4dcdc.png"
+              alt=""
+              className="w-[71.75rem] flex-none max-w-none dark:hidden"
+              decoding="async"
+            />
           </picture>
           <picture>
             <source srcSet="./docs-dark@30.1a9f8cbf.avif" type="image/avif" />
-            <img src="./docs-dark@tinypng.1bbe175e.png" alt="" className="w-[90rem] flex-none max-w-none hidden dark:block" decoding="async" />
+            <img
+              src="./docs-dark@tinypng.1bbe175e.png"
+              alt=""
+              className="w-[90rem] flex-none max-w-none hidden dark:block"
+              decoding="async"
+            />
           </picture>
         </div>
       </div>
@@ -27,11 +37,13 @@ const DefaultLandingPage: FC = () => {
                 <Badge>Update!</Badge>
               </span>
               <span> New version out now </span>
-              <ArrowRight className='w-4 h-4 ml-1' />
+              <ArrowRight className="w-4 h-4 ml-1" />
             </Badge>
 
             <div className="max-w-screen-lg mx-auto text-center text-3xl md:text-5xl font-bold">
-              <h1 className="text-3xl font-semibold -tracking-4 md:text-5xl mb-6 md:mb-4">Welcome to the</h1>
+              <h1 className="text-3xl font-semibold -tracking-4 md:text-5xl mb-6 md:mb-4">
+                Welcome to the
+              </h1>
               {/* <h1>
                 Welcome to the
               </h1> */}
@@ -50,13 +62,13 @@ const DefaultLandingPage: FC = () => {
             </p>
 
             <div className="space-y-4 md:space-y-0 md:space-x-4 mt-10">
-              <Button className="w-5/6  md:w-1/4 font-bold group/arrow" >
+              <Button className="w-5/6  md:w-1/4 font-bold group/arrow">
                 <LogIn className="size-5" />
                 Login
                 {/* <ArrowRight className="size-5 ml-2 group-hover/arrow:translate-x-1 transition-transform" /> */}
               </Button>
 
-              <Button variant="secondary" className="w-5/6 md:w-1/4 font-bold group/arrow" >
+              <Button variant="secondary" className="w-5/6 md:w-1/4 font-bold group/arrow">
                 <Icons.gitHub className="size-5 mr-2" />
                 Github
               </Button>
@@ -65,7 +77,7 @@ const DefaultLandingPage: FC = () => {
         </div>
       </section>
     </>
-  )
+  );
 };
 
-export { DefaultLandingPage }
+export { DefaultLandingPage };

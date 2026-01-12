@@ -1,6 +1,6 @@
-import { useQuery, UseQueryResult } from '@workspace/query';
-import { Room, Event, ParsedEvent, EventCalendarConfig } from '../types/eventCalendar';
-import { allowedRoomIds } from './allowedRoomIds';
+import { useQuery, UseQueryResult } from "@workspace/query";
+import { Room, Event, ParsedEvent, EventCalendarConfig } from "../types/eventCalendar";
+import { allowedRoomIds } from "./allowedRoomIds";
 /**
  * Default configuration for the event calendar
  * TODO: Future improvement - make this configurable via environment variables or settings
@@ -10,13 +10,14 @@ const DEFAULT_CONFIG: EventCalendarConfig = {
   allowedRoomIds,
   // This should be configurable via environment variable
   // Set VITE_UNIVIE_API_BASE_URL to your real API URL to switch from mock data
-  apiBaseUrl: import.meta.env?.VITE_UNIVIE_API_BASE_URL || 'https://api.example.com'
+  apiBaseUrl: import.meta.env?.VITE_UNIVIE_API_BASE_URL || "https://api.example.com",
 };
 
-console.log('🔧 Event Calendar API Configuration:', {
+console.log("🔧 Event Calendar API Configuration:", {
   apiBaseUrl: DEFAULT_CONFIG.apiBaseUrl,
   allowedRoomCount: DEFAULT_CONFIG.allowedRoomIds.length,
-  usingMockData: !DEFAULT_CONFIG.apiBaseUrl || DEFAULT_CONFIG.apiBaseUrl === 'https://api.example.com'
+  usingMockData:
+    !DEFAULT_CONFIG.apiBaseUrl || DEFAULT_CONFIG.apiBaseUrl === "https://api.example.com",
 });
 
 /**
@@ -24,7 +25,7 @@ console.log('🔧 Event Calendar API Configuration:', {
  */
 export function parseEventDates(event: Event): ParsedEvent {
   // Parse date from "02.08.2025" format
-  const dateParts = event.datum.split('.');
+  const dateParts = event.datum.split(".");
   if (dateParts.length !== 3) {
     throw new Error(`Invalid date format: ${event.datum}`);
   }
@@ -32,8 +33,8 @@ export function parseEventDates(event: Event): ParsedEvent {
   const baseDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
 
   // Parse time from "08.00" format
-  const startParts = event.beginn.split('.');
-  const endParts = event.ende.split('.');
+  const startParts = event.beginn.split(".");
+  const endParts = event.ende.split(".");
 
   if (startParts.length !== 2 || endParts.length !== 2) {
     throw new Error(`Invalid time format: ${event.beginn} or ${event.ende}`);
@@ -63,8 +64,8 @@ export function parseEventDates(event: Event): ParsedEvent {
  * Format date for API query parameter
  */
 export function formatDateForApi(date: Date): string {
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const year = date.getFullYear();
   return `${day}.${month}.${year}`;
 }
@@ -74,10 +75,10 @@ export function formatDateForApi(date: Date): string {
  */
 async function fetchRooms(config: EventCalendarConfig = DEFAULT_CONFIG): Promise<Room[]> {
   // Check if we're in production mode (API URL is set)
-  console.log('config.apiBaseUrl', config.apiBaseUrl);
-  if (config.apiBaseUrl && config.apiBaseUrl !== 'https://api.example.com') {
+  console.log("config.apiBaseUrl", config.apiBaseUrl);
+  if (config.apiBaseUrl && config.apiBaseUrl !== "https://api.example.com") {
     try {
-      console.log('Fetching rooms from API...');
+      console.log("Fetching rooms from API...");
       const response = await fetch(`${config.apiBaseUrl}/digitalsignage/v1/getAllRaeume`);
 
       if (!response.ok) {
@@ -88,25 +89,29 @@ async function fetchRooms(config: EventCalendarConfig = DEFAULT_CONFIG): Promise
       console.log(`📡 Fetched ${allRooms.length} rooms from API`);
 
       // Filter rooms to only allowed room IDs
-      const filteredRooms = allRooms.filter((room: Room) => config.allowedRoomIds.includes(room.extRaumId));
+      const filteredRooms = allRooms.filter((room: Room) =>
+        config.allowedRoomIds.includes(room.extRaumId)
+      );
 
-      console.log('🔍 Room filtering results:', {
+      console.log("🔍 Room filtering results:", {
         totalFromAPI: allRooms.length,
         allowedRoomIds: config.allowedRoomIds.length,
         matchingRooms: filteredRooms.length,
-        matchingRoomIds: filteredRooms.map(r => r.extRaumId).sort((a, b) => a - b),
-        missingRoomIds: config.allowedRoomIds.filter(id => !allRooms.find(r => r.extRaumId === id))
+        matchingRoomIds: filteredRooms.map((r) => r.extRaumId).sort((a, b) => a - b),
+        missingRoomIds: config.allowedRoomIds.filter(
+          (id) => !allRooms.find((r) => r.extRaumId === id)
+        ),
       });
 
       return filteredRooms;
     } catch (error) {
-      console.error('Error fetching rooms from API:', error);
+      console.error("Error fetching rooms from API:", error);
       throw error;
     }
   }
 
   // Fallback to mock data for development/demo
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate loading
+  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate loading
 
   const mockRooms: Room[] = [
     {
@@ -122,7 +127,7 @@ async function fetchRooms(config: EventCalendarConfig = DEFAULT_CONFIG): Promise
       gebaeudePlz: "1010",
       gebaeudeOrt: "Wien",
       gebaeudeLand: "Austria",
-      uscreenRaum: "main-hs1"
+      uscreenRaum: "main-hs1",
     },
     {
       extRaumId: 1002,
@@ -137,7 +142,7 @@ async function fetchRooms(config: EventCalendarConfig = DEFAULT_CONFIG): Promise
       gebaeudePlz: "1010",
       gebaeudeOrt: "Wien",
       gebaeudeLand: "Austria",
-      uscreenRaum: "main-hs2"
+      uscreenRaum: "main-hs2",
     },
     {
       extRaumId: 2001,
@@ -152,8 +157,8 @@ async function fetchRooms(config: EventCalendarConfig = DEFAULT_CONFIG): Promise
       gebaeudePlz: "1010",
       gebaeudeOrt: "Wien",
       gebaeudeLand: "Austria",
-      uscreenRaum: "side-sr101"
-    }
+      uscreenRaum: "side-sr101",
+    },
   ];
 
   // Filter rooms to only allowed room IDs
@@ -168,9 +173,11 @@ async function fetchEventsByDays(
   config: EventCalendarConfig = DEFAULT_CONFIG
 ): Promise<ParsedEvent[]> {
   // Check if we're in production mode (API URL is set)
-  if (config.apiBaseUrl && config.apiBaseUrl !== 'https://api.example.com') {
+  if (config.apiBaseUrl && config.apiBaseUrl !== "https://api.example.com") {
     try {
-      const response = await fetch(`${config.apiBaseUrl}/digitalsignage/v1/findRaumbelegungenByDays?days=${days}`);
+      const response = await fetch(
+        `${config.apiBaseUrl}/digitalsignage/v1/findRaumbelegungenByDays?days=${days}`
+      );
 
       if (!response.ok) {
         throw new Error(`Failed to fetch events: ${response.status} ${response.statusText}`);
@@ -183,13 +190,13 @@ async function fetchEventsByDays(
         .filter((event: Event) => config.allowedRoomIds.includes(event.extRaumId))
         .map(parseEventDates);
     } catch (error) {
-      console.error('Error fetching events from API:', error);
+      console.error("Error fetching events from API:", error);
       throw error;
     }
   }
 
   // Fallback to mock data for development/demo
-  await new Promise(resolve => setTimeout(resolve, 800)); // Simulate loading
+  await new Promise((resolve) => setTimeout(resolve, 800)); // Simulate loading
 
   const today = new Date();
   const mockEvents: Event[] = [];
@@ -203,7 +210,8 @@ async function fetchEventsByDays(
     // Different event patterns for different days
     const dayOfWeek = targetDate.getDay(); // 0 = Sunday, 1 = Monday, etc.
 
-    if (dayOfWeek >= 1 && dayOfWeek <= 5) { // Monday to Friday
+    if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+      // Monday to Friday
       mockEvents.push(
         {
           extRaumId: 1001,
@@ -212,7 +220,7 @@ async function fetchEventsByDays(
           ende: "11.00",
           relationenName: "Prof. Dr. Müller, Studiengang Informatik",
           name: "Einführung in die Informatik",
-          lvKategorie: "Vorlesung"
+          lvKategorie: "Vorlesung",
         },
         {
           extRaumId: 1001,
@@ -221,7 +229,7 @@ async function fetchEventsByDays(
           ende: "16.00",
           relationenName: "Dr. Schmidt, Studiengang Mathematik",
           name: "Algorithmen und Datenstrukturen",
-          lvKategorie: "Vorlesung"
+          lvKategorie: "Vorlesung",
         },
         {
           extRaumId: 1002,
@@ -230,7 +238,7 @@ async function fetchEventsByDays(
           ende: "12.00",
           relationenName: "Prof. Dr. Weber, Studiengang Physik",
           name: "Quantenmechanik",
-          lvKategorie: "Vorlesung"
+          lvKategorie: "Vorlesung",
         }
       );
 
@@ -244,7 +252,7 @@ async function fetchEventsByDays(
             ende: "15.00",
             relationenName: "Mag. Fischer, Studiengang Psychologie",
             name: "Statistik für Psychologen",
-            lvKategorie: "Seminar"
+            lvKategorie: "Seminar",
           },
           {
             extRaumId: 2001,
@@ -253,38 +261,35 @@ async function fetchEventsByDays(
             ende: "17.30",
             relationenName: "Dr. Bauer, Studiengang Psychologie",
             name: "Experimentalpsychologie Übung",
-            lvKategorie: "Übung"
+            lvKategorie: "Übung",
           }
         );
       }
 
       // Wednesday has different events
       if (dayOfWeek === 3) {
-        mockEvents.push(
-          {
-            extRaumId: 1002,
-            datum: dateStr,
-            beginn: "13.30",
-            ende: "15.30",
-            relationenName: "Prof. Dr. Wagner, Studiengang Biologie",
-            name: "Molekularbiologie",
-            lvKategorie: "Vorlesung"
-          }
-        );
-      }
-    } else if (dayOfWeek === 6) { // Saturday
-      // Limited weekend events
-      mockEvents.push(
-        {
-          extRaumId: 1001,
+        mockEvents.push({
+          extRaumId: 1002,
           datum: dateStr,
-          beginn: "10.00",
-          ende: "12.00",
-          relationenName: "Dr. Klein, Weiterbildung",
-          name: "Weekend Workshop",
-          lvKategorie: "Workshop"
-        }
-      );
+          beginn: "13.30",
+          ende: "15.30",
+          relationenName: "Prof. Dr. Wagner, Studiengang Biologie",
+          name: "Molekularbiologie",
+          lvKategorie: "Vorlesung",
+        });
+      }
+    } else if (dayOfWeek === 6) {
+      // Saturday
+      // Limited weekend events
+      mockEvents.push({
+        extRaumId: 1001,
+        datum: dateStr,
+        beginn: "10.00",
+        ende: "12.00",
+        relationenName: "Dr. Klein, Weiterbildung",
+        name: "Weekend Workshop",
+        lvKategorie: "Workshop",
+      });
     }
     // Sunday has no events
   }
@@ -320,12 +325,14 @@ async function fetchEventsByDate(
   // For future dates, we use the calculated offset
   const daysToFetch = Math.max(1, apiDays);
 
-  console.log(`Fetching events for date: ${formatDateForApi(date)}, calculated days offset: ${daysToFetch}`);
+  console.log(
+    `Fetching events for date: ${formatDateForApi(date)}, calculated days offset: ${daysToFetch}`
+  );
 
   const events = await fetchEventsByDays(daysToFetch, config);
 
   const targetDateStr = formatDateForApi(date);
-  return events.filter(event => event.originalDatum === targetDateStr);
+  return events.filter((event) => event.originalDatum === targetDateStr);
 }
 
 /**
@@ -333,7 +340,7 @@ async function fetchEventsByDate(
  */
 export function useRooms(config?: EventCalendarConfig): UseQueryResult<Room[], Error> {
   return useQuery({
-    queryKey: ['univie-rooms', config?.allowedRoomIds],
+    queryKey: ["univie-rooms", config?.allowedRoomIds],
     queryFn: () => fetchRooms(config),
     staleTime: 24 * 60 * 60 * 1000, // 24 hours - rooms rarely change
     gcTime: 24 * 60 * 60 * 1000, // 24 hours
@@ -348,7 +355,7 @@ export function useEventsByDays(
   config?: EventCalendarConfig
 ): UseQueryResult<ParsedEvent[], Error> {
   return useQuery({
-    queryKey: ['univie-events-by-days', days, config?.allowedRoomIds],
+    queryKey: ["univie-events-by-days", days, config?.allowedRoomIds],
     queryFn: () => fetchEventsByDays(days, config),
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000, // 5 minutes
@@ -363,7 +370,7 @@ export function useEventsByDate(
   config?: EventCalendarConfig
 ): UseQueryResult<ParsedEvent[], Error> {
   return useQuery({
-    queryKey: ['univie-events-by-date', formatDateForApi(date), config?.allowedRoomIds],
+    queryKey: ["univie-events-by-date", formatDateForApi(date), config?.allowedRoomIds],
     queryFn: () => fetchEventsByDate(date, config),
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000, // 5 minutes
@@ -374,14 +381,14 @@ export function useEventsByDate(
  * Get events for a specific room
  */
 export function getEventsForRoom(events: ParsedEvent[], roomId: number): ParsedEvent[] {
-  return events.filter(event => event.extRaumId === roomId);
+  return events.filter((event) => event.extRaumId === roomId);
 }
 
 /**
  * Get room by ID
  */
 export function getRoomById(rooms: Room[], roomId: number): Room | undefined {
-  return rooms.find(room => room.extRaumId === roomId);
+  return rooms.find((room) => room.extRaumId === roomId);
 }
 
 /**
@@ -390,22 +397,25 @@ export function getRoomById(rooms: Room[], roomId: number): Room | undefined {
  * You can use queryClient.invalidateQueries(['univie-rooms']) to clear the cache.
  */
 export function clearRoomsCache(): void {
-  console.warn('clearRoomsCache is deprecated. Use TanStack Query cache invalidation instead.');
+  console.warn("clearRoomsCache is deprecated. Use TanStack Query cache invalidation instead.");
 }
 
 /**
  * Helper function to analyze room ID mismatches
  */
-export function analyzeRoomIdMismatches(apiRooms: Room[], allowedIds: number[]): {
+export function analyzeRoomIdMismatches(
+  apiRooms: Room[],
+  allowedIds: number[]
+): {
   found: number[];
   missing: number[];
   unexpected: number[];
 } {
-  const apiRoomIds = apiRooms.map(r => r.extRaumId);
+  const apiRoomIds = apiRooms.map((r) => r.extRaumId);
 
   return {
-    found: allowedIds.filter(id => apiRoomIds.includes(id)),
-    missing: allowedIds.filter(id => !apiRoomIds.includes(id)),
-    unexpected: apiRoomIds.filter(id => !allowedIds.includes(id))
+    found: allowedIds.filter((id) => apiRoomIds.includes(id)),
+    missing: allowedIds.filter((id) => !apiRoomIds.includes(id)),
+    unexpected: apiRoomIds.filter((id) => !allowedIds.includes(id)),
   };
 }

@@ -1,17 +1,17 @@
-import React, { Suspense } from 'react';
-import { Navigate } from '@tanstack/react-router';
-import { useAuth } from '../auth/AuthContext';
+import React, { Suspense } from "react";
+import { Navigate } from "@tanstack/react-router";
+import { useAuth } from "../auth/AuthContext";
 
 /**
  * Higher-order component that wraps a component with authentication protection.
  * Use this to create protected route components.
- * 
+ *
  * @example
  * const ProtectedAdmin = withAuthProtection(AdminComponent, {
  *   requiredRoles: ['ROLE_ADMIN'],
  *   fallback: () => <div>Admin access required</div>
  * });
- * 
+ *
  * const route = createRoute({
  *   path: '/admin',
  *   component: ProtectedAdmin,
@@ -30,7 +30,7 @@ export function withAuthProtection<P extends object>(
   const {
     requireAuth = true,
     requiredRoles = [],
-    redirectTo = '/login',
+    redirectTo = "/login",
     fallback: Fallback = () => <div>Access denied</div>,
     loadingComponent: Loading = () => <div>Loading...</div>,
   } = options;
@@ -67,13 +67,13 @@ export function withAuthProtection<P extends object>(
 
 /**
  * Creates a protected route component factory with pre-configured protection settings.
- * 
+ *
  * @example
  * const createAdminRoute = createProtectedComponentFactory({
  *   requiredRoles: ['ROLE_ADMIN'],
  *   fallback: () => <div>Admin access required</div>
  * });
- * 
+ *
  * const ProtectedAdmin = createAdminRoute(AdminComponent);
  */
 export function createProtectedComponentFactory(defaultOptions: {
@@ -94,7 +94,7 @@ export function createProtectedComponentFactory(defaultOptions: {
 
 /**
  * Utility to create a route component that includes Suspense and auth protection.
- * 
+ *
  * @example
  * const route = createRoute({
  *   path: '/admin',
@@ -120,4 +120,4 @@ export function createProtectedRouteComponent(
   ProtectedRouteComponent.displayName = `ProtectedRouteComponent(${Component.displayName || Component.name})`;
 
   return ProtectedRouteComponent;
-} 
+}

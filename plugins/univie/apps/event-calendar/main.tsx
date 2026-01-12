@@ -1,5 +1,5 @@
-import { bootstrapStandaloneApp } from '@workspace/app-runtime';
-import { CalendarView } from './src/components/Calendar/CalendarView';
+import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import { CalendarView } from "./src/components/Calendar/CalendarView";
 
 const config = {
   baseUrl: "/univie-calendar",

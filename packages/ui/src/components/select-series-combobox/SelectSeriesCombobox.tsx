@@ -12,11 +12,7 @@ import {
 } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib";
 import { Loader2 } from "lucide-react";
-import {
-  FetchNextPageOptions,
-  InfiniteData,
-  InfiniteQueryObserverResult,
-} from "@workspace/query";
+import { FetchNextPageOptions, InfiniteData, InfiniteQueryObserverResult } from "@workspace/query";
 import { useI18n } from "@workspace/i18n";
 
 type Series = {
@@ -39,18 +35,14 @@ const SelectSeriesCombobox = ({
   setSelectedSeries: (value: Series | null) => void;
   infiniteFetchNextPage?: (
     options?: FetchNextPageOptions
-  ) => Promise<
-    InfiniteQueryObserverResult<InfiniteData<unknown, unknown>, Error>
-  >;
+  ) => Promise<InfiniteQueryObserverResult<InfiniteData<unknown, unknown>, Error>>;
   hasNextPage?: boolean;
   searchSeries?: (query: React.SetStateAction<string>) => void;
   selectedSeries: Series | null | undefined;
   placeholder: string;
 }) => {
   const [filter, setFilter] = React.useState<string>("");
-  const [seriesListFiltered, setSeriesListFiltered] = React.useState<
-    Series[] | undefined
-  >();
+  const [seriesListFiltered, setSeriesListFiltered] = React.useState<Series[] | undefined>();
 
   const [loading, setLoading] = React.useState(false);
   const [hasMore, setHasMore] = React.useState(true);
@@ -82,17 +74,12 @@ const SelectSeriesCombobox = ({
     <>
       <Select
         onValueChange={(value) => {
-          setSelectedSeries(
-            seriesList?.find((data) => data.id === value) || null
-          );
+          setSelectedSeries(seriesList?.find((data) => data.id === value) || null);
         }}
         value={selectedSeries?.title || ""}
       >
         <SelectTrigger
-          className={cn(
-            "justify-between w-full",
-            !selectedSeries?.id && "text-muted-foreground"
-          )}
+          className={cn("justify-between w-full", !selectedSeries?.id && "text-muted-foreground")}
         >
           <SelectValue placeholder={placeholder}>
             {selectedSeries?.title || placeholder}
@@ -165,19 +152,12 @@ const SelectSeriesCombobox = ({
               )
             ) : (
               <span className="flex items-center justify-center m-4 text-sm">
-                {t('noEntriesHeading')}
+                {t("noEntriesHeading")}
               </span>
             )}
             {infiniteFetchNextPage && (
-              <InfiniteScroll
-                hasMore={hasMore}
-                isLoading={loading}
-                next={next}
-                threshold={0}
-              >
-                {hasMore && (
-                  <Loader2 className="my-4 h-6 animate-spin w-full" />
-                )}
+              <InfiniteScroll hasMore={hasMore} isLoading={loading} next={next} threshold={0}>
+                {hasMore && <Loader2 className="my-4 h-6 animate-spin w-full" />}
               </InfiniteScroll>
             )}
           </Command>

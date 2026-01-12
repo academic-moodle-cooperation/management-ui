@@ -21,7 +21,7 @@ const containerVariants = cva("", {
 
 export interface ContainerProps
   extends React.HTMLAttributes<HTMLDivElement>,
-  VariantProps<typeof containerVariants> {
+    VariantProps<typeof containerVariants> {
   asChild?: boolean;
 }
 
@@ -29,11 +29,7 @@ const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "div";
     return (
-      <Comp
-        className={cn(containerVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      />
+      <Comp className={cn(containerVariants({ variant, size, className }))} ref={ref} {...props} />
     );
   }
 );

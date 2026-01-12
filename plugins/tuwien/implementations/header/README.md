@@ -14,12 +14,14 @@ The `tuwienHeaderImplementation` plugin provides a **complete, self-contained he
 ## Migration from Old System
 
 This implementation was migrated from:
+
 ```
 migrate/extensions/src/tuwien/src/plugins/header/HeaderPlugin.tsx
 migrate/extensions/src/tuwien/src/plugins/header/HeaderPlugin.css
 ```
 
 **Key improvements:**
+
 - ✅ **Modern architecture** - Uses Plugin Architecture 3.0
 - ✅ **Complete component** - Single extension point, no nesting conflicts
 - ✅ **Responsive design** - Mobile-first with desktop navigation
@@ -29,16 +31,19 @@ migrate/extensions/src/tuwien/src/plugins/header/HeaderPlugin.css
 ## Features
 
 ### Navigation Links
+
 - **Portal** - Links to `//video.tuwien.ac.at` (research portal)
 - **Manage** - Links to `/` (current management interface)
 - **Responsive** - Hidden on mobile devices (< 768px)
 
 ### TU Wien Logo
+
 - **SVG format** - Official TU Wien logo
 - **External link** - Opens `//tuwien.ac.at` in new tab
 - **Accessibility** - Proper ARIA labels and alt text
 
 ### Mobile Support
+
 - **Hamburger menu** - Mobile sidebar trigger button
 - **Responsive layout** - Desktop-only navigation
 - **Touch-friendly** - Proper button sizing for mobile
@@ -54,6 +59,7 @@ migrate/extensions/src/tuwien/src/plugins/header/HeaderPlugin.css
 ## Styling
 
 Uses TU Wien-specific colors and branding:
+
 - **TU Wien Blue**: `#069` (primary university color)
 - **Hover Blue**: `#063e5a` (darker shade for interactions)
 - **Text Gray**: `#767676` (navigation text color)
@@ -64,7 +70,7 @@ Uses TU Wien-specific colors and branding:
 The header is automatically registered when TU Wien plugins are loaded:
 
 ```typescript
-import { tuwienHeaderImplementation } from '@workspace/plugins';
+import { tuwienHeaderImplementation } from "@workspace/plugins";
 
 // Plugin is automatically registered via plugins/index.ts
 // No manual registration needed
@@ -75,8 +81,8 @@ import { tuwienHeaderImplementation } from '@workspace/plugins';
 Universities can override with their own header by registering with higher priority:
 
 ```typescript
-manager.registerComponent('appshell:header', CustomHeader, {
-  key: 'my-university-header',
-  order: 25 // Higher priority than TU Wien (50)
+manager.registerComponent("appshell:header", CustomHeader, {
+  key: "my-university-header",
+  order: 25, // Higher priority than TU Wien (50)
 });
-``` 
+```

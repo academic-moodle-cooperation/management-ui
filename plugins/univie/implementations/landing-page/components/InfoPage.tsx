@@ -1,10 +1,10 @@
-import React, { type FC } from 'react';
-import { createOrganizationNamespace, usePluginTranslation } from '@workspace/i18n';
-import { useGetCurrentUser, useAppConfig } from '@workspace/query';
-import { useAuthActions } from '@workspace/router';
-import { Button } from '@workspace/ui/components';
+import React, { type FC } from "react";
+import { createOrganizationNamespace, usePluginTranslation } from "@workspace/i18n";
+import { useGetCurrentUser, useAppConfig } from "@workspace/query";
+import { useAuthActions } from "@workspace/router";
+import { Button } from "@workspace/ui/components";
 // Import the SVG as a URL
-import univieLogoUrl from './assets/univie_logo.svg?url';
+import univieLogoUrl from "./assets/univie_logo.svg?url";
 
 /**
  * University of Vienna Landing Page Implementation
@@ -15,7 +15,7 @@ const InfoPage: FC = () => {
   const { data } = useGetCurrentUser();
   const { config } = useAppConfig();
   const { login } = useAuthActions();
-  const namespace = createOrganizationNamespace('univie', 'landing-page');
+  const namespace = createOrganizationNamespace("univie", "landing-page");
 
   const { t } = usePluginTranslation([namespace]);
 
@@ -26,7 +26,7 @@ const InfoPage: FC = () => {
         <div
           className="absolute inset-0 object-cover w-full z-100 bg-no-repeat h-full bg-[right_-12rem_bottom_-12rem] opacity-50 pointer-events-none"
           style={{
-            backgroundImage: `url(${univieLogoUrl})`
+            backgroundImage: `url(${univieLogoUrl})`,
           }}
         />
 
@@ -84,4 +84,4 @@ const InfoPage: FC = () => {
   );
 };
 
-export { InfoPage }; 
+export { InfoPage };

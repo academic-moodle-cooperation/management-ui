@@ -1,11 +1,11 @@
-import React, { useState, useMemo } from 'react';
-import { ParsedEvent, Room } from '../types/eventCalendar';
-import { EventCard } from './EventCard';
-import { RoomFilter } from './RoomFilter';
-import { Card, Button, Skeleton } from '@workspace/ui/components';
-import { DatePicker } from '@workspace/ui/components';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, RefreshCw } from 'lucide-react';
-import { useEventsByDate, useRooms, getRoomById, getEventsForRoom } from '../api/eventCalendarApi';
+import React, { useState, useMemo } from "react";
+import { ParsedEvent, Room } from "../types/eventCalendar";
+import { EventCard } from "./EventCard";
+import { RoomFilter } from "./RoomFilter";
+import { Card, Button, Skeleton } from "@workspace/ui/components";
+import { DatePicker } from "@workspace/ui/components";
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, RefreshCw } from "lucide-react";
+import { useEventsByDate, useRooms, getRoomById, getEventsForRoom } from "../api/eventCalendarApi";
 
 interface CalendarViewProps {
   className?: string;
@@ -18,15 +18,20 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
 
   // Fetch data
   const { data: rooms, isLoading: roomsLoading, error: roomsError } = useRooms();
-  const { data: events, isLoading: eventsLoading, error: eventsError, refetch } = useEventsByDate(selectedDate);
+  const {
+    data: events,
+    isLoading: eventsLoading,
+    error: eventsError,
+    refetch,
+  } = useEventsByDate(selectedDate);
 
   // Debug logging
   React.useEffect(() => {
     if (rooms) {
-      console.log('🏢 Rooms loaded:', {
+      console.log("🏢 Rooms loaded:", {
         totalRooms: rooms.length,
-        roomIds: rooms.map(r => r.extRaumId).sort((a, b) => a - b),
-        sampleRoom: rooms[0]
+        roomIds: rooms.map((r) => r.extRaumId).sort((a, b) => a - b),
+        sampleRoom: rooms[0],
       });
     }
   }, [rooms]);
@@ -34,20 +39,20 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
   // Initialize selected rooms when rooms are loaded
   React.useEffect(() => {
     if (rooms && rooms.length > 0 && selectedRoomIds.length === 0) {
-      setSelectedRoomIds(rooms.map(room => room.extRaumId));
+      setSelectedRoomIds(rooms.map((room) => room.extRaumId));
     }
   }, [rooms, selectedRoomIds.length]);
 
   // Filter events by selected rooms
   const filteredEvents = useMemo(() => {
     if (!events) return [];
-    return events.filter(event => selectedRoomIds.includes(event.extRaumId));
+    return events.filter((event) => selectedRoomIds.includes(event.extRaumId));
   }, [events, selectedRoomIds]);
 
   // Group events by room
   const eventsByRoom = useMemo(() => {
     const grouped: Record<number, ParsedEvent[]> = {};
-    filteredEvents.forEach(event => {
+    filteredEvents.forEach((event) => {
       if (!grouped[event.extRaumId]) {
         grouped[event.extRaumId] = [];
       }
@@ -55,7 +60,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
     });
 
     // Sort events by start time within each room
-    Object.keys(grouped).forEach(roomId => {
+    Object.keys(grouped).forEach((roomId) => {
       const roomEvents = grouped[parseInt(roomId)];
       if (roomEvents) {
         roomEvents.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
@@ -84,16 +89,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
 
   // Room selection handlers
   const handleRoomToggle = (roomId: number) => {
-    setSelectedRoomIds(prev =>
-      prev.includes(roomId)
-        ? prev.filter(id => id !== roomId)
-        : [...prev, roomId]
+    setSelectedRoomIds((prev) =>
+      prev.includes(roomId) ? prev.filter((id) => id !== roomId) : [...prev, roomId]
     );
   };
 
   const handleSelectAllRooms = () => {
     if (rooms) {
-      setSelectedRoomIds(rooms.map(room => room.extRaumId));
+      setSelectedRoomIds(rooms.map((room) => room.extRaumId));
     }
   };
 
@@ -102,11 +105,11 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
   };
 
   const formatSelectedDate = (date: Date): string => {
-    return date.toLocaleDateString('de-DE', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return date.toLocaleDateString("de-DE", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
@@ -117,7 +120,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
 
   if (roomsError || eventsError) {
     return (
-      <Card className={`p-6 ${className || ''}`}>
+      <Card className={`p-6 ${className || ""}`}>
         <div className="text-center space-y-4">
           <div className="text-destructive">
             Error loading data: {roomsError?.message || eventsError?.message}
@@ -132,7 +135,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
   }
 
   return (
-    <div className={`space-y-6 ${className || ''}`}>
+    <div className={`space-y-6 ${className || ""}`}>
       {/* Header with date navigation */}
       <Card className="p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -165,15 +168,16 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
               </Button>
             </div>
 
-            <Button variant="outline" size="sm" onClick={goToToday} disabled={isToday(selectedDate)}>
-              Today
-            </Button>
-
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setShowRoomFilter(!showRoomFilter)}
+              onClick={goToToday}
+              disabled={isToday(selectedDate)}
             >
+              Today
+            </Button>
+
+            <Button variant="outline" size="sm" onClick={() => setShowRoomFilter(!showRoomFilter)}>
               Filter Rooms ({selectedRoomIds.length})
             </Button>
 
@@ -199,7 +203,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
       <div className="space-y-6">
         {roomsLoading || eventsLoading ? (
           <div className="space-y-4">
-            {[1, 2, 3].map(i => (
+            {[1, 2, 3].map((i) => (
               <Card key={i} className="p-6">
                 <Skeleton className="h-6 w-48 mb-4" />
                 <div className="space-y-3">
@@ -218,9 +222,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
                 <p className="text-muted-foreground mb-4">
                   Please select at least one room to view events.
                 </p>
-                <Button onClick={() => setShowRoomFilter(true)}>
-                  Select Rooms
-                </Button>
+                <Button onClick={() => setShowRoomFilter(true)}>Select Rooms</Button>
               </Card>
             ) : filteredEvents.length === 0 ? (
               <Card className="p-8 text-center">
@@ -232,7 +234,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
               </Card>
             ) : (
               <div className="space-y-6">
-                {selectedRoomIds.map(roomId => {
+                {selectedRoomIds.map((roomId) => {
                   const room = getRoomById(rooms || [], roomId);
                   const roomEvents = eventsByRoom[roomId] || [];
 
@@ -249,11 +251,12 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
                             <p className="text-sm text-muted-foreground">
                               {room.raumArtNeuBezeichnung}
                               {room.stockwerk && ` • Floor ${room.stockwerk}`}
-                              {room.gebaeudeStrasse && ` • ${room.gebaeudeStrasse}, ${room.gebaeudeOrt}`}
+                              {room.gebaeudeStrasse &&
+                                ` • ${room.gebaeudeStrasse}, ${room.gebaeudeOrt}`}
                             </p>
                           )}
                           <p className="text-sm text-muted-foreground">
-                            {roomEvents.length} event{roomEvents.length !== 1 ? 's' : ''}
+                            {roomEvents.length} event{roomEvents.length !== 1 ? "s" : ""}
                           </p>
                         </div>
 

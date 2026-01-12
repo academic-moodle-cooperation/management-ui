@@ -15,9 +15,8 @@ export const UploadAclEditor: React.FC<UploadAclEditorProps> = ({
   onAclDataChange,
   // selectedSeries,
   disabled = false,
-  refetch = () => { },
+  refetch = () => {},
 }) => {
-
   const [hasChanges, setHasChanges] = useState(false);
   const [managedAclId, setManagedAclId] = useState<string | undefined>(undefined);
   const [entries, setEntries] = useState<ACLEntry[]>([]);
@@ -59,16 +58,18 @@ export const UploadAclEditor: React.FC<UploadAclEditorProps> = ({
   return (
     <div className="h-full">
       <AclEditor
-        aclEntries={aclData?.entries.map((entry) => ({
-          role: entry.role,
-          action: entry.action,
-          label: entry.role,
-          userId: "",
-        })) ?? []}
+        aclEntries={
+          aclData?.entries.map((entry) => ({
+            role: entry.role,
+            action: entry.action,
+            label: entry.role,
+            userId: "",
+          })) ?? []
+        }
         managedAclId={managedAclId}
         hasChanges={hasChanges}
         refetch={refetch}
-        onClose={() => { }}
+        onClose={() => {}}
         showUpdateButton={false}
         onAclChange={onAclChange}
         onManagedAclChange={onManagedAclChange}

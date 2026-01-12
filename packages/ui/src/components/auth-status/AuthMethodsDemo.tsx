@@ -1,14 +1,14 @@
-import React from 'react';
-import { useAuth, useAuthActions } from '@workspace/router';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Separator } from '../ui/separator';
+import React from "react";
+import { useAuth, useAuthActions } from "@workspace/router";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Separator } from "../ui/separator";
 
 /**
  * AuthMethodsDemo component that demonstrates the standardized authentication approach.
  * All authentication now uses the /login and /logout routes consistently.
- * 
+ *
  * The useAuthActions hook now uses these routes internally for consistency.
  */
 export const AuthMethodsDemo: React.FC = () => {
@@ -26,11 +26,11 @@ export const AuthMethodsDemo: React.FC = () => {
 
   // Method 2: Direct route navigation (same result as Method 1)
   const handleDirectRouteLogin = () => {
-    window.location.href = '/login';
+    window.location.href = "/login";
   };
 
   const handleDirectRouteLogout = () => {
-    window.location.href = '/logout';
+    window.location.href = "/logout";
   };
 
   return (
@@ -48,8 +48,12 @@ export const AuthMethodsDemo: React.FC = () => {
 
         {isAuthenticated && user?.currentUser && (
           <div className="space-y-1 text-sm">
-            <div><strong>User:</strong> {user.currentUser.name}</div>
-            <div><strong>Role:</strong> {user.currentUser.userRole}</div>
+            <div>
+              <strong>User:</strong> {user.currentUser.name}
+            </div>
+            <div>
+              <strong>Role:</strong> {user.currentUser.userRole}
+            </div>
           </div>
         )}
 
@@ -69,15 +73,11 @@ export const AuthMethodsDemo: React.FC = () => {
                 disabled={authActionsLoading}
                 size="sm"
               >
-                {authActionsLoading ? 'Loading...' : 'Hook Logout'}
+                {authActionsLoading ? "Loading..." : "Hook Logout"}
               </Button>
             ) : (
-              <Button
-                onClick={handleHookLogin}
-                disabled={authActionsLoading}
-                size="sm"
-              >
-                {authActionsLoading ? 'Loading...' : 'Hook Login'}
+              <Button onClick={handleHookLogin} disabled={authActionsLoading} size="sm">
+                {authActionsLoading ? "Loading..." : "Hook Login"}
               </Button>
             )}
           </div>
@@ -93,18 +93,11 @@ export const AuthMethodsDemo: React.FC = () => {
           </p>
           <div className="flex gap-2">
             {isAuthenticated ? (
-              <Button
-                onClick={handleDirectRouteLogout}
-                variant="outline"
-                size="sm"
-              >
+              <Button onClick={handleDirectRouteLogout} variant="outline" size="sm">
                 Route Logout
               </Button>
             ) : (
-              <Button
-                onClick={handleDirectRouteLogin}
-                size="sm"
-              >
+              <Button onClick={handleDirectRouteLogin} size="sm">
                 Route Login
               </Button>
             )}
@@ -112,10 +105,15 @@ export const AuthMethodsDemo: React.FC = () => {
         </div>
 
         <div className="text-xs text-muted-foreground space-y-1">
-          <p><strong>Note:</strong> Both methods now use the same standardized routes internally</p>
-          <p><strong>Benefit:</strong> Consistent behavior, centralized auth logic, proper redirect handling</p>
+          <p>
+            <strong>Note:</strong> Both methods now use the same standardized routes internally
+          </p>
+          <p>
+            <strong>Benefit:</strong> Consistent behavior, centralized auth logic, proper redirect
+            handling
+          </p>
         </div>
       </CardContent>
     </Card>
   );
-}; 
+};

@@ -7,7 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   Container,
-  SidebarMenuButton
+  SidebarMenuButton,
 } from "@workspace/ui/components";
 import { useGetCurrentUser } from "@workspace/query";
 import { LogIn, LogOut } from "@workspace/ui/components/icons";
@@ -56,10 +56,7 @@ const SidebarUserMenu = ({ open }: { open: boolean }) => {
 
                 <span className="sr-only">Your profile</span>
                 {open && (
-                  <span
-                    aria-hidden="true"
-                    className="text-sidebar-foreground whitespace-nowrap"
-                  >
+                  <span aria-hidden="true" className="text-sidebar-foreground whitespace-nowrap">
                     {data?.currentUser.name}
                   </span>
                 )}
@@ -73,16 +70,15 @@ const SidebarUserMenu = ({ open }: { open: boolean }) => {
                 </a>
               </SidebarMenuButton> */}
               <NavMain
-
-                customItemStyles={cn(
-                  "flex gap-4 px-4"
-                )} items={[{
-                  title: "Logout",
-                  url: "/logout",
-                  icon: LogOut
-                }]}
-                menuItemClassName={cn(!open && 'flex justify-center')}
-
+                customItemStyles={cn("flex gap-4 px-4")}
+                items={[
+                  {
+                    title: "Logout",
+                    url: "/logout",
+                    icon: LogOut,
+                  },
+                ]}
+                menuItemClassName={cn(!open && "flex justify-center")}
               />
             </AccordionContent>
           </AccordionItem>
@@ -103,4 +99,4 @@ const SidebarUserMenu = ({ open }: { open: boolean }) => {
   );
 };
 
-export { SidebarUserMenu }; 
+export { SidebarUserMenu };

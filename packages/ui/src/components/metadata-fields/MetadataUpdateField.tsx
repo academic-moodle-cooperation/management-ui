@@ -79,12 +79,7 @@ export const MetadataUpdateField = ({
       $query: String
     ) {
       currentUser {
-        mySeries(
-          limit: $limit
-          offset: $offset
-          orderBy: $orderBy
-          query: $query
-        ) {
+        mySeries(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
           nodes {
             id
             title
@@ -94,16 +89,25 @@ export const MetadataUpdateField = ({
     }
   `;
 
-  const fetchMySeries = async ({ pageParam = 0, query }: { pageParam: number, query: string | undefined }) => {
+  const fetchMySeries = async ({
+    pageParam = 0,
+    query,
+  }: {
+    pageParam: number;
+    query: string | undefined;
+  }) => {
     const graphQLClient = createGraphQLClient(config.api.graphqlEndpoint);
-    const data: GetMySeriesNameAndIdQuery | undefined = await graphQLClient.request(FETCH_MY_SERIES, {
-      limit: 10,
-      offset: pageParam,
-      query,
-      orderBy: {
-        title: OrderDirection.Asc,
+    const data: GetMySeriesNameAndIdQuery | undefined = await graphQLClient.request(
+      FETCH_MY_SERIES,
+      {
+        limit: 10,
+        offset: pageParam,
+        query,
+        orderBy: {
+          title: OrderDirection.Asc,
+        },
       }
-    });
+    );
     return data?.currentUser?.mySeries.nodes;
   };
 
@@ -131,9 +135,7 @@ export const MetadataUpdateField = ({
     },
   });
 
-  const [selectedContributors, setSelectedContributors] = useState<
-    Map<string, string>
-  >(new Map());
+  const [selectedContributors, setSelectedContributors] = useState<Map<string, string>>(new Map());
 
   // if (listProvider === "SERIES" && !isLoadingSeriesData) {
   // if (listProvider === "SERIES" && !isLoading) {
@@ -163,11 +165,7 @@ export const MetadataUpdateField = ({
           <>
             <Popover open={openLangSelect} onOpenChange={setOpenLangSelect}>
               <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  className="w-full justify-between"
-                >
+                <Button variant="outline" role="combobox" className="w-full justify-between">
                   {value ? t(`languages.${value}`) : t(`noOptionSelected`)}
                   <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -227,11 +225,7 @@ export const MetadataUpdateField = ({
               <SelectContent className="sidebar-portal-inside">
                 {Object.values(collection).length ? (
                   Object.values(collection).map((item, index) => (
-                    <SelectItem
-                      key={index + (item as string)}
-                      value={item as string}
-                      tabIndex={0}
-                    >
+                    <SelectItem key={index + (item as string)} value={item as string} tabIndex={0}>
                       {t(`licences.${item}`)}
                     </SelectItem>
                   ))
@@ -250,10 +244,10 @@ export const MetadataUpdateField = ({
           <>
             <SelectSeriesCombobox
               disableSearch={true}
-              seriesList={data?.pages.flat().filter((series) => series !== null) as Series[] | undefined}
-              selectedSeries={data?.pages
-                .flat()
-                .find((series) => series?.id === value)}
+              seriesList={
+                data?.pages.flat().filter((series) => series !== null) as Series[] | undefined
+              }
+              selectedSeries={data?.pages.flat().find((series) => series?.id === value)}
               setSelectedSeries={(el) => {
                 onUpdate(el?.id || "");
               }}
@@ -343,9 +337,7 @@ export const MetadataUpdateField = ({
               onUpdate(e.target.value);
             }}
           />
-          <span className="text-xs text-gray-400">
-            {t(`sepatateValues`)}
-          </span>
+          <span className="text-xs text-gray-400">{t(`sepatateValues`)}</span>
         </>
       );
       break;

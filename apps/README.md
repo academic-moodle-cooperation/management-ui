@@ -16,6 +16,7 @@ Every application in this system is designed for **two modes of operation**:
 2. **Integrated Mode** - Loaded within the core shell for full system functionality
 
 This architecture enables:
+
 - **Fast development** - Work on one app without loading others
 - **Independent testing** - Test app behavior in isolation
 - **Flexible deployment** - Apps can be deployed separately or together
@@ -23,13 +24,13 @@ This architecture enables:
 
 ### Application Catalog
 
-| Application | Purpose | Port | Route | Documentation |
-|-------------|---------|------|-------|---------------|
-| **management-ui-core** | Application shell, orchestration, plugin loading | 3000 | `/` | [README](management-ui-core/README.md) |
-| **management-ui-series** | Video series management | 3001 | `/series` | [README](management-ui-series/README.md) |
-| **management-ui-episodes** | Individual episode management | 3002 | `/episodes` | [README](management-ui-episodes/README.md) |
-| **management-ui-upload** | Content upload and processing | 3003 | `/upload` | [README](management-ui-upload/README.md) |
-| **management-ui-test** | Testing and QA tools | 3004 | `/test` | [README](management-ui-test/README.md) |
+| Application                | Purpose                                          | Port | Route       | Documentation                              |
+| -------------------------- | ------------------------------------------------ | ---- | ----------- | ------------------------------------------ |
+| **management-ui-core**     | Application shell, orchestration, plugin loading | 3000 | `/`         | [README](management-ui-core/README.md)     |
+| **management-ui-series**   | Video series management                          | 3001 | `/series`   | [README](management-ui-series/README.md)   |
+| **management-ui-episodes** | Individual episode management                    | 3002 | `/episodes` | [README](management-ui-episodes/README.md) |
+| **management-ui-upload**   | Content upload and processing                    | 3003 | `/upload`   | [README](management-ui-upload/README.md)   |
+| **management-ui-test**     | Testing and QA tools                             | 3004 | `/test`     | [README](management-ui-test/README.md)     |
 
 ## Architecture Patterns
 
@@ -80,6 +81,7 @@ This architecture enables:
 **Purpose:** Orchestration, plugin loading, shared layout
 
 **Responsibilities:**
+
 - Load and initialize plugin system
 - Provide authentication context
 - Render shared layout (header, sidebar, footer)
@@ -89,6 +91,7 @@ This architecture enables:
 **Dependencies:** All workspace packages
 
 **Key Files:**
+
 - `src/main.tsx` - Entry point
 - `src/loadPlugins.ts` - Plugin discovery and loading
 - `src/app-router.tsx` - Main routing configuration
@@ -99,6 +102,7 @@ This architecture enables:
 **Purpose:** Specific business functionality
 
 **Responsibilities:**
+
 - Implement domain-specific features
 - Manage domain-specific state
 - Provide domain-specific UI
@@ -108,6 +112,7 @@ This architecture enables:
 **Dependencies:** Workspace packages (not other apps)
 
 **Key Files:**
+
 - `src/main.tsx` - Standalone bootstrap
 - `src/App.tsx` - Main application component
 - `src/components/` - Domain-specific components
@@ -121,8 +126,8 @@ Every app (except core) uses the standalone runtime:
 
 ```typescript
 // apps/management-ui-[app-name]/src/main.tsx
-import { bootstrapStandaloneApp } from '@workspace/app-runtime';
-import App from './App';
+import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import App from "./App";
 
 const config = {
   baseUrl: "/[app-route]",
@@ -133,6 +138,7 @@ bootstrapStandaloneApp(App, "root", config);
 ```
 
 **What `bootstrapStandaloneApp` provides:**
+
 - Plugin system initialization
 - Query client setup
 - Router configuration
@@ -155,6 +161,7 @@ const App = () => (
 ```
 
 **What `AdaptiveAppWrapper` does:**
+
 - Detects standalone vs integrated mode
 - Provides appropriate context
 - Handles routing differences
@@ -178,6 +185,7 @@ pnpm dev
 ```
 
 **Benefits:**
+
 - ⚡ Fast hot reload (only one app)
 - 🎯 Focused development
 - 🧪 Easy testing in isolation
@@ -197,6 +205,7 @@ pnpm dev
 ```
 
 **Benefits:**
+
 - 🔗 Test full integration
 - 🎨 See plugin effects
 - 🧭 Test navigation between apps
@@ -206,6 +215,7 @@ pnpm dev
 ### When to Use Each Mode
 
 **Use Standalone When:**
+
 - Developing a specific feature
 - Debugging app-specific issues
 - Writing unit/integration tests
@@ -213,6 +223,7 @@ pnpm dev
 - Working on UI components
 
 **Use Integrated When:**
+
 - Testing app interactions
 - Verifying plugin customizations
 - Testing navigation flows
@@ -229,10 +240,10 @@ import { useSeries } from '@workspace/query';
 
 function SeriesComponent() {
   const { data, isLoading, error } = useSeries();
-  
+
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorMessage error={error} />;
-  
+
   return <SeriesList data={data} />;
 }
 ```
@@ -245,7 +256,7 @@ import { useNavigate } from '@tanstack/react-router';
 
 function NavigateButton() {
   const navigate = useNavigate();
-  
+
   return (
     <Button onClick={() => navigate({ to: '/episodes/$id', params: { id: '123' } })}>
       Go to Episode
@@ -286,7 +297,7 @@ import { useTranslation } from '@workspace/i18n';
 
 function TranslatedComponent() {
   const { t } = useTranslation('[app-name]');
-  
+
   return (
     <div>
       <h1>{t('title')}</h1>
@@ -322,6 +333,7 @@ function TranslatedComponent() {
 ```
 
 **Communication Methods:**
+
 1. **URL Parameters** - Pass IDs via route params
 2. **Query Strings** - Pass filters/state via query
 3. **Shared Store** - Global state via `@workspace/store`
@@ -335,7 +347,7 @@ import { useStore } from '@workspace/store';
 
 function Component() {
   const [selectedSeries, setSelectedSeries] = useStore('selectedSeries');
-  
+
   return <div>{selectedSeries?.name}</div>;
 }
 ```
@@ -349,10 +361,10 @@ Apps should provide extension points for university customization:
 ```typescript
 // Define what can be customized
 const extensionPoints = {
-  '[app-name]:empty-state': 'Custom empty state component',
-  '[app-name]:action-buttons': 'Custom action buttons',
-  '[app-name]:metadata-fields': 'Custom metadata fields',
-  '[app-name]:header': 'Custom app header',
+  "[app-name]:empty-state": "Custom empty state component",
+  "[app-name]:action-buttons": "Custom action buttons",
+  "[app-name]:metadata-fields": "Custom metadata fields",
+  "[app-name]:header": "Custom app header",
 };
 ```
 
@@ -369,9 +381,9 @@ function AppContent() {
         componentType="[app-name]:header"
         defaultComponent={DefaultHeader}
       />
-      
+
       <MainContent />
-      
+
       <ComponentResolver
         componentType="[app-name]:action-buttons"
         defaultComponent={DefaultActions}
@@ -386,6 +398,7 @@ function AppContent() {
 ### Required Workspace Packages
 
 All applications typically depend on:
+
 - `@workspace/app-runtime` - Standalone execution
 - `@workspace/ui` - Component library
 - `@workspace/query` - Data fetching
@@ -408,7 +421,7 @@ All applications typically depend on:
     "@workspace/ui": "workspace:*",
     "@workspace/query": "workspace:*",
     // ... other workspace packages
-    
+
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
     // ... external dependencies
@@ -447,11 +460,11 @@ pnpm test:e2e
 
 ```typescript
 // Test standalone app
-import { render } from '@testing-library/react';
-import { bootstrapStandaloneApp } from '@workspace/app-runtime';
-import App from './App';
+import { render } from "@testing-library/react";
+import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import App from "./App";
 
-test('app renders in standalone mode', () => {
+test("app renders in standalone mode", () => {
   // Test implementation
 });
 ```
@@ -494,11 +507,13 @@ apps/[app-name]/dist/
 ### Deployment Strategies
 
 **Monolith Deployment:**
+
 - Build all apps
 - Deploy core shell
 - Apps loaded via routing
 
 **Micro-Frontend Deployment:**
+
 - Build apps independently
 - Deploy to separate URLs
 - Core shell loads remote apps
@@ -510,17 +525,20 @@ See detailed guide: [/docs/workflows/ADDING_APPS.md](/docs/workflows/ADDING_APPS
 ### Quick Start
 
 1. **Create app directory**
+
    ```bash
    mkdir apps/management-ui-[app-name]
    cd apps/management-ui-[app-name]
    ```
 
 2. **Initialize package**
+
    ```bash
    pnpm init
    ```
 
 3. **Add dependencies**
+
    ```json
    {
      "dependencies": {
@@ -532,11 +550,12 @@ See detailed guide: [/docs/workflows/ADDING_APPS.md](/docs/workflows/ADDING_APPS
    ```
 
 4. **Create entry point**
+
    ```typescript
    // src/main.tsx
-   import { bootstrapStandaloneApp } from '@workspace/app-runtime';
-   import App from './App';
-   
+   import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+   import App from "./App";
+
    bootstrapStandaloneApp(App, "root", {
      baseUrl: "/[app-route]",
      appName: "management-ui-[app-name]",
@@ -544,10 +563,11 @@ See detailed guide: [/docs/workflows/ADDING_APPS.md](/docs/workflows/ADDING_APPS
    ```
 
 5. **Create app component**
+
    ```typescript
    // src/App.tsx
    import { AdaptiveAppWrapper } from '@workspace/app-runtime';
-   
+
    export default function App() {
      return (
        <AdaptiveAppWrapper>
@@ -558,11 +578,12 @@ See detailed guide: [/docs/workflows/ADDING_APPS.md](/docs/workflows/ADDING_APPS
    ```
 
 6. **Configure Vite**
+
    ```typescript
    // vite.config.ts
    import { defineConfig } from 'vite';
    import { createAppConfig } from '@workspace/vite-config';
-   
+
    export default defineConfig(createAppConfig({
      appName: 'management-ui-[app-name]',
      port: 30XX,
@@ -605,6 +626,7 @@ Before considering an app production-ready:
 ### Issue: App Not Loading in Integrated Mode
 
 **Solution:**
+
 1. Check route registration in core
 2. Verify base URL configuration
 3. Check for console errors
@@ -613,6 +635,7 @@ Before considering an app production-ready:
 ### Issue: Standalone Mode Not Working
 
 **Solution:**
+
 1. Verify `bootstrapStandaloneApp` usage
 2. Check Vite configuration
 3. Ensure correct port number
@@ -621,6 +644,7 @@ Before considering an app production-ready:
 ### Issue: Plugin Customizations Not Appearing
 
 **Solution:**
+
 1. Verify plugin is loaded
 2. Check extension point naming
 3. Verify ComponentResolver usage
@@ -644,5 +668,3 @@ Before considering an app production-ready:
 ---
 
 **Remember:** Applications should be independent, well-documented, and support both standalone and integrated execution modes.
-
-

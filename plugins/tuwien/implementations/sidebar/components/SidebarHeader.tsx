@@ -19,7 +19,7 @@ export const SidebarHeader = ({ collapsed }: { collapsed: boolean }) => {
           "flex items-center flex-shrink-0 px-4 text-lg h-16 w-full",
           !collapsed ? "justify-between " : "justify-center"
         )}
-        style={{ backgroundColor: 'var(--color-header)' }} // Use TU Wien theme color
+        style={{ backgroundColor: "var(--color-header)" }} // Use TU Wien theme color
       >
         <a className="text-white " rel="" href="/management-ui" target="_self">
           <>
@@ -52,21 +52,17 @@ export const SidebarHeader = ({ collapsed }: { collapsed: boolean }) => {
             )}
           >
             <span className="sr-only">Switch Language </span>
-            {enabled && (
-              <span className="text-xs font-light text-white ">DE</span>
-            )}
+            {enabled && <span className="text-xs font-light text-white ">DE</span>}
             <span
               aria-hidden="true"
               className={cn(
                 "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out justify-center items-center"
               )}
             />
-            {!enabled && (
-              <span className="text-xs font-light text-white">EN</span>
-            )}
+            {!enabled && <span className="text-xs font-light text-white">EN</span>}
           </SwitchHeadlessUI>
         )}
       </div>
     </>
   );
-}; 
+};

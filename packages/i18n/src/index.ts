@@ -3,4 +3,4 @@ import { I18nextProvider } from "react-i18next";
 
 export * from "./useTranslation";
 export * from "./translationLoader";
-export { i18next, I18nextProvider }; 
+export { i18next, I18nextProvider };

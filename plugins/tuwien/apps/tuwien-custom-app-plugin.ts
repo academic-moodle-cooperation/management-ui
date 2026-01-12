@@ -1,40 +1,40 @@
-import { createPlugin } from '@workspace/plugin-system';
-import { TuWienCustomApp } from './TuWienCustomApp';
+import { createPlugin } from "@workspace/plugin-system";
+import { TuWienCustomApp } from "./TuWienCustomApp";
 
 /**
  * TU Wien custom app plugin
  * This demonstrates how universities can add their own applications through plugins
  */
 export const tuWienCustomAppPlugin = createPlugin({
-  namespace: 'tuwien',
-  type: 'app',
-  version: '1.0.0',
-  
+  namespace: "tuwien",
+  type: "app",
+  version: "1.0.0",
+
   initialize(manager) {
     // Register the custom app through the plugin system
-    manager.registerObject('apps:definitions', 'tuwien-custom-app', {
-      id: 'tuwien-custom-app',
-      name: 'TU Wien Custom App',
-      routePath: '/tuwien-custom',
+    manager.registerObject("apps:definitions", "tuwien-custom-app", {
+      id: "tuwien-custom-app",
+      name: "TU Wien Custom App",
+      routePath: "/tuwien-custom",
       component: TuWienCustomApp,
       navigation: {
-        title: 'TU Wien App',
-        icon: 'building-2',
+        title: "TU Wien App",
+        icon: "building-2",
         order: 150,
-        permissions: ['access_tuwien_app']
+        permissions: ["access_tuwien_app"],
       },
-      version: '1.0.0',
-      description: 'Custom application for TU Wien with university-specific features'
+      version: "1.0.0",
+      description: "Custom application for TU Wien with university-specific features",
     });
 
-    console.log('TU Wien custom app plugin initialized');
+    console.log("TU Wien custom app plugin initialized");
   },
-  
+
   activate() {
-    console.log('TU Wien custom app plugin activated');
+    console.log("TU Wien custom app plugin activated");
   },
-  
+
   deactivate() {
-    console.log('TU Wien custom app plugin deactivated');
-  }
+    console.log("TU Wien custom app plugin deactivated");
+  },
 });

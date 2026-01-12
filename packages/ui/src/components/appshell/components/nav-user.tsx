@@ -1,15 +1,8 @@
-"use client"
+"use client";
 
-import {
-  ChevronsUpDown,
-  LogOut,
-} from "lucide-react"
+import { ChevronsUpDown, LogOut } from "lucide-react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@workspace/ui/components"
+import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,16 +10,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@workspace/ui/components"
+} from "@workspace/ui/components";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@workspace/ui/components"
-import { useGetCurrentUser } from "@workspace/query"
-import { sha256 } from "@workspace/utils"
-import React from "react"
+} from "@workspace/ui/components";
+import { useGetCurrentUser } from "@workspace/query";
+import { sha256 } from "@workspace/utils";
+import React from "react";
 
 // Separate data concerns from presentation
 type UserData = {
@@ -57,10 +50,7 @@ export function NavUser({
 
   const defaultAvatar = (
     <Avatar className="h-8 w-8 rounded-lg">
-      <AvatarImage
-        src={userData.avatarUrl}
-        alt={`Avatar of ${userData.name}`}
-      />
+      <AvatarImage src={userData.avatarUrl} alt={`Avatar of ${userData.name}`} />
       <AvatarFallback className="rounded-lg">
         {userData.name?.split(" ").map((n) => n[0])}
       </AvatarFallback>
@@ -110,11 +100,15 @@ export function NavUser({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }
 
 // Hook for data fetching (separate from presentation)
-export const useUserData = (): { userData: UserData | undefined; isLoading: boolean; logout: () => void } => {
+export const useUserData = (): {
+  userData: UserData | undefined;
+  isLoading: boolean;
+  logout: () => void;
+} => {
   const { data, isLoading } = useGetCurrentUser();
 
   const userData = React.useMemo(() => {
@@ -126,7 +120,7 @@ export const useUserData = (): { userData: UserData | undefined; isLoading: bool
       avatarUrl: `https://www.gravatar.com/avatar/${sha256(
         `${data.currentUser.email}`.toLowerCase()?.trim()
       )}?s=64&d=404`,
-      role: data.currentUser.userRole
+      role: data.currentUser.userRole,
     };
   }, [data]);
 
@@ -143,13 +137,6 @@ export function NavUserConnected(props: {
   customMenuItems?: React.ReactNode;
 }) {
   const { userData, isLoading, logout } = useUserData();
-  
-  return (
-    <NavUser
-      userData={userData}
-      isLoading={isLoading}
-      onLogout={logout}
-      {...props}
-    />
-  );
-} 
+
+  return <NavUser userData={userData} isLoading={isLoading} onLogout={logout} {...props} />;
+}

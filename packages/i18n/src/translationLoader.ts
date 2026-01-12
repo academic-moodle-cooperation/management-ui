@@ -23,10 +23,7 @@ export const loadNamespace = async (
  * @param namespaces - Array of namespaces to load
  * @param autoLoad - Whether to auto-load namespaces (default: true)
  */
-export const usePluginTranslation = (
-  namespaces: string[],
-  autoLoad = true
-) => {
+export const usePluginTranslation = (namespaces: string[], autoLoad = true) => {
   const { t, i18n } = useTranslation(namespaces);
 
   React.useEffect(() => {
@@ -49,8 +46,7 @@ export const usePluginTranslation = (
  * @param key - The translation key
  * @returns Namespaced key string
  */
-export const createNamespacedKey = (namespace: string, key: string) =>
-  `${namespace}:${key}`;
+export const createNamespacedKey = (namespace: string, key: string) => `${namespace}:${key}`;
 
 /**
  * Helper for organization-specific namespace patterns
@@ -62,4 +58,4 @@ export const createOrganizationNamespace = (organization: string, component: str
   `${organization}-${component}`;
 
 // Re-export React hooks for convenience
-export { useTranslation }; 
+export { useTranslation };

@@ -1,10 +1,5 @@
-import React from 'react';
-import {
-  Button,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@workspace/ui/components";
+import React from "react";
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components";
 import { Pencil, UploadCloud } from "lucide-react";
 import { Link } from "@workspace/router";
 import { i18next } from "@workspace/i18n";
@@ -23,10 +18,15 @@ const DefaultSeriesActionsCell: React.FC<SeriesActionsCellProps> = ({ series }) 
     <div className="flex items-center justify-center gap-2">
       <Tooltip delayDuration={300}>
         <TooltipTrigger asChild>
-          <Button variant="ghost" size="icon" className="w-4 h-4" onClick={(e) => {
-            e.stopPropagation();
-            openSidebarWithData(series.id, true, {});
-          }}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-4 h-4"
+            onClick={(e) => {
+              e.stopPropagation();
+              openSidebarWithData(series.id, true, {});
+            }}
+          >
             <Pencil />
             <span className="sr-only">{i18next.t("series:seriesTable.action.editData")}</span>
           </Button>
@@ -68,4 +68,4 @@ export const SeriesActionsCell: React.FC<SeriesActionsCellProps> = (props) => {
   );
 };
 
-export default SeriesActionsCell; 
+export default SeriesActionsCell;

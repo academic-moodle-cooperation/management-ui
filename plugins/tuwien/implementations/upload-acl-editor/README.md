@@ -17,6 +17,7 @@ The TU Wien Upload ACL Editor plugin extends the upload application by adding an
 ## Architecture
 
 ### Plugin Structure
+
 ```
 plugins/tuwien/implementations/upload-acl-editor/
 ├── index.ts                          # Plugin registration and configuration
@@ -28,6 +29,7 @@ plugins/tuwien/implementations/upload-acl-editor/
 ### Plugin Registration
 
 The plugin is registered in the TU Wien plugin system as:
+
 - **Namespace**: `tuwien`
 - **Type**: `upload-acl-editor`
 - **Extension Point**: `upload:acl-editor`
@@ -59,6 +61,7 @@ The plugin is automatically loaded and registered when the upload app initialize
 The main component that provides the ACL editing interface:
 
 #### Props
+
 - `aclData`: Current ACL configuration
 - `onAclChange`: Callback for ACL data changes
 - `selectedSeries`: Currently selected series for context
@@ -66,6 +69,7 @@ The main component that provides the ACL editing interface:
 - `refetch`: Function to refresh data
 
 #### Features
+
 - Accordion-based UI for space efficiency
 - Integration with existing AclEditor component
 - Proper state management for upload context
@@ -85,6 +89,7 @@ To extend the ACL editor functionality:
 ### Testing
 
 The plugin should be tested in the context of:
+
 - Upload workflow with and without series selection
 - ACL data changes and persistence
 - UI responsiveness and accessibility
@@ -99,6 +104,7 @@ The plugin should be tested in the context of:
 ## Conventions
 
 This plugin follows TU Wien plugin conventions:
+
 - Consistent naming patterns (`tuwien*Implementation`)
 - Proper plugin lifecycle management
 - Standard component structure and props

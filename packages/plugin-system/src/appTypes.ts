@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 /**
  * App definition interface for registering apps through plugins

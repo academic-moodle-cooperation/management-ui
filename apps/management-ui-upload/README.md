@@ -113,9 +113,9 @@ interface Upload {
   originalName: string;
   size: number;
   type: string; // MIME type
-  
+
   // Upload progress
-  status: 'pending' | 'uploading' | 'processing' | 'completed' | 'failed';
+  status: "pending" | "uploading" | "processing" | "completed" | "failed";
   progress: {
     uploaded: number;
     total: number;
@@ -123,15 +123,15 @@ interface Upload {
     speed?: number; // bytes per second
     estimatedTimeRemaining?: number; // seconds
   };
-  
+
   // Processing information
   processing: {
-    stage: 'validation' | 'transcoding' | 'thumbnails' | 'quality_check' | 'completed';
+    stage: "validation" | "transcoding" | "thumbnails" | "quality_check" | "completed";
     progress: number;
     logs: ProcessingLog[];
     error?: string;
   };
-  
+
   // File information
   metadata: {
     duration?: string; // for video files
@@ -140,17 +140,17 @@ interface Upload {
     bitrate?: number;
     checksum: string;
   };
-  
+
   // Access control
   acl: {
     owner: string;
     permissions: Record<string, string[]>; // role -> permissions
     inheritFrom?: string; // parent series/folder ID
   };
-  
+
   // University-specific data
   custom: Record<string, unknown>;
-  
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -173,20 +173,20 @@ Universities can customize the upload system extensively:
 
 ```typescript
 // TU Wien ACL integration
-manager.registerObject('upload:acl-provider', 'tuwien-acl', {
-  name: 'TU Wien Access Control',
-  
+manager.registerObject("upload:acl-provider", "tuwien-acl", {
+  name: "TU Wien Access Control",
+
   async validatePermissions(userId: string, action: string): Promise<boolean> {
     // Custom TU Wien permission checking logic
     return tuWienAclService.checkPermission(userId, action);
   },
-  
+
   async getAvailableGroups(userId: string): Promise<Group[]> {
     // Get TU Wien groups for ACL assignment
     return tuWienAclService.getUserGroups(userId);
   },
-  
-  renderAclEditor: TuWienAclEditor // Custom ACL editor component
+
+  renderAclEditor: TuWienAclEditor, // Custom ACL editor component
 });
 ```
 
@@ -194,29 +194,29 @@ manager.registerObject('upload:acl-provider', 'tuwien-acl', {
 
 ```typescript
 // University-specific file validation
-manager.registerObject('upload:validation-rules', 'university-validation', {
+manager.registerObject("upload:validation-rules", "university-validation", {
   fileTypes: {
-    video: ['.mp4', '.mov', '.avi'],
-    transcript: ['.vtt', '.srt', '.txt'],
-    thumbnail: ['.jpg', '.png', '.webp']
+    video: [".mp4", ".mov", ".avi"],
+    transcript: [".vtt", ".srt", ".txt"],
+    thumbnail: [".jpg", ".png", ".webp"],
   },
-  
+
   maxSizes: {
-    video: '2GB',
-    transcript: '10MB',
-    thumbnail: '5MB'
+    video: "2GB",
+    transcript: "10MB",
+    thumbnail: "5MB",
   },
-  
+
   customValidators: [
     {
-      name: 'course-code-required',
+      name: "course-code-required",
       validate: (file, metadata) => {
         // Require course code in filename for academic content
         return /^[A-Z]{3}\d{3}[-_]/.test(file.name);
       },
-      message: 'Filename must start with course code (e.g., CS101_lecture01.mp4)'
-    }
-  ]
+      message: "Filename must start with course code (e.g., CS101_lecture01.mp4)",
+    },
+  ],
 });
 ```
 
@@ -224,36 +224,36 @@ manager.registerObject('upload:validation-rules', 'university-validation', {
 
 ```typescript
 // University-specific upload processing workflow
-manager.registerObject('upload:workflows', 'university-processing', {
-  name: 'Academic Content Processing',
-  
+manager.registerObject("upload:workflows", "university-processing", {
+  name: "Academic Content Processing",
+
   stages: [
     {
-      name: 'Initial Validation',
-      handler: 'validate-academic-content',
-      timeout: '30s'
+      name: "Initial Validation",
+      handler: "validate-academic-content",
+      timeout: "30s",
     },
     {
-      name: 'Virus Scanning',
-      handler: 'university-virus-scan',
-      timeout: '5m'
+      name: "Virus Scanning",
+      handler: "university-virus-scan",
+      timeout: "5m",
     },
     {
-      name: 'Content Analysis',
-      handler: 'analyze-educational-content',
-      timeout: '10m'
+      name: "Content Analysis",
+      handler: "analyze-educational-content",
+      timeout: "10m",
     },
     {
-      name: 'Transcoding',
-      handler: 'university-transcoding',
-      timeout: '30m'
-    }
+      name: "Transcoding",
+      handler: "university-transcoding",
+      timeout: "30m",
+    },
   ],
-  
+
   notifications: {
-    onComplete: ['email:creator', 'webhook:lms'],
-    onError: ['email:admin', 'slack:it-support']
-  }
+    onComplete: ["email:creator", "webhook:lms"],
+    onError: ["email:admin", "slack:it-support"],
+  },
 });
 ```
 
@@ -293,11 +293,11 @@ The upload system integrates with multiple university ACL systems:
 // TU Wien specific ACL editor component
 const TuWienAclEditor = ({ uploadId, currentAcl, onChange }) => {
   const { data: groups } = useTuWienGroups();
-  
+
   return (
     <div className="acl-editor">
       <h3>TU Wien Access Control</h3>
-      
+
       <div className="permission-groups">
         {groups?.map(group => (
           <PermissionGroup
@@ -308,7 +308,7 @@ const TuWienAclEditor = ({ uploadId, currentAcl, onChange }) => {
           />
         ))}
       </div>
-      
+
       <div className="inheritance-settings">
         <label>
           <input
@@ -339,16 +339,16 @@ const { data: processingStatus } = useUploadProcessing(uploadId, {
 const ProcessingMonitor = ({ upload }) => {
   const currentStage = upload.processing.stage;
   const progress = upload.processing.progress;
-  
+
   return (
     <div className="processing-monitor">
       <ProgressBar value={progress} />
-      
+
       <div className="stage-indicator">
         <StageIcon stage={currentStage} />
         <span>{getStageDisplayName(currentStage)}</span>
       </div>
-      
+
       {upload.processing.logs.map(log => (
         <LogEntry key={log.id} log={log} />
       ))}

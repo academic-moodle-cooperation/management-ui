@@ -14,12 +14,12 @@ The actual route tree will be constructed dynamically, likely by `management-ui-
 
 ```tsx
 // Example in @workspace/providers/src/AppProviders.tsx
-import { RouterProvider } from '@workspace/router';
+import { RouterProvider } from "@workspace/router";
 // ... other provider imports
 
 export const AppProviders = ({ children }) => {
   // Logic to generate or fetch the dynamic route tree
-  const dynamicRouteTree = getDynamicRouteTree(); 
+  const dynamicRouteTree = getDynamicRouteTree();
 
   return (
     // ... other providers ...
@@ -29,4 +29,4 @@ export const AppProviders = ({ children }) => {
     // ... other providers ...
   );
 };
-``` 
+```

@@ -81,23 +81,23 @@ Provides university-specific settings:
 // implementations/config/config.ts
 export const config = {
   app: {
-    theme: 'example-university',
-    orgLogoUrl: 'assets/example-university/logo.svg',
-    organizationName: 'Example University',
-    organizationUrl: 'https://example-university.edu',
-    supportEmail: 'support@example-university.edu',
+    theme: "example-university",
+    orgLogoUrl: "assets/example-university/logo.svg",
+    organizationName: "Example University",
+    organizationUrl: "https://example-university.edu",
+    supportEmail: "support@example-university.edu",
     features: {
       enableTranscripts: true,
       enableComments: false,
     },
     pluginNamespace: [
-      'core',
-      'episodes',
-      'series',
-      'upload',
-      { 'example-university': { types: ['config', 'header', 'sidebar'] } }
-    ]
-  }
+      "core",
+      "episodes",
+      "series",
+      "upload",
+      { "example-university": { types: ["config", "header", "sidebar"] } },
+    ],
+  },
 };
 ```
 
@@ -106,12 +106,12 @@ export const config = {
 Adds university logo to the header:
 
 ```typescript
-manager.registerObject('app:header-logo', 'university-logo', {
-  src: '/assets/university-logo.png',
-  alt: 'Example University',
+manager.registerObject("app:header-logo", "university-logo", {
+  src: "/assets/university-logo.png",
+  alt: "Example University",
   width: 120,
   height: 40,
-  href: 'https://example-university.edu'
+  href: "https://example-university.edu",
 });
 ```
 
@@ -121,32 +121,32 @@ Adds custom navigation items:
 
 ```typescript
 // Custom navigation item
-manager.registerObject('sidebar:nav-items', 'example-courses', {
-  title: 'Courses',
-  path: '/courses',
+manager.registerObject("sidebar:nav-items", "example-courses", {
+  title: "Courses",
+  path: "/courses",
   icon: GraduationCap,
   order: 50,
-  permissions: ['courses.view']
+  permissions: ["courses.view"],
 });
 
 // Help link
-manager.registerObject('sidebar:help-items', 'example-docs', {
-  title: 'Documentation',
-  path: 'https://docs.example-university.edu',
+manager.registerObject("sidebar:help-items", "example-docs", {
+  title: "Documentation",
+  path: "https://docs.example-university.edu",
   icon: BookOpen,
   order: 10,
-  external: true
+  external: true,
 });
 ```
 
 ## Extension Points Used
 
-| Extension Point | Implementation | Purpose |
-|-----------------|----------------|---------|
-| `app:config` | `exampleUniversityConfigPlugin` | University settings |
-| `app:header-logo` | `universityHeaderExample` | Header logo |
-| `sidebar:nav-items` | `exampleUniversitySidebarPlugin` | Navigation items |
-| `sidebar:help-items` | `exampleUniversitySidebarPlugin` | Help links |
+| Extension Point      | Implementation                   | Purpose             |
+| -------------------- | -------------------------------- | ------------------- |
+| `app:config`         | `exampleUniversityConfigPlugin`  | University settings |
+| `app:header-logo`    | `universityHeaderExample`        | Header logo         |
+| `sidebar:nav-items`  | `exampleUniversitySidebarPlugin` | Navigation items    |
+| `sidebar:help-items` | `exampleUniversitySidebarPlugin` | Help links          |
 
 ## Development
 
@@ -233,7 +233,7 @@ mkdir -p implementations/footer
 Export in `implementations/index.ts`:
 
 ```typescript
-export { myUniversityFooterPlugin } from './footer';
+export { myUniversityFooterPlugin } from "./footer";
 ```
 
 ### Step 5: Update README
@@ -260,10 +260,10 @@ Place your logo in `assets/`:
 
 ```json
 {
-  "@workspace/app-runtime": "workspace:*",    // Standalone execution
-  "@workspace/i18n": "workspace:*",           // Internationalization
-  "@workspace/plugin-system": "workspace:*",  // Plugin infrastructure
-  "@workspace/ui": "workspace:*",             // UI components
+  "@workspace/app-runtime": "workspace:*", // Standalone execution
+  "@workspace/i18n": "workspace:*", // Internationalization
+  "@workspace/plugin-system": "workspace:*", // Plugin infrastructure
+  "@workspace/ui": "workspace:*", // UI components
   "react": "^18.0.0 || ^19.0.0"
 }
 ```

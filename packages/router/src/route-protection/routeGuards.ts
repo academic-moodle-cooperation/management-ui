@@ -1,4 +1,4 @@
-import { redirect } from '@tanstack/react-router';
+import { redirect } from "@tanstack/react-router";
 
 interface AuthContext {
   isAuthenticated: boolean;
@@ -16,7 +16,7 @@ interface RouteContext {
 /**
  * Route guard that checks authentication before loading a route.
  * Use this in your route's beforeLoad function.
- * 
+ *
  * @example
  * const protectedRoute = createRoute({
  *   path: '/admin',
@@ -24,12 +24,14 @@ interface RouteContext {
  *   beforeLoad: authGuard({ requireAuth: true, requiredRoles: ['ROLE_ADMIN'] }),
  * });
  */
-export function authGuard(options: {
-  requireAuth?: boolean;
-  requiredRoles?: string[];
-  redirectTo?: string;
-} = {}) {
-  const { requireAuth = true, requiredRoles = [], redirectTo = '/login' } = options;
+export function authGuard(
+  options: {
+    requireAuth?: boolean;
+    requiredRoles?: string[];
+    redirectTo?: string;
+  } = {}
+) {
+  const { requireAuth = true, requiredRoles = [], redirectTo = "/login" } = options;
 
   return async ({ context }: { context: RouteContext }) => {
     // In a real application, you'd get auth state from context or a global store
@@ -46,7 +48,7 @@ export function authGuard(options: {
     if (requiredRoles.length > 0) {
       const userRole = authState.user?.currentUser?.userRole;
       if (!userRole || !requiredRoles.includes(userRole)) {
-        throw redirect({ to: '/access-denied' });
+        throw redirect({ to: "/access-denied" });
       }
     }
   };
@@ -55,7 +57,7 @@ export function authGuard(options: {
 /**
  * Helper to mark routes with protection metadata.
  * Use this to add protection information to staticData.
- * 
+ *
  * @example
  * const route = createRoute({
  *   path: '/admin',
@@ -110,4 +112,4 @@ export function getRouteProtection(route: RouteWithStaticData) {
     requiredRoles: route.staticData?.requiredRoles ?? [],
     description: route.staticData?.protectionDescription,
   };
-} 
+}

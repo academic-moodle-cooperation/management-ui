@@ -1,10 +1,4 @@
-
-import {
-  CalendarIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  X,
-} from "lucide-react";
+import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon, X } from "lucide-react";
 import React, {
   useCallback,
   useEffect,
@@ -71,14 +65,8 @@ function Calendar(props: CalendarProps<DateValue>) {
     nextButtonProps: _nextButtonProps,
     title,
   } = useCalendar(props, state);
-  const { buttonProps: prevButtonProps } = useButton(
-    _prevButtonProps,
-    prevButtonRef
-  );
-  const { buttonProps: nextButtonProps } = useButton(
-    _nextButtonProps,
-    nextButtonRef
-  );
+  const { buttonProps: prevButtonProps } = useButton(_prevButtonProps, prevButtonRef);
+  const { buttonProps: nextButtonProps } = useButton(_nextButtonProps, nextButtonRef);
 
   return (
     <div {...calendarProps} className="space-y-4">
@@ -87,9 +75,7 @@ function Calendar(props: CalendarProps<DateValue>) {
           {...prevButtonProps}
           ref={prevButtonRef}
           variant="outline"
-          className={cn(
-            "absolute left-1 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
-          )}
+          className={cn("absolute left-1 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100")}
         >
           <ChevronLeftIcon className="w-4 h-4" />
         </Button>
@@ -98,9 +84,7 @@ function Calendar(props: CalendarProps<DateValue>) {
           {...nextButtonProps}
           ref={nextButtonRef}
           variant="outline"
-          className={cn(
-            "absolute right-1 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
-          )}
+          className={cn("absolute right-1 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100")}
         >
           <ChevronRightIcon className="w-4 h-4" />
         </Button>
@@ -122,20 +106,31 @@ function CalendarGrid({ state, ...props }: CalendarGridProps) {
   const weeksInMonth = getWeeksInMonth(state.visibleRange.start, locale);
 
   return (
-    <table
-      {...gridProps}
-      className={cn(gridProps.className, "w-full border-collapse space-y-1")}
-    >
+    <table {...gridProps} className={cn(gridProps.className, "w-full border-collapse space-y-1")}>
       <thead {...headerProps}>
         <tr className="flex">
-          {weekDays.map((day: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Iterable<React.ReactNode> | null | undefined, index: React.Key | null | undefined) => (
-            <th
-              className="w-9 rounded-md text-[0.8rem] font-normal text-muted-foreground"
-              key={index}
-            >
-              {day}
-            </th>
-          ))}
+          {weekDays.map(
+            (
+              day:
+                | string
+                | number
+                | boolean
+                | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+                | Iterable<React.ReactNode>
+                | React.ReactPortal
+                | Iterable<React.ReactNode>
+                | null
+                | undefined,
+              index: React.Key | null | undefined
+            ) => (
+              <th
+                className="w-9 rounded-md text-[0.8rem] font-normal text-muted-foreground"
+                key={index}
+              >
+                {day}
+              </th>
+            )
+          )}
         </tr>
       </thead>
       <tbody>
@@ -144,11 +139,7 @@ function CalendarGrid({ state, ...props }: CalendarGridProps) {
             {state
               .getDatesInWeek(weekIndex)
               .map((date, i) =>
-                date ? (
-                  <CalendarCell key={i} state={state} date={date} />
-                ) : (
-                  <td key={i} />
-                )
+                date ? <CalendarCell key={i} state={state} date={date} /> : <td key={i} />
               )}
           </tr>
         ))}
@@ -164,14 +155,8 @@ interface CalendarCellProps {
 
 function CalendarCell({ state, date }: CalendarCellProps) {
   const ref = React.useRef<HTMLButtonElement | null>(null);
-  const {
-    cellProps,
-    buttonProps,
-    isSelected,
-    isOutsideVisibleRange,
-    isDisabled,
-    formattedDate,
-  } = useCalendarCell({ date }, state, ref);
+  const { cellProps, buttonProps, isSelected, isOutsideVisibleRange, isDisabled, formattedDate } =
+    useCalendarCell({ date }, state, ref);
 
   const isToday = useMemo(() => {
     const timezone = getLocalTimeZone();
@@ -196,7 +181,7 @@ function CalendarCell({ state, date }: CalendarCellProps) {
           "h-9 w-9",
           isToday && "bg-accent text-accent-foreground",
           isSelected &&
-          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+            "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
           isOutsideVisibleRange && "text-muted-foreground opacity-50",
           isDisabled && "text-muted-foreground opacity-50"
         )}
@@ -361,9 +346,7 @@ const DateTimePicker = React.forwardRef<
      * This is controlled by react-aria.
      **/
     if (state.value) {
-      const date = parseDateTime(state.value.toString()).toDate(
-        getLocalTimeZone()
-      );
+      const date = parseDateTime(state.value.toString()).toDate(getLocalTimeZone());
       setJsDatetime(date);
       onJsDateChange?.(date);
     }
@@ -406,10 +389,7 @@ const DateTimePicker = React.forwardRef<
       <DateField {...fieldProps} value={currentValue()} />
       <div className={cn("-ml-2 mr-2 h-5 w-5", !showClearButton && "hidden")}>
         <X
-          className={cn(
-            "h-5 w-5 cursor-pointer text-primary/30",
-            !jsDatetime && "hidden"
-          )}
+          className={cn("h-5 w-5 cursor-pointer text-primary/30", !jsDatetime && "hidden")}
           onClick={() => setJsDatetime(null)}
         />
       </div>

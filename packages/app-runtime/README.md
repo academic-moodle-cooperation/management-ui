@@ -9,6 +9,7 @@
 The `app-runtime` package provides the runtime infrastructure for standalone application execution in the Management UI system. It enables applications to run both independently (for development) and integrated within the core shell, providing all necessary context (plugins, routing, queries, i18n) regardless of execution mode.
 
 **In Scope:**
+
 - Standalone app bootstrapping
 - Provider hierarchy setup (plugins, query, router, i18n)
 - Context detection (standalone vs integrated)
@@ -16,6 +17,7 @@ The `app-runtime` package provides the runtime infrastructure for standalone app
 - Runtime configuration injection
 
 **Out of Scope:**
+
 - Business logic (belongs in apps)
 - UI components (belongs in `@workspace/ui`)
 - Data fetching (belongs in `@workspace/query`)
@@ -38,8 +40,8 @@ The `app-runtime` package provides the runtime infrastructure for standalone app
 Applications can run independently with full system context:
 
 ```typescript
-import { bootstrapStandaloneApp } from '@workspace/app-runtime';
-import App from './App';
+import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import App from "./App";
 
 bootstrapStandaloneApp(App, "root", {
   baseUrl: "/episodes",
@@ -48,6 +50,7 @@ bootstrapStandaloneApp(App, "root", {
 ```
 
 This single call provides:
+
 - Plugin system initialization
 - Query client setup
 - Router configuration
@@ -120,12 +123,12 @@ These are composed and injected, enabling future swapping.
 
 ```typescript
 // Main exports
-export { bootstrapStandaloneApp } from './index';
-export { AppRuntimeProvider } from './AppRuntimeProvider';
-export { AdaptiveAppWrapper } from './StandaloneAppWrapper';
+export { bootstrapStandaloneApp } from "./index";
+export { AppRuntimeProvider } from "./AppRuntimeProvider";
+export { AdaptiveAppWrapper } from "./StandaloneAppWrapper";
 
 // Types
-export type { AppConfig, StandaloneConfig } from './types';
+export type { AppConfig, StandaloneConfig } from "./types";
 ```
 
 ### Core API
@@ -135,6 +138,7 @@ export type { AppConfig, StandaloneConfig } from './types';
 **Purpose:** Initialize and render a standalone application with full context
 
 **Signature:**
+
 ```typescript
 function bootstrapStandaloneApp(
   App: React.ComponentType,
@@ -144,6 +148,7 @@ function bootstrapStandaloneApp(
 ```
 
 **Parameters:**
+
 - `App` (React.ComponentType): The root application component
 - `rootElementId` (string): DOM element ID to mount to (usually "root")
 - `config` (StandaloneConfig): Application configuration
@@ -152,9 +157,10 @@ function bootstrapStandaloneApp(
   - Additional runtime options as needed
 
 **Example:**
+
 ```typescript
-import { bootstrapStandaloneApp } from '@workspace/app-runtime';
-import App from './App';
+import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import App from "./App";
 
 bootstrapStandaloneApp(App, "root", {
   baseUrl: "/series",
@@ -167,18 +173,18 @@ bootstrapStandaloneApp(App, "root", {
 **Purpose:** Provide runtime context (plugins, query, router, i18n)
 
 **Signature:**
+
 ```typescript
-function AppRuntimeProvider({ 
-  children, 
-  config 
-}: AppRuntimeProviderProps): JSX.Element;
+function AppRuntimeProvider({ children, config }: AppRuntimeProviderProps): JSX.Element;
 ```
 
 **Parameters:**
+
 - `children` (React.ReactNode): Child components
 - `config` (StandaloneConfig): Runtime configuration
 
 **Example:**
+
 ```typescript
 <AppRuntimeProvider config={{ baseUrl: "/episodes", appName: "episodes" }}>
   <App />
@@ -190,13 +196,13 @@ function AppRuntimeProvider({
 **Purpose:** Wrap app content with adaptive context detection
 
 **Signature:**
+
 ```typescript
-function AdaptiveAppWrapper({ 
-  children 
-}: { children: React.ReactNode }): JSX.Element;
+function AdaptiveAppWrapper({ children }: { children: React.ReactNode }): JSX.Element;
 ```
 
 **Example:**
+
 ```typescript
 function App() {
   return (
@@ -214,8 +220,8 @@ function App() {
 
 ```typescript
 export interface StandaloneConfig {
-  baseUrl: string;        // Base URL path (e.g., "/episodes")
-  appName: string;        // Application name
+  baseUrl: string; // Base URL path (e.g., "/episodes")
+  appName: string; // Application name
   // Additional config options
 }
 
@@ -249,6 +255,7 @@ export interface AppRuntimeProviderProps {
 **Allowed to depend on:** All lower layers (Integration, Foundation, Core Infrastructure)
 
 **Rules:**
+
 - Can import from any workspace package
 - Should inject dependencies rather than create them
 - Should not be depended on by lower layers
@@ -285,8 +292,8 @@ To replace this package:
 
 ```typescript
 // apps/management-ui-series/src/main.tsx
-import { bootstrapStandaloneApp } from '@workspace/app-runtime';
-import App from './App';
+import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import App from "./App";
 
 const config = {
   baseUrl: "/series",
@@ -325,9 +332,9 @@ import { useSeries } from '@workspace/query';
 
 function SeriesList() {
   const { data, isLoading } = useSeries();
-  
+
   if (isLoading) return <div>Loading...</div>;
-  
+
   return (
     <div>
       {data.map(series => (
@@ -344,8 +351,8 @@ function SeriesList() {
 
 ```typescript
 // Development entry point
-import { bootstrapStandaloneApp } from '@workspace/app-runtime';
-import App from './App';
+import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import App from "./App";
 
 // Run independently at dedicated port
 bootstrapStandaloneApp(App, "root", {
@@ -398,18 +405,18 @@ describe('AppRuntimeProvider', () => {
 Test full bootstrap process:
 
 ```typescript
-describe('bootstrapStandaloneApp', () => {
-  it('mounts app successfully', () => {
-    const div = document.createElement('div');
-    div.id = 'root';
+describe("bootstrapStandaloneApp", () => {
+  it("mounts app successfully", () => {
+    const div = document.createElement("div");
+    div.id = "root";
     document.body.appendChild(div);
-    
-    bootstrapStandaloneApp(TestApp, 'root', {
-      baseUrl: '/test',
-      appName: 'test-app'
+
+    bootstrapStandaloneApp(TestApp, "root", {
+      baseUrl: "/test",
+      appName: "test-app",
     });
-    
-    expect(div.querySelector('.app')).toBeInTheDocument();
+
+    expect(div.querySelector(".app")).toBeInTheDocument();
   });
 });
 ```
@@ -429,6 +436,7 @@ This package doesn't provide extension points but enables them by:
 #### v0.0.0 (Current)
 
 Initial implementation with:
+
 - `bootstrapStandaloneApp` function
 - `AppRuntimeProvider` component
 - `AdaptiveAppWrapper` component
@@ -522,5 +530,3 @@ When contributing to this package:
 ---
 
 **Remember:** This package enables dual-mode execution. Changes here affect all applications. Test thoroughly in both standalone and integrated modes.
-
-

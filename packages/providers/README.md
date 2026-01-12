@@ -17,11 +17,9 @@ The `AppProviders` component composes the following providers in this order:
 ## Usage
 
 ```tsx
-import { AppProviders } from '@workspace/providers';
+import { AppProviders } from "@workspace/providers";
 
-<AppProviders
-  router={router}
-/>
+<AppProviders router={router} />;
 ```
 
 **Migration Note**: The `configData`, `isConfigLoading`, `isConfigError`, `configError`, and `isConfigFetched` props are no longer needed as configuration is handled internally by `@workspace/query`.
@@ -33,6 +31,7 @@ The entire provider hierarchy is wrapped with a single `ErrorBoundary` from the 
 ## Plugin System Integration
 
 The providers work seamlessly with the plugin system:
+
 - `PluginProvider` and `QueryProvider` are initialized at the outer level in the main app
 - `RendererProvider` (deprecated) provides legacy plugin rendering capabilities
 - Plugin-related context is properly exposed through the provider hierarchy
@@ -58,4 +57,4 @@ React.StrictMode
                 │   │   └── AuthInitializer
                 │   │       └── RouterProvider
                 │   │           └── [Your App Components]
-``` 
+```

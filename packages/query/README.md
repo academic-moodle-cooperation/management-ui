@@ -14,7 +14,7 @@ Data fetching and state management package for the Management UI. Built on TanSt
 This package is automatically available in all monorepo applications:
 
 ```typescript
-import { useAppConfig, QueryProvider, useQuery } from '@workspace/query';
+import { useAppConfig, QueryProvider, useQuery } from "@workspace/query";
 ```
 
 ## Configuration System
@@ -80,24 +80,24 @@ function MyComponent() {
 
 **Return Values:**
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `config` | `AppConfig` | Merged application configuration |
-| `isLoading` | `boolean` | True while fetching config (prod only) |
-| `isError` | `boolean` | True if fetch failed |
-| `error` | `Error \| null` | Error object if fetch failed |
-| `isFetched` | `boolean` | True after config is available |
+| Property    | Type            | Description                            |
+| ----------- | --------------- | -------------------------------------- |
+| `config`    | `AppConfig`     | Merged application configuration       |
+| `isLoading` | `boolean`       | True while fetching config (prod only) |
+| `isError`   | `boolean`       | True if fetch failed                   |
+| `error`     | `Error \| null` | Error object if fetch failed           |
+| `isFetched` | `boolean`       | True after config is available         |
 
 ### getAppConfigSync
 
 Non-hook version for use during plugin initialization:
 
 ```typescript
-import { getAppConfigSync } from '@workspace/query';
+import { getAppConfigSync } from "@workspace/query";
 
 // Use when hooks aren't available (e.g., plugin initialization)
 const config = getAppConfigSync(pluginManager);
-console.log('Current theme:', config.app.theme);
+console.log("Current theme:", config.app.theme);
 ```
 
 ### getCachedAppConfig
@@ -105,7 +105,7 @@ console.log('Current theme:', config.app.theme);
 Cached config fetching for production scenarios:
 
 ```typescript
-import { getCachedAppConfig, clearAppConfigCache } from '@workspace/query/hooks';
+import { getCachedAppConfig, clearAppConfigCache } from "@workspace/query/hooks";
 
 // Fetch with caching (subsequent calls return cached promise)
 const config = await getCachedAppConfig();
@@ -119,7 +119,7 @@ clearAppConfigCache();
 Sets up the TanStack Query client for the entire application:
 
 ```tsx
-import { QueryProvider } from '@workspace/query';
+import { QueryProvider } from "@workspace/query";
 
 function App() {
   return (
@@ -134,7 +134,7 @@ This is typically used within `@workspace/providers`:
 
 ```tsx
 // @workspace/providers/src/AppProviders.tsx
-import { QueryProvider } from '@workspace/query';
+import { QueryProvider } from "@workspace/query";
 
 export const AppProviders = ({ children }) => {
   return (
@@ -179,14 +179,14 @@ events.map(event => (
 #### Series Hooks
 
 ```typescript
-import { useGetSeriesQuery, useUpdateSeriesMutation } from '@workspace/query';
+import { useGetSeriesQuery, useUpdateSeriesMutation } from "@workspace/query";
 
 // Fetch series by ID
 const { data, isLoading } = useGetSeriesQuery({ id });
 
 // Update series
 const { mutate: updateSeries } = useUpdateSeriesMutation();
-updateSeries({ id, title: 'New Title' });
+updateSeries({ id, title: "New Title" });
 ```
 
 #### Event Title Lookup Hook
@@ -211,6 +211,7 @@ const eventTitleMap = useEventTitlesMap(eventIds);
 ```
 
 This hook is optimized to:
+
 - Only fetch events that are actually needed
 - Use parallel queries for efficient fetching
 - Scale to any number of events
@@ -223,13 +224,13 @@ This hook is optimized to:
 ```typescript
 // ❌ WRONG - Will cause TypeScript errors
 const events = data?.currentUser?.myEvents?.nodes || [];
-events.map(event => event.id); // Error: event might be null!
+events.map((event) => event.id); // Error: event might be null!
 
 // ✅ CORRECT - Filter out null values with type guard
 const events = (data?.currentUser?.myEvents?.nodes || []).filter(
   (event): event is NonNullable<typeof event> => event !== null
 );
-events.map(event => event.id); // Safe!
+events.map((event) => event.id); // Safe!
 ```
 
 ### Common Data Fetching Patterns
@@ -243,7 +244,7 @@ import { useGetMyEventsQuery } from '@workspace/query';
 
 function EpisodeSelector({ onSelect }: { onSelect: (event: { id: string; title: string }) => void }) {
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   const { data, isLoading } = useGetMyEventsQuery({
     limit: 20,
     query: searchTerm || undefined,
@@ -256,9 +257,9 @@ function EpisodeSelector({ onSelect }: { onSelect: (event: { id: string; title: 
 
   return (
     <div>
-      <Input 
-        value={searchTerm} 
-        onChange={(e) => setSearchTerm(e.target.value)} 
+      <Input
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Search episodes..."
       />
       {isLoading ? <AppLoader /> : (
@@ -320,7 +321,7 @@ import {
   gql,
   type QueryClient,
   type InfiniteData,
-} from '@workspace/query';
+} from "@workspace/query";
 ```
 
 ## Package Structure

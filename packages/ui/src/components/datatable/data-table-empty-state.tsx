@@ -21,7 +21,7 @@ const NoFilteredResults = () => (
  */
 const NoEpisodesAvailable = () => (
   <div className="text-center my-16 flex flex-col items-center">
-    <Link to={'/upload'} title="Upload" >
+    <Link to={"/upload"} title="Upload">
       <svg
         className="w-12 h-12 mx-auto text-gray-400"
         fill="none"
@@ -68,11 +68,16 @@ const NoSeriesAvailable = () => (
   </div>
 );
 
-
 /**
  * Component to render the empty state based on path and filter state
  */
-const EmptyStateContent = ({ queryFilter, pathname }: { queryFilter?: string, pathname: string }) => {
+const EmptyStateContent = ({
+  queryFilter,
+  pathname,
+}: {
+  queryFilter?: string;
+  pathname: string;
+}) => {
   if (queryFilter) {
     return <NoFilteredResults />;
   }
@@ -97,4 +102,4 @@ const EmptyStateContent = ({ queryFilter, pathname }: { queryFilter?: string, pa
   return <div>No results.</div>;
 };
 
-export { EmptyStateContent }
+export { EmptyStateContent };

@@ -1,4 +1,3 @@
-
 export * from "./appheading";
 export * from "./container";
 export * from "./mui-table";
@@ -16,6 +15,6 @@ export * from "./datetime-picker";
 export * from "./infinite-scroll";
 export * from "./overflow-tooltip";
 export * from "./appLoader";
-export * from "./acl-editor"
+export * from "./acl-editor";
 
 export { Switch as SwitchHeadlessUI } from "@headlessui/react";

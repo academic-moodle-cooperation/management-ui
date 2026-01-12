@@ -1,4 +1,4 @@
-import { PluginComponent } from '../../types';
+import { PluginComponent } from "../../types";
 
 export type RendererComponent = {
   component: PluginComponent;
@@ -8,7 +8,12 @@ export type RendererComponent = {
 };
 
 export type RendererFunctions = {
-  'renderer.add': (position: string, component: PluginComponent, key?: string, order?: number) => void;
-  'renderer.remove': (position: string, key: string) => void;
-  'renderer.getComponents': (position: string) => RendererComponent[];
-}; 
+  "renderer.add": (
+    position: string,
+    component: PluginComponent,
+    key?: string,
+    order?: number
+  ) => void;
+  "renderer.remove": (position: string, key: string) => void;
+  "renderer.getComponents": (position: string) => RendererComponent[];
+};

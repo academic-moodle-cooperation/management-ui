@@ -1,21 +1,17 @@
-import { LucideIcon } from "lucide-react"
+import { LucideIcon } from "lucide-react";
 
-import { cn } from "@workspace/ui/lib/utils"
-import { buttonVariants } from "@workspace/ui/components"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@workspace/ui/components"
+import { cn } from "@workspace/ui/lib/utils";
+import { buttonVariants } from "@workspace/ui/components";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components";
 
 interface NavProps {
-  isCollapsed: boolean
+  isCollapsed: boolean;
   links: {
-    title: string
-    label?: string
-    icon: LucideIcon
-    variant: "default" | "ghost"
-  }[]
+    title: string;
+    label?: string;
+    icon: LucideIcon;
+    variant: "default" | "ghost";
+  }[];
 }
 
 export function Nav({ links, isCollapsed }: NavProps) {
@@ -35,7 +31,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
                     buttonVariants({ variant: link.variant, size: "icon" }),
                     "h-9 w-9",
                     link.variant === "default" &&
-                    "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
+                      "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
                   )}
                 >
                   <link.icon className="h-4 w-4" />
@@ -44,11 +40,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
               </TooltipTrigger>
               <TooltipContent side="right" className="flex items-center gap-4">
                 {link.title}
-                {link.label && (
-                  <span className="ml-auto text-muted-foreground">
-                    {link.label}
-                  </span>
-                )}
+                {link.label && <span className="ml-auto text-muted-foreground">{link.label}</span>}
               </TooltipContent>
             </Tooltip>
           ) : (
@@ -58,7 +50,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
               className={cn(
                 buttonVariants({ variant: link.variant, size: "sm" }),
                 link.variant === "default" &&
-                "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
+                  "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
                 "justify-start"
               )}
             >
@@ -68,8 +60,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
                 <span
                   className={cn(
                     "ml-auto",
-                    link.variant === "default" &&
-                    "text-background dark:text-white"
+                    link.variant === "default" && "text-background dark:text-white"
                   )}
                 >
                   {link.label}
@@ -80,5 +71,5 @@ export function Nav({ links, isCollapsed }: NavProps) {
         )}
       </nav>
     </div>
-  )
-} 
+  );
+}

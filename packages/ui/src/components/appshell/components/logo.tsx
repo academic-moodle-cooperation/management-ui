@@ -14,9 +14,13 @@ const Logo = ({
   className,
   ...props
 }: LogoProps & React.HTMLAttributes<HTMLDivElement>) => {
-
   return (
-    <span className={cn("truncate font-semibold transition-all duration-300", !collapsed ? "w-full py-4" : "w-10 flex items-center justify-center")}>
+    <span
+      className={cn(
+        "truncate font-semibold transition-all duration-300",
+        !collapsed ? "w-full py-4" : "w-10 flex items-center justify-center"
+      )}
+    >
       <div
         className={cn(
           "h-9 flex items-center transition-all duration-300 ease-in-out p-2 justify-center",
@@ -31,14 +35,18 @@ const Logo = ({
           <div
             className={cn(
               "flex items-center justify-center transition-all duration-300 bg-primary",
-              collapsed ? " w-6 h-6 " : " w-9 h-9",
+              collapsed ? " w-6 h-6 " : " w-9 h-9"
             )}
           >
             {/* Position the M exactly like in the SVG */}
-            <span className={cn(
-              "text-white font-normal transition-all duration-300 leading-none",
-              collapsed ? "text-base" : "text-2xl "
-            )}>M</span>
+            <span
+              className={cn(
+                "text-white font-normal transition-all duration-300 leading-none",
+                collapsed ? "text-base" : "text-2xl "
+              )}
+            >
+              M
+            </span>
           </div>
 
           {/* ANAGEMENT UI text with precise positioning */}

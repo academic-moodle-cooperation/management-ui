@@ -18,14 +18,9 @@ const DatePicker: FC<DatePickerProps> = ({ date, onDateChange, children }) => {
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
-          className={cn(
-            "w-[240px] pl-3 text-left font-normal",
-            !date && "text-muted-foreground"
-          )}
+          className={cn("w-[240px] pl-3 text-left font-normal", !date && "text-muted-foreground")}
         >
-          {date
-            ? new Intl.DateTimeFormat("de-DE").format(new Date(date))
-            : children}
+          {date ? new Intl.DateTimeFormat("de-DE").format(new Date(date)) : children}
           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -34,9 +29,7 @@ const DatePicker: FC<DatePickerProps> = ({ date, onDateChange, children }) => {
           mode="single"
           selected={date}
           onSelect={onDateChange}
-          disabled={(date) =>
-            date < new Date("1900-01-01")
-          }
+          disabled={(date) => date < new Date("1900-01-01")}
           initialFocus
         />
       </PopoverContent>

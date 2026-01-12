@@ -1,5 +1,5 @@
-import { Plugin } from './IPlugin';
-import { PluginManager } from './pluginManager';
+import { Plugin } from "./IPlugin";
+import { PluginManager } from "./pluginManager";
 
 /**
  * Options for creating a plugin
@@ -50,7 +50,7 @@ export interface PluginOptions {
 
 /**
  * Creates a properly formatted plugin with consistent naming conventions
- * 
+ *
  * @example
  * ```typescript
  * const sidebarPlugin = createPlugin({
@@ -66,14 +66,23 @@ export interface PluginOptions {
  * ```
  */
 export function createPlugin(options: PluginOptions): Plugin {
-  const { namespace, type, version, order = 100, dependencies, initialize, activate, deactivate } = options;
+  const {
+    namespace,
+    type,
+    version,
+    order = 100,
+    dependencies,
+    initialize,
+    activate,
+    deactivate,
+  } = options;
 
   // Ensure namespace and type are valid
-  if (!namespace || namespace.includes(':')) {
+  if (!namespace || namespace.includes(":")) {
     throw new Error(`Invalid namespace: "${namespace}". Namespace should not contain colons.`);
   }
 
-  if (!type || type.includes(':')) {
+  if (!type || type.includes(":")) {
     throw new Error(`Invalid type: "${type}". Type should not contain colons.`);
   }
 
@@ -84,6 +93,6 @@ export function createPlugin(options: PluginOptions): Plugin {
     dependencies,
     initialize,
     activate,
-    deactivate
+    deactivate,
   };
-} 
+}

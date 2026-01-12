@@ -1,5 +1,11 @@
 import React, { useMemo, useEffect, useCallback, useRef } from "react";
-import { type ColumnDef, MUITable, createMetadataHelpers, Button, Row } from "@workspace/ui/components";
+import {
+  type ColumnDef,
+  MUITable,
+  createMetadataHelpers,
+  Button,
+  Row,
+} from "@workspace/ui/components";
 import { AppLoader } from "@workspace/ui/components";
 import { LayoutGrid, List } from "lucide-react";
 import { EventsDataFragment, useUpdateEventMutation, useAppConfig } from "@workspace/query";
@@ -43,7 +49,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     setEpisodesUpdateData,
     setUpdateField,
     openSidebarWithData,
-    toggleLayout
+    toggleLayout,
   } = useSidebarStore();
 
   // Use the custom hook for table functionality
@@ -60,26 +66,21 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     setPageSize,
     setQueryFilter,
     textCopied,
-    setTextCopied
+    setTextCopied,
   } = useEpisodesTable(seriesId);
 
-  const {
-    data,
-    isLoading,
-    error,
-    refetch
-  } = episodesQuery;
+  const { data, isLoading, error, refetch } = episodesQuery;
 
-  const {
-    pageIndex,
-    pageSize,
-    queryFilter,
-  } = state;
+  const { pageIndex, pageSize, queryFilter } = state;
 
   // Create columns with the current layout and refetch function
-  const columns: ColumnDef<EventsDataFragment>[] = useMemo(() => createColumns(refetch, layout), [refetch, layout]);
+  const columns: ColumnDef<EventsDataFragment>[] = useMemo(
+    () => createColumns(refetch, layout),
+    [refetch, layout]
+  );
 
-  const metadata = (config?.plugins?.["management-ui-episodes"]?.episodeInfo?.metadata || []) as MetadataItem[];
+  const metadata = (config?.plugins?.["management-ui-episodes"]?.episodeInfo?.metadata ||
+    []) as MetadataItem[];
   const { isReadOnly } = createMetadataHelpers(metadata);
 
   // Create a mechanism to ensure data is loaded when the sidebar is opened from the edit button
@@ -95,7 +96,13 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
 
           // Process all the metadata fields
           Object.entries(metadataFields).forEach(([key, field]) => {
-            if (field && typeof field === 'object' && 'value' in field && field.value !== undefined && !isReadOnly(field.id!)) {
+            if (
+              field &&
+              typeof field === "object" &&
+              "value" in field &&
+              field.value !== undefined &&
+              !isReadOnly(field.id!)
+            ) {
               formattedData[key] = field.value;
             }
           });
@@ -108,24 +115,35 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
         }
       }
     }
-  }, [isOpen, isEditing, selectedId, episodesUpdateData, episodesInputFields, setEpisodesUpdateData, isReadOnly]);
+  }, [
+    isOpen,
+    isEditing,
+    selectedId,
+    episodesUpdateData,
+    episodesInputFields,
+    setEpisodesUpdateData,
+    isReadOnly,
+  ]);
 
   // Mutation hook for updating episodes
   const saveEpisodeUpdate = useUpdateEventMutation();
 
   // Modified row click handler to pass inputFields directly
-  const handleRowClick = useCallback((event: React.MouseEvent, row: Row<EventsDataFragment>) => {
-    console.log("EpisodesTable - Row clicked, row data:", row.original);
+  const handleRowClick = useCallback(
+    (event: React.MouseEvent, row: Row<EventsDataFragment>) => {
+      console.log("EpisodesTable - Row clicked, row data:", row.original);
 
-    // Reset edit state when clicking on a different row
-    if (isEditing && selectedId !== row.original.id) {
-      resetUpdateFields();
-    }
+      // Reset edit state when clicking on a different row
+      if (isEditing && selectedId !== row.original.id) {
+        resetUpdateFields();
+      }
 
-    // This was causing the issue by passing stale data to the sidebar.
-    // By only setting the ID, we allow the reactive data flow to update the sidebar.
-    openSidebar(row.original.id);
-  }, [openSidebar, isEditing, selectedId, resetUpdateFields]);
+      // This was causing the issue by passing stale data to the sidebar.
+      // By only setting the ID, we allow the reactive data flow to update the sidebar.
+      openSidebar(row.original.id);
+    },
+    [openSidebar, isEditing, selectedId, resetUpdateFields]
+  );
 
   // Modified edit close handler - no URL updates
   const handleEditClose = useCallback(() => {
@@ -159,15 +177,13 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
 
   // Get the current episode from the table data
   const currentEpisode = useMemo(() => {
-    return episodesData?.find(episode => episode.id === selectedId);
+    return episodesData?.find((episode) => episode.id === selectedId);
   }, [episodesData, selectedId]);
-
-
 
   // Get visible columns from app config with proper type safety
   const configColumns = config?.plugins?.["management-ui-episodes"]?.episodesTable?.columns || [];
   const visibleColumns = (configColumns as Record<string, ColumnsField>[]).filter((column) => {
-    if (!column || typeof column !== 'object') return false;
+    if (!column || typeof column !== "object") return false;
     const key = Object.keys(column)[0];
     if (!key) return false;
     const field = column[key];
@@ -178,19 +194,20 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     .map((column) => Object.keys(column)[0])
     .filter((key): key is string => Boolean(key));
 
-  const sortedColumns = columnsKeys.length > 0
-    ? columnsKeys
-      .map((columnsKey) =>
-        columns.find((column) => {
-          const col = column as any; // TanStack table column types are complex, using any for access
-          return col.accessorKey === columnsKey || col.id === columnsKey;
-        })
-      )
-      .filter((column): column is NonNullable<typeof column> => Boolean(column))
-    : columns;
+  const sortedColumns =
+    columnsKeys.length > 0
+      ? columnsKeys
+          .map((columnsKey) =>
+            columns.find((column) => {
+              const col = column as any; // TanStack table column types are complex, using any for access
+              return col.accessorKey === columnsKey || col.id === columnsKey;
+            })
+          )
+          .filter((column): column is NonNullable<typeof column> => Boolean(column))
+      : columns;
 
   // Error handling
-  if (error && typeof error === 'object' && 'message' in error) {
+  if (error && typeof error === "object" && "message" in error) {
     return (
       <div className="error-container">
         <p>Error loading episodes: {error.message as string}</p>
@@ -237,7 +254,8 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
           setQueryFilter={setQueryFilter}
           columnVisibility={columnVisibility}
           setColumnVisibility={setColumnVisibility}
-          designButton={layoutToggleButton} />
+          designButton={layoutToggleButton}
+        />
       </div>
 
       {/* Episodes-specific sidebar */}
@@ -266,4 +284,4 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   );
 };
 
-export { EpisodesTable }; 
+export { EpisodesTable };

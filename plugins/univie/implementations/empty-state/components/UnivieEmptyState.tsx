@@ -1,10 +1,8 @@
-import React from 'react';
-import { LinkText, Trans, usePluginTranslation } from '@workspace/i18n';
+import React from "react";
+import { LinkText, Trans, usePluginTranslation } from "@workspace/i18n";
 
 const UnivieEmptyState: React.FC = () => {
-  const { t } = usePluginTranslation([
-    'univie-empty-state',
-  ]);
+  const { t } = usePluginTranslation(["univie-empty-state"]);
   return (
     <div className="flex flex-col items-center justify-center w-full">
       <div className="text-center my-16 flex flex-col items-center">
@@ -24,7 +22,7 @@ const UnivieEmptyState: React.FC = () => {
           />
         </svg>
         <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-          {t('series.noSeriesAvailable.title')}
+          {t("series.noSeriesAvailable.title")}
         </h4>
 
         <p className="mt-1 text-sm text-muted-foreground max-w-md">
@@ -71,4 +69,4 @@ const UnivieEmptyState: React.FC = () => {
   );
 };
 
-export { UnivieEmptyState }; 
+export { UnivieEmptyState };

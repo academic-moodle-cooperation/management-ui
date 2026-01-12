@@ -1,8 +1,8 @@
-import React from 'react';
-import { useAuth, useAuthActions } from '@workspace/router';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
+import React from "react";
+import { useAuth, useAuthActions } from "@workspace/router";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
 
 /**
  * AuthStatus component that displays current authentication status
@@ -55,19 +55,12 @@ export const AuthStatus: React.FC = () => {
 
         <div className="flex gap-2">
           {isAuthenticated ? (
-            <Button
-              onClick={handleLogout}
-              variant="outline"
-              disabled={authActionsLoading}
-            >
-              {authActionsLoading ? 'Loading...' : 'Logout (Direct)'}
+            <Button onClick={handleLogout} variant="outline" disabled={authActionsLoading}>
+              {authActionsLoading ? "Loading..." : "Logout (Direct)"}
             </Button>
           ) : (
-            <Button
-              onClick={handleLogin}
-              disabled={authActionsLoading}
-            >
-              {authActionsLoading ? 'Loading...' : 'Login (Direct)'}
+            <Button onClick={handleLogin} disabled={authActionsLoading}>
+              {authActionsLoading ? "Loading..." : "Login (Direct)"}
             </Button>
           )}
         </div>
@@ -82,4 +75,4 @@ export const AuthStatus: React.FC = () => {
       </CardContent>
     </Card>
   );
-}; 
+};

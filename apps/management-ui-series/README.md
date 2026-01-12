@@ -138,18 +138,18 @@ Universities can customize the series application through plugins:
 
 ```typescript
 // Add university-specific metadata fields
-manager.registerObject('series:metadata-fields', 'university-fields', {
+manager.registerObject("series:metadata-fields", "university-fields", {
   department: {
-    type: 'select',
-    label: 'Department',
-    options: ['Computer Science', 'Mathematics', 'Physics'],
-    required: true
+    type: "select",
+    label: "Department",
+    options: ["Computer Science", "Mathematics", "Physics"],
+    required: true,
   },
   funding: {
-    type: 'text',
-    label: 'Funding Source',
-    validation: /^[A-Z]{2}-\d{4}$/
-  }
+    type: "text",
+    label: "Funding Source",
+    validation: /^[A-Z]{2}-\d{4}$/,
+  },
 });
 ```
 
@@ -157,13 +157,13 @@ manager.registerObject('series:metadata-fields', 'university-fields', {
 
 ```typescript
 // Add university-specific approval workflow
-manager.registerObject('series:workflows', 'university-approval', {
-  name: 'Department Approval',
+manager.registerObject("series:workflows", "university-approval", {
+  name: "Department Approval",
   steps: [
-    { name: 'Created', status: 'draft' },
-    { name: 'Department Review', status: 'review', permissions: ['dept.review'] },
-    { name: 'Published', status: 'published', permissions: ['content.publish'] }
-  ]
+    { name: "Created", status: "draft" },
+    { name: "Department Review", status: "review", permissions: ["dept.review"] },
+    { name: "Published", status: "published", permissions: ["content.publish"] },
+  ],
 });
 ```
 
@@ -171,8 +171,8 @@ manager.registerObject('series:workflows', 'university-approval', {
 
 ```typescript
 // Replace series list view with university-specific implementation
-manager.registerComponent('series:list-view', UniversitySeriesListView, {
-  priority: 10
+manager.registerComponent("series:list-view", UniversitySeriesListView, {
+  priority: 10,
 });
 ```
 

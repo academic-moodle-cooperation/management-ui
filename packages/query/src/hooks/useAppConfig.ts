@@ -1,17 +1,22 @@
-import { useQuery } from '@tanstack/react-query';
-import { defaultConfig, type AppConfig, type PluginNamespaceItem, getAppConfig } from '@workspace/ui-config';
-import { useRegistry } from '@workspace/plugin-system';
-import { useMemo } from 'react';
-import { deepMerge, resolveAssetUrl } from '@workspace/utils';
+import { useQuery } from "@tanstack/react-query";
+import {
+  defaultConfig,
+  type AppConfig,
+  type PluginNamespaceItem,
+  getAppConfig,
+} from "@workspace/ui-config";
+import { useRegistry } from "@workspace/plugin-system";
+import { useMemo } from "react";
+import { deepMerge, resolveAssetUrl } from "@workspace/utils";
 
-const CONFIG_QUERY_KEY = ['appConfig'];
+const CONFIG_QUERY_KEY = ["appConfig"];
 
 const fetchAndMergeConfig = async (configUrl?: string): Promise<AppConfig> => {
   if (!configUrl) return { ...defaultConfig };
   // Note: Config is served by OSGi at a different path than regular assets
   // (e.g., /ui/config/... instead of /management-ui/assets/...)
   // so we DON'T use resolveAssetUrl here - use the URL as-is
-  const resolvedUrl = configUrl.startsWith('/') ? configUrl : `/${configUrl}`;
+  const resolvedUrl = configUrl.startsWith("/") ? configUrl : `/${configUrl}`;
   const response = await fetch(resolvedUrl);
   if (!response.ok) throw new Error(`Failed to fetch config: ${response.statusText}`);
   const customConfig = await response.json();
@@ -27,9 +32,9 @@ export function getAppConfigSync(pluginManager?: any): AppConfig {
   let pluginConfigObjects: Record<string, any>[] = [];
   if (pluginManager) {
     try {
-      pluginConfigObjects = pluginManager.getObjects('app:config') as Record<string, any>[];
+      pluginConfigObjects = pluginManager.getObjects("app:config") as Record<string, any>[];
     } catch (error) {
-      console.warn('getAppConfigSync: Failed to get plugin configs from manager');
+      console.warn("getAppConfigSync: Failed to get plugin configs from manager");
     }
   }
 
@@ -37,10 +42,7 @@ export function getAppConfigSync(pluginManager?: any): AppConfig {
   // In production, this would need to be called after config is fetched
   const baseConfig = isDev ? { ...defaultConfig } : { ...defaultConfig };
 
-  return deepMerge(
-    baseConfig,
-    ...(pluginConfigObjects || [])
-  ) as AppConfig;
+  return deepMerge(baseConfig, ...(pluginConfigObjects || [])) as AppConfig;
 }
 
 export function useAppConfig() {
@@ -48,7 +50,7 @@ export function useAppConfig() {
   const isDev = import.meta.env.DEV;
 
   // Get plugin configs (only used in dev mode)
-  const { items: pluginConfigObjects } = useRegistry('app:config');
+  const { items: pluginConfigObjects } = useRegistry("app:config");
 
   // In production, fetch pre-merged config.json (no runtime merging needed)
   // In dev, use defaultConfig and merge plugin configs at runtime
@@ -62,21 +64,18 @@ export function useAppConfig() {
 
   // In dev mode: merge plugin configs at runtime (same order as build)
   // In prod mode: use pre-merged config.json as-is (no additional merging)
-  const mergedConfig = useMemo(
-    () => {
-      if (isDev) {
-        // Dev: Runtime merging with explicit order
-        return deepMerge(
-          queryResult.data ?? { ...defaultConfig },
-          ...((pluginConfigObjects as Record<string, any>[]) || [])
-        ) as AppConfig;
-      } else {
-        // Prod: Use pre-merged config.json directly
-        return (queryResult.data ?? { ...defaultConfig }) as AppConfig;
-      }
-    },
-    [queryResult.data, pluginConfigObjects, isDev]
-  );
+  const mergedConfig = useMemo(() => {
+    if (isDev) {
+      // Dev: Runtime merging with explicit order
+      return deepMerge(
+        queryResult.data ?? { ...defaultConfig },
+        ...((pluginConfigObjects as Record<string, any>[]) || [])
+      ) as AppConfig;
+    } else {
+      // Prod: Use pre-merged config.json directly
+      return (queryResult.data ?? { ...defaultConfig }) as AppConfig;
+    }
+  }, [queryResult.data, pluginConfigObjects, isDev]);
 
   // Emulate loading/error state logic as before
   const isLoading = !isDev && !!configUrl ? queryResult.isLoading : false;

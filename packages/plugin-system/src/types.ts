@@ -1,6 +1,6 @@
 // Core plugin system types for better type safety
 
-import React from 'react';
+import React from "react";
 
 /**
  * Base props that all plugin components receive

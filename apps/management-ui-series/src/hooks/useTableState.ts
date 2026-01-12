@@ -35,7 +35,8 @@ export function useTableState<State extends TableBaseState, Action extends Table
   );
 
   const columnVisibilityAtom = useMemo(
-    () => atomWithStorage<VisibilityState>(columnVisibilityAtomKey, { title: true } as VisibilityState),
+    () =>
+      atomWithStorage<VisibilityState>(columnVisibilityAtomKey, { title: true } as VisibilityState),
     [columnVisibilityAtomKey]
   );
 
@@ -47,17 +48,26 @@ export function useTableState<State extends TableBaseState, Action extends Table
   const setColumnVisibility: OnChangeFn<VisibilityState> = useSetAtom(columnVisibilityAtom);
 
   // Utility functions
-  const setPageIndex = useCallback((index: number) =>
-    dispatch({ type: 'SET_PAGE_INDEX', payload: index } as Action), [dispatch]);
+  const setPageIndex = useCallback(
+    (index: number) => dispatch({ type: "SET_PAGE_INDEX", payload: index } as Action),
+    [dispatch]
+  );
 
-  const setPageSize = useCallback((size: number) =>
-    dispatch({ type: 'SET_PAGE_SIZE', payload: size } as Action), [dispatch]);
+  const setPageSize = useCallback(
+    (size: number) => dispatch({ type: "SET_PAGE_SIZE", payload: size } as Action),
+    [dispatch]
+  );
 
-  const setQueryFilter = useCallback((filter: string | undefined) =>
-    dispatch({ type: 'SET_QUERY_FILTER', payload: filter } as Action), [dispatch]);
+  const setQueryFilter = useCallback(
+    (filter: string | undefined) =>
+      dispatch({ type: "SET_QUERY_FILTER", payload: filter } as Action),
+    [dispatch]
+  );
 
-  const setSidebarOpen = useCallback((open: boolean) =>
-    dispatch({ type: 'SET_SIDEBAR_OPEN', payload: open } as Action), [dispatch]);
+  const setSidebarOpen = useCallback(
+    (open: boolean) => dispatch({ type: "SET_SIDEBAR_OPEN", payload: open } as Action),
+    [dispatch]
+  );
 
   return {
     state,

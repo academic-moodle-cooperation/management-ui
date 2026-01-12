@@ -115,4 +115,4 @@ To create your own university plugin app:
 - **Independent Development**: Develop and test without loading the entire core shell
 - **Full Context**: Access to all providers and services
 - **Consistent Experience**: Same UI and functionality in both modes
-- **Easy Deployment**: Can be deployed independently or as part of the core system 
+- **Easy Deployment**: Can be deployed independently or as part of the core system

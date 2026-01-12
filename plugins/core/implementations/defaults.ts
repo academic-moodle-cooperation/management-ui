@@ -1,5 +1,5 @@
-import { createPlugin, type PluginManager } from '@workspace/plugin-system';
-import { Home } from '@workspace/ui/components';
+import { createPlugin, type PluginManager } from "@workspace/plugin-system";
+import { Home } from "@workspace/ui/components";
 
 /**
  * Core Default Implementations
@@ -7,30 +7,24 @@ import { Home } from '@workspace/ui/components';
  * Individual apps will contribute their own navigation items separately
  */
 export const coreDefaultImplementations = createPlugin({
-  namespace: 'core',
-  type: 'navigation',
-  version: '1.0.0',
+  namespace: "core",
+  type: "navigation",
+  version: "1.0.0",
 
   initialize(manager: PluginManager) {
-
     // Core navigation: Only Home (always present)
-    manager.registerObject('sidebar:nav-items', 'home', {
-      title: 'Home',
-      path: '/',
+    manager.registerObject("sidebar:nav-items", "home", {
+      title: "Home",
+      path: "/",
       icon: Home,
       order: 10, // First item
       permissions: [], // Available to all users
       featureFlags: [],
-      category: 'core'
+      category: "core",
     });
-
   },
 
-  activate() {
+  activate() {},
 
-  },
-
-  deactivate() {
-
-  }
-}); 
+  deactivate() {},
+});

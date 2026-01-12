@@ -11,14 +11,10 @@ export const SidebarToggle = () => {
   const { open, setOpen } = useSidebar();
 
   return (
-    <div className={cn("hidden md:flex",
-      open ? "justify-end" : "flex justify-center"
-    )}>
+    <div className={cn("hidden md:flex", open ? "justify-end" : "flex justify-center")}>
       <Button
         size="icon"
-        className={cn(
-          "rounded-none  h-14 bg-sidebar hover:bg-sidebar border-none"
-        )}
+        className={cn("rounded-none  h-14 bg-sidebar hover:bg-sidebar border-none")}
         variant="outline"
         onClick={() => {
           setOpen(!open);
@@ -35,4 +31,4 @@ export const SidebarToggle = () => {
       </Button>
     </div>
   );
-}; 
+};

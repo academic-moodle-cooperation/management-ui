@@ -31,7 +31,8 @@ export const AppProtection: React.FC<AppProtectionProps> = ({
   const { user, isAuthenticated } = useAuth();
 
   // Get app protection config
-  const appProtection = (config?.plugins?.[appName] as { protection?: { public?: boolean } })?.protection;
+  const appProtection = (config?.plugins?.[appName] as { protection?: { public?: boolean } })
+    ?.protection;
 
   // If marked as public, allow access
   if (appProtection?.public === true) {
@@ -75,9 +76,7 @@ export const AppProtection: React.FC<AppProtectionProps> = ({
     return (
       <div className="p-8 text-center">
         <h2 className="text-xl font-semibold mb-2">Authentication Required</h2>
-        <p className="text-gray-600">
-          Please log in to access this application.
-        </p>
+        <p className="text-gray-600">Please log in to access this application.</p>
         {loginUrl && (
           <a
             href={loginUrl}

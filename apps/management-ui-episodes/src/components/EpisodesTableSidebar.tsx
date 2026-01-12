@@ -89,9 +89,7 @@ export const EpisodesTableSidebar: React.FC<EpisodesTableSidebarProps> = ({
     >("renderer.getComponents", "table-sidebar:episodes:tabs") || [];
 
   // Sort components by order
-  const sortedTabComponents = tabComponents.sort(
-    (a, b) => (a.order || 100) - (b.order || 100)
-  );
+  const sortedTabComponents = tabComponents.sort((a, b) => (a.order || 100) - (b.order || 100));
   const hasTabPlugins = sortedTabComponents.length > 0;
 
   console.log(
@@ -125,10 +123,7 @@ export const EpisodesTableSidebar: React.FC<EpisodesTableSidebarProps> = ({
                 <TabsList className="mx-2 mb-4 grid w-auto grid-cols-2">
                   <TabsTrigger value="metadata">Metadata</TabsTrigger>
                   {sortedTabComponents.map((tabComponent) => (
-                    <TabsTrigger
-                      key={tabComponent.key}
-                      value={tabComponent.key}
-                    >
+                    <TabsTrigger key={tabComponent.key} value={tabComponent.key}>
                       {tabComponent.key
                         .replace(/^.*:/, "")
                         .replace(/-/g, " ")
@@ -187,9 +182,7 @@ export const EpisodesTableSidebar: React.FC<EpisodesTableSidebarProps> = ({
           </div>
 
           {sidebarInfo && activeTab === "metadata" && (
-            <div className="flex justify-end text-xs text-muted-foreground p-2">
-              {sidebarInfo}
-            </div>
+            <div className="flex justify-end text-xs text-muted-foreground p-2">{sidebarInfo}</div>
           )}
 
           {!isLoadingMetadata && activeTab === "metadata" && (

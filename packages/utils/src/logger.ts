@@ -1,12 +1,12 @@
 /**
  * Logger utility for structured logging
- * 
+ *
  * Provides environment-aware logging with different log levels.
  * In production, only warnings and errors are logged.
  * In development, all log levels are available.
  */
 
-type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+type LogLevel = "debug" | "info" | "warn" | "error";
 
 interface LogContext {
   [key: string]: unknown;
@@ -17,9 +17,9 @@ class Logger {
 
   constructor() {
     this.isDevelopment =
-      typeof process !== 'undefined' &&
-      (process.env.NODE_ENV === 'development' ||
-        process.env.DEV === 'true' ||
+      typeof process !== "undefined" &&
+      (process.env.NODE_ENV === "development" ||
+        process.env.DEV === "true" ||
         import.meta.env?.DEV === true);
   }
 
@@ -28,7 +28,7 @@ class Logger {
    */
   debug(message: string, context?: LogContext): void {
     if (this.isDevelopment) {
-      console.debug(`[DEBUG] ${message}`, context || '');
+      console.debug(`[DEBUG] ${message}`, context || "");
     }
   }
 
@@ -37,7 +37,7 @@ class Logger {
    */
   info(message: string, context?: LogContext): void {
     if (this.isDevelopment) {
-      console.info(`[INFO] ${message}`, context || '');
+      console.info(`[INFO] ${message}`, context || "");
     }
   }
 
@@ -45,7 +45,7 @@ class Logger {
    * Log a warning message
    */
   warn(message: string, context?: LogContext): void {
-    console.warn(`[WARN] ${message}`, context || '');
+    console.warn(`[WARN] ${message}`, context || "");
   }
 
   /**

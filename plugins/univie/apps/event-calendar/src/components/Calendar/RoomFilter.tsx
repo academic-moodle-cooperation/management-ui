@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Room } from '../types/eventCalendar';
-import { Card, Button, Badge, Input } from '@workspace/ui/components';
-import { Search, Building, MapPin } from 'lucide-react';
+import React, { useState } from "react";
+import { Room } from "../types/eventCalendar";
+import { Card, Button, Badge, Input } from "@workspace/ui/components";
+import { Search, Building, MapPin } from "lucide-react";
 
 interface RoomFilterProps {
   rooms: Room[];
@@ -18,13 +18,13 @@ export const RoomFilter: React.FC<RoomFilterProps> = ({
   onRoomToggle,
   onSelectAll,
   onSelectNone,
-  className
+  className,
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredRooms = rooms.filter(room => {
+  const filteredRooms = rooms.filter((room) => {
     if (!searchTerm) return true;
-    
+
     const searchLower = searchTerm.toLowerCase();
     return (
       room.nummer.toLowerCase().includes(searchLower) ||
@@ -34,19 +34,22 @@ export const RoomFilter: React.FC<RoomFilterProps> = ({
     );
   });
 
-  const groupedRooms = filteredRooms.reduce((acc, room) => {
-    const building = room.gebaeudeName;
-    if (!acc[building]) {
-      acc[building] = [];
-    }
-    acc[building].push(room);
-    return acc;
-  }, {} as Record<string, Room[]>);
+  const groupedRooms = filteredRooms.reduce(
+    (acc, room) => {
+      const building = room.gebaeudeName;
+      if (!acc[building]) {
+        acc[building] = [];
+      }
+      acc[building].push(room);
+      return acc;
+    },
+    {} as Record<string, Room[]>
+  );
 
   const isRoomSelected = (roomId: number) => selectedRoomIds.includes(roomId);
 
   return (
-    <Card className={`p-4 ${className || ''}`}>
+    <Card className={`p-4 ${className || ""}`}>
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -55,17 +58,17 @@ export const RoomFilter: React.FC<RoomFilterProps> = ({
             Room Filter
           </h3>
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={onSelectAll}
               disabled={selectedRoomIds.length === rooms.length}
             >
               All
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={onSelectNone}
               disabled={selectedRoomIds.length === 0}
             >
@@ -104,8 +107,8 @@ export const RoomFilter: React.FC<RoomFilterProps> = ({
                     key={room.extRaumId}
                     className={`flex items-center justify-between p-2 rounded-lg border cursor-pointer transition-colors ${
                       isRoomSelected(room.extRaumId)
-                        ? 'bg-primary/10 border-primary/50'
-                        : 'hover:bg-muted/50'
+                        ? "bg-primary/10 border-primary/50"
+                        : "hover:bg-muted/50"
                     }`}
                     onClick={() => onRoomToggle(room.extRaumId)}
                   >
@@ -117,9 +120,7 @@ export const RoomFilter: React.FC<RoomFilterProps> = ({
                         className="rounded"
                       />
                       <div>
-                        <div className="font-medium text-sm">
-                          Room {room.nummer}
-                        </div>
+                        <div className="font-medium text-sm">Room {room.nummer}</div>
                         <div className="text-xs text-muted-foreground">
                           {room.raumArtNeuBezeichnung}
                           {room.stockwerk && ` • Floor ${room.stockwerk}`}

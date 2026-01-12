@@ -1,10 +1,6 @@
 import React from "react";
 import i18n from "i18next";
-import {
-  useTranslation,
-  initReactI18next,
-  Trans as i18nTrans,
-} from "react-i18next";
+import { useTranslation, initReactI18next, Trans as i18nTrans } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
 
@@ -40,11 +36,7 @@ export * from "./translationLoader";
 export { i18n as i18nConfig };
 export const useI18n = useTranslation;
 export const Trans = i18nTrans;
-export const LinkText = (props: {
-  to: string;
-  title: string;
-  children?: React.ReactNode;
-}) => {
+export const LinkText = (props: { to: string; title: string; children?: React.ReactNode }) => {
   return (
     <a
       href={props.to || "#"}

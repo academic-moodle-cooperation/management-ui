@@ -25,8 +25,7 @@ export type UploadFileBlob = {
 };
 
 const immer =
-  (config: typeof store) =>
-  (set: (state: (state: Store) => void) => void, get: () => Store) =>
+  (config: typeof store) => (set: (state: (state: Store) => void) => void, get: () => Store) =>
     config((fn) => set(produce(fn)), get);
 
 /** Upload list state structure */
@@ -66,10 +65,7 @@ const initialState: UploadListType = {
   uploadError: null,
 };
 
-const store = (
-  set: (state: (state: Store) => void) => void,
-  get: () => Store
-) => ({
+const store = (set: (state: (state: Store) => void) => void, get: () => Store) => ({
   zustandupload: initialState,
   setUpload: (upload: UploadListType) => {
     return set((state) => {
@@ -93,9 +89,7 @@ const store = (
   },
   deleteUpload: (id: number) => {
     return set((state: Store) => {
-      state.zustandupload.files = state?.zustandupload?.files.filter(
-        (file) => file.id !== id
-      );
+      state.zustandupload.files = state?.zustandupload?.files.filter((file) => file.id !== id);
     });
   },
   resetUpload: () => {

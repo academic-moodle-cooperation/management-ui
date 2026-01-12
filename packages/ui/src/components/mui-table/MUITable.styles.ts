@@ -190,36 +190,26 @@ const tr = cva([], {
   ],
 });
 
-const td = cva(
-  ["[&[align=center]]:text-center", "[&[align=right]]:text-right"],
-  {
-    variants: {
-      size: {
-        sm: ["p-1"],
-        md: ["p-2"],
-        lg: ["p-2.5"],
-      },
+const td = cva(["[&[align=center]]:text-center", "[&[align=right]]:text-right"], {
+  variants: {
+    size: {
+      sm: ["p-1"],
+      md: ["p-2"],
+      lg: ["p-2.5"],
     },
-  }
-);
+  },
+});
 
-const th = cva(
-  [
-    "font-medium",
-    "[&[align=center]]:text-center",
-    "[&[align=right]]:text-right",
-  ],
-  {
-    variants: {
-      size: {
-        sm: ["p-1"],
-        md: ["p-2"],
-        lg: ["p-2.5"],
-        xl: ["p-3"],
-      },
+const th = cva(["font-medium", "[&[align=center]]:text-center", "[&[align=right]]:text-right"], {
+  variants: {
+    size: {
+      sm: ["p-1"],
+      md: ["p-2"],
+      lg: ["p-2.5"],
+      xl: ["p-3"],
     },
-  }
-);
+  },
+});
 
 const tableStyles = {
   wrapper,

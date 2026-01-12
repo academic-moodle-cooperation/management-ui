@@ -1,22 +1,19 @@
-import React from 'react';
-import { createPlugin } from '@workspace/plugin-system';
-import { PluginManager } from '@workspace/plugin-system';
-import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components';
-import { MonitorPlay } from '@workspace/ui/components/icons';
-import { createOrganizationNamespace, i18next, usePluginTranslation } from '@workspace/i18n';
-import { Link } from '@workspace/router';
-import { useAppConfig } from '@workspace/query';
+import React from "react";
+import { createPlugin } from "@workspace/plugin-system";
+import { PluginManager } from "@workspace/plugin-system";
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components";
+import { MonitorPlay } from "@workspace/ui/components/icons";
+import { createOrganizationNamespace, i18next, usePluginTranslation } from "@workspace/i18n";
+import { Link } from "@workspace/router";
+import { useAppConfig } from "@workspace/query";
 
 // Custom TU Wien actions component that enhances the default series actions
-const TUWienSeriesActions = ({
-  series,
-  children,
-}: any) => {
+const TUWienSeriesActions = ({ series, children }: any) => {
   const { config } = useAppConfig();
-  const namespace = createOrganizationNamespace('tuwien', 'series');
+  const namespace = createOrganizationNamespace("tuwien", "series");
   const { t } = usePluginTranslation([
-    'core-series',  // Reuse core translations where possible
-    namespace       // Add TU Wien specific translations (tuwien-series)
+    "core-series", // Reuse core translations where possible
+    namespace, // Add TU Wien specific translations (tuwien-series)
   ]);
 
   // Add TU Wien Tobira action to the existing actions
@@ -58,31 +55,27 @@ const TUWienSeriesActions = ({
  * Adds Tobira video portal integration to the series table
  */
 export const tuwienSeriesActionsImplementation = createPlugin({
-  namespace: 'tuwien',
-  type: 'series-actions',
-  version: '1.0.0',
+  namespace: "tuwien",
+  type: "series-actions",
+  version: "1.0.0",
 
   initialize(manager: PluginManager) {
-    console.log('🎯 Initializing TU Wien Series Actions Implementation');
+    console.log("🎯 Initializing TU Wien Series Actions Implementation");
 
     // Register TU Wien series actions with higher priority than core default
-    manager.registerComponent(
-      'series:table:actions',
-      TUWienSeriesActions,
-      {
-        key: 'tuwien-series-actions',
-        order: 50 // Higher priority than core default (100)
-      }
-    );
+    manager.registerComponent("series:table:actions", TUWienSeriesActions, {
+      key: "tuwien-series-actions",
+      order: 50, // Higher priority than core default (100)
+    });
 
-    console.log('✅ TU Wien series actions implementation registered');
+    console.log("✅ TU Wien series actions implementation registered");
   },
 
   activate() {
-    console.log('🎯 TU Wien Series Actions Implementation activated');
+    console.log("🎯 TU Wien Series Actions Implementation activated");
   },
 
   deactivate() {
-    console.log('🎯 TU Wien Series Actions Implementation deactivated');
-  }
-}); 
+    console.log("🎯 TU Wien Series Actions Implementation deactivated");
+  },
+});

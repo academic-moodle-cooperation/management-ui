@@ -8,10 +8,7 @@ const useFileHandler = (
   zustandupload: UploadListType
 ) => {
   const getLatestId = () => {
-    const fileList: UploadFileBlob[] = [
-      ...zustandupload.uploaded,
-      ...zustandupload.files,
-    ];
+    const fileList: UploadFileBlob[] = [...zustandupload.uploaded, ...zustandupload.files];
     return Math.max(...fileList.map((file) => file && file.id), 0) + 1;
   };
 

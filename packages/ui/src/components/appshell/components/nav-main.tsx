@@ -1,13 +1,9 @@
-"use client"
+"use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react"
-import { Link } from "@workspace/router"
+import { ChevronRight, type LucideIcon } from "lucide-react";
+import { Link } from "@workspace/router";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@workspace/ui/components"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@workspace/ui/components";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -17,33 +13,33 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@workspace/ui/components"
-import { cn } from "@workspace/ui/lib/utils"
+} from "@workspace/ui/components";
+import { cn } from "@workspace/ui/lib/utils";
 
 export type NavMainProps = {
-  groupClassName?: string
-  grouplabel?: string
-  menuClassName?: string
-  menuItemClassName?: string
+  groupClassName?: string;
+  grouplabel?: string;
+  menuClassName?: string;
+  menuItemClassName?: string;
   items: {
-    title: string
-    url: string
-    icon?: LucideIcon
-    isActive?: boolean
-    isExternal?: boolean
-    target?: string
+    title: string;
+    url: string;
+    icon?: LucideIcon;
+    isActive?: boolean;
+    isExternal?: boolean;
+    target?: string;
     items?: {
-      title: string
-      url: string
-      target?: string
-    }[]
-  }[]
-  open?: boolean
-  renderItemIcon?: (icon: LucideIcon | undefined) => React.ReactNode
-  renderActiveIndicator?: (isActive: boolean, open: boolean) => React.ReactNode
-  customItemStyles?: string
-  customActiveStyles?: string
-}
+      title: string;
+      url: string;
+      target?: string;
+    }[];
+  }[];
+  open?: boolean;
+  renderItemIcon?: (icon: LucideIcon | undefined) => React.ReactNode;
+  renderActiveIndicator?: (isActive: boolean, open: boolean) => React.ReactNode;
+  customItemStyles?: string;
+  customActiveStyles?: string;
+};
 
 export function NavMain({
   items,
@@ -54,11 +50,10 @@ export function NavMain({
   open,
   renderItemIcon = (Icon) => Icon && <Icon />,
   renderActiveIndicator = (isActive, open) =>
-    (isActive && open) && <div className="absolute inset-y-0 left-0 w-1 bg-primary rounded-s-md" />,
+    isActive && open && <div className="absolute inset-y-0 left-0 w-1 bg-primary rounded-s-md" />,
   customItemStyles,
-  customActiveStyles
+  customActiveStyles,
 }: NavMainProps) {
-
   return (
     <SidebarGroup className={groupClassName}>
       {grouplabel && <SidebarGroupLabel>{grouplabel}</SidebarGroupLabel>}
@@ -71,7 +66,7 @@ export function NavMain({
             className="group/collapsible"
           >
             <SidebarMenuItem className={menuItemClassName}>
-              {item.items ?
+              {item.items ? (
                 <>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton tooltip={item.title}>
@@ -94,50 +89,51 @@ export function NavMain({
                     </SidebarMenuSub>
                   </CollapsibleContent>
                 </>
-                :
-                item.isExternal ? (
-                  <SidebarMenuButton
-                    asChild
-                    tooltip={item.title}
-                    className={cn(
-                      "hover:bg-sidebar-accent hover:text-sidebar-accent-forground",
-                      customItemStyles
-                    )}
-                  >
-                    <a href={item.url} target={item.target || '_blank'} rel="noopener noreferrer">
-                      {renderItemIcon(item.icon)}
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                ) : (
-                  <Link to={item.url} activeOptions={{
+              ) : item.isExternal ? (
+                <SidebarMenuButton
+                  asChild
+                  tooltip={item.title}
+                  className={cn(
+                    "hover:bg-sidebar-accent hover:text-sidebar-accent-forground",
+                    customItemStyles
+                  )}
+                >
+                  <a href={item.url} target={item.target || "_blank"} rel="noopener noreferrer">
+                    {renderItemIcon(item.icon)}
+                    <span>{item.title}</span>
+                  </a>
+                </SidebarMenuButton>
+              ) : (
+                <Link
+                  to={item.url}
+                  activeOptions={{
                     exact: item.url === "/" ? true : false,
-                  }}>
-                    {({ isActive }) => (
-                      <SidebarMenuButton
-                        tooltip={item.title}
-                        isActive={isActive}
-                        className={cn(
-                          "hover:bg-sidebar-accent hover:text-sidebar-accent-forground",
-                          (isActive && !open) ? "outline-1 outline-primary outline-offset-0" : "",
-                          customItemStyles,
-                          customActiveStyles
-                        )}
-                      >
-                        <>
-                          {renderActiveIndicator(isActive, !!open)}
-                          {renderItemIcon(item.icon)}
-                          <span>{item.title}</span>
-                        </>
-                      </SidebarMenuButton>
-                    )}
-                  </Link>
-                )
-              }
+                  }}
+                >
+                  {({ isActive }) => (
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      isActive={isActive}
+                      className={cn(
+                        "hover:bg-sidebar-accent hover:text-sidebar-accent-forground",
+                        isActive && !open ? "outline-1 outline-primary outline-offset-0" : "",
+                        customItemStyles,
+                        customActiveStyles
+                      )}
+                    >
+                      <>
+                        {renderActiveIndicator(isActive, !!open)}
+                        {renderItemIcon(item.icon)}
+                        <span>{item.title}</span>
+                      </>
+                    </SidebarMenuButton>
+                  )}
+                </Link>
+              )}
             </SidebarMenuItem>
           </Collapsible>
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  )
-} 
+  );
+}

@@ -54,13 +54,13 @@ Extension points define **what** can be customized. University plugins implement
 
 ### App Layout Extension Points
 
-| Extension Point | Description | Priority |
-|-----------------|-------------|----------|
-| `app:header-logo` | University logo in header | Lower = wins |
-| `app:header-actions` | Action buttons in header | Lower = wins |
-| `app:footer` | Footer content and links | Lower = wins |
-| `app:branding` | Theme colors and styles | Lower = wins |
-| `app:config` | Application-wide settings | Merged |
+| Extension Point      | Description               | Priority     |
+| -------------------- | ------------------------- | ------------ |
+| `app:header-logo`    | University logo in header | Lower = wins |
+| `app:header-actions` | Action buttons in header  | Lower = wins |
+| `app:footer`         | Footer content and links  | Lower = wins |
+| `app:branding`       | Theme colors and styles   | Lower = wins |
+| `app:config`         | Application-wide settings | Merged       |
 
 #### `app:header-logo`
 
@@ -68,20 +68,20 @@ University logo displayed in the application header.
 
 ```typescript
 interface HeaderLogoSchema {
-  src: string;      // Logo image URL
-  alt: string;      // Alt text for accessibility
-  width?: number;   // Logo width in pixels
-  height?: number;  // Logo height in pixels
-  href?: string;    // Click destination URL
+  src: string; // Logo image URL
+  alt: string; // Alt text for accessibility
+  width?: number; // Logo width in pixels
+  height?: number; // Logo height in pixels
+  href?: string; // Click destination URL
 }
 
 // Example implementation
-manager.registerObject('app:header-logo', 'my-university-logo', {
-  src: '/assets/my-university/logo.svg',
-  alt: 'My University',
+manager.registerObject("app:header-logo", "my-university-logo", {
+  src: "/assets/my-university/logo.svg",
+  alt: "My University",
   width: 120,
   height: 40,
-  href: 'https://my-university.edu'
+  href: "https://my-university.edu",
 });
 ```
 
@@ -91,20 +91,20 @@ Action buttons and links in the header area.
 
 ```typescript
 interface HeaderActionSchema {
-  title: string;                    // Action title/label
+  title: string; // Action title/label
   icon: string | React.ComponentType; // Icon identifier or component
-  action: () => void;               // Click handler
-  order: number;                    // Display order (lower = left)
-  permissions?: string[];           // Required permissions
+  action: () => void; // Click handler
+  order: number; // Display order (lower = left)
+  permissions?: string[]; // Required permissions
 }
 
 // Example implementation
-manager.registerObject('app:header-actions', 'help-action', {
-  title: 'Help',
-  icon: 'help-circle',
-  action: () => window.open('/help', '_blank'),
+manager.registerObject("app:header-actions", "help-action", {
+  title: "Help",
+  icon: "help-circle",
+  action: () => window.open("/help", "_blank"),
   order: 100,
-  permissions: []
+  permissions: [],
 });
 ```
 
@@ -114,24 +114,24 @@ Footer content including links, disclaimers, and contact info.
 
 ```typescript
 interface FooterSchema {
-  content?: React.ReactNode;  // Footer content
+  content?: React.ReactNode; // Footer content
   links?: Array<{
     title: string;
     url: string;
     external?: boolean;
   }>;
-  disclaimer?: string;        // Legal disclaimer text
-  order?: number;             // Display order
+  disclaimer?: string; // Legal disclaimer text
+  order?: number; // Display order
 }
 
 // Example implementation
-manager.registerObject('app:footer', 'my-university-footer', {
+manager.registerObject("app:footer", "my-university-footer", {
   links: [
-    { title: 'Privacy Policy', url: '/privacy', external: false },
-    { title: 'Terms of Service', url: '/terms', external: false },
-    { title: 'Contact', url: 'mailto:support@university.edu', external: true }
+    { title: "Privacy Policy", url: "/privacy", external: false },
+    { title: "Terms of Service", url: "/terms", external: false },
+    { title: "Contact", url: "mailto:support@university.edu", external: true },
   ],
-  disclaimer: '© 2025 My University. All rights reserved.'
+  disclaimer: "© 2025 My University. All rights reserved.",
 });
 ```
 
@@ -141,20 +141,20 @@ University-specific theme and branding settings.
 
 ```typescript
 interface BrandingSchema {
-  primaryColor: string;    // Primary brand color (HSL or hex)
-  secondaryColor: string;  // Secondary brand color
-  logoUrl: string;         // Logo URL
-  faviconUrl: string;      // Favicon URL
-  fontFamily?: string;     // Custom font family
-  customCss?: string;      // Additional CSS
+  primaryColor: string; // Primary brand color (HSL or hex)
+  secondaryColor: string; // Secondary brand color
+  logoUrl: string; // Logo URL
+  faviconUrl: string; // Favicon URL
+  fontFamily?: string; // Custom font family
+  customCss?: string; // Additional CSS
 }
 
 // Example implementation
-manager.registerObject('app:branding', 'my-university-branding', {
-  primaryColor: '220 90% 45%',
-  secondaryColor: '220 80% 35%',
-  logoUrl: '/assets/logo.svg',
-  faviconUrl: '/assets/favicon.svg'
+manager.registerObject("app:branding", "my-university-branding", {
+  primaryColor: "220 90% 45%",
+  secondaryColor: "220 80% 35%",
+  logoUrl: "/assets/logo.svg",
+  faviconUrl: "/assets/favicon.svg",
 });
 ```
 
@@ -164,36 +164,36 @@ Application-wide configuration settings. Multiple configs are **merged** (not re
 
 ```typescript
 interface AppConfigSchema {
-  organizationName?: string;    // University/organization name
-  organizationUrl?: string;     // University website URL
-  supportEmail?: string;        // Support contact email
-  privacyPolicyUrl?: string;    // Privacy policy URL
-  termsOfServiceUrl?: string;   // Terms of service URL
+  organizationName?: string; // University/organization name
+  organizationUrl?: string; // University website URL
+  supportEmail?: string; // Support contact email
+  privacyPolicyUrl?: string; // Privacy policy URL
+  termsOfServiceUrl?: string; // Terms of service URL
   features?: Record<string, boolean>; // Feature flag overrides
 }
 
 // Example implementation
-manager.registerObject('app:config', 'my-university-config', {
-  organizationName: 'My University',
-  organizationUrl: 'https://my-university.edu',
-  supportEmail: 'support@my-university.edu',
+manager.registerObject("app:config", "my-university-config", {
+  organizationName: "My University",
+  organizationUrl: "https://my-university.edu",
+  supportEmail: "support@my-university.edu",
   features: {
     enableTranscripts: true,
-    enableComments: false
-  }
+    enableComments: false,
+  },
 });
 ```
 
 ### Sidebar Extension Points
 
-| Extension Point | Description | Priority |
-|-----------------|-------------|----------|
-| `sidebar:nav-items` | Main navigation items | Order-based |
-| `sidebar:user-items` | User actions (profile, logout) | Order-based |
-| `sidebar:admin-items` | Administrative functions | Order-based |
-| `sidebar:help-items` | Help and support links | Order-based |
-| `sidebar:header-logo` | Custom sidebar header logo | Lower = wins |
-| `sidebar:footer` | Custom sidebar footer | Lower = wins |
+| Extension Point       | Description                    | Priority     |
+| --------------------- | ------------------------------ | ------------ |
+| `sidebar:nav-items`   | Main navigation items          | Order-based  |
+| `sidebar:user-items`  | User actions (profile, logout) | Order-based  |
+| `sidebar:admin-items` | Administrative functions       | Order-based  |
+| `sidebar:help-items`  | Help and support links         | Order-based  |
+| `sidebar:header-logo` | Custom sidebar header logo     | Lower = wins |
+| `sidebar:footer`      | Custom sidebar footer          | Lower = wins |
 
 #### `sidebar:nav-items`
 
@@ -201,36 +201,36 @@ Main navigation items in the sidebar. Items are sorted by `order`.
 
 ```typescript
 interface NavItemSchema {
-  title: string;                      // Display name
-  path: string;                       // Route path
+  title: string; // Display name
+  path: string; // Route path
   icon: string | React.ComponentType; // Icon identifier or component
-  order: number;                      // Display order (lower = higher up)
-  permissions?: string[];             // Required permissions
-  featureFlags?: string[];            // Required feature flags
-  category?: string;                  // Grouping category
+  order: number; // Display order (lower = higher up)
+  permissions?: string[]; // Required permissions
+  featureFlags?: string[]; // Required feature flags
+  category?: string; // Grouping category
 }
 
 // Example implementation
-manager.registerObject('sidebar:nav-items', 'custom-app', {
-  title: 'Custom App',
-  path: '/custom',
-  icon: 'layout-dashboard',
+manager.registerObject("sidebar:nav-items", "custom-app", {
+  title: "Custom App",
+  path: "/custom",
+  icon: "layout-dashboard",
   order: 50,
-  permissions: ['custom.view'],
+  permissions: ["custom.view"],
   featureFlags: [],
-  category: 'apps'
+  category: "apps",
 });
 ```
 
 **Standard Navigation Order:**
 
-| Order | Item | Category |
-|-------|------|----------|
-| 10 | Home | core |
-| 20 | Series | content |
-| 30 | Episodes | content |
-| 40 | Upload | content |
-| 50+ | Custom Apps | apps |
+| Order | Item        | Category |
+| ----- | ----------- | -------- |
+| 10    | Home        | core     |
+| 20    | Series      | content  |
+| 30    | Episodes    | content  |
+| 40    | Upload      | content  |
+| 50+   | Custom Apps | apps     |
 
 #### `sidebar:user-items`
 
@@ -238,20 +238,20 @@ User-specific actions and settings.
 
 ```typescript
 interface UserItemSchema {
-  title: string;                      // Display name
-  action: () => void;                 // Click handler
+  title: string; // Display name
+  action: () => void; // Click handler
   icon: string | React.ComponentType; // Icon identifier
-  order: number;                      // Display order
-  permissions?: string[];             // Required permissions
+  order: number; // Display order
+  permissions?: string[]; // Required permissions
 }
 
 // Example implementation
-manager.registerObject('sidebar:user-items', 'profile', {
-  title: 'My Profile',
-  action: () => navigate('/profile'),
-  icon: 'user',
+manager.registerObject("sidebar:user-items", "profile", {
+  title: "My Profile",
+  action: () => navigate("/profile"),
+  icon: "user",
   order: 10,
-  permissions: []
+  permissions: [],
 });
 ```
 
@@ -261,20 +261,20 @@ Administrative functions for authorized users.
 
 ```typescript
 interface AdminItemSchema {
-  title: string;                      // Display name
-  path: string;                       // Route path
+  title: string; // Display name
+  path: string; // Route path
   icon: string | React.ComponentType; // Icon identifier
-  order: number;                      // Display order
-  permissions: string[];              // Required admin permissions
+  order: number; // Display order
+  permissions: string[]; // Required admin permissions
 }
 
 // Example implementation
-manager.registerObject('sidebar:admin-items', 'user-management', {
-  title: 'User Management',
-  path: '/admin/users',
-  icon: 'users',
+manager.registerObject("sidebar:admin-items", "user-management", {
+  title: "User Management",
+  path: "/admin/users",
+  icon: "users",
   order: 10,
-  permissions: ['admin.users']
+  permissions: ["admin.users"],
 });
 ```
 
@@ -284,20 +284,20 @@ Help, support, and documentation links.
 
 ```typescript
 interface HelpItemSchema {
-  title: string;                      // Display name
-  path: string;                       // Route path or external URL
+  title: string; // Display name
+  path: string; // Route path or external URL
   icon: string | React.ComponentType; // Icon identifier
-  order: number;                      // Display order
-  external?: boolean;                 // Opens in new tab
+  order: number; // Display order
+  external?: boolean; // Opens in new tab
 }
 
 // Example implementation
-manager.registerObject('sidebar:help-items', 'documentation', {
-  title: 'Documentation',
-  path: 'https://docs.university.edu',
-  icon: 'book-open',
+manager.registerObject("sidebar:help-items", "documentation", {
+  title: "Documentation",
+  path: "https://docs.university.edu",
+  icon: "book-open",
   order: 10,
-  external: true
+  external: true,
 });
 ```
 
@@ -310,7 +310,7 @@ Custom sidebar header logo component.
 
 // Example implementation
 const MySidebarLogo: React.FC<{ collapsed: boolean }> = ({ collapsed }) => {
-  return collapsed 
+  return collapsed
     ? <img src="/icon.svg" alt="Logo" className="w-8 h-8" />
     : <img src="/logo-full.svg" alt="My University" className="h-8" />;
 };
@@ -320,11 +320,11 @@ manager.registerComponent('sidebar:header-logo', MySidebarLogo, { priority: 10 }
 
 ### Table Sidebar Extension Points
 
-| Extension Point | Description | Priority |
-|-----------------|-------------|----------|
-| `table-sidebar:tabs` | Generic table sidebar tabs | Order-based |
-| `table-sidebar:episodes:tabs` | Episode-specific tabs | Order-based |
-| `table-sidebar:series:tabs` | Series-specific tabs | Order-based |
+| Extension Point               | Description                | Priority    |
+| ----------------------------- | -------------------------- | ----------- |
+| `table-sidebar:tabs`          | Generic table sidebar tabs | Order-based |
+| `table-sidebar:episodes:tabs` | Episode-specific tabs      | Order-based |
+| `table-sidebar:series:tabs`   | Series-specific tabs       | Order-based |
 
 #### `table-sidebar:tabs`
 
@@ -332,35 +332,35 @@ Additional tabs for table detail sidebars.
 
 ```typescript
 interface TableSidebarTabSchema {
-  id: string;                       // Unique tab identifier
-  label: string;                    // Tab display name
-  order: number;                    // Tab order (lower = left)
-  component: React.ComponentType;   // Tab content component
-  context?: string[];               // Which tables this applies to
-  permissions?: string[];           // Required permissions
-  featureFlags?: string[];          // Required feature flags
+  id: string; // Unique tab identifier
+  label: string; // Tab display name
+  order: number; // Tab order (lower = left)
+  component: React.ComponentType; // Tab content component
+  context?: string[]; // Which tables this applies to
+  permissions?: string[]; // Required permissions
+  featureFlags?: string[]; // Required feature flags
 }
 
 // Example implementation
-manager.registerObject('table-sidebar:tabs', 'access-control', {
-  id: 'access',
-  label: 'Access Control',
+manager.registerObject("table-sidebar:tabs", "access-control", {
+  id: "access",
+  label: "Access Control",
   order: 20,
   component: AclEditorComponent,
-  context: ['episodes', 'series'],
-  permissions: ['acl.edit'],
-  featureFlags: []
+  context: ["episodes", "series"],
+  permissions: ["acl.edit"],
+  featureFlags: [],
 });
 ```
 
 ### Upload Extension Points
 
-| Extension Point | Description | Priority |
-|-----------------|-------------|----------|
-| `upload:acl-editor` | ACL editor for uploads | Lower = wins |
-| `upload:metadata-editor` | Additional metadata fields | Lower = wins |
-| `upload:workflow-selector` | Custom workflow selection | Lower = wins |
-| `upload:pre-upload-validation` | Pre-upload validation hooks | All run |
+| Extension Point                | Description                 | Priority     |
+| ------------------------------ | --------------------------- | ------------ |
+| `upload:acl-editor`            | ACL editor for uploads      | Lower = wins |
+| `upload:metadata-editor`       | Additional metadata fields  | Lower = wins |
+| `upload:workflow-selector`     | Custom workflow selection   | Lower = wins |
+| `upload:pre-upload-validation` | Pre-upload validation hooks | All run      |
 
 #### `upload:acl-editor`
 
@@ -393,14 +393,14 @@ Additional metadata fields for uploads.
 
 ```typescript
 interface MetadataEditorProps {
-  metadata: Record<string, unknown>;              // Current metadata
+  metadata: Record<string, unknown>; // Current metadata
   onMetadataChange: (data: Record<string, unknown>) => void; // Callback
-  selectedSeries: SelectedElement | null;         // Selected series
-  files: UploadFileBlob[];                        // Files being uploaded
+  selectedSeries: SelectedElement | null; // Selected series
+  files: UploadFileBlob[]; // Files being uploaded
 }
 
 // Example implementation
-manager.registerComponent('upload:metadata-editor', CustomMetadataEditor, { priority: 10 });
+manager.registerComponent("upload:metadata-editor", CustomMetadataEditor, { priority: 10 });
 ```
 
 ## Default Implementations
@@ -411,20 +411,21 @@ The core plugin provides default implementations that work out of the box:
 
 ```typescript
 // Registered by coreDefaultImplementations
-manager.registerObject('sidebar:nav-items', 'home', {
-  title: 'Home',
-  path: '/',
+manager.registerObject("sidebar:nav-items", "home", {
+  title: "Home",
+  path: "/",
   icon: Home,
   order: 10,
   permissions: [],
   featureFlags: [],
-  category: 'core'
+  category: "core",
 });
 ```
 
 ### Default Header
 
 The core header includes:
+
 - Language switcher (`LangSwitcher` component)
 - Login button (`LoginButton` component)
 - Basic branding
@@ -432,6 +433,7 @@ The core header includes:
 ### Default Footer
 
 The core footer includes:
+
 - Copyright notice
 - Basic links
 - Internationalization support
@@ -445,19 +447,19 @@ To override a default implementation:
 
 ```typescript
 // Override header logo (component - use priority)
-manager.registerComponent('app:header-logo', MyUniversityLogo, { 
-  priority: 10  // Lower number = higher priority
+manager.registerComponent("app:header-logo", MyUniversityLogo, {
+  priority: 10, // Lower number = higher priority
 });
 
 // Override navigation item (object - use same key)
-manager.registerObject('sidebar:nav-items', 'home', {
-  title: 'Dashboard',  // Override title
-  path: '/',
+manager.registerObject("sidebar:nav-items", "home", {
+  title: "Dashboard", // Override title
+  path: "/",
   icon: LayoutDashboard,
   order: 10,
   permissions: [],
   featureFlags: [],
-  category: 'core'
+  category: "core",
 });
 ```
 
@@ -468,7 +470,7 @@ The core plugin exports navigation implementations for apps:
 ### Episodes Navigation
 
 ```typescript
-import { episodesNavImplementation } from '@workspace/plugins';
+import { episodesNavImplementation } from "@workspace/plugins";
 
 // Registers: sidebar:nav-items/episodes
 // Path: /episodes
@@ -478,7 +480,7 @@ import { episodesNavImplementation } from '@workspace/plugins';
 ### Series Navigation
 
 ```typescript
-import { seriesNavImplementation } from '@workspace/plugins';
+import { seriesNavImplementation } from "@workspace/plugins";
 
 // Registers: sidebar:nav-items/series
 // Path: /series
@@ -488,7 +490,7 @@ import { seriesNavImplementation } from '@workspace/plugins';
 ### Upload Navigation
 
 ```typescript
-import { uploadNavImplementation } from '@workspace/plugins';
+import { uploadNavImplementation } from "@workspace/plugins";
 
 // Registers: sidebar:nav-items/upload
 // Path: /upload
@@ -517,28 +519,28 @@ const MyHeader = () => (
 ### Basic Implementation Pattern
 
 ```typescript
-import { createPlugin, type PluginManager } from '@workspace/plugin-system';
+import { createPlugin, type PluginManager } from "@workspace/plugin-system";
 
 export const myUniversityPlugin = createPlugin({
-  namespace: 'my-university',
-  type: 'university-extension',
-  version: '1.0.0',
+  namespace: "my-university",
+  type: "university-extension",
+  version: "1.0.0",
 
   initialize(manager: PluginManager) {
     // Override header logo
-    manager.registerComponent('app:header-logo', MyLogo, { priority: 10 });
-    
+    manager.registerComponent("app:header-logo", MyLogo, { priority: 10 });
+
     // Add custom navigation
-    manager.registerObject('sidebar:nav-items', 'custom-feature', {
-      title: 'Custom Feature',
-      path: '/custom',
+    manager.registerObject("sidebar:nav-items", "custom-feature", {
+      title: "Custom Feature",
+      path: "/custom",
       icon: Star,
-      order: 60
+      order: 60,
     });
-    
+
     // Override footer
-    manager.registerComponent('app:footer', MyFooter, { priority: 10 });
-  }
+    manager.registerComponent("app:footer", MyFooter, { priority: 10 });
+  },
 });
 ```
 
@@ -546,19 +548,19 @@ export const myUniversityPlugin = createPlugin({
 
 ```typescript
 export const myUniversityConfig = createPlugin({
-  namespace: 'my-university',
-  type: 'config',
-  version: '1.0.0',
+  namespace: "my-university",
+  type: "config",
+  version: "1.0.0",
 
   initialize(manager: PluginManager) {
-    manager.registerObject('app:config', 'my-university-config', {
-      organizationName: 'My University',
-      organizationUrl: 'https://my-university.edu',
+    manager.registerObject("app:config", "my-university-config", {
+      organizationName: "My University",
+      organizationUrl: "https://my-university.edu",
       features: {
-        enableTranscripts: true
-      }
+        enableTranscripts: true,
+      },
     });
-  }
+  },
 });
 ```
 
@@ -585,8 +587,8 @@ export const myUniversityConfig = createPlugin({
 To discover all available extension points at runtime:
 
 ```typescript
-const documentation = manager.getObjects('extension-points:documentation');
-console.log('Available extension points:', Object.keys(documentation));
+const documentation = manager.getObjects("extension-points:documentation");
+console.log("Available extension points:", Object.keys(documentation));
 ```
 
 ## Best Practices
@@ -597,4 +599,3 @@ console.log('Available extension points:', Object.keys(documentation));
 4. **Follow priority conventions** - Use 10 for high priority overrides
 5. **Provide fallbacks** - Gracefully handle missing configurations
 6. **Use translations** - Support i18n for all user-facing text
-

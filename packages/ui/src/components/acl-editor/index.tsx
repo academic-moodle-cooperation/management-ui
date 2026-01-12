@@ -39,7 +39,7 @@ import {
 import { useI18n, loadNamespace } from "@workspace/i18n";
 import { AclData, ACLEntry, ACLEntryInput, SelectedElement } from "./types";
 
-type UserSearchResult = NonNullable<NonNullable<SearchUserQuery['searchUser']>['nodes']>[number];
+type UserSearchResult = NonNullable<NonNullable<SearchUserQuery["searchUser"]>["nodes"]>[number];
 
 interface AclEditorProps {
   selectedElement?: SelectedElement | null;
@@ -60,7 +60,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   aclEntries,
   managedAclId,
   hasChanges,
-  refetch = () => { },
+  refetch = () => {},
   showUpdateButton = true,
   onAclChange,
   onManagedAclChange,
@@ -95,10 +95,8 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   const id = selectedElement?.id ?? "";
 
   // Check if the selected element is editable
-  const isEventEditable = !disabled && (
-    !isEvent ||
-    selectedElement?.eventStatus?.split('.')?.pop() === 'PROCESSED'
-  );
+  const isEventEditable =
+    !disabled && (!isEvent || selectedElement?.eventStatus?.split(".")?.pop() === "PROCESSED");
 
   const { data: managedAclsWithEvent } = useGetManagedAclsWithEventIdQuery(
     { id },
@@ -112,12 +110,11 @@ export const AclEditor: React.FC<AclEditorProps> = ({
     enabled: isUpload,
   });
 
-  const managedAcls =
-    isEvent
-      ? managedAclsWithEvent?.managedAcls?.nodes ?? []
-      : isSeries
-        ? managedAclsWithSeries?.managedAcls?.nodes ?? []
-        : managedAclsWithoutUsers?.managedAcls?.nodes ?? [];
+  const managedAcls = isEvent
+    ? (managedAclsWithEvent?.managedAcls?.nodes ?? [])
+    : isSeries
+      ? (managedAclsWithSeries?.managedAcls?.nodes ?? [])
+      : (managedAclsWithoutUsers?.managedAcls?.nodes ?? []);
 
   // User actions call parent callbacks
   const handleAddUser = useCallback(
@@ -128,9 +125,9 @@ export const AclEditor: React.FC<AclEditorProps> = ({
           const updatedEntries = [
             ...aclEntries,
             {
-              role: user.userRole || '',
-              label: user.name || user.username || '',
-              userId: user.username || '',
+              role: user.userRole || "",
+              label: user.name || user.username || "",
+              userId: user.username || "",
               action: ["read"],
             },
           ];
@@ -169,10 +166,9 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   };
 
   const handleUpdate = () => {
-
     // Convert UI ACLEntry to API ACLEntryInput (remove UI-only fields)
     const entries: ACLEntryInput[] = aclEntries.map((entry) => ({
-      role: entry.role ?? '',
+      role: entry.role ?? "",
       action: entry.action ?? [],
     }));
 
@@ -191,9 +187,9 @@ export const AclEditor: React.FC<AclEditorProps> = ({
           onSuccess: () => {
             toast.success(t("muitable-sidebar:changesSaved"));
             // Invalidate all event-related queries
-            queryClient.invalidateQueries({ queryKey: ['GetMyEvents'] });
-            queryClient.invalidateQueries({ queryKey: ['EventsFromSeries'] });
-            queryClient.invalidateQueries({ queryKey: ['GetManagedAclsWithEventId'] });
+            queryClient.invalidateQueries({ queryKey: ["GetMyEvents"] });
+            queryClient.invalidateQueries({ queryKey: ["EventsFromSeries"] });
+            queryClient.invalidateQueries({ queryKey: ["GetManagedAclsWithEventId"] });
             refetch();
             // Do NOT call onClose or onEditClose here
           },
@@ -210,9 +206,9 @@ export const AclEditor: React.FC<AclEditorProps> = ({
           onSuccess: () => {
             toast.success(t("muitable-sidebar:changesSaved"));
             // Invalidate all series-related queries
-            queryClient.invalidateQueries({ queryKey: ['GetMySeries'] });
-            queryClient.invalidateQueries({ queryKey: ['GetSeriesInfo'] });
-            queryClient.invalidateQueries({ queryKey: ['GetManagedAclsWithSeriesId'] });
+            queryClient.invalidateQueries({ queryKey: ["GetMySeries"] });
+            queryClient.invalidateQueries({ queryKey: ["GetSeriesInfo"] });
+            queryClient.invalidateQueries({ queryKey: ["GetManagedAclsWithSeriesId"] });
             refetch();
             // Do NOT call onClose or onEditClose here
           },
@@ -242,14 +238,10 @@ export const AclEditor: React.FC<AclEditorProps> = ({
             disabled={disabled}
           >
             <SelectTrigger className="w-full">
-              <SelectValue
-                placeholder={t("muitable-sidebar:selectAccessPolicy")}
-              />
+              <SelectValue placeholder={t("muitable-sidebar:selectAccessPolicy")} />
             </SelectTrigger>
             <SelectContent className="sidebar-portal-inside">
-              <SelectItem value="none">
-                {t("muitable-sidebar:noPolicy")}
-              </SelectItem>
+              <SelectItem value="none">{t("muitable-sidebar:noPolicy")}</SelectItem>
               {managedAcls
                 .filter((policy) => policy != null)
                 .map((policy) => (
@@ -285,25 +277,14 @@ export const AclEditor: React.FC<AclEditorProps> = ({
                         value={searchQuery}
                         onValueChange={setSearchQuery}
                       />
-                      {isLoading && (
-                        <div className="p-2">
-                          {t("muitable-sidebar:loading")}
-                        </div>
-                      )}
+                      {isLoading && <div className="p-2">{t("muitable-sidebar:loading")}</div>}
                       {isError && (
-                        <div className="p-2">
-                          {t("muitable-sidebar:errorLoadingUsers")}
-                        </div>
+                        <div className="p-2">{t("muitable-sidebar:errorLoadingUsers")}</div>
                       )}
-                      <CommandEmpty>
-                        {t("muitable-sidebar:noUsersFound")}
-                      </CommandEmpty>
+                      <CommandEmpty>{t("muitable-sidebar:noUsersFound")}</CommandEmpty>
                       <CommandList>
                         {filteredUsers.map((user) => (
-                          <CommandItem
-                            key={user?.username}
-                            onSelect={() => handleAddUser(user)}
-                          >
+                          <CommandItem key={user?.username} onSelect={() => handleAddUser(user)}>
                             {user?.name || user?.username}
                           </CommandItem>
                         ))}
@@ -344,18 +325,14 @@ export const AclEditor: React.FC<AclEditorProps> = ({
                       <Checkbox
                         checked={entry.action.includes("read")}
                         disabled
-                        onCheckedChange={(value) =>
-                          handlePermissionChange(index, "read", value)
-                        }
+                        onCheckedChange={(value) => handlePermissionChange(index, "read", value)}
                       />
                     </TableCell>
                     <TableCell className="text-center py-2 px-0">
                       <Checkbox
                         checked={entry.action.includes("write")}
                         disabled={disabled}
-                        onCheckedChange={(value) =>
-                          handlePermissionChange(index, "write", value)
-                        }
+                        onCheckedChange={(value) => handlePermissionChange(index, "write", value)}
                       />
                     </TableCell>
                     <TableCell className="text-center py-2 px-0">
@@ -390,19 +367,11 @@ export const AclEditor: React.FC<AclEditorProps> = ({
                             value={searchQuery}
                             onValueChange={setSearchQuery}
                           />
-                          {isLoading && (
-                            <div className="p-2">
-                              {t("muitable-sidebar:loading")}
-                            </div>
-                          )}
+                          {isLoading && <div className="p-2">{t("muitable-sidebar:loading")}</div>}
                           {isError && (
-                            <div className="p-2">
-                              {t("muitable-sidebar:errorLoadingUsers")}
-                            </div>
+                            <div className="p-2">{t("muitable-sidebar:errorLoadingUsers")}</div>
                           )}
-                          <CommandEmpty>
-                            {t("muitable-sidebar:noUsersFound")}
-                          </CommandEmpty>
+                          <CommandEmpty>{t("muitable-sidebar:noUsersFound")}</CommandEmpty>
                           <CommandList>
                             {filteredUsers.map((user) => (
                               <CommandItem
@@ -443,4 +412,10 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   );
 };
 
-export { type AclData, type ACLEntry, type ACLEntryInput, type SelectedElement, type ManagedACLEntry } from "./types";
+export {
+  type AclData,
+  type ACLEntry,
+  type ACLEntryInput,
+  type SelectedElement,
+  type ManagedACLEntry,
+} from "./types";

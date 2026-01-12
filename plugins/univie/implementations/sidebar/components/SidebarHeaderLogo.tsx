@@ -1,5 +1,5 @@
-import React from 'react';
-import { Home } from '@workspace/ui/components/icons';
+import React from "react";
+import { Home } from "@workspace/ui/components/icons";
 import { cn } from "@workspace/ui/lib/utils";
 import { useAppConfig } from "@workspace/query";
 import { resolveFirstAssetUrl } from "@workspace/ui/lib";
@@ -7,7 +7,7 @@ import { resolveFirstAssetUrl } from "@workspace/ui/lib";
 /**
  * University of Vienna Sidebar Header Logo Component
  * Migrated from migrate/extensions/src/univie/src/plugins/appshell-sidebar/components/Logo.tsx
- * 
+ *
  * Provides custom logo display behavior for University of Vienna sidebar header
  */
 
@@ -20,21 +20,12 @@ export const SidebarHeaderLogo = ({ collapsed }: SidebarHeaderLogoProps) => {
 
   const preferredSrc = resolveFirstAssetUrl(
     [config.app.orgLogoUrl, config.app.logoUrl],
-    'assets/favicon/favicon.svg'
+    "assets/favicon/favicon.svg"
   );
 
   return (
-    <div
-      className={cn(
-        "flex items-center flex-shrink-0 text-lg h-full w-full justify-center"
-      )}
-    >
-      <a
-        className="text-sidebar"
-        rel=""
-        href={import.meta.env.BASE_URL}
-        target="_self"
-      >
+    <div className={cn("flex items-center flex-shrink-0 text-lg h-full w-full justify-center")}>
+      <a className="text-sidebar" rel="" href={import.meta.env.BASE_URL} target="_self">
         <>
           <span
             className={cn(
@@ -51,13 +42,13 @@ export const SidebarHeaderLogo = ({ collapsed }: SidebarHeaderLogoProps) => {
                 className="mx-auto h-10 w-auto"
                 onError={(e) => {
                   // Prevent infinite loop by tracking if we've already tried fallback
-                  if (e.currentTarget.dataset.errorHandled === 'true') {
+                  if (e.currentTarget.dataset.errorHandled === "true") {
                     return; // Already tried fallback, don't retry
                   }
-                  e.currentTarget.dataset.errorHandled = 'true';
-                  
+                  e.currentTarget.dataset.errorHandled = "true";
+
                   // Try favicon as fallback
-                  const favicon = resolveFirstAssetUrl([], 'assets/favicon/favicon.svg');
+                  const favicon = resolveFirstAssetUrl([], "assets/favicon/favicon.svg");
                   e.currentTarget.src = favicon;
                 }}
               />
@@ -73,4 +64,4 @@ export const SidebarHeaderLogo = ({ collapsed }: SidebarHeaderLogoProps) => {
       </a>
     </div>
   );
-}; 
+};

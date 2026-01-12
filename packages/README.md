@@ -45,12 +45,12 @@ Packages are organized into **dependency layers** to ensure proper coupling:
 
 These packages have **zero workspace dependencies** and form the foundation.
 
-| Package | Purpose | Dependencies | Documentation |
-|---------|---------|--------------|---------------|
-| **utils** | Common utility functions | None | [README](utils/README.md) |
-| **typescript-config** | Shared TypeScript configurations | None | [README](typescript-config/README.md) |
-| **eslint-config** | Shared ESLint rules | None | [README](eslint-config/README.md) |
-| **tailwind-config** | Shared Tailwind CSS configuration | None | [README](tailwind-config/README.md) |
+| Package               | Purpose                           | Dependencies | Documentation                         |
+| --------------------- | --------------------------------- | ------------ | ------------------------------------- |
+| **utils**             | Common utility functions          | None         | [README](utils/README.md)             |
+| **typescript-config** | Shared TypeScript configurations  | None         | [README](typescript-config/README.md) |
+| **eslint-config**     | Shared ESLint rules               | None         | [README](eslint-config/README.md)     |
+| **tailwind-config**   | Shared Tailwind CSS configuration | None         | [README](tailwind-config/README.md)   |
 
 **Update Safety:** ⭐⭐⭐⭐⭐ Highest - Changes affect all packages
 
@@ -58,11 +58,11 @@ These packages have **zero workspace dependencies** and form the foundation.
 
 These packages provide core functionality and can depend on Core Infrastructure.
 
-| Package | Purpose | Dependencies | Documentation |
-|---------|---------|--------------|---------------|
-| **plugin-system** | Plugin architecture and runtime | React only | [README](plugin-system/docs/README.md) |
-| **store** | Global state management | React, Jotai | [README](store/README.md) |
-| **i18n** | Internationalization system | React, i18next | [README](i18n/README.md) |
+| Package           | Purpose                         | Dependencies   | Documentation                          |
+| ----------------- | ------------------------------- | -------------- | -------------------------------------- |
+| **plugin-system** | Plugin architecture and runtime | React only     | [README](plugin-system/docs/README.md) |
+| **store**         | Global state management         | React, Jotai   | [README](store/README.md)              |
+| **i18n**          | Internationalization system     | React, i18next | [README](i18n/README.md)               |
 
 **Update Safety:** ⭐⭐⭐⭐ High - Changes affect integration and app layers
 
@@ -70,11 +70,11 @@ These packages provide core functionality and can depend on Core Infrastructure.
 
 These packages integrate external libraries and can depend on Foundation + Core.
 
-| Package | Purpose | Dependencies | Documentation |
-|---------|---------|--------------|---------------|
-| **query** | Data fetching & GraphQL client | TanStack Query, GraphQL | [README](query/README.md) |
-| **router** | Application routing | TanStack Router | [README](router/README.md) |
-| **ui** | Component library & design system | React, Radix UI, Tailwind | [README](ui/README.md) |
+| Package    | Purpose                           | Dependencies              | Documentation              |
+| ---------- | --------------------------------- | ------------------------- | -------------------------- |
+| **query**  | Data fetching & GraphQL client    | TanStack Query, GraphQL   | [README](query/README.md)  |
+| **router** | Application routing               | TanStack Router           | [README](router/README.md) |
+| **ui**     | Component library & design system | React, Radix UI, Tailwind | [README](ui/README.md)     |
 
 **Update Safety:** ⭐⭐⭐ Medium - Changes affect applications
 
@@ -82,12 +82,12 @@ These packages integrate external libraries and can depend on Foundation + Core.
 
 These packages orchestrate the system and can depend on all lower layers.
 
-| Package | Purpose | Dependencies | Documentation |
-|---------|---------|--------------|---------------|
-| **app-runtime** | Standalone app execution | query, ui, plugin-system, router | [README](app-runtime/README.md) |
-| **providers** | React context providers | Multiple workspace packages | [README](providers/README.md) |
-| **ui-config** | UI configuration management | utils | [README](ui-config/README.md) |
-| **vite-config** | Shared Vite build configurations | Various | [README](vite-config/README.md) |
+| Package         | Purpose                          | Dependencies                     | Documentation                   |
+| --------------- | -------------------------------- | -------------------------------- | ------------------------------- |
+| **app-runtime** | Standalone app execution         | query, ui, plugin-system, router | [README](app-runtime/README.md) |
+| **providers**   | React context providers          | Multiple workspace packages      | [README](providers/README.md)   |
+| **ui-config**   | UI configuration management      | utils                            | [README](ui-config/README.md)   |
+| **vite-config** | Shared Vite build configurations | Various                          | [README](vite-config/README.md) |
 
 **Update Safety:** ⭐⭐ Low - Changes affect specific applications only
 
@@ -207,6 +207,7 @@ One of our goals is to make it **easy to swap technologies**. Here's how:
 **Current:** TanStack Query (React Query)
 
 **To Swap:**
+
 1. Create new implementation in `query` package
 2. Keep same public API (hooks with same signatures)
 3. Update internal implementation
@@ -220,6 +221,7 @@ One of our goals is to make it **easy to swap technologies**. Here's how:
 **Current:** Radix UI + Tailwind CSS
 
 **To Swap:**
+
 1. Update `ui` package components
 2. Keep same component props and behavior
 3. Update styling approach internally
@@ -250,10 +252,10 @@ export function useMyData() {
 
 // 2. Export from package index
 // packages/query/src/index.ts
-export { useMyData } from './hooks/useMyData';
+export { useMyData } from "./hooks/useMyData";
 
 // 3. Use in applications
-import { useMyData } from '@workspace/query';
+import { useMyData } from "@workspace/query";
 ```
 
 ### Pattern: Creating a Shared Component
@@ -261,14 +263,16 @@ import { useMyData } from '@workspace/query';
 ```typescript
 // 1. Implement in ui package
 // packages/ui/src/components/MyComponent.tsx
-export const MyComponent = () => { /* ... */ };
+export const MyComponent = () => {
+  /* ... */
+};
 
 // 2. Export from package index
 // packages/ui/src/index.ts
-export { MyComponent } from './components/MyComponent';
+export { MyComponent } from "./components/MyComponent";
 
 // 3. Use in applications
-import { MyComponent } from '@workspace/ui';
+import { MyComponent } from "@workspace/ui";
 ```
 
 ### Pattern: Creating a Utility Function
@@ -276,14 +280,16 @@ import { MyComponent } from '@workspace/ui';
 ```typescript
 // 1. Implement in utils package
 // packages/utils/src/myUtil.ts
-export function myUtil() { /* ... */ }
+export function myUtil() {
+  /* ... */
+}
 
 // 2. Export from package index
 // packages/utils/src/index.ts
-export { myUtil } from './myUtil';
+export { myUtil } from "./myUtil";
 
 // 3. Use anywhere
-import { myUtil } from '@workspace/utils';
+import { myUtil } from "@workspace/utils";
 ```
 
 ## Package Development
@@ -328,6 +334,7 @@ pnpm test         # Run tests (if available)
 ### Required Files
 
 Every package must have:
+
 - `package.json` - With proper `name`, `exports`, `scripts`
 - `tsconfig.json` - Extending workspace config
 - `README.md` - Following template
@@ -380,6 +387,7 @@ Before considering a package production-ready:
 **Symptoms:** Build fails with circular dependency error
 
 **Solution:**
+
 1. Identify the cycle in the dependency graph
 2. Extract shared code to a lower-layer package
 3. Use dependency inversion (interfaces)
@@ -390,6 +398,7 @@ Before considering a package production-ready:
 **Symptoms:** Import from `@workspace/package` fails
 
 **Solution:**
+
 1. Verify package is in `pnpm-workspace.yaml`
 2. Run `pnpm install` from root
 3. Check `exports` field in `package.json`
@@ -400,6 +409,7 @@ Before considering a package production-ready:
 **Symptoms:** TypeScript errors after updating a package
 
 **Solution:**
+
 1. Check package's migration guide
 2. Update usage to match new API
 3. Run `pnpm check-types` to verify
@@ -431,6 +441,7 @@ Before considering a package production-ready:
 ### Review Process
 
 Changes to packages should be reviewed for:
+
 - Impact on dependent packages
 - Adherence to layer principles
 - API stability
@@ -444,5 +455,3 @@ Changes to packages should be reviewed for:
 ---
 
 **Remember:** Good package design enables independent evolution. Each package should be understandable, updatable, and replaceable without breaking the system.
-
-

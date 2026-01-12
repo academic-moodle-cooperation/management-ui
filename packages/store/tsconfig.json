@@ -6,13 +6,6 @@
     "noEmit": true,
     "composite": false
   },
-  "include": [
-    "*.ts",
-    "*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".turbo"
-  ]
+  "include": ["*.ts", "*.tsx"],
+  "exclude": ["node_modules", "dist", ".turbo"]
 }

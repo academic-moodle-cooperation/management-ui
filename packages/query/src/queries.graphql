@@ -58,12 +58,7 @@ fragment SeriesData on Series {
   }
 }
 
-query GetMySeries(
-  $limit: Int
-  $offset: Int
-  $orderBy: SeriesOrderByInput
-  $query: String
-) {
+query GetMySeries($limit: Int, $offset: Int, $orderBy: SeriesOrderByInput, $query: String) {
   currentUser {
     mySeries(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
       totalCount
@@ -213,7 +208,6 @@ query GetMySeriesNameAndId(
   }
 }
 
-
 query GetSeriesNameById($seriesId: String!) {
   seriesById(id: $seriesId) {
     title
@@ -283,12 +277,7 @@ query EventsFromSeries(
   }
 }
 
-query GetMyEvents(
-  $limit: Int
-  $offset: Int
-  $orderBy: EventOrderByInput
-  $query: String
-) {
+query GetMyEvents($limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String) {
   currentUser {
     myEvents(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
       totalCount
@@ -381,7 +370,7 @@ query GetAllManagedAcls {
 }
 
 query GetManagedAclsWithEventId($id: String!) {
-	managedAcls {
+  managedAcls {
     nodes {
       name
       id
@@ -397,7 +386,7 @@ query GetManagedAclsWithEventId($id: String!) {
 }
 
 query GetManagedAclsWithSeriesId($id: String!) {
-	managedAcls {
+  managedAcls {
     nodes {
       name
       id
@@ -413,8 +402,8 @@ query GetManagedAclsWithSeriesId($id: String!) {
 }
 
 fragment EventsAclData on Query {
-	eventById(id: $id) {
-      acl {
+  eventById(id: $id) {
+    acl {
       users {
         role
         label
@@ -425,8 +414,8 @@ fragment EventsAclData on Query {
 }
 
 fragment SeriesAclData on Query {
-	seriesById(id: $id) {
-      acl {
+  seriesById(id: $id) {
+    acl {
       users {
         role
         label
@@ -436,24 +425,17 @@ fragment SeriesAclData on Query {
   }
 }
 
-
 ### ---------------------------------------------------------------------------------------------
 ## MUTATIONS
 ### ---------------------------------------------------------------------------------------------
 
-mutation CreateSeries(
-  $acl: AccessControlListInput!
-  $metadata: CommonSeriesMetadataInput!
-) {
+mutation CreateSeries($acl: AccessControlListInput!, $metadata: CommonSeriesMetadataInput!) {
   createSeries(acl: $acl, metadata: $metadata) {
     ...SeriesData
   }
 }
 
-mutation UpdateSeries(
-  $seriesId: String!
-  $metadata: CommonSeriesMetadataInput!
-) {
+mutation UpdateSeries($seriesId: String!, $metadata: CommonSeriesMetadataInput!) {
   updateSeries(id: $seriesId, metadata: $metadata) {
     ...SeriesData
   }
@@ -486,9 +468,9 @@ mutation UpdateEventAcl($eventId: String!, $acl: AccessControlListInput!) {
 }
 
 mutation UpdateSeriesAcl($seriesId: String!, $acl: AccessControlListInput!) {
-    updateSeriesAcl(id: $seriesId, acl: $acl) {
-      muiSeriesInfo {
-        managedAclId
-      }
+  updateSeriesAcl(id: $seriesId, acl: $acl) {
+    muiSeriesInfo {
+      managedAclId
     }
+  }
 }

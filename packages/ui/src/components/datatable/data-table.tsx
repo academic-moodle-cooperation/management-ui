@@ -12,12 +12,7 @@ import {
   VisibilityState,
 } from "@tanstack/react-table";
 
-import {
-  Table,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@workspace/ui/components";
+import { Table, TableHead, TableHeader, TableRow } from "@workspace/ui/components";
 
 import { DataTableBody } from "./data-table-body";
 import { DataTablePagination } from "./data-table-pagination";
@@ -28,14 +23,11 @@ import { useTableNavigation } from "./hooks";
 
 export interface DataTableProps<TData, TValue> {
   /** Table column definitions */
-  columns: ColumnDef<TData, TValue>[]
+  columns: ColumnDef<TData, TValue>[];
   /** Data to display in the table */
   data: TData[];
   /** Callback for row click actions */
-  onClickRowAction?: (
-    event: React.MouseEvent<HTMLTableRowElement>,
-    row: Row<TData>
-  ) => void;
+  onClickRowAction?: (event: React.MouseEvent<HTMLTableRowElement>, row: Row<TData>) => void;
   /** ID of the currently selected row */
   selectedId?: string;
 
@@ -72,7 +64,7 @@ export interface DataTableProps<TData, TValue> {
   setColumnVisibility?: OnChangeFn<VisibilityState>;
 
   /** Function to refetch data */
-  refetch?: () => void
+  refetch?: () => void;
   /** Custom design button (e.g., layout toggle) */
   designButton?: React.ReactNode;
 }
@@ -100,7 +92,7 @@ function DataTable<TData extends Record<string, any>, TValue>({
   columnVisibility,
   setColumnVisibility,
   refetch,
-  designButton
+  designButton,
 }: DataTableProps<TData, TValue>) {
   if (!data) {
     return null;
@@ -152,19 +144,14 @@ function DataTable<TData extends Record<string, any>, TValue>({
         })}
       >
         <Table className={theme.table({ size: "md" })}>
-          <TableHeader
-            className={theme.thead({ size: "md", headerColor: "gray" })}
-          >
+          <TableHeader className={theme.thead({ size: "md", headerColor: "gray" })}>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -197,10 +184,4 @@ function DataTable<TData extends Record<string, any>, TValue>({
   );
 }
 
-export {
-  DataTable,
-  type ColumnDef,
-  type VisibilityState,
-  type SortingState,
-  type OnChangeFn,
-};
+export { DataTable, type ColumnDef, type VisibilityState, type SortingState, type OnChangeFn };

@@ -39,4 +39,4 @@ export const DebouncedInput = ({
       className={cn(className)}
     />
   );
-}; 
+};

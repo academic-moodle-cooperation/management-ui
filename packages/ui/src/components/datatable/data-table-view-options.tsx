@@ -21,9 +21,7 @@ declare module "@tanstack/react-table" {
   }
 }
 
-export function DataTableViewOptions<TData>({
-  table,
-}: DataTableViewOptionsProps<TData>) {
+export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>) {
   const { t } = useI18n();
 
   const [preventEditClose, setPreventEditClose] = React.useState(false);
@@ -37,11 +35,7 @@ export function DataTableViewOptions<TData>({
       open={open}
     >
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="hidden h-8 ml-auto lg:flex"
-        >
+        <Button variant="outline" size="sm" className="hidden h-8 ml-auto lg:flex">
           <Settings2 className="w-4 h-4 mr-2" />
           {t("common:viewOptions")}
         </Button>
@@ -65,10 +59,7 @@ export function DataTableViewOptions<TData>({
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
-          .filter(
-            (column) =>
-              typeof column.accessorFn !== "undefined" && column.getCanHide()
-          )
+          .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide())
           .map((column) => {
             return (
               <DropdownMenuCheckboxItem

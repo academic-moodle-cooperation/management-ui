@@ -32,4 +32,4 @@ export function useGetUserInfo(): UseQueryResult<UserInfo> {
     queryFn: fetchUserInfo,
     staleTime: 3000,
   });
-} 
+}

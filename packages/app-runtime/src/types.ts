@@ -1,8 +1,8 @@
-import React from 'react';
-import type { AnyRouter } from '@tanstack/react-router';
+import React from "react";
+import type { AnyRouter } from "@tanstack/react-router";
 
 // Re-export AppDefinition from plugin-system to avoid circular dependencies
-export type { AppDefinition } from '@workspace/plugin-system';
+export type { AppDefinition } from "@workspace/plugin-system";
 
 /**
  * Runtime configuration for apps
@@ -26,7 +26,7 @@ export interface AppRuntimeConfig {
 export interface AppRuntimeContext {
   config: AppRuntimeConfig;
   /** Function to register an app (only available when running in core) */
-  registerApp?: (app: import('@workspace/plugin-system').AppDefinition) => void;
+  registerApp?: (app: import("@workspace/plugin-system").AppDefinition) => void;
   /** Function to get all registered apps */
-  getApps?: () => import('@workspace/plugin-system').AppDefinition[];
+  getApps?: () => import("@workspace/plugin-system").AppDefinition[];
 }

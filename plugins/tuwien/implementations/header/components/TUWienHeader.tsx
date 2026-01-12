@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { Button, useSidebar } from '@workspace/ui/components';
-import { Menu } from '@workspace/ui/components/icons';
-import { useI18n, loadNamespace } from '@workspace/i18n';
+import React, { useEffect } from "react";
+import { Button, useSidebar } from "@workspace/ui/components";
+import { Menu } from "@workspace/ui/components/icons";
+import { useI18n, loadNamespace } from "@workspace/i18n";
 
 /**
  * TU Wien Header Implementation
  * Migrated from migrate/extensions/src/tuwien/src/plugins/header/HeaderPlugin.tsx
- * 
+ *
  * Complete header with TU Wien branding, navigation, and mobile sidebar trigger
  */
 
@@ -71,7 +71,7 @@ const TUWienHeader: React.FC = () => {
 
   useEffect(() => {
     const loadTranslations = async () => {
-      await loadNamespace('header', i18n.language);
+      await loadNamespace("header", i18n.language);
     };
     loadTranslations();
   }, [i18n.language, t]);
@@ -142,12 +142,12 @@ const TUWienHeader: React.FC = () => {
               >
                 <g>
                   <path
-                    style={{ fill: '#006699' }}
+                    style={{ fill: "#006699" }}
                     d="M86.5,1c5.2,0,9.5,4.3,9.5,9.5l0,76c0,5.3-4.3,9.5-9.5,9.5h-76C5.3,96,1,91.7,1,86.5l0-76C1,5.3,5.3,1,10.5,1
                      H86.5z"
                   />
                   <path
-                    style={{ fill: '#FFF' }}
+                    style={{ fill: "#FFF" }}
                     d="M21.1,23.6h10.1v33.7H21.1V23.6z M8.3,10.5h35.5v10.1H8.3V10.5z M29.7,69.6h-3.4l-2.6,10.5l-3.1-10.5h-2.4
                      l-3.1,10.5l-2.6-10.5H9.2l4.5,16.7h2.7l3.1-10.1l3.1,10.1h2.7L29.7,69.6z M86.3,86.3V69.6h-3.3v10.2l-6.6-10.2h-2.9v16.7h3.3V76
                      l6.6,10.3H86.3z M63,86.3v-2.9h-7.7v-4.1h6.6v-2.9h-6.6v-3.9H63v-2.9h-11v16.7H63z M40.8,69.6h-3.3v16.7h3.3V69.6z M65.9,57.6
@@ -164,4 +164,4 @@ const TUWienHeader: React.FC = () => {
   );
 };
 
-export { TUWienHeader }; 
+export { TUWienHeader };

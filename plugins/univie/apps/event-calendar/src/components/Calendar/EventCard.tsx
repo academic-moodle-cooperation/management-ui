@@ -1,7 +1,7 @@
-import React from 'react';
-import { ParsedEvent, Room } from '../types/eventCalendar';
-import { Card, Badge } from '@workspace/ui/components';
-import { Clock, MapPin, Users } from 'lucide-react';
+import React from "react";
+import { ParsedEvent, Room } from "../types/eventCalendar";
+import { Card, Badge } from "@workspace/ui/components";
+import { Clock, MapPin, Users } from "lucide-react";
 
 interface EventCardProps {
   event: ParsedEvent;
@@ -11,10 +11,10 @@ interface EventCardProps {
 
 export const EventCard: React.FC<EventCardProps> = ({ event, room, className }) => {
   const formatTime = (date: Date): string => {
-    return date.toLocaleTimeString('de-DE', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: false 
+    return date.toLocaleTimeString("de-DE", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
     });
   };
 
@@ -22,7 +22,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, room, className }) 
     const durationMs = event.endTime.getTime() - event.startTime.getTime();
     const hours = Math.floor(durationMs / (1000 * 60 * 60));
     const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
-    
+
     if (hours > 0 && minutes > 0) {
       return `${hours}h ${minutes}m`;
     } else if (hours > 0) {
@@ -34,25 +34,23 @@ export const EventCard: React.FC<EventCardProps> = ({ event, room, className }) 
 
   const getBadgeVariant = (category: string) => {
     switch (category.toLowerCase()) {
-      case 'vorlesung':
-        return 'default';
-      case 'übung':
-        return 'secondary';
-      case 'seminar':
-        return 'outline';
+      case "vorlesung":
+        return "default";
+      case "übung":
+        return "secondary";
+      case "seminar":
+        return "outline";
       default:
-        return 'secondary';
+        return "secondary";
     }
   };
 
   return (
-    <Card className={`p-4 hover:shadow-md transition-shadow ${className || ''}`}>
+    <Card className={`p-4 hover:shadow-md transition-shadow ${className || ""}`}>
       <div className="space-y-3">
         {/* Event title and category */}
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-sm leading-tight line-clamp-2">
-            {event.name}
-          </h3>
+          <h3 className="font-semibold text-sm leading-tight line-clamp-2">{event.name}</h3>
           <Badge variant={getBadgeVariant(event.lvKategorie)} className="shrink-0 text-xs">
             {event.lvKategorie}
           </Badge>
@@ -74,11 +72,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, room, className }) 
             <span>
               {room.gebaeudeName} - {room.nummer}
             </span>
-            {room.stockwerk && (
-              <span className="text-xs">
-                (Floor {room.stockwerk})
-              </span>
-            )}
+            {room.stockwerk && <span className="text-xs">(Floor {room.stockwerk})</span>}
           </div>
         )}
 

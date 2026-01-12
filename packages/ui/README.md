@@ -7,7 +7,7 @@ The shared component library for the Management UI system. This package provides
 The UI package serves as the **design system foundation** that ensures:
 
 - **Visual consistency** across all management UI applications
-- **Accessible components** following WCAG guidelines  
+- **Accessible components** following WCAG guidelines
 - **University customization** through plugin-aware theming
 - **Developer efficiency** with pre-built, tested components
 
@@ -31,6 +31,7 @@ The UI package serves as the **design system foundation** that ensures:
 ### UI Primitives
 
 Built on **shadcn/ui** and **Radix UI**:
+
 - Buttons, inputs, selects, and form controls
 - Modals, tooltips, and overlays
 - Typography and spacing systems
@@ -43,32 +44,24 @@ Built on **shadcn/ui** and **Radix UI**:
 The UI package is automatically available in all monorepo applications:
 
 ```typescript
-import { Button, DataTable, Input } from '@workspace/ui';
+import { Button, DataTable, Input } from "@workspace/ui";
 ```
 
 ### Basic Components
 
 ```tsx
-import { Button, Input, Card } from '@workspace/ui';
+import { Button, Input, Card } from "@workspace/ui";
 
 function LoginForm() {
   return (
     <Card className="p-6">
       <h2 className="text-2xl font-bold mb-4">Login</h2>
-      
+
       <div className="space-y-4">
-        <Input
-          type="email"
-          placeholder="Email address"
-          required
-        />
-        
-        <Input
-          type="password"
-          placeholder="Password"
-          required
-        />
-        
+        <Input type="email" placeholder="Email address" required />
+
+        <Input type="password" placeholder="Password" required />
+
         <Button type="submit" className="w-full">
           Sign In
         </Button>
@@ -81,13 +74,13 @@ function LoginForm() {
 ### Data Table
 
 ```tsx
-import { DataTable } from '@workspace/ui';
+import { DataTable } from "@workspace/ui";
 
 function SeriesTable() {
   const columns = [
-    { accessorKey: 'title', header: 'Title' },
-    { accessorKey: 'episodes', header: 'Episodes' },
-    { accessorKey: 'updated', header: 'Last Updated' }
+    { accessorKey: "title", header: "Title" },
+    { accessorKey: "episodes", header: "Episodes" },
+    { accessorKey: "updated", header: "Last Updated" },
   ];
 
   return (
@@ -107,17 +100,17 @@ function SeriesTable() {
 Components can be customized through the plugin system:
 
 ```tsx
-import { ComponentResolver } from '@workspace/plugin-system';
-import { DefaultHeader } from '@workspace/ui';
+import { ComponentResolver } from "@workspace/plugin-system";
+import { DefaultHeader } from "@workspace/ui";
 
 function AppHeader() {
   return (
     <ComponentResolver
       componentType="ui:header"
       defaultComponent={DefaultHeader}
-      componentProps={{ 
-        title: 'Management UI',
-        user: currentUser 
+      componentProps={{
+        title: "Management UI",
+        user: currentUser,
       }}
     />
   );
@@ -133,7 +126,7 @@ The UI system supports university-specific customization:
 ```css
 /* University theme variables */
 :root {
-  --primary: 210 40% 18%;        /* University blue */
+  --primary: 210 40% 18%; /* University blue */
   --primary-foreground: 0 0% 98%;
   --secondary: 210 40% 96%;
   --accent: 210 40% 92%;
@@ -141,14 +134,14 @@ The UI system supports university-specific customization:
 
 /* TU Wien theme */
 .theme-tuwien {
-  --primary: 210 100% 20%;       /* TU Wien blue */
-  --accent: 45 100% 50%;         /* TU Wien yellow */
+  --primary: 210 100% 20%; /* TU Wien blue */
+  --accent: 45 100% 50%; /* TU Wien yellow */
 }
 
 /* University of Vienna theme */
 .theme-univie {
-  --primary: 0 84% 37%;          /* UniVie red */
-  --secondary: 0 0% 15%;         /* UniVie dark gray */
+  --primary: 0 84% 37%; /* UniVie red */
+  --secondary: 0 0% 15%; /* UniVie dark gray */
 }
 ```
 
@@ -174,19 +167,19 @@ Components support multiple variants for different contexts:
 ### Component Testing
 
 ```tsx
-import { render, screen, fireEvent } from '@testing-library/react';
-import { Button } from '@workspace/ui';
+import { render, screen, fireEvent } from "@testing-library/react";
+import { Button } from "@workspace/ui";
 
-test('renders button with correct text', () => {
+test("renders button with correct text", () => {
   render(<Button>Click me</Button>);
-  expect(screen.getByText('Click me')).toBeInTheDocument();
+  expect(screen.getByText("Click me")).toBeInTheDocument();
 });
 
-test('calls onClick handler when clicked', () => {
+test("calls onClick handler when clicked", () => {
   const handleClick = jest.fn();
   render(<Button onClick={handleClick}>Click me</Button>);
-  
-  fireEvent.click(screen.getByText('Click me'));
+
+  fireEvent.click(screen.getByText("Click me"));
   expect(handleClick).toHaveBeenCalledTimes(1);
 });
 ```
@@ -287,38 +280,39 @@ All components follow WCAG 2.1 AA guidelines:
 ### Example Accessible Component
 
 ```tsx
-import { forwardRef } from 'react';
-import { cn } from '../lib/utils';
+import { forwardRef } from "react";
+import { cn } from "../lib/utils";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'destructive' | 'outline';
-  size?: 'sm' | 'default' | 'lg';
+  variant?: "default" | "destructive" | "outline";
+  size?: "sm" | "default" | "lg";
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = 'default', size = 'default', ...props }, ref) => {
+  ({ className, variant = "default", size = "default", ...props }, ref) => {
     return (
       <button
         className={cn(
           // Base styles
-          'inline-flex items-center justify-center rounded-md font-medium',
-          'focus-visible:outline-none focus-visible:ring-2',
-          'disabled:pointer-events-none disabled:opacity-50',
-          
+          "inline-flex items-center justify-center rounded-md font-medium",
+          "focus-visible:outline-none focus-visible:ring-2",
+          "disabled:pointer-events-none disabled:opacity-50",
+
           // Variant styles
           {
-            'bg-primary text-primary-foreground hover:bg-primary/90': variant === 'default',
-            'bg-destructive text-destructive-foreground hover:bg-destructive/90': variant === 'destructive',
-            'border border-input bg-background hover:bg-accent': variant === 'outline',
+            "bg-primary text-primary-foreground hover:bg-primary/90": variant === "default",
+            "bg-destructive text-destructive-foreground hover:bg-destructive/90":
+              variant === "destructive",
+            "border border-input bg-background hover:bg-accent": variant === "outline",
           },
-          
+
           // Size styles
           {
-            'h-9 px-3 text-sm': size === 'sm',
-            'h-10 px-4 py-2': size === 'default',
-            'h-11 px-8 text-lg': size === 'lg',
+            "h-9 px-3 text-sm": size === "sm",
+            "h-10 px-4 py-2": size === "default",
+            "h-11 px-8 text-lg": size === "lg",
           },
-          
+
           className
         )}
         ref={ref}
@@ -328,7 +322,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 
-Button.displayName = 'Button';
+Button.displayName = "Button";
 export { Button };
 ```
 
@@ -337,7 +331,7 @@ export { Button };
 ### Component Contributions
 
 1. **Follow existing patterns** - Use shadcn/ui base components where possible
-2. **Support university themes** - Test with TU Wien, UniVie, and default themes  
+2. **Support university themes** - Test with TU Wien, UniVie, and default themes
 3. **Include comprehensive tests** - Unit tests, accessibility tests, and visual tests
 4. **Document props and usage** - Clear examples and API documentation
 5. **Consider plugin integration** - How can universities customize this component?

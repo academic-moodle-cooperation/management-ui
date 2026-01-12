@@ -6,4 +6,4 @@
   .divide-y > :not([hidden]) ~ :not([hidden]) {
     @apply border-l-indigo-500;
   }
-} */ 
+} */

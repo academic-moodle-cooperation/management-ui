@@ -7,9 +7,7 @@ import sha256 from "crypto-js/sha256.js";
 import { parse, Duration, serialize } from "tinyduration";
 
 const parseDuration = (duration: string | undefined) => {
-  const durationObj: Duration | undefined = duration
-    ? parse(duration)
-    : undefined;
+  const durationObj: Duration | undefined = duration ? parse(duration) : undefined;
 
   return `${(durationObj?.hours || "00").toString().padStart(2, "0")}:${(durationObj?.minutes || 0).toString().padStart(2, "0")}:${Math.round(
     durationObj?.seconds || 0
@@ -26,20 +24,17 @@ export const copyText = async (text: string) => {
 
   function isOS() {
     // Check if running in a browser environment before accessing navigator
-    if (typeof navigator === 'undefined') return false;
+    if (typeof navigator === "undefined") return false;
     return navigator.userAgent.match(/ipad|iphone/i);
   }
 
   function copyToClipboard() {
     // Check if running in a browser environment before accessing document
-    if (typeof document === 'undefined') return;
+    if (typeof document === "undefined") return;
     const input = document.createElement("input");
     input.setAttribute("id", "copy-text");
     input.setAttribute("type", "text");
-    input.setAttribute(
-      "style",
-      "position: absolute; left: -1000px; top: -1000px"
-    );
+    input.setAttribute("style", "position: absolute; left: -1000px; top: -1000px");
     document.body.appendChild(input);
     input.value = text;
     input.focus();
@@ -59,7 +54,7 @@ export const copyText = async (text: string) => {
 
   return new Promise<boolean>((resolve) => {
     // Check if running in a browser environment before accessing navigator
-    if (typeof navigator === 'undefined' || !navigator.permissions) {
+    if (typeof navigator === "undefined" || !navigator.permissions) {
       copyToClipboard();
       resolve(true);
       return;
@@ -69,11 +64,14 @@ export const copyText = async (text: string) => {
       .query({ name: permissionName })
       .then((result) => {
         if (result.state == "granted" || result.state == "prompt") {
-          navigator.clipboard.writeText(text).then(() => resolve(true)).catch(() => {
-            // Fallback if writeText fails even after permission granted (e.g. in older browsers or specific contexts)
-            copyToClipboard();
-            resolve(true);
-          });
+          navigator.clipboard
+            .writeText(text)
+            .then(() => resolve(true))
+            .catch(() => {
+              // Fallback if writeText fails even after permission granted (e.g. in older browsers or specific contexts)
+              copyToClipboard();
+              resolve(true);
+            });
         } else {
           // Fallback if permission is denied or in other states
           copyToClipboard();
@@ -87,8 +85,6 @@ export const copyText = async (text: string) => {
   });
 };
 
-
-
 /**
  * Normalizes metadata values from GraphQL responses
  * Converts null, undefined, and "null" strings to empty strings for consistent handling
@@ -101,12 +97,14 @@ export function normalizeMetadataValue(value: unknown): string | string[] {
 
   // Handle arrays
   if (Array.isArray(value)) {
-    return value.map(item => {
-      if (item === null || item === undefined || item === "null") {
-        return "";
-      }
-      return String(item);
-    }).filter(item => item !== ""); // Remove empty strings from arrays
+    return value
+      .map((item) => {
+        if (item === null || item === undefined || item === "null") {
+          return "";
+        }
+        return String(item);
+      })
+      .filter((item) => item !== ""); // Remove empty strings from arrays
   }
 
   // Handle other values
@@ -116,15 +114,19 @@ export function normalizeMetadataValue(value: unknown): string | string[] {
 /**
  * Normalizes an entire metadata object, removing empty values
  */
-export function normalizeMetadataObject(metadata: Record<string, unknown>): Record<string, string | string[]> {
+export function normalizeMetadataObject(
+  metadata: Record<string, unknown>
+): Record<string, string | string[]> {
   const normalized: Record<string, string | string[]> = {};
 
   Object.entries(metadata).forEach(([key, value]) => {
     const normalizedValue = normalizeMetadataValue(value);
 
     // Only include non-empty values
-    if (normalizedValue !== "" &&
-      !(Array.isArray(normalizedValue) && normalizedValue.length === 0)) {
+    if (
+      normalizedValue !== "" &&
+      !(Array.isArray(normalizedValue) && normalizedValue.length === 0)
+    ) {
       normalized[key] = normalizedValue;
     }
   });
@@ -132,7 +134,7 @@ export function normalizeMetadataObject(metadata: Record<string, unknown>): Reco
   return normalized;
 }
 
-export { resolveAssetUrl, resolveFirstAssetUrl } from './assetUrl';
-export { deepMerge } from './deepMerge';
-export { logger, Logger } from './logger';
-export type { LogLevel, LogContext } from './logger';
+export { resolveAssetUrl, resolveFirstAssetUrl } from "./assetUrl";
+export { deepMerge } from "./deepMerge";
+export { logger, Logger } from "./logger";
+export type { LogLevel, LogContext } from "./logger";

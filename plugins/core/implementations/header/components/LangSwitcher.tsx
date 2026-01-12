@@ -50,4 +50,4 @@ export const LangSwitcher = () => {
       </DropdownMenu>
     </div>
   );
-}; 
+};

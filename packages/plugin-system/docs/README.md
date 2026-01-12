@@ -7,7 +7,7 @@ The core plugin architecture for the Management UI system. This package provides
 The plugin system enables **controlled extensibility** where:
 
 - **Core applications** define extension points (what can be customized)
-- **University plugins** implement extensions (how it's customized)  
+- **University plugins** implement extensions (how it's customized)
 - **Plugin manager** coordinates loading and lifecycle management
 
 ```
@@ -38,47 +38,39 @@ The plugin system enables **controlled extensibility** where:
 ### Creating a Plugin
 
 ```typescript
-import { createPlugin } from '@workspace/plugin-system';
-import { MyCustomComponent } from './MyCustomComponent';
+import { createPlugin } from "@workspace/plugin-system";
+import { MyCustomComponent } from "./MyCustomComponent";
 
 export const MyUniversityPlugin = createPlugin({
-  namespace: 'myuni',
-  type: 'university-extension',
-  version: '1.0.0',
-  
+  namespace: "myuni",
+  type: "university-extension",
+  version: "1.0.0",
+
   initialize(manager) {
     // Register a custom component
-    manager.registerComponent(
-      'app:header',
-      MyCustomComponent,
-      { priority: 10 }
-    );
-    
+    manager.registerComponent("app:header", MyCustomComponent, { priority: 10 });
+
     // Register configuration data
-    manager.registerObject(
-      'app:branding',
-      'university-theme',
-      {
-        primaryColor: '#003366',
-        logoUrl: '/assets/university-logo.png'
-      }
-    );
+    manager.registerObject("app:branding", "university-theme", {
+      primaryColor: "#003366",
+      logoUrl: "/assets/university-logo.png",
+    });
   },
-  
+
   activate() {
-    console.log('MyUniversityPlugin activated');
+    console.log("MyUniversityPlugin activated");
   },
-  
+
   deactivate() {
-    console.log('MyUniversityPlugin deactivated');
-  }
+    console.log("MyUniversityPlugin deactivated");
+  },
 });
 ```
 
 ### Using Components from Plugins
 
 ```tsx
-import { ComponentResolver } from '@workspace/plugin-system';
+import { ComponentResolver } from "@workspace/plugin-system";
 
 function AppLayout() {
   return (
@@ -89,7 +81,7 @@ function AppLayout() {
         defaultComponent={DefaultHeader}
         componentProps={{ user: currentUser }}
       />
-      
+
       <main>
         {/* Main content area */}
         <ComponentResolver
@@ -97,12 +89,9 @@ function AppLayout() {
           defaultComponent={() => <div>Default content</div>}
         />
       </main>
-      
+
       {/* Footer with plugin customizations */}
-      <ComponentResolver
-        componentType="app:footer"
-        defaultComponent={DefaultFooter}
-      />
+      <ComponentResolver componentType="app:footer" defaultComponent={DefaultFooter} />
     </div>
   );
 }
@@ -116,15 +105,15 @@ Defined locations where plugins can add or override functionality:
 
 ```typescript
 // Core application defines extension points
-manager.defineExtensionPoint('sidebar:nav-items', {
-  description: 'Navigation items in the main sidebar',
+manager.defineExtensionPoint("sidebar:nav-items", {
+  description: "Navigation items in the main sidebar",
   expectedSchema: {
-    title: 'string',
-    path: 'string', 
-    icon: 'string|Component',
-    order: 'number',
-    permissions: 'string[]'
-  }
+    title: "string",
+    path: "string",
+    icon: "string|Component",
+    order: "number",
+    permissions: "string[]",
+  },
 });
 ```
 
@@ -134,12 +123,12 @@ Plugins register components and objects at extension points:
 
 ```typescript
 // University plugin implements extension points
-manager.registerObject('sidebar:nav-items', 'university-portal', {
-  title: 'University Portal',
-  path: '/portal',
-  icon: 'building-2',
+manager.registerObject("sidebar:nav-items", "university-portal", {
+  title: "University Portal",
+  path: "/portal",
+  icon: "building-2",
   order: 50,
-  permissions: ['portal.access']
+  permissions: ["portal.access"],
 });
 ```
 
@@ -149,10 +138,10 @@ The plugin system resolves which components to render:
 
 ```typescript
 // Plugin system finds best matching component
-const HeaderComponent = manager.resolveComponent('app:header', {
+const HeaderComponent = manager.resolveComponent("app:header", {
   fallback: DefaultHeader,
   filter: (plugin) => plugin.isActive,
-  sort: (a, b) => a.priority - b.priority
+  sort: (a, b) => a.priority - b.priority,
 });
 ```
 
@@ -180,8 +169,8 @@ Multiple plugins can target the same extension point:
 
 ```typescript
 // Higher priority (lower number) wins
-manager.registerComponent('app:header', TUWienHeader, { priority: 10 });
-manager.registerComponent('app:header', GenericHeader, { priority: 50 });
+manager.registerComponent("app:header", TUWienHeader, { priority: 10 });
+manager.registerComponent("app:header", GenericHeader, { priority: 50 });
 
 // TUWienHeader will be used
 ```
@@ -219,25 +208,25 @@ manager.registerComponent('app:header', GenericHeader, { priority: 50 });
 ### Unit Testing
 
 ```typescript
-import { PluginManager } from '@workspace/plugin-system';
-import { MyUniversityPlugin } from './MyUniversityPlugin';
+import { PluginManager } from "@workspace/plugin-system";
+import { MyUniversityPlugin } from "./MyUniversityPlugin";
 
-describe('MyUniversityPlugin', () => {
+describe("MyUniversityPlugin", () => {
   let manager: PluginManager;
-  
+
   beforeEach(() => {
     manager = new PluginManager();
     MyUniversityPlugin.initialize(manager);
   });
-  
-  it('should register header component', () => {
-    const header = manager.resolveComponent('app:header');
+
+  it("should register header component", () => {
+    const header = manager.resolveComponent("app:header");
     expect(header).toBeDefined();
   });
-  
-  it('should provide branding configuration', () => {
-    const branding = manager.getObject('app:branding', 'university-theme');
-    expect(branding.primaryColor).toBe('#003366');
+
+  it("should provide branding configuration", () => {
+    const branding = manager.getObject("app:branding", "university-theme");
+    expect(branding.primaryColor).toBe("#003366");
   });
 });
 ```
@@ -255,7 +244,7 @@ it('should render university header', () => {
       componentProps={{ title: 'Test App' }}
     />
   );
-  
+
   expect(getByText('University Logo')).toBeInTheDocument();
 });
 ```
@@ -290,7 +279,7 @@ packages/plugin-system/
 The archived documentation contains detailed migration information:
 
 - **Migration Guide**: [`../../../docs/archive/packages/plugin-system/docs/migration-guide.md`](../../../docs/archive/packages/plugin-system/docs/migration-guide.md)
-- **Plugin System Guide**: [`../../../docs/archive/packages/plugin-system/docs/plugin-system-guide.md`](../../../docs/archive/packages/plugin-system/docs/plugin-system-guide.md)  
+- **Plugin System Guide**: [`../../../docs/archive/packages/plugin-system/docs/plugin-system-guide.md`](../../../docs/archive/packages/plugin-system/docs/plugin-system-guide.md)
 - **Naming Conventions**: [`../../../docs/archive/packages/plugin-system/docs/plugin-naming-conventions.md`](../../../docs/archive/packages/plugin-system/docs/plugin-naming-conventions.md)
 
 ### Key Changes
@@ -327,7 +316,7 @@ export const UniversityHeaderPlugin = createPlugin({
   namespace: 'university',
   type: 'header',
   version: '1.0.0',
-  
+
   initialize(manager) {
     manager.registerComponent('app:header', ({ user }) => (
       <header className="bg-university-blue text-white p-4">
@@ -352,31 +341,31 @@ export const UniversityHeaderPlugin = createPlugin({
 
 ```typescript
 export const CustomNavigationPlugin = createPlugin({
-  namespace: 'university',
-  type: 'navigation',
-  version: '1.0.0',
-  
+  namespace: "university",
+  type: "navigation",
+  version: "1.0.0",
+
   initialize(manager) {
     // Add university-specific navigation items
-    manager.registerObject('sidebar:nav-items', 'university-policies', {
-      title: 'University Policies',
-      path: '/policies',
-      icon: 'shield-check',
+    manager.registerObject("sidebar:nav-items", "university-policies", {
+      title: "University Policies",
+      path: "/policies",
+      icon: "shield-check",
       order: 80,
       permissions: [],
-      category: 'university'
+      category: "university",
     });
-    
-    manager.registerObject('sidebar:nav-items', 'student-resources', {
-      title: 'Student Resources',
-      path: '/resources',
-      icon: 'book-open',
+
+    manager.registerObject("sidebar:nav-items", "student-resources", {
+      title: "Student Resources",
+      path: "/resources",
+      icon: "book-open",
       order: 90,
-      permissions: ['resources.view'],
-      category: 'university'
+      permissions: ["resources.view"],
+      category: "university",
     });
-  }
+  },
 });
 ```
 
-This plugin system provides the foundation for a flexible, maintainable, and university-customizable content management platform. 
+This plugin system provides the foundation for a flexible, maintainable, and university-customizable content management platform.

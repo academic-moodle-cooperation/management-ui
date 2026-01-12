@@ -1,16 +1,16 @@
-import React from 'react';
-import { usePluginManager } from './PluginProvider';
-import { PluginComponent as PluginComponentType, PluginProps } from './types';
+import React from "react";
+import { usePluginManager } from "./PluginProvider";
+import { PluginComponent as PluginComponentType, PluginProps } from "./types";
 
 type PluginComponentProps = {
   /** Unique identifier for the component type (e.g., "acl:managed-entry") */
   componentType: string;
-  /** 
+  /**
    * Additional props to pass to plugin components.
    * These will be merged with any extracted props from children.
    */
   pluginProps?: PluginProps;
-  /** 
+  /**
    * Whether to use the component-override prefix for component lookup
    * @default false (uses new extension point pattern)
    */
@@ -23,7 +23,7 @@ type PluginComponentProps = {
 
 /**
  * A simplified wrapper for making components pluggable.
- * 
+ *
  * Usage:
  * ```tsx
  * <PluginComponent componentType="acl:managed-entry" pluginProps={{ entry }}>
@@ -32,7 +32,7 @@ type PluginComponentProps = {
  *   </OverflowTooltip>
  * </PluginComponent>
  * ```
- * 
+ *
  * Plugin components will receive:
  * - All props from pluginProps
  * - children: The original default implementation
@@ -43,7 +43,7 @@ export const PluginComponent: React.FC<PluginComponentProps> = ({
   pluginProps = {},
   useOverridePrefix = false,
   children,
-  fallback
+  fallback,
 }) => {
   const manager = usePluginManager();
   const [CustomComponent, setCustomComponent] = React.useState<PluginComponentType | null>(null);
@@ -55,10 +55,11 @@ export const PluginComponent: React.FC<PluginComponentProps> = ({
 
     const checkForComponents = () => {
       const lookupKey = useOverridePrefix ? `component-override:${componentType}` : componentType;
-      const components = manager.executeFunction<Array<{ component: PluginComponentType }>>(
-        'renderer.getComponents',
-        lookupKey
-      ) || [];
+      const components =
+        manager.executeFunction<Array<{ component: PluginComponentType }>>(
+          "renderer.getComponents",
+          lookupKey
+        ) || [];
 
       if (!isMounted) return;
 
@@ -87,17 +88,17 @@ export const PluginComponent: React.FC<PluginComponentProps> = ({
       }
     };
 
-    manager.addEventListener('plugins:ready', handlePluginsReady);
-    manager.addEventListener('plugin:registered', handlePluginChange);
+    manager.addEventListener("plugins:ready", handlePluginsReady);
+    manager.addEventListener("plugin:registered", handlePluginChange);
 
-    if ('arePluginsReady' in manager && manager.arePluginsReady && !pluginsLoaded) {
+    if ("arePluginsReady" in manager && manager.arePluginsReady && !pluginsLoaded) {
       setPluginsLoaded(true);
     }
 
     return () => {
       isMounted = false;
-      manager.removeEventListener('plugins:ready', handlePluginsReady);
-      manager.removeEventListener('plugin:registered', handlePluginChange);
+      manager.removeEventListener("plugins:ready", handlePluginsReady);
+      manager.removeEventListener("plugin:registered", handlePluginChange);
     };
   }, [componentType, manager, initialized, pluginsLoaded, useOverridePrefix]);
 
@@ -112,10 +113,7 @@ export const PluginComponent: React.FC<PluginComponentProps> = ({
   // If we have a custom component, render it with the enhanced props
   if (CustomComponent) {
     return (
-      <CustomComponent
-        {...pluginProps}
-        defaultRender={defaultRender}
-      >
+      <CustomComponent {...pluginProps} defaultRender={defaultRender}>
         {children}
       </CustomComponent>
     );
@@ -123,4 +121,4 @@ export const PluginComponent: React.FC<PluginComponentProps> = ({
 
   // Otherwise render the default implementation
   return <>{defaultRender()}</>;
-}; 
+};

@@ -15,8 +15,8 @@ export const shadcnPreset: Config = {
       },
       animation: {
         "bouncing-loader": "bouncing-loader 0.6s infinite alternate",
-      }
+      },
     },
   },
   plugins: [shadcnPlugin, animatePlugin],
-}; 
+};

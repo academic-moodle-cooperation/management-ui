@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 
 /**
  * LectureTube Logo SVG Component
@@ -87,6 +87,6 @@ const LTLogo = (props: React.SVGProps<SVGSVGElement>) => (
       />
     </g>
   </svg>
-)
+);
 
-export default LTLogo 
+export default LTLogo;

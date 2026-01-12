@@ -4,7 +4,7 @@ import {
   Container,
   MetadataField,
   MetadataUpdateField,
-  createMetadataHelpers
+  createMetadataHelpers,
 } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib/utils";
 import { useI18n } from "@workspace/i18n";
@@ -44,7 +44,8 @@ const SeriesInfoContent = ({
 }: SeriesInfoContentProps) => {
   const { t } = useI18n();
   const { config } = useAppConfig();
-  const metadata = (config?.plugins?.["management-ui-series"]?.seriesInfo?.metadata || []) as MetadataItem[];
+  const metadata = (config?.plugins?.["management-ui-series"]?.seriesInfo?.metadata ||
+    []) as MetadataItem[];
 
   // Use the createMetadataHelpers function to get visibility helpers
   const { isVisible, isReadOnly } = createMetadataHelpers(metadata);
@@ -68,41 +69,32 @@ const SeriesInfoContent = ({
               <Container
                 key={field?.id}
                 onClick={
-                  editSeries &&
-                    field &&
-                    !field.readOnly &&
-                    !isReadOnly(field.id!)
+                  editSeries && field && !field.readOnly && !isReadOnly(field.id!)
                     ? () => setUpdateField(field.id!)
-                    : () => { }
+                    : () => {}
                 }
                 className={cn(
                   editSeries &&
-                  field &&
-                  !field.readOnly &&
-                  !isReadOnly(field.id!) &&
-                  "cursor-pointer"
+                    field &&
+                    !field.readOnly &&
+                    !isReadOnly(field.id!) &&
+                    "cursor-pointer"
                 )}
               >
                 <div className="flex items-center space-x-2 text-sm font-medium uppercase text-muted-foreground">
-                  {t(`series:seriesInfo.${field?.id}`)} {(field?.required) && '*'}
-                  {editSeries &&
-                    !field?.readOnly &&
-                    !isReadOnly(field?.id!) && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="w-4 h-4 ml-2"
-                      >
-                        <PencilIcon className="inline-flex group-hover:text-slate-700 text-slate-400" />
-                        <span className="sr-only">{t(`common:edit`)}</span>
-                      </Button>
-                    )}
+                  {t(`series:seriesInfo.${field?.id}`)} {field?.required && "*"}
+                  {editSeries && !field?.readOnly && !isReadOnly(field?.id!) && (
+                    <Button variant="ghost" size="icon" className="w-4 h-4 ml-2">
+                      <PencilIcon className="inline-flex group-hover:text-slate-700 text-slate-400" />
+                      <span className="sr-only">{t(`common:edit`)}</span>
+                    </Button>
+                  )}
                 </div>
                 {editSeries && updateField === field?.id ? (
                   <MetadataUpdateField
                     key={field?.id}
                     {...field}
-                    value={(seriesUpdateData?.[field.id]) ?? field?.value}
+                    value={seriesUpdateData?.[field.id] ?? field?.value}
                     onUpdate={(value) => {
                       setSeriesUpdateData({
                         ...seriesUpdateData,
@@ -110,43 +102,35 @@ const SeriesInfoContent = ({
                       });
                     }}
                   />
-                ) :
-                  field?.id === "identifier" ? (
-                    <>
-                      <div
-                        title={t(`common:copy`)}
-                        className="hover:cursor-pointer flex"
-                        onClick={() => handleCopyText(field?.value as string)}
-                      >
-                        <>
-                          <MetadataField
-                            key={field?.id}
-                            {...field}
-                            value={
-                              (field?.id && seriesUpdateData?.[field?.id]) ??
-                              field?.value
-                            }
-                          />
-                          <CopyIcon className="inline w-5 h-5 ml-2" />
-                        </>
-                      </div>
-                      {textCopied && (
-                        <p className="text-green-500 text-sm">
-                          {t(`series:seriesInfo.identifierCopied`)}
-                        </p>
-                      )}
-                    </>
-                  ) :
-                    (
-                      <MetadataField
-                        key={field?.id}
-                        {...field}
-                        value={
-                          (field?.id && seriesUpdateData?.[field?.id]) ??
-                          field?.value
-                        }
-                      />
+                ) : field?.id === "identifier" ? (
+                  <>
+                    <div
+                      title={t(`common:copy`)}
+                      className="hover:cursor-pointer flex"
+                      onClick={() => handleCopyText(field?.value as string)}
+                    >
+                      <>
+                        <MetadataField
+                          key={field?.id}
+                          {...field}
+                          value={(field?.id && seriesUpdateData?.[field?.id]) ?? field?.value}
+                        />
+                        <CopyIcon className="inline w-5 h-5 ml-2" />
+                      </>
+                    </div>
+                    {textCopied && (
+                      <p className="text-green-500 text-sm">
+                        {t(`series:seriesInfo.identifierCopied`)}
+                      </p>
                     )}
+                  </>
+                ) : (
+                  <MetadataField
+                    key={field?.id}
+                    {...field}
+                    value={(field?.id && seriesUpdateData?.[field?.id]) ?? field?.value}
+                  />
+                )}
               </Container>
             );
           })}

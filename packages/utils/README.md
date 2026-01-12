@@ -9,28 +9,29 @@ Shared utility functions and helper methods used across the Management UI ecosys
 Resolve asset paths dynamically based on the execution context (dev vs production):
 
 ```typescript
-import { resolveAssetUrl, resolveFirstAssetUrl } from '@workspace/utils';
+import { resolveAssetUrl, resolveFirstAssetUrl } from "@workspace/utils";
 
 // Resolve a single asset URL
-const logoUrl = resolveAssetUrl('assets/logo.svg');
+const logoUrl = resolveAssetUrl("assets/logo.svg");
 // Dev:  '/management-ui/dist/assets/logo.svg'
 // Prod: '/management-ui/assets/logo.svg'
 
 // With fallback
-const logo = resolveAssetUrl(config.app.logoUrl, 'assets/favicon/favicon.svg');
+const logo = resolveAssetUrl(config.app.logoUrl, "assets/favicon/favicon.svg");
 
 // Resolve first available from candidates
 const preferredLogo = resolveFirstAssetUrl(
   [config.app.orgLogoUrl, config.app.logoUrl],
-  'assets/favicon/favicon.svg'
+  "assets/favicon/favicon.svg"
 );
 
 // Absolute URLs pass through unchanged
-const external = resolveAssetUrl('https://example.com/logo.png');
+const external = resolveAssetUrl("https://example.com/logo.png");
 // Returns: 'https://example.com/logo.png'
 ```
 
 **Features:**
+
 - Automatically detects dev vs production mode
 - Handles base path detection from DOM scripts
 - Preserves absolute URLs (http/https/data)
@@ -41,15 +42,15 @@ const external = resolveAssetUrl('https://example.com/logo.png');
 Immutable deep merging for configuration objects:
 
 ```typescript
-import { deepMerge } from '@workspace/utils';
+import { deepMerge } from "@workspace/utils";
 
 const base = {
-  app: { theme: 'default', features: { darkMode: false } },
-  api: { timeout: 5000 }
+  app: { theme: "default", features: { darkMode: false } },
+  api: { timeout: 5000 },
 };
 
 const override = {
-  app: { theme: 'univie', features: { darkMode: true } }
+  app: { theme: "univie", features: { darkMode: true } },
 };
 
 const merged = deepMerge(base, override);
@@ -64,6 +65,7 @@ const result = deepMerge(defaults, pluginConfig1, pluginConfig2);
 ```
 
 **Merge Behavior:**
+
 - **Objects**: Merged recursively
 - **Arrays**: Replaced (not concatenated)
 - **Primitives**: Later values override earlier ones
@@ -76,11 +78,11 @@ This is used internally by the configuration system to merge plugin configs. See
 Parse and format ISO 8601 duration strings for video content:
 
 ```typescript
-import { parseDuration, serializeDuration } from '@workspace/utils';
+import { parseDuration, serializeDuration } from "@workspace/utils";
 
 // Parse duration to HH:MM:SS format
-const formatted = parseDuration('PT1H30M45S'); // "01:30:45"
-const formatted2 = parseDuration('PT2M30S');    // "00:02:30"
+const formatted = parseDuration("PT1H30M45S"); // "01:30:45"
+const formatted2 = parseDuration("PT2M30S"); // "00:02:30"
 
 // Serialize duration object back to ISO format
 const duration = { hours: 1, minutes: 30, seconds: 45 };
@@ -92,10 +94,10 @@ const iso = serializeDuration(duration); // "PT1H30M45S"
 Hash generation for data integrity and caching:
 
 ```typescript
-import { sha256 } from '@workspace/utils';
+import { sha256 } from "@workspace/utils";
 
 // Generate SHA-256 hash
-const hash = sha256('my-data').toString();
+const hash = sha256("my-data").toString();
 ```
 
 ### Clipboard Operations
@@ -103,12 +105,12 @@ const hash = sha256('my-data').toString();
 Cross-platform clipboard functionality with fallbacks:
 
 ```typescript
-import { copyText } from '@workspace/utils';
+import { copyText } from "@workspace/utils";
 
 // Copy text to clipboard (handles permissions and fallbacks)
-const success = await copyText('Text to copy');
+const success = await copyText("Text to copy");
 if (success) {
-  console.log('Text copied successfully');
+  console.log("Text copied successfully");
 }
 ```
 
@@ -117,18 +119,18 @@ if (success) {
 Normalize and clean metadata from GraphQL responses:
 
 ```typescript
-import { normalizeMetadataValue, normalizeMetadataObject } from '@workspace/utils';
+import { normalizeMetadataValue, normalizeMetadataObject } from "@workspace/utils";
 
 // Normalize individual values (handles null, undefined, "null" strings)
-const clean = normalizeMetadataValue(null);        // ""
-const clean2 = normalizeMetadataValue(['a', null, 'b']); // ["a", "b"]
+const clean = normalizeMetadataValue(null); // ""
+const clean2 = normalizeMetadataValue(["a", null, "b"]); // ["a", "b"]
 
 // Normalize entire metadata objects
 const metadata = {
-  title: 'My Video',
+  title: "My Video",
   description: null,
-  tags: ['tag1', null, 'tag2'],
-  category: undefined
+  tags: ["tag1", null, "tag2"],
+  category: undefined,
 };
 
 const cleaned = normalizeMetadataObject(metadata);
@@ -176,7 +178,7 @@ const cleaned = normalizeMetadataObject(metadata);
 The utils package is automatically available in all monorepo applications:
 
 ```typescript
-import { parseDuration, copyText, sha256 } from '@workspace/utils';
+import { parseDuration, copyText, sha256 } from "@workspace/utils";
 ```
 
 ### Common Patterns
@@ -189,12 +191,12 @@ import { useAppConfig } from '@workspace/query';
 
 function Logo() {
   const { config } = useAppConfig();
-  
+
   const logoSrc = resolveFirstAssetUrl(
     [config.app.orgLogoUrl, config.app.logoUrl],
     'assets/favicon/favicon.svg'
   );
-  
+
   return <img src={logoSrc} alt="Logo" className="h-10 w-auto" />;
 }
 ```
@@ -202,14 +204,14 @@ function Logo() {
 #### Configuration Merging
 
 ```typescript
-import { deepMerge } from '@workspace/utils';
+import { deepMerge } from "@workspace/utils";
 
 const defaultConfig = {
-  app: { theme: 'default', features: {} }
+  app: { theme: "default", features: {} },
 };
 
 const universityConfig = {
-  app: { theme: 'univie', features: { calendar: true } }
+  app: { theme: "univie", features: { calendar: true } },
 };
 
 const merged = deepMerge(defaultConfig, universityConfig);
@@ -230,12 +232,12 @@ function VideoDuration({ duration }: { duration: string }) {
 #### Metadata Form Processing
 
 ```typescript
-import { normalizeMetadataObject } from '@workspace/utils';
+import { normalizeMetadataObject } from "@workspace/utils";
 
 function saveMetadata(formData: FormData) {
   const rawMetadata = Object.fromEntries(formData);
   const cleanMetadata = normalizeMetadataObject(rawMetadata);
-  
+
   // Save only non-empty values
   return api.updateMetadata(cleanMetadata);
 }
@@ -244,16 +246,16 @@ function saveMetadata(formData: FormData) {
 #### Copy to Clipboard with Toast
 
 ```typescript
-import { copyText } from '@workspace/utils';
-import { toast } from '@workspace/ui';
+import { copyText } from "@workspace/utils";
+import { toast } from "@workspace/ui";
 
 async function handleCopyLink(url: string) {
   const success = await copyText(url);
-  
+
   if (success) {
-    toast.success('Link copied to clipboard');
+    toast.success("Link copied to clipboard");
   } else {
-    toast.error('Failed to copy link');
+    toast.error("Failed to copy link");
   }
 }
 ```
@@ -309,14 +311,14 @@ pnpm lint
  * @returns Formatted string like "1.5 MB"
  */
 export function formatFileSize(bytes: number, decimals: number = 2): string {
-  if (bytes === 0) return '0 Bytes';
-  
+  if (bytes === 0) return "0 Bytes";
+
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
+
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(decimals))} ${sizes[i]}`;
 }
 ```
 
-This utilities package provides the foundational helper functions that enable consistent data processing and user interactions across the entire Management UI ecosystem. 
+This utilities package provides the foundational helper functions that enable consistent data processing and user interactions across the entire Management UI ecosystem.

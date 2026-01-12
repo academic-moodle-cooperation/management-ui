@@ -1,4 +1,4 @@
-import { PluginManager } from './pluginManager';
+import { PluginManager } from "./pluginManager";
 
 export interface Plugin {
   name: string;
@@ -13,4 +13,4 @@ export interface Plugin {
   initialize?(manager: PluginManager): void;
   activate(): void;
   deactivate(): void;
-} 
+}

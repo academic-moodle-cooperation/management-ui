@@ -84,11 +84,7 @@ export const opencastUpload = async (
     },
   ];
 
-  let mediaPackage = await request(
-    "/ingest/createMediaPackage",
-    {},
-    setUploadError
-  )
+  let mediaPackage = await request("/ingest/createMediaPackage", {}, setUploadError)
     .then((response) => {
       return response?.text() || "";
     })
@@ -170,34 +166,21 @@ const addDcCatalog = async ({
 }) => {
   const seriesId = uploadSettings.seriesId;
   const template = uploadSettings.dcc;
-  const dcc = constructDcc(
-    template,
-    { presenter, title, seriesId },
-    currentUser,
-    location
-  );
+  const dcc = constructDcc(template, { presenter, title, seriesId }, currentUser, location);
 
   const body = new FormData();
   body.append("mediaPackage", mediaPackage);
   body.append("dublinCore", encodeURIComponent(dcc));
   body.append("flavor", "dublincore/episode");
 
-  return await request(
-    "/ingest/addDCCatalog",
-    { method: "post", body },
-    setUploadError
-  )
+  return await request("/ingest/addDCCatalog", { method: "post", body }, setUploadError)
     .then((response) => response?.text())
     .catch((err) => console.log("error", err.message));
 };
 
 const constructDcc = (
   template: string,
-  {
-    title,
-    presenter,
-    seriesId,
-  }: { presenter: string; title: string; seriesId: string },
+  { title, presenter, seriesId }: { presenter: string; title: string; seriesId: string },
   currentUser: User,
   location: string
 ) => {
@@ -233,11 +216,7 @@ const attachAcl = async ({
   body.append("mediaPackage", mediaPackage);
   body.append("BODY", new Blob([acl]), "acl.xml");
 
-  return await request(
-    "/ingest/addAttachment",
-    { method: "post", body },
-    setUploadError
-  )
+  return await request("/ingest/addAttachment", { method: "post", body }, setUploadError)
     .then((response) => response?.text())
     .catch((err) => console.log("error", err.message));
 };
@@ -259,11 +238,10 @@ const constructAcl = (template: string, currentUser: User) => {
 
 // Function to generate ACL XML from aclData
 const constructAclFromData = (aclData: AclData) => {
-
   // Convert managed ACL entries to API-facing entries (role/action only)
-  const managedEntries: ACLEntryInput[] = (aclData?.managedAclEntries || []).map(entry => ({
-    role: entry.role || '',
-    action: entry.action?.filter((a): a is string => a !== null) || []
+  const managedEntries: ACLEntryInput[] = (aclData?.managedAclEntries || []).map((entry) => ({
+    role: entry.role || "",
+    action: entry.action?.filter((a): a is string => a !== null) || [],
   }));
 
   const entries: ACLEntryInput[] = (aclData.entries || []).concat(managedEntries);
@@ -375,9 +353,7 @@ const uploadTracks = async (
   },
   updateFile: (updateFileInfo: UploadFileBlob) => void
 ) => {
-  const totalBytes = recordings
-    .map((r: Recording) => r.media.size)
-    .reduce((a, b) => a + b, 0);
+  const totalBytes = recordings.map((r: Recording) => r.media.size).reduce((a, b) => a + b, 0);
   let finishedTracksBytes = 0;
 
   for (const { deviceType, media, url, mimeType } of recordings) {
@@ -476,10 +452,7 @@ const uploadTracks = async (
 };
 
 const finishIngest = async (
-  {
-    mediaPackage,
-    uploadSettings,
-  }: { mediaPackage: string; uploadSettings: UploadSettings },
+  { mediaPackage, uploadSettings }: { mediaPackage: string; uploadSettings: UploadSettings },
   setUploadError: (e: Error) => void
 ) => {
   if (!mediaPackage) return;
@@ -492,18 +465,12 @@ const finishIngest = async (
     body.append("workflowDefinitionId", workflowId);
   }
 
-  await request(
-    "/ingest/ingest",
-    { method: "post", body },
-    setUploadError
-  ).catch((err) => console.log("error", err.message));
+  await request("/ingest/ingest", { method: "post", body }, setUploadError).catch((err) =>
+    console.log("error", err.message)
+  );
 };
 
-const request = async (
-  path: string,
-  options = {},
-  setUploadError: (e: Error) => void
-) => {
+const request = async (path: string, options = {}, setUploadError: (e: Error) => void) => {
   const url = path;
 
   const headers = new Headers();
@@ -525,8 +492,7 @@ const request = async (
   return response;
 };
 
-const escapeString = (s: string | undefined) =>
-  new XMLSerializer().serializeToString(new Text(s));
+const escapeString = (s: string | undefined) => new XMLSerializer().serializeToString(new Text(s));
 
 const renderTemplate = (template: string, view: unknown) => {
   const originalEscape = Mustache.escape;

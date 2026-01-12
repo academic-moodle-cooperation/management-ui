@@ -1,4 +1,4 @@
-import { create } from '@workspace/store';
+import { create } from "@workspace/store";
 
 export type SeriesUpdateData = {
   [key: string]: string | string[];
@@ -28,9 +28,9 @@ export const useSidebarStore = create<SeriesSidebarState>((set) => ({
   // Initial state
   isOpen: false,
   isEditing: false,
-  selectedId: '',
+  selectedId: "",
   seriesUpdateData: undefined,
-  updateField: '',
+  updateField: "",
 
   // Actions
   openSidebar: (id) => set({ isOpen: true, selectedId: id }),
@@ -38,24 +38,27 @@ export const useSidebarStore = create<SeriesSidebarState>((set) => ({
   setIsEditing: (isEditing) => set({ isEditing }),
   setSeriesUpdateData: (data) => set({ seriesUpdateData: data }),
   setUpdateField: (field) => set({ updateField: field }),
-  resetUpdateFields: () => set({
-    seriesUpdateData: undefined,
-    updateField: '',
-    isEditing: false
-  }),
+  resetUpdateFields: () =>
+    set({
+      seriesUpdateData: undefined,
+      updateField: "",
+      isEditing: false,
+    }),
 
   // Updated implementation that handles data loading within the store function
   openSidebarWithData: (id, editing, inputFields) => {
     set({ isOpen: true, selectedId: id, isEditing: editing });
 
     // Only attempt to format data if inputFields is provided and has the expected structure
-    const inputFieldsTyped = inputFields as { seriesById?: { commonMetadataV2?: Record<string, any> } };
+    const inputFieldsTyped = inputFields as {
+      seriesById?: { commonMetadataV2?: Record<string, any> };
+    };
     if (inputFieldsTyped?.seriesById?.commonMetadataV2) {
       const metadataFields = inputFieldsTyped.seriesById.commonMetadataV2;
       const formattedData: SeriesUpdateData = {};
 
       Object.entries(metadataFields).forEach(([key, field]) => {
-        if (field && typeof field === 'object' && 'value' in field) {
+        if (field && typeof field === "object" && "value" in field) {
           const value = field.value;
           if (value !== undefined && value !== null) {
             // Ensure we're casting to the correct type
@@ -68,5 +71,5 @@ export const useSidebarStore = create<SeriesSidebarState>((set) => ({
         set({ seriesUpdateData: formattedData });
       }
     }
-  }
+  },
 }));

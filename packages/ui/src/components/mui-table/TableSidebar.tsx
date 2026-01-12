@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Sheet,
   SheetContent,
@@ -65,9 +65,7 @@ export const TableSidebar: React.FC<TableSidebarProps> = ({
 
           <div className="flex-1 overflow-auto">
             <ScrollArea>
-              <CardContent className="pl-1 pr-3 pt-8 space-y-8">
-                {renderContent}
-              </CardContent>
+              <CardContent className="pl-1 pr-3 pt-8 space-y-8">{renderContent}</CardContent>
               {renderAffix && renderAffix}
             </ScrollArea>
           </div>
@@ -78,9 +76,7 @@ export const TableSidebar: React.FC<TableSidebarProps> = ({
             </Container>
           )}
 
-          <SheetFooter className="p-4 shrink-0 mt-auto">
-            {renderFooter}
-          </SheetFooter>
+          <SheetFooter className="p-4 shrink-0 mt-auto">{renderFooter}</SheetFooter>
         </div>
       </SheetContent>
     </Sheet>

@@ -1,13 +1,13 @@
-import React from 'react';
-import { useGetCurrentUser } from '@workspace/query';
-import { useSidebar } from '@workspace/ui/components';
-import { cn } from '@workspace/ui/lib/utils';
-import { Avatar, AvatarImage, AvatarFallback } from '@workspace/ui/components';
-import { sha256 } from '@workspace/utils';
+import React from "react";
+import { useGetCurrentUser } from "@workspace/query";
+import { useSidebar } from "@workspace/ui/components";
+import { cn } from "@workspace/ui/lib/utils";
+import { Avatar, AvatarImage, AvatarFallback } from "@workspace/ui/components";
+import { sha256 } from "@workspace/utils";
 
 /**
  * University of Vienna Sidebar Footer Component
- * 
+ *
  * Displays the current user's information with avatar in the sidebar footer
  * Migrated from the old extension system
  */
@@ -48,10 +48,7 @@ export const SidebarFooter = () => {
 
             <span className="sr-only">Your profile</span>
             {sidebarOpen && (
-              <span
-                aria-hidden="true"
-                className="text-sidebar-foreground whitespace-nowrap"
-              >
+              <span aria-hidden="true" className="text-sidebar-foreground whitespace-nowrap">
                 {data?.currentUser.name}
               </span>
             )}

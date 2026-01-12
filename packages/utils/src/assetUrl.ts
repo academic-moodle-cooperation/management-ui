@@ -29,8 +29,8 @@ export function resolveAssetUrl(pathOrUrl?: string, fallbackRelative?: string): 
   if (typeof window !== "undefined") {
     // Method 1: Look for script tags to find the base path
     const scripts = Array.from(document.getElementsByTagName("script"));
-    const appScript = scripts.find(s =>
-      s.src && (s.src.includes("/@vite/") || s.src.includes("/management-ui/"))
+    const appScript = scripts.find(
+      (s) => s.src && (s.src.includes("/@vite/") || s.src.includes("/management-ui/"))
     );
 
     if (appScript && appScript.src) {
@@ -53,17 +53,18 @@ export function resolveAssetUrl(pathOrUrl?: string, fallbackRelative?: string): 
   const ensuredBase = base.endsWith("/") ? base : `${base}/`;
 
   // Detect dev mode by checking for Vite dev server indicators
-  const isDev = typeof window !== "undefined" && (
+  const isDev =
+    typeof window !== "undefined" &&
     // Check if @vite/client is loaded (only present in dev mode)
-    Array.from(document.getElementsByTagName("script")).some(s =>
-      s.src && s.src.includes("/@vite/client")
-    )
-  );
+    Array.from(document.getElementsByTagName("script")).some(
+      (s) => s.src && s.src.includes("/@vite/client")
+    );
 
   // In dev mode, vite-plugin-static-copy serves assets under 'dist/' subdirectory
-  const needsDistPrefix = isDev &&
-    !normalized.startsWith('dist/') &&
-    (normalized.startsWith('assets/') || normalized.startsWith('locales/'));
+  const needsDistPrefix =
+    isDev &&
+    !normalized.startsWith("dist/") &&
+    (normalized.startsWith("assets/") || normalized.startsWith("locales/"));
 
   const withDistIfNeeded = needsDistPrefix ? `dist/${normalized}` : normalized;
   return `${ensuredBase}${withDistIfNeeded}`;
@@ -80,5 +81,3 @@ export function resolveFirstAssetUrl(
   const first = candidates.find(Boolean);
   return resolveAssetUrl(first, fallbackRelative);
 }
-
-
