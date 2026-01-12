@@ -21,7 +21,9 @@ export const AppRuntimeProvider: React.FC<AppRuntimeProviderProps> = ({ children
     setRegisteredApps((prev) => {
       const existing = prev.find((a) => a.id === app.id);
       if (existing) {
-        logger.warn(`App with id "${app.id}" is already registered. Replacing...`, { appId: app.id });
+        logger.warn(`App with id "${app.id}" is already registered. Replacing...`, {
+          appId: app.id,
+        });
         return prev.map((a) => (a.id === app.id ? app : a));
       }
       return [...prev, app];

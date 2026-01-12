@@ -64,7 +64,9 @@ export function InfiniteScroll({
       {flattenChildren.map((child, index) => {
         if (!React.isValidElement(child)) {
           if (process.env.NODE_ENV === "development") {
-            logger.warn("You should use a valid element with InfiniteScroll", { childType: typeof child });
+            logger.warn("You should use a valid element with InfiniteScroll", {
+              childType: typeof child,
+            });
           }
           return child;
         }
