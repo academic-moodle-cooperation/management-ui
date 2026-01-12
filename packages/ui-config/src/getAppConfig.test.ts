@@ -16,6 +16,12 @@ describe("getAppConfig", () => {
       app: {
         appName: "Custom App Name",
         theme: "custom-theme",
+        title: defaultConfig.app.title,
+        version: defaultConfig.app.version,
+        locale: defaultConfig.app.locale,
+        HtmlDocumentTitle: defaultConfig.app.HtmlDocumentTitle,
+        appTitle: defaultConfig.app.appTitle,
+        pluginNamespace: defaultConfig.app.pluginNamespace,
       },
     };
 
@@ -31,6 +37,7 @@ describe("getAppConfig", () => {
   it("should merge organizationUrls correctly", () => {
     const instanceConfig: Partial<AppConfig> = {
       app: {
+        ...defaultConfig.app,
         organizationUrls: {
           main: "https://custom.example.com",
           support: "https://support.example.com",
@@ -47,7 +54,9 @@ describe("getAppConfig", () => {
   it("should use default main URL when instance config doesn't provide it", () => {
     const instanceConfig: Partial<AppConfig> = {
       app: {
+        ...defaultConfig.app,
         organizationUrls: {
+          main: defaultConfig.app.organizationUrls?.main || "",
           support: "https://support.example.com",
         },
       },
@@ -55,8 +64,8 @@ describe("getAppConfig", () => {
 
     const config = getAppConfig(instanceConfig);
 
-    expect(config.app.organizationUrls.main).toBe(defaultConfig.app.organizationUrls.main);
-    expect(config.app.organizationUrls.support).toBe("https://support.example.com");
+    expect(config.app.organizationUrls?.main).toBe(defaultConfig.app.organizationUrls?.main);
+    expect(config.app.organizationUrls?.support).toBe("https://support.example.com");
   });
 
   it("should merge auth config", () => {
@@ -98,6 +107,7 @@ describe("getAppConfig", () => {
       api: {
         baseUrl: "/custom-api",
         timeout: 60000,
+        graphqlEndpoint: defaultConfig.api.graphqlEndpoint,
       },
     };
 
