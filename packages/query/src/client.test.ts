@@ -3,15 +3,21 @@ import {
   createGraphQLClient,
   createQueryClient,
 } from "./client";
-import { GraphQLClient } from "graphql-request";
+
+// Create a proper mock class for GraphQLClient
+class MockGraphQLClient {
+  url: string;
+  request = vi.fn();
+  setHeader = vi.fn();
+
+  constructor(url: string) {
+    this.url = url;
+  }
+}
 
 // Mock graphql-request
 vi.mock("graphql-request", () => ({
-  GraphQLClient: vi.fn().mockImplementation((url: string) => ({
-    request: vi.fn(),
-    setHeader: vi.fn(),
-    url,
-  })),
+  GraphQLClient: MockGraphQLClient,
 }));
 
 describe("client", () => {
@@ -23,13 +29,9 @@ describe("client", () => {
     it("should create a GraphQL client with absolute URL", () => {
       const client = createGraphQLClient("https://api.example.com/graphql");
 
-      expect(GraphQLClient).toHaveBeenCalledWith("https://api.example.com/graphql");
       expect(client).toBeDefined();
       expect(client.url).toBe("https://api.example.com/graphql");
     });
-
-    // Note: Relative URL conversion test is complex due to window.location mocking
-    // This functionality is better tested in integration tests
 
     it("should throw error for invalid URL", () => {
       expect(() => {
