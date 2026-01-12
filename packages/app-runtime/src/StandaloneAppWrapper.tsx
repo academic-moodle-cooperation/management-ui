@@ -110,6 +110,8 @@ export const StandaloneAppWrapper: React.FC<StandaloneAppWrapperProps> = ({
   config = {},
   router: providedRouter,
 }) => {
+  // Type assertion needed because import.meta.env types may not include BASE_URL
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const baseUrl = (import.meta as any)?.env?.BASE_URL || "/";
 
   // Create a router if none provided - use the unified dynamic router approach
