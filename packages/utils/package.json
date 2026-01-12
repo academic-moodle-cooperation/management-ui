@@ -11,7 +11,10 @@
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf dist && rm -rf node_modules",
     "lint": "eslint . --ext .ts,.js --report-unused-disable-directives --max-warnings 0",
-    "check-types": "tsc --noEmit -p tsconfig.json"
+    "check-types": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "crypto-js": "^4.2.0",
@@ -22,6 +25,7 @@
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "eslint": "^9.9.0",
-    "typescript": "~5.5.4"
+    "typescript": "~5.5.4",
+    "vitest": "^4.0.17"
   }
 }

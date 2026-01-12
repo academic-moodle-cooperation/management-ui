@@ -1,30 +1,32 @@
-import { Plugin } from '@workspace/plugin-system';
-import type { AppConfig, PluginNamespaceItem } from '@workspace/query';
-import * as AllPlugins from '@workspace/plugins';
+import { Plugin } from "@workspace/plugin-system";
+import type { AppConfig, PluginNamespaceItem } from "@workspace/query";
+import * as AllPlugins from "@workspace/plugins";
 
 // Helper function to check if an object is a valid plugin
 const isPlugin = (module: unknown): module is Plugin =>
   module !== null &&
-  typeof module === 'object' &&
-  'name' in module &&
-  'version' in module &&
-  'activate' in module &&
-  'deactivate' in module;
+  typeof module === "object" &&
+  "name" in module &&
+  "version" in module &&
+  "activate" in module &&
+  "deactivate" in module;
 
 /**
  * Parse plugin configuration from the new array-based format
  */
-const parsePluginConfig = (pluginNamespace: PluginNamespaceItem[]): Map<string, string[] | 'all'> => {
-  const configMap = new Map<string, string[] | 'all'>();
+const parsePluginConfig = (
+  pluginNamespace: PluginNamespaceItem[]
+): Map<string, string[] | "all"> => {
+  const configMap = new Map<string, string[] | "all">();
 
   for (const item of pluginNamespace) {
-    if (typeof item === 'string') {
+    if (typeof item === "string") {
       // Simple string means enable all types for this namespace
-      configMap.set(item, 'all');
+      configMap.set(item, "all");
     } else {
       // Object with granular control
       Object.entries(item).forEach(([namespace, config]) => {
-        configMap.set(namespace, config.types || ['all']);
+        configMap.set(namespace, config.types || ["all"]);
       });
     }
   }
@@ -37,7 +39,7 @@ const parsePluginConfig = (pluginNamespace: PluginNamespaceItem[]): Map<string, 
  */
 const shouldLoadPlugin = (plugin: Plugin, config?: AppConfig): boolean => {
   // Extract namespace and type from plugin name (format: "namespace:type")
-  const [pluginNamespace, pluginType] = plugin.name.split(':');
+  const [pluginNamespace, pluginType] = plugin.name.split(":");
 
   // Handle cases where plugin name doesn't follow namespace:type format
   if (!pluginNamespace) {
@@ -45,7 +47,7 @@ const shouldLoadPlugin = (plugin: Plugin, config?: AppConfig): boolean => {
   }
 
   // Always load config plugins
-  if (pluginType === 'config') {
+  if (pluginType === "config") {
     return true;
   }
 
@@ -59,7 +61,7 @@ const shouldLoadPlugin = (plugin: Plugin, config?: AppConfig): boolean => {
   }
 
   // If namespace config is 'all', enable all types
-  if (namespaceConfig === 'all') {
+  if (namespaceConfig === "all") {
     return true;
   }
 
@@ -84,14 +86,14 @@ export const loadAllAvailablePlugins = async (): Promise<Plugin[]> => {
 
     return allPlugins;
   } catch (error) {
-    console.error('CRITICAL ERROR in loadAllAvailablePlugins:', error);
+    console.error("CRITICAL ERROR in loadAllAvailablePlugins:", error);
     throw error;
   }
 };
 
 /**
  * Load plugins based on configuration - Clean Array-Based Filtering
- * 
+ *
  * Supports the new array format: ["core", {"tuwien": {types: ["episodes-actions"]}}]
  */
 export const loadAllPlugins = async (config?: AppConfig): Promise<Plugin[]> => {
@@ -101,15 +103,14 @@ export const loadAllPlugins = async (config?: AppConfig): Promise<Plugin[]> => {
     const allPlugins = allModules.filter(isPlugin);
 
     // Filter plugins based on array configuration
-    const filteredPlugins = allPlugins.filter(plugin => {
+    const filteredPlugins = allPlugins.filter((plugin) => {
       const shouldLoad = shouldLoadPlugin(plugin, config);
       return shouldLoad;
     });
 
     return filteredPlugins;
-
   } catch (error) {
-    console.error('CRITICAL ERROR in loadAllPlugins:', error);
+    console.error("CRITICAL ERROR in loadAllPlugins:", error);
     throw error;
   }
 };

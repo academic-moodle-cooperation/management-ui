@@ -16,7 +16,7 @@ export const App = () => {
   const getHeading = () => {
     if (!seriesTitle) return t("common:episodes");
     return `${t("common:episodes")} / ${seriesTitle}`;
-  }
+  };
 
   return (
     <Container className="p-8">
@@ -29,4 +29,4 @@ export const App = () => {
   );
 };
 
-export default App; 
+export default App;

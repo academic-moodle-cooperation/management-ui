@@ -1,6 +1,6 @@
-import { config as baseConfig } from '@workspace/eslint-config/base';
-import { config as reactConfig } from '@workspace/eslint-config/react-internal';
-import eslintPluginReactRefresh from 'eslint-plugin-react-refresh';
+import { config as baseConfig } from "@workspace/eslint-config/base";
+import { config as reactConfig } from "@workspace/eslint-config/react-internal";
+import eslintPluginReactRefresh from "eslint-plugin-react-refresh";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -8,15 +8,12 @@ export default [
   ...reactConfig,
   {
     // Configuration specific to this app (management-ui-core)
-    files: ['src/**/*.{ts,tsx}'], // Apply only to src files
+    files: ["src/**/*.{ts,tsx}"], // Apply only to src files
     plugins: {
-      'react-refresh': eslintPluginReactRefresh,
+      "react-refresh": eslintPluginReactRefresh,
     },
     rules: {
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       // You can add other app-specific rules or overrides here
     },
     languageOptions: {
@@ -26,7 +23,7 @@ export default [
       // globals: {
       //   'import.meta.env': 'readonly',
       // }
-    }
+    },
   },
   // If you have other specific needs for this app, add more config objects
   // For example, to ignore specific files for this app:

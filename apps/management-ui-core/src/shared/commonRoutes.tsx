@@ -1,8 +1,8 @@
-import React, { Suspense } from 'react';
-import { createRoute } from '@tanstack/react-router';
-import { DefaultLandingPage, AppLoader, Container } from '@workspace/ui/components';
-import { ComponentResolver } from '@workspace/plugin-system';
-import { createLoginRoute, createLogoutRoute } from '@workspace/router';
+import React, { Suspense } from "react";
+import { createRoute } from "@tanstack/react-router";
+import { DefaultLandingPage, AppLoader, Container } from "@workspace/ui/components";
+import { ComponentResolver } from "@workspace/plugin-system";
+import { createLoginRoute, createLogoutRoute } from "@workspace/router";
 
 /**
  * Shared route definitions used across different router configurations.
@@ -26,29 +26,29 @@ const DefaultLandingComponent = () => (
 export const createCommonRoutes = (parentRoute: any) => {
   const rootLandingRoute = createRoute({
     getParentRoute: () => parentRoute,
-    path: '/',
+    path: "/",
     component: DefaultLandingComponent,
   });
 
   const homeLandingRoute = createRoute({
     getParentRoute: () => parentRoute,
-    path: '/home',
+    path: "/home",
     component: DefaultLandingComponent,
   });
 
   const indexHtmlLandingRoute = createRoute({
     getParentRoute: () => parentRoute,
-    path: '/index.html',
+    path: "/index.html",
     component: DefaultLandingComponent,
   });
 
   // Create auth routes with AppLoader as the loading component
   const loginRoute = createLoginRoute(parentRoute, {
-    loadingComponent: AppLoader
+    loadingComponent: AppLoader,
   });
 
   const logoutRoute = createLogoutRoute(parentRoute, {
-    loadingComponent: AppLoader
+    loadingComponent: AppLoader,
   });
 
   return {

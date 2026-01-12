@@ -1,16 +1,13 @@
 ---
-
 variables:
   API_BASE: "${CI_API_V4_URL}/projects"
   MANAGEMENT_TOOL_REPO_ID: 2027
   PACKAGE_REGISTRY_URL: "${API_BASE}/${MANAGEMENT_TOOL_REPO_ID}/packages/generic"
   PACKAGENAME: management-ui
 
-
 stages:
   - build
   - deploy
-
 
 .deploy:
   stage: deploy
@@ -20,8 +17,7 @@ stages:
   needs:
     - job: management-tool-build
   script:
-    - '${CI_PROJECT_DIR}/.gitlab-ci/deploy.sh'
-
+    - "${CI_PROJECT_DIR}/.gitlab-ci/deploy.sh"
 
 management-tool-build:
   stage: build
@@ -43,12 +39,12 @@ management-tool-build:
     - apt-get update && apt-get -y install gettext-base jq git curl
     - envsubst < ${CI_PROJECT_DIR}/.gitlab-ci/maven/settings.xml.tmpl > ${CI_PROJECT_DIR}/settings.xml
   script:
-    - 'cd ${CI_PROJECT_DIR}'
-    - './mvnw clean install ${MAVEN_CLI_OPTS}'
-    - '${CI_PROJECT_DIR}/.gitlab-ci/install-release-cli.sh'
-    - '${CI_PROJECT_DIR}/.gitlab-ci/release-delete.sh'
-    - '${CI_PROJECT_DIR}/.gitlab-ci/release-upload.sh'
-    - '${CI_PROJECT_DIR}/.gitlab-ci/release-create.sh'
+    - "cd ${CI_PROJECT_DIR}"
+    - "./mvnw clean install ${MAVEN_CLI_OPTS}"
+    - "${CI_PROJECT_DIR}/.gitlab-ci/install-release-cli.sh"
+    - "${CI_PROJECT_DIR}/.gitlab-ci/release-delete.sh"
+    - "${CI_PROJECT_DIR}/.gitlab-ci/release-upload.sh"
+    - "${CI_PROJECT_DIR}/.gitlab-ci/release-create.sh"
   artifacts:
     name: "management-tool-$CI_COMMIT_REF_SLUG"
     paths:
@@ -58,7 +54,6 @@ management-tool-build:
     - if: $CI_COMMIT_TAG
       when: never
     - when: always
-
 
 deploy-dev:
   extends: .deploy
@@ -73,7 +68,6 @@ deploy-dev:
     - when: always
       allow_failure: true
 
-
 deploy-staging:
   extends: .deploy
   environment:
@@ -86,7 +80,6 @@ deploy-staging:
       when: never
     - when: manual
       allow_failure: true
-
 
 deploy-production:
   extends: .deploy
