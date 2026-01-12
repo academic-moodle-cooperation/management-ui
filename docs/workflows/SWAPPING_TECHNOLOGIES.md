@@ -33,6 +33,7 @@ Before attempting to swap a technology, assess difficulty:
 ### Easy to Swap ⭐⭐⭐⭐⭐
 
 These are well-isolated with clear boundaries:
+
 - `@workspace/utils` - Pure utility functions
 - `@workspace/store` - State management (Jotai/Zustand)
 - `@workspace/i18n` - Internationalization (i18next)
@@ -43,6 +44,7 @@ These are well-isolated with clear boundaries:
 ### Medium to Swap ⭐⭐⭐
 
 These require more work but are feasible:
+
 - `@workspace/query` - Data fetching (TanStack Query)
 - `@workspace/router` - Routing (TanStack Router)
 - UI library components - Radix UI
@@ -52,6 +54,7 @@ These require more work but are feasible:
 ### Hard to Swap ⭐⭐
 
 These are tightly integrated:
+
 - `@workspace/ui` - Currently has high coupling
 - `@workspace/plugin-system` - Core architecture
 - React - Entire system built on it
@@ -121,25 +124,24 @@ export interface StateStore<T> {
 
 ```typescript
 // packages/store/src/adapters/redux-adapter.ts
-import { createStore } from 'redux';
+import { createStore } from "redux";
 
 export function createReduxStore<T>(initialValue: T): StateStore<T> {
   const store = createStore((state = initialValue, action) => {
-    if (action.type === 'SET') {
-      return typeof action.payload === 'function'
-        ? action.payload(state)
-        : action.payload;
+    if (action.type === "SET") {
+      return typeof action.payload === "function" ? action.payload(state) : action.payload;
     }
     return state;
   });
-  
+
   return {
     get: () => store.getState(),
-    set: (value) => store.dispatch({ 
-      type: 'SET', 
-      payload: value 
-    }),
-    subscribe: (callback) => store.subscribe(() => callback(store.getState()))
+    set: (value) =>
+      store.dispatch({
+        type: "SET",
+        payload: value,
+      }),
+    subscribe: (callback) => store.subscribe(() => callback(store.getState())),
   };
 }
 ```
@@ -149,10 +151,10 @@ export function createReduxStore<T>(initialValue: T): StateStore<T> {
 ```typescript
 // packages/store/src/index.ts
 // OLD
-export { create } from 'zustand';
+export { create } from "zustand";
 
 // NEW
-export { createReduxStore as createStore } from './adapters/redux-adapter';
+export { createReduxStore as createStore } from "./adapters/redux-adapter";
 ```
 
 #### Step 4: Test
@@ -189,20 +191,19 @@ export interface QueryClient {
 
 ```typescript
 // packages/query/src/adapters/swr-adapter.ts
-import useSWR from 'swr';
+import useSWR from "swr";
 
-export function useQuery<T>(
-  key: string[],
-  fetcher: () => Promise<T>
-): QueryResult<T> {
+export function useQuery<T>(key: string[], fetcher: () => Promise<T>): QueryResult<T> {
   const { data, error, isLoading, mutate } = useSWR(key, fetcher);
-  
+
   return {
     data,
     isLoading,
     isError: !!error,
     error: error || null,
-    refetch: async () => { await mutate(); }
+    refetch: async () => {
+      await mutate();
+    },
   };
 }
 ```
@@ -212,7 +213,7 @@ export function useQuery<T>(
 ```typescript
 // packages/query/src/index.ts
 // Keep same export name, different implementation
-export { useQuery } from './adapters/swr-adapter';
+export { useQuery } from "./adapters/swr-adapter";
 ```
 
 #### Step 4: Test Integration
@@ -242,7 +243,7 @@ export interface Router {
 
 ```typescript
 // packages/router/src/adapters/react-router-adapter.ts
-import { useNavigate, useLocation as useRRLocation, Link as RRLink } from 'react-router-dom';
+import { useNavigate, useLocation as useRRLocation, Link as RRLink } from "react-router-dom";
 
 export function useNavigate() {
   const navigate = useRRNavigate();
@@ -257,7 +258,7 @@ export { useRRLocation as useLocation, RRLink as Link };
 ```typescript
 // Update one app at a time
 // packages/router/src/index.ts
-export { useNavigate, useLocation, Link } from './adapters/react-router-adapter';
+export { useNavigate, useLocation, Link } from "./adapters/react-router-adapter";
 ```
 
 ---
@@ -357,7 +358,9 @@ export function createAppConfig(options) {
   // Webpack equivalent
   return {
     entry: options.entry,
-    output: { /* ... */ },
+    output: {
+      /* ... */
+    },
     // ...
   };
 }
@@ -368,11 +371,11 @@ export function createAppConfig(options) {
 ```typescript
 // apps/management-ui-series/webpack.config.js
 // Previously: vite.config.ts
-import { createAppConfig } from '@workspace/webpack-config';
+import { createAppConfig } from "@workspace/webpack-config";
 
 export default createAppConfig({
-  appName: 'management-ui-series',
-  port: 3001
+  appName: "management-ui-series",
+  port: 3001,
 });
 ```
 
@@ -393,7 +396,7 @@ export function createFetcher(): DataFetcher {
 }
 
 // BAD - Exposing third-party types
-import { GraphQLClient } from 'graphql-request';
+import { GraphQLClient } from "graphql-request";
 
 export function createFetcher(): GraphQLClient {
   // Locked to graphql-request
@@ -407,11 +410,11 @@ export function createFetcher(): GraphQLClient {
 // Hide implementation details
 export class QueryFacade {
   private client: any; // Internal implementation
-  
+
   constructor() {
     this.client = createClient(); // Can be swapped
   }
-  
+
   async query<T>(key: string): Promise<T> {
     // Consistent API regardless of implementation
   }
@@ -437,15 +440,15 @@ This package abstracts [technology]. To swap:
 
 ```typescript
 // Test against interface, not implementation
-describe('DataFetcher', () => {
+describe("DataFetcher", () => {
   let fetcher: DataFetcher;
-  
+
   beforeEach(() => {
     fetcher = createFetcher(); // Implementation doesn't matter
   });
-  
-  it('should fetch data', async () => {
-    const data = await fetcher.fetch('/api/data');
+
+  it("should fetch data", async () => {
+    const data = await fetcher.fetch("/api/data");
     expect(data).toBeDefined();
   });
 });
@@ -460,7 +463,7 @@ export function createApp(config: { fetcher: DataFetcher }) {
 }
 
 // BAD - Hardcoded dependencies
-import { tanstackQuery } from '@tanstack/react-query';
+import { tanstackQuery } from "@tanstack/react-query";
 
 export function createApp() {
   return new App(tanstackQuery); // Can't swap
@@ -563,5 +566,3 @@ Technology swapping is **possible** when architecture supports it:
 ---
 
 **Remember:** Design for swappability from the start. It's much harder to add later.
-
-

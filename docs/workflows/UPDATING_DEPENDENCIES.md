@@ -11,6 +11,7 @@ This guide provides safe strategies for updating dependencies in the Management 
 ### 1. External Dependencies
 
 Third-party packages from npm:
+
 - React, TanStack Query, Vite, etc.
 - UI libraries (Radix UI, Tailwind CSS)
 - Build tools and dev dependencies
@@ -18,6 +19,7 @@ Third-party packages from npm:
 ### 2. Workspace Dependencies
 
 Internal packages (`@workspace/*`):
+
 - Managed by pnpm workspace
 - Version controlled in monorepo
 - Updated together
@@ -52,11 +54,13 @@ pnpm list -r --depth 0
 ### Step 2: Review Impact
 
 **For workspace packages:**
+
 1. Check [Package Ecosystem](/packages/README.md) for dependency graph
 2. Identify all dependents
 3. Review [COUPLING_ANALYSIS.md](/docs/COUPLING_ANALYSIS.md)
 
 **For external packages:**
+
 1. Check which workspace packages use it
 2. Review major version changes
 3. Check for breaking changes
@@ -147,6 +151,7 @@ pnpm add [peer-dependency]@[version]
 ```
 
 **Common scenarios:**
+
 - React version mismatches
 - TypeScript version conflicts
 - Build tool incompatibilities
@@ -197,6 +202,7 @@ pnpm dev
 ```
 
 **Manual testing checklist:**
+
 - [ ] App loads without errors
 - [ ] Core functionality works
 - [ ] Plugin customizations appear
@@ -246,6 +252,7 @@ pnpm update -r @types/react @types/react-dom
 ```
 
 **Additional checks:**
+
 - Test all UI components
 - Verify plugin components
 - Check for deprecated APIs
@@ -264,6 +271,7 @@ pnpm update -r @types/*
 ```
 
 **Additional checks:**
+
 - Run `pnpm check-types` in each package
 - Fix type errors (don't use `@ts-ignore` without justification)
 - Update `tsconfig.json` if needed
@@ -283,6 +291,7 @@ pnpm update vite
 ```
 
 **Additional checks:**
+
 - Test dev server: `pnpm dev`
 - Test build: `pnpm build`
 - Verify preview: `pnpm preview`
@@ -300,6 +309,7 @@ pnpm update -r @tanstack/react-table
 ```
 
 **Additional checks:**
+
 - Test data fetching
 - Test routing
 - Test tables
@@ -319,6 +329,7 @@ pnpm update tailwindcss
 ```
 
 **Additional checks:**
+
 - Test all styled components
 - Verify custom theme works
 - Check new utility classes
@@ -329,6 +340,7 @@ pnpm update tailwindcss
 ### 1. Identify Breaking Changes
 
 Read changelogs carefully:
+
 - GitHub releases
 - Package changelog
 - Migration guides
@@ -348,6 +360,7 @@ export function legacyFunction(...args) {
 ### 3. Update Gradually
 
 For major updates:
+
 1. Update one package at a time
 2. Fix issues in that package
 3. Test thoroughly
@@ -423,6 +436,7 @@ pnpm outdated
 ```
 
 **Benefits:**
+
 - Smaller, manageable changes
 - Security patches
 - Bug fixes
@@ -431,6 +445,7 @@ pnpm outdated
 ### 2. Batch Related Updates
 
 Group related packages:
+
 - UI libraries together
 - TanStack packages together
 - Build tools together
@@ -438,6 +453,7 @@ Group related packages:
 ### 3. Test Thoroughly
 
 Don't skip testing:
+
 - Unit tests
 - Integration tests
 - Manual testing
@@ -446,6 +462,7 @@ Don't skip testing:
 ### 4. Use Lock File
 
 Always commit `pnpm-lock.yaml`:
+
 - Ensures reproducible builds
 - Prevents surprise updates
 - Documents exact versions
@@ -544,6 +561,7 @@ pnpm build
 ## Emergency Contacts
 
 If stuck on a breaking update:
+
 1. Check package issues on GitHub
 2. Review migration guides
 3. Ask in team channels
@@ -552,5 +570,3 @@ If stuck on a breaking update:
 ---
 
 **Remember:** Safe updates are incremental, well-tested, and reversible. When in doubt, test more thoroughly.
-
-

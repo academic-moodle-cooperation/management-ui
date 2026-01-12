@@ -7,6 +7,7 @@
 ## Context
 
 Management UI needs to serve multiple universities, each with unique requirements for branding, workflows, metadata fields, and functionality. Traditional approaches would require:
+
 - Forking the codebase per university (maintenance nightmare)
 - Heavy use of feature flags (complexity explosion)
 - Conditional logic throughout (poor code quality)
@@ -28,6 +29,7 @@ We will implement a **plugin-based architecture** where:
 #### 1. Plugin Manager
 
 Central coordination system that:
+
 - Discovers and loads plugins
 - Manages component and object registration
 - Resolves which components to use
@@ -36,6 +38,7 @@ Central coordination system that:
 #### 2. Extension Points
 
 Named locations where plugins can customize:
+
 - `app:header` - Application header
 - `app:footer` - Application footer
 - `app:sidebar` - Navigation sidebar
@@ -59,13 +62,13 @@ React component that resolves plugins at render time:
 
 ```typescript
 export const UniversityPlugin = createPlugin({
-  namespace: 'university',
-  type: 'extension',
-  version: '1.0.0',
-  
+  namespace: "university",
+  type: "extension",
+  version: "1.0.0",
+
   initialize(manager) {
-    manager.registerComponent('app:header', CustomHeader, { priority: 10 });
-  }
+    manager.registerComponent("app:header", CustomHeader, { priority: 10 });
+  },
 });
 ```
 
@@ -74,26 +77,31 @@ export const UniversityPlugin = createPlugin({
 ### Why This Approach?
 
 **Separation of Concerns:**
+
 - Core focuses on platform functionality
 - Plugins focus on university-specific requirements
 - Clear boundaries between core and customization
 
 **Zero Core Changes:**
+
 - Universities can customize without touching core code
 - Core can evolve independently
 - Reduced merge conflicts
 
 **Runtime Flexibility:**
+
 - No rebuild needed for configuration changes
 - Dynamic plugin loading (future: runtime plugin marketplace)
 - A/B testing capabilities
 
 **Maintainability:**
+
 - Each university maintains only their plugin
 - Core team maintains platform
 - Clear ownership boundaries
 
 **Scalability:**
+
 - Easy to add new universities
 - Easy to add new extension points
 - Plugins can depend on other plugins
@@ -105,10 +113,12 @@ export const UniversityPlugin = createPlugin({
 **Approach:** Use JSON/YAML configuration files for customization
 
 **Pros:**
+
 - Simple to understand
 - No code required for basic customization
 
 **Cons:**
+
 - Limited to predefined options
 - Cannot add custom components
 - Cannot implement custom logic
@@ -121,10 +131,12 @@ export const UniversityPlugin = createPlugin({
 **Approach:** Use template engines (Handlebars, EJS) for customization
 
 **Pros:**
+
 - Familiar to many developers
 - Good for simple layouts
 
 **Cons:**
+
 - Limited to presentation layer
 - Cannot implement business logic
 - Poor TypeScript support
@@ -137,11 +149,13 @@ export const UniversityPlugin = createPlugin({
 **Approach:** Each university gets completely independent frontend
 
 **Pros:**
+
 - Complete independence
 - Different technologies per university
 - Isolated deployments
 
 **Cons:**
+
 - Massive duplication
 - Inconsistent user experience
 - No shared components
@@ -155,10 +169,12 @@ export const UniversityPlugin = createPlugin({
 **Approach:** Single codebase with feature flags per university
 
 **Pros:**
+
 - Simple deployment
 - Shared code
 
 **Cons:**
+
 - Code becomes unmaintainable
 - Conditional logic everywhere
 - Tight coupling
@@ -211,6 +227,7 @@ plugins/university-name/
 ### Priority System
 
 Lower numbers = higher priority:
+
 - Core defaults: 100
 - General plugins: 50
 - University plugins: 10
@@ -219,6 +236,7 @@ Lower numbers = higher priority:
 ### Extension Point Naming
 
 Convention: `category:specific-point`
+
 - `app:header` - Application-level header
 - `episodes:empty-state` - Episodes app empty state
 - `metadata:fields` - Metadata field definitions
@@ -243,5 +261,3 @@ Convention: `category:specific-point`
 ## Status History
 
 - 2025-11-12: Accepted - Initial ADR documenting current architecture
-
-

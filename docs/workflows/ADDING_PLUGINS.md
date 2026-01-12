@@ -20,17 +20,19 @@ This guide walks through creating a new university plugin for the Management UI 
 
 First, determine which type of plugin you need:
 
-| Plugin Type | Use When | Has Vite Build | Can Run Standalone |
-|-------------|----------|----------------|-------------------|
-| **Standalone/App** | Full customization, standalone testing needed | Yes | Yes |
-| **Library** | Only exports code for other apps to consume | No | No |
+| Plugin Type        | Use When                                      | Has Vite Build | Can Run Standalone |
+| ------------------ | --------------------------------------------- | -------------- | ------------------ |
+| **Standalone/App** | Full customization, standalone testing needed | Yes            | Yes                |
+| **Library**        | Only exports code for other apps to consume   | No             | No                 |
 
 **Standalone/App plugins** (like `plugin-tuwien`, `plugin-univie`):
+
 - Have `index.html`, `main.tsx`, and `vite.config.ts`
 - Can be developed and tested independently at their own port
 - Use `createPluginAppViteConfig` for vite configuration
 
 **Library plugins** (like `@workspace/plugin-playlists`):
+
 - Only have `index.ts` exporting plugin code
 - No vite build - source files exported directly
 - Consumed by other apps that handle bundling
@@ -40,6 +42,7 @@ First, determine which type of plugin you need:
 ### 1. Understand Plugin Capabilities
 
 Plugins can provide:
+
 - **Custom Components** - Replace headers, footers, sidebars
 - **Branding** - Colors, logos, typography
 - **Workflows** - Custom approval processes
@@ -50,6 +53,7 @@ Plugins can provide:
 ### 2. Study Existing Plugins
 
 Review examples:
+
 - [`/plugins/core/`](/plugins/core/README.md) - Core extension points
 - [`/plugins/tuwien/`](/plugins/tuwien/README.md) - TU Wien implementation
 - [`/plugins/univie/`](/plugins/univie/README.md) - University of Vienna
@@ -58,6 +62,7 @@ Review examples:
 ### 3. Plan Your Plugin
 
 Consider:
+
 - **University name** - Full and abbreviated
 - **Extension points needed** - What to customize?
 - **Branding requirements** - Colors, logos, fonts
@@ -75,6 +80,7 @@ cd plugins/[university-name]
 ```
 
 **Naming Convention:**
+
 - Use lowercase, kebab-case
 - Use university abbreviation if common: `tuwien`, `univie`
 - Or full name: `stanford`, `mit`, `example-university`
@@ -198,7 +204,7 @@ import * as implementations from './implementations';
 
 /**
  * [University Name] Plugin
- * 
+ *
  * Provides [University Name]-specific customizations including:
  * - Custom branding and theming
  * - University header and footer
@@ -209,24 +215,24 @@ export const [UniversityName]Plugin = createPlugin({
   namespace: '[university-name]',
   type: 'university-extension',
   version: '1.0.0',
-  
+
   initialize(manager) {
     console.log('[University Name] plugin initializing...');
-    
+
     // Register all implementations
     Object.values(implementations).forEach((impl) => {
       if (typeof impl.register === 'function') {
         impl.register(manager);
       }
     });
-    
+
     console.log('[University Name] plugin initialized');
   },
-  
+
   activate() {
     console.log('[University Name] plugin activated');
   },
-  
+
   deactivate() {
     console.log('[University Name] plugin deactivated');
   }
@@ -245,7 +251,7 @@ import { AppConfig } from '@workspace/ui-config';
 
 /**
  * [University Name] Configuration
- * 
+ *
  * This configuration provides university-specific settings that will be
  * merged with the default configuration at build time (production) or
  * runtime (development).
@@ -253,7 +259,7 @@ import { AppConfig } from '@workspace/ui-config';
 export const [universityName]Config: Partial<AppConfig> = {
   // Application Settings
   appName: '[University Name] Video Platform',
-  
+
   // Branding
   branding: {
     primaryColor: '#hexcolor',     // University primary color
@@ -262,7 +268,7 @@ export const [universityName]Config: Partial<AppConfig> = {
     logoUrl: '/assets/logo.svg',   // Path to logo
     faviconUrl: '/assets/favicon.svg',
   },
-  
+
   // Features
   features: {
     enableAdvancedSearch: true,
@@ -270,14 +276,14 @@ export const [universityName]Config: Partial<AppConfig> = {
     enableTranscripts: true,
     // Custom feature flags
   },
-  
+
   // URLs
   urls: {
     helpUrl: 'https://[university].edu/help',
     supportEmail: 'support@[university].edu',
     privacyPolicyUrl: 'https://[university].edu/privacy',
   },
-  
+
   // University-specific settings
   university: {
     name: '[University Name]',
@@ -297,7 +303,7 @@ import { [universityName]Config } from './config';
 export function register(manager: PluginManager) {
   // Register configuration object
   manager.registerObject('app:config', '[university-name]-config', [universityName]Config);
-  
+
   console.log('[University Name] configuration registered');
 }
 
@@ -321,22 +327,22 @@ export interface UniversityHeaderProps {
 
 export const UniversityHeader: React.FC<UniversityHeaderProps> = ({ user }) => {
   const { t } = useTranslation('[university-name]');
-  
+
   return (
     <header className="bg-primary text-primary-foreground p-4">
       <div className="container mx-auto flex items-center justify-between">
         {/* University Logo */}
         <div className="flex items-center space-x-4">
-          <img 
-            src="/assets/logo.svg" 
-            alt="[University Name]" 
+          <img
+            src="/assets/logo.svg"
+            alt="[University Name]"
             className="h-8"
           />
           <span className="text-xl font-bold">
             {t('header.title')}
           </span>
         </div>
-        
+
         {/* Navigation */}
         <nav className="flex space-x-4">
           <a href="/series" className="hover:underline">
@@ -349,7 +355,7 @@ export const UniversityHeader: React.FC<UniversityHeaderProps> = ({ user }) => {
             {t('header.nav.upload')}
           </a>
         </nav>
-        
+
         {/* User Info */}
         {user && (
           <div className="flex items-center space-x-2">
@@ -365,24 +371,20 @@ export const UniversityHeader: React.FC<UniversityHeaderProps> = ({ user }) => {
 Create `implementations/header/index.ts`:
 
 ```typescript
-import { PluginManager } from '@workspace/plugin-system';
-import { UniversityHeader } from './components/UniversityHeader';
+import { PluginManager } from "@workspace/plugin-system";
+import { UniversityHeader } from "./components/UniversityHeader";
 
 export function register(manager: PluginManager) {
   // Register custom header with high priority (overrides default)
-  manager.registerComponent(
-    'app:header',
-    UniversityHeader,
-    { 
-      priority: 10,
-      metadata: {
-        name: '[University Name] Header',
-        description: 'Custom header with university branding'
-      }
-    }
-  );
-  
-  console.log('[University Name] header registered');
+  manager.registerComponent("app:header", UniversityHeader, {
+    priority: 10,
+    metadata: {
+      name: "[University Name] Header",
+      description: "Custom header with university branding",
+    },
+  });
+
+  console.log("[University Name] header registered");
 }
 
 export { UniversityHeader };
@@ -414,17 +416,17 @@ Create `implementations/index.ts`:
 ```typescript
 /**
  * [University Name] Plugin Implementations
- * 
+ *
  * This file exports all plugin implementations for registration.
  */
 
 // Configuration
-export * as config from './config';
+export * as config from "./config";
 
 // Layout Components
-export * as header from './header';
-export * as footer from './footer';
-export * as sidebar from './sidebar';
+export * as header from "./header";
+export * as footer from "./footer";
+export * as sidebar from "./sidebar";
 
 // Feature Implementations
 // export * as [feature] from './[feature]';
@@ -452,13 +454,13 @@ Or create placeholder assets during development.
 Create `vite.config.ts`:
 
 ```typescript
-import { defineConfig, loadEnv } from 'vite';
-import { createPluginAppViteConfig } from '@workspace/vite-config';
+import { defineConfig, loadEnv } from "vite";
+import { createPluginAppViteConfig } from "@workspace/vite-config";
 
-const packageName = 'plugin-[university-name]';
+const packageName = "plugin-[university-name]";
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
+  const env = loadEnv(mode, process.cwd(), "");
 
   return createPluginAppViteConfig({
     packageName,
@@ -525,6 +527,7 @@ pnpm dev
 **Access:** `http://127.0.0.1:3000`
 
 **Verify:**
+
 - Custom header appears
 - Branding is applied
 - Plugin console logs show initialization
@@ -540,6 +543,7 @@ cp docs/templates/PLUGIN_README_TEMPLATE.md plugins/[university-name]/README.md
 ```
 
 Follow template sections:
+
 1. **Purpose** - What this plugin provides
 2. **Features** - What's included
 3. **Plugin Structure** - Directory layout
@@ -551,6 +555,7 @@ Follow template sections:
 9. **Deployment** - Build and deploy
 
 **See examples:**
+
 - [TU Wien Plugin](/plugins/tuwien/README.md)
 - [UniVie Plugin](/plugins/univie/README.md)
 
@@ -563,6 +568,7 @@ cp docs/templates/IMPLEMENTATION_README_TEMPLATE.md plugins/[university-name]/im
 ```
 
 Document:
+
 - Extension point used
 - Component behavior
 - Props interface
@@ -586,28 +592,28 @@ Follow [Adding Apps Guide](/docs/workflows/ADDING_APPS.md) to create the app, th
 
 ```typescript
 // apps/[app-name]-plugin.ts
-import { createPlugin } from '@workspace/plugin-system';
-import { MyCustomApp } from './src/App';
+import { createPlugin } from "@workspace/plugin-system";
+import { MyCustomApp } from "./src/App";
 
 export const MyAppPlugin = createPlugin({
-  namespace: '[university-name]',
-  type: 'app',
-  version: '1.0.0',
-  
+  namespace: "[university-name]",
+  type: "app",
+  version: "1.0.0",
+
   initialize(manager) {
-    manager.registerObject('apps:definitions', '[app-id]', {
-      id: '[app-id]',
-      name: '[App Name]',
-      routePath: '/[route]',
+    manager.registerObject("apps:definitions", "[app-id]", {
+      id: "[app-id]",
+      name: "[App Name]",
+      routePath: "/[route]",
       component: MyCustomApp,
       navigation: {
-        title: '[App Name]',
-        icon: 'icon-name',
+        title: "[App Name]",
+        icon: "icon-name",
         order: 200,
-        permissions: ['app.access']
-      }
+        permissions: ["app.access"],
+      },
     });
-  }
+  },
 });
 ```
 
@@ -714,26 +720,26 @@ export function register(manager: PluginManager) {
 ```typescript
 // implementations/workflow/index.ts
 export function register(manager: PluginManager) {
-  manager.registerObject('workflows:definitions', 'university-approval', {
-    name: 'University Content Approval',
+  manager.registerObject("workflows:definitions", "university-approval", {
+    name: "University Content Approval",
     steps: [
-      { 
-        name: 'Created',
-        status: 'draft',
-        description: 'Content created by instructor'
+      {
+        name: "Created",
+        status: "draft",
+        description: "Content created by instructor",
       },
       {
-        name: 'Department Review',
-        status: 'dept-review',
-        permissions: ['department.review'],
-        timeout: '7d'
+        name: "Department Review",
+        status: "dept-review",
+        permissions: ["department.review"],
+        timeout: "7d",
       },
       {
-        name: 'Published',
-        status: 'published',
-        permissions: ['content.publish']
-      }
-    ]
+        name: "Published",
+        status: "published",
+        permissions: ["content.publish"],
+      },
+    ],
   });
 }
 ```
@@ -743,6 +749,7 @@ export function register(manager: PluginManager) {
 ### Plugin Not Loading
 
 **Solutions:**
+
 1. Verify plugin is registered in `plugins/index.ts`
 2. Check console for initialization logs
 3. Verify `package.json` dependencies
@@ -751,6 +758,7 @@ export function register(manager: PluginManager) {
 ### Customizations Don't Appear
 
 **Solutions:**
+
 1. Check extension point naming
 2. Verify priority number (lower = higher priority)
 3. Check if default has different priority
@@ -759,6 +767,7 @@ export function register(manager: PluginManager) {
 ### Styling Conflicts
 
 **Solutions:**
+
 1. Use Tailwind CSS classes
 2. Check for CSS specificity issues
 3. Use university-specific class prefixes
@@ -767,6 +776,7 @@ export function register(manager: PluginManager) {
 ### Build Failures
 
 **Solutions:**
+
 1. Check TypeScript errors: `pnpm check-types`
 2. Verify imports are correct
 3. Check for missing dependencies
@@ -805,6 +815,7 @@ Before considering a plugin complete:
 ## Examples
 
 **Excellent Examples:**
+
 - `plugins/tuwien` - Comprehensive implementation
 - `plugins/univie` - Clean structure
 - `plugins/example-university` - Reference implementation
@@ -829,5 +840,3 @@ Before considering a plugin complete:
 ---
 
 **Remember:** Good plugins are modular, well-documented, provide clear extension points, and respect the core system's architecture.
-
-

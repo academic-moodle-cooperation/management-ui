@@ -11,14 +11,17 @@ Security audit completed for Management UI repository. No hardcoded secrets foun
 ## 1. Secrets & Credentials Scan
 
 ### Results
+
 ✅ **No hardcoded secrets found**
 
 ### Files Checked
+
 - `packages/query/src/codegen.ts` - Uses `process.env.GRAPHQL_ENDPOINT` ✅
 - `plugins/univie/apps/event-calendar/src/components/api/eventCalendarApi.ts` - Uses `import.meta.env.VITE_UNIVIE_API_BASE_URL` ✅
 - All `.env` files properly ignored in `.gitignore` ✅
 
 ### Recommendations
+
 - ✅ Environment variables used correctly
 - ✅ No API keys or tokens hardcoded
 - ⚠️ Consider adding `.env.example` files for documentation
@@ -69,11 +72,13 @@ Security audit completed for Management UI repository. No hardcoded secrets foun
 ## 3. License Compliance
 
 ### Status
+
 - [ ] LICENSE file needs to be created
 - [ ] License check script needs to be created
 - [ ] Dependencies license audit pending
 
 ### Recommendations
+
 - Create LICENSE file (Apache 2.0 or MIT recommended)
 - Create `scripts/check-licenses.js` for automated license checking
 - Document license compatibility requirements
@@ -81,19 +86,23 @@ Security audit completed for Management UI repository. No hardcoded secrets foun
 ## 4. Environment Variables
 
 ### Current Status
+
 - ✅ `.env*` files properly ignored in `.gitignore`
 - ⚠️ Missing `.env.example` files for documentation
 
 ### Required Environment Variables
 
 #### GraphQL Configuration
+
 - `GRAPHQL_ENDPOINT` - GraphQL API endpoint (default: `http://127.0.0.1:8080/graphql`)
 - `GRAPHQL_HEADERS` - JSON string of headers for GraphQL requests
 
 #### UniVie Event Calendar
+
 - `VITE_UNIVIE_API_BASE_URL` - API base URL for event calendar (default: `https://api.example.com`)
 
 ### Action Items
+
 - [ ] Create `.env.example` in root
 - [ ] Create `.env.example` for apps that need environment variables
 - [ ] Document all required environment variables
@@ -103,11 +112,13 @@ Security audit completed for Management UI repository. No hardcoded secrets foun
 ### Code Review Findings
 
 ✅ **Good Practices:**
+
 - Environment variables used correctly
 - No hardcoded credentials
 - `.gitignore` properly configured
 
 ⚠️ **Areas for Improvement:**
+
 - Add input validation for environment variables
 - Add rate limiting documentation
 - Add CORS configuration documentation

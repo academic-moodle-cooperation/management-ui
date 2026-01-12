@@ -67,7 +67,7 @@ export function register(manager: PluginManager) {
   manager.registerComponent(
     '[extension:point]',
     [ComponentName],
-    { 
+    {
       priority: [number],
       metadata: {
         // Optional metadata
@@ -90,7 +90,7 @@ export interface [ComponentName]Props {
 
 export const [ComponentName]: React.FC<[ComponentName]Props> = (props) => {
   const { t } = useTranslation('[namespace]');
-  
+
   return (
     <div>
       {/* Implementation */}
@@ -117,11 +117,13 @@ interface [ComponentName]Props {
 **Purpose:** [What this feature does]
 
 **Implementation:**
+
 ```typescript
 // Code snippet showing implementation
 ```
 
 **Usage:**
+
 ```typescript
 // Code snippet showing usage
 ```
@@ -150,8 +152,8 @@ interface [ComponentName]Props {
 ```typescript
 // How this component uses theme
 const styles = {
-  backgroundColor: 'var(--primary)',
-  color: 'var(--primary-foreground)',
+  backgroundColor: "var(--primary)",
+  color: "var(--primary-foreground)",
 };
 ```
 
@@ -231,7 +233,7 @@ const defaultConfig: [Feature]Config = {
 
 ```typescript
 // How to override configuration
-manager.registerObject('[feature]:config', 'custom-config', {
+manager.registerObject("[feature]:config", "custom-config", {
   // Custom configuration
 });
 ```
@@ -284,11 +286,11 @@ describe('[ComponentName]', () => {
     render(<[ComponentName] {...props} />);
     expect(screen.getByText('Expected')).toBeInTheDocument();
   });
-  
+
   it('should handle user interaction', () => {
     const onAction = jest.fn();
     render(<[ComponentName] onAction={onAction} />);
-    
+
     // Simulate interaction
     // Assert expected behavior
   });
@@ -356,11 +358,13 @@ describe('[ComponentName]', () => {
 ### From Default Implementation
 
 **Before (Default):**
+
 ```typescript
 // Default implementation usage
 ```
 
 **After (Custom):**
+
 ```typescript
 // Custom implementation usage
 ```
@@ -450,6 +454,7 @@ function Parent() {
 ## Changelog
 
 ### 1.0.0 (YYYY-MM-DD)
+
 - Initial implementation
 - [Feature 1]
 - [Feature 2]
@@ -457,5 +462,3 @@ function Parent() {
 ## License
 
 [License information if different from main project]
-
-

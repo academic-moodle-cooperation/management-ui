@@ -11,6 +11,7 @@ This document analyzes the coupling between packages in the Management UI monore
 ### Key Findings
 
 ✅ **Strengths:**
+
 - Clear layer separation in all packages
 - No circular dependencies detected
 - Configuration packages are well-isolated
@@ -18,9 +19,11 @@ This document analyzes the coupling between packages in the Management UI monore
 - UI package refactored to remove query/router coupling ✅
 
 🧹 **Cleanup Completed (2025-12-19):**
+
 - ✅ Deleted unused auth-status demo components from UI package
 
 ⚠️ **Remaining Issues:**
+
 - **ui package has excessive workspace dependencies** (6 workspace packages) - Multiple components use query/router hooks
 - **query package depends on ui-config and plugin-system** → Justified by design (config system)
 - **router package depends on query** → Justified by design (auth routes)
@@ -141,9 +144,11 @@ Dependencies:
 **Analysis:** Good isolation. Three state management libraries present (jotai, zustand, immer).
 
 **Issues:**
+
 - **Minor:** Multiple state management libraries. Why both jotai AND zustand?
 
 **Recommendations:**
+
 - Consider standardizing on one state management library
 - Document why multiple libraries are needed
 - If both are needed, explain use cases in package README
@@ -194,15 +199,18 @@ Dependencies:
 **Analysis:** **PROBLEMATIC COUPLING**. Query package should be a pure data-fetching layer, but it depends on ui-config and plugin-system.
 
 **Issues:**
+
 - **Major:** Depends on `ui-config` - Why does data fetching need UI configuration?
 - **Major:** Depends on `plugin-system` - Should query layer know about plugins?
 
 **Impact:**
+
 - Makes query package harder to replace
 - Creates unnecessary coupling between data and presentation layers
 - Violates separation of concerns
 
 **Recommendations:**
+
 1. **HIGH PRIORITY:** Remove dependency on `ui-config`
    - Extract config reading to a higher layer (providers or app-runtime)
    - Pass config as parameters to query functions
@@ -221,7 +229,7 @@ Dependencies:
 ```typescript
 // BEFORE (current - problematic)
 // In query package
-import { getConfig } from '@workspace/ui-config';
+import { getConfig } from "@workspace/ui-config";
 const endpoint = getConfig().graphqlEndpoint;
 
 // AFTER (better - injected)
@@ -231,11 +239,11 @@ export function createQueryClient(config: { graphqlEndpoint: string }) {
 }
 
 // In app-runtime or providers
-import { getConfig } from '@workspace/ui-config';
-import { createQueryClient } from '@workspace/query';
+import { getConfig } from "@workspace/ui-config";
+import { createQueryClient } from "@workspace/query";
 
-const client = createQueryClient({ 
-  graphqlEndpoint: getConfig().graphqlEndpoint 
+const client = createQueryClient({
+  graphqlEndpoint: getConfig().graphqlEndpoint,
 });
 ```
 
@@ -257,15 +265,18 @@ Dependencies:
 **Analysis:** **QUESTIONABLE COUPLING**. Router depends on query package.
 
 **Issues:**
-- **Medium:** Why does routing need data fetching? 
+
+- **Medium:** Why does routing need data fetching?
 - Possible reason: TanStack Router loaders might use query hooks
 - Creates coupling between navigation and data layers
 
 **Impact:**
+
 - Cannot swap query implementation without considering router
 - Router changes may require query changes and vice versa
 
 **Recommendations:**
+
 1. **INVESTIGATE:** Understand why router needs query
    - Is it for route loaders?
    - Is it for authenticated routes?
@@ -313,13 +324,16 @@ Dependencies:
 **Analysis:** **NEEDS WORK**. UI package depends on 6 other workspace packages.
 
 **Partial Cleanup (2025-12-19):**
+
 - ✅ Deleted unused auth-status demo components (AuthDebug, AuthStatus, AuthMethodsDemo)
 
 **Remaining Issues:**
+
 - **@workspace/query** - Still used in: acl-editor, nav-user, metadata-fields, select-series-combobox
 - **@workspace/router** - Still used in: nav-main, datatable (data-table-body, data-table-empty-state)
 
 **Justified Dependencies:**
+
 - **i18n:** For text translations - acceptable
 - **plugin-system:** For ComponentResolver in appshell/datatable - intentional
 - **ui-config:** For theming configuration - acceptable
@@ -327,11 +341,13 @@ Dependencies:
 
 **Future Refactoring:**
 To fully decouple UI from query/router, these components would need to:
+
 1. Accept data as props instead of using hooks
 2. Accept navigation callbacks instead of using router directly
 3. Move data fetching to container components in apps
 
 **Impact:**
+
 - **MEDIUM:** Cannot update query/router without considering UI package
 - **MEDIUM:** UI components are not fully presentational
 
@@ -359,7 +375,8 @@ Dependencies:
 
 **Issues:** None (expected for this layer)
 
-**Recommendations:** 
+**Recommendations:**
+
 - Continue as orchestration layer
 - Document the purpose clearly
 - Consider if any dependencies could be injected rather than hardcoded
@@ -385,6 +402,7 @@ Dependencies:
 **Issues:** None (expected for this layer)
 
 **Recommendations:**
+
 - Document provider order and dependencies
 - Consider if providers could be more modular
 
@@ -434,6 +452,7 @@ Dependencies:
 **Status:** ✅ No circular dependencies detected
 
 All packages follow the layer hierarchy:
+
 ```
 Core Infrastructure → Foundation → Integration → Application
 ```
@@ -483,22 +502,22 @@ No package depends on a package in a higher layer (except the identified issues 
 
 ### By Package
 
-| Package | Workspace Deps | External Deps | Coupling Score | Status |
-|---------|----------------|---------------|----------------|---------|
-| utils | 0 | 2 | ⭐⭐⭐⭐⭐ | Excellent |
-| typescript-config | 0 | 0 | ⭐⭐⭐⭐⭐ | Excellent |
-| eslint-config | 0 | ~5 | ⭐⭐⭐⭐⭐ | Excellent |
-| tailwind-config | 0 | ~3 | ⭐⭐⭐⭐⭐ | Excellent |
-| plugin-system | 0 | 1 | ⭐⭐⭐⭐⭐ | Excellent |
-| store | 0 | 3 | ⭐⭐⭐⭐ | Good |
-| i18n | 0 | 4 | ⭐⭐⭐⭐⭐ | Excellent |
-| query | 3 | 3 | ⭐⭐⭐⭐ | Good (By Design) |
-| router | 1 | 2 | ⭐⭐⭐⭐ | Good (By Design) |
-| ui | 6 ⚠️ | ~30 | ⭐⭐⭐ | Needs Work (Partial cleanup done) |
-| app-runtime | 4 | 2 | ⭐⭐⭐⭐ | Good |
-| providers | 4 | 1 | ⭐⭐⭐⭐ | Good |
-| ui-config | 0 | 0 | ⭐⭐⭐⭐⭐ | Excellent |
-| vite-config | 0 | 4 | ⭐⭐⭐⭐⭐ | Excellent |
+| Package           | Workspace Deps | External Deps | Coupling Score | Status                            |
+| ----------------- | -------------- | ------------- | -------------- | --------------------------------- |
+| utils             | 0              | 2             | ⭐⭐⭐⭐⭐     | Excellent                         |
+| typescript-config | 0              | 0             | ⭐⭐⭐⭐⭐     | Excellent                         |
+| eslint-config     | 0              | ~5            | ⭐⭐⭐⭐⭐     | Excellent                         |
+| tailwind-config   | 0              | ~3            | ⭐⭐⭐⭐⭐     | Excellent                         |
+| plugin-system     | 0              | 1             | ⭐⭐⭐⭐⭐     | Excellent                         |
+| store             | 0              | 3             | ⭐⭐⭐⭐       | Good                              |
+| i18n              | 0              | 4             | ⭐⭐⭐⭐⭐     | Excellent                         |
+| query             | 3              | 3             | ⭐⭐⭐⭐       | Good (By Design)                  |
+| router            | 1              | 2             | ⭐⭐⭐⭐       | Good (By Design)                  |
+| ui                | 6 ⚠️           | ~30           | ⭐⭐⭐         | Needs Work (Partial cleanup done) |
+| app-runtime       | 4              | 2             | ⭐⭐⭐⭐       | Good                              |
+| providers         | 4              | 1             | ⭐⭐⭐⭐       | Good                              |
+| ui-config         | 0              | 0             | ⭐⭐⭐⭐⭐     | Excellent                         |
+| vite-config       | 0              | 4             | ⭐⭐⭐⭐⭐     | Excellent                         |
 
 ### Overall Statistics
 
@@ -553,30 +572,31 @@ No package depends on a package in a higher layer (except the identified issues 
 
 ### How easy is it to swap each technology?
 
-| Package | Current Tech | Swapping Difficulty | Notes |
-|---------|--------------|---------------------|-------|
-| query | TanStack Query | MEDIUM | Config system coupling is intentional |
-| router | TanStack Router | MEDIUM | Auth integration with query is intentional |
-| ui | Radix UI | HARD | Still has query/router coupling in components |
-| i18n | i18next | EASY | Well isolated |
-| store | Jotai/Zustand | EASY | Well isolated |
-| plugin-system | Custom | N/A | Core system |
+| Package       | Current Tech    | Swapping Difficulty | Notes                                         |
+| ------------- | --------------- | ------------------- | --------------------------------------------- |
+| query         | TanStack Query  | MEDIUM              | Config system coupling is intentional         |
+| router        | TanStack Router | MEDIUM              | Auth integration with query is intentional    |
+| ui            | Radix UI        | HARD                | Still has query/router coupling in components |
+| i18n          | i18next         | EASY                | Well isolated                                 |
+| store         | Jotai/Zustand   | EASY                | Well isolated                                 |
+| plugin-system | Custom          | N/A                 | Core system                                   |
 
 ### Recommendations for Swappability
 
 1. **Create Adapter Interfaces**
+
    ```typescript
    // Define interface for query layer
    interface DataClient {
      query<T>(query: string): Promise<T>;
      mutate<T>(mutation: string): Promise<T>;
    }
-   
+
    // Current implementation
    class TanStackQueryClient implements DataClient {
      // Implementation
    }
-   
+
    // Future implementation
    class ApolloClient implements DataClient {
      // Different implementation, same interface
@@ -600,22 +620,24 @@ No package depends on a package in a higher layer (except the identified issues 
 **Summary:** Deleted unused auth-status demo components. However, multiple other components still use query/router hooks.
 
 **Completed:**
+
 1. ✅ Deleted unused auth-status directory (AuthDebug, AuthStatus, AuthMethodsDemo)
 
 **Remaining Work:**
 The following components would need refactoring to fully decouple UI from query/router:
 
-| Component | Uses | Refactoring Approach |
-|-----------|------|---------------------|
-| `acl-editor/index.tsx` | query hooks | Pass ACL data as props |
-| `appshell/nav-main.tsx` | router hooks | Pass navigation callback |
-| `appshell/nav-user.tsx` | query hooks | Pass user data as props |
-| `datatable/data-table-body.tsx` | router hooks | Pass row click handler |
-| `datatable/data-table-empty-state.tsx` | router hooks | Pass navigation callback |
-| `metadata-fields/*.tsx` | query hooks | Pass metadata as props |
-| `select-series-combobox/` | query hooks | Pass series list as props |
+| Component                              | Uses         | Refactoring Approach      |
+| -------------------------------------- | ------------ | ------------------------- |
+| `acl-editor/index.tsx`                 | query hooks  | Pass ACL data as props    |
+| `appshell/nav-main.tsx`                | router hooks | Pass navigation callback  |
+| `appshell/nav-user.tsx`                | query hooks  | Pass user data as props   |
+| `datatable/data-table-body.tsx`        | router hooks | Pass row click handler    |
+| `datatable/data-table-empty-state.tsx` | router hooks | Pass navigation callback  |
+| `metadata-fields/*.tsx`                | query hooks  | Pass metadata as props    |
+| `select-series-combobox/`              | query hooks  | Pass series list as props |
 
 **Effort Estimate:** HIGH - Each component requires:
+
 1. Creating props interface for data/callbacks
 2. Moving hook usage to parent container components
 3. Updating all usages across apps
@@ -623,12 +645,14 @@ The following components would need refactoring to fully decouple UI from query/
 ### Decoupling @workspace/query
 
 **Step 1:** Find usages of ui-config and plugin-system
+
 ```bash
 grep -r "@workspace/ui-config" packages/query/src/
 grep -r "@workspace/plugin-system" packages/query/src/
 ```
 
 **Step 2:** Create configuration injection
+
 ```typescript
 // Instead of importing config
 export function createQueryClient(config: QueryConfig) {
@@ -637,10 +661,11 @@ export function createQueryClient(config: QueryConfig) {
 ```
 
 **Step 3:** Move configuration reading to app-runtime
+
 ```typescript
 // In app-runtime
-import { getConfig } from '@workspace/ui-config';
-import { createQueryClient } from '@workspace/query';
+import { getConfig } from "@workspace/ui-config";
+import { createQueryClient } from "@workspace/query";
 
 const client = createQueryClient(getConfig());
 ```
@@ -652,11 +677,13 @@ const client = createQueryClient(getConfig());
 Consider adding these tools:
 
 1. **dependency-cruiser** - Validate dependency rules
+
    ```bash
    npx depcruise --config .dependency-cruiser.js packages/
    ```
 
 2. **Custom script** - Check layer violations
+
    ```typescript
    // check-dependencies.ts
    // Validate packages only depend on lower layers
@@ -696,15 +723,15 @@ The query and router couplings are justified architectural decisions. The remain
 ## Changelog
 
 ### 2025-12-19 - Partial UI Package Cleanup
+
 - ✅ Removed unused auth-status demo components from @workspace/ui (AuthDebug, AuthStatus, AuthMethodsDemo)
 - ✅ Marked query->ui-config and router->query coupling as "By Design"
 - ⚠️ UI package still has query/router dependencies in other components (acl-editor, nav-main, datatable, etc.)
 - Documented remaining refactoring work needed for UI package
 
 ### 2025-11-12 - Initial Analysis
+
 - Analyzed all 14 packages
 - Identified 3 problematic couplings
 - Provided refactoring recommendations
 - Created coupling metrics
-
-

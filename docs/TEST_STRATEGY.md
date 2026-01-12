@@ -53,12 +53,14 @@ This document defines the testing strategy for the Management UI monorepo, inclu
 **Focus:** Individual functions, utilities, and components in isolation
 
 **Examples:**
+
 - Utility functions (`deepMerge`, `normalizeMetadataValue`)
 - Logger functionality
 - Plugin Manager methods
 - State management functions
 
 **Tools:**
+
 - Vitest
 - @testing-library/react (for React components)
 
@@ -67,12 +69,14 @@ This document defines the testing strategy for the Management UI monorepo, inclu
 **Focus:** Package interactions and component integration
 
 **Examples:**
+
 - Plugin system integration
 - Query hooks with mock GraphQL
 - Router protection logic
 - Component composition
 
 **Tools:**
+
 - Vitest
 - Mock Service Worker (MSW) for API mocking
 
@@ -81,12 +85,14 @@ This document defines the testing strategy for the Management UI monorepo, inclu
 **Focus:** Critical user flows and complete workflows
 
 **Examples:**
+
 - User authentication flow
 - Content upload workflow
 - Plugin registration and activation
 - App navigation
 
 **Tools:**
+
 - Playwright or Cypress (to be determined)
 
 ## Test Organization
@@ -127,12 +133,12 @@ describe('MyComponent', () => {
 ### Hook Testing
 
 ```typescript
-import { renderHook } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
-import { useMyHook } from './useMyHook';
+import { renderHook } from "@testing-library/react";
+import { describe, it, expect } from "vitest";
+import { useMyHook } from "./useMyHook";
 
-describe('useMyHook', () => {
-  it('should return expected value', () => {
+describe("useMyHook", () => {
+  it("should return expected value", () => {
     const { result } = renderHook(() => useMyHook());
     expect(result.current).toBeDefined();
   });
@@ -142,11 +148,11 @@ describe('useMyHook', () => {
 ### Utility Function Testing
 
 ```typescript
-import { describe, it, expect } from 'vitest';
-import { myUtility } from './myUtility';
+import { describe, it, expect } from "vitest";
+import { myUtility } from "./myUtility";
 
-describe('myUtility', () => {
-  it('should handle edge cases', () => {
+describe("myUtility", () => {
+  it("should handle edge cases", () => {
     expect(myUtility(input)).toEqual(expected);
   });
 });

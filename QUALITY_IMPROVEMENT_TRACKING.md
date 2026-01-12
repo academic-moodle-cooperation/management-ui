@@ -22,6 +22,7 @@ This document tracks the progress of the comprehensive code quality improvement 
 - [x] Dokumentations-Konsistenz geprüft
 
 **Deliverables:**
+
 - ✅ Alle Dokumentations-Dateien aus showcase Branch integriert
 - ✅ Konsistente Dokumentations-Struktur
 - ✅ AI_DEVELOPMENT_GUIDE.md aktuell und vollständig
@@ -65,6 +66,7 @@ This document tracks the progress of the comprehensive code quality improvement 
 - [x] Basis-Lizenz-Compliance dokumentiert
 
 **Deliverables:**
+
 - ✅ SECURITY_AUDIT_REPORT.md
 - ✅ LICENSE File
 - ✅ `.env.example` Template
@@ -112,6 +114,7 @@ This document tracks the progress of the comprehensive code quality improvement 
 - [ ] Dead Code entfernen
 
 **Deliverables:**
+
 - ✅ `.prettierrc.json`
 - ✅ `.prettierignore`
 - ✅ Erweiterte Format-Scripts
@@ -138,6 +141,7 @@ This document tracks the progress of the comprehensive code quality improvement 
 - [x] GitHub Actions Workflow erstellt (`.github/workflows/test.yml`)
 
 **Deliverables:**
+
 - ✅ Vitest Setup
 - ✅ Test-Scripts
 - ✅ CI/CD Workflow
@@ -149,6 +153,7 @@ This document tracks the progress of the comprehensive code quality improvement 
 - [x] Test-Prioritäten dokumentiert
 
 **Deliverables:**
+
 - ✅ TEST_STRATEGY.md
 
 #### 3.3 Test-Coverage aufbauen ⏳ IN PROGRESS
@@ -249,11 +254,11 @@ This document tracks the progress of the comprehensive code quality improvement 
 
 ### Current Coverage
 
-| Package | Coverage | Tests | Status |
-|---------|----------|-------|--------|
-| `packages/utils` | ~80% | 10 | ✅ Good |
-| `packages/plugin-system` | ~5% | 4 | ⏳ Started |
-| Other packages | 0% | 0 | ⏳ Pending |
+| Package                  | Coverage | Tests | Status     |
+| ------------------------ | -------- | ----- | ---------- |
+| `packages/utils`         | ~80%     | 10    | ✅ Good    |
+| `packages/plugin-system` | ~5%      | 4     | ⏳ Started |
+| Other packages           | 0%       | 0     | ⏳ Pending |
 
 ### Coverage Goals
 

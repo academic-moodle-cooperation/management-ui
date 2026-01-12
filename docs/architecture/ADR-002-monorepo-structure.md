@@ -55,21 +55,25 @@ We will use a **monorepo structure with strict dependency layers** organized as:
 ### Why Monorepo?
 
 **Code Sharing:**
+
 - Single source of truth for shared components
 - Easy to extract and refactor shared code
 - Consistent versions across all apps
 
 **Atomic Changes:**
+
 - Update multiple packages in single PR
 - See impact of changes immediately
 - Easier refactoring across boundaries
 
 **Simplified Development:**
+
 - Clone once, work on everything
 - No complex submodule management
 - Unified CI/CD pipeline
 
 **Consistent Tooling:**
+
 - Single TypeScript configuration
 - Single linting configuration
 - Single dependency management
@@ -77,21 +81,25 @@ We will use a **monorepo structure with strict dependency layers** organized as:
 ### Why Dependency Layers?
 
 **Prevents Circular Dependencies:**
+
 - Clear direction: only depend downward
 - Impossible to create cycles if followed
 
 **Enables Independent Updates:**
+
 - Core infrastructure has zero workspace deps → update anytime
 - Foundation has minimal deps → update with little impact
 - Integration layer abstracted → swappable
 - Application layer orchestrates → expected high coupling
 
 **Supports Technology Swapping:**
+
 - Each layer has well-defined boundaries
 - Integration layer abstracts third-party libs
 - Can swap implementations without affecting higher layers
 
 **Improves Understanding:**
+
 - Clear mental model
 - New developers quickly understand structure
 - AI models can reason about impact
@@ -103,11 +111,13 @@ We will use a **monorepo structure with strict dependency layers** organized as:
 **Approach:** Separate repository for each app and package
 
 **Pros:**
+
 - Complete independence
 - Different teams own different repos
 - Isolated version control
 
 **Cons:**
+
 - Complex dependency management
 - Difficult to make atomic changes
 - Submodule hell
@@ -122,11 +132,13 @@ We will use a **monorepo structure with strict dependency layers** organized as:
 **Approach:** All code in single application
 
 **Pros:**
+
 - Simple deployment
 - No dependency management
 - Easy to start
 
 **Cons:**
+
 - No code organization
 - Cannot deploy apps independently
 - Everything couples to everything
@@ -140,10 +152,12 @@ We will use a **monorepo structure with strict dependency layers** organized as:
 **Approach:** Monorepo but packages can depend on anything
 
 **Pros:**
+
 - Maximum flexibility
 - Easy to add dependencies
 
 **Cons:**
+
 - Circular dependencies inevitable
 - Hard to understand impact
 - Cannot swap technologies
@@ -157,11 +171,13 @@ We will use a **monorepo structure with strict dependency layers** organized as:
 **Approach:** Each app as completely independent service
 
 **Pros:**
+
 - Complete independence
 - Different technologies
 - Scalable deployment
 
 **Cons:**
+
 - Massive duplication
 - Inconsistent UI/UX
 - Complex integration
@@ -254,7 +270,7 @@ packages:
 {
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],  // Build dependencies first
+      "dependsOn": ["^build"], // Build dependencies first
       "outputs": ["dist/**"]
     },
     "dev": {
@@ -268,6 +284,7 @@ packages:
 ### Layer Enforcement
 
 Enforced through:
+
 1. **Documentation** - Clear rules in [COUPLING_ANALYSIS.md](/docs/COUPLING_ANALYSIS.md)
 2. **Code Review** - Check dependencies in PRs
 3. **Automated Tools** - (Future) dependency-cruiser for validation
@@ -277,6 +294,7 @@ Enforced through:
 ### Core Infrastructure (Layer 0)
 
 **Allowed Dependencies:**
+
 - External packages only
 - No workspace dependencies
 
@@ -287,6 +305,7 @@ Enforced through:
 ### Foundation (Layer 1)
 
 **Allowed Dependencies:**
+
 - Core Infrastructure
 - External packages
 
@@ -297,6 +316,7 @@ Enforced through:
 ### Integration (Layer 2)
 
 **Allowed Dependencies:**
+
 - Foundation
 - Core Infrastructure
 - External packages
@@ -308,6 +328,7 @@ Enforced through:
 ### Application (Layer 3)
 
 **Allowed Dependencies:**
+
 - All lower layers
 - External packages
 
@@ -345,5 +366,3 @@ If layer violations are found:
 ## Status History
 
 - 2025-11-12: Accepted - Initial ADR documenting current structure
-
-

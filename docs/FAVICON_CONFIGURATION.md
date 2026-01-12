@@ -27,22 +27,24 @@ Universities can override these settings in their plugin configuration:
 // plugins/tuwien/implementations/config/config.ts
 export const config = {
   app: {
-    faviconUrl: '/management-ui/assets/favicon/tuwien-favicon.svg',
-    HtmlDocumentTitle: 'TU Wien Video Management',
+    faviconUrl: "/management-ui/assets/favicon/tuwien-favicon.svg",
+    HtmlDocumentTitle: "TU Wien Video Management",
     // ... other config
-  }
+  },
 };
 ```
 
 ## How It Works
 
 ### 1. **Favicon Loading**
+
 - The application loads with a default favicon from `index.html`
 - Once the configuration is loaded, the favicon is dynamically replaced
 - The system automatically handles both SVG and ICO formats
 - Falls back to ICO if SVG is not available
 
 ### 2. **HTML Title**
+
 - The document title is set dynamically when the configuration loads
 - Includes development mode prefix `[DEV]` when running in development
 - Can be overridden by university-specific configurations
@@ -50,12 +52,14 @@ export const config = {
 ## Configuration Options
 
 ### `faviconUrl` (Optional)
+
 - **Type**: `string`
 - **Default**: `"/management-ui/assets/favicon/favicon.svg"`
 - **Description**: URL to the favicon file (SVG preferred)
 - **Example**: `"/management-ui/assets/favicon/university-logo.svg"`
 
 ### `HtmlDocumentTitle` (Required)
+
 - **Type**: `string`
 - **Default**: `"Management UI"`
 - **Description**: The HTML document title
@@ -64,30 +68,33 @@ export const config = {
 ## University Customization Examples
 
 ### TU Wien Example
+
 ```typescript
 export const config = {
   app: {
-    faviconUrl: '/management-ui/assets/favicon/tuwien-favicon.svg',
-    HtmlDocumentTitle: 'TU Wien Video Management',
-    theme: 'tuwien'
-  }
+    faviconUrl: "/management-ui/assets/favicon/tuwien-favicon.svg",
+    HtmlDocumentTitle: "TU Wien Video Management",
+    theme: "tuwien",
+  },
 };
 ```
 
 ### University of Vienna Example
+
 ```typescript
 export const config = {
   app: {
-    faviconUrl: '/management-ui/assets/favicon/univie-favicon.svg',
-    HtmlDocumentTitle: 'UniVie Video Platform',
-    theme: 'univie'
-  }
+    faviconUrl: "/management-ui/assets/favicon/univie-favicon.svg",
+    HtmlDocumentTitle: "UniVie Video Platform",
+    theme: "univie",
+  },
 };
 ```
 
 ## Asset Management
 
 ### Favicon Files
+
 Universities should place their favicon files in the plugin assets directory:
 
 ```
@@ -107,6 +114,7 @@ plugins/
 ```
 
 ### File Requirements
+
 - **SVG Favicon**: Modern, scalable, preferred format
 - **ICO Favicon**: Fallback for older browsers
 - **Web Manifest**: Optional, for PWA features
@@ -114,11 +122,13 @@ plugins/
 ## Runtime Behavior
 
 ### Development Mode
+
 - Title includes `[DEV]` prefix
 - Favicon can be changed without rebuild
 - Configuration is loaded from local development server
 
 ### Production Mode
+
 - Title uses exact configuration value
 - Favicon is served from production assets
 - Configuration is loaded from production endpoint
@@ -134,12 +144,14 @@ plugins/
 ## Troubleshooting
 
 ### Favicon Not Loading
+
 1. Check that the favicon file exists at the specified URL
 2. Verify the path includes the base path (`/management-ui/`)
 3. Ensure the file is properly copied to the build output
 4. Check browser developer tools for 404 errors
 
 ### Title Not Updating
+
 1. Verify the configuration is loading correctly
 2. Check that `HtmlDocumentTitle` is set in the config
 3. Ensure the configuration merge is working properly
@@ -157,6 +169,7 @@ If you're migrating from static favicon configuration:
 ## API Reference
 
 ### Configuration Interface
+
 ```typescript
 interface AppConfig {
   app: {
@@ -168,7 +181,9 @@ interface AppConfig {
 ```
 
 ### Dynamic Loading
+
 The favicon is loaded dynamically in `main.tsx`:
+
 - Removes existing favicon links
 - Creates new favicon link element
 - Appends to document head

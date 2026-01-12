@@ -11,11 +11,13 @@
 This package provides [core functionality description]. It is designed to [primary goal] and enables [key capabilities].
 
 **In Scope:**
+
 - [Feature/capability 1]
 - [Feature/capability 2]
 - [Feature/capability 3]
 
 **Out of Scope:**
+
 - [What this package explicitly does NOT do]
 - [Responsibilities that belong elsewhere]
 
@@ -68,9 +70,9 @@ This package provides [core functionality description]. It is designed to [prima
 
 ```typescript
 // What is exported from this package
-export { MainComponent } from './MainComponent';
-export { useHook } from './hooks/useHook';
-export type { PublicType } from './types';
+export { MainComponent } from "./MainComponent";
+export { useHook } from "./hooks/useHook";
+export type { PublicType } from "./types";
 ```
 
 ### Core API
@@ -80,18 +82,21 @@ export type { PublicType } from './types';
 **Purpose:** [Brief description]
 
 **Signature:**
+
 ```typescript
 function functionName(param: Type): ReturnType;
 ```
 
 **Parameters:**
+
 - `param` (Type): [Description]
 
 **Returns:** [Description of return value]
 
 **Example:**
+
 ```typescript
-import { functionName } from '@workspace/[package-name]';
+import { functionName } from "@workspace/[package-name]";
 
 const result = functionName(input);
 ```
@@ -135,6 +140,7 @@ export type MainType = {
 **Allowed to depend on:** [Which layers this can depend on]
 
 **Rules:**
+
 - [Dependency rule 1]
 - [Dependency rule 2]
 
@@ -164,7 +170,7 @@ If you need to replace this package:
 ### Basic Usage
 
 ```typescript
-import { Something } from '@workspace/[package-name]';
+import { Something } from "@workspace/[package-name]";
 
 // Most common use case
 const example = Something();
@@ -180,8 +186,8 @@ const example = Something();
 
 ```typescript
 // How this package works with others
-import { Something } from '@workspace/[package-name]';
-import { OtherThing } from '@workspace/other-package';
+import { Something } from "@workspace/[package-name]";
+import { OtherThing } from "@workspace/other-package";
 
 // Integration example
 ```
@@ -214,6 +220,7 @@ pnpm test
 ```
 
 **Test Coverage:**
+
 - [Component/function 1] - [Coverage description]
 - [Component/function 2] - [Coverage description]
 
@@ -225,10 +232,10 @@ pnpm test
 
 ```typescript
 // Example test structure
-import { something } from '@workspace/[package-name]';
+import { something } from "@workspace/[package-name]";
 
-describe('something', () => {
-  it('should do expected behavior', () => {
+describe("something", () => {
+  it("should do expected behavior", () => {
     // Test implementation
   });
 });
@@ -243,6 +250,7 @@ describe('something', () => {
 **Purpose:** [What can be extended]
 
 **How to extend:**
+
 ```typescript
 // Extension example
 ```
@@ -258,15 +266,18 @@ describe('something', () => {
 #### v1.0.0 → v2.0.0
 
 **Breaking Changes:**
+
 - [Change 1]: [Migration steps]
 - [Change 2]: [Migration steps]
 
 **Before:**
+
 ```typescript
 // Old way
 ```
 
 **After:**
+
 ```typescript
 // New way
 ```
@@ -366,5 +377,3 @@ When contributing to this package:
 ## License
 
 [License information - usually inherits from project root]
-
-

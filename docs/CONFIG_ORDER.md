@@ -23,11 +23,12 @@ In development, plugin configs are registered dynamically when plugins initializ
 2. **Runtime merging in `useAppConfig`** - Configs are merged at runtime using `deepMerge`
 
 **Example:**
+
 ```typescript
 // plugins/index.ts
-export * from './core';
-export * from './tuwien';   // Registered first
-export * from './univie';   // Registered last - WINS
+export * from "./core";
+export * from "./tuwien"; // Registered first
+export * from "./univie"; // Registered last - WINS
 ```
 
 In this case, `univie` config will override `tuwien` config because it's exported last.
@@ -41,11 +42,12 @@ In production, configs are merged **at build time** by the `generateConfigPlugin
 3. **No runtime merging** - The pre-merged config is used as-is
 
 **Example:**
+
 ```typescript
 // apps/management-ui-core/vite.config.ts
 const PLUGIN_CONFIGS = [
   // tuwienConfig,  // Commented out
-  univieConfig,     // ACTIVE
+  univieConfig, // ACTIVE
 ];
 ```
 
@@ -60,7 +62,7 @@ To switch from one organization to another (e.g., from `univie` to `tuwien`):
 ```typescript
 // apps/management-ui-core/vite.config.ts
 const PLUGIN_CONFIGS = [
-  tuwienConfig,     // ACTIVE
+  tuwienConfig, // ACTIVE
   // univieConfig,  // Commented out
 ];
 ```
@@ -69,9 +71,9 @@ const PLUGIN_CONFIGS = [
 
 ```typescript
 // plugins/index.ts
-export * from './core';
-export * from './univie';   // Exported first
-export * from './tuwien';   // Exported last - WINS
+export * from "./core";
+export * from "./univie"; // Exported first
+export * from "./tuwien"; // Exported last - WINS
 ```
 
 **Important:** The export order in `plugins/index.ts` should match the order in `PLUGIN_CONFIGS` to ensure dev and prod behave the same way.
@@ -166,6 +168,7 @@ cat apps/management-ui-core/dist/ui/config/management-ui/config.json | jq '.app.
 **Problem:** Changed `PLUGIN_CONFIGS` but config.json still shows old values.
 
 **Solution:** Clear the dist folder and rebuild:
+
 ```bash
 rm -rf apps/management-ui-core/dist
 pnpm --filter management-ui-core build
@@ -176,4 +179,3 @@ pnpm --filter management-ui-core build
 **Problem:** Build fails with "X is not exported by plugins/index.ts".
 
 **Solution:** Keep all plugins exported in `plugins/index.ts` for compatibility. Control which config is active using `PLUGIN_CONFIGS` in `vite.config.ts` and export order.
-

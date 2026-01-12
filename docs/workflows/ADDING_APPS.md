@@ -18,6 +18,7 @@ This guide walks through creating a new application in the Management UI monorep
 ### 1. Determine if You Need a New App
 
 Ask yourself:
+
 - **Is this distinct functionality?** Apps are for separate domains (series, episodes, upload)
 - **Could it be a plugin?** University-specific features should be plugins
 - **Could it extend an existing app?** Check if functionality fits elsewhere
@@ -25,6 +26,7 @@ Ask yourself:
 ### 2. Plan the Application
 
 Consider:
+
 - **Primary purpose** - What domain does this manage?
 - **User workflow** - What tasks will users complete?
 - **Data model** - What entities does it manage?
@@ -34,6 +36,7 @@ Consider:
 ### 3. Choose a Port Number
 
 Applications use dedicated ports for standalone mode:
+
 - 3000: management-ui-core (shell)
 - 3001: management-ui-series
 - 3002: management-ui-episodes
@@ -52,6 +55,7 @@ cd apps/management-ui-[app-name]
 ```
 
 **Naming Convention:**
+
 - Prefix with `management-ui-`
 - Use kebab-case: `management-ui-[app-name]`
 - Examples: `management-ui-series`, `management-ui-episodes`
@@ -179,11 +183,11 @@ apps/management-ui-[app-name]/
 Create `src/main.tsx` - this enables standalone mode:
 
 ```typescript
-import { bootstrapStandaloneApp } from '@workspace/app-runtime';
-import App from './App';
+import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import App from "./App";
 
 const config = {
-  baseUrl: "/[route-path]",  // e.g., "/series", "/episodes"
+  baseUrl: "/[route-path]", // e.g., "/series", "/episodes"
   appName: "management-ui-[app-name]",
 };
 
@@ -191,6 +195,7 @@ bootstrapStandaloneApp(App, "root", config);
 ```
 
 **What this provides:**
+
 - Plugin system initialization
 - Query client setup (TanStack Query)
 - Router configuration
@@ -213,7 +218,7 @@ function App() {
         <h1 className="text-3xl font-bold mb-4">
           [App Name]
         </h1>
-        
+
         {/* Your app content here */}
         <Button>Example Button</Button>
       </div>
@@ -225,6 +230,7 @@ export default App;
 ```
 
 **What AdaptiveAppWrapper does:**
+
 - Detects standalone vs integrated mode
 - Provides appropriate context
 - Handles routing differences
@@ -291,6 +297,7 @@ pnpm dev
 **Access:** `http://127.0.0.1:30XX`
 
 **Verify:**
+
 - App loads successfully
 - No console errors
 - Basic rendering works
@@ -307,7 +314,7 @@ import { useTranslation } from '@workspace/i18n';
 
 export function ExampleList() {
   const { t } = useTranslation('[app-name]');
-  
+
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold">{t('list.title')}</h2>
@@ -340,10 +347,10 @@ import { useMyData } from '../hooks/useMyData';
 
 function MyComponent() {
   const { data, isLoading, error } = useMyData();
-  
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading data</div>;
-  
+
   return <div>{/* Render data */}</div>;
 }
 ```
@@ -359,14 +366,14 @@ import { DefaultEmptyState } from '@workspace/ui';
 
 function ListView() {
   const items = []; // Your data
-  
+
   return (
     <div>
       {items.length === 0 ? (
         <ComponentResolver
           componentType="[app-name]:empty-state"
           defaultComponent={DefaultEmptyState}
-          componentProps={{ 
+          componentProps={{
             message: 'No items found',
             action: 'Create New'
           }}
@@ -380,6 +387,7 @@ function ListView() {
 ```
 
 **Common Extension Points:**
+
 - `[app-name]:empty-state` - Custom empty state
 - `[app-name]:header` - Custom app header
 - `[app-name]:action-buttons` - Custom actions
@@ -415,7 +423,7 @@ import { useTranslation } from '@workspace/i18n';
 
 function Component() {
   const { t } = useTranslation('[app-name]');
-  
+
   return <h1>{t('title')}</h1>;
 }
 ```
@@ -438,17 +446,17 @@ Option 2: Register via plugin system
 
 ```typescript
 // In a plugin
-manager.registerObject('apps:definitions', '[app-name]', {
-  id: '[app-name]',
-  name: '[App Display Name]',
-  routePath: '/[route-path]',
+manager.registerObject("apps:definitions", "[app-name]", {
+  id: "[app-name]",
+  name: "[App Display Name]",
+  routePath: "/[route-path]",
   component: MyAppComponent,
   navigation: {
-    title: '[App Name]',
-    icon: 'icon-name',
+    title: "[App Name]",
+    icon: "icon-name",
     order: 100,
-    permissions: ['app.access']
-  }
+    permissions: ["app.access"],
+  },
 });
 ```
 
@@ -462,6 +470,7 @@ pnpm dev
 **Access:** `http://127.0.0.1:3000/[route-path]`
 
 **Verify:**
+
 - App loads within core shell
 - Navigation works
 - Plugin customizations appear
@@ -478,6 +487,7 @@ cp docs/templates/APP_README_TEMPLATE.md apps/management-ui-[app-name]/README.md
 ```
 
 Follow the template sections:
+
 1. **Purpose** - What this app does
 2. **Key Features** - Main capabilities
 3. **Architecture** - How it's structured
@@ -490,6 +500,7 @@ Follow the template sections:
 10. **Deployment** - Build and deploy
 
 **See examples:**
+
 - [episodes README](/apps/management-ui-episodes/README.md) - Comprehensive example
 
 ### Step 20: Update Applications Documentation
@@ -499,8 +510,8 @@ Update [`/apps/README.md`](/apps/README.md):
 1. **Add to application catalog:**
 
 ```markdown
-| Application | Purpose | Port | Route | Documentation |
-|-------------|---------|------|-------|---------------|
+| Application                  | Purpose   | Port | Route      | Documentation                                |
+| ---------------------------- | --------- | ---- | ---------- | -------------------------------------------- |
 | **management-ui-[app-name]** | [Purpose] | 30XX | `/[route]` | [README](management-ui-[app-name]/README.md) |
 ```
 
@@ -593,12 +604,12 @@ import { useMyItems } from './hooks/useMyItems';
 
 function App() {
   const { data, isLoading } = useMyItems();
-  
+
   const columns = [
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'status', header: 'Status' },
   ];
-  
+
   return (
     <AdaptiveAppWrapper>
       <DataTable
@@ -621,21 +632,21 @@ import { useState } from 'react';
 
 function App() {
   const [formData, setFormData] = useState({ name: '', email: '' });
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Submit logic
   };
-  
+
   return (
     <AdaptiveAppWrapper>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Input 
+        <Input
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           placeholder="Name"
         />
-        <Input 
+        <Input
           value={formData.email}
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           placeholder="Email"
@@ -657,7 +668,7 @@ function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const { data: items } = useMyItems();
   const { data: detail } = useMyItemDetail(selectedId);
-  
+
   return (
     <AdaptiveAppWrapper>
       <div className="grid grid-cols-3 gap-4">
@@ -678,6 +689,7 @@ function App() {
 ### App Doesn't Load in Standalone Mode
 
 **Solutions:**
+
 1. Check port number - is it in use?
 2. Verify `bootstrapStandaloneApp` call
 3. Check Vite configuration
@@ -687,6 +699,7 @@ function App() {
 ### App Doesn't Load in Integrated Mode
 
 **Solutions:**
+
 1. Verify route registration in core
 2. Check base URL configuration
 3. Verify import paths
@@ -695,6 +708,7 @@ function App() {
 ### Styling Doesn't Work
 
 **Solutions:**
+
 1. Verify PostCSS configuration
 2. Check Tailwind CSS is imported
 3. Verify `@workspace/ui` is installed
@@ -703,6 +717,7 @@ function App() {
 ### Plugin Customizations Don't Appear
 
 **Solutions:**
+
 1. Verify ComponentResolver usage
 2. Check extension point naming
 3. Verify plugin is loaded
@@ -739,6 +754,7 @@ Before considering an app complete:
 ## Examples
 
 **Excellent Examples:**
+
 - `management-ui-episodes` - Comprehensive, well-documented
 - `management-ui-series` - Clean architecture
 - `management-ui-upload` - Complex functionality
@@ -764,5 +780,3 @@ Before considering an app complete:
 ---
 
 **Remember:** Good applications are focused, well-documented, support dual-mode execution, and provide extension points for customization.
-
-

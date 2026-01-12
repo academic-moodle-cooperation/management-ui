@@ -40,12 +40,12 @@ plugins/[university-name]/
 
 ### Implemented Extension Points
 
-| Extension Point | Implementation | Priority | Description |
-|----------------|----------------|----------|-------------|
-| `app:header` | [HeaderComponent] | 10 | [Description] |
-| `app:footer` | [FooterComponent] | 10 | [Description] |
-| `app:sidebar` | [SidebarComponent] | 10 | [Description] |
-| `[extension:point]` | [Component] | [N] | [Description] |
+| Extension Point     | Implementation     | Priority | Description   |
+| ------------------- | ------------------ | -------- | ------------- |
+| `app:header`        | [HeaderComponent]  | 10       | [Description] |
+| `app:footer`        | [FooterComponent]  | 10       | [Description] |
+| `app:sidebar`       | [SidebarComponent] | 10       | [Description] |
+| `[extension:point]` | [Component]        | [N]      | [Description] |
 
 ### Implementation Details
 
@@ -58,10 +58,12 @@ plugins/[university-name]/
 **File:** [`implementations/[feature]/`](implementations/[feature]/)
 
 **Features:**
+
 - [Feature 1]
 - [Feature 2]
 
 **Example:**
+
 ```typescript
 // How this implementation is used
 ```
@@ -92,10 +94,10 @@ plugins/[university-name]/
 // plugins/[university-name]/implementations/config/config.ts
 export const config = {
   branding: {
-    primaryColor: '#hexcolor',
-    secondaryColor: '#hexcolor',
-    logo: '/path/to/logo',
-    favicon: '/path/to/favicon',
+    primaryColor: "#hexcolor",
+    secondaryColor: "#hexcolor",
+    logo: "/path/to/logo",
+    favicon: "/path/to/favicon",
   },
   features: {
     // Feature flags
@@ -132,6 +134,7 @@ pnpm dev
 Access at: `http://127.0.0.1:[port]`
 
 **Standalone Features:**
+
 - Test implementations in isolation
 - Fast hot reload
 - Full plugin context
@@ -206,9 +209,9 @@ This plugin implements the following extension points:
 ```css
 /* University colors */
 :root {
-  --primary: [hsl values];        /* Primary brand color */
-  --secondary: [hsl values];      /* Secondary brand color */
-  --accent: [hsl values];         /* Accent color */
+  --primary: [hsl values]; /* Primary brand color */
+  --secondary: [hsl values]; /* Secondary brand color */
+  --accent: [hsl values]; /* Accent color */
 }
 ```
 
@@ -242,9 +245,10 @@ implementations/[feature]/locales/
 
 1. Add translations to locale files
 2. Use translation hook:
+
    ```typescript
    import { useTranslation } from '@workspace/i18n';
-   
+
    function Component() {
      const { t } = useTranslation('[namespace]');
      return <div>{t('key')}</div>;
@@ -294,18 +298,18 @@ export const [UniversityName]Plugin = createPlugin({
   namespace: '[university-name]',
   type: 'university-extension',
   version: '1.0.0',
-  
+
   initialize(manager) {
     // Register all implementations
     implementations.forEach(impl => {
       impl.register(manager);
     });
   },
-  
+
   activate() {
     console.log('[University Name] plugin activated');
   },
-  
+
   deactivate() {
     console.log('[University Name] plugin deactivated');
   }
@@ -317,11 +321,7 @@ export const [UniversityName]Plugin = createPlugin({
 ```typescript
 // plugins/[university-name]/implementations/[feature]/index.ts
 export function register(manager: PluginManager) {
-  manager.registerComponent(
-    '[extension:point]',
-    ComponentName,
-    { priority: 10 }
-  );
+  manager.registerComponent("[extension:point]", ComponentName, { priority: 10 });
 }
 ```
 
@@ -380,10 +380,12 @@ pnpm build
 #### v1.x.x → v2.x.x
 
 **Breaking Changes:**
+
 - [Change 1]
 - [Change 2]
 
 **Migration Steps:**
+
 1. [Step 1]
 2. [Step 2]
 
@@ -398,6 +400,7 @@ pnpm build
 **Cause:** [Why it happens]
 
 **Solution:**
+
 1. [Step 1]
 2. [Step 2]
 
@@ -408,6 +411,7 @@ pnpm build
 **Cause:** [Why it happens]
 
 **Solution:**
+
 1. [Step 1]
 2. [Step 2]
 
@@ -458,9 +462,8 @@ pnpm build
 ## Changelog
 
 ### 1.0.0 (YYYY-MM-DD)
+
 - Initial plugin release
 - [Feature 1]
 - [Feature 2]
 - [Feature 3]
-
-

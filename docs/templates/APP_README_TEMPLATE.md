@@ -92,11 +92,13 @@ management-ui-[app-name]
 ### Coupling Analysis
 
 **Integration Points:**
+
 - **Core App:** [How this app integrates with core shell]
 - **Other Apps:** [Dependencies on other apps, if any]
 - **Backend API:** [GraphQL endpoints used]
 
 **Loose Coupling Strategies:**
+
 - [Strategy 1]
 - [Strategy 2]
 
@@ -128,6 +130,7 @@ pnpm dev
 Access at: `http://127.0.0.1:[port]`
 
 **Standalone Features:**
+
 - Full provider context (router, auth, plugins, query client)
 - Fast hot reload
 - Independent from core shell
@@ -178,10 +181,12 @@ GRAPHQL_ENDPOINT=/graphql
 **URL:** `/[route]`
 
 **Features:**
+
 - [Feature 1]
 - [Feature 2]
 
 **Screenshot/Diagram:**
+
 ```
 [ASCII diagram or description]
 ```
@@ -214,6 +219,7 @@ src/
 - **Form State:** [Form management approach]
 
 **State Flow:**
+
 ```
 [Diagram or description of state flow]
 ```
@@ -263,7 +269,7 @@ import { use[DataHook] } from '@workspace/query';
 
 function Component() {
   const { data, isLoading, error } = use[DataHook]();
-  
+
   // Component logic
 }
 ```
@@ -288,9 +294,10 @@ This app provides the following extension points for customization:
 **Default Implementation:** [What happens by default]
 
 **Customization Example:**
+
 ```typescript
 // In university plugin
-manager.registerComponent('[app-name]:[extension-point]', CustomComponent);
+manager.registerComponent("[app-name]:[extension-point]", CustomComponent);
 ```
 
 ### University Customization Examples
@@ -322,9 +329,9 @@ manager.registerComponent('[app-name]:[extension-point]', CustomComponent);
 // Route definition example
 const routes = [
   {
-    path: '/[route]',
+    path: "/[route]",
     component: ViewComponent,
-    permissions: ['permission.required'],
+    permissions: ["permission.required"],
   },
 ];
 ```
@@ -538,9 +545,11 @@ apps/management-ui-[app-name]/
 ## Changelog
 
 ### [Next Version]
+
 - [Upcoming features or changes]
 
 ### 1.0.0 (YYYY-MM-DD)
+
 - Initial release
 - [Feature 1]
 - [Feature 2]
@@ -548,5 +557,3 @@ apps/management-ui-[app-name]/
 ## License
 
 [License information]
-
-

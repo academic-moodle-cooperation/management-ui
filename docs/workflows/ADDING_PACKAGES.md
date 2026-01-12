@@ -18,6 +18,7 @@ This guide walks through creating a new workspace package in the Management UI m
 ### 1. Verify the Need
 
 Ask yourself:
+
 - **Does this belong in a package?** Or should it be in an app or plugin?
 - **Can existing packages be extended?** Check if functionality fits elsewhere
 - **Is it reusable?** Packages should be used by multiple apps/plugins
@@ -62,6 +63,7 @@ cd packages/[package-name]
 ```
 
 **Naming Convention:**
+
 - Use kebab-case: `package-name`
 - Descriptive names: `plugin-system`, `app-runtime`, `ui-config`
 - Add suffix for type if helpful: `-config`, `-runtime`, `-system`
@@ -103,6 +105,7 @@ Edit `package.json` with these essentials:
 ```
 
 **Important:**
+
 - Use `@workspace/` scope
 - Set `"private": true`
 - Set `"type": "module"`
@@ -127,6 +130,7 @@ Create `tsconfig.json`:
 ```
 
 **Choose the right base config:**
+
 - `react-library.json` - React components/hooks
 - `node-esm-library.json` - Node.js utilities
 - `base.json` - Generic TypeScript
@@ -148,11 +152,11 @@ Create `src/index.ts` as the main export file:
  */
 
 // Export main functionality
-export { default as MainComponent } from './MainComponent';
-export { useMainHook } from './hooks/useMainHook';
+export { default as MainComponent } from "./MainComponent";
+export { useMainHook } from "./hooks/useMainHook";
 
 // Export types
-export type { MainType, AnotherType } from './types';
+export type { MainType, AnotherType } from "./types";
 ```
 
 **Directory Structure:**
@@ -194,6 +198,7 @@ pnpm add @workspace/[other-package] --filter @workspace/[your-package]
 ```
 
 **Before adding workspace dependencies:**
+
 1. **Check layer rules** - Can you depend on this package?
 2. **Justify the need** - Is this dependency necessary?
 3. **Consider injection** - Can it be passed as a parameter instead?
@@ -211,6 +216,7 @@ cp docs/templates/PACKAGE_README_TEMPLATE.md packages/[package-name]/README.md
 ```
 
 Edit the README.md following the template sections:
+
 1. **Purpose & Scope** - What and why
 2. **Architecture & Design Decisions** - How and why
 3. **API Surface** - Public exports
@@ -221,6 +227,7 @@ Edit the README.md following the template sections:
 8. **Migration Guide** - Breaking changes
 
 **See examples:**
+
 - [plugin-system README](/packages/plugin-system/docs/README.md) - Excellent example
 - [ui README](/packages/ui/README.md) - Comprehensive example
 
@@ -243,6 +250,7 @@ pnpm install
 ```
 
 This will:
+
 - Install external dependencies
 - Link workspace dependencies
 - Set up symlinks
@@ -287,7 +295,7 @@ export function createDataFetcher(config: Config): DataFetcher {
 }
 
 // BAD: Exposing third-party types
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient } from "@tanstack/react-query";
 export function createFetcher(): QueryClient {
   // Tight coupling to implementation
 }
@@ -320,12 +328,12 @@ Create test files:
 
 ```typescript
 // __tests__/myFunction.test.ts
-import { describe, it, expect } from 'vitest';
-import { myFunction } from '../src';
+import { describe, it, expect } from "vitest";
+import { myFunction } from "../src";
 
-describe('myFunction', () => {
-  it('should process input correctly', () => {
-    expect(myFunction('test')).toBe('expected');
+describe("myFunction", () => {
+  it("should process input correctly", () => {
+    expect(myFunction("test")).toBe("expected");
   });
 });
 ```
@@ -351,8 +359,8 @@ Update [`/packages/README.md`](/packages/README.md):
 1. **Add to package catalog**:
 
 ```markdown
-| Package | Purpose | Dependencies | Documentation |
-|---------|---------|--------------|---------------|
+| Package            | Purpose   | Dependencies   | Documentation                      |
+| ------------------ | --------- | -------------- | ---------------------------------- |
 | **[package-name]** | [Purpose] | [Dependencies] | [README]([package-name]/README.md) |
 ```
 
@@ -396,9 +404,9 @@ Create a test usage in an app or plugin:
 
 ```typescript
 // In apps/management-ui-core/src/test.tsx
-import { myFunction } from '@workspace/[package-name]';
+import { myFunction } from "@workspace/[package-name]";
 
-console.log(myFunction('test'));
+console.log(myFunction("test"));
 ```
 
 Run the app:
@@ -409,6 +417,7 @@ pnpm dev
 ```
 
 Verify:
+
 - Package is correctly imported
 - No type errors
 - Functionality works as expected
@@ -423,6 +432,7 @@ If you've added dependencies, update [`/docs/COUPLING_ANALYSIS.md`](/docs/COUPLI
 **Coupling Score:** ⭐⭐⭐⭐ (4/5)
 
 **Dependencies:**
+
 - @workspace/[dependency] - [Why needed]
 
 **Analysis:** [Coupling analysis]
@@ -462,6 +472,7 @@ export function parseDate(str: string): Date {
 ```
 
 **Characteristics:**
+
 - Layer: Core Infrastructure
 - No workspace dependencies
 - Pure functions
@@ -471,20 +482,21 @@ export function parseDate(str: string): Date {
 
 ```typescript
 // packages/my-hooks/src/useMyHook.ts
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 export function useMyHook(initialValue: string) {
   const [value, setValue] = useState(initialValue);
-  
+
   useEffect(() => {
     // Effect logic
   }, [value]);
-  
+
   return [value, setValue] as const;
 }
 ```
 
 **Characteristics:**
+
 - Layer: Foundation or Integration
 - React as peer dependency
 - Export hooks from index
@@ -500,12 +512,13 @@ export interface MyConfig {
 }
 
 export const defaultConfig: MyConfig = {
-  apiUrl: 'https://api.example.com',
+  apiUrl: "https://api.example.com",
   timeout: 5000,
 };
 ```
 
 **Characteristics:**
+
 - Layer: Core Infrastructure
 - No dependencies
 - Type definitions
@@ -518,6 +531,7 @@ export const defaultConfig: MyConfig = {
 **Error:** `Cannot find package '@workspace/[package-name]'`
 
 **Solutions:**
+
 1. Run `pnpm install` from root
 2. Check package name in `package.json`
 3. Verify `pnpm-workspace.yaml` includes package directory
@@ -528,6 +542,7 @@ export const defaultConfig: MyConfig = {
 **Error:** TypeScript can't find types
 
 **Solutions:**
+
 1. Verify `tsconfig.json` extends correct base
 2. Check `types` field in `package.json`
 3. Ensure `@types/` packages are installed
@@ -538,6 +553,7 @@ export const defaultConfig: MyConfig = {
 **Error:** Build fails with circular dependency
 
 **Solutions:**
+
 1. Review dependency graph
 2. Move shared code to lower layer
 3. Use dependency inversion (interfaces)
@@ -548,6 +564,7 @@ export const defaultConfig: MyConfig = {
 **Error:** Package fails to build
 
 **Solutions:**
+
 1. Check TypeScript configuration
 2. Verify all imports are correct
 3. Ensure dependencies are installed
@@ -584,11 +601,13 @@ Before considering a package complete:
 ## Examples
 
 **Excellent Examples:**
+
 - `@workspace/plugin-system` - Foundation layer, well-documented
 - `@workspace/utils` - Core infrastructure, zero workspace deps
 - `@workspace/i18n` - Foundation layer, single responsibility
 
 **Complex Examples:**
+
 - `@workspace/ui` - Integration layer, many components
 - `@workspace/app-runtime` - Application layer, orchestration
 
@@ -613,5 +632,3 @@ Before considering a package complete:
 ---
 
 **Remember:** Good packages are small, focused, well-documented, and loosely coupled. When in doubt, favor simplicity and clear boundaries.
-
-
