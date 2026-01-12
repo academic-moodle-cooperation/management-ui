@@ -4,13 +4,15 @@
  * Provides common testing helpers and utilities that can be shared across packages.
  */
 
+import { vi, type Mock } from "vitest";
+
 /**
  * Creates a mock implementation that can be used in tests
  */
 export function createMock<T extends (...args: unknown[]) => unknown>(
   implementation?: T
-): jest.Mock<T> {
-  return jest.fn(implementation) as jest.Mock<T>;
+): Mock<T> {
+  return vi.fn(implementation) as Mock<T>;
 }
 
 /**
@@ -22,9 +24,13 @@ export function wait(ms: number): Promise<void> {
 
 /**
  * Creates a promise that resolves after the next tick
+ * Uses setTimeout(0) as a browser-compatible alternative to process.nextTick
  */
 export function nextTick(): Promise<void> {
-  return new Promise((resolve) => process.nextTick(resolve));
+  return new Promise((resolve) => {
+    // Use setTimeout(0) as a browser-compatible alternative to process.nextTick
+    setTimeout(resolve, 0);
+  });
 }
 
 /**

@@ -63,7 +63,9 @@ describe("assetUrl utilities", () => {
     });
 
     it("should return empty string if all values are null/undefined", () => {
-      expect(resolveFirstAssetUrl([null, undefined, null])).toBe("");
+      // Note: null is not part of the function signature, but we test it for runtime safety
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect(resolveFirstAssetUrl([null, undefined, null] as any)).toBe("");
     });
   });
 });

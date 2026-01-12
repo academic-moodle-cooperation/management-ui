@@ -17,9 +17,13 @@ class Logger {
 
   constructor() {
     // Check Node.js environment first (for build-time packages like vite-config)
-    const nodeEnv =
-      typeof process !== "undefined" &&
-      (process.env.NODE_ENV === "development" || process.env.DEV === "true");
+    // Use type guard to safely check process in both Node.js and browser environments
+    let nodeEnv = false;
+    if (typeof process !== "undefined" && process !== null) {
+      const proc = process as { env?: { NODE_ENV?: string; DEV?: string } };
+      nodeEnv =
+        proc.env?.NODE_ENV === "development" || proc.env?.DEV === "true";
+    }
 
     // Check Vite environment (for runtime packages)
     let viteEnv = false;

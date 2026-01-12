@@ -4,7 +4,7 @@ import { QueryProvider } from "@workspace/query";
 import { PluginProvider, RendererProvider } from "@workspace/plugin-system";
 import { AuthProvider, AuthInitializer, RouterProvider } from "@workspace/router";
 import { ErrorBoundary } from "@workspace/ui/components/errors/general-error";
-import type { RouteComponent } from "@tanstack/react-router";
+import type { RouteComponent, AnyRoute } from "@tanstack/react-router";
 import { AppRuntimeProvider, useAppRuntime } from "./AppRuntimeProvider";
 import type { AppRuntimeConfig } from "./types";
 import type { AnyRouter } from "@tanstack/react-router";
@@ -40,7 +40,7 @@ const createStandaloneDynamicRouter = (
   });
 
   // Create routes for the specific app
-  const appRoutes: any[] = [];
+  const appRoutes: AnyRoute[] = [];
 
   // Main route that renders the app component
   const mainRoute = createRoute({

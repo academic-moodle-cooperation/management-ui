@@ -11,7 +11,7 @@ import {
   Container,
 } from "@workspace/ui/components";
 
-export interface TableSidebarProps {
+export interface TableSidebarProps<T = unknown> {
   /** Whether the sidebar is open */
   isOpen: boolean;
   /** Callback when the sidebar is closed */
@@ -21,7 +21,7 @@ export interface TableSidebarProps {
   /** Sidebar description */
   description?: string;
   /** Selected item to display/edit */
-  selectedItem?: any;
+  selectedItem?: T;
   /** Main content renderer */
   renderContent: React.ReactNode;
   /** Optional affix content, shown below the main content */
@@ -37,7 +37,7 @@ export interface TableSidebarProps {
 /**
  * Reusable sidebar component for table detail views
  */
-export const TableSidebar: React.FC<TableSidebarProps> = ({
+export function TableSidebar<T = unknown>({
   isOpen,
   onClose,
   heading,
@@ -47,7 +47,7 @@ export const TableSidebar: React.FC<TableSidebarProps> = ({
   renderInfo,
   renderFooter,
   modal = false,
-}) => {
+}: TableSidebarProps<T>) {
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       onClose();
@@ -81,4 +81,4 @@ export const TableSidebar: React.FC<TableSidebarProps> = ({
       </SheetContent>
     </Sheet>
   );
-};
+}

@@ -5,7 +5,7 @@ import {
   type PluginNamespaceItem,
   getAppConfig,
 } from "@workspace/ui-config";
-import { useRegistry } from "@workspace/plugin-system";
+import { useRegistry, type PluginManager } from "@workspace/plugin-system";
 import { useMemo } from "react";
 import { deepMerge, resolveAssetUrl, logger } from "@workspace/utils";
 
@@ -24,7 +24,7 @@ const fetchAndMergeConfig = async (configUrl?: string): Promise<AppConfig> => {
 };
 
 // Non-hook version for use during plugin initialization
-export function getAppConfigSync(pluginManager?: any): AppConfig {
+export function getAppConfigSync(pluginManager?: PluginManager): AppConfig {
   const configUrl = defaultConfig.productionConfigUrl || undefined;
   const isDev = import.meta.env.DEV;
 
