@@ -88,5 +88,6 @@ export const copyText = async (text: string) => {
 export { resolveAssetUrl, resolveFirstAssetUrl } from "./assetUrl.js";
 export { deepMerge } from "./deepMerge.js";
 export { logger, Logger } from "./logger.js";
-export type { LogLevel, LogContext } from "./logger.js";
 export { normalizeMetadataValue, normalizeMetadataObject } from "./normalizeMetadata.js";
+
+export type { LogLevel, LogContext } from "./logger.js";
