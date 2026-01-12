@@ -1,8 +1,75 @@
 # @workspace/utils
 
-Shared utility functions and helper methods used across the Management UI ecosystem. This package provides common functionality for data processing, formatting, and browser interactions.
+Shared utility functions and helper methods used across the Management UI ecosystem. This package provides common functionality for data processing, formatting, asset resolution, and browser interactions.
 
 ## 📦 Utilities
+
+### Asset URL Resolution
+
+Resolve asset paths dynamically based on the execution context (dev vs production):
+
+```typescript
+import { resolveAssetUrl, resolveFirstAssetUrl } from '@workspace/utils';
+
+// Resolve a single asset URL
+const logoUrl = resolveAssetUrl('assets/logo.svg');
+// Dev:  '/management-ui/dist/assets/logo.svg'
+// Prod: '/management-ui/assets/logo.svg'
+
+// With fallback
+const logo = resolveAssetUrl(config.app.logoUrl, 'assets/favicon/favicon.svg');
+
+// Resolve first available from candidates
+const preferredLogo = resolveFirstAssetUrl(
+  [config.app.orgLogoUrl, config.app.logoUrl],
+  'assets/favicon/favicon.svg'
+);
+
+// Absolute URLs pass through unchanged
+const external = resolveAssetUrl('https://example.com/logo.png');
+// Returns: 'https://example.com/logo.png'
+```
+
+**Features:**
+- Automatically detects dev vs production mode
+- Handles base path detection from DOM scripts
+- Preserves absolute URLs (http/https/data)
+- Adds `/dist/` prefix in development for vite-plugin-static-copy compatibility
+
+### Deep Merge
+
+Immutable deep merging for configuration objects:
+
+```typescript
+import { deepMerge } from '@workspace/utils';
+
+const base = {
+  app: { theme: 'default', features: { darkMode: false } },
+  api: { timeout: 5000 }
+};
+
+const override = {
+  app: { theme: 'univie', features: { darkMode: true } }
+};
+
+const merged = deepMerge(base, override);
+// Result:
+// {
+//   app: { theme: 'univie', features: { darkMode: true } },
+//   api: { timeout: 5000 }
+// }
+
+// Multiple sources (later wins)
+const result = deepMerge(defaults, pluginConfig1, pluginConfig2);
+```
+
+**Merge Behavior:**
+- **Objects**: Merged recursively
+- **Arrays**: Replaced (not concatenated)
+- **Primitives**: Later values override earlier ones
+- **Undefined**: Skipped (doesn't override existing values)
+
+This is used internally by the configuration system to merge plugin configs. See [Configuration Generation](/docs/CONFIG_GENERATION.md) for details.
 
 ### Duration Handling
 
@@ -70,6 +137,20 @@ const cleaned = normalizeMetadataObject(metadata);
 
 ## 🔧 Features
 
+### Asset Management
+
+- **Dynamic path resolution**: Automatically handles dev vs production paths
+- **Base path detection**: Discovers base URL from DOM or environment
+- **Fallback chains**: Specify multiple candidates with default fallback
+- **URL preservation**: Absolute URLs pass through unchanged
+
+### Configuration Merging
+
+- **Immutable operations**: Returns new objects, never mutates inputs
+- **Recursive merging**: Deeply nested objects are merged correctly
+- **Array handling**: Arrays are replaced, not concatenated (intentional for config overrides)
+- **Undefined safety**: Undefined values don't override existing properties
+
 ### Browser Compatibility
 
 - **Cross-platform clipboard**: Handles iOS, desktop, and legacy browsers
@@ -99,6 +180,41 @@ import { parseDuration, copyText, sha256 } from '@workspace/utils';
 ```
 
 ### Common Patterns
+
+#### Logo Component with Fallback
+
+```typescript
+import { resolveFirstAssetUrl } from '@workspace/utils';
+import { useAppConfig } from '@workspace/query';
+
+function Logo() {
+  const { config } = useAppConfig();
+  
+  const logoSrc = resolveFirstAssetUrl(
+    [config.app.orgLogoUrl, config.app.logoUrl],
+    'assets/favicon/favicon.svg'
+  );
+  
+  return <img src={logoSrc} alt="Logo" className="h-10 w-auto" />;
+}
+```
+
+#### Configuration Merging
+
+```typescript
+import { deepMerge } from '@workspace/utils';
+
+const defaultConfig = {
+  app: { theme: 'default', features: {} }
+};
+
+const universityConfig = {
+  app: { theme: 'univie', features: { calendar: true } }
+};
+
+const merged = deepMerge(defaultConfig, universityConfig);
+// { app: { theme: 'univie', features: { calendar: true } } }
+```
 
 #### Video Duration Display
 
@@ -147,7 +263,9 @@ async function handleCopyLink(url: string) {
 ```
 packages/utils/
 ├── src/
-│   └── index.ts             # All utility functions
+│   ├── index.ts             # Main exports
+│   ├── assetUrl.ts          # Asset URL resolution utilities
+│   └── deepMerge.ts         # Deep merge utility
 ├── package.json
 ├── tsconfig.json
 └── README.md

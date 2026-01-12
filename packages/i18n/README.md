@@ -142,10 +142,95 @@ The system now uses generic terminology instead of university-specific terms:
 
 ## Plugin Translation Guidelines
 
-1. Use descriptive namespace names: `organization-footer` not `footer`
+### Adding Translations for a New Plugin
+
+**CRITICAL FOR AI MODELS:** When creating a new plugin with translations, you MUST complete these steps:
+
+#### Step 1: Register the Namespace
+
+Add your namespace to the `ns` array in `packages/i18n/src/useTranslation.tsx`:
+
+```typescript
+// packages/i18n/src/useTranslation.tsx
+i18n.init({
+  // ...
+  ns: ["common", "series", "episodes", "upload", "playlists"], // Add your namespace here!
+  // ...
+});
+```
+
+**If you skip this step, translations will NOT load and you'll see translation keys instead of text.**
+
+#### Step 2: Create Translation Files
+
+Create translation files in your plugin:
+
+```
+plugins/my-plugin/
+└── locales/
+    └── my-plugin/           # Namespace name must match
+        ├── en.json
+        └── de.json
+```
+
+Example `en.json`:
+```json
+{
+  "my-plugin": {
+    "heading": "My Plugin",
+    "description": "Plugin description here"
+  }
+}
+```
+
+#### Step 3: Use Translations in Components
+
+```typescript
+import { useI18n } from '@workspace/i18n';
+
+function MyPluginComponent() {
+  const { t } = useI18n();
+  
+  return (
+    <div>
+      <h1>{t('my-plugin:heading')}</h1>
+      <p>{t('my-plugin:description')}</p>
+    </div>
+  );
+}
+```
+
+### Complete Checklist for Plugin Translations
+
+- [ ] Namespace added to `packages/i18n/src/useTranslation.tsx` in the `ns` array
+- [ ] `locales/{namespace}/en.json` created in plugin directory
+- [ ] `locales/{namespace}/de.json` created in plugin directory
+- [ ] JSON structure matches namespace (e.g., `{ "playlists": { ... } }`)
+- [ ] Components use `t('namespace:key')` syntax
+
+### Common Translation Keys
+
+Add these to `common` namespace (not your plugin namespace) for reuse:
+
+```json
+{
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "edit": "Edit",
+  "create": "Create",
+  "add": "Add",
+  "remove": "Remove",
+  "action": "Action"
+}
+```
+
+### Best Practices
+
+1. Use descriptive namespace names: `playlists` not `pl`
 2. Keep translations scoped to your plugin
-3. Use the `usePluginTranslation` hook for automatic loading
-4. Test translations load correctly in plugin context
+3. Reuse `common` namespace keys for standard UI (save, cancel, etc.)
+4. Test translations load correctly by checking the browser console for missing key warnings
 
 ## Migration from Legacy System
 
