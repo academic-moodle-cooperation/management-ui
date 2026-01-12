@@ -15,7 +15,9 @@ describe("assetUrl utilities", () => {
 
   describe("resolveAssetUrl", () => {
     it("should return empty string for null or undefined", () => {
-      expect(resolveAssetUrl(null)).toBe("");
+      // Note: null is not part of the function signature, but we test it for runtime safety
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect(resolveAssetUrl(null as any)).toBe("");
       expect(resolveAssetUrl(undefined)).toBe("");
     });
 
@@ -56,7 +58,9 @@ describe("assetUrl utilities", () => {
     });
 
     it("should skip null/undefined values and return first valid URL", () => {
-      const urls = [null, undefined, "/image.jpg", "/image2.jpg"];
+      // Note: null is not part of the function signature, but we test it for runtime safety
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const urls = [null, undefined, "/image.jpg", "/image2.jpg"] as any;
       const result = resolveFirstAssetUrl(urls);
       expect(result).toBeTruthy();
       expect(result).toContain("image.jpg");
