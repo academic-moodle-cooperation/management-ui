@@ -1,16 +1,23 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { createRouter, createRoute, createRootRoute, Outlet, useRouterState } from '@tanstack/react-router';
-import type { AnyRoute } from '@tanstack/react-router';
-import { usePluginManager, getAllApps } from '@workspace/plugin-system';
-import { useAppConfig } from '@workspace/query';
-import { getCachedAppConfig } from '@workspace/query';
-import { ProtectedRoute } from '@workspace/router';
-import { ComponentResolver } from '@workspace/plugin-system';
+import React, { useState, useEffect, lazy, Suspense } from "react";
+import {
+  createRouter,
+  createRoute,
+  createRootRoute,
+  Outlet,
+  useRouterState,
+} from "@tanstack/react-router";
+import type { AnyRoute } from "@tanstack/react-router";
+import { usePluginManager, getAllApps } from "@workspace/plugin-system";
+import { useAppConfig } from "@workspace/query";
+import { getCachedAppConfig } from "@workspace/query";
+import { ProtectedRoute } from "@workspace/router";
+import { ComponentResolver } from "@workspace/plugin-system";
+import { logger } from "@workspace/utils";
 
 // Import components from the core app
-import { ErrorBoundary, ModuleErrorFallback, NotFoundError, CoreAppShellLayout } from './index';
-import { DefaultLandingPage, AppLoader, Container } from '@workspace/ui/components';
-import { createCommonRoutes } from '../shared/commonRoutes';
+import { ErrorBoundary, ModuleErrorFallback, NotFoundError, CoreAppShellLayout } from "./index";
+import { DefaultLandingPage, AppLoader, Container } from "@workspace/ui/components";
+import { createCommonRoutes } from "../shared/commonRoutes";
 
 // Base root route for the application
 const appCoreRootRoute = createRootRoute({
@@ -20,16 +27,6 @@ const appCoreRootRoute = createRootRoute({
 
 // Create common routes using shared utility
 const commonRoutes = createCommonRoutes(appCoreRootRoute);
-
-
-
-
-
-
-
-
-
-
 
 // Interfaces for dynamic modules
 interface ClientDynamicModule {
@@ -57,28 +54,36 @@ const getDynamicModules = async (): Promise<ClientDynamicModule[]> => {
     const isDev = import.meta.env.DEV;
     const appConfig = await getCachedAppConfig();
     const productionAppPluginUrl = appConfig?.productionAppPluginUrl;
-    const dynamicModulesUrl = isDev ? `${baseUrl.replace(/\/$/, '')}/dynamic-modules.json` : `${productionAppPluginUrl}`;
+    const dynamicModulesUrl = isDev
+      ? `${baseUrl.replace(/\/$/, "")}/dynamic-modules.json`
+      : `${productionAppPluginUrl}`;
 
     const response = await fetch(dynamicModulesUrl);
     if (!response.ok) {
-      console.error('Failed to fetch dynamic modules configuration:', response.statusText);
+      logger.error("Failed to fetch dynamic modules configuration", {
+        statusText: response.statusText,
+        url: dynamicModulesUrl,
+      });
       return [];
     }
     const config: FetchedModulesConfig = await response.json();
 
     return config.plugins.map((plugin) => {
-      const routePath = plugin.path.replace('/static/plugins', '');
+      const routePath = plugin.path.replace("/static/plugins", "");
       const componentImportPath = /* @vite-ignore */ `@monorepo-apps/${plugin.name}/src/App`;
 
       return {
         routePath,
-        componentName: 'default',
+        componentName: "default",
         componentImportPath: componentImportPath,
         isPluginApp: false,
       };
     });
   } catch (error) {
-    console.error('Error fetching or parsing dynamic modules configuration:', error);
+    logger.error(
+      "Error fetching or parsing dynamic modules configuration",
+      error instanceof Error ? error : new Error(String(error))
+    );
     return [];
   }
 };
@@ -90,13 +95,16 @@ const getPluginBasedApps = (manager: any): ClientDynamicModule[] => {
 
     return pluginApps.map((app) => ({
       routePath: app.routePath,
-      componentName: 'default',
-      componentImportPath: '', // Not used for plugin apps
+      componentName: "default",
+      componentImportPath: "", // Not used for plugin apps
       isPluginApp: true,
       appDefinition: app,
     }));
   } catch (error) {
-    console.error('Error getting plugin-based apps:', error);
+    logger.error(
+      "Error getting plugin-based apps",
+      error instanceof Error ? error : new Error(String(error))
+    );
     return [];
   }
 };
@@ -129,7 +137,11 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
             const pluginConfig = config?.plugins?.[app.appDefinition.id];
             return pluginConfig;
           } catch (err) {
-            console.error(`Error fetching/processing config for plugin app ${app.appDefinition.id} in loader:`, err);
+            logger.error(
+              `Error fetching/processing config for plugin app ${app.appDefinition.id} in loader`,
+              err instanceof Error ? err : new Error(String(err)),
+              { appId: app.appDefinition.id }
+            );
             throw err;
           }
         },
@@ -138,7 +150,7 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
       // Create a subpath route for handling additional path segments
       const pluginSubRoute = createRoute({
         getParentRoute: () => pluginRoute,
-        path: '$routeSubPath',
+        path: "$routeSubPath",
         component: () => (
           <ProtectedRoute loadingComponent={AppLoader}>
             <ErrorBoundary fallback={<ModuleErrorFallback name={app.appDefinition.name} />}>
@@ -156,13 +168,13 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
       return pluginRoute;
     } else {
       // Handle dynamic modules (existing logic)
-      const parts = app.componentImportPath.split('/');
+      const parts = app.componentImportPath.split("/");
       const pluginname = parts.length > 1 ? parts[1] : "";
 
       const DynamicComponent = lazy(async () => {
         if (!pluginname) {
           const errorMsg = `Could not derive plugin name from path: ${app.componentImportPath}`;
-          console.error(errorMsg);
+          logger.error(errorMsg, { componentImportPath: app.componentImportPath });
           return { default: () => <ModuleErrorFallback name={errorMsg} /> };
         }
 
@@ -171,8 +183,16 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
           return await import(`@monorepo-apps/${pluginname}/src/App.tsx`);
         } catch (err: unknown) {
           const error = err instanceof Error ? err : new Error(String(err));
-          console.error(`Failed to load module for plugin ${pluginname} from ${importPathForLogging}:`, error);
-          return { default: () => <ModuleErrorFallback name={`Plugin: ${pluginname}, Error: ${error.message}`} /> };
+          logger.error(
+            `Failed to load module for plugin ${pluginname} from ${importPathForLogging}`,
+            error,
+            { pluginname, importPath: importPathForLogging }
+          );
+          return {
+            default: () => (
+              <ModuleErrorFallback name={`Plugin: ${pluginname}, Error: ${error.message}`} />
+            ),
+          };
         }
       });
 
@@ -193,7 +213,9 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
         ),
         loader: async () => {
           if (!pluginname) {
-            console.error("Could not determine plugin name for route, cannot load config:", app.routePath);
+            logger.error("Could not determine plugin name for route, cannot load config", {
+              routePath: app.routePath,
+            });
             throw new Error(`Could not determine plugin name for route: ${app.routePath}`);
           }
           try {
@@ -201,7 +223,11 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
             const pluginConfig = config?.plugins?.[pluginname];
             return pluginConfig;
           } catch (err) {
-            console.error(`Error fetching/processing config for plugin ${pluginname} in loader:`, err);
+            logger.error(
+              `Error fetching/processing config for plugin ${pluginname} in loader`,
+              err instanceof Error ? err : new Error(String(err)),
+              { pluginname }
+            );
             throw err;
           }
         },
@@ -210,7 +236,7 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
       // Create a subpath route for handling additional path segments
       const dynamicSubRoute = createRoute({
         getParentRoute: () => dynamicRoute,
-        path: '$routeSubPath',
+        path: "$routeSubPath",
         component: () => (
           <ProtectedRoute loadingComponent={AppLoader}>
             <ErrorBoundary fallback={<ModuleErrorFallback name={app.componentName} />}>
@@ -250,8 +276,11 @@ export const DynamicRouterProvider: React.FC<DynamicRouterProviderProps> = ({ ch
         const dynamicModules = await getDynamicModules();
         const pluginApps = getPluginBasedApps(manager);
 
-        console.log('Dynamic modules:', dynamicModules);
-        console.log('Plugin apps:', pluginApps);
+        logger.debug("Dynamic modules loaded", {
+          count: dynamicModules.length,
+          modules: dynamicModules,
+        });
+        logger.debug("Plugin apps loaded", { count: pluginApps.length, apps: pluginApps });
 
         // Combine all apps
         const allApps = [...dynamicModules, ...pluginApps];
@@ -266,7 +295,7 @@ export const DynamicRouterProvider: React.FC<DynamicRouterProviderProps> = ({ ch
           commonRoutes.indexHtmlLandingRoute,
           commonRoutes.loginRoute,
           commonRoutes.logoutRoute,
-          ...dynamicRoutes
+          ...dynamicRoutes,
         ];
 
         const routeTree = appCoreRootRoute.addChildren(allChildRoutes);
@@ -279,7 +308,10 @@ export const DynamicRouterProvider: React.FC<DynamicRouterProviderProps> = ({ ch
         setRouter(newRouter);
         setIsLoading(false);
       } catch (error) {
-        console.error('Error creating dynamic router:', error);
+        logger.error(
+          "Error creating dynamic router",
+          error instanceof Error ? error : new Error(String(error))
+        );
         setIsLoading(false);
       }
     };
@@ -293,4 +325,4 @@ export const DynamicRouterProvider: React.FC<DynamicRouterProviderProps> = ({ ch
 
   // Use render prop pattern to pass router to children
   return <>{children(router)}</>;
-}; 
+};

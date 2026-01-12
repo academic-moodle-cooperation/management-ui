@@ -1,6 +1,7 @@
 import { Plugin } from './IPlugin';
 import { RegistryObject } from './plugins/objectRegistry/index';
 import { PluginFunction, EventCallback, PluginComponent, RegistryMetadata } from './types';
+import { logger } from '@workspace/utils';
 
 type PluginRegistry = Map<string, Plugin>;
 type FunctionRegistry = Map<string, PluginFunction>;
@@ -13,7 +14,7 @@ type FunctionRegistry = Map<string, PluginFunction>;
 const isValidPluginName = (name: string): boolean => {
   // Allow legacy names for backward compatibility, but log a warning
   if (!name.includes(':')) {
-    console.warn(`Plugin name "${name}" doesn't follow the recommended 'namespace:plugin-type' format`);
+    logger.warn(`Plugin name "${name}" doesn't follow the recommended 'namespace:plugin-type' format`, { pluginName: name });
     return true; // Still allow it for backward compatibility
   }
 
@@ -77,17 +78,17 @@ export const createPluginManager = (): PluginManager => {
   const register = (plugin: Plugin) => {
     // Validate plugin name format
     if (!isValidPluginName(plugin.name)) {
-      console.error(`Invalid plugin name format: ${plugin.name}. Expected format: "namespace:plugin-type"`);
+      logger.error(`Invalid plugin name format: ${plugin.name}. Expected format: "namespace:plugin-type"`, { pluginName: plugin.name });
       return;
     }
 
     if (plugins.has(plugin.name)) {
-      console.warn(`Plugin "${plugin.name}" is already registered.`);
+      logger.warn(`Plugin "${plugin.name}" is already registered.`, { pluginName: plugin.name });
       return;
     }
 
     if (plugin.dependencies && !checkDependencies(plugin)) {
-      console.error(`Failed to register plugin "${plugin.name}" due to missing dependencies.`);
+      logger.error(`Failed to register plugin "${plugin.name}" due to missing dependencies.`, { pluginName: plugin.name, dependencies: plugin.dependencies });
       return;
     }
 
@@ -97,7 +98,7 @@ export const createPluginManager = (): PluginManager => {
     plugin.activate();
     currentPlugin = undefined; // Clear current plugin
 
-    console.info(`Plugin "${plugin.name}" registered successfully.`);
+    logger.info(`Plugin "${plugin.name}" registered successfully.`, { pluginName: plugin.name });
 
     // Dispatch an event to notify that a plugin has been registered
     dispatchEvent('plugin:registered', { pluginName: plugin.name, plugin });
@@ -106,20 +107,20 @@ export const createPluginManager = (): PluginManager => {
   const deregister = (pluginName: string) => {
     const plugin = plugins.get(pluginName);
     if (!plugin) {
-      console.warn(`Plugin "${pluginName}" is not registered.`);
+      logger.warn(`Plugin "${pluginName}" is not registered.`, { pluginName });
       return;
     }
 
     plugin.deactivate();
     plugins.delete(pluginName);
-    console.info(`Plugin "${pluginName}" deregistered.`);
+    logger.info(`Plugin "${pluginName}" deregistered.`, { pluginName });
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const executeFunction = <T>(key: string, ...args: any[]): T | undefined => {
     const func = functions.get(key);
     if (!func) {
-      console.error(`Function "${key}" is not registered.`);
+      logger.error(`Function "${key}" is not registered.`, { functionKey: key });
       return undefined;
     }
     return func(...args) as T;
@@ -127,7 +128,7 @@ export const createPluginManager = (): PluginManager => {
 
   const addFunction = (key: string, func: PluginFunction) => {
     if (functions.has(key)) {
-      console.warn(`Function "${key}" is already registered. Overwriting.`);
+      logger.warn(`Function "${key}" is already registered. Overwriting.`, { functionKey: key });
     }
     functions.set(key, func);
   };
@@ -184,7 +185,7 @@ export const createPluginManager = (): PluginManager => {
 
     // Validate component key
     if (!isValidComponentKey(componentKey)) {
-      console.warn(`Component key "${componentKey}" doesn't follow the recommended format. Consider using 'namespace:plugin-type:component'`);
+      logger.warn(`Component key "${componentKey}" doesn't follow the recommended format. Consider using 'namespace:plugin-type:component'`, { componentKey, extensionPoint });
     }
 
     // Register the component using the renderer plugin

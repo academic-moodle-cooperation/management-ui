@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useMemo, useEffect, useRef } from 'react';
 import { usePluginManager } from './PluginProvider';
+import { logger } from '@workspace/utils';
 
 type ComponentEntry = {
   key: string;
@@ -25,7 +26,7 @@ export const RendererProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const warnedAboutDeprecation = useRef(false);
 
   useEffect(() => {
-    console.warn('RendererProvider is deprecated. Use ComponentResolver for new code.');
+    logger.warn('RendererProvider is deprecated. Use ComponentResolver for new code.');
     warnedAboutDeprecation.current = true;
   }, []);
 
@@ -45,7 +46,7 @@ export const RendererProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const value = useMemo(() => ({
     registerComponent: (position: string, key: string, Component: React.FC) => {
-      console.warn('registerComponent via RendererContext is deprecated. Use manager.registerComponent instead.');
+      logger.warn('registerComponent via RendererContext is deprecated. Use manager.registerComponent instead.', { position, key });
 
       setComponents(prev => {
         const existingComponents = prev[position] || [];
@@ -67,7 +68,7 @@ export const RendererProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       });
     },
     unregisterComponent: (position: string, key: string) => {
-      console.warn('unregisterComponent via RendererContext is deprecated.');
+      logger.warn('unregisterComponent via RendererContext is deprecated.', { position, key });
 
       setComponents(prev => ({
         ...prev,
@@ -80,7 +81,7 @@ export const RendererProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           await new Promise<void>(resolve => {
             // Only wait for initial plugin registration
             const timeout = setTimeout(() => {
-              console.warn(`Timeout waiting for plugins at position ${position}`);
+              logger.warn(`Timeout waiting for plugins at position ${position}`, { position });
               registrationComplete.current = true;
               resolve();
             }, 1000);
@@ -106,16 +107,16 @@ export const RendererProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         try {
           // This dynamic function lookup pattern is deprecated
           const functionName = `get${position.charAt(0).toUpperCase() + position.slice(1)}Components`;
-          console.warn(`DEPRECATED: Using dynamic function lookup (${functionName}). Use ComponentResolver instead.`);
+          logger.warn(`DEPRECATED: Using dynamic function lookup (${functionName}). Use ComponentResolver instead.`, { position, functionName });
           
           pluginComponents = manager.executeFunction<ComponentEntry[]>(functionName) || [];
         } catch (e) {
-          console.warn(`Error getting components for position ${position}:`, e);
+          logger.warn(`Error getting components for position ${position}`, e instanceof Error ? e : new Error(String(e)), { position });
         }
 
         return [...registeredComponents, ...pluginComponents];
       } catch (error) {
-        console.error(`Error in getComponentsForPosition for ${position}:`, error);
+        logger.error(`Error in getComponentsForPosition for ${position}`, error instanceof Error ? error : new Error(String(error)), { position });
         return [];
       }
     }
@@ -132,7 +133,7 @@ export const RendererProvider: React.FC<{ children: React.ReactNode }> = ({ chil
  * @deprecated Use ComponentResolver instead.
  */
 export const useRenderer = () => {
-  console.warn('useRenderer is deprecated. Use ComponentResolver instead.');
+  logger.warn('useRenderer is deprecated. Use ComponentResolver instead.');
 
   const context = useContext(RendererContext);
   if (!context) {
