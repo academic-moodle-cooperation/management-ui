@@ -116,11 +116,11 @@ export const RendererProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
             pluginComponents = manager.executeFunction<ComponentEntry[]>(functionName) || [];
           } catch (e) {
-            logger.warn(
-              `Error getting components for position ${position}`,
-              e instanceof Error ? e : new Error(String(e)),
-              { position }
-            );
+            logger.warn(`Error getting components for position ${position}`, {
+              error: e instanceof Error ? e.message : String(e),
+              stack: e instanceof Error ? e.stack : undefined,
+              position,
+            });
           }
 
           return [...registeredComponents, ...pluginComponents];

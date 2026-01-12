@@ -1,7 +1,6 @@
 import type { Plugin } from "vite";
 import fs from "fs";
 import path from "path";
-import { logger } from "@workspace/utils";
 
 export interface GenerateConfigPluginOptions {
   /** Path to output the config.json file (relative to outDir) */
@@ -92,10 +91,8 @@ export function generateConfigPlugin(options: GenerateConfigPluginOptions): Plug
 
     async closeBundle() {
       try {
-        logger.info("[generate-config] Generating production config.json");
-        logger.debug(`[generate-config] Merging ${pluginConfigs.length} plugin config(s)`, {
-          pluginConfigCount: pluginConfigs.length,
-        });
+        console.log("[generate-config] Generating production config.json...");
+        console.log(`[generate-config] Merging ${pluginConfigs.length} plugin config(s)...`);
 
         // Deep merge configs (same logic as in useAppConfig.ts)
         const mergedConfig = deepMerge({ ...defaultConfig }, ...pluginConfigs);
@@ -107,19 +104,15 @@ export function generateConfigPlugin(options: GenerateConfigPluginOptions): Plug
         fs.mkdirSync(outputDir, { recursive: true });
         fs.writeFileSync(fullOutputPath, JSON.stringify(mergedConfig, null, 2), "utf-8");
 
-        logger.info(
+        console.log(
           `[generate-config] ✓ Config written to ${path.relative(process.cwd(), fullOutputPath)}`
         );
-        logger.debug(`[generate-config] Summary`, {
-          theme: mergedConfig.app.theme,
-          logo: mergedConfig.app.orgLogoUrl || mergedConfig.app.logoUrl,
-          pluginNamespaces: mergedConfig.app.pluginNamespace.length,
-        });
+        console.log(`[generate-config] Summary:`);
+        console.log(`  - Theme: ${mergedConfig.app.theme}`);
+        console.log(`  - Logo: ${mergedConfig.app.orgLogoUrl || mergedConfig.app.logoUrl}`);
+        console.log(`  - Plugins: ${mergedConfig.app.pluginNamespace.length} namespaces`);
       } catch (error) {
-        logger.error(
-          "[generate-config] Failed to generate config",
-          error instanceof Error ? error : new Error(String(error))
-        );
+        console.error("[generate-config] Failed to generate config:", error);
         // Don't fail the build, just warn
       }
     },
