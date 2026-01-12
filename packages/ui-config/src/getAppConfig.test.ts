@@ -122,6 +122,7 @@ describe("getAppConfig", () => {
   it("should handle pluginNamespace override", () => {
     const instanceConfig: Partial<AppConfig> = {
       app: {
+        ...defaultConfig.app,
         pluginNamespace: ["custom", "namespace"],
       },
     };
@@ -160,6 +161,7 @@ describe("getAppConfig", () => {
   it("should handle partial nested configs", () => {
     const instanceConfig: Partial<AppConfig> = {
       app: {
+        ...defaultConfig.app,
         logoUrl: "/custom-logo.png",
       },
     };
