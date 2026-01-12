@@ -91,8 +91,10 @@ export function generateConfigPlugin(options: GenerateConfigPluginOptions): Plug
 
     async closeBundle() {
       try {
-        console.log("[generate-config] Generating production config.json...");
-        console.log(`[generate-config] Merging ${pluginConfigs.length} plugin config(s)...`);
+        logger.info("[generate-config] Generating production config.json");
+        logger.debug(`[generate-config] Merging ${pluginConfigs.length} plugin config(s)`, {
+          pluginConfigCount: pluginConfigs.length,
+        });
 
         // Deep merge configs (same logic as in useAppConfig.ts)
         const mergedConfig = deepMerge({ ...defaultConfig }, ...pluginConfigs);
@@ -104,15 +106,19 @@ export function generateConfigPlugin(options: GenerateConfigPluginOptions): Plug
         fs.mkdirSync(outputDir, { recursive: true });
         fs.writeFileSync(fullOutputPath, JSON.stringify(mergedConfig, null, 2), "utf-8");
 
-        console.log(
+        logger.info(
           `[generate-config] ✓ Config written to ${path.relative(process.cwd(), fullOutputPath)}`
         );
-        console.log(`[generate-config] Summary:`);
-        console.log(`  - Theme: ${mergedConfig.app.theme}`);
-        console.log(`  - Logo: ${mergedConfig.app.orgLogoUrl || mergedConfig.app.logoUrl}`);
-        console.log(`  - Plugins: ${mergedConfig.app.pluginNamespace.length} namespaces`);
+        logger.debug(`[generate-config] Summary`, {
+          theme: mergedConfig.app.theme,
+          logo: mergedConfig.app.orgLogoUrl || mergedConfig.app.logoUrl,
+          pluginNamespaces: mergedConfig.app.pluginNamespace.length,
+        });
       } catch (error) {
-        console.error("[generate-config] Failed to generate config:", error);
+        logger.error(
+          "[generate-config] Failed to generate config",
+          error instanceof Error ? error : new Error(String(error))
+        );
         // Don't fail the build, just warn
       }
     },

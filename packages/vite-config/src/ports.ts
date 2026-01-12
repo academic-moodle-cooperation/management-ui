@@ -49,8 +49,9 @@ export const getPluginPorts = (pluginPackageName: string): PluginPorts | undefin
     };
   }
 
-  console.warn(
-    `[vite-config] Plugin "${pluginPackageName}" not found in known plugin list for port assignment.`
+  logger.warn(
+    `[vite-config] Plugin "${pluginPackageName}" not found in known plugin list for port assignment.`,
+    { pluginPackageName }
   );
   return undefined;
 };
