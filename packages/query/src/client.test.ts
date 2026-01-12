@@ -1,8 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   createGraphQLClient,
-  initializeGraphQLClient,
-  getGraphQLClient,
   createQueryClient,
 } from "./client";
 import { GraphQLClient } from "graphql-request";
@@ -19,8 +17,6 @@ vi.mock("graphql-request", () => ({
 describe("client", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset module state
-    vi.resetModules();
   });
 
   describe("createGraphQLClient", () => {
@@ -29,6 +25,7 @@ describe("client", () => {
 
       expect(GraphQLClient).toHaveBeenCalledWith("https://api.example.com/graphql");
       expect(client).toBeDefined();
+      expect(client.url).toBe("https://api.example.com/graphql");
     });
 
     it("should convert relative URL to absolute URL in browser", () => {
@@ -45,6 +42,7 @@ describe("client", () => {
 
       expect(GraphQLClient).toHaveBeenCalledWith("https://example.com/graphql");
       expect(client).toBeDefined();
+      expect(client.url).toBe("https://example.com/graphql");
     });
 
     it("should throw error for invalid URL", () => {
@@ -64,41 +62,6 @@ describe("client", () => {
       expect(() => {
         createGraphQLClient(null as any);
       }).toThrow("Invalid GraphQL endpoint");
-    });
-  });
-
-  describe("initializeGraphQLClient", () => {
-    it("should initialize GraphQL client", () => {
-      const client = initializeGraphQLClient("https://api.example.com/graphql");
-
-      expect(GraphQLClient).toHaveBeenCalledWith("https://api.example.com/graphql");
-      expect(client).toBeDefined();
-    });
-
-    it("should return same client on subsequent calls (singleton behavior)", () => {
-      const client1 = initializeGraphQLClient("https://api.example.com/graphql");
-      const client2 = initializeGraphQLClient("https://api.example.com/graphql");
-
-      // Both should be the same instance (singleton)
-      expect(client1).toBe(client2);
-    });
-  });
-
-  describe("getGraphQLClient", () => {
-    it("should return initialized client", () => {
-      const initialized = initializeGraphQLClient("https://api.example.com/graphql");
-      const retrieved = getGraphQLClient();
-
-      expect(retrieved).toBe(initialized);
-    });
-
-    it("should throw error if client not initialized", () => {
-      // Reset module to clear initialized client
-      vi.resetModules();
-
-      expect(() => {
-        getGraphQLClient();
-      }).toThrow("GraphQL client not initialized");
     });
   });
 
