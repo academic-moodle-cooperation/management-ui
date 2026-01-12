@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { UseQueryResult, UseSuspenseQueryResult } from "@tanstack/react-query";
+import { UseQueryResult, UseSuspenseQueryResult} from "@tanstack/react-query";
 import { useQuery, useSuspenseQuery, useMutation, UseQueryOptions, UseSuspenseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
 import { fetchData } from './fetcher';
 export type Maybe<T> = T | null;
@@ -309,6 +309,40 @@ export type EventPublicationsArgs = {
   tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
+/** Filter options for events */
+export enum EventFilter {
+  /** INGESTING */
+  Ingesting = 'INGESTING',
+  /** PAUSED */
+  Paused = 'PAUSED',
+  /** PENDING */
+  Pending = 'PENDING',
+  /** PROCESSED */
+  Processed = 'PROCESSED',
+  /** PROCESSING */
+  Processing = 'PROCESSING',
+  /** PROCESSING_CANCELLED */
+  ProcessingCancelled = 'PROCESSING_CANCELLED',
+  /** PROCESSING_FAILURE */
+  ProcessingFailure = 'PROCESSING_FAILURE',
+  /** RECORDING */
+  Recording = 'RECORDING',
+  /** RECORDING_FAILURE */
+  RecordingFailure = 'RECORDING_FAILURE',
+  /** SCHEDULED */
+  Scheduled = 'SCHEDULED'
+}
+
+/** Filter options for events */
+export type EventFilterByInput = {
+  /** Filter by published state */
+  published?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Filter by series */
+  seriesId?: InputMaybe<Scalars['String']['input']>;
+  /** Filter by event status */
+  status?: InputMaybe<EventFilter>;
+};
+
 /** A list of events */
 export type EventList = {
   nodes: Array<Maybe<Event>>;
@@ -318,6 +352,7 @@ export type EventList = {
 
 /** Ordering options for events */
 export type EventOrderByInput = {
+  created?: InputMaybe<OrderDirection>;
   endDate?: InputMaybe<OrderDirection>;
   eventStatus?: InputMaybe<OrderDirection>;
   location?: InputMaybe<OrderDirection>;
@@ -603,6 +638,7 @@ export type Query = {
 
 
 export type QueryAllEventsArgs = {
+  filterBy?: InputMaybe<EventFilterByInput>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<EventOrderByInput>;
@@ -859,6 +895,13 @@ export type GetMyEventsQueryVariables = Exact<{
 
 export type GetMyEventsQuery = { currentUser: { myEvents: { totalCount: any, nodes: Array<{ __typename: 'Event', contributors?: Array<string | null> | null, seriesName?: string | null, seriesId?: string | null, title: string, creator?: string | null, created?: any | null, description?: string | null, displayableStatus?: string | null, eventStatus: string, duration?: any | null, hasPreview: boolean, id: string, location?: string | null, presenters?: Array<string | null> | null, startDate?: any | null, publications?: Array<{ uri?: string | null, tracks?: Array<{ width?: number | null, uri?: string | null, tags?: Array<string | null> | null, mimeType?: string | null, logicalName?: string | null, isLive?: boolean | null, height?: number | null, frameRate?: number | null, flavor?: string | null } | null> | null } | null> | null, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } | null> } } };
 
+export type GetEventByIdQueryVariables = Exact<{
+  eventId: Scalars['String']['input'];
+}>;
+
+
+export type GetEventByIdQuery = { eventById?: { id: string, title: string } | null };
+
 export type GetEventByIdInputFieldsQueryVariables = Exact<{
   eventId: Scalars['String']['input'];
 }>;
@@ -1108,40 +1151,38 @@ export const UserDocument = `
     `;
 
 export const useUserQuery = <
-  TData = UserQuery,
-  TError = unknown
->(
-  variables?: UserQueryVariables,
-  options?: Omit<UseQueryOptions<UserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<UserQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useQuery<UserQuery, TError, TData>(
-    {
-      queryKey: variables === undefined ? ['User'] : ['User', variables],
-      queryFn: fetchData<UserQuery, UserQueryVariables>(UserDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = UserQuery,
+      TError = unknown
+    >(
+      variables?: UserQueryVariables,
+      options?: Omit<UseQueryOptions<UserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<UserQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<UserQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['User'] : ['User', variables],
+    queryFn: fetchData<UserQuery, UserQueryVariables>(UserDocument, variables),
+    ...options
+  }
+    )};
 
 useUserQuery.getKey = (variables?: UserQueryVariables) => variables === undefined ? ['User'] : ['User', variables];
 
 export const useSuspenseUserQuery = <
-  TData = UserQuery,
-  TError = unknown
->(
-  variables?: UserQueryVariables,
-  options?: Omit<UseSuspenseQueryOptions<UserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<UserQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useSuspenseQuery<UserQuery, TError, TData>(
-    {
-      queryKey: variables === undefined ? ['UserSuspense'] : ['UserSuspense', variables],
-      queryFn: fetchData<UserQuery, UserQueryVariables>(UserDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = UserQuery,
+      TError = unknown
+    >(
+      variables?: UserQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<UserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<UserQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useSuspenseQuery<UserQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['UserSuspense'] : ['UserSuspense', variables],
+    queryFn: fetchData<UserQuery, UserQueryVariables>(UserDocument, variables),
+    ...options
+  }
+    )};
 
 useSuspenseUserQuery.getKey = (variables?: UserQueryVariables) => variables === undefined ? ['UserSuspense'] : ['UserSuspense', variables];
 
@@ -1170,40 +1211,38 @@ export const SearchUserDocument = `
     `;
 
 export const useSearchUserQuery = <
-  TData = SearchUserQuery,
-  TError = unknown
->(
-  variables: SearchUserQueryVariables,
-  options?: Omit<UseQueryOptions<SearchUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<SearchUserQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useQuery<SearchUserQuery, TError, TData>(
-    {
-      queryKey: ['SearchUser', variables],
-      queryFn: fetchData<SearchUserQuery, SearchUserQueryVariables>(SearchUserDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = SearchUserQuery,
+      TError = unknown
+    >(
+      variables: SearchUserQueryVariables,
+      options?: Omit<UseQueryOptions<SearchUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<SearchUserQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<SearchUserQuery, TError, TData>(
+      {
+    queryKey: ['SearchUser', variables],
+    queryFn: fetchData<SearchUserQuery, SearchUserQueryVariables>(SearchUserDocument, variables),
+    ...options
+  }
+    )};
 
 useSearchUserQuery.getKey = (variables: SearchUserQueryVariables) => ['SearchUser', variables];
 
 export const useSuspenseSearchUserQuery = <
-  TData = SearchUserQuery,
-  TError = unknown
->(
-  variables: SearchUserQueryVariables,
-  options?: Omit<UseSuspenseQueryOptions<SearchUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<SearchUserQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useSuspenseQuery<SearchUserQuery, TError, TData>(
-    {
-      queryKey: ['SearchUserSuspense', variables],
-      queryFn: fetchData<SearchUserQuery, SearchUserQueryVariables>(SearchUserDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = SearchUserQuery,
+      TError = unknown
+    >(
+      variables: SearchUserQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<SearchUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<SearchUserQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useSuspenseQuery<SearchUserQuery, TError, TData>(
+      {
+    queryKey: ['SearchUserSuspense', variables],
+    queryFn: fetchData<SearchUserQuery, SearchUserQueryVariables>(SearchUserDocument, variables),
+    ...options
+  }
+    )};
 
 useSuspenseSearchUserQuery.getKey = (variables: SearchUserQueryVariables) => ['SearchUserSuspense', variables];
 
@@ -1224,40 +1263,38 @@ export const GetMySeriesDocument = `
     ${SeriesDataFragmentDoc}`;
 
 export const useGetMySeriesQuery = <
-  TData = GetMySeriesQuery,
-  TError = unknown
->(
-  variables?: GetMySeriesQueryVariables,
-  options?: Omit<UseQueryOptions<GetMySeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMySeriesQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useQuery<GetMySeriesQuery, TError, TData>(
-    {
-      queryKey: variables === undefined ? ['GetMySeries'] : ['GetMySeries', variables],
-      queryFn: fetchData<GetMySeriesQuery, GetMySeriesQueryVariables>(GetMySeriesDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetMySeriesQuery,
+      TError = unknown
+    >(
+      variables?: GetMySeriesQueryVariables,
+      options?: Omit<UseQueryOptions<GetMySeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMySeriesQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetMySeriesQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetMySeries'] : ['GetMySeries', variables],
+    queryFn: fetchData<GetMySeriesQuery, GetMySeriesQueryVariables>(GetMySeriesDocument, variables),
+    ...options
+  }
+    )};
 
 useGetMySeriesQuery.getKey = (variables?: GetMySeriesQueryVariables) => variables === undefined ? ['GetMySeries'] : ['GetMySeries', variables];
 
 export const useSuspenseGetMySeriesQuery = <
-  TData = GetMySeriesQuery,
-  TError = unknown
->(
-  variables?: GetMySeriesQueryVariables,
-  options?: Omit<UseSuspenseQueryOptions<GetMySeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetMySeriesQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useSuspenseQuery<GetMySeriesQuery, TError, TData>(
-    {
-      queryKey: variables === undefined ? ['GetMySeriesSuspense'] : ['GetMySeriesSuspense', variables],
-      queryFn: fetchData<GetMySeriesQuery, GetMySeriesQueryVariables>(GetMySeriesDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetMySeriesQuery,
+      TError = unknown
+    >(
+      variables?: GetMySeriesQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<GetMySeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetMySeriesQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useSuspenseQuery<GetMySeriesQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetMySeriesSuspense'] : ['GetMySeriesSuspense', variables],
+    queryFn: fetchData<GetMySeriesQuery, GetMySeriesQueryVariables>(GetMySeriesDocument, variables),
+    ...options
+  }
+    )};
 
 useSuspenseGetMySeriesQuery.getKey = (variables?: GetMySeriesQueryVariables) => variables === undefined ? ['GetMySeriesSuspense'] : ['GetMySeriesSuspense', variables];
 
@@ -1288,40 +1325,38 @@ export const GetSeriesInfoDocument = `
     `;
 
 export const useGetSeriesInfoQuery = <
-  TData = GetSeriesInfoQuery,
-  TError = unknown
->(
-  variables: GetSeriesInfoQueryVariables,
-  options?: Omit<UseQueryOptions<GetSeriesInfoQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetSeriesInfoQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useQuery<GetSeriesInfoQuery, TError, TData>(
-    {
-      queryKey: ['GetSeriesInfo', variables],
-      queryFn: fetchData<GetSeriesInfoQuery, GetSeriesInfoQueryVariables>(GetSeriesInfoDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetSeriesInfoQuery,
+      TError = unknown
+    >(
+      variables: GetSeriesInfoQueryVariables,
+      options?: Omit<UseQueryOptions<GetSeriesInfoQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetSeriesInfoQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetSeriesInfoQuery, TError, TData>(
+      {
+    queryKey: ['GetSeriesInfo', variables],
+    queryFn: fetchData<GetSeriesInfoQuery, GetSeriesInfoQueryVariables>(GetSeriesInfoDocument, variables),
+    ...options
+  }
+    )};
 
 useGetSeriesInfoQuery.getKey = (variables: GetSeriesInfoQueryVariables) => ['GetSeriesInfo', variables];
 
 export const useSuspenseGetSeriesInfoQuery = <
-  TData = GetSeriesInfoQuery,
-  TError = unknown
->(
-  variables: GetSeriesInfoQueryVariables,
-  options?: Omit<UseSuspenseQueryOptions<GetSeriesInfoQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetSeriesInfoQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useSuspenseQuery<GetSeriesInfoQuery, TError, TData>(
-    {
-      queryKey: ['GetSeriesInfoSuspense', variables],
-      queryFn: fetchData<GetSeriesInfoQuery, GetSeriesInfoQueryVariables>(GetSeriesInfoDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetSeriesInfoQuery,
+      TError = unknown
+    >(
+      variables: GetSeriesInfoQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<GetSeriesInfoQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetSeriesInfoQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useSuspenseQuery<GetSeriesInfoQuery, TError, TData>(
+      {
+    queryKey: ['GetSeriesInfoSuspense', variables],
+    queryFn: fetchData<GetSeriesInfoQuery, GetSeriesInfoQueryVariables>(GetSeriesInfoDocument, variables),
+    ...options
+  }
+    )};
 
 useSuspenseGetSeriesInfoQuery.getKey = (variables: GetSeriesInfoQueryVariables) => ['GetSeriesInfoSuspense', variables];
 
@@ -1369,40 +1404,38 @@ export const GetSeriesByIdInputFieldsDocument = `
 ${GetStringInputFieldsMetaDataFragmentDoc}`;
 
 export const useGetSeriesByIdInputFieldsQuery = <
-  TData = GetSeriesByIdInputFieldsQuery,
-  TError = unknown
->(
-  variables: GetSeriesByIdInputFieldsQueryVariables,
-  options?: Omit<UseQueryOptions<GetSeriesByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetSeriesByIdInputFieldsQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useQuery<GetSeriesByIdInputFieldsQuery, TError, TData>(
-    {
-      queryKey: ['GetSeriesByIdInputFields', variables],
-      queryFn: fetchData<GetSeriesByIdInputFieldsQuery, GetSeriesByIdInputFieldsQueryVariables>(GetSeriesByIdInputFieldsDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetSeriesByIdInputFieldsQuery,
+      TError = unknown
+    >(
+      variables: GetSeriesByIdInputFieldsQueryVariables,
+      options?: Omit<UseQueryOptions<GetSeriesByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetSeriesByIdInputFieldsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetSeriesByIdInputFieldsQuery, TError, TData>(
+      {
+    queryKey: ['GetSeriesByIdInputFields', variables],
+    queryFn: fetchData<GetSeriesByIdInputFieldsQuery, GetSeriesByIdInputFieldsQueryVariables>(GetSeriesByIdInputFieldsDocument, variables),
+    ...options
+  }
+    )};
 
 useGetSeriesByIdInputFieldsQuery.getKey = (variables: GetSeriesByIdInputFieldsQueryVariables) => ['GetSeriesByIdInputFields', variables];
 
 export const useSuspenseGetSeriesByIdInputFieldsQuery = <
-  TData = GetSeriesByIdInputFieldsQuery,
-  TError = unknown
->(
-  variables: GetSeriesByIdInputFieldsQueryVariables,
-  options?: Omit<UseSuspenseQueryOptions<GetSeriesByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetSeriesByIdInputFieldsQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useSuspenseQuery<GetSeriesByIdInputFieldsQuery, TError, TData>(
-    {
-      queryKey: ['GetSeriesByIdInputFieldsSuspense', variables],
-      queryFn: fetchData<GetSeriesByIdInputFieldsQuery, GetSeriesByIdInputFieldsQueryVariables>(GetSeriesByIdInputFieldsDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetSeriesByIdInputFieldsQuery,
+      TError = unknown
+    >(
+      variables: GetSeriesByIdInputFieldsQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<GetSeriesByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetSeriesByIdInputFieldsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useSuspenseQuery<GetSeriesByIdInputFieldsQuery, TError, TData>(
+      {
+    queryKey: ['GetSeriesByIdInputFieldsSuspense', variables],
+    queryFn: fetchData<GetSeriesByIdInputFieldsQuery, GetSeriesByIdInputFieldsQueryVariables>(GetSeriesByIdInputFieldsDocument, variables),
+    ...options
+  }
+    )};
 
 useSuspenseGetSeriesByIdInputFieldsQuery.getKey = (variables: GetSeriesByIdInputFieldsQueryVariables) => ['GetSeriesByIdInputFieldsSuspense', variables];
 
@@ -1423,40 +1456,38 @@ export const GetMySeriesNameAndIdDocument = `
     `;
 
 export const useGetMySeriesNameAndIdQuery = <
-  TData = GetMySeriesNameAndIdQuery,
-  TError = unknown
->(
-  variables?: GetMySeriesNameAndIdQueryVariables,
-  options?: Omit<UseQueryOptions<GetMySeriesNameAndIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMySeriesNameAndIdQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useQuery<GetMySeriesNameAndIdQuery, TError, TData>(
-    {
-      queryKey: variables === undefined ? ['GetMySeriesNameAndId'] : ['GetMySeriesNameAndId', variables],
-      queryFn: fetchData<GetMySeriesNameAndIdQuery, GetMySeriesNameAndIdQueryVariables>(GetMySeriesNameAndIdDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetMySeriesNameAndIdQuery,
+      TError = unknown
+    >(
+      variables?: GetMySeriesNameAndIdQueryVariables,
+      options?: Omit<UseQueryOptions<GetMySeriesNameAndIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMySeriesNameAndIdQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetMySeriesNameAndIdQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetMySeriesNameAndId'] : ['GetMySeriesNameAndId', variables],
+    queryFn: fetchData<GetMySeriesNameAndIdQuery, GetMySeriesNameAndIdQueryVariables>(GetMySeriesNameAndIdDocument, variables),
+    ...options
+  }
+    )};
 
 useGetMySeriesNameAndIdQuery.getKey = (variables?: GetMySeriesNameAndIdQueryVariables) => variables === undefined ? ['GetMySeriesNameAndId'] : ['GetMySeriesNameAndId', variables];
 
 export const useSuspenseGetMySeriesNameAndIdQuery = <
-  TData = GetMySeriesNameAndIdQuery,
-  TError = unknown
->(
-  variables?: GetMySeriesNameAndIdQueryVariables,
-  options?: Omit<UseSuspenseQueryOptions<GetMySeriesNameAndIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetMySeriesNameAndIdQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useSuspenseQuery<GetMySeriesNameAndIdQuery, TError, TData>(
-    {
-      queryKey: variables === undefined ? ['GetMySeriesNameAndIdSuspense'] : ['GetMySeriesNameAndIdSuspense', variables],
-      queryFn: fetchData<GetMySeriesNameAndIdQuery, GetMySeriesNameAndIdQueryVariables>(GetMySeriesNameAndIdDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetMySeriesNameAndIdQuery,
+      TError = unknown
+    >(
+      variables?: GetMySeriesNameAndIdQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<GetMySeriesNameAndIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetMySeriesNameAndIdQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useSuspenseQuery<GetMySeriesNameAndIdQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetMySeriesNameAndIdSuspense'] : ['GetMySeriesNameAndIdSuspense', variables],
+    queryFn: fetchData<GetMySeriesNameAndIdQuery, GetMySeriesNameAndIdQueryVariables>(GetMySeriesNameAndIdDocument, variables),
+    ...options
+  }
+    )};
 
 useSuspenseGetMySeriesNameAndIdQuery.getKey = (variables?: GetMySeriesNameAndIdQueryVariables) => variables === undefined ? ['GetMySeriesNameAndIdSuspense'] : ['GetMySeriesNameAndIdSuspense', variables];
 
@@ -1472,40 +1503,38 @@ export const GetSeriesNameByIdDocument = `
     `;
 
 export const useGetSeriesNameByIdQuery = <
-  TData = GetSeriesNameByIdQuery,
-  TError = unknown
->(
-  variables: GetSeriesNameByIdQueryVariables,
-  options?: Omit<UseQueryOptions<GetSeriesNameByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetSeriesNameByIdQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useQuery<GetSeriesNameByIdQuery, TError, TData>(
-    {
-      queryKey: ['GetSeriesNameById', variables],
-      queryFn: fetchData<GetSeriesNameByIdQuery, GetSeriesNameByIdQueryVariables>(GetSeriesNameByIdDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetSeriesNameByIdQuery,
+      TError = unknown
+    >(
+      variables: GetSeriesNameByIdQueryVariables,
+      options?: Omit<UseQueryOptions<GetSeriesNameByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetSeriesNameByIdQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetSeriesNameByIdQuery, TError, TData>(
+      {
+    queryKey: ['GetSeriesNameById', variables],
+    queryFn: fetchData<GetSeriesNameByIdQuery, GetSeriesNameByIdQueryVariables>(GetSeriesNameByIdDocument, variables),
+    ...options
+  }
+    )};
 
 useGetSeriesNameByIdQuery.getKey = (variables: GetSeriesNameByIdQueryVariables) => ['GetSeriesNameById', variables];
 
 export const useSuspenseGetSeriesNameByIdQuery = <
-  TData = GetSeriesNameByIdQuery,
-  TError = unknown
->(
-  variables: GetSeriesNameByIdQueryVariables,
-  options?: Omit<UseSuspenseQueryOptions<GetSeriesNameByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetSeriesNameByIdQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useSuspenseQuery<GetSeriesNameByIdQuery, TError, TData>(
-    {
-      queryKey: ['GetSeriesNameByIdSuspense', variables],
-      queryFn: fetchData<GetSeriesNameByIdQuery, GetSeriesNameByIdQueryVariables>(GetSeriesNameByIdDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetSeriesNameByIdQuery,
+      TError = unknown
+    >(
+      variables: GetSeriesNameByIdQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<GetSeriesNameByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetSeriesNameByIdQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useSuspenseQuery<GetSeriesNameByIdQuery, TError, TData>(
+      {
+    queryKey: ['GetSeriesNameByIdSuspense', variables],
+    queryFn: fetchData<GetSeriesNameByIdQuery, GetSeriesNameByIdQueryVariables>(GetSeriesNameByIdDocument, variables),
+    ...options
+  }
+    )};
 
 useSuspenseGetSeriesNameByIdQuery.getKey = (variables: GetSeriesNameByIdQueryVariables) => ['GetSeriesNameByIdSuspense', variables];
 
@@ -1528,40 +1557,38 @@ export const EventsFromSeriesDocument = `
     ${EventsDataFragmentDoc}`;
 
 export const useEventsFromSeriesQuery = <
-  TData = EventsFromSeriesQuery,
-  TError = unknown
->(
-  variables: EventsFromSeriesQueryVariables,
-  options?: Omit<UseQueryOptions<EventsFromSeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<EventsFromSeriesQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useQuery<EventsFromSeriesQuery, TError, TData>(
-    {
-      queryKey: ['EventsFromSeries', variables],
-      queryFn: fetchData<EventsFromSeriesQuery, EventsFromSeriesQueryVariables>(EventsFromSeriesDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = EventsFromSeriesQuery,
+      TError = unknown
+    >(
+      variables: EventsFromSeriesQueryVariables,
+      options?: Omit<UseQueryOptions<EventsFromSeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<EventsFromSeriesQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<EventsFromSeriesQuery, TError, TData>(
+      {
+    queryKey: ['EventsFromSeries', variables],
+    queryFn: fetchData<EventsFromSeriesQuery, EventsFromSeriesQueryVariables>(EventsFromSeriesDocument, variables),
+    ...options
+  }
+    )};
 
 useEventsFromSeriesQuery.getKey = (variables: EventsFromSeriesQueryVariables) => ['EventsFromSeries', variables];
 
 export const useSuspenseEventsFromSeriesQuery = <
-  TData = EventsFromSeriesQuery,
-  TError = unknown
->(
-  variables: EventsFromSeriesQueryVariables,
-  options?: Omit<UseSuspenseQueryOptions<EventsFromSeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<EventsFromSeriesQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useSuspenseQuery<EventsFromSeriesQuery, TError, TData>(
-    {
-      queryKey: ['EventsFromSeriesSuspense', variables],
-      queryFn: fetchData<EventsFromSeriesQuery, EventsFromSeriesQueryVariables>(EventsFromSeriesDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = EventsFromSeriesQuery,
+      TError = unknown
+    >(
+      variables: EventsFromSeriesQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<EventsFromSeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<EventsFromSeriesQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useSuspenseQuery<EventsFromSeriesQuery, TError, TData>(
+      {
+    queryKey: ['EventsFromSeriesSuspense', variables],
+    queryFn: fetchData<EventsFromSeriesQuery, EventsFromSeriesQueryVariables>(EventsFromSeriesDocument, variables),
+    ...options
+  }
+    )};
 
 useSuspenseEventsFromSeriesQuery.getKey = (variables: EventsFromSeriesQueryVariables) => ['EventsFromSeriesSuspense', variables];
 
@@ -1582,45 +1609,91 @@ export const GetMyEventsDocument = `
     ${EventsDataFragmentDoc}`;
 
 export const useGetMyEventsQuery = <
-  TData = GetMyEventsQuery,
-  TError = unknown
->(
-  variables?: GetMyEventsQueryVariables,
-  options?: Omit<UseQueryOptions<GetMyEventsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMyEventsQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useQuery<GetMyEventsQuery, TError, TData>(
-    {
-      queryKey: variables === undefined ? ['GetMyEvents'] : ['GetMyEvents', variables],
-      queryFn: fetchData<GetMyEventsQuery, GetMyEventsQueryVariables>(GetMyEventsDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetMyEventsQuery,
+      TError = unknown
+    >(
+      variables?: GetMyEventsQueryVariables,
+      options?: Omit<UseQueryOptions<GetMyEventsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMyEventsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetMyEventsQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetMyEvents'] : ['GetMyEvents', variables],
+    queryFn: fetchData<GetMyEventsQuery, GetMyEventsQueryVariables>(GetMyEventsDocument, variables),
+    ...options
+  }
+    )};
 
 useGetMyEventsQuery.getKey = (variables?: GetMyEventsQueryVariables) => variables === undefined ? ['GetMyEvents'] : ['GetMyEvents', variables];
 
 export const useSuspenseGetMyEventsQuery = <
-  TData = GetMyEventsQuery,
-  TError = unknown
->(
-  variables?: GetMyEventsQueryVariables,
-  options?: Omit<UseSuspenseQueryOptions<GetMyEventsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetMyEventsQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useSuspenseQuery<GetMyEventsQuery, TError, TData>(
-    {
-      queryKey: variables === undefined ? ['GetMyEventsSuspense'] : ['GetMyEventsSuspense', variables],
-      queryFn: fetchData<GetMyEventsQuery, GetMyEventsQueryVariables>(GetMyEventsDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetMyEventsQuery,
+      TError = unknown
+    >(
+      variables?: GetMyEventsQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<GetMyEventsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetMyEventsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useSuspenseQuery<GetMyEventsQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetMyEventsSuspense'] : ['GetMyEventsSuspense', variables],
+    queryFn: fetchData<GetMyEventsQuery, GetMyEventsQueryVariables>(GetMyEventsDocument, variables),
+    ...options
+  }
+    )};
 
 useSuspenseGetMyEventsQuery.getKey = (variables?: GetMyEventsQueryVariables) => variables === undefined ? ['GetMyEventsSuspense'] : ['GetMyEventsSuspense', variables];
 
 
 useGetMyEventsQuery.fetcher = (variables?: GetMyEventsQueryVariables, options?: RequestInit['headers']) => fetchData<GetMyEventsQuery, GetMyEventsQueryVariables>(GetMyEventsDocument, variables, options);
+
+export const GetEventByIdDocument = `
+    query GetEventById($eventId: String!) {
+  eventById(id: $eventId) {
+    id
+    title
+  }
+}
+    `;
+
+export const useGetEventByIdQuery = <
+      TData = GetEventByIdQuery,
+      TError = unknown
+    >(
+      variables: GetEventByIdQueryVariables,
+      options?: Omit<UseQueryOptions<GetEventByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetEventByIdQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetEventByIdQuery, TError, TData>(
+      {
+    queryKey: ['GetEventById', variables],
+    queryFn: fetchData<GetEventByIdQuery, GetEventByIdQueryVariables>(GetEventByIdDocument, variables),
+    ...options
+  }
+    )};
+
+useGetEventByIdQuery.getKey = (variables: GetEventByIdQueryVariables) => ['GetEventById', variables];
+
+export const useSuspenseGetEventByIdQuery = <
+      TData = GetEventByIdQuery,
+      TError = unknown
+    >(
+      variables: GetEventByIdQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<GetEventByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetEventByIdQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useSuspenseQuery<GetEventByIdQuery, TError, TData>(
+      {
+    queryKey: ['GetEventByIdSuspense', variables],
+    queryFn: fetchData<GetEventByIdQuery, GetEventByIdQueryVariables>(GetEventByIdDocument, variables),
+    ...options
+  }
+    )};
+
+useSuspenseGetEventByIdQuery.getKey = (variables: GetEventByIdQueryVariables) => ['GetEventByIdSuspense', variables];
+
+
+useGetEventByIdQuery.fetcher = (variables: GetEventByIdQueryVariables, options?: RequestInit['headers']) => fetchData<GetEventByIdQuery, GetEventByIdQueryVariables>(GetEventByIdDocument, variables, options);
 
 export const GetEventByIdInputFieldsDocument = `
     query GetEventByIdInputFields($eventId: String!) {
@@ -1683,40 +1756,38 @@ ${GetStringInputFieldsMetaDataFragmentDoc}
 ${GetDurationInputFieldsMetaDataFragmentDoc}`;
 
 export const useGetEventByIdInputFieldsQuery = <
-  TData = GetEventByIdInputFieldsQuery,
-  TError = unknown
->(
-  variables: GetEventByIdInputFieldsQueryVariables,
-  options?: Omit<UseQueryOptions<GetEventByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetEventByIdInputFieldsQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useQuery<GetEventByIdInputFieldsQuery, TError, TData>(
-    {
-      queryKey: ['GetEventByIdInputFields', variables],
-      queryFn: fetchData<GetEventByIdInputFieldsQuery, GetEventByIdInputFieldsQueryVariables>(GetEventByIdInputFieldsDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetEventByIdInputFieldsQuery,
+      TError = unknown
+    >(
+      variables: GetEventByIdInputFieldsQueryVariables,
+      options?: Omit<UseQueryOptions<GetEventByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetEventByIdInputFieldsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetEventByIdInputFieldsQuery, TError, TData>(
+      {
+    queryKey: ['GetEventByIdInputFields', variables],
+    queryFn: fetchData<GetEventByIdInputFieldsQuery, GetEventByIdInputFieldsQueryVariables>(GetEventByIdInputFieldsDocument, variables),
+    ...options
+  }
+    )};
 
 useGetEventByIdInputFieldsQuery.getKey = (variables: GetEventByIdInputFieldsQueryVariables) => ['GetEventByIdInputFields', variables];
 
 export const useSuspenseGetEventByIdInputFieldsQuery = <
-  TData = GetEventByIdInputFieldsQuery,
-  TError = unknown
->(
-  variables: GetEventByIdInputFieldsQueryVariables,
-  options?: Omit<UseSuspenseQueryOptions<GetEventByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetEventByIdInputFieldsQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useSuspenseQuery<GetEventByIdInputFieldsQuery, TError, TData>(
-    {
-      queryKey: ['GetEventByIdInputFieldsSuspense', variables],
-      queryFn: fetchData<GetEventByIdInputFieldsQuery, GetEventByIdInputFieldsQueryVariables>(GetEventByIdInputFieldsDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetEventByIdInputFieldsQuery,
+      TError = unknown
+    >(
+      variables: GetEventByIdInputFieldsQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<GetEventByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetEventByIdInputFieldsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useSuspenseQuery<GetEventByIdInputFieldsQuery, TError, TData>(
+      {
+    queryKey: ['GetEventByIdInputFieldsSuspense', variables],
+    queryFn: fetchData<GetEventByIdInputFieldsQuery, GetEventByIdInputFieldsQueryVariables>(GetEventByIdInputFieldsDocument, variables),
+    ...options
+  }
+    )};
 
 useSuspenseGetEventByIdInputFieldsQuery.getKey = (variables: GetEventByIdInputFieldsQueryVariables) => ['GetEventByIdInputFieldsSuspense', variables];
 
@@ -1741,40 +1812,38 @@ export const GetAllManagedAclsDocument = `
     `;
 
 export const useGetAllManagedAclsQuery = <
-  TData = GetAllManagedAclsQuery,
-  TError = unknown
->(
-  variables?: GetAllManagedAclsQueryVariables,
-  options?: Omit<UseQueryOptions<GetAllManagedAclsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetAllManagedAclsQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useQuery<GetAllManagedAclsQuery, TError, TData>(
-    {
-      queryKey: variables === undefined ? ['GetAllManagedAcls'] : ['GetAllManagedAcls', variables],
-      queryFn: fetchData<GetAllManagedAclsQuery, GetAllManagedAclsQueryVariables>(GetAllManagedAclsDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetAllManagedAclsQuery,
+      TError = unknown
+    >(
+      variables?: GetAllManagedAclsQueryVariables,
+      options?: Omit<UseQueryOptions<GetAllManagedAclsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetAllManagedAclsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetAllManagedAclsQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetAllManagedAcls'] : ['GetAllManagedAcls', variables],
+    queryFn: fetchData<GetAllManagedAclsQuery, GetAllManagedAclsQueryVariables>(GetAllManagedAclsDocument, variables),
+    ...options
+  }
+    )};
 
 useGetAllManagedAclsQuery.getKey = (variables?: GetAllManagedAclsQueryVariables) => variables === undefined ? ['GetAllManagedAcls'] : ['GetAllManagedAcls', variables];
 
 export const useSuspenseGetAllManagedAclsQuery = <
-  TData = GetAllManagedAclsQuery,
-  TError = unknown
->(
-  variables?: GetAllManagedAclsQueryVariables,
-  options?: Omit<UseSuspenseQueryOptions<GetAllManagedAclsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetAllManagedAclsQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useSuspenseQuery<GetAllManagedAclsQuery, TError, TData>(
-    {
-      queryKey: variables === undefined ? ['GetAllManagedAclsSuspense'] : ['GetAllManagedAclsSuspense', variables],
-      queryFn: fetchData<GetAllManagedAclsQuery, GetAllManagedAclsQueryVariables>(GetAllManagedAclsDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetAllManagedAclsQuery,
+      TError = unknown
+    >(
+      variables?: GetAllManagedAclsQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<GetAllManagedAclsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetAllManagedAclsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useSuspenseQuery<GetAllManagedAclsQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetAllManagedAclsSuspense'] : ['GetAllManagedAclsSuspense', variables],
+    queryFn: fetchData<GetAllManagedAclsQuery, GetAllManagedAclsQueryVariables>(GetAllManagedAclsDocument, variables),
+    ...options
+  }
+    )};
 
 useSuspenseGetAllManagedAclsQuery.getKey = (variables?: GetAllManagedAclsQueryVariables) => variables === undefined ? ['GetAllManagedAclsSuspense'] : ['GetAllManagedAclsSuspense', variables];
 
@@ -1800,40 +1869,38 @@ export const GetManagedAclsWithEventIdDocument = `
     ${EventsAclDataFragmentDoc}`;
 
 export const useGetManagedAclsWithEventIdQuery = <
-  TData = GetManagedAclsWithEventIdQuery,
-  TError = unknown
->(
-  variables: GetManagedAclsWithEventIdQueryVariables,
-  options?: Omit<UseQueryOptions<GetManagedAclsWithEventIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetManagedAclsWithEventIdQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useQuery<GetManagedAclsWithEventIdQuery, TError, TData>(
-    {
-      queryKey: ['GetManagedAclsWithEventId', variables],
-      queryFn: fetchData<GetManagedAclsWithEventIdQuery, GetManagedAclsWithEventIdQueryVariables>(GetManagedAclsWithEventIdDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetManagedAclsWithEventIdQuery,
+      TError = unknown
+    >(
+      variables: GetManagedAclsWithEventIdQueryVariables,
+      options?: Omit<UseQueryOptions<GetManagedAclsWithEventIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetManagedAclsWithEventIdQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetManagedAclsWithEventIdQuery, TError, TData>(
+      {
+    queryKey: ['GetManagedAclsWithEventId', variables],
+    queryFn: fetchData<GetManagedAclsWithEventIdQuery, GetManagedAclsWithEventIdQueryVariables>(GetManagedAclsWithEventIdDocument, variables),
+    ...options
+  }
+    )};
 
 useGetManagedAclsWithEventIdQuery.getKey = (variables: GetManagedAclsWithEventIdQueryVariables) => ['GetManagedAclsWithEventId', variables];
 
 export const useSuspenseGetManagedAclsWithEventIdQuery = <
-  TData = GetManagedAclsWithEventIdQuery,
-  TError = unknown
->(
-  variables: GetManagedAclsWithEventIdQueryVariables,
-  options?: Omit<UseSuspenseQueryOptions<GetManagedAclsWithEventIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetManagedAclsWithEventIdQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useSuspenseQuery<GetManagedAclsWithEventIdQuery, TError, TData>(
-    {
-      queryKey: ['GetManagedAclsWithEventIdSuspense', variables],
-      queryFn: fetchData<GetManagedAclsWithEventIdQuery, GetManagedAclsWithEventIdQueryVariables>(GetManagedAclsWithEventIdDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetManagedAclsWithEventIdQuery,
+      TError = unknown
+    >(
+      variables: GetManagedAclsWithEventIdQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<GetManagedAclsWithEventIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetManagedAclsWithEventIdQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useSuspenseQuery<GetManagedAclsWithEventIdQuery, TError, TData>(
+      {
+    queryKey: ['GetManagedAclsWithEventIdSuspense', variables],
+    queryFn: fetchData<GetManagedAclsWithEventIdQuery, GetManagedAclsWithEventIdQueryVariables>(GetManagedAclsWithEventIdDocument, variables),
+    ...options
+  }
+    )};
 
 useSuspenseGetManagedAclsWithEventIdQuery.getKey = (variables: GetManagedAclsWithEventIdQueryVariables) => ['GetManagedAclsWithEventIdSuspense', variables];
 
@@ -1859,40 +1926,38 @@ export const GetManagedAclsWithSeriesIdDocument = `
     ${SeriesAclDataFragmentDoc}`;
 
 export const useGetManagedAclsWithSeriesIdQuery = <
-  TData = GetManagedAclsWithSeriesIdQuery,
-  TError = unknown
->(
-  variables: GetManagedAclsWithSeriesIdQueryVariables,
-  options?: Omit<UseQueryOptions<GetManagedAclsWithSeriesIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetManagedAclsWithSeriesIdQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useQuery<GetManagedAclsWithSeriesIdQuery, TError, TData>(
-    {
-      queryKey: ['GetManagedAclsWithSeriesId', variables],
-      queryFn: fetchData<GetManagedAclsWithSeriesIdQuery, GetManagedAclsWithSeriesIdQueryVariables>(GetManagedAclsWithSeriesIdDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetManagedAclsWithSeriesIdQuery,
+      TError = unknown
+    >(
+      variables: GetManagedAclsWithSeriesIdQueryVariables,
+      options?: Omit<UseQueryOptions<GetManagedAclsWithSeriesIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetManagedAclsWithSeriesIdQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetManagedAclsWithSeriesIdQuery, TError, TData>(
+      {
+    queryKey: ['GetManagedAclsWithSeriesId', variables],
+    queryFn: fetchData<GetManagedAclsWithSeriesIdQuery, GetManagedAclsWithSeriesIdQueryVariables>(GetManagedAclsWithSeriesIdDocument, variables),
+    ...options
+  }
+    )};
 
 useGetManagedAclsWithSeriesIdQuery.getKey = (variables: GetManagedAclsWithSeriesIdQueryVariables) => ['GetManagedAclsWithSeriesId', variables];
 
 export const useSuspenseGetManagedAclsWithSeriesIdQuery = <
-  TData = GetManagedAclsWithSeriesIdQuery,
-  TError = unknown
->(
-  variables: GetManagedAclsWithSeriesIdQueryVariables,
-  options?: Omit<UseSuspenseQueryOptions<GetManagedAclsWithSeriesIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetManagedAclsWithSeriesIdQuery, TError, TData>['queryKey'] }
-) => {
-
-  return useSuspenseQuery<GetManagedAclsWithSeriesIdQuery, TError, TData>(
-    {
-      queryKey: ['GetManagedAclsWithSeriesIdSuspense', variables],
-      queryFn: fetchData<GetManagedAclsWithSeriesIdQuery, GetManagedAclsWithSeriesIdQueryVariables>(GetManagedAclsWithSeriesIdDocument, variables),
-      ...options
-    }
-  )
-};
+      TData = GetManagedAclsWithSeriesIdQuery,
+      TError = unknown
+    >(
+      variables: GetManagedAclsWithSeriesIdQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<GetManagedAclsWithSeriesIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetManagedAclsWithSeriesIdQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useSuspenseQuery<GetManagedAclsWithSeriesIdQuery, TError, TData>(
+      {
+    queryKey: ['GetManagedAclsWithSeriesIdSuspense', variables],
+    queryFn: fetchData<GetManagedAclsWithSeriesIdQuery, GetManagedAclsWithSeriesIdQueryVariables>(GetManagedAclsWithSeriesIdDocument, variables),
+    ...options
+  }
+    )};
 
 useSuspenseGetManagedAclsWithSeriesIdQuery.getKey = (variables: GetManagedAclsWithSeriesIdQueryVariables) => ['GetManagedAclsWithSeriesIdSuspense', variables];
 
@@ -1908,18 +1973,17 @@ export const CreateSeriesDocument = `
     ${SeriesDataFragmentDoc}`;
 
 export const useCreateSeriesMutation = <
-  TError = unknown,
-  TContext = unknown
->(options?: UseMutationOptions<CreateSeriesMutation, TError, CreateSeriesMutationVariables, TContext>) => {
-
-  return useMutation<CreateSeriesMutation, TError, CreateSeriesMutationVariables, TContext>(
-    {
-      mutationKey: ['CreateSeries'],
-      mutationFn: (variables?: CreateSeriesMutationVariables) => fetchData<CreateSeriesMutation, CreateSeriesMutationVariables>(CreateSeriesDocument, variables)(),
-      ...options
-    }
-  )
-};
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<CreateSeriesMutation, TError, CreateSeriesMutationVariables, TContext>) => {
+    
+    return useMutation<CreateSeriesMutation, TError, CreateSeriesMutationVariables, TContext>(
+      {
+    mutationKey: ['CreateSeries'],
+    mutationFn: (variables?: CreateSeriesMutationVariables) => fetchData<CreateSeriesMutation, CreateSeriesMutationVariables>(CreateSeriesDocument, variables)(),
+    ...options
+  }
+    )};
 
 
 useCreateSeriesMutation.fetcher = (variables: CreateSeriesMutationVariables, options?: RequestInit['headers']) => fetchData<CreateSeriesMutation, CreateSeriesMutationVariables>(CreateSeriesDocument, variables, options);
@@ -1933,18 +1997,17 @@ export const UpdateSeriesDocument = `
     ${SeriesDataFragmentDoc}`;
 
 export const useUpdateSeriesMutation = <
-  TError = unknown,
-  TContext = unknown
->(options?: UseMutationOptions<UpdateSeriesMutation, TError, UpdateSeriesMutationVariables, TContext>) => {
-
-  return useMutation<UpdateSeriesMutation, TError, UpdateSeriesMutationVariables, TContext>(
-    {
-      mutationKey: ['UpdateSeries'],
-      mutationFn: (variables?: UpdateSeriesMutationVariables) => fetchData<UpdateSeriesMutation, UpdateSeriesMutationVariables>(UpdateSeriesDocument, variables)(),
-      ...options
-    }
-  )
-};
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateSeriesMutation, TError, UpdateSeriesMutationVariables, TContext>) => {
+    
+    return useMutation<UpdateSeriesMutation, TError, UpdateSeriesMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdateSeries'],
+    mutationFn: (variables?: UpdateSeriesMutationVariables) => fetchData<UpdateSeriesMutation, UpdateSeriesMutationVariables>(UpdateSeriesDocument, variables)(),
+    ...options
+  }
+    )};
 
 
 useUpdateSeriesMutation.fetcher = (variables: UpdateSeriesMutationVariables, options?: RequestInit['headers']) => fetchData<UpdateSeriesMutation, UpdateSeriesMutationVariables>(UpdateSeriesDocument, variables, options);
@@ -1960,18 +2023,17 @@ export const UpdateEventDocument = `
     ${EventsDataFragmentDoc}`;
 
 export const useUpdateEventMutation = <
-  TError = unknown,
-  TContext = unknown
->(options?: UseMutationOptions<UpdateEventMutation, TError, UpdateEventMutationVariables, TContext>) => {
-
-  return useMutation<UpdateEventMutation, TError, UpdateEventMutationVariables, TContext>(
-    {
-      mutationKey: ['UpdateEvent'],
-      mutationFn: (variables?: UpdateEventMutationVariables) => fetchData<UpdateEventMutation, UpdateEventMutationVariables>(UpdateEventDocument, variables)(),
-      ...options
-    }
-  )
-};
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateEventMutation, TError, UpdateEventMutationVariables, TContext>) => {
+    
+    return useMutation<UpdateEventMutation, TError, UpdateEventMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdateEvent'],
+    mutationFn: (variables?: UpdateEventMutationVariables) => fetchData<UpdateEventMutation, UpdateEventMutationVariables>(UpdateEventDocument, variables)(),
+    ...options
+  }
+    )};
 
 
 useUpdateEventMutation.fetcher = (variables: UpdateEventMutationVariables, options?: RequestInit['headers']) => fetchData<UpdateEventMutation, UpdateEventMutationVariables>(UpdateEventDocument, variables, options);
@@ -1987,18 +2049,17 @@ export const DeleteEventDocument = `
     `;
 
 export const useDeleteEventMutation = <
-  TError = unknown,
-  TContext = unknown
->(options?: UseMutationOptions<DeleteEventMutation, TError, DeleteEventMutationVariables, TContext>) => {
-
-  return useMutation<DeleteEventMutation, TError, DeleteEventMutationVariables, TContext>(
-    {
-      mutationKey: ['DeleteEvent'],
-      mutationFn: (variables?: DeleteEventMutationVariables) => fetchData<DeleteEventMutation, DeleteEventMutationVariables>(DeleteEventDocument, variables)(),
-      ...options
-    }
-  )
-};
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<DeleteEventMutation, TError, DeleteEventMutationVariables, TContext>) => {
+    
+    return useMutation<DeleteEventMutation, TError, DeleteEventMutationVariables, TContext>(
+      {
+    mutationKey: ['DeleteEvent'],
+    mutationFn: (variables?: DeleteEventMutationVariables) => fetchData<DeleteEventMutation, DeleteEventMutationVariables>(DeleteEventDocument, variables)(),
+    ...options
+  }
+    )};
 
 
 useDeleteEventMutation.fetcher = (variables: DeleteEventMutationVariables, options?: RequestInit['headers']) => fetchData<DeleteEventMutation, DeleteEventMutationVariables>(DeleteEventDocument, variables, options);
@@ -2016,18 +2077,17 @@ export const UpdateEventAclDocument = `
     `;
 
 export const useUpdateEventAclMutation = <
-  TError = unknown,
-  TContext = unknown
->(options?: UseMutationOptions<UpdateEventAclMutation, TError, UpdateEventAclMutationVariables, TContext>) => {
-
-  return useMutation<UpdateEventAclMutation, TError, UpdateEventAclMutationVariables, TContext>(
-    {
-      mutationKey: ['UpdateEventAcl'],
-      mutationFn: (variables?: UpdateEventAclMutationVariables) => fetchData<UpdateEventAclMutation, UpdateEventAclMutationVariables>(UpdateEventAclDocument, variables)(),
-      ...options
-    }
-  )
-};
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateEventAclMutation, TError, UpdateEventAclMutationVariables, TContext>) => {
+    
+    return useMutation<UpdateEventAclMutation, TError, UpdateEventAclMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdateEventAcl'],
+    mutationFn: (variables?: UpdateEventAclMutationVariables) => fetchData<UpdateEventAclMutation, UpdateEventAclMutationVariables>(UpdateEventAclDocument, variables)(),
+    ...options
+  }
+    )};
 
 
 useUpdateEventAclMutation.fetcher = (variables: UpdateEventAclMutationVariables, options?: RequestInit['headers']) => fetchData<UpdateEventAclMutation, UpdateEventAclMutationVariables>(UpdateEventAclDocument, variables, options);
@@ -2043,18 +2103,17 @@ export const UpdateSeriesAclDocument = `
     `;
 
 export const useUpdateSeriesAclMutation = <
-  TError = unknown,
-  TContext = unknown
->(options?: UseMutationOptions<UpdateSeriesAclMutation, TError, UpdateSeriesAclMutationVariables, TContext>) => {
-
-  return useMutation<UpdateSeriesAclMutation, TError, UpdateSeriesAclMutationVariables, TContext>(
-    {
-      mutationKey: ['UpdateSeriesAcl'],
-      mutationFn: (variables?: UpdateSeriesAclMutationVariables) => fetchData<UpdateSeriesAclMutation, UpdateSeriesAclMutationVariables>(UpdateSeriesAclDocument, variables)(),
-      ...options
-    }
-  )
-};
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateSeriesAclMutation, TError, UpdateSeriesAclMutationVariables, TContext>) => {
+    
+    return useMutation<UpdateSeriesAclMutation, TError, UpdateSeriesAclMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdateSeriesAcl'],
+    mutationFn: (variables?: UpdateSeriesAclMutationVariables) => fetchData<UpdateSeriesAclMutation, UpdateSeriesAclMutationVariables>(UpdateSeriesAclDocument, variables)(),
+    ...options
+  }
+    )};
 
 
 useUpdateSeriesAclMutation.fetcher = (variables: UpdateSeriesAclMutationVariables, options?: RequestInit['headers']) => fetchData<UpdateSeriesAclMutation, UpdateSeriesAclMutationVariables>(UpdateSeriesAclDocument, variables, options);
