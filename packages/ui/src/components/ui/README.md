@@ -13,6 +13,8 @@ This folder contains **shadcn/ui components** that are automatically generated a
 
 3. **Formatting is OK** - Prettier formatting is acceptable, but avoid structural changes.
 
+4. **`components.json` is different** - The configuration file `packages/ui/components.json` is **manually maintained** and can be edited. Only the component files in this folder are auto-generated.
+
 ## What is shadcn/ui?
 
 shadcn/ui is a collection of re-usable components built with Radix UI and Tailwind CSS. Components are copied into your project, not installed as dependencies.
@@ -20,6 +22,14 @@ shadcn/ui is a collection of re-usable components built with Radix UI and Tailwi
 ## Configuration
 
 The shadcn configuration is in `packages/ui/components.json`.
+
+**Important:** `components.json` is **NOT auto-generated** - it's a manual configuration file that defines:
+- Where components should be generated (`ui` alias → `@workspace/ui/components/ui`)
+- Which style to use (`new-york` or `default`)
+- Tailwind CSS settings
+- Import aliases
+
+**DO edit `components.json`** if you need to change shadcn settings, but **DO NOT edit** the component files in this folder.
 
 ## Adding New Components
 
