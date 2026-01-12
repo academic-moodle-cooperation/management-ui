@@ -299,6 +299,13 @@ query GetMyEvents(
   }
 }
 
+query GetEventById($eventId: String!) {
+  eventById(id: $eventId) {
+    id
+    title
+  }
+}
+
 query GetEventByIdInputFields($eventId: String!) {
   eventById(id: $eventId) {
     commonMetadataV2 {
@@ -389,7 +396,7 @@ query GetManagedAclsWithEventId($id: String!) {
   ...EventsAclData
 }
 
-query GetManagedAclsWithSeriesid($id: String!) {
+query GetManagedAclsWithSeriesId($id: String!) {
 	managedAcls {
     nodes {
       name

@@ -1,6 +1,6 @@
 import { StringMetadataField, IntMetadataField, DateTimeMetadataField, DurationMetadataField, JsonMetadataField, ListMetadataField, LongMetadataField } from "./gql-generated";
 
-export { useQuery, useInfiniteQuery, useQueryClient } from "@tanstack/react-query"
+export { useQuery, useQueries, useInfiniteQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 export type { QueryClient, InfiniteData, FetchNextPageOptions, InfiniteQueryObserverResult } from "@tanstack/react-query"
 export { gql } from "graphql-request";
 
