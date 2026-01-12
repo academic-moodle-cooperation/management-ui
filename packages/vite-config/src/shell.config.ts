@@ -43,7 +43,7 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
     targets: [
       // Core i18n locales
       {
-        src: path.resolve(monorepoRootPath, "packages/i18n/locales/**/*"),
+        src: path.resolve(monorepoRootPath, "packages/i18n/src/locales/**/*"),
         dest: "locales",
       },
       // Plugin locales (from packages)
