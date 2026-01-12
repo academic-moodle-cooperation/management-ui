@@ -29,10 +29,13 @@ export function getAppConfigSync(pluginManager?: PluginManager): AppConfig {
   const isDev = import.meta.env.DEV;
 
   // Get plugin configs directly from manager if available
-  let pluginConfigObjects: Record<string, any>[] = [];
+  // Plugin configs are partial AppConfig objects that will be merged
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let pluginConfigObjects: Partial<AppConfig>[] = [];
   if (pluginManager) {
     try {
-      pluginConfigObjects = pluginManager.getObjects("app:config") as Record<string, any>[];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      pluginConfigObjects = pluginManager.getObjects("app:config") as Partial<AppConfig>[];
     } catch (error) {
       logger.warn("getAppConfigSync: Failed to get plugin configs from manager", {
         error: error instanceof Error ? error.message : String(error),
@@ -69,9 +72,11 @@ export function useAppConfig() {
   const mergedConfig = useMemo(() => {
     if (isDev) {
       // Dev: Runtime merging with explicit order
+      // Plugin configs are partial AppConfig objects
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return deepMerge(
         queryResult.data ?? { ...defaultConfig },
-        ...((pluginConfigObjects as Record<string, any>[]) || [])
+        ...((pluginConfigObjects as Partial<AppConfig>[]) || [])
       ) as AppConfig;
     } else {
       // Prod: Use pre-merged config.json directly
