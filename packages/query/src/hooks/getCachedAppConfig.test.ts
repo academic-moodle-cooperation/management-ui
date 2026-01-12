@@ -1,0 +1,125 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { getCachedAppConfig, clearAppConfigCache } from "./getCachedAppConfig";
+import { defaultConfig } from "@workspace/ui-config";
+
+// Mock @workspace/ui-config
+vi.mock("@workspace/ui-config", () => ({
+  defaultConfig: {
+    productionConfigUrl: "/ui/config/config.json",
+  },
+}));
+
+// Mock global fetch
+global.fetch = vi.fn();
+
+describe("getCachedAppConfig", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    clearAppConfigCache();
+  });
+
+  it("should fetch and cache config", async () => {
+    const mockConfig = { app: { theme: "test" } };
+    const mockResponse = {
+      ok: true,
+      json: vi.fn().mockResolvedValue(mockConfig),
+    };
+
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
+
+    const result = await getCachedAppConfig();
+
+    expect(global.fetch).toHaveBeenCalledWith("/ui/config/config.json");
+    expect(result).toEqual(mockConfig);
+  });
+
+  it("should return cached promise on subsequent calls", async () => {
+    const mockConfig = { app: { theme: "test" } };
+    const mockResponse = {
+      ok: true,
+      json: vi.fn().mockResolvedValue(mockConfig),
+    };
+
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
+
+    const promise1 = getCachedAppConfig();
+    const promise2 = getCachedAppConfig();
+
+    // Both should return the same promise (cached)
+    expect(promise1).toBe(promise2);
+
+    const result1 = await promise1;
+    const result2 = await promise2;
+
+    // Should only fetch once
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(result1).toEqual(mockConfig);
+    expect(result2).toEqual(mockConfig);
+  });
+
+  it("should clear cache on error and allow retry", async () => {
+    const mockErrorResponse = {
+      ok: false,
+      status: 404,
+    };
+
+    vi.mocked(global.fetch).mockResolvedValue(mockErrorResponse as unknown as Response);
+
+    // First call should fail
+    await expect(getCachedAppConfig()).rejects.toThrow("HTTP error");
+
+    // Cache should be cleared, so second call should retry
+    const mockSuccessResponse = {
+      ok: true,
+      json: vi.fn().mockResolvedValue({ app: { theme: "test" } }),
+    };
+
+    vi.mocked(global.fetch).mockResolvedValue(mockSuccessResponse as unknown as Response);
+
+    const result = await getCachedAppConfig();
+
+    // Should have been called twice (once for error, once for retry)
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(result).toEqual({ app: { theme: "test" } });
+  });
+
+  it("should handle configUrl without leading slash", async () => {
+    // Mock defaultConfig with URL without leading slash
+    vi.mocked(defaultConfig).productionConfigUrl = "ui/config/config.json";
+
+    const mockConfig = { app: { theme: "test" } };
+    const mockResponse = {
+      ok: true,
+      json: vi.fn().mockResolvedValue(mockConfig),
+    };
+
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
+
+    await getCachedAppConfig();
+
+    expect(global.fetch).toHaveBeenCalledWith("/ui/config/config.json");
+  });
+});
+
+describe("clearAppConfigCache", () => {
+  it("should clear the cache", async () => {
+    const mockConfig = { app: { theme: "test" } };
+    const mockResponse = {
+      ok: true,
+      json: vi.fn().mockResolvedValue(mockConfig),
+    };
+
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
+
+    // Fetch and cache
+    await getCachedAppConfig();
+
+    // Clear cache
+    clearAppConfigCache();
+
+    // Next call should fetch again
+    await getCachedAppConfig();
+
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+  });
+});
