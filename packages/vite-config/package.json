@@ -21,14 +21,14 @@
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
-    "vite": "^6.3.5",
-    "@vitejs/plugin-react-swc": "^3.9.0",
     "@tailwindcss/vite": "^4.1.7",
-    "vite-plugin-static-copy": "^1.0.6",
-    "@workspace/utils": "workspace:*"
+    "@vitejs/plugin-react-swc": "^3.9.0",
+    "@workspace/utils": "workspace:*",
+    "vite": "^6.3.5",
+    "vite-plugin-static-copy": "^1.0.6"
   },
   "devDependencies": {
-    "@types/node": "^20.14.12",
+    "@types/node": "^25.0.6",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "eslint": "^9.8.0",

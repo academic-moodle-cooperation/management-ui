@@ -71,10 +71,10 @@ class Logger {
     const errorContext: LogContext = {
       ...(error instanceof Error
         ? {
-            error: error.message,
-            stack: error.stack,
-            name: error.name,
-          }
+          error: error.message,
+          stack: error.stack,
+          name: error.name,
+        }
         : error || {}),
       ...(context || {}),
     };
