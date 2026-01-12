@@ -34,6 +34,49 @@ plugins/        ← Extension point definitions
 └─ example-university/  ← Example implementations
 ```
 
+## 📚 Documentation
+
+**🤖 For AI Models:** Start with the [AI Development Guide](AI_DEVELOPMENT_GUIDE.md) - your entry point for understanding and contributing to this codebase.
+
+### Core Documentation
+
+- **[AI Development Guide](AI_DEVELOPMENT_GUIDE.md)** - Main entry point for AI models and new developers
+- **[Package Ecosystem](/packages/README.md)** - Shared infrastructure packages and dependency management
+- **[Application Architecture](/apps/README.md)** - Domain applications and dual-mode execution
+- **[Plugin System](/plugins/README.md)** - Extension points and university customizations
+- **[Coupling Analysis](/docs/COUPLING_ANALYSIS.md)** - Package dependencies and refactoring priorities
+
+### Configuration & Assets
+
+- **[Config Generation](/docs/CONFIG_GENERATION.md)** - How configuration works in dev vs production
+- **[Config Order](/docs/CONFIG_ORDER.md)** - Plugin configuration precedence and merging
+- **[Favicon Configuration](/docs/FAVICON_CONFIGURATION.md)** - Customizing favicons and assets per university
+
+### Development Workflows
+
+Step-by-step guides for common tasks:
+
+- **[Adding Packages](/docs/workflows/ADDING_PACKAGES.md)** - Create new workspace packages
+- **[Adding Apps](/docs/workflows/ADDING_APPS.md)** - Create new applications
+- **[Adding Plugins](/docs/workflows/ADDING_PLUGINS.md)** - Create university-specific plugins
+- **[Updating Dependencies](/docs/workflows/UPDATING_DEPENDENCIES.md)** - Safe dependency updates
+- **[Swapping Technologies](/docs/workflows/SWAPPING_TECHNOLOGIES.md)** - Replace underlying technologies
+
+### Documentation Templates
+
+Ensure consistency when creating documentation:
+
+- **[Package README Template](/docs/templates/PACKAGE_README_TEMPLATE.md)** - For workspace packages
+- **[App README Template](/docs/templates/APP_README_TEMPLATE.md)** - For applications
+- **[Plugin README Template](/docs/templates/PLUGIN_README_TEMPLATE.md)** - For plugins
+- **[Implementation README Template](/docs/templates/IMPLEMENTATION_README_TEMPLATE.md)** - For plugin implementations
+
+### Architecture Decisions
+
+Understanding why the system is designed this way:
+
+- **[Architecture Decision Records](/docs/architecture/)** - Key architectural decisions and rationale
+
 ## 🚀 Quick Start
 
 ### Prerequisites
