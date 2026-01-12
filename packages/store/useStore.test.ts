@@ -182,7 +182,7 @@ describe("useStore", () => {
       });
 
       expect(result.current.zustandupload.files).toHaveLength(1);
-      expect(result.current.zustandupload.files[0].id).toBe(2);
+      expect(result.current.zustandupload.files[0]?.id).toBe(2);
     });
   });
 
@@ -265,8 +265,8 @@ describe("useStore", () => {
         result.current.updateFile(updatedFile);
       });
 
-      expect(result.current.zustandupload.files[0].progress).toBe(50);
-      expect(result.current.zustandupload.files[0].status).toBe("uploading");
+      expect(result.current.zustandupload.files[0]?.progress).toBe(50);
+      expect(result.current.zustandupload.files[0]?.status).toBe("uploading");
     });
 
     it("should not update if file id not found", () => {
@@ -307,7 +307,7 @@ describe("useStore", () => {
         result.current.updateFile(nonExistentFile);
       });
 
-      expect(result.current.zustandupload.files[0].progress).toBe(0);
+      expect(result.current.zustandupload.files[0]?.progress).toBe(0);
     });
   });
 
@@ -359,7 +359,7 @@ describe("useStore", () => {
       expect(result.current.zustandupload.next).toBeNull();
       expect(result.current.zustandupload.pending).toEqual([mockFile2]);
       expect(result.current.zustandupload.uploaded).toHaveLength(1);
-      expect(result.current.zustandupload.uploaded[0].id).toBe(1);
+      expect(result.current.zustandupload.uploaded[0]?.id).toBe(1);
     });
   });
 
