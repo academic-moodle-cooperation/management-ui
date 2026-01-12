@@ -125,7 +125,7 @@ describe("utils", () => {
 
       // Simulate media query change
       matches = true;
-      if (onChangeCallback) {
+      if (onChangeCallback && typeof onChangeCallback === "function") {
         act(() => {
           onChangeCallback({
             matches: true,
