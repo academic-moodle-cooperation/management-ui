@@ -6,7 +6,10 @@
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf dist && rm -rf target && rm -rf node_modules",
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
-    "check-types": "tsc --noEmit -p tsconfig.json"
+    "check-types": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "exports": {
     ".": "./src/index.ts",
@@ -70,7 +73,11 @@
     "eslint": "^9.9.0",
     "react": "^19.1.0",
     "tailwindcss": "^4.1.7",
-    "typescript": "~5.5.4"
+    "typescript": "~5.5.4",
+    "vitest": "^4.0.17",
+    "@testing-library/react": "^16.3.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "jsdom": "^27.4.0"
   },
   "peerDependencies": {
     "@tanstack/react-table": "^8.19.3",
