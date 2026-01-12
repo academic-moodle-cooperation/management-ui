@@ -9,6 +9,7 @@ import {
 import { AppLoader } from "@workspace/ui/components";
 import { loadAllAvailablePlugins } from "../loadPlugins";
 import type { AppConfig } from "@workspace/query";
+import { logger } from "@workspace/utils";
 
 interface PluginInitializerProps {
   children: React.ReactNode;
@@ -78,9 +79,10 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
               try {
                 plugin.initialize?.(manager);
               } catch (error) {
-                console.error(
-                  `PluginInitializer: Failed to re-initialize config plugin ${plugin.name}:`,
-                  error
+                logger.error(
+                  `PluginInitializer: Failed to re-initialize config plugin ${plugin.name}`,
+                  error instanceof Error ? error : new Error(String(error)),
+                  { pluginName: plugin.name }
                 );
               }
             }
@@ -131,9 +133,10 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                 try {
                   plugin.initialize?.(manager);
                 } catch (error) {
-                  console.error(
-                    `PluginInitializer: Failed to re-initialize plugin ${plugin.name}:`,
-                    error
+                  logger.error(
+                    `PluginInitializer: Failed to re-initialize plugin ${plugin.name}`,
+                    error instanceof Error ? error : new Error(String(error)),
+                    { pluginName: plugin.name }
                   );
                 }
               }
@@ -151,7 +154,10 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           setPluginsReady(true);
         }
       } catch (error) {
-        console.error("PluginInitializer: Failed to initialize plugins", error);
+        logger.error(
+          "PluginInitializer: Failed to initialize plugins",
+          error instanceof Error ? error : new Error(String(error))
+        );
         if (!didUnmount) {
           setPluginsReady(true); // Still set to true to avoid an infinite loading state on error
         }

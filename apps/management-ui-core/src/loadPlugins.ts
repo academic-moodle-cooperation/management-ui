@@ -1,6 +1,7 @@
 import { Plugin } from "@workspace/plugin-system";
 import type { AppConfig, PluginNamespaceItem } from "@workspace/query";
 import * as AllPlugins from "@workspace/plugins";
+import { logger } from "@workspace/utils";
 
 // Helper function to check if an object is a valid plugin
 const isPlugin = (module: unknown): module is Plugin =>
@@ -86,7 +87,10 @@ export const loadAllAvailablePlugins = async (): Promise<Plugin[]> => {
 
     return allPlugins;
   } catch (error) {
-    console.error("CRITICAL ERROR in loadAllAvailablePlugins:", error);
+    logger.error(
+      "CRITICAL ERROR in loadAllAvailablePlugins",
+      error instanceof Error ? error : new Error(String(error))
+    );
     throw error;
   }
 };
@@ -110,7 +114,10 @@ export const loadAllPlugins = async (config?: AppConfig): Promise<Plugin[]> => {
 
     return filteredPlugins;
   } catch (error) {
-    console.error("CRITICAL ERROR in loadAllPlugins:", error);
+    logger.error(
+      "CRITICAL ERROR in loadAllPlugins",
+      error instanceof Error ? error : new Error(String(error))
+    );
     throw error;
   }
 };
