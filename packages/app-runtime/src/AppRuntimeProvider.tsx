@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import type { AppRuntimeContext, AppRuntimeConfig } from "./types";
 import type { AppDefinition } from "@workspace/plugin-system";
+import { logger } from "@workspace/utils";
 
 export const AppRuntimeContextProvider = createContext<AppRuntimeContext | null>(null);
 
@@ -20,7 +21,7 @@ export const AppRuntimeProvider: React.FC<AppRuntimeProviderProps> = ({ children
     setRegisteredApps((prev) => {
       const existing = prev.find((a) => a.id === app.id);
       if (existing) {
-        console.warn(`App with id "${app.id}" is already registered. Replacing...`);
+        logger.warn(`App with id "${app.id}" is already registered. Replacing...`, { appId: app.id });
         return prev.map((a) => (a.id === app.id ? app : a));
       }
       return [...prev, app];

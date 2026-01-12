@@ -38,6 +38,7 @@ import {
 } from "@workspace/query";
 import { useI18n, loadNamespace } from "@workspace/i18n";
 import { AclData, ACLEntry, ACLEntryInput, SelectedElement } from "./types";
+import { logger } from "@workspace/utils";
 
 type UserSearchResult = NonNullable<NonNullable<SearchUserQuery["searchUser"]>["nodes"]>[number];
 
@@ -214,7 +215,11 @@ export const AclEditor: React.FC<AclEditorProps> = ({
           },
           onError: (error) => {
             toast.error(t("muitable-sidebar:changesFailed"));
-            console.error("Error updating series ACL:", error);
+            logger.error(
+              "Error updating series ACL",
+              error instanceof Error ? error : new Error(String(error)),
+              { seriesId: id }
+            );
           },
         }
       );

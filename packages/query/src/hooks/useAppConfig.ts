@@ -7,7 +7,7 @@ import {
 } from "@workspace/ui-config";
 import { useRegistry } from "@workspace/plugin-system";
 import { useMemo } from "react";
-import { deepMerge, resolveAssetUrl } from "@workspace/utils";
+import { deepMerge, resolveAssetUrl, logger } from "@workspace/utils";
 
 const CONFIG_QUERY_KEY = ["appConfig"];
 
@@ -34,7 +34,9 @@ export function getAppConfigSync(pluginManager?: any): AppConfig {
     try {
       pluginConfigObjects = pluginManager.getObjects("app:config") as Record<string, any>[];
     } catch (error) {
-      console.warn("getAppConfigSync: Failed to get plugin configs from manager");
+      logger.warn("getAppConfigSync: Failed to get plugin configs from manager", {
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 

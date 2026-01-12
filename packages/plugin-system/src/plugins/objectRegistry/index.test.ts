@@ -90,7 +90,7 @@ describe("ObjectRegistryPlugin", () => {
 
     it("should remove an object and return true", () => {
       manager.executeFunction("registry.addObject", "test:type", "test-id", { value: 1 });
-      
+
       const result = manager.executeFunction("registry.removeObject", "test:type", "test-id");
       expect(result).toBe(true);
 

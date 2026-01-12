@@ -1,6 +1,7 @@
 import { cn } from "@workspace/ui/lib/utils";
 import { Button } from "@workspace/ui/components";
 import { Component, ErrorInfo, ReactNode } from "react";
+import { logger } from "@workspace/utils";
 
 interface GeneralErrorProps extends React.HTMLAttributes<HTMLDivElement> {
   minimal?: boolean;
@@ -33,9 +34,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     this.props.onError?.(error, errorInfo);
 
-    // Log the error to the console during development
+    // Log the error during development
     if (process.env.NODE_ENV === "development") {
-      console.error("ErrorBoundary caught an error:", error, errorInfo);
+      logger.error("ErrorBoundary caught an error", error, {
+        componentStack: errorInfo.componentStack,
+      });
     }
   }
 

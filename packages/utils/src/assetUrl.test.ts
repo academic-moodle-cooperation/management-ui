@@ -27,9 +27,7 @@ describe("assetUrl utilities", () => {
       expect(resolveAssetUrl("https://example.com/image.jpg")).toBe(
         "https://example.com/image.jpg"
       );
-      expect(resolveAssetUrl("http://example.com/image.jpg")).toBe(
-        "http://example.com/image.jpg"
-      );
+      expect(resolveAssetUrl("http://example.com/image.jpg")).toBe("http://example.com/image.jpg");
     });
 
     it("should prepend base URL for relative paths", () => {
