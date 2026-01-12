@@ -125,9 +125,10 @@ describe("utils", () => {
 
       // Simulate media query change
       matches = true;
-      if (onChangeCallback && typeof onChangeCallback === "function") {
+      const callback = onChangeCallback;
+      if (callback) {
         act(() => {
-          onChangeCallback({
+          callback({
             matches: true,
             media: "(min-width: 768px)",
           } as MediaQueryListEvent);
