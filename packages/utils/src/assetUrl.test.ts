@@ -43,6 +43,47 @@ describe("assetUrl utilities", () => {
       const result = resolveAssetUrl("images/logo.png");
       expect(result).toContain("images/logo.png");
     });
+
+    it("should detect base path from script tags in browser", () => {
+      // Mock document.getElementsByTagName to return a script with management-ui path
+      const mockScript = {
+        src: "http://localhost:5173/management-ui/@vite/client",
+      };
+      vi.spyOn(document, "getElementsByTagName").mockReturnValue([mockScript] as unknown as HTMLCollectionOf<HTMLScriptElement>);
+
+      const result = resolveAssetUrl("/test.jpg");
+      expect(result).toContain("/management-ui/");
+      expect(result).toContain("test.jpg");
+    });
+
+    it("should detect base path from window.location.pathname", () => {
+      // Mock window.location.pathname
+      Object.defineProperty(window, "location", {
+        value: {
+          pathname: "/management-ui/app",
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      // Mock getElementsByTagName to return empty array so it falls back to location.pathname
+      vi.spyOn(document, "getElementsByTagName").mockReturnValue([] as unknown as HTMLCollectionOf<HTMLScriptElement>);
+
+      const result = resolveAssetUrl("/test.jpg");
+      expect(result).toContain("/management-ui/");
+      expect(result).toContain("test.jpg");
+    });
+
+    it("should handle dev mode with dist prefix", () => {
+      // Mock @vite/client detection
+      const mockScript = {
+        src: "http://localhost:5173/@vite/client",
+      };
+      vi.spyOn(document, "getElementsByTagName").mockReturnValue([mockScript] as unknown as HTMLCollectionOf<HTMLScriptElement>);
+
+      const result = resolveAssetUrl("/assets/test.jpg");
+      expect(result).toContain("test.jpg");
+    });
   });
 
   describe("resolveFirstAssetUrl", () => {

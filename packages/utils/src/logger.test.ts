@@ -22,6 +22,34 @@ describe("Logger", () => {
     Object.values(consoleSpy).forEach((spy) => spy.mockRestore());
   });
 
+  describe("debug", () => {
+    it("should log debug messages in development", () => {
+      // Mock development environment
+      const originalEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = "development";
+
+      logger.debug("Test debug message", { key: "value" });
+
+      expect(consoleSpy.debug).toHaveBeenCalledWith("[DEBUG] Test debug message", { key: "value" });
+
+      process.env.NODE_ENV = originalEnv;
+    });
+  });
+
+  describe("info", () => {
+    it("should log info messages in development", () => {
+      // Mock development environment
+      const originalEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = "development";
+
+      logger.info("Test info message", { key: "value" });
+
+      expect(consoleSpy.info).toHaveBeenCalledWith("[INFO] Test info message", { key: "value" });
+
+      process.env.NODE_ENV = originalEnv;
+    });
+  });
+
   describe("warn", () => {
     it("should log warn messages", () => {
       logger.warn("Test warn message", { key: "value" });
@@ -63,6 +91,34 @@ describe("Logger", () => {
         parent: "context",
         child: "data",
       });
+    });
+
+    it("should create a child logger that merges context", () => {
+      const childLogger = logger.child({ module: "test" });
+      childLogger.error("Error message", new Error("test"), { errorCode: "E001" });
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        "[ERROR] Error message",
+        expect.objectContaining({
+          module: "test",
+          errorCode: "E001",
+        })
+      );
+    });
+
+    it("should create a child logger with debug method", () => {
+      const originalEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = "development";
+
+      const childLogger = logger.child({ module: "test" });
+      childLogger.debug("Debug message", { debugData: "value" });
+
+      expect(consoleSpy.debug).toHaveBeenCalledWith("[DEBUG] Debug message", {
+        module: "test",
+        debugData: "value",
+      });
+
+      process.env.NODE_ENV = originalEnv;
     });
   });
 });
