@@ -30,19 +30,21 @@ describe("client", () => {
 
     it("should convert relative URL to absolute URL in browser", () => {
       // Mock window.location
-      Object.defineProperty(window, "location", {
-        value: {
-          origin: "https://example.com",
-        },
-        writable: true,
-        configurable: true,
-      });
+      const originalLocation = window.location;
+      delete (window as { location?: Location }).location;
+      window.location = {
+        ...originalLocation,
+        origin: "https://example.com",
+      } as Location;
 
       const client = createGraphQLClient("/graphql");
 
       expect(GraphQLClient).toHaveBeenCalledWith("https://example.com/graphql");
       expect(client).toBeDefined();
       expect(client.url).toBe("https://example.com/graphql");
+
+      // Restore
+      window.location = originalLocation;
     });
 
     it("should throw error for invalid URL", () => {
