@@ -82,7 +82,7 @@ describe("ObjectRegistryPlugin", () => {
 
       const result = manager.executeFunction<RegistryObject[]>("registry.getObjects", "test:type");
       expect(result).toHaveLength(2);
-      expect(result.map((r) => r.data as { value: number }).map((r) => r.value)).toEqual([1, 2]);
+      expect(result?.map((r) => r.data as { value: number }).map((r) => r.value)).toEqual([1, 2]);
     });
   });
 
@@ -110,7 +110,7 @@ describe("ObjectRegistryPlugin", () => {
 
       const remaining = manager.executeFunction<RegistryObject[]>("registry.getObjects", "test:type");
       expect(remaining).toHaveLength(1);
-      expect((remaining[0]?.data as { value: number })?.value).toBe(2);
+      expect((remaining?.[0]?.data as { value: number })?.value).toBe(2);
     });
   });
 });
