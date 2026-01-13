@@ -1,5 +1,6 @@
 import React from "react";
 import type { PluginManager } from "../../pluginManager";
+import type { Plugin } from "../../IPlugin";
 import type { AppDefinition } from "../../appTypes";
 import { logger } from "@workspace/utils";
 
@@ -41,10 +42,13 @@ export const createAppRegistryPlugin = (): AppRegistryPlugin => {
       });
 
       // Listen for plugin registration events to auto-discover apps
-      manager.addEventListener("plugin:registered", (payload: any) => {
-        const { pluginName } = payload;
-        logger.debug(`Checking plugin ${pluginName} for app definitions...`, { pluginName });
-      });
+      manager.addEventListener<{ pluginName: string; plugin: Plugin }>(
+        "plugin:registered",
+        (payload) => {
+          const { pluginName } = payload;
+          logger.debug(`Checking plugin ${pluginName} for app definitions...`, { pluginName });
+        }
+      );
 
       logger.debug("App registry plugin initialized");
     },

@@ -24,7 +24,7 @@ export interface AppDefinition {
     permissions?: string[];
   };
   /** Optional loader function for app-specific data */
-  loader?: () => Promise<any>;
+  loader?: () => Promise<unknown>;
   /** App version */
   version?: string;
   /** App description */

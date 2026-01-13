@@ -1,5 +1,5 @@
 import React from "react";
-import { createRoute, useRouterState } from "@tanstack/react-router";
+import { createRoute, useRouterState, type AnyRoute } from "@tanstack/react-router";
 import { useAppConfig } from "@workspace/query";
 
 /**
@@ -22,7 +22,7 @@ export interface AuthRouteOptions {
  * to centralize authentication logic.
  */
 
-export const createLoginRoute = (parentRoute: any, options: AuthRouteOptions = {}) => {
+export const createLoginRoute = (parentRoute: AnyRoute, options: AuthRouteOptions = {}) => {
   const LoadingComponent = options.loadingComponent || (() => <div>Loading...</div>);
 
   return createRoute({
@@ -55,7 +55,7 @@ export const createLoginRoute = (parentRoute: any, options: AuthRouteOptions = {
   });
 };
 
-export const createLogoutRoute = (parentRoute: any, options: AuthRouteOptions = {}) => {
+export const createLogoutRoute = (parentRoute: AnyRoute, options: AuthRouteOptions = {}) => {
   const LoadingComponent = options.loadingComponent || (() => <div>Loading...</div>);
 
   return createRoute({

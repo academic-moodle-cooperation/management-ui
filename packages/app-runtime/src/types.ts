@@ -17,7 +17,7 @@ export interface AppRuntimeConfig {
   /** Router instance (if available) */
   router?: AnyRouter;
   /** App-specific configuration */
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
 }
 
 /**
