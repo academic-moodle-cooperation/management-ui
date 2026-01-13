@@ -1,6 +1,6 @@
 import React from "react";
-import { NavMain, NavMainProps } from "@workspace/ui/components/appshell/components/nav-main";
-import { LucideIcon } from "@workspace/ui/components/icons";
+import { NavMain, type NavMainProps } from "@workspace/ui/components/appshell/components/nav-main";
+import type { LucideIcon } from "@workspace/ui/components/icons";
 import { cn } from "@workspace/ui/lib/utils";
 import { usePluginTranslation, createOrganizationNamespace } from "@workspace/i18n";
 

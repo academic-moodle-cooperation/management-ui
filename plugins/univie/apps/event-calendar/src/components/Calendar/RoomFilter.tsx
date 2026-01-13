@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Room } from "../types/eventCalendar";
+import type { Room } from "../types/eventCalendar";
 import { Card, Button, Badge, Input } from "@workspace/ui/components";
 import { Search, Building, MapPin } from "lucide-react";
 

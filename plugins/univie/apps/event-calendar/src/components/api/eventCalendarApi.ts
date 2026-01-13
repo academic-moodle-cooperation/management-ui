@@ -1,5 +1,5 @@
-import { useQuery, UseQueryResult } from "@workspace/query";
-import { Room, Event, ParsedEvent, EventCalendarConfig } from "../types/eventCalendar";
+import { useQuery, type UseQueryResult } from "@workspace/query";
+import type { Room, Event, ParsedEvent, EventCalendarConfig } from "../types/eventCalendar";
 import { allowedRoomIds } from "./allowedRoomIds";
 import { logger } from "@workspace/utils";
 /**
@@ -11,7 +11,7 @@ const DEFAULT_CONFIG: EventCalendarConfig = {
   allowedRoomIds,
   // This should be configurable via environment variable
   // Set VITE_UNIVIE_API_BASE_URL to your real API URL to switch from mock data
-  apiBaseUrl: import.meta.env?.VITE_UNIVIE_API_BASE_URL || "https://api.example.com",
+  apiBaseUrl: import.meta.env?.["VITE_UNIVIE_API_BASE_URL"] || "https://api.example.com",
 };
 
 logger.debug("Event Calendar API Configuration", {

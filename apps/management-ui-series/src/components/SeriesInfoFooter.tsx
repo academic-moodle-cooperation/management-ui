@@ -1,12 +1,12 @@
 import React from "react";
 import { Button, toast } from "@workspace/ui/components";
 import { useI18n } from "@workspace/i18n";
-import {
+import { useUpdateSeriesMutation } from "@workspace/query";
+import type {
   CommonSeriesMetadataV2,
   GetSeriesByIdInputFieldsQuery,
-  useUpdateSeriesMutation,
 } from "@workspace/query";
-import { MetadataField } from "@workspace/ui-config";
+import type { MetadataField } from "@workspace/ui-config";
 import { normalizeMetadataObject } from "@workspace/utils";
 
 type SeriesUpdateData = {
@@ -102,13 +102,13 @@ const SeriesInfoFooter = ({
     if (
       seriesUpdateData &&
       Object.hasOwn(seriesUpdateData, "contributor") &&
-      seriesUpdateData.contributor?.length &&
-      seriesUpdateData.contributor.length > 0
+      seriesUpdateData["contributor"]?.length &&
+      seriesUpdateData["contributor"].length > 0
     ) {
-      seriesUpdateData.contributor = (
-        Array.isArray(seriesUpdateData.contributor)
-          ? seriesUpdateData.contributor.join(",")
-          : seriesUpdateData.contributor
+      seriesUpdateData["contributor"] = (
+        Array.isArray(seriesUpdateData["contributor"])
+          ? seriesUpdateData["contributor"].join(",")
+          : seriesUpdateData["contributor"]
       )
         .replace(/\n/g, ",")
         .split(",")
@@ -119,13 +119,13 @@ const SeriesInfoFooter = ({
     if (
       seriesUpdateData &&
       Object.hasOwn(seriesUpdateData, "publisher") &&
-      seriesUpdateData.publisher?.length &&
-      seriesUpdateData.publisher.length > 0
+      seriesUpdateData["publisher"]?.length &&
+      seriesUpdateData["publisher"].length > 0
     ) {
-      seriesUpdateData.publisher = (
-        Array.isArray(seriesUpdateData.publisher)
-          ? seriesUpdateData.publisher.join(",")
-          : seriesUpdateData.publisher
+      seriesUpdateData["publisher"] = (
+        Array.isArray(seriesUpdateData["publisher"])
+          ? seriesUpdateData["publisher"].join(",")
+          : seriesUpdateData["publisher"]
       )
         .replace(/\n/g, ",")
         .split(",")
@@ -146,7 +146,7 @@ const SeriesInfoFooter = ({
     // Use the normalized metadata (which includes seriesUpdateData) and only fallback to original if truly missing
     const metadataWithTitle = {
       title:
-        normalizedMetadata.title ||
+        normalizedMetadata["title"] ||
         seriesInputFields?.seriesById?.commonMetadataV2?.title?.value ||
         "",
       ...normalizedMetadata,

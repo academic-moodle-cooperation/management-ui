@@ -8,7 +8,7 @@ import {
   OverflowTooltip,
 } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib";
-import { SeriesDataFragment } from "@workspace/query";
+import type { SeriesDataFragment } from "@workspace/query";
 import { Film, Info } from "lucide-react";
 import { Link } from "@workspace/router";
 import { i18next } from "@workspace/i18n";

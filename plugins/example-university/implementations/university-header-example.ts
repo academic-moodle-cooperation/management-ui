@@ -26,10 +26,10 @@ export const universityHeaderExample = createPlugin({
     // The default header only provides language switcher + login button
     manager.registerObject("app:header-logo", "university-logo", {
       src: "/assets/university-logo.png",
-      alt: import.meta.env.VITE_INSTITUTION_NAME || "University",
+      alt: import.meta.env["VITE_INSTITUTION_NAME"] || "University",
       width: 120,
       height: 40,
-      href: import.meta.env.VITE_INSTITUTION_WEBSITE || "/",
+      href: import.meta.env["VITE_INSTITUTION_WEBSITE"] || "/",
     });
 
     logger.debug("University header extension registered (logo only)");

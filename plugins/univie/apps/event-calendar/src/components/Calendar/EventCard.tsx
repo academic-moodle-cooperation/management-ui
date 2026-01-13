@@ -1,12 +1,12 @@
 import React from "react";
-import { ParsedEvent, Room } from "../types/eventCalendar";
+import type { ParsedEvent, Room } from "../types/eventCalendar";
 import { Card, Badge } from "@workspace/ui/components";
 import { Clock, MapPin, Users } from "lucide-react";
 
 interface EventCardProps {
   event: ParsedEvent;
-  room?: Room;
-  className?: string;
+  room?: Room | undefined;
+  className?: string | undefined;
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ event, room, className }) => {

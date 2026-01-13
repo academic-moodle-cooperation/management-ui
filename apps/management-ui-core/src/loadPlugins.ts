@@ -1,4 +1,4 @@
-import { Plugin } from "@workspace/plugin-system";
+import type { Plugin } from "@workspace/plugin-system";
 import type { AppConfig, PluginNamespaceItem } from "@workspace/query";
 import * as AllPlugins from "@workspace/plugins";
 import { logger } from "@workspace/utils";

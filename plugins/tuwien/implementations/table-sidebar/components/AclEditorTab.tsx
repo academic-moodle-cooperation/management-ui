@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { AclEditor, SelectedElement, ACLEntry } from "@workspace/ui/components";
+import { AclEditor, type SelectedElement, type ACLEntry } from "@workspace/ui/components";
 import {
   useGetManagedAclsWithEventIdQuery,
   useGetManagedAclsWithSeriesIdQuery,

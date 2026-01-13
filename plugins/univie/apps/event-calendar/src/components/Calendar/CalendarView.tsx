@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { ParsedEvent, Room } from "../types/eventCalendar";
+import type { ParsedEvent, Room } from "../types/eventCalendar";
 import { EventCard } from "./EventCard";
 import { RoomFilter } from "./RoomFilter";
 import { Card, Button, Skeleton } from "@workspace/ui/components";
@@ -266,7 +266,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
                             <EventCard
                               key={`${event.extRaumId}-${event.originalDatum}-${event.originalBeginn}-${index}`}
                               event={event}
-                              room={room}
+                              room={room ?? undefined}
                             />
                           ))}
                         </div>

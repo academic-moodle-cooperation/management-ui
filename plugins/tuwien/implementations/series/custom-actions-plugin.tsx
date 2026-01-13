@@ -1,11 +1,11 @@
 import React from "react";
 import { createPlugin } from "@workspace/plugin-system";
-import { PluginManager } from "@workspace/plugin-system";
+import type { PluginManager } from "@workspace/plugin-system";
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components";
 import { MonitorPlay } from "@workspace/ui/components/icons";
 import { createOrganizationNamespace, i18next, usePluginTranslation } from "@workspace/i18n";
 import { Link } from "@workspace/router";
-import { useAppConfig, SeriesDataFragment } from "@workspace/query";
+import { useAppConfig, type SeriesDataFragment } from "@workspace/query";
 import { logger } from "@workspace/utils";
 
 interface TUWienSeriesActionsProps {
@@ -27,7 +27,7 @@ const TUWienSeriesActions = ({ series, children }: TUWienSeriesActionsProps) => 
     <Tooltip delayDuration={300} key="tuwien-tobira">
       <TooltipTrigger asChild>
         <Link
-          to={`${config.tobiraUrl}/!s/:${series.id}`}
+          to={`${config["tobiraUrl"]}/!s/:${series.id}`}
           className="flex items-center justify-end group"
           onClick={(e: React.MouseEvent) => {
             e.stopPropagation();

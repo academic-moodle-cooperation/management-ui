@@ -1,7 +1,9 @@
 import React, { useMemo, useEffect, useCallback, useRef, useState } from "react";
-import { MUITable, createMetadataHelpers, Row, type ColumnDef } from "@workspace/ui/components";
+import { MUITable, createMetadataHelpers, type ColumnDef } from "@workspace/ui/components";
+import type { Row } from "@workspace/ui/components";
 import { AppLoader } from "@workspace/ui/components";
-import { useUpdateSeriesMutation, SeriesDataFragment, useAppConfig } from "@workspace/query";
+import { useUpdateSeriesMutation, useAppConfig } from "@workspace/query";
+import type { SeriesDataFragment } from "@workspace/query";
 import { useNavigate } from "@workspace/router";
 import type { MetadataItem, ColumnsField } from "@workspace/ui-config";
 import { useI18n } from "@workspace/i18n";
@@ -75,9 +77,9 @@ const SeriesTable = () => {
     if (isOpen && isEditing && selectedId && !seriesUpdateData) {
       logger.debug("SeriesTable - Sidebar opened in edit mode", { selectedId });
 
-          // Here we'll use the existing input fields data to populate the sidebar
-          if (seriesInputFields?.seriesById?.commonMetadataV2) {
-            const formattedData: SeriesUpdateData = {};
+      // Here we'll use the existing input fields data to populate the sidebar
+      if (seriesInputFields?.seriesById?.commonMetadataV2) {
+        const formattedData: SeriesUpdateData = {};
         try {
           // Process each metadata field in seriesById.commonMetadataV2
           const metadataFields = seriesInputFields.seriesById.commonMetadataV2;
@@ -131,16 +133,16 @@ const SeriesTable = () => {
   // Modified row click handler to pass inputFields directly
   const handleRowClick = useCallback(
     (event: React.MouseEvent, row: Row<Record<string, unknown>>) => {
-      logger.debug("SeriesTable - Row clicked", { rowId: row.original.id });
+      logger.debug("SeriesTable - Row clicked", { rowId: row.original["id"] });
 
       // Reset edit state when clicking on a different row
-      if (isEditing && selectedId !== row.original.id) {
+      if (isEditing && selectedId !== row.original["id"]) {
         resetUpdateFields();
       }
 
       // This was causing the issue by passing stale data to the sidebar.
       // By only setting the ID, we allow the reactive data flow to update the sidebar.
-      openSidebar(row.original.id as string);
+      openSidebar(row.original["id"] as string);
     },
     [openSidebar, isEditing, selectedId, resetUpdateFields]
   );

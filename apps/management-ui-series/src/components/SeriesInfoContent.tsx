@@ -8,10 +8,10 @@ import {
 } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib/utils";
 import { useI18n } from "@workspace/i18n";
-import {
+import { useAppConfig } from "@workspace/query";
+import type {
   GetSeriesByIdInputFieldsQuery,
   GetInputFieldsMetaDataFragment,
-  useAppConfig,
 } from "@workspace/query";
 import type { MetadataItem } from "@workspace/ui-config";
 import { CopyIcon, PencilIcon } from "@workspace/ui/components";

@@ -4,7 +4,7 @@ import { Pencil, UploadCloud } from "lucide-react";
 import { Link } from "@workspace/router";
 import { i18next } from "@workspace/i18n";
 import { useSidebarStore } from "../stores/sidebarStore";
-import { SeriesDataFragment } from "@workspace/query";
+import type { SeriesDataFragment } from "@workspace/query";
 import { PluginComponent } from "@workspace/plugin-system";
 
 interface SeriesActionsCellProps {

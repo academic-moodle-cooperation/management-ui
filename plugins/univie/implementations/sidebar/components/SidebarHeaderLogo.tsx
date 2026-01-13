@@ -42,10 +42,10 @@ export const SidebarHeaderLogo = ({ collapsed }: SidebarHeaderLogoProps) => {
                 className="mx-auto h-10 w-auto"
                 onError={(e) => {
                   // Prevent infinite loop by tracking if we've already tried fallback
-                  if (e.currentTarget.dataset.errorHandled === "true") {
+                  if (e.currentTarget.dataset["errorHandled"] === "true") {
                     return; // Already tried fallback, don't retry
                   }
-                  e.currentTarget.dataset.errorHandled = "true";
+                  e.currentTarget.dataset["errorHandled"] = "true";
 
                   // Try favicon as fallback
                   const favicon = resolveFirstAssetUrl([], "assets/favicon/favicon.svg");

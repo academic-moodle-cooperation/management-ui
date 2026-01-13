@@ -35,7 +35,7 @@ export const appLayoutExtensionPoints = createPlugin({
           alt: "University of Vienna",
           width: 120,
           height: 40,
-          href: import.meta.env.VITE_INSTITUTION_WEBSITE || "#",
+          href: import.meta.env["VITE_INSTITUTION_WEBSITE"] || "#",
         },
       ],
     });

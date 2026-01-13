@@ -1,6 +1,6 @@
 import { createPlugin } from "@workspace/plugin-system";
 import DefaultFooter from "./components/default-footer";
-import { PluginManager } from "@workspace/plugin-system";
+import type { PluginManager } from "@workspace/plugin-system";
 
 // Core Footer Implementation Plugin
 export const coreFooterImplementation = createPlugin({
@@ -21,7 +21,7 @@ export const coreFooterImplementation = createPlugin({
     );
   },
 
-  activate() {},
+  activate() { },
 
-  deactivate() {},
+  deactivate() { },
 });

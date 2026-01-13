@@ -1,6 +1,6 @@
 import { useReducer, useMemo, useCallback } from "react";
 import { atomWithStorage, useAtomValue, useSetAtom } from "@workspace/store";
-import { OnChangeFn, SortingState, VisibilityState } from "@workspace/ui/components";
+import type { OnChangeFn, SortingState, VisibilityState } from "@workspace/ui/components";
 export interface TableBaseState {
   pageIndex: number;
   pageSize: number;

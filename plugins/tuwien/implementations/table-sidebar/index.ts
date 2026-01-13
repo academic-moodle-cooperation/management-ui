@@ -1,6 +1,6 @@
 import { createPlugin } from "@workspace/plugin-system";
 import { AclEditorTab } from "./components/AclEditorTab";
-import { PluginManager } from "@workspace/plugin-system";
+import type { PluginManager } from "@workspace/plugin-system";
 import { logger } from "@workspace/utils";
 
 /**

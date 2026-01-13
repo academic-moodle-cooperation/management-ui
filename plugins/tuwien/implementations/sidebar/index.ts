@@ -1,5 +1,5 @@
 import { createPlugin } from "@workspace/plugin-system";
-import { PluginManager } from "@workspace/plugin-system";
+import type { PluginManager } from "@workspace/plugin-system";
 import { CustomNavMain } from "./components/CustomNavMain";
 import { SidebarHeader } from "./components/SidebarHeader";
 import { SidebarUserMenu } from "./components/SidebarUserMenu";
@@ -85,7 +85,7 @@ export const studioNavImplementation = createPlugin({
     });
   },
 
-  activate() {},
+  activate() { },
 
-  deactivate() {},
+  deactivate() { },
 });

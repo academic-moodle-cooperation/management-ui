@@ -1,11 +1,11 @@
 import React from "react";
 import { createPlugin } from "@workspace/plugin-system";
-import { PluginManager } from "@workspace/plugin-system";
+import type { PluginManager } from "@workspace/plugin-system";
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components";
 import { MonitorPlay } from "@workspace/ui/components/icons";
 import { createOrganizationNamespace, usePluginTranslation } from "@workspace/i18n";
 import { Link } from "@workspace/router";
-import { useAppConfig, EventsDataFragment } from "@workspace/query";
+import { useAppConfig, type EventsDataFragment } from "@workspace/query";
 
 interface TUWienEpisodesActionsProps {
   event: EventsDataFragment;
@@ -38,7 +38,7 @@ const TUWienEpisodesActions = ({
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <Link
-              to={`${config.tobiraUrl}/!v/:${event.id}`}
+              to={`${config["tobiraUrl"]}/!v/:${event.id}`}
               className="flex items-center justify-end group"
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
@@ -90,7 +90,7 @@ export const tuwienEpisodesActionsImplementation = createPlugin({
     });
   },
 
-  activate() {},
+  activate() { },
 
-  deactivate() {},
+  deactivate() { },
 });

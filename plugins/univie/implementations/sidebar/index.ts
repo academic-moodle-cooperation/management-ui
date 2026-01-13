@@ -1,5 +1,5 @@
 import { createPlugin } from "@workspace/plugin-system";
-import { PluginManager } from "@workspace/plugin-system";
+import type { PluginManager } from "@workspace/plugin-system";
 import { CustomNavMain } from "./components/CustomNavMain";
 import { SidebarHeaderLogo } from "./components/SidebarHeaderLogo";
 import { SidebarFooter } from "./components/SidebarFooter";
@@ -58,9 +58,9 @@ export const univieSidebarImplementation = createPlugin({
     });
   },
 
-  activate() {},
+  activate() { },
 
-  deactivate() {},
+  deactivate() { },
 });
 
 export const studioUnivieNavImplementation = createPlugin({
@@ -78,8 +78,8 @@ export const studioUnivieNavImplementation = createPlugin({
     }, {});
 
     // Get Studio URL from merged config
-    const appConfig = mergedConfig?.app as { studioUrl?: string } | undefined;
-    const studioUrl = appConfig?.studioUrl || (mergedConfig?.studioUrl as string | undefined) || "/studio";
+    const appConfig = mergedConfig?.["app"] as { studioUrl?: string } | undefined;
+    const studioUrl = appConfig?.studioUrl || (mergedConfig?.["studioUrl"] as string | undefined) || "/studio";
 
     // Register a plain object (not a React component)
     manager.registerObject("sidebar:nav-items", "studio", {
@@ -118,8 +118,8 @@ export const captureUnivieNavImplementation = createPlugin({
     }, {});
 
     // Get Capture URL from merged config
-    const appConfig = mergedConfig?.app as { captureUrl?: string } | undefined;
-    const captureUrl = appConfig?.captureUrl || (mergedConfig?.captureUrl as string | undefined) || "/capture";
+    const appConfig = mergedConfig?.["app"] as { captureUrl?: string } | undefined;
+    const captureUrl = appConfig?.captureUrl || (mergedConfig?.["captureUrl"] as string | undefined) || "/capture";
 
     // Register a plain object (not a React component)
     // Title will be translated in CustomNavMain component
