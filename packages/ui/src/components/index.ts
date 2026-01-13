@@ -18,3 +18,9 @@ export * from "./appLoader";
 export * from "./acl-editor";
 
 export { Switch as SwitchHeadlessUI } from "@headlessui/react";
+
+// Explicitly re-export types for Vite/Rollup compatibility
+// when using 'import type' syntax
+export type { Row, SortingState, ColumnDef, Column, CellContext } from "./datatable";
+export type { OnChangeFn, VisibilityState } from "@tanstack/react-table";
+export type { ACLEntry, ACLEntryInput, ManagedACLEntry } from "./acl-editor/types";
