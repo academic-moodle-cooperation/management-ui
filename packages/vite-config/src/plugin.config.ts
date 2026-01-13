@@ -1,8 +1,10 @@
 import path from "node:path";
-import type { UserConfig, BuildOptions } from "vite";
+
 import { createBaseConfig, type CreateBaseConfigOptions } from "./base.config.js";
 import { getPluginPorts, getPluginBasePath, getAppBasePath } from "./ports.js";
 import { createProxyConfig } from "./proxy.js";
+
+import type { UserConfig, BuildOptions } from "vite";
 
 export interface CreatePluginAppViteConfigOptions {
   packageName: string;

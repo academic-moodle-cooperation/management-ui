@@ -1,6 +1,6 @@
-import { type UserConfig, type PluginOption } from "vite";
-import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react-swc";
+import { type UserConfig, type PluginOption } from "vite";
 // import path from "node:path"; // path.resolve for '@' alias is app-specific
 
 export interface CreateBaseConfigOptions {

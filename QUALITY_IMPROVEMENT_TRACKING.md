@@ -94,7 +94,7 @@ This document tracks the progress of the comprehensive code quality improvement 
 
 **Status:** ✅ TypeScript strictness vollständig implementiert und dokumentiert
 
-#### 2.2 Console Statements bereinigen ✅ COMPLETED (Priority Files)
+#### 2.2 Console Statements bereinigen ✅ COMPLETED
 
 - [x] Logger-System erstellt (`packages/utils/src/logger.ts`)
 - [x] Logger exportiert in `packages/utils/src/index.ts`
@@ -103,9 +103,12 @@ This document tracks the progress of the comprehensive code quality improvement 
   - [x] `apps/management-ui-core/src/app-router.tsx` (6 console Statements)
   - [x] `packages/plugin-system/src/pluginManager.ts` (10 console Statements)
   - [x] `packages/plugin-system/src/RendererContext.tsx` (8 console Statements)
-- [ ] Weitere Dateien (plugins, andere apps) - ⏳ In Progress
+  - [x] `packages/vite-config/src/generate-config-plugin.ts` (8 console Statements)
+  - [x] `packages/vite-config/src/ports.ts` (1 console Statement)
+- [x] Alle produktiven console Statements durch logger ersetzt
+- [x] Auskommentierte console Statements in Renderer.tsx bleiben (deprecated Code)
 
-**Status:** Priority Files abgeschlossen, weitere Dateien folgen
+**Status:** ✅ Alle produktiven console Statements durch logger ersetzt
 
 #### 2.3 Code-Style & Konsistenz ✅ COMPLETED
 
