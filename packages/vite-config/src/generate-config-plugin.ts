@@ -86,15 +86,13 @@ export function generateConfigPlugin(options: GenerateConfigPluginOptions): Plug
     pluginConfigs = [],
   } = options;
 
-  let monorepoRoot: string;
   let outDir: string;
 
   return {
     name: "generate-config-plugin",
 
     configResolved(config) {
-      // Detect monorepo root (go up from the app's root)
-      monorepoRoot = path.resolve(config.root, "../..");
+      // Detect output directory from Vite config
       outDir = path.resolve(config.root, config.build.outDir);
     },
 

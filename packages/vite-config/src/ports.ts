@@ -16,8 +16,6 @@ const discoverPluginPackages = (): string[] => {
   return ["plugin-tuwien", "plugin-univie", "plugin-example-university"];
 };
 
-const KNOWN_PLUGIN_PACKAGE_NAMES = [...CORE_APP_NAMES, ...discoverPluginPackages()];
-
 interface PluginPorts {
   dev: number;
   preview: number;

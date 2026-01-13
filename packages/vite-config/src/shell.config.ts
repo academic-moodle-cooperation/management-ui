@@ -5,7 +5,6 @@ import path from "node:path";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
 import { createBaseConfig, type CreateBaseConfigOptions } from "./base.config.js";
-import { generateConfigPlugin } from "./generate-config-plugin.js";
 import { getAppBasePath, DEFAULT_SHELL_APP_PORT } from "./ports.js";
 import { createProxyConfig } from "./proxy.js";
 
