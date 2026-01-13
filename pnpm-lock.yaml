@@ -94,6 +94,9 @@ importers:
       '@workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@workspace/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@workspace/vite-config':
         specifier: workspace:*
         version: link:../../packages/vite-config
@@ -471,6 +474,9 @@ importers:
       '@workspace/ui':
         specifier: workspace:*
         version: link:../ui
+      '@workspace/utils':
+        specifier: workspace:*
+        version: link:../utils
       react:
         specifier: ^19.1.0
         version: 19.1.0
@@ -1124,9 +1130,15 @@ importers:
 
   plugins/core:
     dependencies:
+      '@workspace/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
       '@workspace/plugin-system':
         specifier: workspace:*
         version: link:../../packages/plugin-system
+      '@workspace/router':
+        specifier: workspace:*
+        version: link:../../packages/router
       '@workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -1149,6 +1161,12 @@ importers:
 
   plugins/example-university:
     dependencies:
+      '@workspace/plugin-system':
+        specifier: workspace:*
+        version: link:../../packages/plugin-system
+      '@workspace/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       react:
         specifier: ^18.0.0 || ^19.0.0
         version: 19.1.0
@@ -1183,6 +1201,24 @@ importers:
       '@workspace/app-runtime':
         specifier: workspace:*
         version: link:../../packages/app-runtime
+      '@workspace/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
+      '@workspace/plugin-system':
+        specifier: workspace:*
+        version: link:../../packages/plugin-system
+      '@workspace/query':
+        specifier: workspace:*
+        version: link:../../packages/query
+      '@workspace/router':
+        specifier: workspace:*
+        version: link:../../packages/router
+      '@workspace/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@workspace/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       react:
         specifier: ^18.0.0 || ^19.0.0
         version: 19.1.0
@@ -1235,6 +1271,9 @@ importers:
       '@workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@workspace/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       lucide-react:
         specifier: ^0.417.0
         version: 0.417.0(react@19.1.0)
