@@ -72,7 +72,7 @@ export interface DataTableProps<TData, TValue> {
 /**
  * Data table component with sorting, filtering, and pagination
  */
-function DataTable<TData extends Record<string, any>, TValue>({
+function DataTable<TData extends Record<string, unknown>, TValue>({
   columns,
   data,
   selectedId,

@@ -74,8 +74,9 @@ export function InfiniteScroll({
         const isObserveTarget = reverse ? index === 0 : index === flattenChildren.length - 1;
         const ref = isObserveTarget ? observerRef : null;
         // Type assertion needed because React.cloneElement's ref prop typing is complex
+        // React.cloneElement doesn't properly type ref forwarding for all component types
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return React.cloneElement(child as any, { ref });
+        return React.cloneElement(child as React.ReactElement<any>, { ref });
       })}
     </>
   );

@@ -14,7 +14,7 @@ interface MUITableProps<TData, TValue> extends DataTableProps<TData, TValue> {
   designButton?: React.ReactNode;
 }
 
-function MUITable<TData extends Record<string, any>, TValue>({
+function MUITable<TData extends Record<string, unknown>, TValue>({
   columns,
   data,
   refetch,
