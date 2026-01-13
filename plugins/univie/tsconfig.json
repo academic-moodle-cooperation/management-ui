@@ -4,13 +4,20 @@
     "baseUrl": ".",
     "composite": false,
     "paths": {
-      "@/*": ["./src/*"],
-      "@workspace/utils": ["../../packages/utils/src/index.ts"],
-      "@workspace/utils/*": ["../../packages/utils/src/*"],
-      "@workspace/app-runtime": ["../../packages/app-runtime/src/index.ts"],
-      "@workspace/app-runtime/*": ["../../packages/app-runtime/src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "vite-env.d.ts", "vite.config.ts"],
-  "exclude": ["node_modules", "dist", ".turbo"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "vite-env.d.ts",
+    "vite.config.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".turbo"
+  ]
 }

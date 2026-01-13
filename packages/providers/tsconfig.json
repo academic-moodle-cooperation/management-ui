@@ -3,15 +3,20 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@workspace/utils": ["../utils/src/index.ts"],
-      "@workspace/utils/*": ["../utils/src/*"],
-      "@workspace/app-runtime": ["../app-runtime/src/index.ts"],
-      "@workspace/app-runtime/*": ["../app-runtime/src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
     "composite": false,
     "noEmit": true
   },
-  "include": ["src", "src/vite-env.d.ts"],
-  "exclude": ["node_modules", "dist", ".turbo"]
+  "include": [
+    "src",
+    "src/vite-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".turbo"
+  ]
 }

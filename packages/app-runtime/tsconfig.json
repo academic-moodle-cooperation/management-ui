@@ -5,12 +5,6 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ],
-      "@workspace/utils": [
-        "../utils/src/index.ts"
-      ],
-      "@workspace/utils/*": [
-        "../utils/src/*"
       ]
     },
     "composite": false,
