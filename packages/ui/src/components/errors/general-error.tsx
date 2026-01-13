@@ -35,7 +35,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     this.props.onError?.(error, errorInfo);
 
     // Log the error during development
-    if (process.env["NODE_ENV"] === "development") {
+    if (import.meta.env.DEV) {
       logger.error("ErrorBoundary caught an error", error, {
         componentStack: errorInfo.componentStack,
       });
@@ -54,7 +54,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       return (
         <GeneralError
           message={
-            process.env["NODE_ENV"] === "development"
+            import.meta.env.DEV
               ? `${this.state.error?.name}: ${this.state.error?.message}`
               : undefined
           }

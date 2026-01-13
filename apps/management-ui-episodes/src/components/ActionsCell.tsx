@@ -238,11 +238,11 @@ const DeleteAction: React.FC<{
 }> = ({ event, onDelete, dialogOpen, setDialogOpen }) => (
   <Dialog onOpenChange={(open) => !open && setDialogOpen(false)} open={dialogOpen}>
     <DialogTrigger
+      asChild
       onClick={(e: React.MouseEvent) => {
         e.stopPropagation();
         setDialogOpen(true);
       }}
-      className="w-4 h-4"
     >
       <Button variant="ghost" size="icon" className="w-4 h-4">
         <Trash2 />
