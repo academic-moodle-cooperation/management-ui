@@ -1,6 +1,7 @@
 import React from "react";
-import { Button } from "@workspace/ui/components";
+
 import { AdaptiveAppWrapper } from "@workspace/app-runtime";
+import { Button } from "@workspace/ui/components";
 
 const TestAppContent: React.FC = () => {
   return (

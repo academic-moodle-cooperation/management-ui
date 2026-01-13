@@ -1,6 +1,7 @@
-import React from "react";
 import { Settings2 } from "lucide-react";
-import type { Table, RowData } from "@tanstack/react-table";
+import React from "react";
+
+import { useI18n } from "@workspace/i18n";
 import {
   DropdownMenuTrigger,
   DropdownMenu,
@@ -8,9 +9,10 @@ import {
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-} from "@workspace/ui/components";
-import { Button } from "@workspace/ui/components";
-import { useI18n } from "@workspace/i18n";
+ Button } from "@workspace/ui/components";
+
+import type { Table, RowData } from "@tanstack/react-table";
+
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;

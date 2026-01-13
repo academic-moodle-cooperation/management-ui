@@ -1,4 +1,3 @@
-import React from "react";
 import {
   type ColumnDef,
   flexRender,
@@ -11,12 +10,13 @@ import {
   type Row,
   type VisibilityState,
 } from "@tanstack/react-table";
+import React from "react";
 
 import { Table, TableHead, TableHeader, TableRow } from "@workspace/ui/components";
+import { useComponentTheme } from "@workspace/ui/theme/theme.context";
 
 import { DataTableBody } from "./data-table-body";
 import { DataTablePagination } from "./data-table-pagination";
-import { useComponentTheme } from "@workspace/ui/theme/theme.context";
 import { DataTableToolbar } from "./data-table-toolbar";
 // Import the hook from the new location
 import { useTableNavigation } from "./hooks";

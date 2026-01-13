@@ -1,8 +1,7 @@
 import * as React from "react";
-import type { LucideIcon } from "lucide-react";
 
-import { NavMain } from "./nav-main";
-import { NavUser } from "./nav-user";
+
+import { useRegistry , ComponentResolver } from "@workspace/plugin-system";
 import {
   Sidebar,
   SidebarContent,
@@ -11,10 +10,13 @@ import {
   SidebarRail,
   useSidebar,
 } from "@workspace/ui/components";
-import { useRegistry } from "@workspace/plugin-system";
+
 import { Logo } from "./logo";
-import { ComponentResolver } from "@workspace/plugin-system";
 import { MobileCloseButton } from "./mobile-closebutton";
+import { NavMain } from "./nav-main";
+import { NavUser } from "./nav-user";
+
+import type { LucideIcon } from "lucide-react";
 
 interface SidebarConfig {
   title: string;

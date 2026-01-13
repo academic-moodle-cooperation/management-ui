@@ -1,8 +1,8 @@
-import type { LucideIcon } from "lucide-react";
 
+import { buttonVariants , Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib/utils";
-import { buttonVariants } from "@workspace/ui/components";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components";
+
+import type { LucideIcon } from "lucide-react";
 
 interface NavProps {
   isCollapsed: boolean;

@@ -1,9 +1,10 @@
 import React from "react";
+
+import { useGetCurrentUser , useAppConfig } from "@workspace/query";
 import { useAuth } from "@workspace/router";
-import { useGetCurrentUser } from "@workspace/query";
-import { useAppConfig } from "@workspace/query";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+
 import { Badge } from "../ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 export const AuthDebug: React.FC = () => {
   const authContext = useAuth();

@@ -1,4 +1,5 @@
 import React from "react";
+
 import { usePluginTranslation } from "@workspace/i18n";
 
 /**

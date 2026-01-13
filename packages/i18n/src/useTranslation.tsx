@@ -1,8 +1,8 @@
-import React from "react";
 import i18n from "i18next";
-import { useTranslation, initReactI18next, Trans as i18nTrans } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
+import React from "react";
+import { useTranslation, initReactI18next, Trans as i18nTrans } from "react-i18next";
 
 export const selectedLanguage = {
   de: "Deutsch",

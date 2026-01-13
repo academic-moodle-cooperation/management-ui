@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import { logger } from "@workspace/utils";
 
 interface InfiniteScrollProps {

@@ -1,4 +1,17 @@
+import { Trash2 } from "lucide-react";
 import React, { useState, useEffect, useCallback } from "react";
+
+import { useI18n, loadNamespace } from "@workspace/i18n";
+import {
+  useGetAllManagedAclsQuery,
+  useUpdateEventAclMutation,
+  useUpdateSeriesAclMutation,
+  useGetManagedAclsWithEventIdQuery,
+  useGetManagedAclsWithSeriesIdQuery,
+  useSearchUserQuery,
+  useQueryClient,
+} from "@workspace/query";
+import type { SearchUserQuery } from "@workspace/query";
 import {
   Button,
   Checkbox,
@@ -25,20 +38,9 @@ import {
   toast,
   OverflowTooltip,
 } from "@workspace/ui/components";
-import { Trash2 } from "lucide-react";
-import {
-  useGetAllManagedAclsQuery,
-  useUpdateEventAclMutation,
-  useUpdateSeriesAclMutation,
-  useGetManagedAclsWithEventIdQuery,
-  useGetManagedAclsWithSeriesIdQuery,
-  useSearchUserQuery,
-  useQueryClient,
-} from "@workspace/query";
-import type { SearchUserQuery } from "@workspace/query";
-import { useI18n, loadNamespace } from "@workspace/i18n";
-import type { AclData, ACLEntry, ACLEntryInput, SelectedElement } from "./types";
 import { logger } from "@workspace/utils";
+
+import type { AclData, ACLEntry, ACLEntryInput, SelectedElement } from "./types";
 
 type UserSearchResult = NonNullable<NonNullable<SearchUserQuery["searchUser"]>["nodes"]>[number];
 

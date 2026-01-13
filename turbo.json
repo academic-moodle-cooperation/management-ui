@@ -7,7 +7,9 @@
     "NODE_ENV",
     "VITE_PROXY_TARGET",
     "GRAPHQL_ENDPOINT",
-    "GRAPHQL_HEADERS"
+    "GRAPHQL_HEADERS",
+    "npm_package_name",
+    "VITE_INSTITUTION_WEBSITE"
   ],
   "tasks": {
     "build": {

@@ -1,8 +1,8 @@
-import type { FC } from "react";
-import { Badge } from "@workspace/ui/components";
-import { Button } from "@workspace/ui/components";
+import { Badge , Button } from "@workspace/ui/components";
 // import { ArrowRight, LogIn, Github } from 'lucide-react';
 import { Icons, ArrowRight, LogIn } from "@workspace/ui/components";
+
+import type { FC } from "react";
 
 const DefaultLandingPage: FC = () => {
   return (

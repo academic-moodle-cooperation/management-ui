@@ -1,5 +1,8 @@
+import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react";
 
+import { useI18n } from "@workspace/i18n";
+import type { FetchNextPageOptions, InfiniteData, InfiniteQueryObserverResult } from "@workspace/query";
 import {
   Command,
   CommandInput,
@@ -11,9 +14,6 @@ import {
   InfiniteScroll,
 } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib";
-import { Loader2 } from "lucide-react";
-import type { FetchNextPageOptions, InfiniteData, InfiniteQueryObserverResult } from "@workspace/query";
-import { useI18n } from "@workspace/i18n";
 
 type Series = {
   id: string | null | undefined;

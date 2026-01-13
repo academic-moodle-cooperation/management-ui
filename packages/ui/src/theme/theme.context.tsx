@@ -1,5 +1,6 @@
-import * as styles from "../styles";
 import { createContext, type Provider, useContext } from "react";
+
+import * as styles from "../styles";
 
 export type Theme = {
   components: ThemeComponents;

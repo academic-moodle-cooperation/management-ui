@@ -1,9 +1,9 @@
-import React, { type FC } from "react";
 import { CalendarIcon } from "lucide-react";
+import React, { type FC } from "react";
+
+import { Button , Popover, PopoverContent, PopoverTrigger , Calendar } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib";
-import { Button } from "@workspace/ui/components";
-import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components";
-import { Calendar } from "@workspace/ui/components";
+
 import type { SelectSingleEventHandler } from "react-day-picker";
 
 interface DatePickerProps {

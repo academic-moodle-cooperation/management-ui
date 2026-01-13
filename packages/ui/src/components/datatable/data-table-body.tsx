@@ -1,8 +1,11 @@
-import { useMemo } from "react";
-import { TableBody, TableCell, TableRow } from "@workspace/ui/components";
-import { EmptyStateContent } from "./data-table-empty-state";
-import { useRouter } from "@workspace/router";
 import { flexRender } from "@tanstack/react-table";
+import { useMemo } from "react";
+
+import { useRouter } from "@workspace/router";
+import { TableBody, TableCell, TableRow } from "@workspace/ui/components";
+
+import { EmptyStateContent } from "./data-table-empty-state";
+
 import type { ColumnDef, Row, Table } from "@tanstack/react-table";
 
 interface DataTableBodyProps<TData, TValue> {

@@ -1,8 +1,7 @@
 import { createPlugin } from "@workspace/plugin-system";
-import DefaultHeader from "./components/default-header";
-import { LangSwitcher } from "./components/LangSwitcher";
-import { LoginButton } from "./components/LoginButton";
 import type { PluginManager } from "@workspace/plugin-system";
+
+import DefaultHeader from "./components/default-header";
 
 // Core Header Implementation Plugin
 // This plugin provides a complete header component with built-in functionality

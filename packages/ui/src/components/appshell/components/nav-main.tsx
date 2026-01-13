@@ -1,10 +1,9 @@
 "use client";
 
 import { ChevronRight, type LucideIcon } from "lucide-react";
-import { Link } from "@workspace/router";
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@workspace/ui/components";
-import {
+import { Link } from "@workspace/router";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger ,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,

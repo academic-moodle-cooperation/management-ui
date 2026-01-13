@@ -13,7 +13,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
 
   // Type assertion needed because sonner's ToasterProps doesn't fully comply
   // with exactOptionalPropertyTypes, but the component works correctly at runtime
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   return (
     <Sonner
       theme={theme as (ToasterProps["theme"] | undefined)}

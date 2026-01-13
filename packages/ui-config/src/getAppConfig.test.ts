@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
+
 import { getAppConfig, defaultConfig } from "./index";
+
 import type { AppConfig } from "./types";
 
 describe("getAppConfig", () => {

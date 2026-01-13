@@ -1,4 +1,18 @@
+import { ChevronDown } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
+
+import { useI18n } from "@workspace/i18n";
+import {
+  useGetMySeriesNameAndIdQuery,
+  useInfiniteQuery,
+  createGraphQLClient,
+  gql,
+  type MetadataFieldType,
+  OrderDirection,
+  type GetMySeriesNameAndIdQuery,
+  type Series,
+} from "@workspace/query";
+import { useAppConfig } from "@workspace/query";
 import {
   // Badge,
   // Button,
@@ -22,24 +36,9 @@ import {
   CommandItem,
   CommandList,
   Button,
-} from "@workspace/ui/components";
-import { DatePicker } from "@workspace/ui/components";
-import { TimePicker } from "@workspace/ui/components";
+ DatePicker , TimePicker } from "@workspace/ui/components";
 import { serializeDuration } from "@workspace/utils";
 
-import {
-  useGetMySeriesNameAndIdQuery,
-  useInfiniteQuery,
-  createGraphQLClient,
-  gql,
-  type MetadataFieldType,
-  OrderDirection,
-  type GetMySeriesNameAndIdQuery,
-  type Series,
-} from "@workspace/query";
-import { useI18n } from "@workspace/i18n";
-import { useAppConfig } from "@workspace/query";
-import { ChevronDown } from "lucide-react";
 
 type MetadataUpdateFieldProps = MetadataFieldType & {
   value: string | string[];

@@ -1,6 +1,7 @@
 import { createPlugin } from "@workspace/plugin-system";
-import DefaultFooter from "./components/default-footer";
 import type { PluginManager } from "@workspace/plugin-system";
+
+import DefaultFooter from "./components/default-footer";
 
 // Core Footer Implementation Plugin
 export const coreFooterImplementation = createPlugin({

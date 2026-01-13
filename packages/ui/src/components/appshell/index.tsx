@@ -1,5 +1,6 @@
-import { SidebarProvider, SidebarTrigger, SidebarInset } from "@workspace/ui/components";
 import { ComponentResolver } from "@workspace/plugin-system";
+import { SidebarProvider, SidebarTrigger, SidebarInset } from "@workspace/ui/components";
+
 import { AppSidebar } from "./components/app-sidebar";
 
 export function Appshell({ children }: { children: React.ReactNode }) {

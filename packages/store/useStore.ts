@@ -3,9 +3,9 @@
  * This store handles file upload queuing, progress tracking, and state persistence
  */
 
+import { produce } from "immer";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { produce } from "immer";
 
 /** Upload file data structure */
 export type UploadFileBlob = {

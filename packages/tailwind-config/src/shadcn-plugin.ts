@@ -1,5 +1,5 @@
-import plugin from "tailwindcss/plugin.js";
 import defaultTheme from "tailwindcss/defaultTheme";
+import plugin from "tailwindcss/plugin.js";
 
 export const shadcnPlugin = plugin(function () {}, {
   theme: {

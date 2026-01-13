@@ -1,13 +1,16 @@
+
+
+// import { DataTableFacetedFilter } from "./data-table-faceted-filter";
+import { X, RefreshCcw } from "lucide-react";
 import React from "react";
-import type { Table } from "@tanstack/react-table";
+
+import { useI18n } from "@workspace/i18n";
+import { Button, DebouncedInput } from "@workspace/ui/components";
+import { cn } from "@workspace/ui/lib";
 
 import { DataTableViewOptions } from "./data-table-view-options";
 
-// import { DataTableFacetedFilter } from "./data-table-faceted-filter";
-import { Button, DebouncedInput } from "@workspace/ui/components";
-import { X, RefreshCcw } from "lucide-react";
-import { useI18n } from "@workspace/i18n";
-import { cn } from "@workspace/ui/lib";
+import type { Table } from "@tanstack/react-table";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;

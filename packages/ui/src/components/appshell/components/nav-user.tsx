@@ -1,25 +1,23 @@
 "use client";
 
 import { ChevronsUpDown, LogOut } from "lucide-react";
+import React from "react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components";
-import {
+import { useGetCurrentUser } from "@workspace/query";
+import { Avatar, AvatarFallback, AvatarImage ,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@workspace/ui/components";
-import {
+,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
-} from "@workspace/ui/components";
-import { useGetCurrentUser } from "@workspace/query";
+  useSidebar} from "@workspace/ui/components";
 import { sha256 } from "@workspace/utils";
-import React from "react";
+
 
 // Separate data concerns from presentation
 type UserData = {
