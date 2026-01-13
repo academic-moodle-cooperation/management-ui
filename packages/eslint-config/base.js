@@ -32,7 +32,7 @@ export const config = [
       ],
       // Import order rules
       "import/order": [
-        "warn",
+        "error",
         {
           groups: [
             "builtin",
@@ -62,7 +62,7 @@ export const config = [
           pathGroupsExcludedImportTypes: ["builtin"],
         },
       ],
-      "import/no-duplicates": "warn",
+      "import/no-duplicates": "error",
       "import/no-unresolved": "off", // TypeScript handles this
     },
     settings: {
@@ -76,6 +76,22 @@ export const config = [
   {
     plugins: {
       onlyWarn,
+    },
+  },
+  {
+    languageOptions: {
+      globals: {
+        process: "readonly",
+      },
+    },
+  },
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    rules: {
+      // TypeScript strict rules
+      "@typescript-eslint/no-explicit-any": "warn", // Start with warn, can escalate to error later
+      // Note: no-floating-promises and no-misused-promises require type information
+      // They should be enabled via @workspace/eslint-config/type-aware
     },
   },
   {

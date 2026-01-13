@@ -23,6 +23,15 @@ Extends the base configuration with React-specific rules:
 - Browser and service worker globals
 - Automatic React version detection
 
+### Type-Aware Configuration (`@workspace/eslint-config/type-aware`)
+
+Optional configuration that enables type-aware linting rules:
+
+- `@typescript-eslint/no-floating-promises`: Error on unhandled promises
+- `@typescript-eslint/no-misused-promises`: Error on promises used incorrectly
+
+**Note:** This configuration requires TypeScript type information and may slow down linting. Use it selectively in packages where strict Promise handling is critical.
+
 ## Usage
 
 Import the appropriate configuration in your `eslint.config.js`:
