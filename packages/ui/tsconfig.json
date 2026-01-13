@@ -5,10 +5,24 @@
     "rootDir": "src",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@workspace/ui/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@workspace/ui/*": [
+        "./src/*"
+      ]
     }
   },
-  "include": ["src", "src/vite-env.d.ts"],
-  "exclude": ["node_modules", "dist", ".turbo"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
+    "vite-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".turbo",
+    "src/components/ui"
+  ]
 }

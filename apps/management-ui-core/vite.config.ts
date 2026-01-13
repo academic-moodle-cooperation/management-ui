@@ -3,7 +3,7 @@ import { defineConfig, loadEnv } from "vite";
 import { createShellAppViteConfig, generateConfigPlugin } from "@workspace/vite-config";
 import { defaultConfig } from "../../packages/ui-config/src/index";
 
-const packageName = process.env.npm_package_name || "management-ui-core";
+const packageName = process.env["npm_package_name"] || "management-ui-core";
 
 // Import plugin configs directly
 import { config as univieConfig } from "../../plugins/univie/implementations/config/config";
