@@ -133,8 +133,123 @@ This config includes:
 3. **Optional declarations**: Use `build:types` script only when needed
 4. **CI/CD**: Run `check-types` in CI, optionally run `build:types` before releases
 
+## TypeScript Path Mappings
+
+### Policy: No `@workspace/*` Path Mappings in Base Configs
+
+We **do not use** TypeScript path mappings for `@workspace/*` packages in base configurations because:
+
+1. **Modern module resolution**: We use `package.json` exports with TypeScript source paths
+2. **Real dependencies**: Workspace packages should be listed as actual dependencies in `package.json`
+3. **Type safety**: TypeScript resolves types through actual package boundaries
+4. **Bundler compatibility**: Vite and other bundlers work better with real package imports
+
+### Local Path Mappings Are OK
+
+**Within a single package**, local path mappings like `@/*` are acceptable and commonly used:
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+```
+
+This is fine because:
+- It's scoped to a single package
+- It doesn't create phantom dependencies
+- It improves developer experience for internal imports
+
+### What We Avoid
+
+**Do NOT** add `@workspace/*` path mappings to base configs:
+
+```json
+// ❌ DON'T DO THIS in base.json
+{
+  "compilerOptions": {
+    "paths": {
+      "@workspace/ui/*": ["../ui/src/*"]
+    }
+  }
+}
+```
+
+Instead, use real package imports:
+```typescript
+// ✅ DO THIS
+import { Button } from "@workspace/ui/components";
+```
+
+## Auto-Generated Files Exclusion
+
+### shadcn/ui Components
+
+The `packages/ui/src/components/ui/` folder contains auto-generated shadcn/ui components. These files are excluded from strict TypeScript checking because:
+
+1. **Auto-generated**: Files are overwritten by `shadcn add` commands
+2. **External source**: We don't control the code generation
+3. **Strictness conflicts**: Generated code may not conform to our strict TypeScript settings
+
+### Implementation
+
+We use a custom `check-types` script that filters out errors from `src/components/ui`:
+
+**`packages/ui/scripts/check-types.sh`**:
+```bash
+#!/bin/bash
+# Type check script that excludes errors from src/components/ui (auto-generated shadcn/ui files)
+
+OUTPUT=$(tsc --noEmit -p tsconfig.json 2>&1)
+EXIT_CODE=$?
+
+# Filter out errors from src/components/ui
+FILTERED_OUTPUT=$(echo "$OUTPUT" | grep -v 'src/components/ui')
+
+# Check if there are any errors remaining (excluding src/components/ui)
+if echo "$FILTERED_OUTPUT" | grep -q 'error TS'; then
+  echo "$FILTERED_OUTPUT"
+  exit 1
+fi
+
+# If no errors (or only src/components/ui errors), exit with success
+exit 0
+```
+
+**`packages/ui/tsconfig.json`**:
+```json
+{
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".turbo",
+    "src/components/ui"
+  ]
+}
+```
+
+**`packages/ui/package.json`**:
+```json
+{
+  "scripts": {
+    "check-types": "./scripts/check-types.sh"
+  }
+}
+```
+
+This approach:
+- ✅ Survives shadcn updates (no `@ts-nocheck` in files)
+- ✅ Filters errors at script level
+- ✅ Still checks all other files strictly
+- ✅ Maintains type safety for manually written code
+
 ## References
 
 - [TypeScript: skipLibCheck](https://www.typescriptlang.org/tsconfig#skipLibCheck)
 - [TypeScript: emitDeclarationOnly](https://www.typescriptlang.org/tsconfig#emitDeclarationOnly)
 - [TypeScript: Project References](https://www.typescriptlang.org/docs/handbook/project-references.html)
+- [TypeScript: Path Mapping](https://www.typescriptlang.org/tsconfig#paths)
