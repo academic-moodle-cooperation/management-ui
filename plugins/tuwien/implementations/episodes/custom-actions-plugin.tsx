@@ -63,12 +63,11 @@ const TUWienEpisodesActions = ({
   return (
     <div className="relative">
       {/* Render the default actions with our custom actions injected */}
-      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       {React.cloneElement(children, {
-        ...(children.props as any),
+        ...(children.props as Record<string, unknown>),
         customActions, // Pass our custom actions to be merged
         maxVisibleActions: maxVisibleActions || 4,
-      } as any)}
+      } as Record<string, unknown>)}
     </div>
   );
 };

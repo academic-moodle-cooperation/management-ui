@@ -141,6 +141,8 @@ export const createPluginManager = (): PluginManager => {
       logger.error(`Function "${key}" is not registered.`, { functionKey: key });
       return undefined;
     }
+    // Type assertion needed because PluginFunction has flexible signature
+    // The generic return type T provides type safety for callers
     return func(...args) as T;
   };
 

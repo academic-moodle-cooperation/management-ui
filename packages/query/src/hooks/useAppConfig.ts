@@ -30,12 +30,10 @@ export function getAppConfigSync(pluginManager?: PluginManager): AppConfig {
 
   // Get plugin configs directly from manager if available
   // Plugin configs are partial AppConfig objects that will be merged
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let pluginConfigObjects: Partial<AppConfig>[] = [];
   if (pluginManager) {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      pluginConfigObjects = pluginManager.getObjects("app:config") as Partial<AppConfig>[];
+      pluginConfigObjects = pluginManager.getObjects<Partial<AppConfig>>("app:config");
     } catch (error) {
       logger.warn("getAppConfigSync: Failed to get plugin configs from manager", {
         error: error instanceof Error ? error.message : String(error),
@@ -73,10 +71,12 @@ export function useAppConfig() {
     if (isDev) {
       // Dev: Runtime merging with explicit order
       // Plugin configs are partial AppConfig objects
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // Type assertion needed because useRegistry returns unknown[]
+      const pluginConfigs = (pluginConfigObjects || []) as Partial<AppConfig>[];
+      // deepMerge accepts rest parameters, so we need to spread the array
       return deepMerge(
         queryResult.data ?? { ...defaultConfig },
-        ...((pluginConfigObjects as Partial<AppConfig>[]) || [])
+        ...pluginConfigs
       ) as AppConfig;
     } else {
       // Prod: Use pre-merged config.json directly

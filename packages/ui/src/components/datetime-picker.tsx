@@ -115,7 +115,7 @@ function CalendarGrid({ state, ...props }: CalendarGridProps) {
                 | string
                 | number
                 | boolean
-                | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+                | React.ReactElement<unknown, string | React.JSXElementConstructor<unknown>>
                 | Iterable<React.ReactNode>
                 | React.ReactPortal
                 | Iterable<React.ReactNode>

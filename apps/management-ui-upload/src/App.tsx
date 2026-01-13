@@ -148,7 +148,7 @@ export const App = () => {
       orderBy: {
         title: OrderDirection.Asc,
       },
-    })) as any;
+    })) as GetMySeriesNameAndIdQuery;
     return data?.currentUser?.mySeries?.nodes || [];
   };
 

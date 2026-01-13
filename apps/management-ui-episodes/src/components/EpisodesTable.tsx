@@ -8,7 +8,13 @@ import {
 } from "@workspace/ui/components";
 import { AppLoader } from "@workspace/ui/components";
 import { LayoutGrid, List } from "lucide-react";
-import { EventsDataFragment, useUpdateEventMutation, useAppConfig } from "@workspace/query";
+import {
+  EventsDataFragment,
+  useUpdateEventMutation,
+  useAppConfig,
+  type EventsFromSeriesQuery,
+  type GetMyEventsQuery,
+} from "@workspace/query";
 import { useNavigate } from "@workspace/router";
 import type { MetadataItem, ColumnsField } from "@workspace/ui-config";
 import { useI18n } from "@workspace/i18n";
@@ -160,11 +166,11 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   const episodesData = useMemo(() => {
     if (seriesId) {
       // When filtering by series, data comes from seriesById.events
-      const seriesData = data as any; // Type assertion since we know this is EventsFromSeriesQuery when seriesId exists
+      const seriesData = data as EventsFromSeriesQuery | undefined;
       return seriesData?.seriesById?.events.nodes.filter(Boolean) as EventsDataFragment[];
     } else {
       // When showing all events, data comes from currentUser.myEvents
-      const eventsData = data as any; // Type assertion since we know this is GetMyEventsQuery when no seriesId
+      const eventsData = data as GetMyEventsQuery | undefined;
       return eventsData?.currentUser?.myEvents.nodes.filter(Boolean) as EventsDataFragment[];
     }
   }, [data, seriesId]);
@@ -172,10 +178,10 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   // Get total count based on query type
   const totalCount = useMemo(() => {
     if (seriesId) {
-      const seriesData = data as any;
+      const seriesData = data as EventsFromSeriesQuery | undefined;
       return seriesData?.seriesById?.events.totalCount || 0;
     } else {
-      const eventsData = data as any;
+      const eventsData = data as GetMyEventsQuery | undefined;
       return eventsData?.currentUser?.myEvents.totalCount || 0;
     }
   }, [data, seriesId]);

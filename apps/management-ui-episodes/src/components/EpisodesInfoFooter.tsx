@@ -83,7 +83,7 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
 
     // Compare each field in episodesUpdateData with original values
     const result = Object.entries(episodesUpdateData).some(([key, newValue]) => {
-      const originalField = (originalData as any)[key];
+      const originalField = (originalData as Record<string, { value?: unknown } | undefined>)[key];
       const originalValue = originalField?.value;
 
       // Handle different value types and normalize for comparison
@@ -167,7 +167,7 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
     };
 
     // Remove identifier if it exists (we don't want to update it)
-    const { identifier, ...finalMetadata } = metadataWithTitle as any;
+    const { identifier, ...finalMetadata } = metadataWithTitle as Record<string, unknown>;
 
     // IMPORTANT: Validate the merged metadata BEFORE normalization, because normalizeMetadataObject removes empty values
     // but we need to validate that required fields are not empty

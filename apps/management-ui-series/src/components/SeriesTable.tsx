@@ -178,7 +178,8 @@ const SeriesTable = () => {
   const sortedColumns = columnsKeys
     .map((columnsKey) =>
       columns.find((column) => {
-        const col = column as any; // TanStack table column types are complex, using any for access
+        // TanStack table column types are complex, but we can safely access these properties
+        const col = column as { accessorKey?: string; id?: string };
         return col.accessorKey === columnsKey || col.id === columnsKey;
       })
     )
@@ -201,7 +202,7 @@ const SeriesTable = () => {
       {/* Main table with ref */}
       <div ref={tableRef}>
         <MUITable
-          columns={sortedColumns.length > 0 ? (sortedColumns as any) : columns}
+          columns={sortedColumns.length > 0 ? (sortedColumns as ColumnDef<SeriesDataFragment, unknown>[]) : columns}
           data={(seriesData?.filter(Boolean) as SeriesDataFragment[]) || []}
           selectedId={selectedId}
           refetch={refetch}
