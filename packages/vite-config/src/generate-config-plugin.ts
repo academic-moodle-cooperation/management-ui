@@ -6,28 +6,29 @@ export interface GenerateConfigPluginOptions {
   /** Path to output the config.json file (relative to outDir) */
   outputPath?: string;
   /** Default config object (imported from @workspace/ui-config) */
-  defaultConfig: Record<string, any>;
+  defaultConfig: Record<string, unknown>;
   /** Plugin config objects to merge (imported directly in vite.config.ts) */
-  pluginConfigs?: Array<Record<string, any>>;
+  pluginConfigs?: Array<Record<string, unknown>>;
 }
 
 /**
  * Deep merge utility (same as @workspace/utils/deepMerge)
  * Inlined here to avoid build-time import issues
  */
-function deepMerge(
-  target: Record<string, any>,
-  ...sources: Record<string, any>[]
-): Record<string, any> {
+function deepMerge<T extends Record<string, unknown>>(
+  target: T,
+  ...sources: Array<Partial<T> | Record<string, unknown>>
+): T {
   return sources.reduce(
     (acc, source) => {
       if (!source) return acc;
-      Object.keys(source).forEach((key) => {
-        const sourceValue = source[key];
+      const sourceRecord = source as Record<string, unknown>;
+      Object.keys(sourceRecord).forEach((key) => {
+        const sourceValue = sourceRecord[key];
         const accValue = acc[key];
         if (Array.isArray(accValue) && Array.isArray(sourceValue)) {
-          // Replace arrays (not merged)
-          acc[key] = sourceValue;
+          // Replace arrays (don't merge them)
+          (acc as Record<string, unknown>)[key] = sourceValue;
         } else if (
           accValue &&
           typeof accValue === "object" &&
@@ -36,15 +37,20 @@ function deepMerge(
           !Array.isArray(accValue) &&
           !Array.isArray(sourceValue)
         ) {
-          acc[key] = deepMerge({ ...accValue }, sourceValue);
+          // Recursively merge objects
+          (acc as Record<string, unknown>)[key] = deepMerge(
+            { ...(accValue as Record<string, unknown>) },
+            sourceValue as Record<string, unknown>
+          );
         } else if (sourceValue !== undefined) {
-          acc[key] = sourceValue;
+          // Replace primitive values
+          (acc as Record<string, unknown>)[key] = sourceValue;
         }
       });
       return acc;
     },
     { ...target }
-  );
+  ) as T;
 }
 
 /**
@@ -108,9 +114,12 @@ export function generateConfigPlugin(options: GenerateConfigPluginOptions): Plug
           `[generate-config] ✓ Config written to ${path.relative(process.cwd(), fullOutputPath)}`
         );
         console.log(`[generate-config] Summary:`);
-        console.log(`  - Theme: ${mergedConfig.app.theme}`);
-        console.log(`  - Logo: ${mergedConfig.app.orgLogoUrl || mergedConfig.app.logoUrl}`);
-        console.log(`  - Plugins: ${mergedConfig.app.pluginNamespace.length} namespaces`);
+        // Type assertion needed because mergedConfig is Record<string, unknown>
+        // We know the structure matches AppConfig from ui-config
+        const config = mergedConfig as { app?: { theme?: string; orgLogoUrl?: string; logoUrl?: string; pluginNamespace?: unknown[] } };
+        console.log(`  - Theme: ${config.app?.theme || "default"}`);
+        console.log(`  - Logo: ${config.app?.orgLogoUrl || config.app?.logoUrl || "default"}`);
+        console.log(`  - Plugins: ${(Array.isArray(config.app?.pluginNamespace) ? config.app.pluginNamespace.length : 0)} namespaces`);
       } catch (error) {
         console.error("[generate-config] Failed to generate config:", error);
         // Don't fail the build, just warn
