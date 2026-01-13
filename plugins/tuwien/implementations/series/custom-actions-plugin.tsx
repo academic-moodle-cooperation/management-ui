@@ -5,11 +5,16 @@ import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/c
 import { MonitorPlay } from "@workspace/ui/components/icons";
 import { createOrganizationNamespace, i18next, usePluginTranslation } from "@workspace/i18n";
 import { Link } from "@workspace/router";
-import { useAppConfig } from "@workspace/query";
+import { useAppConfig, SeriesDataFragment } from "@workspace/query";
 import { logger } from "@workspace/utils";
 
+interface TUWienSeriesActionsProps {
+  series: SeriesDataFragment;
+  children: React.ReactNode;
+}
+
 // Custom TU Wien actions component that enhances the default series actions
-const TUWienSeriesActions = ({ series, children }: any) => {
+const TUWienSeriesActions = ({ series, children }: TUWienSeriesActionsProps) => {
   const { config } = useAppConfig();
   const namespace = createOrganizationNamespace("tuwien", "series");
   const { t } = usePluginTranslation([

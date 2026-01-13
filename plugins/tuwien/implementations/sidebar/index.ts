@@ -7,9 +7,10 @@ import { SidebarToggle } from "./components/SidebarToggle";
 import React from "react";
 import { Video } from "@workspace/ui/components/icons";
 import { logger } from "@workspace/utils";
+import type { NavMainProps } from "@workspace/ui/components/appshell/components/nav-main";
 
 // Wrapper components that don't need props directly from the plugin system
-const CustomNavMainWrapper = (props: { open?: boolean; items?: any[] }) => {
+const CustomNavMainWrapper = (props: { open?: boolean; items?: NavMainProps["items"] }) => {
   return React.createElement(
     React.Fragment,
     {},
@@ -18,12 +19,12 @@ const CustomNavMainWrapper = (props: { open?: boolean; items?: any[] }) => {
   );
 };
 
-const SidebarHeaderWrapper = (props: any) => {
+const SidebarHeaderWrapper = (props: React.ComponentProps<typeof SidebarHeader>) => {
   return React.createElement(SidebarHeader, props);
 };
 
-const SidebarToggleWrapper = (props: any) => {
-  return React.createElement(SidebarToggle, props);
+const SidebarToggleWrapper = () => {
+  return React.createElement(SidebarToggle);
 };
 
 /**

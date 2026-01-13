@@ -7,7 +7,7 @@ import type { MetadataItem, ColumnsField } from "@workspace/ui-config";
 import { useI18n } from "@workspace/i18n";
 
 import { createColumns } from "../columns";
-import { useSeriesTable } from "../hooks";
+import { useSeriesTable, type SeriesUpdateData } from "../hooks";
 import { SeriesTableSidebar } from "./SeriesTableSidebar";
 import { useSidebarStore } from "../stores/sidebarStore";
 import { logger } from "@workspace/utils";
@@ -75,9 +75,9 @@ const SeriesTable = () => {
     if (isOpen && isEditing && selectedId && !seriesUpdateData) {
       logger.debug("SeriesTable - Sidebar opened in edit mode", { selectedId });
 
-      // Here we'll use the existing input fields data to populate the sidebar
-      if (seriesInputFields?.seriesById?.commonMetadataV2) {
-        const formattedData: Record<string, unknown> = {};
+          // Here we'll use the existing input fields data to populate the sidebar
+          if (seriesInputFields?.seriesById?.commonMetadataV2) {
+            const formattedData: SeriesUpdateData = {};
         try {
           // Process each metadata field in seriesById.commonMetadataV2
           const metadataFields = seriesInputFields.seriesById.commonMetadataV2;
@@ -91,7 +91,16 @@ const SeriesTable = () => {
               field.value !== undefined &&
               !isReadOnly(field.id!)
             ) {
-              formattedData[key] = field.value;
+              // Type assertion: field.value can be string | (string | null)[] | null
+              // but SeriesUpdateData expects string | string[]
+              const value = field.value;
+              if (value !== null) {
+                if (Array.isArray(value)) {
+                  formattedData[key] = value.filter((v): v is string => v !== null) as string[];
+                } else if (typeof value === "string") {
+                  formattedData[key] = value;
+                }
+              }
             }
           });
 

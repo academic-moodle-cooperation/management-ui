@@ -62,7 +62,8 @@ const getStatusIcon = (status: string) => {
 export const createColumns = (
   refetch: () => void,
   layout: "list" | "gallery" = "list"
-): ColumnDef<EventsDataFragment, any>[] => {
+): ColumnDef<EventsDataFragment, unknown>[] => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const listColumns: ColumnDef<EventsDataFragment, any>[] = [
     columnHelper.accessor("title", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
@@ -330,6 +331,7 @@ export const createColumns = (
     }),
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const galleryColumns: ColumnDef<EventsDataFragment, any>[] = [
     columnHelper.accessor("title", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (

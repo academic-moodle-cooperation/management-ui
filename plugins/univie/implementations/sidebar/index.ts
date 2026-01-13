@@ -6,6 +6,7 @@ import { SidebarFooter } from "./components/SidebarFooter";
 import React from "react";
 import { Video, ExternalLink } from "@workspace/ui/components/icons";
 import { logger } from "@workspace/utils";
+import type { NavMainProps } from "@workspace/ui/components/appshell/components/nav-main";
 
 /**
  * University of Vienna Custom Sidebar Implementation Plugin
@@ -16,11 +17,11 @@ import { logger } from "@workspace/utils";
  */
 
 // Create wrapper components that can receive props from the plugin system
-const CustomNavMainWrapper = (props: { open?: boolean; items?: any[] }) => {
+const CustomNavMainWrapper = (props: { open?: boolean; items?: NavMainProps["items"] }) => {
   return React.createElement(CustomNavMain, { ...props, items: props.items || [] });
 };
 
-const SidebarHeaderLogoWrapper = (props: any) => {
+const SidebarHeaderLogoWrapper = (props: React.ComponentProps<typeof SidebarHeaderLogo>) => {
   return React.createElement(SidebarHeaderLogo, props);
 };
 
@@ -69,15 +70,16 @@ export const studioUnivieNavImplementation = createPlugin({
 
   initialize(manager: PluginManager) {
     // Get all config objects from the plugin manager and merge them
-    const configObjects = manager.getObjects<any>("app:config");
+    const configObjects = manager.getObjects<Record<string, unknown>>("app:config");
 
     // Merge all configs (similar to how PluginInitializer does it)
-    const mergedConfig = configObjects.reduce((acc: any, obj: any) => {
+    const mergedConfig = configObjects.reduce((acc: Record<string, unknown>, obj: Record<string, unknown>) => {
       return { ...acc, ...obj };
     }, {});
 
     // Get Studio URL from merged config
-    const studioUrl = mergedConfig?.app?.studioUrl || mergedConfig?.studioUrl || "/studio";
+    const appConfig = mergedConfig?.app as { studioUrl?: string } | undefined;
+    const studioUrl = appConfig?.studioUrl || (mergedConfig?.studioUrl as string | undefined) || "/studio";
 
     // Register a plain object (not a React component)
     manager.registerObject("sidebar:nav-items", "studio", {
@@ -108,15 +110,16 @@ export const captureUnivieNavImplementation = createPlugin({
 
   initialize(manager: PluginManager) {
     // Get all config objects from the plugin manager and merge them
-    const configObjects = manager.getObjects<any>("app:config");
+    const configObjects = manager.getObjects<Record<string, unknown>>("app:config");
 
     // Merge all configs (similar to how PluginInitializer does it)
-    const mergedConfig = configObjects.reduce((acc: any, obj: any) => {
+    const mergedConfig = configObjects.reduce((acc: Record<string, unknown>, obj: Record<string, unknown>) => {
       return { ...acc, ...obj };
     }, {});
 
     // Get Capture URL from merged config
-    const captureUrl = mergedConfig?.app?.captureUrl || mergedConfig?.captureUrl || "/capture";
+    const appConfig = mergedConfig?.app as { captureUrl?: string } | undefined;
+    const captureUrl = appConfig?.captureUrl || (mergedConfig?.captureUrl as string | undefined) || "/capture";
 
     // Register a plain object (not a React component)
     // Title will be translated in CustomNavMain component

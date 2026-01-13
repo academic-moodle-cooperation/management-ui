@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AclEditor, ManagedACLEntry, ACLEntry, AclData } from "@workspace/ui/components";
-import { useGetAllManagedAclsQuery } from "@workspace/query";
+import { useGetAllManagedAclsQuery, type GetAllManagedAclsQuery } from "@workspace/query";
 
 export interface UploadAclEditorProps {
   aclData?: AclData | null;
@@ -20,20 +20,30 @@ export const UploadAclEditor: React.FC<UploadAclEditorProps> = ({
   const [hasChanges, setHasChanges] = useState(false);
   const [managedAclId, setManagedAclId] = useState<string | undefined>(undefined);
   const [entries, setEntries] = useState<ACLEntry[]>([]);
-  const [managedAcls, setManagedAcls] = useState<any[]>([]);
+  type ManagedAclNode = NonNullable<GetAllManagedAclsQuery["managedAcls"]["nodes"][number]>;
+  const [managedAcls, setManagedAcls] = useState<ManagedAclNode[]>([]);
   const [managedAclEntries, setManagedAclEntries] = useState<ManagedACLEntry[]>([]);
 
   // Fetch managed ACLs
   const { data: managedAclsData } = useGetAllManagedAclsQuery();
   useEffect(() => {
-    setManagedAcls(managedAclsData?.managedAcls?.nodes ?? []);
+    const nodes = managedAclsData?.managedAcls?.nodes ?? [];
+    // Filter out null values
+    setManagedAcls(nodes.filter((node): node is ManagedAclNode => node !== null));
   }, [managedAclsData]);
 
   // When managed ACL changes, update entries
   const onManagedAclChange = (aclId: string) => {
     setManagedAclId(aclId);
     const selectedAcl = managedAcls.find((acl) => acl.id === aclId);
-    setManagedAclEntries(selectedAcl?.acl?.entries || []);
+    const entries = selectedAcl?.acl?.entries ?? [];
+    // Filter out null values and map to ManagedACLEntry
+    setManagedAclEntries(
+      entries.filter((entry): entry is ManagedACLEntry => entry !== null).map((entry) => ({
+        role: entry.role ?? null,
+        action: entry.action ?? null,
+      }))
+    );
   };
 
   const onAclChange = (entries: ACLEntry[]) => {

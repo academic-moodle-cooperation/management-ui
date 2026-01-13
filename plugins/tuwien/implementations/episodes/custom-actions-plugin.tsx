@@ -5,7 +5,15 @@ import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/c
 import { MonitorPlay } from "@workspace/ui/components/icons";
 import { createOrganizationNamespace, usePluginTranslation } from "@workspace/i18n";
 import { Link } from "@workspace/router";
-import { useAppConfig } from "@workspace/query";
+import { useAppConfig, EventsDataFragment } from "@workspace/query";
+
+interface TUWienEpisodesActionsProps {
+  event: EventsDataFragment;
+  refetch: () => void;
+  maxVisibleActions?: number;
+  children: React.ReactElement;
+  defaultRender?: () => React.ReactNode;
+}
 
 // Custom TU Wien actions component that enhances the default actions
 const TUWienEpisodesActions = ({
@@ -14,7 +22,7 @@ const TUWienEpisodesActions = ({
   maxVisibleActions,
   children,
   defaultRender,
-}: any) => {
+}: TUWienEpisodesActionsProps) => {
   const { config } = useAppConfig();
   const namespace = createOrganizationNamespace("tuwien", "episodes");
   const { t } = usePluginTranslation([
@@ -26,7 +34,7 @@ const TUWienEpisodesActions = ({
   const customActions = [
     {
       id: "tuwien-tobira",
-      component: ({ event }: any) => (
+      component: ({ event }: { event: EventsDataFragment }) => (
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <Link
@@ -55,11 +63,12 @@ const TUWienEpisodesActions = ({
   return (
     <div className="relative">
       {/* Render the default actions with our custom actions injected */}
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       {React.cloneElement(children, {
-        ...children.props,
+        ...(children.props as any),
         customActions, // Pass our custom actions to be merged
         maxVisibleActions: maxVisibleActions || 4,
-      })}
+      } as any)}
     </div>
   );
 };

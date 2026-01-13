@@ -36,7 +36,7 @@ const SeriesInfoFooter = ({
 }: SeriesInfoFooterProps) => {
   const { t } = useI18n();
 
-  const checkIfRequiredFieldsAreFilled = (metadata: Record<string, any>) => {
+  const checkIfRequiredFieldsAreFilled = (metadata: Record<string, unknown>) => {
     const requiredFields = Object.values(seriesInputFields?.seriesById?.commonMetadataV2 || {})
       .filter((field) => field?.required)
       .map((field) => field?.id)
