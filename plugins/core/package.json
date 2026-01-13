@@ -4,12 +4,15 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf target && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@workspace/plugin-system": "workspace:*",
     "@workspace/ui": "workspace:*",
+    "@workspace/i18n": "workspace:*",
+    "@workspace/router": "workspace:*",
     "react": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {

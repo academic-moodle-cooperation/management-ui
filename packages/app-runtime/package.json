@@ -8,7 +8,7 @@
     "./src/*": "./src/*"
   },
   "scripts": {
-    "clean": "rm -rf .turbo && rm -rf dist && rm -rf target && rm -rf node_modules",
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf target && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "check-types": "tsc --noEmit -p tsconfig.json"
   },
@@ -19,6 +19,7 @@
     "@workspace/ui": "workspace:*",
     "@workspace/plugin-system": "workspace:*",
     "@workspace/router": "workspace:*",
+    "@workspace/utils": "workspace:*",
     "@tanstack/react-router": "^1.46.0"
   },
   "devDependencies": {

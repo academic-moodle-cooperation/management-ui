@@ -13,6 +13,7 @@
     "README.md"
   ],
   "scripts": {
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf target && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
     "dev": "vite --port 3006",
     "build": "vite build",
     "preview": "vite preview",

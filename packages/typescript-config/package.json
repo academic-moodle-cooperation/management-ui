@@ -16,6 +16,6 @@
     "*.json"
   ],
   "scripts": {
-    "clean": "rm -rf .turbo && rm -rf dist && rm -rf target && rm -rf node_modules"
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf target && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo"
   }
 }
