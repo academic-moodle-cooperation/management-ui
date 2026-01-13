@@ -1,3 +1,5 @@
+import { logger } from "@workspace/utils";
+
 export const DEFAULT_SHELL_APP_PORT = 3000;
 const PLUGIN_DEV_PORT_START = 3001;
 
@@ -49,8 +51,9 @@ export const getPluginPorts = (pluginPackageName: string): PluginPorts | undefin
     };
   }
 
-  console.warn(
-    `[vite-config] Plugin "${pluginPackageName}" not found in known plugin list for port assignment.`
+  logger.warn(
+    `Plugin "${pluginPackageName}" not found in known plugin list for port assignment.`,
+    { context: "vite-config" }
   );
   return undefined;
 };

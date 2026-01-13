@@ -2,6 +2,8 @@ import type { Plugin } from "vite";
 import fs from "fs";
 import path from "path";
 
+import { logger } from "@workspace/utils";
+
 export interface GenerateConfigPluginOptions {
   /** Path to output the config.json file (relative to outDir) */
   outputPath?: string;
@@ -97,8 +99,8 @@ export function generateConfigPlugin(options: GenerateConfigPluginOptions): Plug
 
     async closeBundle() {
       try {
-        console.log("[generate-config] Generating production config.json...");
-        console.log(`[generate-config] Merging ${pluginConfigs.length} plugin config(s)...`);
+        logger.info("Generating production config.json...", { context: "generate-config" });
+        logger.info(`Merging ${pluginConfigs.length} plugin config(s)...`, { context: "generate-config" });
 
         // Deep merge configs (same logic as in useAppConfig.ts)
         const mergedConfig = deepMerge({ ...defaultConfig }, ...pluginConfigs);
@@ -110,18 +112,19 @@ export function generateConfigPlugin(options: GenerateConfigPluginOptions): Plug
         fs.mkdirSync(outputDir, { recursive: true });
         fs.writeFileSync(fullOutputPath, JSON.stringify(mergedConfig, null, 2), "utf-8");
 
-        console.log(
-          `[generate-config] ✓ Config written to ${path.relative(process.cwd(), fullOutputPath)}`
+        logger.info(
+          `✓ Config written to ${path.relative(process.cwd(), fullOutputPath)}`,
+          { context: "generate-config" }
         );
-        console.log(`[generate-config] Summary:`);
         // Type assertion needed because mergedConfig is Record<string, unknown>
         // We know the structure matches AppConfig from ui-config
         const config = mergedConfig as { app?: { theme?: string; orgLogoUrl?: string; logoUrl?: string; pluginNamespace?: unknown[] } };
-        console.log(`  - Theme: ${config.app?.theme || "default"}`);
-        console.log(`  - Logo: ${config.app?.orgLogoUrl || config.app?.logoUrl || "default"}`);
-        console.log(`  - Plugins: ${(Array.isArray(config.app?.pluginNamespace) ? config.app.pluginNamespace.length : 0)} namespaces`);
+        logger.info(
+          `Summary: Theme=${config.app?.theme || "default"}, Logo=${config.app?.orgLogoUrl || config.app?.logoUrl || "default"}, Plugins=${(Array.isArray(config.app?.pluginNamespace) ? config.app.pluginNamespace.length : 0)} namespaces`,
+          { context: "generate-config" }
+        );
       } catch (error) {
-        console.error("[generate-config] Failed to generate config:", error);
+        logger.error("Failed to generate config", { context: "generate-config", error });
         // Don't fail the build, just warn
       }
     },
