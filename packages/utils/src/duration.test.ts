@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+
 import { parseDuration, serializeDuration } from "./index";
 
 describe("parseDuration", () => {

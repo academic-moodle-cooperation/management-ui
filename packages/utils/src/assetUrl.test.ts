@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
+
 import { resolveAssetUrl, resolveFirstAssetUrl } from "./assetUrl";
 
 describe("assetUrl utilities", () => {
