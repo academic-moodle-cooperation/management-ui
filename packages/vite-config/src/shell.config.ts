@@ -8,7 +8,7 @@ import { createBaseConfig, type CreateBaseConfigOptions } from "./base.config.js
 import { getAppBasePath, DEFAULT_SHELL_APP_PORT } from "./ports.js";
 import { createProxyConfig } from "./proxy.js";
 
-import type { UserConfig, BuildOptions, Plugin } from "vite";
+import type { UserConfig, BuildOptions } from "vite";
 
 export interface CreateShellAppViteConfigOptions {
   packageName: string;
