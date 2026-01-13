@@ -1,4 +1,5 @@
-import React, { useRef, RefObject, useState } from "react";
+import React, { useRef, useState } from "react";
+import type { RefObject } from "react";
 import {
   Sheet,
   SheetContent,
@@ -12,15 +13,15 @@ import {
   TabsContent,
 } from "@workspace/ui/components";
 import { useClickOutside } from "@workspace/ui/hooks";
-import {
+import { useUpdateEventMutation } from "@workspace/query";
+import type {
   GetEventByIdInputFieldsQuery,
-  useUpdateEventMutation,
   EventsDataFragment,
 } from "@workspace/query";
 import { usePluginManager } from "@workspace/plugin-system";
 import { EpisodesInfoContent } from "./EpisodesInfoContent";
 import { EpisodesInfoFooter } from "./EpisodesInfoFooter";
-import { EpisodesUpdateData } from "../stores/sidebarStore";
+import type { EpisodesUpdateData } from "../stores/sidebarStore";
 import { useTranslation } from "@workspace/i18n";
 import { logger } from "@workspace/utils";
 
@@ -28,7 +29,7 @@ interface EpisodesTableSidebarProps {
   isOpen: boolean;
   onEditClose: () => void;
   heading: string;
-  description?: string;
+  description?: string | undefined;
   episodesInputFields: GetEventByIdInputFieldsQuery | undefined;
   isLoadingMetadata: boolean;
   episodesUpdateData: EpisodesUpdateData | undefined;
@@ -42,9 +43,9 @@ interface EpisodesTableSidebarProps {
   selectedEpisodeId: string;
   refetch: () => void;
   setIsEditing: (value: boolean) => void;
-  sidebarInfo?: string;
+  sidebarInfo?: string | undefined;
   tableRef: RefObject<HTMLDivElement | null>;
-  currentEpisode?: EventsDataFragment;
+  currentEpisode?: EventsDataFragment | undefined;
 }
 
 /**

@@ -24,7 +24,8 @@ import { Pencil, PlayCircle, Scissors, Trash2, ArrowDownToLine, MoreVertical } f
 import { Link } from "@workspace/router";
 import { i18next } from "@workspace/i18n";
 import { useSidebarStore } from "../stores/sidebarStore";
-import { EventsDataFragment, useDeleteEventMutation } from "@workspace/query";
+import { useDeleteEventMutation } from "@workspace/query";
+import type { EventsDataFragment } from "@workspace/query";
 import { PluginComponent } from "@workspace/plugin-system";
 
 export interface ActionItem {
@@ -158,8 +159,8 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
     const actionElement = action.href ? (
       <Link
         to={action.href}
-        target={action.target}
-        rel={action.target === "_blank" ? "noopener noreferrer" : undefined}
+        {...(action.target !== undefined && { target: action.target })}
+        {...(action.target === "_blank" && { rel: "noopener noreferrer" })}
         className="flex items-center justify-end group"
         onClick={(e: React.MouseEvent) => {
           e.stopPropagation();

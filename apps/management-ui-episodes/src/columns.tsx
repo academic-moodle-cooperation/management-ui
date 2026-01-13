@@ -11,7 +11,7 @@ import {
   type Row,
   type Column,
 } from "@workspace/ui/components";
-import { EventsDataFragment } from "@workspace/query";
+import type { EventsDataFragment } from "@workspace/query";
 import {
   History,
   CircleEllipsis,

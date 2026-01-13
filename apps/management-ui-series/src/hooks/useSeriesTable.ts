@@ -1,6 +1,8 @@
 import { useEffect, useCallback } from "react";
-import { useTableState, TableBaseState, TableAction } from "./useTableState";
-import { useSidebarContent, Row } from "@workspace/ui/components";
+import { useTableState } from "./useTableState";
+import type { TableBaseState, TableAction } from "./useTableState";
+import { useSidebarContent } from "@workspace/ui/components";
+import type { Row } from "@workspace/ui/components";
 import {
   useGetMySeriesQuery,
   OrderDirection,
@@ -15,7 +17,7 @@ export type SeriesUpdateData = {
 
 // State interface extending the base table state
 export interface SeriesTableState extends TableBaseState {
-  seriesUpdateData?: SeriesUpdateData;
+  seriesUpdateData?: SeriesUpdateData | undefined;
   updateField: string;
   isEditing: boolean;
 }
@@ -36,12 +38,12 @@ type SeriesTableAction =
 const initialState: SeriesTableState = {
   pageIndex: 0,
   pageSize: 10,
-  queryFilter: undefined,
-  seriesUpdateData: undefined,
+  queryFilter: undefined as string | undefined,
+  seriesUpdateData: undefined as SeriesUpdateData | undefined,
   updateField: "",
   isEditing: false,
   sidebarOpen: false,
-};
+} as unknown as SeriesTableState;
 
 // Reducer function
 function seriesTableReducer(state: SeriesTableState, action: SeriesTableAction): SeriesTableState {
@@ -51,9 +53,9 @@ function seriesTableReducer(state: SeriesTableState, action: SeriesTableAction):
     case "SET_PAGE_SIZE":
       return { ...state, pageSize: action.payload };
     case "SET_QUERY_FILTER":
-      return { ...state, queryFilter: action.payload };
+      return { ...state, queryFilter: action.payload } as SeriesTableState;
     case "SET_SERIES_UPDATE_DATA":
-      return { ...state, seriesUpdateData: action.payload };
+      return { ...state, seriesUpdateData: action.payload as SeriesUpdateData | undefined };
     case "SET_UPDATE_FIELD":
       return { ...state, updateField: action.payload };
     case "SET_IS_EDITING":
@@ -63,14 +65,14 @@ function seriesTableReducer(state: SeriesTableState, action: SeriesTableAction):
     case "RESET_UPDATE_FIELDS":
       return {
         ...state,
-        seriesUpdateData: undefined,
+        seriesUpdateData: undefined as SeriesUpdateData | undefined,
         updateField: "",
         isEditing: false,
       };
     case "CLOSE_SIDEBAR":
       return {
         ...state,
-        seriesUpdateData: undefined,
+        seriesUpdateData: undefined as SeriesUpdateData | undefined,
         updateField: "",
         isEditing: false,
         sidebarOpen: false,
@@ -123,8 +125,8 @@ export function useSeriesTable() {
   const seriesQuery = useGetMySeriesQuery({
     limit: pageSize,
     offset,
-    orderBy,
-    query: queryFilter,
+    ...(orderBy !== undefined && { orderBy }),
+    ...(queryFilter !== undefined && { query: queryFilter }),
   });
 
   // Event handlers
@@ -141,7 +143,7 @@ export function useSeriesTable() {
 
   const handleRowClick = (event: React.MouseEvent, row: Row<Record<string, unknown>>) => {
     navigate({
-      to: `${import.meta.env.BASE_URL}/series/${row.original.id}`,
+      to: `${import.meta.env.BASE_URL}/series/${row.original["id"]}`,
       replace: true,
     });
   };

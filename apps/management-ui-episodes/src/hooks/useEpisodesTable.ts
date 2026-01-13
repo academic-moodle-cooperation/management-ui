@@ -1,6 +1,8 @@
 import { useEffect, useCallback } from "react";
-import { useTableState, TableBaseState, TableAction } from "./useTableState";
-import { useSidebarContent, Row } from "@workspace/ui/components";
+import { useTableState } from "./useTableState";
+import type { TableBaseState, TableAction } from "./useTableState";
+import { useSidebarContent } from "@workspace/ui/components";
+import type { Row } from "@workspace/ui/components";
 import {
   useGetMyEventsQuery,
   useEventsFromSeriesQuery,
@@ -16,7 +18,7 @@ export type EpisodesUpdateData = {
 
 // State interface extending the base table state
 export interface EpisodesTableState extends TableBaseState {
-  episodesUpdateData?: EpisodesUpdateData;
+  episodesUpdateData?: EpisodesUpdateData | undefined;
   updateField: string;
   isEditing: boolean;
 }
@@ -37,12 +39,12 @@ type EpisodesTableAction =
 const initialState: EpisodesTableState = {
   pageIndex: 0,
   pageSize: 10,
-  queryFilter: undefined,
-  episodesUpdateData: undefined,
+  queryFilter: undefined as string | undefined,
+  episodesUpdateData: undefined as EpisodesUpdateData | undefined,
   updateField: "",
   isEditing: false,
   sidebarOpen: false,
-};
+} as unknown as EpisodesTableState;
 
 // Reducer function
 function episodesTableReducer(
@@ -55,9 +57,9 @@ function episodesTableReducer(
     case "SET_PAGE_SIZE":
       return { ...state, pageSize: action.payload };
     case "SET_QUERY_FILTER":
-      return { ...state, queryFilter: action.payload };
+      return { ...state, queryFilter: action.payload } as EpisodesTableState;
     case "SET_EPISODES_UPDATE_DATA":
-      return { ...state, episodesUpdateData: action.payload };
+      return { ...state, episodesUpdateData: action.payload } as EpisodesTableState;
     case "SET_UPDATE_FIELD":
       return { ...state, updateField: action.payload };
     case "SET_IS_EDITING":
@@ -125,8 +127,8 @@ export function useEpisodesTable(seriesId?: string) {
     {
       limit: pageSize,
       offset,
-      orderBy,
-      query: queryFilter,
+      ...(orderBy !== undefined && { orderBy }),
+      ...(queryFilter !== undefined && { query: queryFilter }),
     },
     {
       enabled: !seriesId, // Only enabled when no seriesId is provided
@@ -138,8 +140,8 @@ export function useEpisodesTable(seriesId?: string) {
       seriesId: seriesId || "",
       limit: pageSize,
       offset,
-      orderBy,
-      query: queryFilter,
+      ...(orderBy !== undefined && { orderBy }),
+      ...(queryFilter !== undefined && { query: queryFilter }),
     },
     {
       enabled: Boolean(seriesId), // Only enabled when seriesId is provided
@@ -167,7 +169,7 @@ export function useEpisodesTable(seriesId?: string) {
 
   const handleRowClick = (event: React.MouseEvent, row: Row<Record<string, unknown>>) => {
     navigate({
-      to: `${import.meta.env.BASE_URL}/episodes/${row.original.id}`,
+      to: `${import.meta.env.BASE_URL}/episodes/${row.original["id"]}`,
       replace: true,
     });
   };

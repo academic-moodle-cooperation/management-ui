@@ -4,15 +4,15 @@ import {
   MUITable,
   createMetadataHelpers,
   Button,
-  Row,
 } from "@workspace/ui/components";
+import type { Row } from "@workspace/ui/components";
 import { AppLoader } from "@workspace/ui/components";
 import { LayoutGrid, List } from "lucide-react";
 import {
-  EventsDataFragment,
   useUpdateEventMutation,
   useAppConfig,
   type EventsFromSeriesQuery,
+  type EventsDataFragment,
   type GetMyEventsQuery,
 } from "@workspace/query";
 import { useNavigate } from "@workspace/router";
@@ -208,13 +208,13 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   const sortedColumns =
     columnsKeys.length > 0
       ? columnsKeys
-          .map((columnsKey) =>
-            columns.find((column) => {
-              const col = column as any; // TanStack table column types are complex, using any for access
-              return col.accessorKey === columnsKey || col.id === columnsKey;
-            })
-          )
-          .filter((column): column is NonNullable<typeof column> => Boolean(column))
+        .map((columnsKey) =>
+          columns.find((column) => {
+            const col = column as any; // TanStack table column types are complex, using any for access
+            return col.accessorKey === columnsKey || col.id === columnsKey;
+          })
+        )
+        .filter((column): column is NonNullable<typeof column> => Boolean(column))
       : columns;
 
   // Error handling

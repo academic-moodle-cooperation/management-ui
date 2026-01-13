@@ -1,4 +1,5 @@
-import React, { useRef, RefObject, useState } from "react";
+import React, { useRef, useState } from "react";
+import type { RefObject } from "react";
 import {
   Sheet,
   SheetContent,
@@ -12,15 +13,12 @@ import {
   TabsContent,
 } from "@workspace/ui/components";
 import { useClickOutside } from "@workspace/ui/hooks";
-import {
-  GetSeriesByIdInputFieldsQuery,
-  useUpdateSeriesMutation,
-  SeriesDataFragment,
-} from "@workspace/query";
+import { useUpdateSeriesMutation } from "@workspace/query";
+import type { GetSeriesByIdInputFieldsQuery, SeriesDataFragment } from "@workspace/query";
 import { usePluginManager } from "@workspace/plugin-system";
 import { SeriesInfoContent } from "./SeriesInfoContent";
 import { SeriesInfoFooter } from "./SeriesInfoFooter";
-import { SeriesUpdateData } from "../stores/sidebarStore";
+import type { SeriesUpdateData } from "../stores/sidebarStore";
 import { useTranslation } from "@workspace/i18n";
 import { logger } from "@workspace/utils";
 
@@ -28,7 +26,7 @@ interface SeriesTableSidebarProps {
   isOpen: boolean;
   onEditClose: () => void;
   heading: string;
-  description?: string;
+  description?: string | undefined;
   seriesInputFields: GetSeriesByIdInputFieldsQuery | undefined;
   isLoadingMetadata: boolean;
   seriesUpdateData: SeriesUpdateData | undefined;
@@ -42,9 +40,9 @@ interface SeriesTableSidebarProps {
   selectedSeriesId: string;
   refetch: () => void;
   setIsEditing: (value: boolean) => void;
-  sidebarInfo?: string;
+  sidebarInfo?: string | undefined;
   tableRef: RefObject<HTMLDivElement | null>;
-  currentSeries?: SeriesDataFragment | null;
+  currentSeries?: SeriesDataFragment | null | undefined;
 }
 
 /**

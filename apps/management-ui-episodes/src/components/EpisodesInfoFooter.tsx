@@ -1,13 +1,13 @@
 import React from "react";
 import { Button, toast } from "@workspace/ui/components";
 import { useI18n } from "@workspace/i18n";
-import {
+import { useUpdateEventMutation } from "@workspace/query";
+import type {
   CommonEventMetadataV2,
   GetEventByIdInputFieldsQuery,
-  useUpdateEventMutation,
   EventsDataFragment,
 } from "@workspace/query";
-import { MetadataField } from "@workspace/ui-config";
+import type { MetadataField } from "@workspace/ui-config";
 import { normalizeMetadataObject, logger } from "@workspace/utils";
 
 type EpisodesUpdateData = {
@@ -23,7 +23,7 @@ interface EpisodesInfoFooterProps {
   selectedEpisodeId: string;
   refetch: () => void;
   setEditEpisode: (value: boolean) => void;
-  currentEpisode?: EventsDataFragment;
+  currentEpisode?: EventsDataFragment | undefined;
 }
 
 /**
@@ -121,13 +121,13 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
     if (
       episodesUpdateData &&
       Object.hasOwn(episodesUpdateData, "contributor") &&
-      episodesUpdateData.contributor?.length &&
-      episodesUpdateData.contributor.length > 0
+      episodesUpdateData["contributor"]?.length &&
+      episodesUpdateData["contributor"].length > 0
     ) {
-      episodesUpdateData.contributor = (
-        Array.isArray(episodesUpdateData.contributor)
-          ? episodesUpdateData.contributor.join(",")
-          : episodesUpdateData.contributor
+      episodesUpdateData["contributor"] = (
+        Array.isArray(episodesUpdateData["contributor"])
+          ? episodesUpdateData["contributor"].join(",")
+          : episodesUpdateData["contributor"]
       )
         .replace(/\n/g, ",")
         .split(",")
@@ -138,13 +138,13 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
     if (
       episodesUpdateData &&
       Object.hasOwn(episodesUpdateData, "publisher") &&
-      episodesUpdateData.publisher?.length &&
-      episodesUpdateData.publisher.length > 0
+      episodesUpdateData["publisher"]?.length &&
+      episodesUpdateData["publisher"].length > 0
     ) {
-      episodesUpdateData.publisher = (
-        Array.isArray(episodesUpdateData.publisher)
-          ? episodesUpdateData.publisher.join(",")
-          : episodesUpdateData.publisher
+      episodesUpdateData["publisher"] = (
+        Array.isArray(episodesUpdateData["publisher"])
+          ? episodesUpdateData["publisher"].join(",")
+          : episodesUpdateData["publisher"]
       )
         .replace(/\n/g, ",")
         .split(",")
@@ -177,7 +177,7 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
       saveEpisodeUpdate.mutate(
         {
           eventId: selectedEpisodeId,
-          metadata: finalMetadata,
+          metadata: finalMetadata as { title: string;[key: string]: unknown },
         },
         {
           onSuccess: () => {

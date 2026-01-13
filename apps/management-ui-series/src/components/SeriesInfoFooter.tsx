@@ -153,7 +153,12 @@ const SeriesInfoFooter = ({
     };
 
     // Remove identifier if it exists (we don't want to update it)
-    const { identifier, ...finalMetadata } = metadataWithTitle as Record<string, unknown>;
+    const { identifier, ...restMetadata } = metadataWithTitle as Record<string, unknown>;
+    // Ensure title is always present (required by CommonSeriesMetadataInput)
+    const finalMetadata = {
+      title: metadataWithTitle.title || "",
+      ...restMetadata,
+    };
 
     // IMPORTANT: Validate the merged metadata BEFORE normalization, because normalizeMetadataObject removes empty values
     // but we need to validate that required fields are not empty
@@ -163,7 +168,7 @@ const SeriesInfoFooter = ({
       saveSeriesUpdate.mutate(
         {
           seriesId: selectedSeriesId,
-          metadata: finalMetadata,
+          metadata: finalMetadata as { title: string;[key: string]: unknown },
         },
         {
           onSuccess: () => {

@@ -1,13 +1,13 @@
 import { useReducer, useMemo, useCallback, useEffect } from "react";
 import { atomWithStorage, useAtomValue, useSetAtom } from "@workspace/store";
 import { useMatch } from "@workspace/router";
-import { OnChangeFn, SortingState, VisibilityState } from "@workspace/ui/components";
+import type { OnChangeFn, SortingState, VisibilityState } from "@workspace/ui/components";
 import { logger } from "@workspace/utils";
 
 export interface TableBaseState {
   pageIndex: number;
   pageSize: number;
-  queryFilter?: string;
+  queryFilter?: string | undefined;
   sidebarOpen: boolean;
 }
 

@@ -4,7 +4,7 @@ import type { OnChangeFn, SortingState, VisibilityState } from "@workspace/ui/co
 export interface TableBaseState {
   pageIndex: number;
   pageSize: number;
-  queryFilter?: string;
+  queryFilter?: string | undefined;
   sidebarOpen: boolean;
 }
 

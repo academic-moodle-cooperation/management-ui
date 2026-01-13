@@ -8,10 +8,10 @@ import {
 } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib/utils";
 import { useI18n } from "@workspace/i18n";
-import {
+import { useAppConfig } from "@workspace/query";
+import type {
   GetEventByIdInputFieldsQuery,
   GetInputFieldsMetaDataFragment,
-  useAppConfig,
 } from "@workspace/query";
 import type { MetadataItem } from "@workspace/ui-config";
 import { CopyIcon, PencilIcon } from "@workspace/ui/components";
@@ -74,14 +74,14 @@ const EpisodesInfoContent = ({
                   onClick={
                     editEpisode && field && !field.readOnly && !isReadOnly(field.id!)
                       ? () => setUpdateField(field.id!)
-                      : () => {}
+                      : () => { }
                   }
                   className={cn(
                     editEpisode &&
-                      field &&
-                      !field.readOnly &&
-                      !isReadOnly(field.id!) &&
-                      "cursor-pointer"
+                    field &&
+                    !field.readOnly &&
+                    !isReadOnly(field.id!) &&
+                    "cursor-pointer"
                   )}
                 >
                   <div className="flex items-center space-x-2 text-sm font-medium uppercase text-muted-foreground">

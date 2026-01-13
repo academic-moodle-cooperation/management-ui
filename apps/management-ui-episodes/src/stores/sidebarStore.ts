@@ -32,7 +32,7 @@ export const useSidebarStore = create<EpisodesSidebarState>((set, get) => ({
   isOpen: false,
   isEditing: false,
   selectedId: "",
-  episodesUpdateData: undefined,
+  episodesUpdateData: undefined as EpisodesUpdateData | undefined,
   updateField: "",
   layout: "list",
 
@@ -40,14 +40,14 @@ export const useSidebarStore = create<EpisodesSidebarState>((set, get) => ({
   openSidebar: (id) => set({ isOpen: true, selectedId: id }),
   closeSidebar: () => set({ isOpen: false }),
   setIsEditing: (isEditing) => set({ isEditing }),
-  setEpisodesUpdateData: (data) => set({ episodesUpdateData: data }),
+  setEpisodesUpdateData: (data) => set({ episodesUpdateData: data } as Partial<EpisodesSidebarState>),
   setUpdateField: (field) => set({ updateField: field }),
   resetUpdateFields: () =>
     set({
-      episodesUpdateData: undefined,
+      episodesUpdateData: undefined as EpisodesUpdateData | undefined,
       updateField: "",
       isEditing: false,
-    }),
+    } as Partial<EpisodesSidebarState>),
   setLayout: (layout) => set({ layout }),
   toggleLayout: () =>
     set((state) => ({
@@ -81,4 +81,4 @@ export const useSidebarStore = create<EpisodesSidebarState>((set, get) => ({
       }
     }
   },
-}));
+} as EpisodesSidebarState));
