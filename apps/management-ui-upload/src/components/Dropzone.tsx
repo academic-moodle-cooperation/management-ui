@@ -1,4 +1,5 @@
-import React, { FC, useState } from "react";
+import React, { useState } from "react";
+import type { FC } from "react";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -14,7 +15,7 @@ import {
 } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib/utils";
 import { useI18n } from "@workspace/i18n";
-import { UploadFileBlob, UploadListType } from "@workspace/store";
+import type { UploadFileBlob, UploadListType } from "@workspace/store";
 
 import { useFileHandler } from "../uploadservice/fileHandler";
 import { useAppConfig } from "@workspace/query";

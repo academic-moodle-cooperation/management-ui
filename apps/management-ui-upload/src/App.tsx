@@ -1,6 +1,6 @@
-import React, { RefObject, createRef, useCallback, useEffect, useMemo, useState } from "react";
+import React, { createRef, useCallback, useEffect, useMemo, useState } from "react";
+import type { RefObject } from "react";
 import {
-  ACLEntry,
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -17,7 +17,8 @@ import {
 import Dropzone from "./components/Dropzone";
 
 import { useFileHandler } from "./uploadservice/fileHandler";
-import { UploadFileBlob, useStore } from "@workspace/store";
+import { useStore } from "@workspace/store";
+import type { UploadFileBlob } from "@workspace/store";
 import { opencastUpload } from "./uploadservice/opencastUpload";
 import {
   gql,
@@ -27,6 +28,7 @@ import {
   useGetUserInfo,
   useInfiniteQuery,
 } from "@workspace/query";
+import type { GetMySeriesNameAndIdQuery } from "@workspace/query";
 import { LinkText, Trans, useI18n } from "@workspace/i18n";
 import { UploadList } from "./components/UploadList";
 import { useLoaderData, useNavigate, useParams, useRouter } from "@workspace/router";
@@ -155,7 +157,10 @@ export const App = () => {
   const { data, refetch, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: ["seriesList", query],
     queryFn: ({ pageParam }) => {
-      return fetchMySeries({ pageParam, query });
+      return fetchMySeries({
+        pageParam,
+        ...(query !== undefined && { query }),
+      });
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, pages, lastPageParam) => {
@@ -566,7 +571,7 @@ export const App = () => {
                     <h2 className="font-semibold tracking-tight my-2">{t("upload:series")}</h2>
 
                     <SelectSeriesCombobox
-                      seriesList={data?.pages.flat()}
+                      seriesList={data?.pages.flat().filter((s): s is { id: string; title: string } => s !== null)}
                       selectedSeries={selectedSeries}
                       setSelectedSeries={(value) => {
                         setSelectedSeries(

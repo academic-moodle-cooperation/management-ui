@@ -1,4 +1,4 @@
-import { UploadFileBlob, UploadListType } from "@workspace/store";
+import type { UploadFileBlob, UploadListType } from "@workspace/store";
 
 const useFileHandler = (
   files: FileList,

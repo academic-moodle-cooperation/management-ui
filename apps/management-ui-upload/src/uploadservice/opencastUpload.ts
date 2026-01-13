@@ -1,7 +1,7 @@
 import Mustache from "mustache";
 
 import onProgress from "./onProgress";
-import { UploadFileBlob } from "@workspace/store";
+import type { UploadFileBlob } from "@workspace/store";
 import { toast, type AclData, type ACLEntryInput } from "@workspace/ui/components";
 import { i18next } from "@workspace/i18n";
 import { logger } from "@workspace/utils";
