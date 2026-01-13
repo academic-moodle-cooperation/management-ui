@@ -60,7 +60,7 @@ export const useSidebarStore = create<EpisodesSidebarState>((set, get) => ({
 
     // Only attempt to format data if inputFields is provided and has the expected structure
     const inputFieldsTyped = inputFields as {
-      eventById?: { commonMetadataV2?: Record<string, any> };
+      eventById?: { commonMetadataV2?: Record<string, unknown> };
     };
     if (inputFieldsTyped?.eventById?.commonMetadataV2) {
       const metadataFields = inputFieldsTyped.eventById.commonMetadataV2;

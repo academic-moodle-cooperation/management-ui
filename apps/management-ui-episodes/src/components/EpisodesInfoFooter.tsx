@@ -42,7 +42,7 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
 }) => {
   const { t } = useI18n();
 
-  const checkIfRequiredFieldsAreFilled = (metadata: Record<string, any>) => {
+  const checkIfRequiredFieldsAreFilled = (metadata: Record<string, unknown>) => {
     const requiredFields = Object.values(episodesInputFields?.eventById?.commonMetadataV2 || {})
       .filter((field) => field?.required)
       .map((field) => field?.id)

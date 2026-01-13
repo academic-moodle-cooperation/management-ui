@@ -86,7 +86,15 @@ export const EpisodesTableSidebar: React.FC<EpisodesTableSidebarProps> = ({
   // Plugin system integration - check for table sidebar plugins
   const tabComponents =
     manager.executeFunction<
-      Array<{ component: React.ComponentType<any>; key: string; order: number }>
+      Array<{
+        component: React.ComponentType<{
+          selectedElement?: unknown;
+          refetch?: () => void;
+          onClose?: () => void;
+        }>;
+        key: string;
+        order: number;
+      }>
     >("renderer.getComponents", "table-sidebar:episodes:tabs") || [];
 
   // Sort components by order

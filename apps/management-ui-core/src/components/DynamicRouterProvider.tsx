@@ -6,8 +6,8 @@ import {
   Outlet,
   useRouterState,
 } from "@tanstack/react-router";
-import type { AnyRoute } from "@tanstack/react-router";
-import { usePluginManager, getAllApps } from "@workspace/plugin-system";
+import type { AnyRoute, AnyRouter } from "@tanstack/react-router";
+import { usePluginManager, getAllApps, type PluginManager, type AppDefinition } from "@workspace/plugin-system";
 import { useAppConfig } from "@workspace/query";
 import { getCachedAppConfig } from "@workspace/query";
 import { ProtectedRoute } from "@workspace/router";
@@ -34,7 +34,7 @@ interface ClientDynamicModule {
   componentName: string;
   componentImportPath: string;
   isPluginApp?: boolean;
-  appDefinition?: any;
+  appDefinition?: AppDefinition;
 }
 
 interface FetchedPluginConfig {
@@ -89,7 +89,7 @@ const getDynamicModules = async (): Promise<ClientDynamicModule[]> => {
 };
 
 // Get plugin-based apps from the plugin system
-const getPluginBasedApps = (manager: any): ClientDynamicModule[] => {
+const getPluginBasedApps = (manager: PluginManager): ClientDynamicModule[] => {
   try {
     const pluginApps = getAllApps(manager);
 
@@ -112,19 +112,20 @@ const getPluginBasedApps = (manager: any): ClientDynamicModule[] => {
 // Create routes from all apps
 const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
   return allApps.map((app) => {
-    if (app.isPluginApp) {
+    if (app.isPluginApp && app.appDefinition) {
       // Handle plugin-based apps
-      const PluginAppComponent = app.appDefinition.component;
+      const appDef = app.appDefinition; // Type guard: appDef is now definitely defined
+      const PluginAppComponent = appDef.component;
 
       const pluginRoute = createRoute({
         getParentRoute: () => appCoreRootRoute,
         path: app.routePath,
         staticData: {
-          appName: app.appDefinition.id,
+          appName: appDef.id,
         },
         component: () => (
           <ProtectedRoute loadingComponent={AppLoader}>
-            <ErrorBoundary fallback={<ModuleErrorFallback name={app.appDefinition.name} />}>
+            <ErrorBoundary fallback={<ModuleErrorFallback name={appDef.name} />}>
               <Suspense fallback={<AppLoader />}>
                 <PluginAppComponent />
               </Suspense>
@@ -134,13 +135,13 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
         loader: async () => {
           try {
             const config = await getCachedAppConfig();
-            const pluginConfig = config?.plugins?.[app.appDefinition.id];
+            const pluginConfig = config?.plugins?.[appDef.id];
             return pluginConfig;
           } catch (err) {
             logger.error(
-              `Error fetching/processing config for plugin app ${app.appDefinition.id} in loader`,
+              `Error fetching/processing config for plugin app ${appDef.id} in loader`,
               err instanceof Error ? err : new Error(String(err)),
-              { appId: app.appDefinition.id }
+              { appId: appDef.id }
             );
             throw err;
           }
@@ -153,7 +154,7 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
         path: "$routeSubPath",
         component: () => (
           <ProtectedRoute loadingComponent={AppLoader}>
-            <ErrorBoundary fallback={<ModuleErrorFallback name={app.appDefinition.name} />}>
+            <ErrorBoundary fallback={<ModuleErrorFallback name={appDef.name} />}>
               <Suspense fallback={<AppLoader />}>
                 <PluginAppComponent />
               </Suspense>
@@ -257,12 +258,12 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
 };
 
 interface DynamicRouterProviderProps {
-  children: (router: any) => React.ReactNode;
+  children: (router: AnyRouter) => React.ReactNode;
 }
 
 export const DynamicRouterProvider: React.FC<DynamicRouterProviderProps> = ({ children }) => {
   const manager = usePluginManager();
-  const [router, setRouter] = useState<any>(null);
+  const [router, setRouter] = useState<AnyRouter | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

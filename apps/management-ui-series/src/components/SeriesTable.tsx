@@ -77,7 +77,7 @@ const SeriesTable = () => {
 
       // Here we'll use the existing input fields data to populate the sidebar
       if (seriesInputFields?.seriesById?.commonMetadataV2) {
-        const formattedData: Record<string, any> = {};
+        const formattedData: Record<string, unknown> = {};
         try {
           // Process each metadata field in seriesById.commonMetadataV2
           const metadataFields = seriesInputFields.seriesById.commonMetadataV2;

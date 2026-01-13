@@ -51,7 +51,7 @@ export const useSidebarStore = create<SeriesSidebarState>((set) => ({
 
     // Only attempt to format data if inputFields is provided and has the expected structure
     const inputFieldsTyped = inputFields as {
-      seriesById?: { commonMetadataV2?: Record<string, any> };
+      seriesById?: { commonMetadataV2?: Record<string, unknown> };
     };
     if (inputFieldsTyped?.seriesById?.commonMetadataV2) {
       const metadataFields = inputFieldsTyped.seriesById.commonMetadataV2;

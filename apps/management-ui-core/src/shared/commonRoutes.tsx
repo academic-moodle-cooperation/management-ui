@@ -23,7 +23,9 @@ const DefaultLandingComponent = () => (
   </Suspense>
 );
 
-export const createCommonRoutes = (parentRoute: any) => {
+import type { AnyRoute } from "@tanstack/react-router";
+
+export const createCommonRoutes = (parentRoute: AnyRoute) => {
   const rootLandingRoute = createRoute({
     getParentRoute: () => parentRoute,
     path: "/",
