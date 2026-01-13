@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "composite": false,
+    "skipLibCheck": true,
     "paths": {
       "@/*": [
         "./src/*"
@@ -19,6 +20,7 @@
   "exclude": [
     "node_modules",
     "dist",
-    ".turbo"
+    ".turbo",
+    "../../packages/ui/src/components/ui/**/*"
   ]
 }

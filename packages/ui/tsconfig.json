@@ -4,6 +4,7 @@
     "jsx": "react-jsx",
     "rootDir": "src",
     "baseUrl": ".",
+    "skipLibCheck": true,
     "paths": {
       "@/*": [
         "./src/*"
@@ -22,7 +23,6 @@
   "exclude": [
     "node_modules",
     "dist",
-    ".turbo",
-    "src/components/ui"
+    ".turbo"
   ]
 }

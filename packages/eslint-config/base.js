@@ -64,6 +64,19 @@ export const config = [
       ],
       "import/no-duplicates": "error",
       "import/no-unresolved": "off", // TypeScript handles this
+      // Prevent deep imports into UI internals - use stable exports only
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@workspace/ui/src/*", "@workspace/ui/components/ui/*", "@workspace/ui/components/appshell/components/*"],
+              message:
+                "Import from stable entrypoints like '@workspace/ui/components' or '@workspace/ui/lib/utils' instead of deep paths.",
+            },
+          ],
+        },
+      ],
     },
     settings: {
       "import/resolver": {

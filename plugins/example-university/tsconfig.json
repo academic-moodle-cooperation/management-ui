@@ -14,6 +14,6 @@
     "node_modules",
     "dist",
     ".turbo",
-    "../packages/ui/src/components/ui/**/*"
+    "../../packages/ui/src/components/ui/**/*"
   ]
 }

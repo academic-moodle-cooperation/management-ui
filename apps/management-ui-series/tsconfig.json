@@ -2,6 +2,7 @@
   "extends": "@workspace/typescript-config/react-application.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "skipLibCheck": true,
     "paths": {
       "@/*": [
         "./src/*"
@@ -18,6 +19,7 @@
   "exclude": [
     "node_modules",
     "dist",
-    ".turbo"
+    ".turbo",
+    "../../packages/ui/src/components/ui/**/*"
   ]
 }
