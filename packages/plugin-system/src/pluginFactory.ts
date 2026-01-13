@@ -1,5 +1,5 @@
-import { Plugin } from "./IPlugin";
-import { PluginManager } from "./pluginManager";
+import type { Plugin } from "./IPlugin";
+import type { PluginManager } from "./pluginManager";
 
 /**
  * Options for creating a plugin
@@ -90,8 +90,8 @@ export function createPlugin(options: PluginOptions): Plugin {
     name: `${namespace}:${type}`,
     version,
     order,
-    dependencies,
-    initialize,
+    dependencies: dependencies ?? undefined,
+    initialize: initialize ?? undefined,
     activate,
     deactivate,
   };

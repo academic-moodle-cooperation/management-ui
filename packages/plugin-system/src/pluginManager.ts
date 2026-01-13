@@ -1,6 +1,6 @@
-import { Plugin } from "./IPlugin";
-import { RegistryObject } from "./plugins/objectRegistry/index";
-import { PluginFunction, EventCallback, PluginComponent, RegistryMetadata } from "./types";
+import type { Plugin } from "./IPlugin";
+import type { RegistryObject } from "./plugins/objectRegistry/index";
+import type { PluginFunction, EventCallback, PluginComponent, RegistryMetadata } from "./types";
 import { logger } from "@workspace/utils";
 
 type PluginRegistry = Map<string, Plugin>;
@@ -61,7 +61,7 @@ export interface PluginManager {
   removeEventListener<T = unknown>(eventName: string, callback: EventCallback<T>): void;
   dispatchEvent<T = unknown>(eventName: string, payload: T): void;
   checkDependencies(plugin: Plugin): boolean;
-  currentPlugin?: Plugin; // Track the current plugin for context in helper methods
+  currentPlugin?: Plugin | undefined; // Track the current plugin for context in helper methods
   registerComponent(
     extensionPoint: string,
     component: PluginComponent,

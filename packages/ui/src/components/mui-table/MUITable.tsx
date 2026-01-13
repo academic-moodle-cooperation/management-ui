@@ -3,7 +3,7 @@ import {
   TooltipProvider,
   Container,
   DataTable,
-  DataTableProps,
+  type DataTableProps,
   Toaster,
 } from "@workspace/ui/components";
 import { useI18n, loadNamespace } from "@workspace/i18n";

@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState } from "react";
+import type { ReactNode } from "react";
 import type { AppRuntimeContext, AppRuntimeConfig } from "./types";
 import type { AppDefinition } from "@workspace/plugin-system";
 import { logger } from "@workspace/utils";
@@ -34,8 +35,7 @@ export const AppRuntimeProvider: React.FC<AppRuntimeProviderProps> = ({ children
 
   const contextValue: AppRuntimeContext = {
     config,
-    registerApp: config.isStandalone ? undefined : registerApp,
-    getApps: config.isStandalone ? undefined : getApps,
+    ...(config.isStandalone ? {} : { registerApp, getApps }),
   };
 
   return (

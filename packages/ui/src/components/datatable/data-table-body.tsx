@@ -2,15 +2,16 @@ import { useMemo } from "react";
 import { TableBody, TableCell, TableRow } from "@workspace/ui/components";
 import { EmptyStateContent } from "./data-table-empty-state";
 import { useRouter } from "@workspace/router";
-import { ColumnDef, flexRender, Row, Table } from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
+import type { ColumnDef, Row, Table } from "@tanstack/react-table";
 
 interface DataTableBodyProps<TData, TValue> {
   table: Table<TData>;
   columns: ColumnDef<TData, TValue>[];
-  className?: string;
-  selectedId?: string;
-  onClickRowAction?: (event: React.MouseEvent<HTMLTableRowElement>, row: Row<TData>) => void;
-  queryFilter?: string;
+  className?: string | undefined;
+  selectedId?: string | undefined;
+  onClickRowAction?: ((event: React.MouseEvent<HTMLTableRowElement>, row: Row<TData>) => void) | undefined;
+  queryFilter?: string | undefined;
 }
 
 function DataTableBody<TData extends Record<string, unknown>, TValue>({
@@ -33,7 +34,7 @@ function DataTableBody<TData extends Record<string, unknown>, TValue>({
           <TableRow
             key={row.id}
             data-state={
-              row.getIsSelected() || (selectedId && row.original.id === selectedId)
+              row.getIsSelected() || (selectedId && row.original["id"] === selectedId)
                 ? "selected"
                 : undefined
             }
@@ -54,7 +55,7 @@ function DataTableBody<TData extends Record<string, unknown>, TValue>({
       ) : (
         <TableRow>
           <TableCell colSpan={columns.length} className="h-24 text-center">
-            <EmptyStateContent queryFilter={queryFilter} pathname={pathname} />
+            <EmptyStateContent {...(queryFilter !== undefined && { queryFilter })} pathname={pathname} />
           </TableCell>
         </TableRow>
       )}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Table } from "@tanstack/react-table";
+import type { Table } from "@tanstack/react-table";
 
 import { DataTableViewOptions } from "./data-table-view-options";
 
@@ -14,8 +14,8 @@ interface DataTableToolbarProps<TData> {
   queryFilter: string | undefined;
   setQueryFilter: (filter: string | undefined) => void;
   setPageIndex: (index: number) => void;
-  refetch?: () => void;
-  designButton?: React.ReactNode;
+  refetch?: (() => void) | undefined;
+  designButton?: React.ReactNode | undefined;
 }
 
 export function DataTableToolbar<TData>({

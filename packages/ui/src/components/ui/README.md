@@ -15,6 +15,10 @@ This folder contains **shadcn/ui components** that are automatically generated a
 
 4. **`components.json` is different** - The configuration file `packages/ui/components.json` is **manually maintained** and can be edited. Only the component files in this folder are auto-generated.
 
+5. **TypeScript checks excluded** - This folder is excluded from TypeScript strictness checks (`tsconfig.json` excludes `src/components/ui`) because these files are auto-generated and may not always conform to our strict TypeScript settings (e.g., `verbatimModuleSyntax`, `exactOptionalPropertyTypes`).
+
+   **Note**: Due to TypeScript's behavior with `exclude` when files are imported, some files in this folder may still appear in type checking errors. These errors can be safely ignored as the files are auto-generated and will be updated by the shadcn CLI.
+
 ## What is shadcn/ui?
 
 shadcn/ui is a collection of re-usable components built with Radix UI and Tailwind CSS. Components are copied into your project, not installed as dependencies.

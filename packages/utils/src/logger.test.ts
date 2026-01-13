@@ -11,10 +11,10 @@ describe("Logger", () => {
 
   beforeEach(() => {
     consoleSpy = {
-      debug: vi.spyOn(console, "debug").mockImplementation(() => {}),
-      info: vi.spyOn(console, "info").mockImplementation(() => {}),
-      warn: vi.spyOn(console, "warn").mockImplementation(() => {}),
-      error: vi.spyOn(console, "error").mockImplementation(() => {}),
+      debug: vi.spyOn(console, "debug").mockImplementation(() => { }),
+      info: vi.spyOn(console, "info").mockImplementation(() => { }),
+      warn: vi.spyOn(console, "warn").mockImplementation(() => { }),
+      error: vi.spyOn(console, "error").mockImplementation(() => { }),
     };
   });
 
@@ -25,28 +25,28 @@ describe("Logger", () => {
   describe("debug", () => {
     it("should log debug messages in development", () => {
       // Mock development environment
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = "development";
+      const originalEnv = process.env["NODE_ENV"];
+      process.env["NODE_ENV"] = "development";
 
       logger.debug("Test debug message", { key: "value" });
 
       expect(consoleSpy.debug).toHaveBeenCalledWith("[DEBUG] Test debug message", { key: "value" });
 
-      process.env.NODE_ENV = originalEnv;
+      process.env["NODE_ENV"] = originalEnv;
     });
   });
 
   describe("info", () => {
     it("should log info messages in development", () => {
       // Mock development environment
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = "development";
+      const originalEnv = process.env["NODE_ENV"];
+      process.env["NODE_ENV"] = "development";
 
       logger.info("Test info message", { key: "value" });
 
       expect(consoleSpy.info).toHaveBeenCalledWith("[INFO] Test info message", { key: "value" });
 
-      process.env.NODE_ENV = originalEnv;
+      process.env["NODE_ENV"] = originalEnv;
     });
   });
 
@@ -107,8 +107,8 @@ describe("Logger", () => {
     });
 
     it("should create a child logger with debug method", () => {
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = "development";
+      const originalEnv = process.env["NODE_ENV"];
+      process.env["NODE_ENV"] = "development";
 
       const childLogger = logger.child({ module: "test" });
       childLogger.debug("Debug message", { debugData: "value" });
@@ -118,7 +118,7 @@ describe("Logger", () => {
         debugData: "value",
       });
 
-      process.env.NODE_ENV = originalEnv;
+      process.env["NODE_ENV"] = originalEnv;
     });
   });
 });

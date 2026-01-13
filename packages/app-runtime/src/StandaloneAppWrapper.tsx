@@ -1,4 +1,5 @@
-import React, { ReactNode } from "react";
+import React from "react";
+import type { ReactNode } from "react";
 import ReactDOM from "react-dom/client";
 import { QueryProvider } from "@workspace/query";
 import { PluginProvider, RendererProvider } from "@workspace/plugin-system";

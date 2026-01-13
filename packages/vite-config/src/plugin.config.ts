@@ -65,7 +65,7 @@ export const createPluginAppViteConfig = (
   const assignedDevPort = ports?.dev || fallbackDevPort;
   const assignedPreviewPort = ports?.preview || assignedDevPort + 1000; // Ensure preview is distinct
 
-  const currentShellAppBasePath = getAppBasePath(isProduction, env.VITE_APP_BASE_PATH);
+  const currentShellAppBasePath = getAppBasePath(isProduction, env["VITE_APP_BASE_PATH"]);
   const calculatedPluginBasePath = getPluginBasePath(
     isProduction,
     packageName,
@@ -79,7 +79,7 @@ export const createPluginAppViteConfig = (
 
   const proxyConfiguration = createProxyConfig({
     isProduction,
-    target: env.VITE_PROXY_TARGET,
+    ...(env["VITE_PROXY_TARGET"] !== undefined && { target: env["VITE_PROXY_TARGET"] }),
     // customProxies: { ... } // if plugin needs specific proxies from env or hardcoded
   });
 

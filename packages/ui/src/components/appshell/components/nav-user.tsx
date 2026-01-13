@@ -138,5 +138,12 @@ export function NavUserConnected(props: {
 }) {
   const { userData, isLoading, logout } = useUserData();
 
-  return <NavUser userData={userData} isLoading={isLoading} onLogout={logout} {...props} />;
+  return (
+    <NavUser
+      {...(userData !== undefined && { userData })}
+      {...(isLoading !== undefined && { isLoading })}
+      {...(logout !== undefined && { onLogout: logout })}
+      {...props}
+    />
+  );
 }

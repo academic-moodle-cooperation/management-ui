@@ -1,10 +1,10 @@
-import { Plugin } from "../../IPlugin";
+import type { Plugin } from "../../IPlugin";
 
 export type RegistryObject = {
   id: string;
   type: string;
   data: unknown;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown> | undefined;
 };
 
 export const createObjectRegistryPlugin = (): Plugin => {
@@ -23,7 +23,7 @@ export const createObjectRegistryPlugin = (): Plugin => {
             registryItems.set(type, new Map());
           }
           const typeRegistry = registryItems.get(type)!;
-          typeRegistry.set(id, { id, type, data, metadata });
+          typeRegistry.set(id, { id, type, data, metadata: metadata ?? undefined });
           manager.dispatchEvent("registry.objectUpdated", { type, id });
         }
       );

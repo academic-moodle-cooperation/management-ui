@@ -8,11 +8,11 @@ import React, {
   useState,
 } from "react";
 import {
-  AriaDatePickerProps,
-  AriaTimeFieldProps,
-  CalendarProps,
-  DateValue,
-  TimeValue,
+  type AriaDatePickerProps,
+  type AriaTimeFieldProps,
+  type CalendarProps,
+  type DateValue,
+  type TimeValue,
   useButton,
   useCalendar,
   useCalendarCell,
@@ -24,10 +24,10 @@ import {
   useTimeField,
 } from "react-aria";
 import {
-  CalendarState,
-  DateFieldState,
-  DatePickerState,
-  DatePickerStateOptions,
+  type CalendarState,
+  type DateFieldState,
+  type DatePickerState,
+  type DatePickerStateOptions,
   useCalendarState,
   useDateFieldState,
   useDatePickerState,
@@ -47,7 +47,7 @@ import {
   isToday as _isToday,
   toCalendarDate,
 } from "@internationalized/date";
-import { DateSegment as IDateSegment } from "@react-stately/datepicker";
+import type { DateSegment as IDateSegment } from "@react-stately/datepicker";
 
 function Calendar(props: CalendarProps<DateValue>) {
   const prevButtonRef = React.useRef<HTMLButtonElement | null>(null);
@@ -360,7 +360,10 @@ const DateTimePicker = React.forwardRef<
         "flex items-center rounded-md border ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
       )}
     >
-      <Popover open={props.isOpen} onOpenChange={props.onOpenChange}>
+      <Popover
+        {...(props.isOpen !== undefined && { open: props.isOpen })}
+        {...(props.onOpenChange !== undefined && { onOpenChange: props.onOpenChange })}
+      >
         <PopoverTrigger asChild>
           <Button
             {...buttonProps}

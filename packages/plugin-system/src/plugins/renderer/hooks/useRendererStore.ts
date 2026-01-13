@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { usePluginManager } from "../../../PluginProvider";
-import { RendererComponent } from "../types";
+import type { RendererComponent } from "../types";
 
 /**
  * @deprecated This hook is part of the deprecated Renderer system. Use ComponentResolver instead.

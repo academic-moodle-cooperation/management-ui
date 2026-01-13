@@ -1,5 +1,5 @@
 import * as React from "react";
-import { LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
@@ -45,9 +45,9 @@ const useSidebarItems = () => {
     return sidebarNavItems.map((config) => ({
       title: config.title,
       url: config.path,
-      icon: config.icon,
+      ...(config.icon !== undefined && { icon: config.icon }),
       isExternal: config.path?.startsWith("http://") || config.path?.startsWith("https://"),
-      target: config.target,
+      ...(config.target !== undefined && { target: config.target }),
     }));
   }, [sidebarNavItems]);
 };
@@ -85,7 +85,7 @@ export function AppSidebar({
         <ComponentResolver
           componentType="appshell:sidebar:content"
           defaultComponent={NavMain}
-          componentProps={{ items: navItems, open }}
+          componentProps={{ items: navItems, ...(open !== undefined && { open }) }}
           loadingBehavior="none"
         />
       </SidebarContent>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from "react";
+import React, { createContext, useContext, type ReactNode } from "react";
 import { createPluginManager } from "./pluginManager";
 
 const PluginContext = createContext<ReturnType<typeof createPluginManager> | null>(null);

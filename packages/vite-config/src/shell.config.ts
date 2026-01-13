@@ -98,10 +98,10 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
   };
 
   const baseSettings = createBaseConfig(baseConfigOptions);
-  const shellBasePath = getAppBasePath(isProduction, env.VITE_APP_BASE_PATH);
+  const shellBasePath = getAppBasePath(isProduction, env["VITE_APP_BASE_PATH"]);
   const proxyConfiguration = createProxyConfig({
     isProduction,
-    target: env.VITE_PROXY_TARGET,
+    ...(env["VITE_PROXY_TARGET"] !== undefined && { target: env["VITE_PROXY_TARGET"] }),
     // customProxies: { ... } // if shell needs specific proxies from env or hardcoded
   });
 

@@ -33,27 +33,27 @@ import {
   useGetManagedAclsWithEventIdQuery,
   useGetManagedAclsWithSeriesIdQuery,
   useSearchUserQuery,
-  SearchUserQuery,
   useQueryClient,
 } from "@workspace/query";
+import type { SearchUserQuery } from "@workspace/query";
 import { useI18n, loadNamespace } from "@workspace/i18n";
-import { AclData, ACLEntry, ACLEntryInput, SelectedElement } from "./types";
+import type { AclData, ACLEntry, ACLEntryInput, SelectedElement } from "./types";
 import { logger } from "@workspace/utils";
 
 type UserSearchResult = NonNullable<NonNullable<SearchUserQuery["searchUser"]>["nodes"]>[number];
 
 interface AclEditorProps {
-  selectedElement?: SelectedElement | null;
+  selectedElement?: SelectedElement | null | undefined;
   aclEntries: ACLEntry[];
-  managedAclId?: string;
+  managedAclId?: string | undefined;
   hasChanges: boolean;
   refetch: () => void;
-  onClose?: () => void;
-  showUpdateButton?: boolean;
+  onClose?: (() => void) | undefined;
+  showUpdateButton?: boolean | undefined;
   onAclChange: (entries: ACLEntry[]) => void;
   onManagedAclChange: (managedAclId: string) => void;
   onHasChangesChange: (hasChanges: boolean) => void;
-  disabled?: boolean;
+  disabled?: boolean | undefined;
 }
 
 export const AclEditor: React.FC<AclEditorProps> = ({
@@ -61,7 +61,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   aclEntries,
   managedAclId,
   hasChanges,
-  refetch = () => {},
+  refetch = () => { },
   showUpdateButton = true,
   onAclChange,
   onManagedAclChange,

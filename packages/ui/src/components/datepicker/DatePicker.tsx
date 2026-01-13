@@ -1,10 +1,10 @@
-import React, { FC } from "react";
+import React, { type FC } from "react";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@workspace/ui/lib";
 import { Button } from "@workspace/ui/components";
 import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components";
 import { Calendar } from "@workspace/ui/components";
-import { SelectSingleEventHandler } from "react-day-picker";
+import type { SelectSingleEventHandler } from "react-day-picker";
 
 interface DatePickerProps {
   date: Date | undefined;
@@ -27,8 +27,8 @@ const DatePicker: FC<DatePickerProps> = ({ date, onDateChange, children }) => {
       <PopoverContent className="sidebar-portal-inside w-auto p-0" align="start">
         <Calendar
           mode="single"
-          selected={date}
-          onSelect={onDateChange}
+          {...(date !== undefined && { selected: date })}
+          {...(onDateChange !== undefined && { onSelect: onDateChange })}
           disabled={(date) => date < new Date("1900-01-01")}
           initialFocus
         />

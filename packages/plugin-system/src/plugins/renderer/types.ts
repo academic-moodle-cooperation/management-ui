@@ -1,4 +1,4 @@
-import { PluginComponent } from "../../types";
+import type { PluginComponent } from "../../types";
 
 export type RendererComponent = {
   component: PluginComponent;

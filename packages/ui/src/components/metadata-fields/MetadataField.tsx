@@ -1,6 +1,6 @@
 import { useI18n } from "@workspace/i18n";
 import { parseDuration } from "@workspace/utils";
-import { MetadataFieldType } from "@workspace/query";
+import type { MetadataFieldType } from "@workspace/query";
 
 export const MetadataField = ({ type, listProvider, collection, value }: MetadataFieldType) => {
   const { t } = useI18n();

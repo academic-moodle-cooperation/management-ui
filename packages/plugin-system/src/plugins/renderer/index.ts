@@ -1,5 +1,5 @@
-import { Plugin } from "../../IPlugin";
-import { RendererComponent } from "./types";
+import type { Plugin } from "../../IPlugin";
+import type { RendererComponent } from "./types";
 import { logger } from "@workspace/utils";
 
 export const createRendererPlugin = (): Plugin => {

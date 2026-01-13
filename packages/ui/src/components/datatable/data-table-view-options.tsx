@@ -1,6 +1,6 @@
 import React from "react";
 import { Settings2 } from "lucide-react";
-import { Table, RowData } from "@tanstack/react-table";
+import type { Table, RowData } from "@tanstack/react-table";
 import {
   DropdownMenuTrigger,
   DropdownMenu,

@@ -1,4 +1,4 @@
-import { MetadataItem } from "@workspace/ui-config";
+import type { MetadataItem } from "@workspace/ui-config";
 import { useState, useEffect } from "react";
 
 /**

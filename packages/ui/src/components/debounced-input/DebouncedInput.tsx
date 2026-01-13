@@ -1,4 +1,4 @@
-import React, { useState, useEffect, InputHTMLAttributes } from "react";
+import React, { useState, useEffect, type InputHTMLAttributes } from "react";
 import { Input } from "../ui/input"; // Adjusted path
 import { cn } from "../../lib/utils"; // Adjusted path
 

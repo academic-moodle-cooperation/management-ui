@@ -1,4 +1,4 @@
-import { useEffect, RefObject } from "react";
+import { useEffect, type RefObject } from "react";
 
 /**
  * Custom hook that handles clicks outside specified elements

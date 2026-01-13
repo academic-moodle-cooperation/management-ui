@@ -1,13 +1,13 @@
 import { cn } from "@workspace/ui/lib/utils";
 import { Button } from "@workspace/ui/components";
-import { Component, ErrorInfo, ReactNode } from "react";
+import { Component, type ErrorInfo, type ReactNode } from "react";
 import { logger } from "@workspace/utils";
 
 interface GeneralErrorProps extends React.HTMLAttributes<HTMLDivElement> {
-  minimal?: boolean;
-  message?: string;
-  onHomeClick?: () => void;
-  onBackClick?: () => void;
+  minimal?: boolean | undefined;
+  message?: string | undefined;
+  onHomeClick?: (() => void) | undefined;
+  onBackClick?: (() => void) | undefined;
 }
 
 interface ErrorBoundaryProps {
@@ -35,7 +35,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     this.props.onError?.(error, errorInfo);
 
     // Log the error during development
-    if (process.env.NODE_ENV === "development") {
+    if (process.env["NODE_ENV"] === "development") {
       logger.error("ErrorBoundary caught an error", error, {
         componentStack: errorInfo.componentStack,
       });
@@ -54,7 +54,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       return (
         <GeneralError
           message={
-            process.env.NODE_ENV === "development"
+            process.env["NODE_ENV"] === "development"
               ? `${this.state.error?.name}: ${this.state.error?.message}`
               : undefined
           }

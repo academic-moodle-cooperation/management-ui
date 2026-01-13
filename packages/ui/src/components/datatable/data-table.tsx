@@ -1,15 +1,15 @@
 import React from "react";
 import {
-  ColumnDef,
+  type ColumnDef,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-  SortingState,
-  OnChangeFn,
-  Row,
-  VisibilityState,
+  type SortingState,
+  type OnChangeFn,
+  type Row,
+  type VisibilityState,
 } from "@tanstack/react-table";
 
 import { Table, TableHead, TableHeader, TableRow } from "@workspace/ui/components";
@@ -27,9 +27,9 @@ export interface DataTableProps<TData, TValue> {
   /** Data to display in the table */
   data: TData[];
   /** Callback for row click actions */
-  onClickRowAction?: (event: React.MouseEvent<HTMLTableRowElement>, row: Row<TData>) => void;
+  onClickRowAction?: ((event: React.MouseEvent<HTMLTableRowElement>, row: Row<TData>) => void) | undefined;
   /** ID of the currently selected row */
-  selectedId?: string;
+  selectedId?: string | undefined;
 
   /** Whether pagination is handled manually (outside the table) */
   manualPagination: boolean;
@@ -47,11 +47,11 @@ export interface DataTableProps<TData, TValue> {
   totalRows: number;
 
   /** Current sorting state */
-  sorting?: SortingState;
+  sorting?: SortingState | undefined;
   /** Function to update sorting */
-  setSorting?: OnChangeFn<SortingState>;
+  setSorting?: OnChangeFn<SortingState> | undefined;
   /** Whether sorting is handled manually */
-  manualSorting?: boolean;
+  manualSorting?: boolean | undefined;
 
   /** Current filter query */
   queryFilter: string | undefined;
@@ -59,12 +59,12 @@ export interface DataTableProps<TData, TValue> {
   setQueryFilter: (filter: string | undefined) => void;
 
   /** Current column visibility state */
-  columnVisibility?: VisibilityState;
+  columnVisibility?: VisibilityState | undefined;
   /** Function to update column visibility */
-  setColumnVisibility?: OnChangeFn<VisibilityState>;
+  setColumnVisibility?: OnChangeFn<VisibilityState> | undefined;
 
   /** Function to refetch data */
-  refetch?: () => void;
+  refetch?: (() => void) | undefined;
   /** Custom design button (e.g., layout toggle) */
   designButton?: React.ReactNode;
 }
@@ -103,17 +103,17 @@ function DataTable<TData extends Record<string, unknown>, TValue>({
     data,
     columns,
     state: {
-      sorting,
-      columnVisibility,
+      ...(sorting !== undefined && { sorting }),
+      ...(columnVisibility !== undefined && { columnVisibility }),
     },
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    manualPagination,
+    ...(manualPagination !== undefined && { manualPagination }),
     pageCount: controlledPageCount || -1,
     getSortedRowModel: getSortedRowModel(),
-    onSortingChange: setSorting,
-    manualSorting,
-    onColumnVisibilityChange: setColumnVisibility,
+    ...(setSorting !== undefined && { onSortingChange: setSorting }),
+    ...(manualSorting !== undefined && { manualSorting }),
+    ...(setColumnVisibility !== undefined && { onColumnVisibilityChange: setColumnVisibility }),
   });
 
   const theme = useComponentTheme("Table");

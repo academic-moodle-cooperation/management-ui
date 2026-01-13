@@ -33,13 +33,13 @@ describe("assetUrl utilities", () => {
     });
 
     it("should prepend base URL for relative paths", () => {
-      process.env.VITE_ASSET_BASE_URL = "https://cdn.example.com";
+      process.env["VITE_ASSET_BASE_URL"] = "https://cdn.example.com";
       const result = resolveAssetUrl("/images/logo.png");
       expect(result).toContain("/images/logo.png");
     });
 
     it("should handle paths without leading slash", () => {
-      process.env.VITE_ASSET_BASE_URL = "https://cdn.example.com";
+      process.env["VITE_ASSET_BASE_URL"] = "https://cdn.example.com";
       const result = resolveAssetUrl("images/logo.png");
       expect(result).toContain("images/logo.png");
     });

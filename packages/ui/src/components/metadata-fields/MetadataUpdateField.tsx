@@ -32,10 +32,10 @@ import {
   useInfiniteQuery,
   createGraphQLClient,
   gql,
-  MetadataFieldType,
+  type MetadataFieldType,
   OrderDirection,
-  GetMySeriesNameAndIdQuery,
-  Series,
+  type GetMySeriesNameAndIdQuery,
+  type Series,
 } from "@workspace/query";
 import { useI18n } from "@workspace/i18n";
 import { useAppConfig } from "@workspace/query";
@@ -373,15 +373,13 @@ export const MetadataUpdateField = ({
           granularity="second"
           shouldForceLeadingZeros
           hourCycle={24}
-          onChange={(value) =>
-            onUpdate(
-              serializeDuration({
-                hours: value?.hour,
-                minutes: value?.minute,
-                seconds: value?.second,
-              })
-            )
-          }
+          onChange={(value) => {
+            const duration: { hours?: number; minutes?: number; seconds?: number } = {};
+            if (value?.hour !== undefined) duration.hours = value.hour;
+            if (value?.minute !== undefined) duration.minutes = value.minute;
+            if (value?.second !== undefined) duration.seconds = value.second;
+            onUpdate(serializeDuration(duration));
+          }}
         />
       );
       break;

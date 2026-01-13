@@ -1,6 +1,6 @@
 import React from "react";
 import { usePluginManager } from "./PluginProvider";
-import { PluginComponent as PluginComponentType, PluginProps } from "./types";
+import type { PluginComponent as PluginComponentType, PluginProps } from "./types";
 
 type PluginComponentProps = {
   /** Unique identifier for the component type (e.g., "acl:managed-entry") */

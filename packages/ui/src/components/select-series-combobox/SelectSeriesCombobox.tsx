@@ -12,7 +12,7 @@ import {
 } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib";
 import { Loader2 } from "lucide-react";
-import { FetchNextPageOptions, InfiniteData, InfiniteQueryObserverResult } from "@workspace/query";
+import type { FetchNextPageOptions, InfiniteData, InfiniteQueryObserverResult } from "@workspace/query";
 import { useI18n } from "@workspace/i18n";
 
 type Series = {

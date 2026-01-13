@@ -43,7 +43,7 @@ export const createLoginRoute = (parentRoute: AnyRoute, options: AuthRouteOption
 
       // Handle redirect parameter from query string or default to home
       const redirectParam =
-        (routerState.location.search as Record<string, unknown>).redirect || "/";
+        (routerState.location.search as Record<string, unknown>)["redirect"] || "/";
 
       // Build the final login URL with redirect parameter
       const finalLoginUrl = `${loginUrl}?redirect=${encodeURIComponent(window.location.origin + redirectParam)}`;
