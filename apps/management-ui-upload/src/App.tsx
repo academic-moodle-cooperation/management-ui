@@ -74,8 +74,9 @@ export const App = () => {
   const { t } = useI18n();
   const { config } = useAppConfig();
   // Get upload-specific config from the real config system
-  const uploadConfig = config.plugins?.["management-ui-upload"] || {};
-  const { location, workflowId } = uploadConfig;
+  const uploadConfig = config.plugins?.["management-ui-upload"];
+  const location = uploadConfig?.location || "Upload";
+  const workflowId = uploadConfig?.workflowId || "ingest-upload";
 
   // Plugin system integration
   const manager = usePluginManager();
@@ -166,9 +167,9 @@ export const App = () => {
   });
 
   const refsById = useMemo(() => {
-    const uploadFileEditNameRefs: RefObject<HTMLSpanElement | null>[] = [];
+    const uploadFileEditNameRefs: RefObject<HTMLSpanElement>[] = [];
     fileWaitingList.forEach((item) => {
-      uploadFileEditNameRefs[item.id] = createRef();
+      uploadFileEditNameRefs[item.id] = createRef<HTMLSpanElement>() as RefObject<HTMLSpanElement>;
     });
     return uploadFileEditNameRefs;
   }, [fileWaitingList]);
@@ -179,10 +180,10 @@ export const App = () => {
     setSelectedSeries(
       navSeries && navSeries.id && navSeries.title
         ? {
-            __typename: navSeries.__typename as "Series" | "Event",
-            id: navSeries.id,
-            title: navSeries.title,
-          }
+          __typename: navSeries.__typename as "Series" | "Event",
+          id: navSeries.id,
+          title: navSeries.title,
+        }
         : null
     );
     routeSubPath && setSelectedSeriesId(routeSubPath);
@@ -244,12 +245,12 @@ export const App = () => {
           // Convert UserInfo to User type by adding missing provider property
           user
             ? {
-                ...user,
-                user: {
-                  ...user.user,
-                  provider: "internal", // Add default provider since it's missing from UserInfo
-                },
-              }
+              ...user,
+              user: {
+                ...user.user,
+                provider: "internal", // Add default provider since it's missing from UserInfo
+              },
+            }
             : user,
           location,
           updateFile,
@@ -265,17 +266,21 @@ export const App = () => {
             setFileWaitingList((prevState) => {
               const updateFileIndex = prevState.findIndex(
                 (fileItem) => fileItem?.id === next.id
-              ) as number;
+              );
 
-              prevState[updateFileIndex] = {
-                ...prevState[updateFileIndex],
+              if (updateFileIndex === -1) return prevState;
+
+              const existingFile = prevState[updateFileIndex];
+              if (!existingFile) return prevState;
+
+              const updatedFile: UploadFileBlob = {
+                ...existingFile,
                 status: "error",
               };
 
-              updateFile({
-                ...prevState[updateFileIndex],
-                status: "error",
-              });
+              prevState[updateFileIndex] = updatedFile;
+
+              updateFile(updatedFile);
 
               return prevState;
             });
@@ -354,17 +359,21 @@ export const App = () => {
     setFileWaitingList((prevState) => {
       const updateFileIndex = prevState.findIndex(
         (fileItem) => fileItem?.id === selectedFile.id
-      ) as number;
+      );
 
-      prevState[updateFileIndex] = {
-        ...prevState[updateFileIndex],
+      if (updateFileIndex === -1) return prevState;
+
+      const existingFile = prevState[updateFileIndex];
+      if (!existingFile) return prevState;
+
+      const updatedFile: UploadFileBlob = {
+        ...existingFile,
         status: "aborted",
       };
 
-      updateFile({
-        ...prevState[updateFileIndex],
-        status: "aborted",
-      });
+      prevState[updateFileIndex] = updatedFile;
+
+      updateFile(updatedFile);
 
       return prevState;
     });
@@ -563,15 +572,15 @@ export const App = () => {
                         setSelectedSeries(
                           value && value.id && value.title
                             ? {
-                                __typename: "Series" as const,
-                                id: value.id,
-                                title: value.title,
-                              }
+                              __typename: "Series" as const,
+                              id: value.id,
+                              title: value.title,
+                            }
                             : null
                         );
                       }}
-                      searchSeries={(query) => {
-                        setQuery(query || undefined);
+                      searchSeries={(query: React.SetStateAction<string>) => {
+                        setQuery(typeof query === "function" ? query("") : query || undefined);
                       }}
                       infiniteFetchNextPage={fetchNextPage}
                       hasNextPage={hasNextPage}

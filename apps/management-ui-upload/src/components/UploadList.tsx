@@ -57,7 +57,10 @@ export const UploadList = ({
                         autoFocus
                         onKeyDown={handleEditUploadName}
                         value={editFile.name}
-                        onChange={handleEditUploadName}
+                        onChange={(e) => {
+                          // onChange handler for input value updates
+                          editUploadNameEnd(e.target.value);
+                        }}
                         onBlur={() => editUploadNameEnd(editFile.name)}
                         style={{
                           width: `${(refsById[selectedFile.id]?.current?.offsetWidth || 0) + 20}px`,

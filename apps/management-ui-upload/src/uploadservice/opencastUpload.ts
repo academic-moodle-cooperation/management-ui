@@ -68,12 +68,16 @@ export const opencastUpload = async (
   seriesId: string,
   workflowId: string,
   currentUser: User,
-  location: string,
+  location: string | undefined,
   updateFile: (updateFileInfo: UploadFileBlob) => void,
   setUploadError: (error: Error) => void,
   aclData?: AclData
 ) => {
-  if (!selectedFile.file || selectedFile.status === "aborted") return;
+  if (!selectedFile.file || selectedFile.status === "aborted" || !location) return;
+
+  // TypeScript: location is checked above, so it's safe to use here
+  // Create a local variable with the correct type using type assertion
+  const locationString = location as string;
 
   const recordings = [
     {
@@ -115,28 +119,30 @@ export const opencastUpload = async (
     presenterField: presenter,
   };
 
-  mediaPackage = await addDcCatalog({
+  // TypeScript: location is checked above, so it's safe to use here
+  const updatedMediaPackage = await addDcCatalog({
     mediaPackage,
     title,
     presenter,
     uploadSettings,
     currentUser,
-    location,
+    location: locationString,
     setUploadError,
   });
 
-  if (!mediaPackage) return;
+  if (!updatedMediaPackage) return;
+  mediaPackage = updatedMediaPackage;
 
   if (uploadSettings?.acl !== null) {
-    mediaPackage = await attachAcl({
+    const aclMediaPackage = await attachAcl({
       mediaPackage,
       uploadSettings,
       currentUser,
       setUploadError,
     });
+    if (!aclMediaPackage) return;
+    mediaPackage = aclMediaPackage;
   }
-
-  if (!mediaPackage) return;
 
   mediaPackage = await uploadTracks(
     selectedFile,

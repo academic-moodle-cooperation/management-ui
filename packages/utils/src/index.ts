@@ -4,7 +4,8 @@
 // export * from './string-utils';
 
 import sha256 from "crypto-js/sha256.js";
-import { parse, Duration, serialize } from "tinyduration";
+import { parse, serialize } from "tinyduration";
+import type { Duration } from "tinyduration";
 
 const parseDuration = (duration: string | undefined) => {
   const durationObj: Duration | undefined = duration ? parse(duration) : undefined;
