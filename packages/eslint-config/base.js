@@ -15,6 +15,9 @@ export const config = [
   eslintConfigPrettier,
   ...tseslint.configs.recommended,
   {
+    ignores: ["**/coverage/**", "**/dist/**", "**/node_modules/**", "**/.turbo/**"],
+  },
+  {
     plugins: {
       turbo: turboPlugin,
       import: importPlugin,
