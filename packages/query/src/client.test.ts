@@ -45,7 +45,6 @@ describe("client", () => {
     });
 
     it("should throw error for non-string input", () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect(() => {
         createGraphQLClient(null as any);
       }).toThrow("Invalid GraphQL endpoint");
