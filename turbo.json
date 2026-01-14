@@ -24,6 +24,11 @@
         "dist/**"
       ]
     },
+    "@workspace/utils#build": {
+      "outputs": [
+        "dist/**"
+      ]
+    },
     "plugin-univie#build": {
       "outputs": []
     },
