@@ -205,8 +205,9 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
       ? columnsKeys
           .map((columnsKey) =>
             columns.find((column) => {
-              // TanStack table column types are complex, but we can safely access these properties
-              const col = column as ColumnDef<EventsDataFragment>;
+              // TanStack table column types are complex, accessorKey and id are optional
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const col = column as any;
               return col.accessorKey === columnsKey || col.id === columnsKey;
             }),
           )
