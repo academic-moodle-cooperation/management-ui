@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
+
+import { useGetAllManagedAclsQuery, type GetAllManagedAclsQuery } from "@workspace/query";
 import {
   AclEditor,
   type ManagedACLEntry,
   type ACLEntry,
   type AclData,
 } from "@workspace/ui/components";
-import { useGetAllManagedAclsQuery, type GetAllManagedAclsQuery } from "@workspace/query";
 
 export interface UploadAclEditorProps {
   aclData?: AclData | null;

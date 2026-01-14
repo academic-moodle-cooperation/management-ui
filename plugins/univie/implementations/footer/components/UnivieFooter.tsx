@@ -1,4 +1,5 @@
 import React from "react";
+
 import { usePluginTranslation, createOrganizationNamespace } from "@workspace/i18n";
 
 /**

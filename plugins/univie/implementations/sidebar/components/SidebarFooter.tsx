@@ -1,8 +1,8 @@
 import React from "react";
+
 import { useGetCurrentUser } from "@workspace/query";
-import { useSidebar } from "@workspace/ui/components";
+import { useSidebar , Avatar, AvatarImage, AvatarFallback } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib/utils";
-import { Avatar, AvatarImage, AvatarFallback } from "@workspace/ui/components";
 import { sha256 } from "@workspace/utils";
 
 /**

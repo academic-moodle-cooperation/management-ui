@@ -1,4 +1,5 @@
 import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+
 import { TuWienCustomApp } from "./apps/TuWienCustomApp";
 
 const config = {

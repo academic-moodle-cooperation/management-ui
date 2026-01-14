@@ -1,6 +1,7 @@
 import { createPlugin } from "@workspace/plugin-system";
-import { TUWienHeader } from "./components/TUWienHeader";
 import type { PluginManager } from "@workspace/plugin-system";
+
+import { TUWienHeader } from "./components/TUWienHeader";
 
 /**
  * TU Wien Header Implementation Plugin

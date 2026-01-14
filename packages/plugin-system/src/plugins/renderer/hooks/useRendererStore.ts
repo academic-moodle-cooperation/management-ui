@@ -1,5 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
+
 import { usePluginManager } from "../../../PluginProvider";
+
 import type { RendererComponent } from "../types";
 
 /**

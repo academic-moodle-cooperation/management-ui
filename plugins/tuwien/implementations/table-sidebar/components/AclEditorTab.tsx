@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { AclEditor, type SelectedElement, type ACLEntry } from "@workspace/ui/components";
+
 import {
   useGetManagedAclsWithEventIdQuery,
   useGetManagedAclsWithSeriesIdQuery,
 } from "@workspace/query";
+import { AclEditor, type SelectedElement, type ACLEntry } from "@workspace/ui/components";
 
 /**
  * ACL Editor Tab Component for TU Wien Table Sidebars

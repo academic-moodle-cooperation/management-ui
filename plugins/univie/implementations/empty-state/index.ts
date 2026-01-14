@@ -1,6 +1,7 @@
 import { createPlugin } from "@workspace/plugin-system";
-import { UnivieEmptyState } from "./components";
 import type { PluginManager } from "@workspace/plugin-system";
+
+import { UnivieEmptyState } from "./components";
 
 /**
  * Univie Empty State Implementation Plugin

@@ -1,12 +1,14 @@
+import React from "react";
+
 import { createPlugin } from "@workspace/plugin-system";
 import type { PluginManager } from "@workspace/plugin-system";
-import { CustomNavMain } from "./components/CustomNavMain";
-import { SidebarHeaderLogo } from "./components/SidebarHeaderLogo";
-import { SidebarFooter } from "./components/SidebarFooter";
-import React from "react";
+import type { NavMainProps } from "@workspace/ui/components";
 import { Video, ExternalLink } from "@workspace/ui/components/icons";
 import { logger } from "@workspace/utils";
-import type { NavMainProps } from "@workspace/ui/components/appshell/components/nav-main";
+
+import { CustomNavMain } from "./components/CustomNavMain";
+import { SidebarFooter } from "./components/SidebarFooter";
+import { SidebarHeaderLogo } from "./components/SidebarHeaderLogo";
 
 /**
  * University of Vienna Custom Sidebar Implementation Plugin

@@ -1,4 +1,5 @@
 import React from "react";
+
 import { NavMain, type NavMainProps } from "@workspace/ui/components/appshell/components/nav-main";
 import { cn } from "@workspace/ui/lib/utils";
 

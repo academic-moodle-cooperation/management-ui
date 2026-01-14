@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+
+import { useI18n } from "@workspace/i18n";
 import { SwitchHeadlessUI } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib/utils";
-import { useI18n } from "@workspace/i18n";
+
 import LTLogo from "./LTLogo";
 
 /**

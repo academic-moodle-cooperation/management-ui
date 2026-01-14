@@ -1,6 +1,7 @@
 import React from "react";
-import { usePluginManager } from "./PluginProvider";
+
 import { ComponentLoader } from "./ComponentLoader";
+import { usePluginManager } from "./PluginProvider";
 
 type ComponentResolverProps<P extends object = Record<string, unknown>> = {
   componentType: string;

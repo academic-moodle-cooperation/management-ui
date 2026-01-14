@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useMemo, useEffect, useRef } from "react";
-import { usePluginManager } from "./PluginProvider";
+
 import { logger } from "@workspace/utils";
+
+import { usePluginManager } from "./PluginProvider";
 
 type ComponentEntry = {
   key: string;

@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
+
+import { useI18n, loadNamespace } from "@workspace/i18n";
 import { Button, useSidebar } from "@workspace/ui/components";
 import { Menu } from "@workspace/ui/components/icons";
-import { useI18n, loadNamespace } from "@workspace/i18n";
 
 /**
  * TU Wien Header Implementation

@@ -1,11 +1,12 @@
 import React from "react";
+
+import { createOrganizationNamespace, i18next, usePluginTranslation } from "@workspace/i18n";
 import { createPlugin } from "@workspace/plugin-system";
 import type { PluginManager } from "@workspace/plugin-system";
+import { useAppConfig, type SeriesDataFragment } from "@workspace/query";
+import { Link } from "@workspace/router";
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components";
 import { MonitorPlay } from "@workspace/ui/components/icons";
-import { createOrganizationNamespace, i18next, usePluginTranslation } from "@workspace/i18n";
-import { Link } from "@workspace/router";
-import { useAppConfig, type SeriesDataFragment } from "@workspace/query";
 import { logger } from "@workspace/utils";
 
 interface TUWienSeriesActionsProps {

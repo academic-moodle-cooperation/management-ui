@@ -1,5 +1,6 @@
 // packages/plugin-system/src/plugins/objectRegistry/hooks/useRegistry.ts
 import { useState, useEffect, useMemo } from "react";
+
 import { usePluginManager } from "../../../PluginProvider";
 
 export function useRegistry<T = unknown>(type: string) {

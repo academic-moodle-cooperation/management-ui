@@ -1,6 +1,7 @@
 import { createPlugin, type PluginManager } from "@workspace/plugin-system";
-import { TuWienCustomApp } from "./TuWienCustomApp";
 import { logger } from "@workspace/utils";
+
+import { TuWienCustomApp } from "./TuWienCustomApp";
 
 /**
  * TU Wien custom app plugin

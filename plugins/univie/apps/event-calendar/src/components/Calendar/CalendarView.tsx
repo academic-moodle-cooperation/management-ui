@@ -1,12 +1,16 @@
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, RefreshCw } from "lucide-react";
 import React, { useState, useMemo } from "react";
-import type { ParsedEvent, Room } from "../types/eventCalendar";
+
+import { Card, Button, Skeleton , DatePicker } from "@workspace/ui/components";
+import { logger } from "@workspace/utils";
+
+import { useEventsByDate, useRooms, getRoomById, getEventsForRoom } from "../api/eventCalendarApi";
+
+
 import { EventCard } from "./EventCard";
 import { RoomFilter } from "./RoomFilter";
-import { Card, Button, Skeleton } from "@workspace/ui/components";
-import { DatePicker } from "@workspace/ui/components";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, RefreshCw } from "lucide-react";
-import { useEventsByDate, useRooms, getRoomById, getEventsForRoom } from "../api/eventCalendarApi";
-import { logger } from "@workspace/utils";
+
+import type { ParsedEvent, Room } from "../types/eventCalendar";
 
 interface CalendarViewProps {
   className?: string;

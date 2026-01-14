@@ -1,6 +1,7 @@
 import { createPlugin } from "@workspace/plugin-system";
-import { UnivieFooter } from "./components/UnivieFooter";
 import type { PluginManager } from "@workspace/plugin-system";
+
+import { UnivieFooter } from "./components/UnivieFooter";
 
 /**
  * University of Vienna Footer Implementation Plugin

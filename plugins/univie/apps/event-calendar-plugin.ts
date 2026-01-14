@@ -1,6 +1,7 @@
 import { createPlugin } from "@workspace/plugin-system";
-import { CalendarView } from "./event-calendar/src/components/Calendar/CalendarView";
 import { logger } from "@workspace/utils";
+
+import { CalendarView } from "./event-calendar/src/components/Calendar/CalendarView";
 
 /**
  * UniVie Event Calendar plugin

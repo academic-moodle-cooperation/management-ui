@@ -1,5 +1,7 @@
 import React from "react";
+
 import { usePluginManager } from "./PluginProvider";
+
 import type { PluginComponent as PluginComponentType, PluginProps } from "./types";
 
 type PluginComponentProps = {

@@ -1,4 +1,7 @@
 import React from "react";
+
+import { useGetCurrentUser , useAppConfig } from "@workspace/query";
+import { Link } from "@workspace/router";
 import {
   Avatar,
   AvatarFallback,
@@ -9,12 +12,9 @@ import {
   Container,
   SidebarMenuButton,
 } from "@workspace/ui/components";
-import { useGetCurrentUser } from "@workspace/query";
+import { NavMain } from "@workspace/ui/components/appshell/components/nav-main";
 import { LogIn, LogOut } from "@workspace/ui/components/icons";
 import { cn } from "@workspace/ui/lib/utils";
-import { useAppConfig } from "@workspace/query";
-import { Link } from "@workspace/router";
-import { NavMain } from "@workspace/ui/components/appshell/components/nav-main";
 
 /**
  * TU Wien Sidebar User Menu Component

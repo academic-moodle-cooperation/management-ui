@@ -1,4 +1,5 @@
 import React from "react";
+
 import { LinkText, Trans, usePluginTranslation } from "@workspace/i18n";
 
 const UnivieEmptyState: React.FC = () => {

@@ -1,6 +1,7 @@
 import { createPlugin } from "@workspace/plugin-system";
-import { TUWienFooter } from "./components/TUWienFooter";
 import type { PluginManager } from "@workspace/plugin-system";
+
+import { TUWienFooter } from "./components/TUWienFooter";
 
 /**
  * TU Wien Footer Implementation Plugin

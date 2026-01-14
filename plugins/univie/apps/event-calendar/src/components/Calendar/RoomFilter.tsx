@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-import type { Room } from "../types/eventCalendar";
-import { Card, Button, Badge, Input } from "@workspace/ui/components";
 import { Search, Building, MapPin } from "lucide-react";
+import React, { useState } from "react";
+
+import { Card, Button, Badge, Input } from "@workspace/ui/components";
+
+import type { Room } from "../types/eventCalendar";
 
 interface RoomFilterProps {
   rooms: Room[];

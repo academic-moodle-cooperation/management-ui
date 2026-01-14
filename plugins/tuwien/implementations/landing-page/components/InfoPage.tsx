@@ -1,4 +1,5 @@
 import React, { type FC, useEffect } from "react";
+
 import { usePluginTranslation, createOrganizationNamespace, Trans } from "@workspace/i18n";
 import { useGetCurrentUser } from "@workspace/query";
 import { UploadCloud, Film } from "@workspace/ui/components";

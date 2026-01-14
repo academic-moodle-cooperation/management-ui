@@ -1,8 +1,9 @@
 import React from "react";
-import { Home } from "@workspace/ui/components/icons";
-import { cn } from "@workspace/ui/lib/utils";
+
 import { useAppConfig } from "@workspace/query";
+import { Home } from "@workspace/ui/components/icons";
 import { resolveFirstAssetUrl } from "@workspace/ui/lib";
+import { cn } from "@workspace/ui/lib/utils";
 
 /**
  * University of Vienna Sidebar Header Logo Component

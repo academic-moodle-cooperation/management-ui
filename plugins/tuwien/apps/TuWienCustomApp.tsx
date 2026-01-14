@@ -1,6 +1,7 @@
 import React from "react";
-import { Button, Container } from "@workspace/ui/components";
+
 import { AdaptiveAppWrapper } from "@workspace/app-runtime";
+import { Button, Container } from "@workspace/ui/components";
 
 /**
  * Example TU Wien custom app component

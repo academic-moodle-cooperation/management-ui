@@ -1,13 +1,15 @@
+import React from "react";
+
 import { createPlugin } from "@workspace/plugin-system";
 import type { PluginManager } from "@workspace/plugin-system";
-import { CustomNavMain } from "./components/CustomNavMain";
-import { SidebarHeader } from "./components/SidebarHeader";
-import { SidebarUserMenu } from "./components/SidebarUserMenu";
-import { SidebarToggle } from "./components/SidebarToggle";
-import React from "react";
+import type { NavMainProps } from "@workspace/ui/components/appshell/components/nav-main";
 import { Video } from "@workspace/ui/components/icons";
 import { logger } from "@workspace/utils";
-import type { NavMainProps } from "@workspace/ui/components/appshell/components/nav-main";
+
+import { CustomNavMain } from "./components/CustomNavMain";
+import { SidebarHeader } from "./components/SidebarHeader";
+import { SidebarToggle } from "./components/SidebarToggle";
+import { SidebarUserMenu } from "./components/SidebarUserMenu";
 
 // Wrapper components that don't need props directly from the plugin system
 const CustomNavMainWrapper = (props: { open?: boolean; items?: NavMainProps["items"] }) => {

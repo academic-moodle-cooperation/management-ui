@@ -1,7 +1,8 @@
 import { createPlugin } from "@workspace/plugin-system";
-import { AclEditorTab } from "./components/AclEditorTab";
 import type { PluginManager } from "@workspace/plugin-system";
 import { logger } from "@workspace/utils";
+
+import { AclEditorTab } from "./components/AclEditorTab";
 
 /**
  * TU Wien Table Sidebar Implementation Plugin

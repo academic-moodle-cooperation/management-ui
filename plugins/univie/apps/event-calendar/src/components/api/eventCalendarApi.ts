@@ -1,7 +1,9 @@
 import { useQuery, type UseQueryResult } from "@workspace/query";
-import type { Room, Event, ParsedEvent, EventCalendarConfig } from "../types/eventCalendar";
-import { allowedRoomIds } from "./allowedRoomIds";
 import { logger } from "@workspace/utils";
+
+import { allowedRoomIds } from "./allowedRoomIds";
+
+import type { Room, Event, ParsedEvent, EventCalendarConfig } from "../types/eventCalendar";
 /**
  * Default configuration for the event calendar
  * TODO: Future improvement - make this configurable via environment variables or settings

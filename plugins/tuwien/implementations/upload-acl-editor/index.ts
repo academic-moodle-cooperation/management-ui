@@ -1,6 +1,7 @@
 import { createPlugin } from "@workspace/plugin-system";
-import { UploadAclEditor, type UploadAclEditorProps } from "./components/UploadAclEditor";
 import type { PluginManager } from "@workspace/plugin-system";
+
+import { UploadAclEditor, type UploadAclEditorProps } from "./components/UploadAclEditor";
 
 /**
  * TU Wien Upload ACL Editor Implementation Plugin

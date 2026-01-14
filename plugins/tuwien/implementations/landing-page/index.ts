@@ -1,6 +1,7 @@
 import { createPlugin } from "@workspace/plugin-system";
-import { InfoPage } from "./components/InfoPage";
 import type { PluginManager } from "@workspace/plugin-system";
+
+import { InfoPage } from "./components/InfoPage";
 
 /**
  * TU Wien Landing Page Implementation Plugin
