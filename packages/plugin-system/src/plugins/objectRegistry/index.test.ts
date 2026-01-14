@@ -1,8 +1,10 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { createObjectRegistryPlugin, type RegistryObject } from "./index";
+
 import { createPluginManager } from "../../pluginManager";
+
+import { createObjectRegistryPlugin, type RegistryObject } from "./index";
+
 import type { PluginManager } from "../../pluginManager";
-import React from "react";
 
 describe("ObjectRegistryPlugin", () => {
   let manager: PluginManager;

@@ -1,8 +1,10 @@
-import React from "react";
-import type { PluginManager } from "../../pluginManager";
-import type { Plugin } from "../../IPlugin";
-import type { AppDefinition } from "../../appTypes";
+
 import { logger } from "@workspace/utils";
+
+import type { AppDefinition } from "../../appTypes";
+import type { Plugin } from "../../IPlugin";
+import type { PluginManager } from "../../pluginManager";
+
 
 /**
  * App registry plugin for managing registered apps
