@@ -1,5 +1,5 @@
 {
-  "extends": "../../../tsconfig.json",
+  "extends": "@workspace/typescript-config/react-library.json",
   "compilerOptions": {
     "skipLibCheck": true,
     "noEmit": true,
@@ -8,6 +8,9 @@
     "noPropertyAccessFromIndexSignature": false,
     "noUncheckedIndexedAccess": false
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ],
   "exclude": []
 }

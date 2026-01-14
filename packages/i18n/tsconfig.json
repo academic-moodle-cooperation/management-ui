@@ -5,11 +5,23 @@
     "rootDir": "src",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": [
+        "src/*"
+      ]
     },
-    "types": ["vite/client"],
+    "types": [
+      "node",
+      "react",
+      "vite/client"
+    ],
     "composite": true
   },
-  "include": ["src/**/*", "vite-env.d.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*",
+    "vite-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
