@@ -54,6 +54,10 @@ migrate
 # TypeScript build info
 *.tsbuildinfo
 
+# ESLint cache
+.eslintcache
+**/.eslintcache
+
 # SpecStory
 .specstory
 
