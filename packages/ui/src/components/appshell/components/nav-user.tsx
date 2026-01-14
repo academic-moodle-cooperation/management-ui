@@ -4,18 +4,21 @@ import { ChevronsUpDown, LogOut } from "lucide-react";
 import React from "react";
 
 import { useGetCurrentUser } from "@workspace/query";
-import { Avatar, AvatarFallback, AvatarImage ,
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar} from "@workspace/ui/components";
+  useSidebar,
+} from "@workspace/ui/components";
 import { sha256 } from "@workspace/utils";
 
 
