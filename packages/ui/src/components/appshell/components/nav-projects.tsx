@@ -8,14 +8,14 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar} from "@workspace/ui/components";
+  useSidebar,
+} from "@workspace/ui/components";
 
 export function NavProjects({
   projects,

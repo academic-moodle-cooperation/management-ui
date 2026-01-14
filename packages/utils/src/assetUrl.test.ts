@@ -28,7 +28,7 @@ describe("assetUrl utilities", () => {
 
     it("should return the URL as-is if it starts with http:// or https://", () => {
       expect(resolveAssetUrl("https://example.com/image.jpg")).toBe(
-        "https://example.com/image.jpg"
+        "https://example.com/image.jpg",
       );
       expect(resolveAssetUrl("http://example.com/image.jpg")).toBe("http://example.com/image.jpg");
     });
@@ -50,7 +50,9 @@ describe("assetUrl utilities", () => {
       const mockScript = {
         src: "http://localhost:5173/management-ui/@vite/client",
       };
-      vi.spyOn(document, "getElementsByTagName").mockReturnValue([mockScript] as unknown as HTMLCollectionOf<HTMLScriptElement>);
+      vi.spyOn(document, "getElementsByTagName").mockReturnValue([
+        mockScript,
+      ] as unknown as HTMLCollectionOf<HTMLScriptElement>);
 
       const result = resolveAssetUrl("/test.jpg");
       expect(result).toContain("/management-ui/");
@@ -68,7 +70,9 @@ describe("assetUrl utilities", () => {
       });
 
       // Mock getElementsByTagName to return empty array so it falls back to location.pathname
-      vi.spyOn(document, "getElementsByTagName").mockReturnValue([] as unknown as HTMLCollectionOf<HTMLScriptElement>);
+      vi.spyOn(document, "getElementsByTagName").mockReturnValue(
+        [] as unknown as HTMLCollectionOf<HTMLScriptElement>,
+      );
 
       const result = resolveAssetUrl("/test.jpg");
       expect(result).toContain("/management-ui/");
@@ -80,7 +84,9 @@ describe("assetUrl utilities", () => {
       const mockScript = {
         src: "http://localhost:5173/@vite/client",
       };
-      vi.spyOn(document, "getElementsByTagName").mockReturnValue([mockScript] as unknown as HTMLCollectionOf<HTMLScriptElement>);
+      vi.spyOn(document, "getElementsByTagName").mockReturnValue([
+        mockScript,
+      ] as unknown as HTMLCollectionOf<HTMLScriptElement>);
 
       const result = resolveAssetUrl("/assets/test.jpg");
       expect(result).toContain("test.jpg");

@@ -14,7 +14,7 @@ export interface CreatePluginAppViteConfigOptions {
 }
 
 export const createPluginAppViteConfig = (
-  options: CreatePluginAppViteConfigOptions
+  options: CreatePluginAppViteConfigOptions,
 ): UserConfig => {
   const { packageName, mode, env, invokerDir } = options;
   const isProduction = mode === "production";
@@ -34,7 +34,7 @@ export const createPluginAppViteConfig = (
       // Minimal generic roots for workspace packages used in plugin code
       "@workspace/ui/globals.css": path.resolve(
         monorepoRootPath,
-        "packages/ui/src/styles/globals.css"
+        "packages/ui/src/styles/globals.css",
       ),
       "@workspace/i18n": path.resolve(monorepoRootPath, "packages/i18n/src"),
       "@workspace/router": path.resolve(monorepoRootPath, "packages/router/src"),
@@ -71,7 +71,7 @@ export const createPluginAppViteConfig = (
   const calculatedPluginBasePath = getPluginBasePath(
     isProduction,
     packageName,
-    currentShellAppBasePath
+    currentShellAppBasePath,
   );
 
   // Allow plugin-specific base path override via env, e.g., VITE_PLUGIN_MYPLUGIN_BASE_PATH

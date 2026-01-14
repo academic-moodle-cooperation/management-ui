@@ -90,7 +90,7 @@ export function useSeriesTable() {
   const tableState = useTableState<SeriesTableState, SeriesTableAction>(
     initialState,
     seriesTableReducer,
-    "series"
+    "series",
   );
 
   // Use the sidebar content hook for metadata operations
@@ -151,18 +151,18 @@ export function useSeriesTable() {
   // Specific action dispatchers
   const setIsEditing = useCallback(
     (editing: boolean) => dispatch({ type: "SET_IS_EDITING", payload: editing }),
-    [dispatch]
+    [dispatch],
   );
 
   const setSeriesUpdateData = useCallback(
     (data: SeriesUpdateData | undefined) =>
       dispatch({ type: "SET_SERIES_UPDATE_DATA", payload: data }),
-    [dispatch]
+    [dispatch],
   );
 
   const setUpdateField = useCallback(
     (field: string) => dispatch({ type: "SET_UPDATE_FIELD", payload: field }),
-    [dispatch]
+    [dispatch],
   );
 
   // Extract values from sidebarContent

@@ -1,9 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import {
-  createNamespacedKey,
-  createOrganizationNamespace,
-} from "./translationLoader";
+import { createNamespacedKey, createOrganizationNamespace } from "./translationLoader";
 
 // Note: loadNamespace and usePluginTranslation require i18next initialization
 // which is complex to mock. These are integration-tested in the apps.

@@ -3,7 +3,10 @@
 import { ChevronRight, type LucideIcon } from "lucide-react";
 
 import { Link } from "@workspace/router";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger ,
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
@@ -79,7 +82,10 @@ export function NavMain({
                       {item.items?.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
-                            <Link to={subItem.url} {...(subItem.target !== undefined && { target: subItem.target })}>
+                            <Link
+                              to={subItem.url}
+                              {...(subItem.target !== undefined && { target: subItem.target })}
+                            >
                               <span>{subItem.title}</span>
                             </Link>
                           </SidebarMenuSubButton>
@@ -94,7 +100,7 @@ export function NavMain({
                   tooltip={item.title}
                   className={cn(
                     "hover:bg-sidebar-accent hover:text-sidebar-accent-forground",
-                    customItemStyles
+                    customItemStyles,
                   )}
                 >
                   <a href={item.url} target={item.target || "_blank"} rel="noopener noreferrer">
@@ -117,7 +123,7 @@ export function NavMain({
                         "hover:bg-sidebar-accent hover:text-sidebar-accent-forground",
                         isActive && !open ? "outline-1 outline-primary outline-offset-0" : "",
                         customItemStyles,
-                        customActiveStyles
+                        customActiveStyles,
                       )}
                     >
                       <>

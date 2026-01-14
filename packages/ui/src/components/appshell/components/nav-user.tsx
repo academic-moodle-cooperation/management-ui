@@ -21,7 +21,6 @@ import {
 } from "@workspace/ui/components";
 import { sha256 } from "@workspace/utils";
 
-
 // Separate data concerns from presentation
 type UserData = {
   name: string;
@@ -119,7 +118,7 @@ export const useUserData = (): {
       name: data.currentUser.name,
       email: data.currentUser.email,
       avatarUrl: `https://www.gravatar.com/avatar/${sha256(
-        `${data.currentUser.email}`.toLowerCase()?.trim()
+        `${data.currentUser.email}`.toLowerCase()?.trim(),
       )}?s=64&d=404`,
       role: data.currentUser.userRole,
     };

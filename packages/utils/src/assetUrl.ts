@@ -30,7 +30,7 @@ export function resolveAssetUrl(pathOrUrl?: string, fallbackRelative?: string): 
     // Method 1: Look for script tags to find the base path
     const scripts = Array.from(document.getElementsByTagName("script"));
     const appScript = scripts.find(
-      (s) => s.src && (s.src.includes("/@vite/") || s.src.includes("/management-ui/"))
+      (s) => s.src && (s.src.includes("/@vite/") || s.src.includes("/management-ui/")),
     );
 
     if (appScript && appScript.src) {
@@ -57,7 +57,7 @@ export function resolveAssetUrl(pathOrUrl?: string, fallbackRelative?: string): 
     typeof window !== "undefined" &&
     // Check if @vite/client is loaded (only present in dev mode)
     Array.from(document.getElementsByTagName("script")).some(
-      (s) => s.src && s.src.includes("/@vite/client")
+      (s) => s.src && s.src.includes("/@vite/client"),
     );
 
   // In dev mode, vite-plugin-static-copy serves assets under 'dist/' subdirectory
@@ -76,7 +76,7 @@ export function resolveAssetUrl(pathOrUrl?: string, fallbackRelative?: string): 
  */
 export function resolveFirstAssetUrl(
   candidates: Array<string | undefined>,
-  fallbackRelative?: string
+  fallbackRelative?: string,
 ): string {
   const first = candidates.find(Boolean);
   return resolveAssetUrl(first, fallbackRelative);

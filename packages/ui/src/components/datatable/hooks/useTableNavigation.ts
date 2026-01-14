@@ -25,7 +25,7 @@ export function useTableNavigation(
   pageIndex: number,
   pageCount: number,
   setPageIndex: (index: number) => void,
-  totalRows: number
+  totalRows: number,
 ): TableNavigation {
   const canPreviousPage = pageIndex > 0;
   const canNextPage = pageIndex < pageCount - 1;

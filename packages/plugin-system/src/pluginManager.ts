@@ -16,7 +16,7 @@ const isValidPluginName = (name: string): boolean => {
   if (!name.includes(":")) {
     logger.warn(
       `Plugin name "${name}" doesn't follow the recommended 'namespace:plugin-type' format`,
-      { pluginName: name }
+      { pluginName: name },
     );
     return true; // Still allow it for backward compatibility
   }
@@ -65,13 +65,13 @@ export interface PluginManager {
   registerComponent(
     extensionPoint: string,
     component: PluginComponent,
-    options?: { key?: string; order?: number }
+    options?: { key?: string; order?: number },
   ): void;
   registerObject<T = unknown>(
     type: string,
     objectId: string,
     data: T,
-    metadata?: RegistryMetadata
+    metadata?: RegistryMetadata,
   ): void;
   getObjects<T = unknown>(type: string): T[];
   getObject<T = unknown>(type: string, objectId: string): T | null;
@@ -92,7 +92,7 @@ export const createPluginManager = (): PluginManager => {
     if (!isValidPluginName(plugin.name)) {
       logger.error(
         `Invalid plugin name format: ${plugin.name}. Expected format: "namespace:plugin-type"`,
-        { pluginName: plugin.name }
+        { pluginName: plugin.name },
       );
       return;
     }
@@ -168,7 +168,7 @@ export const createPluginManager = (): PluginManager => {
     const listeners = eventListeners.get(eventName) || [];
     eventListeners.set(
       eventName,
-      listeners.filter((listener) => listener !== (callback as EventCallback<unknown>))
+      listeners.filter((listener) => listener !== (callback as EventCallback<unknown>)),
     );
   };
 
@@ -195,7 +195,7 @@ export const createPluginManager = (): PluginManager => {
   const registerComponent = (
     extensionPoint: string,
     component: PluginComponent,
-    options: { key?: string; order?: number } = {}
+    options: { key?: string; order?: number } = {},
   ) => {
     const { key = crypto.randomUUID(), order = 100 } = options;
     const pluginName = currentPlugin?.name || "unknown";
@@ -207,7 +207,7 @@ export const createPluginManager = (): PluginManager => {
     if (!isValidComponentKey(componentKey)) {
       logger.warn(
         `Component key "${componentKey}" doesn't follow the recommended format. Consider using 'namespace:plugin-type:component'`,
-        { componentKey, extensionPoint }
+        { componentKey, extensionPoint },
       );
     }
 
@@ -220,7 +220,7 @@ export const createPluginManager = (): PluginManager => {
     type: string,
     objectId: string,
     data: T,
-    metadata?: RegistryMetadata
+    metadata?: RegistryMetadata,
   ) => {
     const pluginName = currentPlugin?.name || "unknown";
 

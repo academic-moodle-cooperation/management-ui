@@ -8,6 +8,7 @@
 **Total `eslint-disable` comments found:** 16
 
 All `eslint-disable` comments are **justified and necessary**. They are used for:
+
 - Type safety in plugin system (intentional `any` types)
 - Test files (mock data)
 - Auto-generated files (gql-generated.ts)
@@ -18,6 +19,7 @@ All `eslint-disable` comments are **justified and necessary**. They are used for
 ### 1. Plugin System (`@typescript-eslint/no-explicit-any`)
 
 **Files:**
+
 - `packages/plugin-system/src/pluginManager.ts` (2 instances)
 - `packages/plugin-system/src/types.ts` (2 instances)
 
@@ -30,12 +32,14 @@ All `eslint-disable` comments are **justified and necessary**. They are used for
 ### 2. UI Components (`@typescript-eslint/no-explicit-any`)
 
 **Files:**
+
 - `packages/ui/src/components/ui/sonner.tsx` (1 instance)
 - `packages/ui/src/components/infinite-scroll.tsx` (1 instance)
 - `apps/management-ui-episodes/src/columns.tsx` (2 instances)
 - `apps/management-ui-series/src/components/SeriesTable.tsx` (1 instance)
 
 **Reasons:**
+
 - **sonner.tsx**: Third-party library (`sonner`) doesn't fully comply with `exactOptionalPropertyTypes`. Type assertion needed for props spread.
 - **infinite-scroll.tsx**: React's `cloneElement` ref typing is complex. Type assertion needed for ref forwarding.
 - **columns.tsx**: TanStack Table column types are complex. Type assertions needed for column definitions.
@@ -48,6 +52,7 @@ All `eslint-disable` comments are **justified and necessary**. They are used for
 ### 3. Test Files (`@typescript-eslint/no-explicit-any`)
 
 **Files:**
+
 - `packages/utils/src/assetUrl.test.ts` (3 instances)
 - `packages/query/src/client.test.ts` (1 instance)
 
@@ -60,6 +65,7 @@ All `eslint-disable` comments are **justified and necessary**. They are used for
 ### 4. React Hooks (`react-hooks/exhaustive-deps`)
 
 **Files:**
+
 - `packages/ui/src/components/debounced-input/DebouncedInput.tsx` (1 instance)
 
 **Reason:** Intentional dependency exclusion for debounce behavior. The effect should not re-run when the debounced value changes.
@@ -71,6 +77,7 @@ All `eslint-disable` comments are **justified and necessary**. They are used for
 ### 5. Auto-Generated Files (`eslint-disable`)
 
 **Files:**
+
 - `packages/query/src/gql-generated.ts` (full file disable)
 - `packages/query/src/codegen.ts` (generates the disable comment)
 
@@ -85,6 +92,7 @@ All `eslint-disable` comments are **justified and necessary**. They are used for
 ### ✅ All Current Disables Are Justified
 
 All `eslint-disable` comments in the codebase are:
+
 1. **Necessary** - Required for functionality or architectural reasons
 2. **Documented** - Comments explain why the disable is needed
 3. **Specific** - Use `eslint-disable-next-line` with specific rules, not blanket disables
@@ -93,6 +101,7 @@ All `eslint-disable` comments in the codebase are:
 ### 📋 Guidelines for Future Development
 
 1. **Always document the reason:**
+
    ```typescript
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
    // Reason: Third-party library type limitation (see issue #123)

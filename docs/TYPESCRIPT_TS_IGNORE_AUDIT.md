@@ -8,6 +8,7 @@
 **Result:** ✅ **No `@ts-ignore` or `@ts-expect-error` comments found in the codebase**
 
 This is excellent! The codebase is clean of TypeScript suppression comments, which indicates:
+
 - Strong type safety throughout the codebase
 - Proper handling of type errors through correct typing
 - No workarounds or type suppressions needed
@@ -45,6 +46,7 @@ If `@ts-ignore` or `@ts-expect-error` becomes necessary in the future:
    - `@ts-ignore` will silently ignore errors even after they're fixed
 
 2. **Always document the reason:**
+
    ```typescript
    // @ts-expect-error - Third-party library type mismatch (see issue #123)
    ```

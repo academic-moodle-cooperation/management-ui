@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { AclEditor, type ManagedACLEntry, type ACLEntry, type AclData } from "@workspace/ui/components";
+import {
+  AclEditor,
+  type ManagedACLEntry,
+  type ACLEntry,
+  type AclData,
+} from "@workspace/ui/components";
 import { useGetAllManagedAclsQuery, type GetAllManagedAclsQuery } from "@workspace/query";
 
 export interface UploadAclEditorProps {
@@ -39,10 +44,12 @@ export const UploadAclEditor: React.FC<UploadAclEditorProps> = ({
     const entries = selectedAcl?.acl?.entries ?? [];
     // Filter out null values and map to ManagedACLEntry
     setManagedAclEntries(
-      entries.filter((entry): entry is ManagedACLEntry => entry !== null).map((entry) => ({
-        role: entry.role ?? null,
-        action: entry.action ?? null,
-      }))
+      entries
+        .filter((entry): entry is ManagedACLEntry => entry !== null)
+        .map((entry) => ({
+          role: entry.role ?? null,
+          action: entry.action ?? null,
+        })),
     );
   };
 
@@ -61,7 +68,7 @@ export const UploadAclEditor: React.FC<UploadAclEditorProps> = ({
         managedAclEntries,
         managedAclId: managedAclId ?? "",
       },
-      managedAclId ?? ""
+      managedAclId ?? "",
     );
   }, [managedAclId, entries, managedAclEntries]);
 

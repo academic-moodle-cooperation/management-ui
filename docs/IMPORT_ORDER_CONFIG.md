@@ -80,6 +80,7 @@ Type-only imports (`import type`) are placed in a separate group at the end.
 ## Example
 
 **Before (incorrect):**
+
 ```typescript
 import { useState } from "react";
 import type { FC } from "react";
@@ -90,6 +91,7 @@ import "./styles.css";
 ```
 
 **After (correct):**
+
 ```typescript
 import { useState } from "react";
 

@@ -12,7 +12,6 @@ const defaultProxyPaths: Record<string, string | ProxyOptions> = {
   "/j_spring_security_login": "",
   "/j_spring_security_check": "",
   "/j_spring_security_logout": "",
-  "/login.html": "", // Proxy login.html to backend for post-login redirect handling
   "/management-tool/ui/config/plugins.json": "",
   "/info/me.json": "",
   "/ui/config/management-ui/config.json": "",
@@ -30,7 +29,7 @@ const defaultProxyPaths: Record<string, string | ProxyOptions> = {
 };
 
 export function createProxyConfig(
-  options?: CreateProxyConfigOptions
+  options?: CreateProxyConfigOptions,
 ): Record<string, string | ProxyOptions> {
   const target = options?.target || defaultBackendTarget;
 

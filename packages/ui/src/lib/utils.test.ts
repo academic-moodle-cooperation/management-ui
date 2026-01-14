@@ -103,11 +103,13 @@ describe("utils", () => {
           onchange: null,
           addListener: vi.fn(),
           removeListener: vi.fn(),
-          addEventListener: vi.fn((event: string, callback: (event: MediaQueryListEvent) => void) => {
-            if (event === "change") {
-              onChangeCallback = callback;
-            }
-          }),
+          addEventListener: vi.fn(
+            (event: string, callback: (event: MediaQueryListEvent) => void) => {
+              if (event === "change") {
+                onChangeCallback = callback;
+              }
+            },
+          ),
           removeEventListener: vi.fn(),
           dispatchEvent: vi.fn(),
         } as MediaQueryList;

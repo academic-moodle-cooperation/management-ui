@@ -1,7 +1,7 @@
 export const fetchData = <TData, TVariables>(
   query: string,
   variables?: TVariables,
-  options?: RequestInit["headers"]
+  options?: RequestInit["headers"],
 ): (() => Promise<TData>) => {
   return async () => {
     const response = await fetch("/graphql", {

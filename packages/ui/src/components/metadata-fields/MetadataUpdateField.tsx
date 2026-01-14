@@ -36,9 +36,10 @@ import {
   CommandItem,
   CommandList,
   Button,
- DatePicker , TimePicker } from "@workspace/ui/components";
+  DatePicker,
+  TimePicker,
+} from "@workspace/ui/components";
 import { serializeDuration } from "@workspace/utils";
-
 
 type MetadataUpdateFieldProps = MetadataFieldType & {
   value: string | string[];
@@ -105,7 +106,7 @@ export const MetadataUpdateField = ({
         orderBy: {
           title: OrderDirection.Asc,
         },
-      }
+      },
     );
     return data?.currentUser?.mySeries.nodes;
   };

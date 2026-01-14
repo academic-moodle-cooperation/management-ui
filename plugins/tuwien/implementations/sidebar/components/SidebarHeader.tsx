@@ -17,7 +17,7 @@ export const SidebarHeader = ({ collapsed }: { collapsed: boolean }) => {
       <div
         className={cn(
           "flex items-center flex-shrink-0 px-4 text-lg h-16 w-full",
-          !collapsed ? "justify-between " : "justify-center"
+          !collapsed ? "justify-between " : "justify-center",
         )}
         style={{ backgroundColor: "var(--color-header)" }} // Use TU Wien theme color
       >
@@ -27,7 +27,7 @@ export const SidebarHeader = ({ collapsed }: { collapsed: boolean }) => {
               <span
                 className={cn(
                   "flex transition-[width] transition-opacity ease-in-out duration-600 overflow-hidden text-nowrap ",
-                  "opacity-100 w-full"
+                  "opacity-100 w-full",
                 )}
               >
                 LectureTube
@@ -48,7 +48,7 @@ export const SidebarHeader = ({ collapsed }: { collapsed: boolean }) => {
             }}
             className={cn(
               "relative inline-flex h-6 w-11 items-center flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-0 justify-around",
-              "bg-black/20 hover:bg-black/30" // Use relative colors instead of hardcoded values
+              "bg-black/20 hover:bg-black/30", // Use relative colors instead of hardcoded values
             )}
           >
             <span className="sr-only">Switch Language </span>
@@ -56,7 +56,7 @@ export const SidebarHeader = ({ collapsed }: { collapsed: boolean }) => {
             <span
               aria-hidden="true"
               className={cn(
-                "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out justify-center items-center"
+                "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out justify-center items-center",
               )}
             />
             {!enabled && <span className="text-xs font-light text-white">EN</span>}

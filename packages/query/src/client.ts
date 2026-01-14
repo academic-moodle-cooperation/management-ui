@@ -48,7 +48,7 @@ export const createGraphQLClient = (url: string): GraphQLClient => {
     } else {
       // In server-side environments, you might need a different approach
       throw new Error(
-        `Relative URL "${url}" cannot be resolved in server-side context. Please provide an absolute URL.`
+        `Relative URL "${url}" cannot be resolved in server-side context. Please provide an absolute URL.`,
       );
     }
   }
@@ -58,7 +58,7 @@ export const createGraphQLClient = (url: string): GraphQLClient => {
     new URL(absoluteUrl);
   } catch (error) {
     throw new Error(
-      `Failed to create GraphQL client: Invalid URL "${absoluteUrl}". Original URL: "${url}". ${error instanceof Error ? error.message : String(error)}`
+      `Failed to create GraphQL client: Invalid URL "${absoluteUrl}". Original URL: "${url}". ${error instanceof Error ? error.message : String(error)}`,
     );
   }
 
@@ -66,7 +66,7 @@ export const createGraphQLClient = (url: string): GraphQLClient => {
     return new GraphQLClient(absoluteUrl);
   } catch (error) {
     throw new Error(
-      `Failed to create GraphQL client with URL "${absoluteUrl}": ${error instanceof Error ? error.message : String(error)}`
+      `Failed to create GraphQL client with URL "${absoluteUrl}": ${error instanceof Error ? error.message : String(error)}`,
     );
   }
 };

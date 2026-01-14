@@ -23,7 +23,7 @@ export const useRendererStore = () => {
         return newMap;
       });
     },
-    [manager]
+    [manager],
   );
 
   const removeComponent = useCallback(
@@ -33,20 +33,20 @@ export const useRendererStore = () => {
         const existing = newMap.get(position) || [];
         newMap.set(
           position,
-          existing.filter((c) => c.key !== key)
+          existing.filter((c) => c.key !== key),
         );
         manager.dispatchEvent("renderer.componentUpdated", { position });
         return newMap;
       });
     },
-    [manager]
+    [manager],
   );
 
   const getComponents = useCallback(
     (position: string) => {
       return components.get(position) || [];
     },
-    [components]
+    [components],
   );
 
   return { addComponent, removeComponent, getComponents };

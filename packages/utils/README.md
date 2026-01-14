@@ -22,7 +22,7 @@ const logo = resolveAssetUrl(config.app.logoUrl, "assets/favicon/favicon.svg");
 // Resolve first available from candidates
 const preferredLogo = resolveFirstAssetUrl(
   [config.app.orgLogoUrl, config.app.logoUrl],
-  "assets/favicon/favicon.svg"
+  "assets/favicon/favicon.svg",
 );
 
 // Absolute URLs pass through unchanged

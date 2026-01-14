@@ -20,7 +20,7 @@ export const SidebarHeaderLogo = ({ collapsed }: SidebarHeaderLogoProps) => {
 
   const preferredSrc = resolveFirstAssetUrl(
     [config.app.orgLogoUrl, config.app.logoUrl],
-    "assets/favicon/favicon.svg"
+    "assets/favicon/favicon.svg",
   );
 
   return (
@@ -30,7 +30,7 @@ export const SidebarHeaderLogo = ({ collapsed }: SidebarHeaderLogoProps) => {
           <span
             className={cn(
               "flex transition-[width] transition-opacity ease-in-out duration-600 overflow-hidden text-nowrap",
-              !collapsed ? "opacity-100 w-full" : "opacity-0 w-[0%] h-0"
+              !collapsed ? "opacity-100 w-full" : "opacity-0 w-[0%] h-0",
             )}
           >
             {config.app.appTitle.length > 0 ? (
@@ -57,7 +57,7 @@ export const SidebarHeaderLogo = ({ collapsed }: SidebarHeaderLogoProps) => {
           <Home
             className={cn(
               "transition-all ease-in-out duration-600",
-              collapsed ? "opacity-100 w-full" : "opacity-0 w-[0%] h-0"
+              collapsed ? "opacity-100 w-full" : "opacity-0 w-[0%] h-0",
             )}
           />
         </>

@@ -26,7 +26,7 @@ interface StandaloneAppWrapperProps {
 const createStandaloneDynamicRouter = (
   AppComponent: RouteComponent,
   appName?: string,
-  basePath: string = "/"
+  basePath: string = "/",
 ) => {
   // Simple root route for standalone apps
   const standaloneRootRoute = createRootRoute({
@@ -150,7 +150,7 @@ export const StandaloneAppWrapper: React.FC<StandaloneAppWrapperProps> = ({
 export const bootstrapStandaloneApp = (
   AppComponent: RouteComponent,
   containerId = "root",
-  config: Partial<AppRuntimeConfig>
+  config: Partial<AppRuntimeConfig>,
 ) => {
   const container = document.getElementById(containerId);
   if (!container) {
@@ -167,7 +167,7 @@ export const bootstrapStandaloneApp = (
   root.render(
     <React.StrictMode>
       <StandaloneAppWrapper config={config} router={router} />
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 
   return root;

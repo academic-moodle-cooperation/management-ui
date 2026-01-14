@@ -100,7 +100,7 @@ const store = (set: (state: (state: Store) => void) => void, get: () => Store) =
   updateFile: (updateFileInfo: UploadFileBlob) => {
     return set((state: Store) => {
       const updateFileIndex = get().zustandupload?.files.findIndex(
-        (fileItem: UploadFileBlob) => fileItem?.id === updateFileInfo.id
+        (fileItem: UploadFileBlob) => fileItem?.id === updateFileInfo.id,
       );
 
       if (updateFileIndex === -1) return state.zustandupload;
@@ -114,7 +114,7 @@ const store = (set: (state: (state: Store) => void) => void, get: () => Store) =
 
   fileUploaded: (uploadFile: UploadFileBlob, pending: UploadFileBlob[]) => {
     const updateFileIndex = get().zustandupload?.files.findIndex(
-      (fileItem) => fileItem?.id === uploadFile.id
+      (fileItem) => fileItem?.id === uploadFile.id,
     );
 
     return set((state: Store) => {
@@ -148,7 +148,7 @@ export const useStore = create<Store>()(
   persist<Store>(immer(store), {
     name: "upload-store",
     getStorage: () => sessionStorage,
-  })
+  }),
 );
 
 // Types and store are exported directly above

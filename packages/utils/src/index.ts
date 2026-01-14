@@ -12,7 +12,7 @@ const parseDuration = (duration: string | undefined) => {
   const durationObj: Duration | undefined = duration ? parse(duration) : undefined;
 
   return `${(durationObj?.hours || "00").toString().padStart(2, "0")}:${(durationObj?.minutes || 0).toString().padStart(2, "0")}:${Math.round(
-    durationObj?.seconds || 0
+    durationObj?.seconds || 0,
   )
     .toString()
     .padStart(2, "0")}`;

@@ -49,10 +49,9 @@ export const getPluginPorts = (pluginPackageName: string): PluginPorts | undefin
     };
   }
 
-  logger.warn(
-    `Plugin "${pluginPackageName}" not found in known plugin list for port assignment.`,
-    { context: "vite-config" }
-  );
+  logger.warn(`Plugin "${pluginPackageName}" not found in known plugin list for port assignment.`, {
+    context: "vite-config",
+  });
   return undefined;
 };
 
@@ -64,7 +63,7 @@ export const getPluginPorts = (pluginPackageName: string): PluginPorts | undefin
 export const getPluginBasePath = (
   isProduction: boolean,
   pluginPackageName: string,
-  shellAppBasePath: string = "/management-ui/"
+  shellAppBasePath: string = "/management-ui/",
 ): string => {
   // Derives "test" from "management-ui-test"
   const pluginShortName = pluginPackageName.replace(/^management-ui-/, "");

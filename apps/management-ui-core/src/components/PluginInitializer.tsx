@@ -66,7 +66,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
 
         // 3. Register config plugins first to establish configuration
         const configPlugins = allAvailablePlugins.filter((plugin) =>
-          plugin.name.endsWith(":config")
+          plugin.name.endsWith(":config"),
         );
 
         configPlugins.forEach((plugin) => {
@@ -82,7 +82,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                 logger.error(
                   `PluginInitializer: Failed to re-initialize config plugin ${plugin.name}`,
                   error instanceof Error ? error : new Error(String(error)),
-                  { pluginName: plugin.name }
+                  { pluginName: plugin.name },
                 );
               }
             }
@@ -95,12 +95,12 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           (acc: AppConfig, obj: AppConfig) => {
             return { ...acc, ...obj };
           },
-          config || ({} as AppConfig)
+          config || ({} as AppConfig),
         );
 
         // 5. Filter and load remaining plugins with the merged configuration
         const remainingPlugins = allAvailablePlugins.filter(
-          (plugin) => !plugin.name.endsWith(":config")
+          (plugin) => !plugin.name.endsWith(":config"),
         );
 
         remainingPlugins.forEach((plugin) => {
@@ -136,7 +136,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                   logger.error(
                     `PluginInitializer: Failed to re-initialize plugin ${plugin.name}`,
                     error instanceof Error ? error : new Error(String(error)),
-                    { pluginName: plugin.name }
+                    { pluginName: plugin.name },
                   );
                 }
               }
@@ -156,7 +156,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
       } catch (error) {
         logger.error(
           "PluginInitializer: Failed to initialize plugins",
-          error instanceof Error ? error : new Error(String(error))
+          error instanceof Error ? error : new Error(String(error)),
         );
         if (!didUnmount) {
           setPluginsReady(true); // Still set to true to avoid an infinite loading state on error

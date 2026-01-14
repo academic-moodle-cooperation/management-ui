@@ -72,7 +72,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
         onError: () => {
           toast.error(i18next.t("episodes:episodesTable.notification.deleteError"));
         },
-      }
+      },
     );
     setDialogOpen(false);
   };

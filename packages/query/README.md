@@ -228,7 +228,7 @@ events.map((event) => event.id); // Error: event might be null!
 
 // ✅ CORRECT - Filter out null values with type guard
 const events = (data?.currentUser?.myEvents?.nodes || []).filter(
-  (event): event is NonNullable<typeof event> => event !== null
+  (event): event is NonNullable<typeof event> => event !== null,
 );
 events.map((event) => event.id); // Safe!
 ```

@@ -18,11 +18,11 @@ export const coreFooterImplementation = createPlugin({
       {
         key: "default-footer",
         order: 100, // Standard priority, allows overrides
-      }
+      },
     );
   },
 
-  activate() { },
+  activate() {},
 
-  deactivate() { },
+  deactivate() {},
 });

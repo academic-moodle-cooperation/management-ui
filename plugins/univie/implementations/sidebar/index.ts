@@ -48,7 +48,7 @@ export const univieSidebarImplementation = createPlugin({
       {
         key: "univie-sidebar-header",
         order: 50, // Higher priority than core default
-      }
+      },
     );
 
     // Register custom footer component with high priority
@@ -58,9 +58,9 @@ export const univieSidebarImplementation = createPlugin({
     });
   },
 
-  activate() { },
+  activate() {},
 
-  deactivate() { },
+  deactivate() {},
 });
 
 export const studioUnivieNavImplementation = createPlugin({
@@ -73,13 +73,17 @@ export const studioUnivieNavImplementation = createPlugin({
     const configObjects = manager.getObjects<Record<string, unknown>>("app:config");
 
     // Merge all configs (similar to how PluginInitializer does it)
-    const mergedConfig = configObjects.reduce((acc: Record<string, unknown>, obj: Record<string, unknown>) => {
-      return { ...acc, ...obj };
-    }, {});
+    const mergedConfig = configObjects.reduce(
+      (acc: Record<string, unknown>, obj: Record<string, unknown>) => {
+        return { ...acc, ...obj };
+      },
+      {},
+    );
 
     // Get Studio URL from merged config
     const appConfig = mergedConfig?.["app"] as { studioUrl?: string } | undefined;
-    const studioUrl = appConfig?.studioUrl || (mergedConfig?.["studioUrl"] as string | undefined) || "/studio";
+    const studioUrl =
+      appConfig?.studioUrl || (mergedConfig?.["studioUrl"] as string | undefined) || "/studio";
 
     // Register a plain object (not a React component)
     manager.registerObject("sidebar:nav-items", "studio", {
@@ -113,13 +117,17 @@ export const captureUnivieNavImplementation = createPlugin({
     const configObjects = manager.getObjects<Record<string, unknown>>("app:config");
 
     // Merge all configs (similar to how PluginInitializer does it)
-    const mergedConfig = configObjects.reduce((acc: Record<string, unknown>, obj: Record<string, unknown>) => {
-      return { ...acc, ...obj };
-    }, {});
+    const mergedConfig = configObjects.reduce(
+      (acc: Record<string, unknown>, obj: Record<string, unknown>) => {
+        return { ...acc, ...obj };
+      },
+      {},
+    );
 
     // Get Capture URL from merged config
     const appConfig = mergedConfig?.["app"] as { captureUrl?: string } | undefined;
-    const captureUrl = appConfig?.captureUrl || (mergedConfig?.["captureUrl"] as string | undefined) || "/capture";
+    const captureUrl =
+      appConfig?.captureUrl || (mergedConfig?.["captureUrl"] as string | undefined) || "/capture";
 
     // Register a plain object (not a React component)
     // Title will be translated in CustomNavMain component

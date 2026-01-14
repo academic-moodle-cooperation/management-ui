@@ -49,7 +49,7 @@ const initialState: EpisodesTableState = {
 // Reducer function
 function episodesTableReducer(
   state: EpisodesTableState,
-  action: EpisodesTableAction
+  action: EpisodesTableAction,
 ): EpisodesTableState {
   switch (action.type) {
     case "SET_PAGE_INDEX":
@@ -94,7 +94,7 @@ export function useEpisodesTable(seriesId?: string) {
   const tableState = useTableState<EpisodesTableState, EpisodesTableAction>(
     initialState,
     episodesTableReducer,
-    "episodes"
+    "episodes",
   );
 
   // Use the sidebar content hook for metadata operations
@@ -132,7 +132,7 @@ export function useEpisodesTable(seriesId?: string) {
     },
     {
       enabled: !seriesId, // Only enabled when no seriesId is provided
-    }
+    },
   );
 
   const seriesEventsQuery = useEventsFromSeriesQuery(
@@ -145,7 +145,7 @@ export function useEpisodesTable(seriesId?: string) {
     },
     {
       enabled: Boolean(seriesId), // Only enabled when seriesId is provided
-    }
+    },
   );
 
   // Use the appropriate query result based on seriesId
@@ -177,18 +177,18 @@ export function useEpisodesTable(seriesId?: string) {
   // Specific action dispatchers
   const setIsEditing = useCallback(
     (editing: boolean) => dispatch({ type: "SET_IS_EDITING", payload: editing }),
-    [dispatch]
+    [dispatch],
   );
 
   const setEpisodesUpdateData = useCallback(
     (data: EpisodesUpdateData | undefined) =>
       dispatch({ type: "SET_EPISODES_UPDATE_DATA", payload: data }),
-    [dispatch]
+    [dispatch],
   );
 
   const setUpdateField = useCallback(
     (field: string) => dispatch({ type: "SET_UPDATE_FIELD", payload: field }),
-    [dispatch]
+    [dispatch],
   );
 
   // Extract values from sidebarContent

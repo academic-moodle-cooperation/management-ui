@@ -7,7 +7,12 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import type { AnyRoute, AnyRouter } from "@tanstack/react-router";
-import { usePluginManager, getAllApps, type PluginManager, type AppDefinition } from "@workspace/plugin-system";
+import {
+  usePluginManager,
+  getAllApps,
+  type PluginManager,
+  type AppDefinition,
+} from "@workspace/plugin-system";
 import { useAppConfig } from "@workspace/query";
 import { getCachedAppConfig } from "@workspace/query";
 import { ProtectedRoute } from "@workspace/router";
@@ -82,7 +87,7 @@ const getDynamicModules = async (): Promise<ClientDynamicModule[]> => {
   } catch (error) {
     logger.error(
       "Error fetching or parsing dynamic modules configuration",
-      error instanceof Error ? error : new Error(String(error))
+      error instanceof Error ? error : new Error(String(error)),
     );
     return [];
   }
@@ -103,7 +108,7 @@ const getPluginBasedApps = (manager: PluginManager): ClientDynamicModule[] => {
   } catch (error) {
     logger.error(
       "Error getting plugin-based apps",
-      error instanceof Error ? error : new Error(String(error))
+      error instanceof Error ? error : new Error(String(error)),
     );
     return [];
   }
@@ -141,7 +146,7 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
             logger.error(
               `Error fetching/processing config for plugin app ${appDef.id} in loader`,
               err instanceof Error ? err : new Error(String(err)),
-              { appId: appDef.id }
+              { appId: appDef.id },
             );
             throw err;
           }
@@ -187,7 +192,7 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
           logger.error(
             `Failed to load module for plugin ${pluginname} from ${importPathForLogging}`,
             error,
-            { pluginname, importPath: importPathForLogging }
+            { pluginname, importPath: importPathForLogging },
           );
           return {
             default: () => (
@@ -227,7 +232,7 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
             logger.error(
               `Error fetching/processing config for plugin ${pluginname} in loader`,
               err instanceof Error ? err : new Error(String(err)),
-              { pluginname }
+              { pluginname },
             );
             throw err;
           }
@@ -311,7 +316,7 @@ export const DynamicRouterProvider: React.FC<DynamicRouterProviderProps> = ({ ch
       } catch (error) {
         logger.error(
           "Error creating dynamic router",
-          error instanceof Error ? error : new Error(String(error))
+          error instanceof Error ? error : new Error(String(error)),
         );
         setIsLoading(false);
       }

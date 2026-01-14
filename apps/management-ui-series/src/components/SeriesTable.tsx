@@ -115,7 +115,7 @@ const SeriesTable = () => {
           logger.error(
             "Error formatting series data",
             error instanceof Error ? error : new Error(String(error)),
-            { selectedId }
+            { selectedId },
           );
         }
       } else {
@@ -144,7 +144,7 @@ const SeriesTable = () => {
       // By only setting the ID, we allow the reactive data flow to update the sidebar.
       openSidebar(row.original["id"] as string);
     },
-    [openSidebar, isEditing, selectedId, resetUpdateFields]
+    [openSidebar, isEditing, selectedId, resetUpdateFields],
   );
 
   // Modified edit close handler - no URL updates
@@ -181,7 +181,7 @@ const SeriesTable = () => {
         // TanStack table column types are complex, but we can safely access these properties
         const col = column as { accessorKey?: string; id?: string };
         return col.accessorKey === columnsKey || col.id === columnsKey;
-      })
+      }),
     )
     .filter((column): column is NonNullable<typeof column> => Boolean(column));
 
@@ -205,9 +205,9 @@ const SeriesTable = () => {
           columns={
             sortedColumns.length > 0
               ? // Type assertion needed because TanStack table column types are complex
-              // and the filtered columns may have slightly different type structure
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (sortedColumns as any)
+                // and the filtered columns may have slightly different type structure
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (sortedColumns as any)
               : columns
           }
           data={(seriesData?.filter(Boolean) as SeriesDataFragment[]) || []}

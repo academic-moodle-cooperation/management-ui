@@ -46,6 +46,6 @@ export function useRegistry<T = unknown>(type: string) {
         manager.registerObject(type, id, data, metadata),
       removeItem: (id: string) => manager.removeObject(type, id),
     }),
-    [items, manager, type]
+    [items, manager, type],
   );
 }

@@ -72,7 +72,7 @@ describe("fetcher", () => {
             variables,
             options: undefined,
           }),
-        })
+        }),
       );
     });
 
@@ -96,7 +96,7 @@ describe("fetcher", () => {
             variables: undefined,
             options,
           }),
-        })
+        }),
       );
     });
   });

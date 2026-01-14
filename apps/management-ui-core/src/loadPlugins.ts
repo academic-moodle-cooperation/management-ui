@@ -16,7 +16,7 @@ const isPlugin = (module: unknown): module is Plugin =>
  * Parse plugin configuration from the new array-based format
  */
 const parsePluginConfig = (
-  pluginNamespace: PluginNamespaceItem[]
+  pluginNamespace: PluginNamespaceItem[],
 ): Map<string, string[] | "all"> => {
   const configMap = new Map<string, string[] | "all">();
 
@@ -89,7 +89,7 @@ export const loadAllAvailablePlugins = async (): Promise<Plugin[]> => {
   } catch (error) {
     logger.error(
       "CRITICAL ERROR in loadAllAvailablePlugins",
-      error instanceof Error ? error : new Error(String(error))
+      error instanceof Error ? error : new Error(String(error)),
     );
     throw error;
   }
@@ -116,7 +116,7 @@ export const loadAllPlugins = async (config?: AppConfig): Promise<Plugin[]> => {
   } catch (error) {
     logger.error(
       "CRITICAL ERROR in loadAllPlugins",
-      error instanceof Error ? error : new Error(String(error))
+      error instanceof Error ? error : new Error(String(error)),
     );
     throw error;
   }

@@ -43,7 +43,7 @@ function deepMerge<T extends Record<string, unknown>>(
           // Recursively merge objects
           (acc as Record<string, unknown>)[key] = deepMerge(
             { ...(accValue as Record<string, unknown>) },
-            sourceValue as Record<string, unknown>
+            sourceValue as Record<string, unknown>,
           );
         } else if (sourceValue !== undefined) {
           // Replace primitive values
@@ -52,7 +52,7 @@ function deepMerge<T extends Record<string, unknown>>(
       });
       return acc;
     },
-    { ...target }
+    { ...target },
   ) as T;
 }
 
@@ -99,7 +99,9 @@ export function generateConfigPlugin(options: GenerateConfigPluginOptions): Plug
     async closeBundle() {
       try {
         logger.info("Generating production config.json...", { context: "generate-config" });
-        logger.info(`Merging ${pluginConfigs.length} plugin config(s)...`, { context: "generate-config" });
+        logger.info(`Merging ${pluginConfigs.length} plugin config(s)...`, {
+          context: "generate-config",
+        });
 
         // Deep merge configs (same logic as in useAppConfig.ts)
         const mergedConfig = deepMerge({ ...defaultConfig }, ...pluginConfigs);
@@ -111,16 +113,22 @@ export function generateConfigPlugin(options: GenerateConfigPluginOptions): Plug
         fs.mkdirSync(outputDir, { recursive: true });
         fs.writeFileSync(fullOutputPath, JSON.stringify(mergedConfig, null, 2), "utf-8");
 
-        logger.info(
-          `✓ Config written to ${path.relative(process.cwd(), fullOutputPath)}`,
-          { context: "generate-config" }
-        );
+        logger.info(`✓ Config written to ${path.relative(process.cwd(), fullOutputPath)}`, {
+          context: "generate-config",
+        });
         // Type assertion needed because mergedConfig is Record<string, unknown>
         // We know the structure matches AppConfig from ui-config
-        const config = mergedConfig as { app?: { theme?: string; orgLogoUrl?: string; logoUrl?: string; pluginNamespace?: unknown[] } };
+        const config = mergedConfig as {
+          app?: {
+            theme?: string;
+            orgLogoUrl?: string;
+            logoUrl?: string;
+            pluginNamespace?: unknown[];
+          };
+        };
         logger.info(
-          `Summary: Theme=${config.app?.theme || "default"}, Logo=${config.app?.orgLogoUrl || config.app?.logoUrl || "default"}, Plugins=${(Array.isArray(config.app?.pluginNamespace) ? config.app.pluginNamespace.length : 0)} namespaces`,
-          { context: "generate-config" }
+          `Summary: Theme=${config.app?.theme || "default"}, Logo=${config.app?.orgLogoUrl || config.app?.logoUrl || "default"}, Plugins=${Array.isArray(config.app?.pluginNamespace) ? config.app.pluginNamespace.length : 0} namespaces`,
+          { context: "generate-config" },
         );
       } catch (error) {
         logger.error("Failed to generate config", { context: "generate-config", error });

@@ -8,6 +8,7 @@ The `packages/ui/src/components/ui/` folder contains **auto-generated shadcn/ui 
 - `exactOptionalPropertyTypes: true`
 
 This can cause TypeScript errors (TS1484, TS2375) in:
+
 - `@workspace/ui` package itself
 - Packages that import from `@workspace/ui` (e.g., `@workspace/plugins`, `plugin-core`, `@workspace/app-runtime`)
 
@@ -54,6 +55,7 @@ For CI/Contributions, you have two options:
 ## Consumer Packages
 
 Consumer packages (apps, other plugins) should use:
+
 - `skipLibCheck: true` in their `tsconfig.json` (already configured)
 - `exclude` for shadcn files where possible (already configured)
 

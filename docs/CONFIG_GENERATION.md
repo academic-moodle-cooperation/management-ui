@@ -47,9 +47,9 @@ const mergedConfig = useMemo(
   () =>
     deepMerge(
       queryResult.data ?? { ...defaultConfig },
-      ...((pluginConfigObjects as Record<string, any>[]) || [])
+      ...((pluginConfigObjects as Record<string, any>[]) || []),
     ) as AppConfig,
-  [queryResult.data, pluginConfigObjects]
+  [queryResult.data, pluginConfigObjects],
 );
 ```
 
@@ -112,7 +112,7 @@ const queryResult = useQuery({
 // Then merges with plugin configs
 const mergedConfig = deepMerge(
   queryResult.data ?? { ...defaultConfig },
-  ...pluginConfigObjects // Plugins can still override at runtime
+  ...pluginConfigObjects, // Plugins can still override at runtime
 );
 ```
 
@@ -175,7 +175,7 @@ function deepMerge(
       });
       return acc;
     },
-    { ...target }
+    { ...target },
   );
 }
 ```

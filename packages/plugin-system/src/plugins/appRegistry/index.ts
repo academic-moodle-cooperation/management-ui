@@ -47,7 +47,7 @@ export const createAppRegistryPlugin = (): AppRegistryPlugin => {
         (payload) => {
           const { pluginName } = payload;
           logger.debug(`Checking plugin ${pluginName} for app definitions...`, { pluginName });
-        }
+        },
       );
 
       logger.debug("App registry plugin initialized");

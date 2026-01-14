@@ -13,7 +13,9 @@ interface DataTableBodyProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   className?: string | undefined;
   selectedId?: string | undefined;
-  onClickRowAction?: ((event: React.MouseEvent<HTMLTableRowElement>, row: Row<TData>) => void) | undefined;
+  onClickRowAction?:
+    | ((event: React.MouseEvent<HTMLTableRowElement>, row: Row<TData>) => void)
+    | undefined;
   queryFilter?: string | undefined;
 }
 
@@ -58,7 +60,10 @@ function DataTableBody<TData extends Record<string, unknown>, TValue>({
       ) : (
         <TableRow>
           <TableCell colSpan={columns.length} className="h-24 text-center">
-            <EmptyStateContent {...(queryFilter !== undefined && { queryFilter })} pathname={pathname} />
+            <EmptyStateContent
+              {...(queryFilter !== undefined && { queryFilter })}
+              pathname={pathname}
+            />
           </TableCell>
         </TableRow>
       )}

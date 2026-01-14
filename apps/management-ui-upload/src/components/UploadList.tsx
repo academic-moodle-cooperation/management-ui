@@ -20,11 +20,11 @@ export const UploadList = ({
   // fileWaitingList: UploadFileBlob[];
   files: UploadFileBlob[];
   editFile:
-  | {
-    index: number;
-    name: string;
-  }
-  | undefined;
+    | {
+        index: number;
+        name: string;
+      }
+    | undefined;
   handleEditUploadName: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   editUploadName: (selectedFile: UploadFileBlob) => void;
   editUploadNameEnd: (uploadName: string) => void;
@@ -104,7 +104,7 @@ export const UploadList = ({
                           "relative focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
                           (selectedFile.status === "completed" ||
                             selectedFile.status === "aborted") &&
-                          "hidden"
+                            "hidden",
                         )}
                         onClick={() => abortUpload(selectedFile)}
                       >

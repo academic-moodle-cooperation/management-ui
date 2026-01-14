@@ -78,7 +78,7 @@ const SeriesInfoContent = ({
                     field &&
                     !field.readOnly &&
                     !isReadOnly(field.id!) &&
-                    "cursor-pointer"
+                    "cursor-pointer",
                 )}
               >
                 <div className="flex items-center space-x-2 text-sm font-medium uppercase text-muted-foreground">

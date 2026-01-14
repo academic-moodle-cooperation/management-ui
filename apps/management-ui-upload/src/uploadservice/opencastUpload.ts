@@ -71,7 +71,7 @@ export const opencastUpload = async (
   location: string | undefined,
   updateFile: (updateFileInfo: UploadFileBlob) => void,
   setUploadError: (error: Error) => void,
-  aclData?: AclData
+  aclData?: AclData,
 ) => {
   if (!selectedFile.file || selectedFile.status === "aborted" || !location) return;
 
@@ -96,7 +96,7 @@ export const opencastUpload = async (
     .catch((err) => {
       logger.error(
         "Error creating media package",
-        err instanceof Error ? err : new Error(String(err))
+        err instanceof Error ? err : new Error(String(err)),
       );
       return "";
     });
@@ -152,7 +152,7 @@ export const opencastUpload = async (
       title,
       presenter,
     },
-    updateFile
+    updateFile,
   );
 
   if (!mediaPackage) return;
@@ -198,7 +198,7 @@ const constructDcc = (
   template: string,
   { title, presenter, seriesId }: { presenter: string; title: string; seriesId: string },
   currentUser: User,
-  location: string
+  location: string,
 ) => {
   // Prepare template "view": the values that can be used within the template.
   const view = {
@@ -370,7 +370,7 @@ const uploadTracks = async (
     title: string;
     presenter: string;
   },
-  updateFile: (updateFileInfo: UploadFileBlob) => void
+  updateFile: (updateFileInfo: UploadFileBlob) => void,
 ) => {
   const totalBytes = recordings.map((r: Recording) => r.media.size).reduce((a, b) => a + b, 0);
   let finishedTracksBytes = 0;
@@ -475,7 +475,7 @@ const uploadTracks = async (
 
 const finishIngest = async (
   { mediaPackage, uploadSettings }: { mediaPackage: string; uploadSettings: UploadSettings },
-  setUploadError: (e: Error) => void
+  setUploadError: (e: Error) => void,
 ) => {
   if (!mediaPackage) return;
 

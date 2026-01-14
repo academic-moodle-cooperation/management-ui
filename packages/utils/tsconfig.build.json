@@ -11,14 +11,6 @@
     "rootDir": "./src",
     "noEmit": false
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "dist-types",
-    ".turbo",
-    "**/*.test.ts"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "dist-types", ".turbo", "**/*.test.ts"]
 }

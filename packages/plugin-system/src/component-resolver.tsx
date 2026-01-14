@@ -50,7 +50,7 @@ export const ComponentResolver = <P extends object>({
       const components =
         manager.executeFunction<Array<{ component: React.ComponentType<P> }>>(
           "renderer.getComponents",
-          lookupKey
+          lookupKey,
         ) || [];
 
       if (!isMounted) return;

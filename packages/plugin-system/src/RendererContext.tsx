@@ -49,7 +49,7 @@ export const RendererProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       registerComponent: (position: string, key: string, Component: React.FC) => {
         logger.warn(
           "registerComponent via RendererContext is deprecated. Use manager.registerComponent instead.",
-          { position, key }
+          { position, key },
         );
 
         setComponents((prev) => {
@@ -111,7 +111,7 @@ export const RendererProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             const functionName = `get${position.charAt(0).toUpperCase() + position.slice(1)}Components`;
             logger.warn(
               `DEPRECATED: Using dynamic function lookup (${functionName}). Use ComponentResolver instead.`,
-              { position, functionName }
+              { position, functionName },
             );
 
             pluginComponents = manager.executeFunction<ComponentEntry[]>(functionName) || [];
@@ -128,13 +128,13 @@ export const RendererProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           logger.error(
             `Error in getComponentsForPosition for ${position}`,
             error instanceof Error ? error : new Error(String(error)),
-            { position }
+            { position },
           );
           return [];
         }
       },
     }),
-    [components, manager]
+    [components, manager],
   );
 
   return <RendererContext.Provider value={value}>{children}</RendererContext.Provider>;

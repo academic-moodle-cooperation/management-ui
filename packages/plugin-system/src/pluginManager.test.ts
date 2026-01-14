@@ -296,7 +296,10 @@ describe("PluginManager", () => {
       manager.register(plugin);
       manager.registerComponent("test:position", TestComponent, { key: "test-key" });
 
-      const components = manager.executeFunction<unknown[]>("renderer.getComponents", "test:position");
+      const components = manager.executeFunction<unknown[]>(
+        "renderer.getComponents",
+        "test:position",
+      );
       expect(components).toBeDefined();
       expect(Array.isArray(components) && components.length).toBeGreaterThan(0);
     });

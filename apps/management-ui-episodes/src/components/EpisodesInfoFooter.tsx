@@ -177,14 +177,14 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
       saveEpisodeUpdate.mutate(
         {
           eventId: selectedEpisodeId,
-          metadata: finalMetadata as { title: string;[key: string]: unknown },
+          metadata: finalMetadata as { title: string; [key: string]: unknown },
         },
         {
           onSuccess: () => {
             toast.success(t("episodes:episodesTable.notification.changesSaved"));
             refetch();
           },
-        }
+        },
       );
 
       onEditClose();

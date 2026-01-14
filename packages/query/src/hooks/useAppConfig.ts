@@ -74,10 +74,7 @@ export function useAppConfig() {
       // Type assertion needed because useRegistry returns unknown[]
       const pluginConfigs = (pluginConfigObjects || []) as Partial<AppConfig>[];
       // deepMerge accepts rest parameters, so we need to spread the array
-      return deepMerge(
-        queryResult.data ?? { ...defaultConfig },
-        ...pluginConfigs
-      ) as AppConfig;
+      return deepMerge(queryResult.data ?? { ...defaultConfig }, ...pluginConfigs) as AppConfig;
     } else {
       // Prod: Use pre-merged config.json directly
       return (queryResult.data ?? { ...defaultConfig }) as AppConfig;

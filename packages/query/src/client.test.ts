@@ -1,8 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import {
-  createGraphQLClient,
-  createQueryClient,
-} from "./client";
+import { createGraphQLClient, createQueryClient } from "./client";
 
 // Mock graphql-request - define class inside factory to avoid hoisting issues
 vi.mock("graphql-request", () => {

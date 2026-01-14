@@ -27,7 +27,9 @@ export interface DataTableProps<TData, TValue> {
   /** Data to display in the table */
   data: TData[];
   /** Callback for row click actions */
-  onClickRowAction?: ((event: React.MouseEvent<HTMLTableRowElement>, row: Row<TData>) => void) | undefined;
+  onClickRowAction?:
+    | ((event: React.MouseEvent<HTMLTableRowElement>, row: Row<TData>) => void)
+    | undefined;
   /** ID of the currently selected row */
   selectedId?: string | undefined;
 
@@ -123,7 +125,7 @@ function DataTable<TData extends Record<string, unknown>, TValue>({
     pageIndex,
     table.getPageCount(),
     setPageIndex,
-    totalRows
+    totalRows,
   );
 
   return (

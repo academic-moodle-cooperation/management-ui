@@ -47,7 +47,7 @@ export default defineConfig(({ mode }) => {
       generateConfigPlugin({
         defaultConfig,
         pluginConfigs: PLUGIN_CONFIGS, // Use the explicit ordered list
-      })
+      }),
     );
   }
 

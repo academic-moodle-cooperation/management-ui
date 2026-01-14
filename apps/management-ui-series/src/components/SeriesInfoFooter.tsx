@@ -2,10 +2,7 @@ import React from "react";
 import { Button, toast } from "@workspace/ui/components";
 import { useI18n } from "@workspace/i18n";
 import { useUpdateSeriesMutation } from "@workspace/query";
-import type {
-  CommonSeriesMetadataV2,
-  GetSeriesByIdInputFieldsQuery,
-} from "@workspace/query";
+import type { CommonSeriesMetadataV2, GetSeriesByIdInputFieldsQuery } from "@workspace/query";
 import type { MetadataField } from "@workspace/ui-config";
 import { normalizeMetadataObject } from "@workspace/utils";
 
@@ -168,14 +165,14 @@ const SeriesInfoFooter = ({
       saveSeriesUpdate.mutate(
         {
           seriesId: selectedSeriesId,
-          metadata: finalMetadata as { title: string;[key: string]: unknown },
+          metadata: finalMetadata as { title: string; [key: string]: unknown },
         },
         {
           onSuccess: () => {
             toast.success(t("series:seriesTable.notification.changesSaved"));
             refetch();
           },
-        }
+        },
       );
 
       onEditClose();

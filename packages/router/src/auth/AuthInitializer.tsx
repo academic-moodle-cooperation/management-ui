@@ -43,7 +43,7 @@ const isAuthenticationError = (error: Error): boolean => {
         gqlError?.extensions?.code === "UNAUTHENTICATED" ||
         gqlError?.extensions?.code === "FORBIDDEN" ||
         gqlError?.message?.toLowerCase().includes("unauthorized") ||
-        gqlError?.message?.toLowerCase().includes("forbidden")
+        gqlError?.message?.toLowerCase().includes("forbidden"),
     );
   }
 

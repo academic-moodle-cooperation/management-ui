@@ -39,11 +39,13 @@ executeFunction<T>(key: string, ...args: any[]): T | undefined;
 ```
 
 **Current Usage:**
+
 - Used for dynamic plugin function execution
 - Generic return type `T` provides type safety for return values
 - Arguments are `any[]` for flexibility
 
 **Improvement Suggestion:**
+
 - Consider using a union type or generic constraint for common argument patterns
 - Document expected function signatures per plugin type
 
@@ -63,6 +65,7 @@ export const createLogoutRoute = (parentRoute: any, options: AuthRouteOptions = 
 **Reason:** TanStack Router's route types are complex and dynamic. Using `any` here avoids complex type gymnastics.
 
 **Improvement Suggestion:**
+
 - Investigate TanStack Router's type system for proper route typing
 - Consider using `Route` type from `@tanstack/react-router`
 
@@ -81,6 +84,7 @@ export function getAppConfigSync(pluginManager?: any): AppConfig {
 **Reason:** PluginManager type might not be imported or circular dependency issue.
 
 **Improvement Suggestion:**
+
 - Import `PluginManager` type from `@workspace/plugin-system`
 - Or create a minimal interface for the required methods
 
@@ -99,6 +103,7 @@ selectedItem?: any;
 **Reason:** Generic table component that needs to work with various item types.
 
 **Improvement Suggestion:**
+
 - Make component generic: `TableSidebar<T>`
 - Use `selectedItem?: T`
 
@@ -117,6 +122,7 @@ const appRoutes: any[] = [];
 **Reason:** Dynamic route collection from plugins.
 
 **Improvement Suggestion:**
+
 - Use proper route type from TanStack Router
 - Type as `Route[]` or similar
 
@@ -158,25 +164,28 @@ expect(result.map((r: any) => r.data.value)).toEqual([1, 2]);
 
 ## Summary
 
-| Category | Count | Status |
-|----------|-------|--------|
-| Documented & Acceptable | 3 | ✅ |
-| Should Be Improved | 6 | ⚠️ |
-| Test Files | 1 | ✅ |
-| **Total** | **10** | |
+| Category                | Count  | Status |
+| ----------------------- | ------ | ------ |
+| Documented & Acceptable | 3      | ✅     |
+| Should Be Improved      | 6      | ⚠️     |
+| Test Files              | 1      | ✅     |
+| **Total**               | **10** |        |
 
 ## Action Items
 
 ### High Priority
+
 - [ ] Improve `getAppConfigSync` to use proper `PluginManager` type
 - [ ] Make `TableSidebar` generic for type safety
 
 ### Medium Priority
+
 - [ ] Improve router auth route types with TanStack Router types
 - [ ] Improve `appRoutes` typing in StandaloneAppWrapper
 - [ ] Consider improving `executeFunction` argument types
 
 ### Low Priority
+
 - [ ] Document plugin function signatures for better type inference
 
 ## Guidelines

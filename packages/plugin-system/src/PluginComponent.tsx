@@ -58,7 +58,7 @@ export const PluginComponent: React.FC<PluginComponentProps> = ({
       const components =
         manager.executeFunction<Array<{ component: PluginComponentType }>>(
           "renderer.getComponents",
-          lookupKey
+          lookupKey,
         ) || [];
 
       if (!isMounted) return;

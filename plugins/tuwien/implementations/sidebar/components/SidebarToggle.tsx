@@ -23,7 +23,7 @@ export const SidebarToggle = () => {
         <ChevronsRight
           className={cn(
             "!w-9 !h-9 transition ease-in-out duration-300 text-sidebar-foreground hover:text-background",
-            open ? "rotate-[-180deg]" : "rotate-0"
+            open ? "rotate-[-180deg]" : "rotate-0",
           )}
           aria-hidden="true"
         />

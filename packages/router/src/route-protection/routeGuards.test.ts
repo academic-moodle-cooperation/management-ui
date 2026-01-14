@@ -1,11 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { redirect } from "@tanstack/react-router";
-import {
-  authGuard,
-  protectionMetadata,
-  isProtectedRoute,
-  getRouteProtection,
-} from "./routeGuards";
+import { authGuard, protectionMetadata, isProtectedRoute, getRouteProtection } from "./routeGuards";
 
 // Mock @tanstack/react-router
 vi.mock("@tanstack/react-router", () => ({

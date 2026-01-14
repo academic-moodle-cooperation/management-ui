@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useGetCurrentUser , useAppConfig } from "@workspace/query";
+import { useGetCurrentUser, useAppConfig } from "@workspace/query";
 import { useAuth } from "@workspace/router";
 
 import { Badge } from "../ui/badge";

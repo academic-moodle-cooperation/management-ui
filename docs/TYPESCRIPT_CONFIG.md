@@ -13,11 +13,13 @@ This document explains our TypeScript configuration strategy, specifically regar
 ### Type Safety Impact
 
 **Minimal impact on your code:**
+
 - TypeScript still type-checks **your code** normally
 - TypeScript still validates **what you actually use** from dependencies
 - Only the **full declaration trees** of all dependencies are skipped
 
 **Potential issues:**
+
 - Inconsistencies or errors in library type definitions may go undetected
 - Conflicting types from multiple libraries might not be caught
 
@@ -70,6 +72,7 @@ For packages that might be published in the future, we provide an optional `buil
 **Example Implementation** (`packages/utils`):
 
 1. **tsconfig.build.json**:
+
 ```json
 {
   "extends": "./tsconfig.json",
@@ -89,6 +92,7 @@ For packages that might be published in the future, we provide an optional `buil
 ```
 
 2. **package.json** script:
+
 ```json
 {
   "scripts": {
@@ -98,6 +102,7 @@ For packages that might be published in the future, we provide an optional `buil
 ```
 
 3. **Usage**:
+
 ```bash
 cd packages/utils
 pnpm build:types
@@ -105,6 +110,7 @@ pnpm build:types
 ```
 
 **What it does**:
+
 - Generates `.d.ts` declaration files only (no JavaScript)
 - Outputs to `dist-types/` (separate from regular build output)
 - Excludes test files
@@ -121,6 +127,7 @@ For packages that should generate declarations, use:
 ```
 
 This config includes:
+
 - `composite: true`
 - `declaration: true`
 - `declarationMap: true`
@@ -160,6 +167,7 @@ We **do not use** TypeScript path mappings for `@workspace/*` packages in base c
 ```
 
 This is fine because:
+
 - It's scoped to a single package
 - It doesn't create phantom dependencies
 - It improves developer experience for internal imports
@@ -180,6 +188,7 @@ This is fine because:
 ```
 
 Instead, use real package imports:
+
 ```typescript
 // ✅ DO THIS
 import { Button } from "@workspace/ui/components";
@@ -200,6 +209,7 @@ The `packages/ui/src/components/ui/` folder contains auto-generated shadcn/ui co
 We use a custom `check-types` script that filters out errors from `src/components/ui`:
 
 **`packages/ui/scripts/check-types.sh`**:
+
 ```bash
 #!/bin/bash
 # Type check script that excludes errors from src/components/ui (auto-generated shadcn/ui files)
@@ -221,18 +231,15 @@ exit 0
 ```
 
 **`packages/ui/tsconfig.json`**:
+
 ```json
 {
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".turbo",
-    "src/components/ui"
-  ]
+  "exclude": ["node_modules", "dist", ".turbo", "src/components/ui"]
 }
 ```
 
 **`packages/ui/package.json`**:
+
 ```json
 {
   "scripts": {
@@ -242,6 +249,7 @@ exit 0
 ```
 
 This approach:
+
 - ✅ Survives shadcn updates (no `@ts-nocheck` in files)
 - ✅ Filters errors at script level
 - ✅ Still checks all other files strictly

@@ -34,15 +34,7 @@ export const config = [
       "import/order": [
         "error",
         {
-          groups: [
-            "builtin",
-            "external",
-            "internal",
-            "parent",
-            "sibling",
-            "index",
-            "type",
-          ],
+          groups: ["builtin", "external", "internal", "parent", "sibling", "index", "type"],
           "newlines-between": "always",
           alphabetize: {
             order: "asc",
@@ -70,7 +62,11 @@ export const config = [
         {
           patterns: [
             {
-              group: ["@workspace/ui/src/*", "@workspace/ui/components/ui/*", "@workspace/ui/components/appshell/components/*"],
+              group: [
+                "@workspace/ui/src/*",
+                "@workspace/ui/components/ui/*",
+                "@workspace/ui/components/appshell/components/*",
+              ],
               message:
                 "Import from stable entrypoints like '@workspace/ui/components' or '@workspace/ui/lib/utils' instead of deep paths.",
             },

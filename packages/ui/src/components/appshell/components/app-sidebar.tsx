@@ -1,7 +1,6 @@
 import * as React from "react";
 
-
-import { useRegistry , ComponentResolver } from "@workspace/plugin-system";
+import { useRegistry, ComponentResolver } from "@workspace/plugin-system";
 import {
   Sidebar,
   SidebarContent,

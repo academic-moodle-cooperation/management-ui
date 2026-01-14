@@ -22,20 +22,20 @@ export const SidebarFooter = () => {
         <span
           className={cn(
             "px-6 py-4 text-sidebar-foreground ",
-            !sidebarOpen && "[&>svg]:hidden flex justify-center px-4"
+            !sidebarOpen && "[&>svg]:hidden flex justify-center px-4",
           )}
         >
           <div
             className={cn(
               "flex items-center text-sm font-semibold leading-6 gap-x-4 text-sidebar-foreground",
-              !sidebarOpen && "mr-1"
+              !sidebarOpen && "mr-1",
             )}
           >
             <Avatar className="w-8 h-8">
               <AvatarImage
                 className="w-auto h-auto rounded-full"
                 src={`https://www.gravatar.com/avatar/${sha256(
-                  `${data?.currentUser.email}`.toLowerCase()?.trim()
+                  `${data?.currentUser.email}`.toLowerCase()?.trim(),
                 )}?s=32&d=404`}
                 alt={`Avatar of ${data?.currentUser.name}`}
               />

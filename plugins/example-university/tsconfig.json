@@ -6,14 +6,6 @@
     "skipLibCheck": true,
     "paths": {}
   },
-  "include": [
-    ".",
-    "vite-env.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".turbo",
-    "../../packages/ui/src/components/ui/**/*"
-  ]
+  "include": [".", "vite-env.d.ts"],
+  "exclude": ["node_modules", "dist", ".turbo"]
 }

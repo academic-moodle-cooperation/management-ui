@@ -15,7 +15,7 @@ const CustomNavMainWrapper = (props: { open?: boolean; items?: NavMainProps["ite
     React.Fragment,
     {},
     React.createElement(SidebarUserMenu, { open: props.open || false }),
-    React.createElement(CustomNavMain, { ...props, items: props.items || [] })
+    React.createElement(CustomNavMain, { ...props, items: props.items || [] }),
   );
 };
 
@@ -85,7 +85,7 @@ export const studioNavImplementation = createPlugin({
     });
   },
 
-  activate() { },
+  activate() {},
 
-  deactivate() { },
+  deactivate() {},
 });

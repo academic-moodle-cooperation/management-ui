@@ -4,21 +4,11 @@
     "baseUrl": ".",
     "skipLibCheck": true,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
     "composite": false,
     "noEmit": true
   },
-  "include": [
-    "src",
-    "vite-env.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".turbo",
-    "../ui/src/components/ui/**/*"
-  ]
+  "include": ["src", "vite-env.d.ts"],
+  "exclude": ["node_modules", "dist", ".turbo", "../ui/src/components/ui/**/*"]
 }

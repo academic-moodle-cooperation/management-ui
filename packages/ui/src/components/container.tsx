@@ -31,7 +31,7 @@ const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
     return (
       <Comp className={cn(containerVariants({ variant, size, className }))} ref={ref} {...props} />
     );
-  }
+  },
 );
 Container.displayName = "Container";
 

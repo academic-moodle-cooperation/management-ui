@@ -28,7 +28,7 @@ export function normalizeMetadataValue(value: unknown): string | string[] {
  * Normalizes an entire metadata object, removing empty values
  */
 export function normalizeMetadataObject(
-  metadata: Record<string, unknown>
+  metadata: Record<string, unknown>,
 ): Record<string, string | string[]> {
   const normalized: Record<string, string | string[]> = {};
 

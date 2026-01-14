@@ -25,7 +25,7 @@ export function withAuthProtection<P extends object>(
     redirectTo?: string;
     fallback?: React.ComponentType;
     loadingComponent?: React.ComponentType;
-  } = {}
+  } = {},
 ) {
   const {
     requireAuth = true,
@@ -85,7 +85,7 @@ export function createProtectedComponentFactory(defaultOptions: {
 }) {
   return function <P extends object>(
     Component: React.ComponentType<P>,
-    overrideOptions: Partial<typeof defaultOptions> = {}
+    overrideOptions: Partial<typeof defaultOptions> = {},
   ) {
     const mergedOptions = { ...defaultOptions, ...overrideOptions };
     return withAuthProtection(Component, mergedOptions);
@@ -107,7 +107,7 @@ export function createProtectedComponentFactory(defaultOptions: {
 export function createProtectedRouteComponent(
   Component: React.ComponentType,
   protectionOptions: Parameters<typeof withAuthProtection>[1] = {},
-  suspenseProps: { fallback?: React.ReactNode } = {}
+  suspenseProps: { fallback?: React.ReactNode } = {},
 ) {
   const ProtectedComponent = withAuthProtection(Component, protectionOptions);
 

@@ -12,7 +12,7 @@ export function useClickOutside(refs: RefObject<HTMLElement | null>[], handler: 
 
       // Check if the click is outside all of the provided refs
       const isOutsideAll = refs.every(
-        (ref) => !ref.current || !ref.current.contains(event.target as Node)
+        (ref) => !ref.current || !ref.current.contains(event.target as Node),
       );
 
       if (isOutsideAll) {

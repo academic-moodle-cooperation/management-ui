@@ -63,7 +63,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   aclEntries,
   managedAclId,
   hasChanges,
-  refetch = () => { },
+  refetch = () => {},
   showUpdateButton = true,
   onAclChange,
   onManagedAclChange,
@@ -103,11 +103,11 @@ export const AclEditor: React.FC<AclEditorProps> = ({
 
   const { data: managedAclsWithEvent } = useGetManagedAclsWithEventIdQuery(
     { id },
-    { enabled: isEvent && !!id }
+    { enabled: isEvent && !!id },
   );
   const { data: managedAclsWithSeries } = useGetManagedAclsWithSeriesIdQuery(
     { id },
-    { enabled: isSeries && !!id }
+    { enabled: isSeries && !!id },
   );
   const { data: managedAclsWithoutUsers } = useGetAllManagedAclsQuery(undefined, {
     enabled: isUpload,
@@ -141,7 +141,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
         }
       }
     },
-    [aclEntries, onAclChange, onHasChangesChange]
+    [aclEntries, onAclChange, onHasChangesChange],
   );
 
   const handlePermissionChange = (index: number, permission: string, value: boolean | string) => {
@@ -153,7 +153,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
         }
       } else {
         updatedEntries[index].action = updatedEntries[index].action.filter(
-          (act) => act !== permission
+          (act) => act !== permission,
         );
       }
       onAclChange(updatedEntries);
@@ -196,7 +196,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
             refetch();
             // Do NOT call onClose or onEditClose here
           },
-        }
+        },
       );
     }
     if (selectedElement?.__typename === "Series") {
@@ -220,10 +220,10 @@ export const AclEditor: React.FC<AclEditorProps> = ({
             logger.error(
               "Error updating series ACL",
               error instanceof Error ? error : new Error(String(error)),
-              { seriesId: id }
+              { seriesId: id },
             );
           },
-        }
+        },
       );
     }
     onHasChangesChange(false); // Use controlled hasChanges prop

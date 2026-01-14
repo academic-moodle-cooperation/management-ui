@@ -19,17 +19,17 @@ export const createRendererPlugin = (): Plugin => {
             const positionComponents = components.get(position) || [];
             if (positionComponents.length > 1) {
               const orders = positionComponents.map((c) =>
-                typeof c.order === "number" ? c.order : 100
+                typeof c.order === "number" ? c.order : 100,
               );
               const minOrder = Math.min(...orders);
               const topComponents = positionComponents.filter(
-                (c) => (typeof c.order === "number" ? c.order : 100) === minOrder
+                (c) => (typeof c.order === "number" ? c.order : 100) === minOrder,
               );
               if (topComponents.length > 1 && position.startsWith("component-override:")) {
                 const keys = topComponents.map((c) => c.key).join(", ");
                 logger.warn(
                   `[plugin-system][renderer] Multiple components registered with the same priority (order ${minOrder}) for "${position}". The first registered will be used. Conflicting keys: ${keys}`,
-                  { position, minOrder, keys: topComponents.map((c) => c.key) }
+                  { position, minOrder, keys: topComponents.map((c) => c.key) },
                 );
               }
             }
@@ -37,11 +37,11 @@ export const createRendererPlugin = (): Plugin => {
             logger.error(
               "[plugin-system][renderer] Failed to evaluate component priorities for warning",
               e instanceof Error ? e : new Error(String(e)),
-              { position }
+              { position },
             );
           }
           manager.dispatchEvent("renderer.componentUpdated", { position });
-        }
+        },
       );
 
       manager.addFunction("renderer.getComponents", (position: string) => {
@@ -54,7 +54,7 @@ export const createRendererPlugin = (): Plugin => {
         const existing = components.get(position) || [];
         components.set(
           position,
-          existing.filter((c) => c.key !== key)
+          existing.filter((c) => c.key !== key),
         );
         manager.dispatchEvent("renderer.componentUpdated", { position });
       });

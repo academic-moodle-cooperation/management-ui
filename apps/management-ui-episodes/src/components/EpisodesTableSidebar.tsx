@@ -14,10 +14,7 @@ import {
 } from "@workspace/ui/components";
 import { useClickOutside } from "@workspace/ui/hooks";
 import { useUpdateEventMutation } from "@workspace/query";
-import type {
-  GetEventByIdInputFieldsQuery,
-  EventsDataFragment,
-} from "@workspace/query";
+import type { GetEventByIdInputFieldsQuery, EventsDataFragment } from "@workspace/query";
 import { usePluginManager } from "@workspace/plugin-system";
 import { EpisodesInfoContent } from "./EpisodesInfoContent";
 import { EpisodesInfoFooter } from "./EpisodesInfoFooter";

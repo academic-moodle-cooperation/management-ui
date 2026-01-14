@@ -12,7 +12,7 @@ export type RendererFunctions = {
     position: string,
     component: PluginComponent,
     key?: string,
-    order?: number
+    order?: number,
   ) => void;
   "renderer.remove": (position: string, key: string) => void;
   "renderer.getComponents": (position: string) => RendererComponent[];

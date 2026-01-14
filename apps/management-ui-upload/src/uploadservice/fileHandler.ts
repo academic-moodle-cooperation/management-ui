@@ -5,7 +5,7 @@ const useFileHandler = (
   fileWaitingList: UploadFileBlob[],
   seriesId: string,
   setUpload: (upload: UploadListType) => void,
-  zustandupload: UploadListType
+  zustandupload: UploadListType,
 ) => {
   const getLatestId = () => {
     const fileList: UploadFileBlob[] = [...zustandupload.uploaded, ...zustandupload.files];

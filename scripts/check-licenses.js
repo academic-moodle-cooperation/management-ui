@@ -36,7 +36,7 @@ console.log("===================\n");
 console.log("⚠️  Basic license check - extend with license-checker for full audit");
 console.log("Recommended: npm install -D license-checker");
 console.log(
-  'Then run: npx license-checker --onlyAllow "MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause"'
+  'Then run: npx license-checker --onlyAllow "MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause"',
 );
 
 process.exit(0);

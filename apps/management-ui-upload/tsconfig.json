@@ -4,22 +4,9 @@
     "baseUrl": ".",
     "skipLibCheck": true,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "src",
-    "vite-env.d.ts",
-    "vite.config.ts",
-    "tailwind.config.js",
-    "postcss.config.mjs"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".turbo",
-    "../../packages/ui/src/components/ui/**/*"
-  ]
+  "include": ["src", "vite-env.d.ts", "vite.config.ts", "tailwind.config.js", "postcss.config.mjs"],
+  "exclude": ["node_modules", "dist", ".turbo"]
 }

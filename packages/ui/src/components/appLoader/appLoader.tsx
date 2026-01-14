@@ -5,7 +5,7 @@ const AppLoader = ({ className, children }: { className?: string; children?: Rea
     <section
       className={cn(
         "fixed top-0 left-0 right-0 w-auto h-full z-[9999] flex flex-col justify-center items-center bg-transparent opacity-80",
-        className
+        className,
       )}
     >
       <div className="flex justify-center">

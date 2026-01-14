@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 
-
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
 import { createBaseConfig, type CreateBaseConfigOptions } from "./base.config.js";
@@ -79,7 +78,7 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
       "@workspace/i18n": path.resolve(monorepoRootPath, "packages/i18n/src"),
       "@workspace/ui/globals.css": path.resolve(
         monorepoRootPath,
-        "packages/ui/src/styles/globals.css"
+        "packages/ui/src/styles/globals.css",
       ),
       "@workspace/utils": path.resolve(monorepoRootPath, "packages/utils/src"),
       "@workspace/router": path.resolve(monorepoRootPath, "packages/router/src"),

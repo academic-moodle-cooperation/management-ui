@@ -29,7 +29,7 @@ export function authGuard(
     requireAuth?: boolean;
     requiredRoles?: string[];
     redirectTo?: string;
-  } = {}
+  } = {},
 ) {
   const { requireAuth = true, requiredRoles = [], redirectTo = "/login" } = options;
 

@@ -45,7 +45,7 @@ import {
   useTimeFieldState,
 } from "react-stately";
 
-import { Button , Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components";
+import { Button, Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib";
 
 import type { DateSegment as IDateSegment } from "@react-stately/datepicker";
@@ -122,7 +122,7 @@ function CalendarGrid({ state, ...props }: CalendarGridProps) {
                 | Iterable<React.ReactNode>
                 | null
                 | undefined,
-              index: React.Key | null | undefined
+              index: React.Key | null | undefined,
             ) => (
               <th
                 className="w-9 rounded-md text-[0.8rem] font-normal text-muted-foreground"
@@ -130,7 +130,7 @@ function CalendarGrid({ state, ...props }: CalendarGridProps) {
               >
                 {day}
               </th>
-            )
+            ),
           )}
         </tr>
       </thead>
@@ -140,7 +140,7 @@ function CalendarGrid({ state, ...props }: CalendarGridProps) {
             {state
               .getDatesInWeek(weekIndex)
               .map((date, i) =>
-                date ? <CalendarCell key={i} state={state} date={date} /> : <td key={i} />
+                date ? <CalendarCell key={i} state={state} date={date} /> : <td key={i} />,
               )}
           </tr>
         ))}
@@ -169,7 +169,7 @@ function CalendarCell({ state, date }: CalendarCellProps) {
       {...cellProps}
       className={cn(
         cellProps.className,
-        "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md"
+        "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md",
       )}
     >
       <Button
@@ -184,7 +184,7 @@ function CalendarCell({ state, date }: CalendarCellProps) {
           isSelected &&
             "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
           isOutsideVisibleRange && "text-muted-foreground opacity-50",
-          isDisabled && "text-muted-foreground opacity-50"
+          isDisabled && "text-muted-foreground opacity-50",
         )}
       >
         {formattedDate}
@@ -212,7 +212,7 @@ function DateSegment({ segment, state }: DateSegmentProps) {
       className={cn(
         "focus:rounded-[2px] focus:bg-accent focus:text-accent-foreground focus:outline-none",
         segment.type !== "literal" && "px-[1px]",
-        segment.isPlaceholder && "text-muted-foreground"
+        segment.isPlaceholder && "text-muted-foreground",
       )}
     >
       {segment.text}
@@ -237,7 +237,7 @@ function DateField(props: AriaDatePickerProps<DateValue>) {
       ref={ref}
       className={cn(
         "inline-flex h-10 flex-1 items-center rounded-l-md border-input bg-transparent px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-        props.isDisabled && "cursor-not-allowed opacity-50"
+        props.isDisabled && "cursor-not-allowed opacity-50",
       )}
     >
       {state.segments.map((segment, i) => (
@@ -268,7 +268,7 @@ function TimeField(props: AriaTimeFieldProps<TimeValue> & { className?: string }
       className={cn(
         "inline-flex h-10 w-full flex-1 rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         props.isDisabled && "cursor-not-allowed opacity-50",
-        props.className as string
+        props.className as string,
       )}
     >
       {state.segments.map((segment, i) => (
@@ -358,7 +358,7 @@ const DateTimePicker = React.forwardRef<
       ref={divRef}
       className={cn(
         groupProps.className,
-        "flex items-center rounded-md border ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
+        "flex items-center rounded-md border ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
       )}
     >
       <Popover

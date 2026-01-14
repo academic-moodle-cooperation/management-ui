@@ -94,7 +94,7 @@ const getDynamicModules = async (): Promise<ClientDynamicModule[]> => {
   } catch (error) {
     logger.error(
       "Error fetching or parsing dynamic modules configuration",
-      error instanceof Error ? error : new Error(String(error))
+      error instanceof Error ? error : new Error(String(error)),
     );
     return [];
   }
@@ -127,7 +127,7 @@ export const createDynamicRouter = async () => {
         logger.error(
           `Failed to load module for plugin ${pluginname} from ${importPathForLogging}`,
           error,
-          { pluginname, importPath: importPathForLogging }
+          { pluginname, importPath: importPathForLogging },
         );
         // Provide a fallback component for React.lazy
         return {
@@ -168,7 +168,7 @@ export const createDynamicRouter = async () => {
           logger.error(
             `Error fetching/processing config for plugin ${pluginname} in loader`,
             err instanceof Error ? err : new Error(String(err)),
-            { pluginname }
+            { pluginname },
           );
           throw err;
         }

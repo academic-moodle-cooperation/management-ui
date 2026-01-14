@@ -6,9 +6,7 @@ import { useTableNavigation } from "./useTableNavigation";
 describe("useTableNavigation", () => {
   it("should calculate correct navigation state", () => {
     const setPageIndex = vi.fn();
-    const { result } = renderHook(() =>
-      useTableNavigation(0, 10, setPageIndex, 100)
-    );
+    const { result } = renderHook(() => useTableNavigation(0, 10, setPageIndex, 100));
 
     expect(result.current.canPreviousPage).toBe(false);
     expect(result.current.canNextPage).toBe(true);
@@ -17,9 +15,7 @@ describe("useTableNavigation", () => {
 
   it("should handle first page correctly", () => {
     const setPageIndex = vi.fn();
-    const { result } = renderHook(() =>
-      useTableNavigation(0, 10, setPageIndex, 100)
-    );
+    const { result } = renderHook(() => useTableNavigation(0, 10, setPageIndex, 100));
 
     expect(result.current.canPreviousPage).toBe(false);
     expect(result.current.canNextPage).toBe(true);
@@ -27,9 +23,7 @@ describe("useTableNavigation", () => {
 
   it("should handle last page correctly", () => {
     const setPageIndex = vi.fn();
-    const { result } = renderHook(() =>
-      useTableNavigation(9, 10, setPageIndex, 100)
-    );
+    const { result } = renderHook(() => useTableNavigation(9, 10, setPageIndex, 100));
 
     expect(result.current.canPreviousPage).toBe(true);
     expect(result.current.canNextPage).toBe(false);
@@ -37,9 +31,7 @@ describe("useTableNavigation", () => {
 
   it("should handle middle page correctly", () => {
     const setPageIndex = vi.fn();
-    const { result } = renderHook(() =>
-      useTableNavigation(4, 10, setPageIndex, 100)
-    );
+    const { result } = renderHook(() => useTableNavigation(4, 10, setPageIndex, 100));
 
     expect(result.current.canPreviousPage).toBe(true);
     expect(result.current.canNextPage).toBe(true);
@@ -47,9 +39,7 @@ describe("useTableNavigation", () => {
 
   it("should handle single page", () => {
     const setPageIndex = vi.fn();
-    const { result } = renderHook(() =>
-      useTableNavigation(0, 1, setPageIndex, 10)
-    );
+    const { result } = renderHook(() => useTableNavigation(0, 1, setPageIndex, 10));
 
     expect(result.current.canPreviousPage).toBe(false);
     expect(result.current.canNextPage).toBe(false);
@@ -57,9 +47,7 @@ describe("useTableNavigation", () => {
 
   it("should handle empty table", () => {
     const setPageIndex = vi.fn();
-    const { result } = renderHook(() =>
-      useTableNavigation(0, 1, setPageIndex, 0)
-    );
+    const { result } = renderHook(() => useTableNavigation(0, 1, setPageIndex, 0));
 
     expect(result.current.totalRows).toBe(0);
     expect(result.current.canPreviousPage).toBe(false);
@@ -68,9 +56,7 @@ describe("useTableNavigation", () => {
 
   it("should provide goToFirstPage function", () => {
     const setPageIndex = vi.fn();
-    const { result } = renderHook(() =>
-      useTableNavigation(5, 10, setPageIndex, 100)
-    );
+    const { result } = renderHook(() => useTableNavigation(5, 10, setPageIndex, 100));
 
     act(() => {
       result.current.goToFirstPage();
@@ -81,9 +67,7 @@ describe("useTableNavigation", () => {
 
   it("should provide goToLastPage function", () => {
     const setPageIndex = vi.fn();
-    const { result } = renderHook(() =>
-      useTableNavigation(0, 10, setPageIndex, 100)
-    );
+    const { result } = renderHook(() => useTableNavigation(0, 10, setPageIndex, 100));
 
     act(() => {
       result.current.goToLastPage();
@@ -94,9 +78,7 @@ describe("useTableNavigation", () => {
 
   it("should provide goToNextPage function", () => {
     const setPageIndex = vi.fn();
-    const { result } = renderHook(() =>
-      useTableNavigation(0, 10, setPageIndex, 100)
-    );
+    const { result } = renderHook(() => useTableNavigation(0, 10, setPageIndex, 100));
 
     act(() => {
       result.current.goToNextPage();
@@ -107,9 +89,7 @@ describe("useTableNavigation", () => {
 
   it("should provide goToPreviousPage function", () => {
     const setPageIndex = vi.fn();
-    const { result } = renderHook(() =>
-      useTableNavigation(5, 10, setPageIndex, 100)
-    );
+    const { result } = renderHook(() => useTableNavigation(5, 10, setPageIndex, 100));
 
     act(() => {
       result.current.goToPreviousPage();
@@ -120,9 +100,7 @@ describe("useTableNavigation", () => {
 
   it("should not go to previous page when on first page", () => {
     const setPageIndex = vi.fn();
-    const { result } = renderHook(() =>
-      useTableNavigation(0, 10, setPageIndex, 100)
-    );
+    const { result } = renderHook(() => useTableNavigation(0, 10, setPageIndex, 100));
 
     act(() => {
       result.current.goToPreviousPage();
@@ -133,9 +111,7 @@ describe("useTableNavigation", () => {
 
   it("should not go to next page when on last page", () => {
     const setPageIndex = vi.fn();
-    const { result } = renderHook(() =>
-      useTableNavigation(9, 10, setPageIndex, 100)
-    );
+    const { result } = renderHook(() => useTableNavigation(9, 10, setPageIndex, 100));
 
     act(() => {
       result.current.goToNextPage();

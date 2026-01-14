@@ -61,7 +61,7 @@ const getStatusIcon = (status: string) => {
 // Convert columns to a factory function that accepts layout and refetch
 export const createColumns = (
   refetch: () => void,
-  layout: "list" | "gallery" = "list"
+  layout: "list" | "gallery" = "list",
 ): ColumnDef<EventsDataFragment, unknown>[] => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const listColumns: ColumnDef<EventsDataFragment, any>[] = [
@@ -167,7 +167,7 @@ export const createColumns = (
           <OverflowTooltip
             className={cn(
               "truncate whitespace-pre max-w-[200px] flex items-start",
-              contributors.length === 3 ? "max-h-[48px]" : "max-h-[32px]"
+              contributors.length === 3 ? "max-h-[48px]" : "max-h-[32px]",
             )}
           >
             {contributors.join("\n")}
@@ -191,7 +191,7 @@ export const createColumns = (
           <OverflowTooltip
             className={cn(
               "truncate whitespace-pre max-w-[200px] flex items-start",
-              presenters.length === 3 ? "max-h-[48px]" : "max-h-[32px]"
+              presenters.length === 3 ? "max-h-[48px]" : "max-h-[32px]",
             )}
           >
             {presenters.map((name: string | null, index: number) => (

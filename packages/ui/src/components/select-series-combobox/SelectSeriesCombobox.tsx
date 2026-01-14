@@ -2,7 +2,11 @@ import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react";
 
 import { useI18n } from "@workspace/i18n";
-import type { FetchNextPageOptions, InfiniteData, InfiniteQueryObserverResult } from "@workspace/query";
+import type {
+  FetchNextPageOptions,
+  InfiniteData,
+  InfiniteQueryObserverResult,
+} from "@workspace/query";
 import {
   Command,
   CommandInput,
@@ -34,7 +38,7 @@ const SelectSeriesCombobox = ({
   seriesList: Series[] | undefined;
   setSelectedSeries: (value: Series | null) => void;
   infiniteFetchNextPage?: (
-    options?: FetchNextPageOptions
+    options?: FetchNextPageOptions,
   ) => Promise<InfiniteQueryObserverResult<InfiniteData<unknown, unknown>, Error>>;
   hasNextPage?: boolean;
   searchSeries?: (query: React.SetStateAction<string>) => void;
@@ -148,7 +152,7 @@ const SelectSeriesCombobox = ({
                     <SelectItem key={series.id} value={series.id} tabIndex={0}>
                       {series.title}
                     </SelectItem>
-                  )
+                  ),
               )
             ) : (
               <span className="flex items-center justify-center m-4 text-sm">

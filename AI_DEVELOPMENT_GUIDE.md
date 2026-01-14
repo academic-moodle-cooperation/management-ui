@@ -112,6 +112,7 @@ Management UI/
 2. **Other auto-generated files** - Check for `components.json` or similar config files that indicate auto-generation
 
 **If you need to customize auto-generated components:**
+
 - Copy to a different location (e.g., `src/components/custom/`)
 - Use the plugin system to override via `component-override` extension points
 - Document your customization approach

@@ -11,7 +11,7 @@ export function Loading({ className, children, centered = true }: LoadingProps) 
     <div
       className={cn(
         "w-24 h-24 border-8 border-primary border-solid rounded-full border-t-transparent animate-spin",
-        className
+        className,
       )}
     ></div>
   );

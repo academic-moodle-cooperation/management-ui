@@ -89,7 +89,7 @@ export const tuwienEpisodesActionsImplementation = createPlugin({
     });
   },
 
-  activate() { },
+  activate() {},
 
-  deactivate() { },
+  deactivate() {},
 });

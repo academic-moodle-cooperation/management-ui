@@ -36,7 +36,7 @@ export function deepMerge<T extends Record<string, unknown>>(
           // Recursively merge objects
           (acc as Record<string, unknown>)[key] = deepMerge(
             { ...(accValue as Record<string, unknown>) },
-            sourceValue as Record<string, unknown>
+            sourceValue as Record<string, unknown>,
           );
         } else if (sourceValue !== undefined) {
           // Replace primitive values
@@ -45,6 +45,6 @@ export function deepMerge<T extends Record<string, unknown>>(
       });
       return acc;
     },
-    { ...target }
+    { ...target },
   ) as T;
 }

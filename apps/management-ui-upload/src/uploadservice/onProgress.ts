@@ -26,7 +26,7 @@ export default function onProgress(progress: number) {
   // datapoints).
   const windowStart = Math.min(
     progressHistory.findIndex((p) => now - p.timestamp < WINDOW_SIZE_MS),
-    Math.max(0, progressHistory.length - WINDOW_SIZE_DATA_POINTS)
+    Math.max(0, progressHistory.length - WINDOW_SIZE_DATA_POINTS),
   );
 
   // Remove all elements outside the window.

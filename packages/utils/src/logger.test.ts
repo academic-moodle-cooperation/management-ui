@@ -12,10 +12,10 @@ describe("Logger", () => {
 
   beforeEach(() => {
     consoleSpy = {
-      debug: vi.spyOn(console, "debug").mockImplementation(() => { }),
-      info: vi.spyOn(console, "info").mockImplementation(() => { }),
-      warn: vi.spyOn(console, "warn").mockImplementation(() => { }),
-      error: vi.spyOn(console, "error").mockImplementation(() => { }),
+      debug: vi.spyOn(console, "debug").mockImplementation(() => {}),
+      info: vi.spyOn(console, "info").mockImplementation(() => {}),
+      warn: vi.spyOn(console, "warn").mockImplementation(() => {}),
+      error: vi.spyOn(console, "error").mockImplementation(() => {}),
     };
   });
 
@@ -69,7 +69,7 @@ describe("Logger", () => {
         expect.objectContaining({
           error: "Test error",
           name: "Error",
-        })
+        }),
       );
     });
 
@@ -103,7 +103,7 @@ describe("Logger", () => {
         expect.objectContaining({
           module: "test",
           errorCode: "E001",
-        })
+        }),
       );
     });
 

@@ -19,7 +19,7 @@ export const coreHeaderImplementation = createPlugin({
       {
         key: "default-header",
         order: 100, // Standard priority, allows overrides
-      }
+      },
     );
   },
 

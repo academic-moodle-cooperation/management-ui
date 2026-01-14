@@ -25,7 +25,7 @@ export const createObjectRegistryPlugin = (): Plugin => {
           const typeRegistry = registryItems.get(type)!;
           typeRegistry.set(id, { id, type, data, metadata: metadata ?? undefined });
           manager.dispatchEvent("registry.objectUpdated", { type, id });
-        }
+        },
       );
 
       // Get all objects of a specific type

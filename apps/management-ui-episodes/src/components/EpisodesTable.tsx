@@ -1,10 +1,5 @@
 import React, { useMemo, useEffect, useCallback, useRef } from "react";
-import {
-  type ColumnDef,
-  MUITable,
-  createMetadataHelpers,
-  Button,
-} from "@workspace/ui/components";
+import { type ColumnDef, MUITable, createMetadataHelpers, Button } from "@workspace/ui/components";
 import type { Row } from "@workspace/ui/components";
 import { AppLoader } from "@workspace/ui/components";
 import { LayoutGrid, List } from "lucide-react";
@@ -83,7 +78,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   // Create columns with the current layout and refetch function
   const columns: ColumnDef<EventsDataFragment>[] = useMemo(
     () => createColumns(refetch, layout),
-    [refetch, layout]
+    [refetch, layout],
   );
 
   const metadata = (config?.plugins?.["management-ui-episodes"]?.episodeInfo?.metadata ||
@@ -121,7 +116,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
           logger.error(
             "Error formatting episodes data",
             error instanceof Error ? error : new Error(String(error)),
-            { selectedId, isEditing }
+            { selectedId, isEditing },
           );
         }
       }
@@ -153,7 +148,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
       // By only setting the ID, we allow the reactive data flow to update the sidebar.
       openSidebar(row.original.id);
     },
-    [openSidebar, isEditing, selectedId, resetUpdateFields]
+    [openSidebar, isEditing, selectedId, resetUpdateFields],
   );
 
   // Modified edit close handler - no URL updates
@@ -208,13 +203,13 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   const sortedColumns =
     columnsKeys.length > 0
       ? columnsKeys
-        .map((columnsKey) =>
-          columns.find((column) => {
-            const col = column as any; // TanStack table column types are complex, using any for access
-            return col.accessorKey === columnsKey || col.id === columnsKey;
-          })
-        )
-        .filter((column): column is NonNullable<typeof column> => Boolean(column))
+          .map((columnsKey) =>
+            columns.find((column) => {
+              const col = column as any; // TanStack table column types are complex, using any for access
+              return col.accessorKey === columnsKey || col.id === columnsKey;
+            }),
+          )
+          .filter((column): column is NonNullable<typeof column> => Boolean(column))
       : columns;
 
   // Error handling

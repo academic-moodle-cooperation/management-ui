@@ -108,7 +108,7 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => [
         <OverflowTooltip
           className={cn(
             "truncate whitespace-pre max-w-[200px] flex items-start",
-            contributors.length === 3 ? "max-h-[48px]" : "max-h-[32px]"
+            contributors.length === 3 ? "max-h-[48px]" : "max-h-[32px]",
           )}
         >
           {contributors.join("\n")}

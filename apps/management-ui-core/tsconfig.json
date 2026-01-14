@@ -4,25 +4,10 @@
     "baseUrl": ".",
     "skipLibCheck": true,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@monorepo-apps/*": [
-        "../../apps/*"
-      ]
+      "@/*": ["./src/*"],
+      "@monorepo-apps/*": ["../../apps/*"]
     }
   },
-  "include": [
-    "src",
-    "vite-env.d.ts",
-    "vite.config.ts",
-    "postcss.config.mjs",
-    "tailwind.config.js"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".turbo",
-    "../../packages/ui/src/components/ui/**/*"
-  ]
+  "include": ["src", "vite-env.d.ts", "vite.config.ts", "postcss.config.mjs", "tailwind.config.js"],
+  "exclude": ["node_modules", "dist", ".turbo"]
 }

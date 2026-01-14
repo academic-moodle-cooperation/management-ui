@@ -37,13 +37,13 @@ const SidebarUserMenu = ({ open }: { open: boolean }) => {
             <AccordionTrigger
               className={cn(
                 "px-6 py-4 text-sidebar-foreground flex items-center",
-                !open && "[&>svg]:hidden flex justify-center px-4"
+                !open && "[&>svg]:hidden flex justify-center px-4",
               )}
             >
               <div
                 className={cn(
                   "flex items-center text-sm font-semibold leading-6 gap-x-4 text-sidebar-foreground",
-                  !open && "mr-1"
+                  !open && "mr-1",
                 )}
               >
                 <Avatar className="w-8 h-8 bg-foreground/90 ">

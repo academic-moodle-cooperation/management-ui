@@ -18,7 +18,7 @@ export const LangSwitcher = () => {
   };
 
   const [language, setLanguage] = useState<"en" | "de" | undefined>(
-    (i18next.resolvedLanguage as "en" | "de") || "en"
+    (i18next.resolvedLanguage as "en" | "de") || "en",
   );
 
   return (

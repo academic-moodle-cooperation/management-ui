@@ -74,14 +74,14 @@ const EpisodesInfoContent = ({
                   onClick={
                     editEpisode && field && !field.readOnly && !isReadOnly(field.id!)
                       ? () => setUpdateField(field.id!)
-                      : () => { }
+                      : () => {}
                   }
                   className={cn(
                     editEpisode &&
-                    field &&
-                    !field.readOnly &&
-                    !isReadOnly(field.id!) &&
-                    "cursor-pointer"
+                      field &&
+                      !field.readOnly &&
+                      !isReadOnly(field.id!) &&
+                      "cursor-pointer",
                   )}
                 >
                   <div className="flex items-center space-x-2 text-sm font-medium uppercase text-muted-foreground">

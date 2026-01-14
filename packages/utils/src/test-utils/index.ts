@@ -9,9 +9,7 @@ import { vi, type Mock } from "vitest";
 /**
  * Creates a mock implementation that can be used in tests
  */
-export function createMock<T extends (...args: unknown[]) => unknown>(
-  implementation?: T
-): Mock<T> {
+export function createMock<T extends (...args: unknown[]) => unknown>(implementation?: T): Mock<T> {
   return vi.fn(implementation) as Mock<T>;
 }
 

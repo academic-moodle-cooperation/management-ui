@@ -114,7 +114,7 @@ export const App = () => {
       seriesData?.currentUser.mySeries.nodes?.map((series) => {
         return { id: series?.id, title: series?.title, __typename: "Series" };
       }) || [],
-    [seriesData]
+    [seriesData],
   );
 
   const FETCH_MY_SERIES = gql`
@@ -185,11 +185,11 @@ export const App = () => {
     setSelectedSeries(
       navSeries && navSeries.id && navSeries.title
         ? {
-          __typename: navSeries.__typename as "Series" | "Event",
-          id: navSeries.id,
-          title: navSeries.title,
-        }
-        : null
+            __typename: navSeries.__typename as "Series" | "Event",
+            id: navSeries.id,
+            title: navSeries.title,
+          }
+        : null,
     );
     routeSubPath && setSelectedSeriesId(routeSubPath);
   }, [routeSubPath, seriesList]);
@@ -250,17 +250,17 @@ export const App = () => {
           // Convert UserInfo to User type by adding missing provider property
           user
             ? {
-              ...user,
-              user: {
-                ...user.user,
-                provider: "internal", // Add default provider since it's missing from UserInfo
-              },
-            }
+                ...user,
+                user: {
+                  ...user.user,
+                  provider: "internal", // Add default provider since it's missing from UserInfo
+                },
+              }
             : user,
           location,
           updateFile,
           setUploadError,
-          aclData
+          aclData,
         )
           .then(() => {
             const prev = next;
@@ -269,9 +269,7 @@ export const App = () => {
           })
           .catch((error) => {
             setFileWaitingList((prevState) => {
-              const updateFileIndex = prevState.findIndex(
-                (fileItem) => fileItem?.id === next.id
-              );
+              const updateFileIndex = prevState.findIndex((fileItem) => fileItem?.id === next.id);
 
               if (updateFileIndex === -1) return prevState;
 
@@ -350,7 +348,7 @@ export const App = () => {
         deleteUpload(fileID);
       }
     },
-    [zustandupload?.files, deleteUpload]
+    [zustandupload?.files, deleteUpload],
   );
 
   const abortUpload = (selectedFile: UploadFileBlob) => {
@@ -362,9 +360,7 @@ export const App = () => {
     }
 
     setFileWaitingList((prevState) => {
-      const updateFileIndex = prevState.findIndex(
-        (fileItem) => fileItem?.id === selectedFile.id
-      );
+      const updateFileIndex = prevState.findIndex((fileItem) => fileItem?.id === selectedFile.id);
 
       if (updateFileIndex === -1) return prevState;
 
@@ -419,7 +415,7 @@ export const App = () => {
     if (editFile && uploadName.trim().length > 0) {
       setFileWaitingList((prevState) => {
         const updateFileIndex = prevState.findIndex(
-          (fileItem) => fileItem?.id === editFile.index
+          (fileItem) => fileItem?.id === editFile.index,
         ) as number;
 
         if (
@@ -571,17 +567,19 @@ export const App = () => {
                     <h2 className="font-semibold tracking-tight my-2">{t("upload:series")}</h2>
 
                     <SelectSeriesCombobox
-                      seriesList={data?.pages.flat().filter((s): s is { id: string; title: string } => s !== null)}
+                      seriesList={data?.pages
+                        .flat()
+                        .filter((s): s is { id: string; title: string } => s !== null)}
                       selectedSeries={selectedSeries}
                       setSelectedSeries={(value) => {
                         setSelectedSeries(
                           value && value.id && value.title
                             ? {
-                              __typename: "Series" as const,
-                              id: value.id,
-                              title: value.title,
-                            }
-                            : null
+                                __typename: "Series" as const,
+                                id: value.id,
+                                title: value.title,
+                              }
+                            : null,
                         );
                       }}
                       searchSeries={(query: React.SetStateAction<string>) => {

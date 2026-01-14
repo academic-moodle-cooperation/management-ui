@@ -11,11 +11,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar} from "@workspace/ui/components";
+  useSidebar,
+} from "@workspace/ui/components";
 
 interface Team {
   name: string;
@@ -28,7 +28,7 @@ export function TeamSwitcher({ teams }: { teams: Team[] }) {
   // Initialize with the first team if available, otherwise undefined.
   // The type annotation helps TypeScript understand activeTeam can be Team or undefined.
   const [activeTeam, setActiveTeam] = React.useState<Team | undefined>(
-    teams && teams.length > 0 ? teams[0] : undefined
+    teams && teams.length > 0 ? teams[0] : undefined,
   );
 
   // If there's no active team (e.g., teams array was empty), render nothing or a placeholder.

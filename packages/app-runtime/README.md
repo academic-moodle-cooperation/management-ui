@@ -143,7 +143,7 @@ export type { AppConfig, StandaloneConfig } from "./types";
 function bootstrapStandaloneApp(
   App: React.ComponentType,
   rootElementId: string,
-  config: StandaloneConfig
+  config: StandaloneConfig,
 ): void;
 ```
 

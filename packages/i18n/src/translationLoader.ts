@@ -5,7 +5,7 @@ import { i18next } from "./index";
 
 export const loadNamespace = async (
   namespace: string,
-  language = i18next.language.split("-")[0] || "de"
+  language = i18next.language.split("-")[0] || "de",
 ) => {
   if (!i18next.hasResourceBundle(language, namespace)) {
     try {

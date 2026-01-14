@@ -91,7 +91,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
   // Room selection handlers
   const handleRoomToggle = (roomId: number) => {
     setSelectedRoomIds((prev) =>
-      prev.includes(roomId) ? prev.filter((id) => id !== roomId) : [...prev, roomId]
+      prev.includes(roomId) ? prev.filter((id) => id !== roomId) : [...prev, roomId],
     );
   };
 

@@ -91,7 +91,7 @@ async function fetchRooms(config: EventCalendarConfig = DEFAULT_CONFIG): Promise
 
       // Filter rooms to only allowed room IDs
       const filteredRooms = allRooms.filter((room: Room) =>
-        config.allowedRoomIds.includes(room.extRaumId)
+        config.allowedRoomIds.includes(room.extRaumId),
       );
 
       logger.debug("Room filtering results", {
@@ -100,7 +100,7 @@ async function fetchRooms(config: EventCalendarConfig = DEFAULT_CONFIG): Promise
         matchingRooms: filteredRooms.length,
         matchingRoomIds: filteredRooms.map((r) => r.extRaumId).sort((a, b) => a - b),
         missingRoomIds: config.allowedRoomIds.filter(
-          (id) => !allRooms.find((r) => r.extRaumId === id)
+          (id) => !allRooms.find((r) => r.extRaumId === id),
         ),
       });
 
@@ -108,7 +108,7 @@ async function fetchRooms(config: EventCalendarConfig = DEFAULT_CONFIG): Promise
     } catch (error) {
       logger.error(
         "Error fetching rooms from API",
-        error instanceof Error ? error : new Error(String(error))
+        error instanceof Error ? error : new Error(String(error)),
       );
       throw error;
     }
@@ -174,13 +174,13 @@ async function fetchRooms(config: EventCalendarConfig = DEFAULT_CONFIG): Promise
  */
 async function fetchEventsByDays(
   days: number = 1,
-  config: EventCalendarConfig = DEFAULT_CONFIG
+  config: EventCalendarConfig = DEFAULT_CONFIG,
 ): Promise<ParsedEvent[]> {
   // Check if we're in production mode (API URL is set)
   if (config.apiBaseUrl && config.apiBaseUrl !== "https://api.example.com") {
     try {
       const response = await fetch(
-        `${config.apiBaseUrl}/digitalsignage/v1/findRaumbelegungenByDays?days=${days}`
+        `${config.apiBaseUrl}/digitalsignage/v1/findRaumbelegungenByDays?days=${days}`,
       );
 
       if (!response.ok) {
@@ -196,7 +196,7 @@ async function fetchEventsByDays(
     } catch (error) {
       logger.error(
         "Error fetching events from API",
-        error instanceof Error ? error : new Error(String(error))
+        error instanceof Error ? error : new Error(String(error)),
       );
       throw error;
     }
@@ -246,7 +246,7 @@ async function fetchEventsByDays(
           relationenName: "Prof. Dr. Weber, Studiengang Physik",
           name: "Quantenmechanik",
           lvKategorie: "Vorlesung",
-        }
+        },
       );
 
       // Tuesday, Thursday have additional events
@@ -269,7 +269,7 @@ async function fetchEventsByDays(
             relationenName: "Dr. Bauer, Studiengang Psychologie",
             name: "Experimentalpsychologie Übung",
             lvKategorie: "Übung",
-          }
+          },
         );
       }
 
@@ -312,7 +312,7 @@ async function fetchEventsByDays(
  */
 async function fetchEventsByDate(
   date: Date,
-  config: EventCalendarConfig = DEFAULT_CONFIG
+  config: EventCalendarConfig = DEFAULT_CONFIG,
 ): Promise<ParsedEvent[]> {
   // Calculate days offset from today
   const today = new Date();
@@ -360,7 +360,7 @@ export function useRooms(config?: EventCalendarConfig): UseQueryResult<Room[], E
  */
 export function useEventsByDays(
   days: number = 1,
-  config?: EventCalendarConfig
+  config?: EventCalendarConfig,
 ): UseQueryResult<ParsedEvent[], Error> {
   return useQuery({
     queryKey: ["univie-events-by-days", days, config?.allowedRoomIds],
@@ -375,7 +375,7 @@ export function useEventsByDays(
  */
 export function useEventsByDate(
   date: Date,
-  config?: EventCalendarConfig
+  config?: EventCalendarConfig,
 ): UseQueryResult<ParsedEvent[], Error> {
   return useQuery({
     queryKey: ["univie-events-by-date", formatDateForApi(date), config?.allowedRoomIds],
@@ -413,7 +413,7 @@ export function clearRoomsCache(): void {
  */
 export function analyzeRoomIdMismatches(
   apiRooms: Room[],
-  allowedIds: number[]
+  allowedIds: number[],
 ): {
   found: number[];
   missing: number[];

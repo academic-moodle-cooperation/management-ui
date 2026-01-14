@@ -4,19 +4,19 @@ import {
   Loader2Icon,
   OctagonXIcon,
   TriangleAlertIcon,
-} from "lucide-react"
-import { useTheme } from "next-themes"
-import { Toaster as Sonner, type ToasterProps } from "sonner"
+} from "lucide-react";
+import { useTheme } from "next-themes";
+import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme()
+  const { theme = "system" } = useTheme();
 
   // Type assertion needed because sonner's ToasterProps doesn't fully comply
   // with exactOptionalPropertyTypes, but the component works correctly at runtime
-   
+
   return (
     <Sonner
-      theme={theme as (ToasterProps["theme"] | undefined)}
+      theme={theme as ToasterProps["theme"] | undefined}
       className="toaster group"
       icons={{
         success: <CircleCheckIcon className="size-4" />,
@@ -35,7 +35,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }
       {...(props as any)}
     />
-  )
-}
+  );
+};
 
-export { Toaster }
+export { Toaster };

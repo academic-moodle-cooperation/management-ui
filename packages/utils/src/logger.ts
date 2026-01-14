@@ -21,8 +21,7 @@ class Logger {
     let nodeEnv = false;
     if (typeof process !== "undefined" && process !== null) {
       const proc = process as { env?: { NODE_ENV?: string; DEV?: string } };
-      nodeEnv =
-        proc.env?.NODE_ENV === "development" || proc.env?.DEV === "true";
+      nodeEnv = proc.env?.NODE_ENV === "development" || proc.env?.DEV === "true";
     }
 
     // Check Vite environment (for runtime packages)
@@ -71,10 +70,10 @@ class Logger {
     const errorContext: LogContext = {
       ...(error instanceof Error
         ? {
-          error: error.message,
-          stack: error.stack,
-          name: error.name,
-        }
+            error: error.message,
+            stack: error.stack,
+            name: error.name,
+          }
         : error || {}),
       ...(context || {}),
     };
@@ -109,7 +108,7 @@ class Logger {
     childLogger.error = (
       message: string,
       error?: Error | LogContext,
-      additionalContext?: LogContext
+      additionalContext?: LogContext,
     ) => {
       originalMethods.error(message, error, { ...context, ...additionalContext });
     };

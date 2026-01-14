@@ -43,7 +43,7 @@ export const RoomFilter: React.FC<RoomFilterProps> = ({
       acc[building].push(room);
       return acc;
     },
-    {} as Record<string, Room[]>
+    {} as Record<string, Room[]>,
   );
 
   const isRoomSelected = (roomId: number) => selectedRoomIds.includes(roomId);

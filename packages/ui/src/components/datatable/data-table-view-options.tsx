@@ -9,10 +9,10 @@ import {
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
- Button } from "@workspace/ui/components";
+  Button,
+} from "@workspace/ui/components";
 
 import type { Table, RowData } from "@tanstack/react-table";
-
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;

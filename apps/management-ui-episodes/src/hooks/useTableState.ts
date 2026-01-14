@@ -22,7 +22,7 @@ export interface TableAction {
 export function useTableState<State extends TableBaseState, Action extends TableAction>(
   initialState: State,
   reducer: (state: State, action: Action) => State,
-  appName: string
+  appName: string,
 ) {
   // Initialize state with reducer
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -34,13 +34,13 @@ export function useTableState<State extends TableBaseState, Action extends Table
   // Create atoms for storage
   const sortingAtom = useMemo(
     () => atomWithStorage<SortingState>(sortingAtomKey, []),
-    [sortingAtomKey]
+    [sortingAtomKey],
   );
 
   const columnVisibilityAtom = useMemo(
     () =>
       atomWithStorage<VisibilityState>(columnVisibilityAtomKey, { title: true } as VisibilityState),
-    [columnVisibilityAtomKey]
+    [columnVisibilityAtomKey],
   );
 
   // Get values and setters from atoms
@@ -53,23 +53,23 @@ export function useTableState<State extends TableBaseState, Action extends Table
   // Utility functions
   const setPageIndex = useCallback(
     (index: number) => dispatch({ type: "SET_PAGE_INDEX", payload: index } as Action),
-    [dispatch]
+    [dispatch],
   );
 
   const setPageSize = useCallback(
     (size: number) => dispatch({ type: "SET_PAGE_SIZE", payload: size } as Action),
-    [dispatch]
+    [dispatch],
   );
 
   const setQueryFilter = useCallback(
     (filter: string | undefined) =>
       dispatch({ type: "SET_QUERY_FILTER", payload: filter } as Action),
-    [dispatch]
+    [dispatch],
   );
 
   const setSidebarOpen = useCallback(
     (open: boolean) => dispatch({ type: "SET_SIDEBAR_OPEN", payload: open } as Action),
-    [dispatch]
+    [dispatch],
   );
 
   useEffect(() => {

@@ -38,11 +38,11 @@ export const AclEditorTab: React.FC<AclEditorTabProps> = ({
   // Fetch ACL data based on element type
   const { data: eventAclData } = useGetManagedAclsWithEventIdQuery(
     { id },
-    { enabled: isEvent && !!id }
+    { enabled: isEvent && !!id },
   );
   const { data: seriesAclData } = useGetManagedAclsWithSeriesIdQuery(
     { id },
-    { enabled: isSeries && !!id }
+    { enabled: isSeries && !!id },
   );
 
   // Extract initial ACL entries from the fetched data
