@@ -13,7 +13,7 @@ export interface UploadAclEditorProps {
   onAclDataChange: (aclData: AclData, managedAclId: string) => void;
   // selectedSeries: Series;
   disabled: boolean;
-  refetch: () => void;
+  refetch?: () => void;
 }
 
 export const UploadAclEditor: React.FC<UploadAclEditorProps> = ({
@@ -71,7 +71,7 @@ export const UploadAclEditor: React.FC<UploadAclEditorProps> = ({
       },
       managedAclId ?? "",
     );
-  }, [managedAclId, entries, managedAclEntries]);
+  }, [managedAclId, entries, managedAclEntries, onAclDataChange]);
 
   return (
     <div className="h-full">

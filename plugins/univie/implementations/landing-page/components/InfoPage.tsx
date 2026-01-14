@@ -1,7 +1,7 @@
 import React, { type FC } from "react";
 
 import { createOrganizationNamespace, usePluginTranslation } from "@workspace/i18n";
-import { useGetCurrentUser, useAppConfig } from "@workspace/query";
+import { useGetCurrentUser } from "@workspace/query";
 import { useAuthActions } from "@workspace/router";
 import { Button } from "@workspace/ui/components";
 
@@ -15,7 +15,6 @@ import univieLogoUrl from "./assets/univie_logo.svg?url";
  */
 const InfoPage: FC = () => {
   const { data } = useGetCurrentUser();
-  const { config } = useAppConfig();
   const { login } = useAuthActions();
   const namespace = createOrganizationNamespace("univie", "landing-page");
 

@@ -2,7 +2,7 @@ import React from "react";
 
 import { createPlugin } from "@workspace/plugin-system";
 import type { PluginManager } from "@workspace/plugin-system";
-import type { NavMainProps } from "@workspace/ui/components/appshell/components/nav-main";
+import type { NavMainProps } from "@workspace/ui/components";
 import { Video } from "@workspace/ui/components/icons";
 import { logger } from "@workspace/utils";
 

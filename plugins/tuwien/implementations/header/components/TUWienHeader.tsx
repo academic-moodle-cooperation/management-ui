@@ -68,7 +68,7 @@ const headerStyles = `
 
 const TUWienHeader: React.FC = () => {
   const { t, i18n } = useI18n();
-  const { open, setOpen, isMobile, toggleSidebar } = useSidebar();
+  const { isMobile, toggleSidebar } = useSidebar();
 
   useEffect(() => {
     const loadTranslations = async () => {

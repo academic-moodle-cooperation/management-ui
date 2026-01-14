@@ -10,9 +10,9 @@ import {
   AccordionItem,
   AccordionTrigger,
   Container,
+  NavMain,
   SidebarMenuButton,
 } from "@workspace/ui/components";
-import { NavMain } from "@workspace/ui/components/appshell/components/nav-main";
 import { LogIn, LogOut } from "@workspace/ui/components/icons";
 import { cn } from "@workspace/ui/lib/utils";
 
@@ -22,7 +22,6 @@ import { cn } from "@workspace/ui/lib/utils";
  */
 const SidebarUserMenu = ({ open }: { open: boolean }) => {
   const { data, isLoading } = useGetCurrentUser();
-  const { config } = useAppConfig();
 
   // Using standardized routes instead of direct config URLs
 

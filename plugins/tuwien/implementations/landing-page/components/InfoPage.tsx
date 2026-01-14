@@ -17,10 +17,8 @@ const InfoPage: FC = () => {
 
   useEffect(() => {
     const loadTranslations = async () => {
-      try {
-        // The plugin system should handle translation loading automatically
-        // but we'll keep this pattern for consistency with the original
-      } catch (error) {}
+      // The plugin system should handle translation loading automatically
+      // but we'll keep this pattern for consistency with the original
     };
     loadTranslations();
   }, [i18n.language, t]);

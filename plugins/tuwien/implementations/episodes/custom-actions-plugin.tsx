@@ -9,20 +9,14 @@ import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/c
 import { MonitorPlay } from "@workspace/ui/components/icons";
 
 interface TUWienEpisodesActionsProps {
-  event: EventsDataFragment;
-  refetch: () => void;
   maxVisibleActions?: number;
   children: React.ReactElement;
-  defaultRender?: () => React.ReactNode;
 }
 
 // Custom TU Wien actions component that enhances the default actions
 const TUWienEpisodesActions = ({
-  event,
-  refetch,
   maxVisibleActions,
   children,
-  defaultRender,
 }: TUWienEpisodesActionsProps) => {
   const { config } = useAppConfig();
   const namespace = createOrganizationNamespace("tuwien", "episodes");

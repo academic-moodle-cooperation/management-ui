@@ -1,6 +1,6 @@
 import React from "react";
 
-import { createOrganizationNamespace, i18next, usePluginTranslation } from "@workspace/i18n";
+import { createOrganizationNamespace, usePluginTranslation } from "@workspace/i18n";
 import { createPlugin } from "@workspace/plugin-system";
 import type { PluginManager } from "@workspace/plugin-system";
 import { useAppConfig, type SeriesDataFragment } from "@workspace/query";

@@ -4,13 +4,13 @@ import React, { useState, useMemo } from "react";
 import { Card, Button, Skeleton , DatePicker } from "@workspace/ui/components";
 import { logger } from "@workspace/utils";
 
-import { useEventsByDate, useRooms, getRoomById, getEventsForRoom } from "../api/eventCalendarApi";
+import { useEventsByDate, useRooms, getRoomById } from "../api/eventCalendarApi";
 
 
 import { EventCard } from "./EventCard";
 import { RoomFilter } from "./RoomFilter";
 
-import type { ParsedEvent, Room } from "../types/eventCalendar";
+import type { ParsedEvent } from "../types/eventCalendar";
 
 interface CalendarViewProps {
   className?: string;

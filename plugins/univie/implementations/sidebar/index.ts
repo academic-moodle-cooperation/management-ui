@@ -60,9 +60,9 @@ export const univieSidebarImplementation = createPlugin({
     });
   },
 
-  activate() {},
+  activate() { },
 
-  deactivate() {},
+  deactivate() { },
 });
 
 export const studioUnivieNavImplementation = createPlugin({

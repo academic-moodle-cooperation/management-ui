@@ -1,7 +1,6 @@
 import React from "react";
 
 import { usePluginTranslation, createOrganizationNamespace } from "@workspace/i18n";
-import { cn } from "@workspace/ui/lib/utils";
 
 /**
  * TU Wien Footer Implementation
