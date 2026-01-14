@@ -205,7 +205,8 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
       ? columnsKeys
           .map((columnsKey) =>
             columns.find((column) => {
-              const col = column as any; // TanStack table column types are complex, using any for access
+              // TanStack table column types are complex, but we can safely access these properties
+              const col = column as ColumnDef<EventsDataFragment>;
               return col.accessorKey === columnsKey || col.id === columnsKey;
             }),
           )
@@ -241,7 +242,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
       {/* Main table with ref */}
       <div ref={tableRef}>
         <MUITable
-          columns={sortedColumns as any}
+          columns={sortedColumns as ColumnDef<EventsDataFragment>[]}
           data={episodesData?.filter(Boolean) || []}
           selectedId={selectedId}
           refetch={refetch}
