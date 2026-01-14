@@ -38,7 +38,7 @@ export function resolveAssetUrl(pathOrUrl?: string, fallbackRelative?: string): 
       const pathname = url.pathname;
 
       // Extract base path (e.g., "/management-ui/" from "/management-ui/@vite/client")
-      const match = pathname.match(/^(\/[^\/]+\/)/);
+      const match = pathname.match(/^(\/[^/]+\/)/);
       if (match?.[1] && match[1] !== "/src/" && match[1] !== "/@vite/") {
         base = match[1];
       }

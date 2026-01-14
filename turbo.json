@@ -9,7 +9,8 @@
     "GRAPHQL_ENDPOINT",
     "GRAPHQL_HEADERS",
     "npm_package_name",
-    "VITE_INSTITUTION_WEBSITE"
+    "VITE_INSTITUTION_WEBSITE",
+    "VITE_ASSET_BASE_URL"
   ],
   "tasks": {
     "build": {
