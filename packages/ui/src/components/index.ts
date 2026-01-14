@@ -24,3 +24,5 @@ export { Switch as SwitchHeadlessUI } from "@headlessui/react";
 export type { Row, SortingState, ColumnDef, Column, CellContext } from "./datatable";
 export type { OnChangeFn, VisibilityState } from "@tanstack/react-table";
 export type { ACLEntry, ACLEntryInput, ManagedACLEntry } from "./acl-editor/types";
+export { NavMain } from "./appshell/components/nav-main";
+export type { NavMainProps } from "./appshell/components/nav-main";
