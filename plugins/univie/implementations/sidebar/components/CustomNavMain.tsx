@@ -1,8 +1,8 @@
 import React from "react";
-import { NavMain, type NavMainProps } from "@workspace/ui/components/appshell/components/nav-main";
-import type { LucideIcon } from "@workspace/ui/components/icons";
-import { cn } from "@workspace/ui/lib/utils";
+
 import { usePluginTranslation, createOrganizationNamespace } from "@workspace/i18n";
+import { NavMain, type NavMainProps } from "@workspace/ui/components";
+import { cn } from "@workspace/ui/lib/utils";
 
 export const CustomNavMain = (props: NavMainProps) => {
   const namespace = createOrganizationNamespace("univie", "sidebar");
