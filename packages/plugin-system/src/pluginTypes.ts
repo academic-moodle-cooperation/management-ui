@@ -6,7 +6,7 @@ export interface PluginTypeDefinition {
   extensionPoints: {
     id: string;
     description: string;
-    accepts: 'component' | 'object' | 'both';
+    accepts: "component" | "object" | "both";
     schema?: Record<string, unknown>; // For object types, describe expected fields
   }[];
   examples: {
@@ -17,30 +17,30 @@ export interface PluginTypeDefinition {
 
 export const PLUGIN_TYPES: PluginTypeDefinition[] = [
   {
-    type: 'sidebar',
-    namespace: 'ui',
-    description: 'Add items to the application sidebar navigation',
+    type: "sidebar",
+    namespace: "ui",
+    description: "Add items to the application sidebar navigation",
     extensionPoints: [
       {
-        id: 'sidebar:nav-items',
-        description: 'Navigation items in the main sidebar',
-        accepts: 'component'
+        id: "sidebar:nav-items",
+        description: "Navigation items in the main sidebar",
+        accepts: "component",
       },
       {
-        id: 'sidebar:config',
-        description: 'Configuration for sidebar items',
-        accepts: 'object',
+        id: "sidebar:config",
+        description: "Configuration for sidebar items",
+        accepts: "object",
         schema: {
-          title: 'string',
-          path: 'string',
-          icon: 'string',
-          permissions: 'string[]'
-        }
-      }
+          title: "string",
+          path: "string",
+          icon: "string",
+          permissions: "string[]",
+        },
+      },
     ],
     examples: [
       {
-        title: 'Adding a navigation item',
+        title: "Adding a navigation item",
         code: `
 import { createPlugin } from '@workspace/plugin-system';
 
@@ -65,34 +65,34 @@ export const MyPlugin = createPlugin({
   activate() { /* Plugin activated */ },
   deactivate() { /* Plugin deactivated */ }
 });
-        `
-      }
-    ]
+        `,
+      },
+    ],
   },
   {
-    type: 'app',
-    namespace: 'apps',
-    description: 'Register full applications that can be loaded by the core shell',
+    type: "app",
+    namespace: "apps",
+    description: "Register full applications that can be loaded by the core shell",
     extensionPoints: [
       {
-        id: 'apps:definitions',
-        description: 'Application definitions for dynamic loading',
-        accepts: 'object',
+        id: "apps:definitions",
+        description: "Application definitions for dynamic loading",
+        accepts: "object",
         schema: {
-          id: 'string',
-          name: 'string',
-          routePath: 'string',
-          component: 'React.ComponentType',
-          navigation: 'object',
-          loader: 'function',
-          version: 'string',
-          description: 'string'
-        }
-      }
+          id: "string",
+          name: "string",
+          routePath: "string",
+          component: "React.ComponentType",
+          navigation: "object",
+          loader: "function",
+          version: "string",
+          description: "string",
+        },
+      },
     ],
     examples: [
       {
-        title: 'Registering an application',
+        title: "Registering an application",
         code: `
 import { createPlugin } from '@workspace/plugin-system';
 import { MyAppComponent } from './MyAppComponent';
@@ -122,14 +122,14 @@ export const MyAppPlugin = createPlugin({
   activate() { /* Plugin activated */ },
   deactivate() { /* Plugin deactivated */ }
 });
-        `
-      }
-    ]
+        `,
+      },
+    ],
   },
   // Add more plugin types...
 ];
 
 // Helper function to get plugin type information
 export function getPluginTypeInfo(type: string): PluginTypeDefinition | undefined {
-  return PLUGIN_TYPES.find(p => p.type === type);
-} 
+  return PLUGIN_TYPES.find((p) => p.type === type);
+}

@@ -2,22 +2,12 @@
   "extends": "@workspace/typescript-config/react-application.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "composite": false,
+    "skipLibCheck": true,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "src",
-    "vite-env.d.ts",
-    "vite.config.ts",
-    "tailwind.config.js",
-    "postcss.config.mjs"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".turbo"
-  ]
+  "include": ["src", "vite-env.d.ts", "vite.config.ts", "tailwind.config.js", "postcss.config.mjs"],
+  "exclude": ["node_modules", "dist", ".turbo"]
 }

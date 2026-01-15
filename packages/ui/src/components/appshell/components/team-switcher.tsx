@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { ChevronsUpDown, Plus } from "lucide-react"
+import { ChevronsUpDown, Plus } from "lucide-react";
+import * as React from "react";
 
 import {
   DropdownMenu,
@@ -11,13 +11,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@workspace/ui/components"
-import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@workspace/ui/components"
+} from "@workspace/ui/components";
 
 interface Team {
   name: string;
@@ -25,16 +23,12 @@ interface Team {
   plan: string;
 }
 
-export function TeamSwitcher({
-  teams,
-}: {
-  teams: Team[]
-}) {
-  const { isMobile } = useSidebar()
+export function TeamSwitcher({ teams }: { teams: Team[] }) {
+  const { isMobile } = useSidebar();
   // Initialize with the first team if available, otherwise undefined.
   // The type annotation helps TypeScript understand activeTeam can be Team or undefined.
   const [activeTeam, setActiveTeam] = React.useState<Team | undefined>(
-    teams && teams.length > 0 ? teams[0] : undefined
+    teams && teams.length > 0 ? teams[0] : undefined,
   );
 
   // If there's no active team (e.g., teams array was empty), render nothing or a placeholder.
@@ -56,9 +50,7 @@ export function TeamSwitcher({
                 <activeTeam.logo className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  {activeTeam.name}
-                </span>
+                <span className="truncate font-semibold">{activeTeam.name}</span>
                 <span className="truncate text-xs">{activeTeam.plan}</span>
               </div>
               <ChevronsUpDown className="ml-auto" />
@@ -70,9 +62,7 @@ export function TeamSwitcher({
             side={isMobile ? "bottom" : "right"}
             sideOffset={4}
           >
-            <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Teams
-            </DropdownMenuLabel>
+            <DropdownMenuLabel className="text-xs text-muted-foreground">Teams</DropdownMenuLabel>
             {/* map over the original teams prop, not activeTeam */}
             {teams.map((team, index) => (
               <DropdownMenuItem
@@ -98,5 +88,5 @@ export function TeamSwitcher({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
-} 
+  );
+}

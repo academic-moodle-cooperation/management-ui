@@ -1,11 +1,13 @@
-import path from 'node:path';
-import fs from 'node:fs';
-import type { UserConfig, BuildOptions, Plugin } from 'vite';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
-import { createBaseConfig, type CreateBaseConfigOptions } from './base.config.js';
-import { getAppBasePath, DEFAULT_SHELL_APP_PORT } from './ports.js';
-import { createProxyConfig } from './proxy.js';
-import { generateConfigPlugin } from './generate-config-plugin.js';
+import fs from "node:fs";
+import path from "node:path";
+
+import { viteStaticCopy } from "vite-plugin-static-copy";
+
+import { createBaseConfig, type CreateBaseConfigOptions } from "./base.config.js";
+import { getAppBasePath, DEFAULT_SHELL_APP_PORT } from "./ports.js";
+import { createProxyConfig } from "./proxy.js";
+
+import type { UserConfig, BuildOptions } from "vite";
 
 export interface CreateShellAppViteConfigOptions {
   packageName: string;
@@ -14,28 +16,24 @@ export interface CreateShellAppViteConfigOptions {
   invokerDir: string; // __dirname of the vite.config.ts file calling this
 }
 
-export const createShellAppViteConfig = (
-  options: CreateShellAppViteConfigOptions
-): UserConfig => {
+export const createShellAppViteConfig = (options: CreateShellAppViteConfigOptions): UserConfig => {
   const { mode, env, invokerDir } = options;
-  const isProduction = mode === 'production';
+  const isProduction = mode === "production";
 
-  const monorepoRootPath = path.resolve(invokerDir, '../..');
-  const appsPath = path.resolve(invokerDir, '../../apps'); // For @monorepo-apps alias
-
-
+  const monorepoRootPath = path.resolve(invokerDir, "../..");
+  const appsPath = path.resolve(invokerDir, "../../apps"); // For @monorepo-apps alias
 
   // Discover per-plugin asset directories (e.g., plugins/<plugin>/assets/**/*)
-  const pluginsRoot = path.resolve(monorepoRootPath, 'plugins');
+  const pluginsRoot = path.resolve(monorepoRootPath, "plugins");
   let perPluginAssetTargets: { src: string; dest: string }[] = [];
   try {
     const pluginEntries = fs.readdirSync(pluginsRoot, { withFileTypes: true });
     perPluginAssetTargets = pluginEntries
       .filter((entry) => entry.isDirectory())
       .map((entry) => entry.name)
-      .filter((pluginDirName) => fs.existsSync(path.resolve(pluginsRoot, pluginDirName, 'assets')))
+      .filter((pluginDirName) => fs.existsSync(path.resolve(pluginsRoot, pluginDirName, "assets")))
       .map((pluginDirName) => ({
-        src: path.resolve(pluginsRoot, pluginDirName, 'assets/**/*'),
+        src: path.resolve(pluginsRoot, pluginDirName, "assets/**/*"),
         dest: `assets/${pluginDirName}`,
       }));
   } catch {
@@ -47,52 +45,55 @@ export const createShellAppViteConfig = (
     targets: [
       // Core i18n locales
       {
-        src: path.resolve(monorepoRootPath, 'packages/i18n/locales/**/*'),
-        dest: 'locales'
+        src: path.resolve(monorepoRootPath, "packages/i18n/src/locales/**/*"),
+        dest: "locales",
       },
       // Plugin locales (from packages)
       {
-        src: path.resolve(monorepoRootPath, 'packages/**/locales/**/*'),
-        dest: 'locales'
+        src: path.resolve(monorepoRootPath, "packages/**/locales/**/*"),
+        dest: "locales",
       },
       // All plugin implementations from unified plugins directory
       {
-        src: path.resolve(monorepoRootPath, 'plugins/**/locales/**/*'),
-        dest: 'locales'
+        src: path.resolve(monorepoRootPath, "plugins/**/locales/**/*"),
+        dest: "locales",
       },
       // Shared plugin assets (global)
       {
-        src: path.resolve(monorepoRootPath, 'plugins/assets/*'),
-        dest: 'assets'
+        src: path.resolve(monorepoRootPath, "plugins/assets/*"),
+        dest: "assets",
       },
       // Per-plugin assets (encapsulated under /assets/<plugin>/...)
       ...perPluginAssetTargets,
-
-    ]
+    ],
   });
 
   const baseConfigOptions: CreateBaseConfigOptions = {
     isProduction,
     plugins: [staticAssetsCopyPlugin], // Add static assets copying plugin
     resolveAliases: {
-      '@': path.resolve(invokerDir, 'src'),
-      '@monorepo-apps': appsPath,
+      "@": path.resolve(invokerDir, "src"),
+      "@monorepo-apps": appsPath,
       // Minimal generic roots for workspace packages used in plugin code
-      '@workspace/i18n': path.resolve(monorepoRootPath, 'packages/i18n/src'),
-      '@workspace/ui/globals.css': path.resolve(monorepoRootPath, 'packages/ui/src/styles/globals.css'),
-      '@workspace/utils': path.resolve(monorepoRootPath, 'packages/utils/src'),
-      '@workspace/router': path.resolve(monorepoRootPath, 'packages/router/src'),
-      '@workspace/plugin-system': path.resolve(monorepoRootPath, 'packages/plugin-system/src'),
-      '@workspace/ui': path.resolve(monorepoRootPath, 'packages/ui/src'),
-      '@workspace/query': path.resolve(monorepoRootPath, 'packages/query/src'),
-      '@workspace/providers': path.resolve(monorepoRootPath, 'packages/providers/src'),
-      '@workspace/plugins': path.resolve(monorepoRootPath, 'plugins'),
+      "@workspace/i18n": path.resolve(monorepoRootPath, "packages/i18n/src"),
+      "@workspace/ui-config": path.resolve(monorepoRootPath, "packages/ui-config/src"),
+      "@workspace/ui/globals.css": path.resolve(
+        monorepoRootPath,
+        "packages/ui/src/styles/globals.css",
+      ),
+      "@workspace/utils": path.resolve(monorepoRootPath, "packages/utils/src"),
+      "@workspace/router": path.resolve(monorepoRootPath, "packages/router/src"),
+      "@workspace/plugin-system": path.resolve(monorepoRootPath, "packages/plugin-system/src"),
+      "@workspace/ui": path.resolve(monorepoRootPath, "packages/ui/src"),
+      "@workspace/query": path.resolve(monorepoRootPath, "packages/query/src"),
+      "@workspace/providers": path.resolve(monorepoRootPath, "packages/providers/src"),
+      "@workspace/plugins": path.resolve(monorepoRootPath, "plugins"),
     },
     serverOptions: {
       fs: {
         allow: [monorepoRootPath],
       },
-      host: '127.0.0.1',
+      host: "127.0.0.1",
     },
     buildOptions: {
       // Shell-specific build options can go here
@@ -100,10 +101,10 @@ export const createShellAppViteConfig = (
   };
 
   const baseSettings = createBaseConfig(baseConfigOptions);
-  const shellBasePath = getAppBasePath(isProduction, env.VITE_APP_BASE_PATH);
+  const shellBasePath = getAppBasePath(isProduction, env["VITE_APP_BASE_PATH"]);
   const proxyConfiguration = createProxyConfig({
     isProduction,
-    target: env.VITE_PROXY_TARGET,
+    ...(env["VITE_PROXY_TARGET"] !== undefined && { target: env["VITE_PROXY_TARGET"] }),
     // customProxies: { ... } // if shell needs specific proxies from env or hardcoded
   });
 
@@ -129,4 +130,4 @@ export const createShellAppViteConfig = (
     },
     build: finalBuildOptions,
   };
-}; 
+};

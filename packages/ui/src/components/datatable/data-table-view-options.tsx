@@ -1,6 +1,7 @@
-import React from "react";
 import { Settings2 } from "lucide-react";
-import { Table, RowData } from "@tanstack/react-table";
+import React from "react";
+
+import { useI18n } from "@workspace/i18n";
 import {
   DropdownMenuTrigger,
   DropdownMenu,
@@ -8,22 +9,22 @@ import {
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  Button,
 } from "@workspace/ui/components";
-import { Button } from "@workspace/ui/components";
-import { useI18n } from "@workspace/i18n";
+
+import type { Table, RowData } from "@tanstack/react-table";
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
 }
 declare module "@tanstack/react-table" {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ColumnMeta<TData extends RowData, TValue> {
     translatedTitle: string;
   }
 }
 
-export function DataTableViewOptions<TData>({
-  table,
-}: DataTableViewOptionsProps<TData>) {
+export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>) {
   const { t } = useI18n();
 
   const [preventEditClose, setPreventEditClose] = React.useState(false);
@@ -37,11 +38,7 @@ export function DataTableViewOptions<TData>({
       open={open}
     >
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="hidden h-8 ml-auto lg:flex"
-        >
+        <Button variant="outline" size="sm" className="hidden h-8 ml-auto lg:flex">
           <Settings2 className="w-4 h-4 mr-2" />
           {t("common:viewOptions")}
         </Button>
@@ -65,10 +62,7 @@ export function DataTableViewOptions<TData>({
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
-          .filter(
-            (column) =>
-              typeof column.accessorFn !== "undefined" && column.getCanHide()
-          )
+          .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide())
           .map((column) => {
             return (
               <DropdownMenuCheckboxItem

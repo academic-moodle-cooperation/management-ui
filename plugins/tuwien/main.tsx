@@ -1,5 +1,6 @@
-import { bootstrapStandaloneApp } from '@workspace/app-runtime';
-import { TuWienCustomApp } from './apps/TuWienCustomApp';
+import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+
+import { TuWienCustomApp } from "./apps/TuWienCustomApp";
 
 const config = {
   baseUrl: "/tuwien-custom",
@@ -7,4 +8,4 @@ const config = {
 };
 
 // Bootstrap the TU Wien custom app for standalone execution
-bootstrapStandaloneApp(TuWienCustomApp, "root", config); 
+bootstrapStandaloneApp(TuWienCustomApp, "root", config);

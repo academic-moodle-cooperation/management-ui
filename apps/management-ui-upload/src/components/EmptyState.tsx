@@ -1,7 +1,7 @@
-import { LinkText, Trans, useI18n } from "@workspace/i18n"
+import { useI18n } from "@workspace/i18n";
 
 const EmptyState = () => {
-  const { t } = useI18n()
+  const { t } = useI18n();
   return (
     <div className="flex flex-col items-center justify-center w-full">
       <div className="text-center my-16 flex flex-col items-center">
@@ -25,7 +25,7 @@ const EmptyState = () => {
         </h4>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export { EmptyState }
+export { EmptyState };

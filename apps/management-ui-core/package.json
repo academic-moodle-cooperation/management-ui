@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "clean": "rm -rf .turbo && rm -rf dist && rm -rf target && rm -rf node_modules",
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf target && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
     "check-types": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
@@ -18,15 +18,18 @@
     "@workspace/plugins": "workspace:*",
     "@workspace/providers": "workspace:*",
     "@workspace/query": "workspace:*",
-    "@workspace/ui": "workspace:*",
     "@workspace/router": "workspace:*",
+    "@workspace/ui": "workspace:*",
+    "@workspace/ui-config": "workspace:*",
+    "@workspace/utils": "workspace:*",
     "@workspace/vite-config": "workspace:*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@tanstack/router-devtools": "^1.125.6",
     "@tailwindcss/vite": "^4.1.7",
+    "@tanstack/router-devtools": "^1.125.6",
+    "@types/node": "^25.0.6",
     "@types/react": "^18.0.0 || ^19.0.0",
     "@types/react-dom": "^18.0.0 || ^19.0.0",
     "@vitejs/plugin-react-swc": "^3.9.0",

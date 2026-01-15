@@ -1,1 +1,1 @@
-export { coreHeaderImplementation } from './core-header-implementation'; 
+export { coreHeaderImplementation } from "./core-header-implementation";

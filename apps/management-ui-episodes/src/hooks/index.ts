@@ -1,2 +1,2 @@
-export * from './useEpisodesTable';
-export * from './useTableState'; 
+export * from "./useEpisodesTable";
+export * from "./useTableState";

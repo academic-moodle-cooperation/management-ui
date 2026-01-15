@@ -35,7 +35,7 @@ The plugin filters rooms to show only a configured list of room IDs. To modify t
 ```typescript
 const DEFAULT_CONFIG: EventCalendarConfig = {
   allowedRoomIds: [1001, 1002, 1003, 2001, 2002], // Your room IDs here
-  apiBaseUrl: process.env.VITE_UNIVIE_API_BASE_URL || 'https://api.example.com'
+  apiBaseUrl: process.env.VITE_UNIVIE_API_BASE_URL || "https://api.example.com",
 };
 ```
 
@@ -64,6 +64,7 @@ The plugin automatically registers with the core shell when loaded, providing:
 ## Data Models
 
 ### Room Model
+
 ```typescript
 interface Room {
   extRaumId: number;
@@ -83,6 +84,7 @@ interface Room {
 ```
 
 ### Event Model
+
 ```typescript
 interface Event {
   extRaumId: number;
@@ -119,11 +121,13 @@ interface Event {
 ### Setup
 
 1. Install dependencies:
+
    ```bash
    pnpm install
    ```
 
 2. Start development server:
+
    ```bash
    pnpm dev
    ```
@@ -136,11 +140,13 @@ interface Event {
 ### Testing
 
 Run type checking:
+
 ```bash
 pnpm check-types
 ```
 
 Run linting:
+
 ```bash
 pnpm lint
 ```

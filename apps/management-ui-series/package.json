@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "clean": "rm -rf .turbo && rm -rf dist && rm -rf target && rm -rf node_modules",
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf target && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "check-types": "tsc --noEmit -p tsconfig.json",
     "preview": "vite preview"
@@ -14,8 +14,8 @@
   "dependencies": {
     "@workspace/app-runtime": "workspace:*",
     "@workspace/i18n": "workspace:*",
-    "@workspace/providers": "workspace:*",
     "@workspace/plugin-system": "workspace:*",
+    "@workspace/providers": "workspace:*",
     "@workspace/query": "workspace:*",
     "@workspace/router": "workspace:*",
     "@workspace/store": "workspace:*",
@@ -27,6 +27,7 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@types/node": "^25.0.6",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@typescript-eslint/eslint-plugin": "^7.13.1",

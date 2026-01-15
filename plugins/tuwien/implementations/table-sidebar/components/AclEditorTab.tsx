@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { AclEditor, SelectedElement, ACLEntry } from "@workspace/ui/components";
+
 import {
   useGetManagedAclsWithEventIdQuery,
   useGetManagedAclsWithSeriesIdQuery,
 } from "@workspace/query";
+import { AclEditor, type SelectedElement, type ACLEntry } from "@workspace/ui/components";
 
 /**
  * ACL Editor Tab Component for TU Wien Table Sidebars
@@ -38,11 +39,11 @@ export const AclEditorTab: React.FC<AclEditorTabProps> = ({
   // Fetch ACL data based on element type
   const { data: eventAclData } = useGetManagedAclsWithEventIdQuery(
     { id },
-    { enabled: isEvent && !!id }
+    { enabled: isEvent && !!id },
   );
   const { data: seriesAclData } = useGetManagedAclsWithSeriesIdQuery(
     { id },
-    { enabled: isSeries && !!id }
+    { enabled: isSeries && !!id },
   );
 
   // Extract initial ACL entries from the fetched data
@@ -65,9 +66,7 @@ export const AclEditorTab: React.FC<AclEditorTabProps> = ({
         role: entry.role || "",
         label: entry.label || entry.role || "",
         userId: "", // userId is not available in the GraphQL response, will be set when adding users
-        action:
-          entry.action?.filter((action): action is string => action !== null) ||
-          [], // Filter out null actions
+        action: entry.action?.filter((action): action is string => action !== null) || [], // Filter out null actions
       }));
 
     return processedEntries;
@@ -77,13 +76,15 @@ export const AclEditorTab: React.FC<AclEditorTabProps> = ({
   const initialManagedAclId: string | undefined = useMemo(() => {
     // First try to get it from selectedElement (if available)
     let managedAclIdFromElement: string | number | null | undefined;
-    
+
     if (selectedElement?.__typename === "Event") {
-      managedAclIdFromElement = (selectedElement as { muiEventInfo?: { managedAclId?: string | number | null } })
-        .muiEventInfo?.managedAclId;
+      managedAclIdFromElement = (
+        selectedElement as { muiEventInfo?: { managedAclId?: string | number | null } }
+      ).muiEventInfo?.managedAclId;
     } else if (selectedElement?.__typename === "Series") {
-      managedAclIdFromElement = (selectedElement as { muiSeriesInfo?: { managedAclId?: string | number | null } })
-        .muiSeriesInfo?.managedAclId;
+      managedAclIdFromElement = (
+        selectedElement as { muiSeriesInfo?: { managedAclId?: string | number | null } }
+      ).muiSeriesInfo?.managedAclId;
     }
 
     // Convert to string if we have a valid value
@@ -97,9 +98,7 @@ export const AclEditorTab: React.FC<AclEditorTabProps> = ({
 
   // State management
   const [aclEntries, setAclEntries] = useState<ACLEntry[]>([]);
-  const [managedAclId, setManagedAclId] = useState<string | undefined>(
-    undefined
-  );
+  const [managedAclId, setManagedAclId] = useState<string | undefined>(undefined);
   const [hasChanges, setHasChanges] = useState(false);
 
   // Update state when data changes

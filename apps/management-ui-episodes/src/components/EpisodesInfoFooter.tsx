@@ -1,14 +1,10 @@
 import React from "react";
-import { Button, toast } from "@workspace/ui/components";
+
 import { useI18n } from "@workspace/i18n";
-import {
-  CommonEventMetadataV2,
-  GetEventByIdInputFieldsQuery,
-  useUpdateEventMutation,
-  EventsDataFragment,
-} from "@workspace/query";
-import { MetadataField } from "@workspace/ui-config";
-import { normalizeMetadataObject } from "@workspace/utils";
+import { useUpdateEventMutation } from "@workspace/query";
+import type { GetEventByIdInputFieldsQuery, EventsDataFragment } from "@workspace/query";
+import { Button, toast } from "@workspace/ui/components";
+import { normalizeMetadataObject, logger } from "@workspace/utils";
 
 type EpisodesUpdateData = {
   [T: string]: string | string[];
@@ -23,7 +19,7 @@ interface EpisodesInfoFooterProps {
   selectedEpisodeId: string;
   refetch: () => void;
   setEditEpisode: (value: boolean) => void;
-  currentEpisode?: EventsDataFragment;
+  currentEpisode?: EventsDataFragment | undefined;
 }
 
 /**
@@ -38,14 +34,15 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
   selectedEpisodeId,
   refetch,
   setEditEpisode,
-  currentEpisode
+  currentEpisode,
 }) => {
   const { t } = useI18n();
 
-  const checkIfRequiredFieldsAreFilled = (metadata: Record<string, any>) => {
-    const requiredFields = Object.values(episodesInputFields?.eventById?.commonMetadataV2 || {}).filter(
-      (field) => field?.required
-    ).map((field) => field?.id).filter(Boolean) as string[];
+  const checkIfRequiredFieldsAreFilled = (metadata: Record<string, unknown>) => {
+    const requiredFields = Object.values(episodesInputFields?.eventById?.commonMetadataV2 || {})
+      .filter((field) => field?.required)
+      .map((field) => field?.id)
+      .filter(Boolean) as string[];
 
     // If no required fields, validation passes
     if (!requiredFields || requiredFields.length === 0) {
@@ -56,16 +53,19 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
     return requiredFields.every((fieldId: string) => {
       const value = metadata[fieldId];
       // Check for null, undefined, empty string, or empty array
-      if (value === null || value === undefined || value === '') {
-        console.log("🎯 EpisodesInfoFooter: value is null, undefined, or empty", value);
+      if (value === null || value === undefined || value === "") {
+        logger.debug("EpisodesInfoFooter: value is null, undefined, or empty", { fieldId, value });
         return false;
       }
       // For arrays, check if they have content
       if (Array.isArray(value)) {
-        return value.length > 0 && value.some(item => item !== null && item !== undefined && String(item).trim() !== '');
+        return (
+          value.length > 0 &&
+          value.some((item) => item !== null && item !== undefined && String(item).trim() !== "")
+        );
       }
       // For strings, check if they're not just whitespace
-      return String(value).trim() !== '';
+      return String(value).trim() !== "";
     });
   };
 
@@ -79,7 +79,7 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
 
     // Compare each field in episodesUpdateData with original values
     const result = Object.entries(episodesUpdateData).some(([key, newValue]) => {
-      const originalField = (originalData as any)[key];
+      const originalField = (originalData as Record<string, { value?: unknown } | undefined>)[key];
       const originalValue = originalField?.value;
 
       // Handle different value types and normalize for comparison
@@ -89,8 +89,10 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
       }
 
       // Convert both to strings for comparison to handle different types
-      const normalizedOriginal = Array.isArray(originalValue) ? originalValue.join(',') : String(originalValue);
-      const normalizedNew = Array.isArray(newValue) ? newValue.join(',') : String(newValue);
+      const normalizedOriginal = Array.isArray(originalValue)
+        ? originalValue.join(",")
+        : String(originalValue);
+      const normalizedNew = Array.isArray(newValue) ? newValue.join(",") : String(newValue);
 
       const hasChanged = normalizedOriginal !== normalizedNew;
       return hasChanged;
@@ -103,8 +105,8 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
     const eventStatus = currentEpisode?.eventStatus;
     if (!eventStatus) return true;
 
-    const status = eventStatus.split('.').pop()?.toUpperCase();
-    return !(status === 'PROCESSING' || status === 'PENDING');
+    const status = eventStatus.split(".").pop()?.toUpperCase();
+    return !(status === "PROCESSING" || status === "PENDING");
   }, [currentEpisode]);
 
   const onSave = () => {
@@ -115,12 +117,13 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
     if (
       episodesUpdateData &&
       Object.hasOwn(episodesUpdateData, "contributor") &&
-      episodesUpdateData.contributor?.length && episodesUpdateData.contributor.length > 0
+      episodesUpdateData["contributor"]?.length &&
+      episodesUpdateData["contributor"].length > 0
     ) {
-      episodesUpdateData.contributor = (
-        Array.isArray(episodesUpdateData.contributor)
-          ? episodesUpdateData.contributor.join(",")
-          : episodesUpdateData.contributor
+      episodesUpdateData["contributor"] = (
+        Array.isArray(episodesUpdateData["contributor"])
+          ? episodesUpdateData["contributor"].join(",")
+          : episodesUpdateData["contributor"]
       )
         .replace(/\n/g, ",")
         .split(",")
@@ -131,12 +134,13 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
     if (
       episodesUpdateData &&
       Object.hasOwn(episodesUpdateData, "publisher") &&
-      episodesUpdateData.publisher?.length && episodesUpdateData.publisher.length > 0
+      episodesUpdateData["publisher"]?.length &&
+      episodesUpdateData["publisher"].length > 0
     ) {
-      episodesUpdateData.publisher = (
-        Array.isArray(episodesUpdateData.publisher)
-          ? episodesUpdateData.publisher.join(",")
-          : episodesUpdateData.publisher
+      episodesUpdateData["publisher"] = (
+        Array.isArray(episodesUpdateData["publisher"])
+          ? episodesUpdateData["publisher"].join(",")
+          : episodesUpdateData["publisher"]
       )
         .replace(/\n/g, ",")
         .split(",")
@@ -159,25 +163,25 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
     };
 
     // Remove identifier if it exists (we don't want to update it)
-    const { identifier, ...finalMetadata } = metadataWithTitle as any;
-
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { identifier, ...finalMetadata } = metadataWithTitle as Record<string, unknown>;
 
     // IMPORTANT: Validate the merged metadata BEFORE normalization, because normalizeMetadataObject removes empty values
     // but we need to validate that required fields are not empty
     if (!checkIfRequiredFieldsAreFilled(metadata)) {
-      toast.error(t("episodes:episodesTable.notification.fieldRequiredEmpty"))
+      toast.error(t("episodes:episodesTable.notification.fieldRequiredEmpty"));
     } else {
       saveEpisodeUpdate.mutate(
         {
           eventId: selectedEpisodeId,
-          metadata: finalMetadata,
+          metadata: finalMetadata as { title: string; [key: string]: unknown },
         },
         {
           onSuccess: () => {
             toast.success(t("episodes:episodesTable.notification.changesSaved"));
             refetch();
           },
-        }
+        },
       );
 
       onEditClose();
@@ -187,25 +191,16 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
   return (
     <>
       {!isEditable ? (
-        <div className="text-xs text-center text-muted-foreground">
-          {t("episodes:notEditable")}
-        </div>
+        <div className="text-xs text-center text-muted-foreground">{t("episodes:notEditable")}</div>
       ) : editEpisode ? (
         <>
-          <Button
-            variant={"secondary"}
-            size={"sm"}
-            className=""
-            onClick={onEditClose}
-          >
+          <Button variant={"secondary"} size={"sm"} className="" onClick={onEditClose}>
             {t("common:cancel")}
           </Button>
           <Button
             variant={!hasDataChanged ? "secondary" : "default"}
             size={"sm"}
-            className={
-              !hasDataChanged ? "cursor-not-allowed" : "cursor-pointer"
-            }
+            className={!hasDataChanged ? "cursor-not-allowed" : "cursor-pointer"}
             onClick={onSave}
             disabled={!hasDataChanged}
           >
@@ -227,4 +222,4 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
   );
 };
 
-export { EpisodesInfoFooter }; 
+export { EpisodesInfoFooter };

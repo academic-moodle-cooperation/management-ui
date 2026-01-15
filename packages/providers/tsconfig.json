@@ -1,23 +1,13 @@
 {
   "extends": "../typescript-config/react-library.json",
   "compilerOptions": {
-    "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
     "composite": false,
     "noEmit": true
   },
-  "include": [
-    "src",
-    "src/vite-env.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".turbo"
-  ]
+  "include": ["src", "vite-env.d.ts"],
+  "exclude": ["node_modules", "dist", ".turbo"]
 }

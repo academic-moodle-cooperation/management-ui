@@ -1,4 +1,7 @@
 import React from "react";
+
+import { useGetCurrentUser } from "@workspace/query";
+import { Link } from "@workspace/router";
 import {
   Avatar,
   AvatarFallback,
@@ -7,14 +10,11 @@ import {
   AccordionItem,
   AccordionTrigger,
   Container,
-  SidebarMenuButton
+  NavMain,
+  SidebarMenuButton,
 } from "@workspace/ui/components";
-import { useGetCurrentUser } from "@workspace/query";
 import { LogIn, LogOut } from "@workspace/ui/components/icons";
 import { cn } from "@workspace/ui/lib/utils";
-import { useAppConfig } from "@workspace/query";
-import { Link } from "@workspace/router";
-import { NavMain } from "@workspace/ui/components/appshell/components/nav-main";
 
 /**
  * TU Wien Sidebar User Menu Component
@@ -22,7 +22,6 @@ import { NavMain } from "@workspace/ui/components/appshell/components/nav-main";
  */
 const SidebarUserMenu = ({ open }: { open: boolean }) => {
   const { data, isLoading } = useGetCurrentUser();
-  const { config } = useAppConfig();
 
   // Using standardized routes instead of direct config URLs
 
@@ -37,13 +36,13 @@ const SidebarUserMenu = ({ open }: { open: boolean }) => {
             <AccordionTrigger
               className={cn(
                 "px-6 py-4 text-sidebar-foreground flex items-center",
-                !open && "[&>svg]:hidden flex justify-center px-4"
+                !open && "[&>svg]:hidden flex justify-center px-4",
               )}
             >
               <div
                 className={cn(
                   "flex items-center text-sm font-semibold leading-6 gap-x-4 text-sidebar-foreground",
-                  !open && "mr-1"
+                  !open && "mr-1",
                 )}
               >
                 <Avatar className="w-8 h-8 bg-foreground/90 ">
@@ -56,10 +55,7 @@ const SidebarUserMenu = ({ open }: { open: boolean }) => {
 
                 <span className="sr-only">Your profile</span>
                 {open && (
-                  <span
-                    aria-hidden="true"
-                    className="text-sidebar-foreground whitespace-nowrap"
-                  >
+                  <span aria-hidden="true" className="text-sidebar-foreground whitespace-nowrap">
                     {data?.currentUser.name}
                   </span>
                 )}
@@ -73,16 +69,15 @@ const SidebarUserMenu = ({ open }: { open: boolean }) => {
                 </a>
               </SidebarMenuButton> */}
               <NavMain
-
-                customItemStyles={cn(
-                  "flex gap-4 px-4"
-                )} items={[{
-                  title: "Logout",
-                  url: "/logout",
-                  icon: LogOut
-                }]}
-                menuItemClassName={cn(!open && 'flex justify-center')}
-
+                customItemStyles={cn("flex gap-4 px-4")}
+                items={[
+                  {
+                    title: "Logout",
+                    url: "/logout",
+                    icon: LogOut,
+                  },
+                ]}
+                menuItemClassName={cn(!open && "flex justify-center")}
               />
             </AccordionContent>
           </AccordionItem>
@@ -103,4 +98,4 @@ const SidebarUserMenu = ({ open }: { open: boolean }) => {
   );
 };
 
-export { SidebarUserMenu }; 
+export { SidebarUserMenu };

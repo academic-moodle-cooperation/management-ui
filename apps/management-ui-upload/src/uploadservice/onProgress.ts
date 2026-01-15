@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 const progressHistory: { timestamp: number; progress: number }[] = [];
 
 export default function onProgress(progress: number) {
@@ -26,7 +24,7 @@ export default function onProgress(progress: number) {
   // datapoints).
   const windowStart = Math.min(
     progressHistory.findIndex((p) => now - p.timestamp < WINDOW_SIZE_MS),
-    Math.max(0, progressHistory.length - WINDOW_SIZE_DATA_POINTS)
+    Math.max(0, progressHistory.length - WINDOW_SIZE_DATA_POINTS),
   );
 
   // Remove all elements outside the window.
@@ -42,28 +40,34 @@ export default function onProgress(progress: number) {
     secondsLeft = Math.max(0, Math.round(progressLeft / progressPerSecond));
   }
 
-  useEffect(() => {
+  return { secondsLeft, currentProgress: progress };
+}
+
+/**
+ * Initialize interval for time estimation updates
+ * This should be called from a React component's useEffect
+ * @returns cleanup function to clear the interval
+ */
+export function initializeProgressInterval() {
+  const interval = setInterval(() => {
     // To still update the time estimation, we make sure to call `onProgress` at
     // least every so often.
-    const interval = setInterval(() => {
-      // if (uploadState.state !== STATE_UPLOADING) {
-      //     return;
-      // }
+    // if (uploadState.state !== STATE_UPLOADING) {
+    //     return;
+    // }
 
-      if (!progressHistory.length) {
-        onProgress(0);
-      } else {
-        const lastProgress = progressHistory[progressHistory.length - 1];
-        if (lastProgress) {
-          const timeSinceLastUpdate = Date.now() - lastProgress.timestamp;
-          if (timeSinceLastUpdate > 3000) {
-            onProgress(lastProgress.progress);
-          }
+    if (progressHistory.length === 0) {
+      onProgress(0);
+    } else {
+      const lastProgress = progressHistory[progressHistory.length - 1];
+      if (lastProgress) {
+        const timeSinceLastUpdate = Date.now() - lastProgress.timestamp;
+        if (timeSinceLastUpdate > 3000) {
+          onProgress(lastProgress.progress);
         }
       }
-    }, 1000);
+    }
+  }, 1000);
 
-    return () => clearInterval(interval);
-  });
-  return { secondsLeft, currentProgress: progress };
+  return () => clearInterval(interval);
 }

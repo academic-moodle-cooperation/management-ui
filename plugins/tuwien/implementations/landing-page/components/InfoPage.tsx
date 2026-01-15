@@ -1,11 +1,8 @@
-import React, { type FC, useEffect } from 'react';
-import {
-  usePluginTranslation,
-  createOrganizationNamespace,
-  Trans
-} from '@workspace/i18n';
-import { useGetCurrentUser } from '@workspace/query';
-import { UploadCloud, Film } from '@workspace/ui/components';
+import React, { type FC, useEffect } from "react";
+
+import { usePluginTranslation, createOrganizationNamespace, Trans } from "@workspace/i18n";
+import { useGetCurrentUser } from "@workspace/query";
+import { UploadCloud, Film } from "@workspace/ui/components";
 
 /**
  * TU Wien Landing Page Implementation
@@ -13,18 +10,15 @@ import { UploadCloud, Film } from '@workspace/ui/components';
  * University-specific welcome page with TU Wien LectureTube branding
  */
 const InfoPage: FC = () => {
-  const namespace = createOrganizationNamespace('tuwien', 'landing-page');
+  const namespace = createOrganizationNamespace("tuwien", "landing-page");
   const { data } = useGetCurrentUser();
 
   const { t, i18n } = usePluginTranslation([namespace]);
 
   useEffect(() => {
     const loadTranslations = async () => {
-      try {
-        // The plugin system should handle translation loading automatically
-        // but we'll keep this pattern for consistency with the original
-      } catch (error) {
-      }
+      // The plugin system should handle translation loading automatically
+      // but we'll keep this pattern for consistency with the original
     };
     loadTranslations();
   }, [i18n.language, t]);
@@ -115,7 +109,7 @@ const InfoPage: FC = () => {
                           rel="noopener noreferrer"
                           className="text-[#069] underline"
                         />
-                      )
+                      ),
                     }}
                   />
                 </p>
@@ -128,4 +122,4 @@ const InfoPage: FC = () => {
   );
 };
 
-export { InfoPage }; 
+export { InfoPage };

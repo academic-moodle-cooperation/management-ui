@@ -1,7 +1,9 @@
-import React from 'react';
-import { SidebarTrigger } from '@workspace/ui/components';
-import { LangSwitcher } from './LangSwitcher';
-import { LoginButton } from './LoginButton';
+import React from "react";
+
+import { SidebarTrigger } from "@workspace/ui/components";
+
+import { LangSwitcher } from "./LangSwitcher";
+import { LoginButton } from "./LoginButton";
 
 /**
  * Default Header Component
@@ -25,4 +27,4 @@ const DefaultHeader: React.FC = () => {
   );
 };
 
-export default DefaultHeader; 
+export default DefaultHeader;

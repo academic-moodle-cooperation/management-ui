@@ -109,15 +109,15 @@ interface Episode {
   description?: string;
   duration?: string; // ISO 8601 duration format
   order: number;
-  
+
   // Media information
   media: {
     videoUrl?: string;
     thumbnailUrl?: string;
-    processingStatus: 'pending' | 'processing' | 'completed' | 'failed';
+    processingStatus: "pending" | "processing" | "completed" | "failed";
     uploadProgress?: number;
   };
-  
+
   // Rich metadata
   metadata: {
     speakers: string[];
@@ -128,7 +128,7 @@ interface Episode {
     // University-specific fields via plugins
     [key: string]: unknown;
   };
-  
+
   // Transcript information
   transcript?: {
     content: string;
@@ -136,22 +136,22 @@ interface Episode {
     synchronized: boolean;
     lastModified: Date;
   };
-  
+
   // Publishing workflow
   workflow: {
-    status: 'draft' | 'review' | 'approved' | 'published' | 'archived';
+    status: "draft" | "review" | "approved" | "published" | "archived";
     approvals: ApprovalRecord[];
     publishDate?: Date;
     archiveDate?: Date;
   };
-  
+
   // Access control
   permissions: {
     view: string[];
     edit: string[];
     approve: string[];
   };
-  
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -174,23 +174,23 @@ Universities can extensively customize episode management:
 
 ```typescript
 // Add university-specific episode metadata
-manager.registerObject('episodes:metadata-fields', 'university-episode-fields', {
+manager.registerObject("episodes:metadata-fields", "university-episode-fields", {
   courseCode: {
-    type: 'text',
-    label: 'Course Code',
+    type: "text",
+    label: "Course Code",
     pattern: /^[A-Z]{3}\d{3}$/,
-    required: true
+    required: true,
   },
   lectureNumber: {
-    type: 'number',
-    label: 'Lecture Number',
+    type: "number",
+    label: "Lecture Number",
     min: 1,
-    max: 50
+    max: 50,
   },
   examRelevant: {
-    type: 'boolean',
-    label: 'Exam Relevant Content'
-  }
+    type: "boolean",
+    label: "Exam Relevant Content",
+  },
 });
 ```
 
@@ -198,34 +198,34 @@ manager.registerObject('episodes:metadata-fields', 'university-episode-fields', 
 
 ```typescript
 // Define university-specific publishing workflow
-manager.registerObject('episodes:workflows', 'university-publishing', {
-  name: 'Academic Review Process',
+manager.registerObject("episodes:workflows", "university-publishing", {
+  name: "Academic Review Process",
   steps: [
-    { 
-      name: 'Created',
-      status: 'draft',
-      description: 'Episode created by instructor'
+    {
+      name: "Created",
+      status: "draft",
+      description: "Episode created by instructor",
     },
     {
-      name: 'Department Review',
-      status: 'dept-review',
+      name: "Department Review",
+      status: "dept-review",
       required: true,
-      permissions: ['department.review'],
-      timeout: '7d'
+      permissions: ["department.review"],
+      timeout: "7d",
     },
     {
-      name: 'Quality Check',
-      status: 'quality-check',
+      name: "Quality Check",
+      status: "quality-check",
       required: true,
-      permissions: ['media.quality'],
-      timeout: '3d'
+      permissions: ["media.quality"],
+      timeout: "3d",
     },
     {
-      name: 'Published',
-      status: 'published',
-      permissions: ['content.publish']
-    }
-  ]
+      name: "Published",
+      status: "published",
+      permissions: ["content.publish"],
+    },
+  ],
 });
 ```
 
@@ -233,12 +233,12 @@ manager.registerObject('episodes:workflows', 'university-publishing', {
 
 ```typescript
 // Replace episode editor with university-specific version
-manager.registerComponent('episodes:editor', UniversityEpisodeEditor, {
-  priority: 10
+manager.registerComponent("episodes:editor", UniversityEpisodeEditor, {
+  priority: 10,
 });
 
 // Add custom transcript editor
-manager.registerComponent('episodes:transcript-editor', CustomTranscriptEditor);
+manager.registerComponent("episodes:transcript-editor", CustomTranscriptEditor);
 ```
 
 ## 📱 User Interface
@@ -270,7 +270,7 @@ manager.registerComponent('episodes:transcript-editor', CustomTranscriptEditor);
 ### Data Validation
 
 - **Metadata validation**: Ensure required fields and formats
-- **File validation**: Verify transcript file formats and sizes  
+- **File validation**: Verify transcript file formats and sizes
 - **Workflow validation**: Enforce approval process requirements
 - **University-specific rules**: Custom validation through plugins
 
@@ -300,7 +300,7 @@ const { data: processingStatus } = useProcessingStatus(episodeId);
 // Handle upload progress
 const { uploadFile, progress } = useVideoUpload({
   onSuccess: (videoUrl) => updateEpisode({ videoUrl }),
-  onError: (error) => showError(error.message)
+  onError: (error) => showError(error.message),
 });
 ```
 

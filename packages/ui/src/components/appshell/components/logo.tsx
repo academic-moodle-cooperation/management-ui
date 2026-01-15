@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import { cn } from "@workspace/ui/lib/utils";
 
 interface LogoProps {
@@ -14,14 +15,18 @@ const Logo = ({
   className,
   ...props
 }: LogoProps & React.HTMLAttributes<HTMLDivElement>) => {
-
   return (
-    <span className={cn("truncate font-semibold transition-all duration-300", !collapsed ? "w-full py-4" : "w-10 flex items-center justify-center")}>
+    <span
+      className={cn(
+        "truncate font-semibold transition-all duration-300",
+        !collapsed ? "w-full py-4" : "w-10 flex items-center justify-center",
+      )}
+    >
       <div
         className={cn(
           "h-9 flex items-center transition-all duration-300 ease-in-out p-2 justify-center",
           collapsed ? "w-6 p-1 w-auto" : "w-full",
-          className
+          className,
         )}
         style={{ fontFamily }}
         {...props}
@@ -35,17 +40,21 @@ const Logo = ({
             )}
           >
             {/* Position the M exactly like in the SVG */}
-            <span className={cn(
-              "text-white font-normal transition-all duration-300 leading-none",
-              collapsed ? "text-base" : "text-2xl "
-            )}>M</span>
+            <span
+              className={cn(
+                "text-white font-normal transition-all duration-300 leading-none",
+                collapsed ? "text-base" : "text-2xl ",
+              )}
+            >
+              M
+            </span>
           </div>
 
           {/* ANAGEMENT UI text with precise positioning */}
           <div
             className={cn(
               "transition-opacity duration-300 text-2xl font-normal ml-0.5 leading-none",
-              collapsed ? "opacity-0 w-0" : "opacity-100 w-auto"
+              collapsed ? "opacity-0 w-0" : "opacity-100 w-auto",
             )}
           >
             ANAGEMENT UI

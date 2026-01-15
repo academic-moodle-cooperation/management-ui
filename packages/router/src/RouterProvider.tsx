@@ -1,10 +1,10 @@
-import React from 'react';
 import {
   RouterProvider as TanStackRouterProvider,
   Outlet,
   createRootRoute,
   type AnyRouter,
-} from '@tanstack/react-router';
+} from "@tanstack/react-router";
+import React from "react";
 
 const RootLayoutComponent = () => {
   return (
@@ -28,7 +28,7 @@ export const RouterProvider: React.FC<AppRouterProviderProps> = ({ router }) => 
   return <TanStackRouterProvider router={router} />;
 };
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface Register {
     router: AnyRouter;
   }

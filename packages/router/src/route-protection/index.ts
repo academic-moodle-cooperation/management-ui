@@ -1,3 +1,3 @@
-export * from './protectedRouteUtils';
-export * from './routeGuards';
-export * from './AppProtection';
+export * from "./protectedRouteUtils";
+export * from "./routeGuards";
+export * from "./AppProtection";

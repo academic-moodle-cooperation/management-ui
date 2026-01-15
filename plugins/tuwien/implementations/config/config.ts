@@ -1,7 +1,7 @@
 export const config = {
   app: {
-    theme: 'tuwien',
-    faviconUrl: '/management-ui/assets/favicon/favicon.svg', // TU Wien custom favicon
+    theme: "tuwien",
+    faviconUrl: "/management-ui/assets/favicon/favicon.svg", // TU Wien custom favicon
     pluginNamespace: [
       // Core namespaces needed for navigation
       "core",
@@ -10,8 +10,8 @@ export const config = {
       "upload",
       // Add TU Wien specific namespace
       {
-        "tuwien": {
-          "types": [
+        tuwien: {
+          types: [
             "config",
             "app",
             "episodes-actions",
@@ -21,17 +21,15 @@ export const config = {
             "landing-page",
             "sidebar",
             "table-sidebar",
-            "navigation"
-          ]
+            "navigation",
+          ],
         },
-        "univie": {
-          "types": [
-            "app",
-          ]
-        }
-      }
-    ]
+        univie: {
+          types: ["app"],
+        },
+      },
+    ],
   },
-  tobiraUrl: 'https://video.tuwien.ac.at',
-  studioUrl: 'https://studio.tuwien.ac.at'
+  tobiraUrl: "https://video.tuwien.ac.at",
+  studioUrl: "https://studio.tuwien.ac.at",
 };

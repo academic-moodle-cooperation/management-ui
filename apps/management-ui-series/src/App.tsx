@@ -1,6 +1,5 @@
-import { AppHeading, Separator, Container } from "@workspace/ui/components";
 import { useI18n } from "@workspace/i18n";
-
+import { AppHeading, Separator, Container } from "@workspace/ui/components";
 
 import { SeriesTable } from "./components/SeriesTable";
 

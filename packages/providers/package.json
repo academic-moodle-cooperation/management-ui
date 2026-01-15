@@ -8,23 +8,23 @@
     "./*": "./src/*.tsx"
   },
   "scripts": {
-    "clean": "rm -rf .turbo && rm -rf dist && rm -rf node_modules",
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "check-types": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@workspace/router": "workspace:*",
-    "@workspace/ui": "workspace:*",
     "@tanstack/react-router": "^1.46.0",
+    "@workspace/app-runtime": "workspace:*",
     "@workspace/plugin-system": "workspace:*",
-    "@workspace/app-runtime": "workspace:*"
+    "@workspace/router": "workspace:*",
+    "@workspace/ui": "workspace:*"
   },
   "peerDependencies": {
-    "react": "^18.0.0 || ^19.0.0",
-    "@workspace/query": "workspace:*"
+    "@workspace/query": "workspace:*",
+    "react": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.16.0",
+    "@types/node": "^25.0.6",
     "@types/react": "^18.0.0 || ^19.0.0",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",

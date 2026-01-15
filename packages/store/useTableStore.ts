@@ -13,7 +13,6 @@ import {
   useAtom,
   type PrimitiveAtom,
 } from "jotai";
-
 import { atomWithStorage } from "jotai/utils";
 
 // Re-export Jotai utilities for table state management

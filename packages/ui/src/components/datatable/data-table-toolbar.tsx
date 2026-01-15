@@ -1,21 +1,22 @@
+// import { DataTableFacetedFilter } from "./data-table-faceted-filter";
+import { X, RefreshCcw } from "lucide-react";
 import React from "react";
-import { Table } from "@tanstack/react-table";
+
+import { useI18n } from "@workspace/i18n";
+import { Button, DebouncedInput } from "@workspace/ui/components";
+import { cn } from "@workspace/ui/lib";
 
 import { DataTableViewOptions } from "./data-table-view-options";
 
-// import { DataTableFacetedFilter } from "./data-table-faceted-filter";
-import { Button, DebouncedInput } from "@workspace/ui/components";
-import { X, RefreshCcw } from "lucide-react";
-import { useI18n } from "@workspace/i18n";
-import { cn } from "@workspace/ui/lib";
+import type { Table } from "@tanstack/react-table";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
   queryFilter: string | undefined;
   setQueryFilter: (filter: string | undefined) => void;
   setPageIndex: (index: number) => void;
-  refetch?: () => void;
-  designButton?: React.ReactNode;
+  refetch?: (() => void) | undefined;
+  designButton?: React.ReactNode | undefined;
 }
 
 export function DataTableToolbar<TData>({
@@ -26,7 +27,7 @@ export function DataTableToolbar<TData>({
   refetch,
   designButton,
 }: DataTableToolbarProps<TData>) {
-  const isFiltered = queryFilter && (queryFilter?.length > 0);
+  const isFiltered = queryFilter && queryFilter?.length > 0;
 
   const { t } = useI18n();
 
@@ -44,7 +45,7 @@ export function DataTableToolbar<TData>({
 
       setIsFetchingExtended(false);
     })();
-  }
+  };
 
   return (
     <div className="flex items-center justify-between py-4 gap-2">
@@ -63,7 +64,7 @@ export function DataTableToolbar<TData>({
             setPageIndex(0);
           }}
           type="text"
-          autoFocus={(queryFilter?.length && queryFilter?.length > 0) ? true : false}
+          autoFocus={queryFilter?.length && queryFilter?.length > 0 ? true : false}
         />
         {/* {table.getColumn("status") && (
           <DataTableFacetedFilter
@@ -74,11 +75,7 @@ export function DataTableToolbar<TData>({
         )} */}
 
         {isFiltered && (
-          <Button
-            variant="ghost"
-            onClick={() => setQueryFilter('')}
-            className="h-8 px-2 lg:px-3"
-          >
+          <Button variant="ghost" onClick={() => setQueryFilter("")} className="h-8 px-2 lg:px-3">
             Reset
             <X className="w-4 h-4 ml-2" />
           </Button>
@@ -92,12 +89,7 @@ export function DataTableToolbar<TData>({
         className={"flex font-medium text-sm h-8 rounded-md px-3 py-1"}
         onClick={handleRefetch}
       >
-        <div
-          className={cn(
-            "mr-2",
-            isFetchingExtended && "animate-spin"
-          )}
-        >
+        <div className={cn("mr-2", isFetchingExtended && "animate-spin")}>
           <RefreshCcw className={cn("h-4 scale-x-[-1]")} />
         </div>
         {t("reloadData")}

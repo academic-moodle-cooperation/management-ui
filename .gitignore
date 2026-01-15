@@ -26,6 +26,7 @@ coverage
 out/
 build
 dist
+dist-types
 
 # Debug
 npm-debug.log*
@@ -52,6 +53,10 @@ migrate
 
 # TypeScript build info
 *.tsbuildinfo
+
+# ESLint cache
+.eslintcache
+**/.eslintcache
 
 # SpecStory
 .specstory

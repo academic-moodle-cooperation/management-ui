@@ -13,17 +13,20 @@ This plugin provides custom sidebar navigation, header, and footer components fo
 ## Components
 
 ### CustomNavMain
+
 - Custom navigation component with University of Vienna specific styling
 - Supports collapsible navigation groups
 - Custom active state indicators
 - Responsive design with collapsed/expanded states
 
-### SidebarHeaderLogo  
+### SidebarHeaderLogo
+
 - Custom header logo component
 - Animated transitions between full logo and home icon
 - Integrates with app configuration for logo customization
 
 ### SidebarFooter
+
 - Custom footer component displaying current user information
 - Shows user avatar with Gravatar integration
 - Responsive design that adapts to sidebar open/closed state
@@ -42,7 +45,7 @@ This plugin registers components on the following extension points:
 The plugin is automatically loaded when the `univie` namespace is included in the plugin configuration:
 
 ```typescript
-pluginNamespace: ["core", "univie"]
+pluginNamespace: ["core", "univie"];
 ```
 
 ## Features
@@ -69,4 +72,4 @@ pluginNamespace: ["core", "univie"]
 - Replaced `usePlugin` with `useSidebar` hook from UI components
 - Simplified sidebar state management using built-in sidebar context
 - Removed custom event system in favor of direct state access
-- Updated imports to use new workspace package structure 
+- Updated imports to use new workspace package structure

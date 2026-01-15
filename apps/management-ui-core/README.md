@@ -108,44 +108,48 @@ pnpm lint
 The core application provides these extension points for university customization:
 
 #### Layout Extensions
+
 ```typescript
 // Custom header component
-manager.registerComponent('app:header', UniversityHeader);
+manager.registerComponent("app:header", UniversityHeader);
 
 // Custom sidebar navigation
-manager.registerObject('sidebar:nav-items', 'custom-nav', {
-  title: 'University Portal',
-  path: '/portal',
-  icon: 'building-2'
+manager.registerObject("sidebar:nav-items", "custom-nav", {
+  title: "University Portal",
+  path: "/portal",
+  icon: "building-2",
 });
 
 // Custom footer
-manager.registerComponent('app:footer', UniversityFooter);
+manager.registerComponent("app:footer", UniversityFooter);
 ```
 
 #### Branding Extensions
+
 ```typescript
 // University branding
-manager.registerObject('app:branding', 'university-theme', {
-  primaryColor: '#003366',
-  logoUrl: '/assets/university-logo.png',
-  favicon: '/assets/favicon.ico'
+manager.registerObject("app:branding", "university-theme", {
+  primaryColor: "#003366",
+  logoUrl: "/assets/university-logo.png",
+  favicon: "/assets/favicon.ico",
 });
 ```
 
 #### Authentication Extensions
+
 ```typescript
 // Custom authentication provider
-manager.registerObject('auth:provider', 'university-sso', {
-  loginUrl: '/auth/university-login',
-  logoutUrl: '/auth/logout',
-  userInfoEndpoint: '/auth/me'
+manager.registerObject("auth:provider", "university-sso", {
+  loginUrl: "/auth/university-login",
+  logoutUrl: "/auth/logout",
+  userInfoEndpoint: "/auth/me",
 });
 ```
 
 ### Loading Plugins
 
 Plugins are automatically discovered and loaded from:
+
 - `plugins/core/` - Core system plugins
 - `plugins/tuwien/` - TU Wien specific implementations
 - `plugins/univie/` - University of Vienna implementations
@@ -233,7 +237,7 @@ pnpm test:e2e
 The core coordinates loading of other management UI applications:
 
 - **Series Management** (`/series`) - Dynamically loads `management-ui-series`
-- **Episode Management** (`/episodes`) - Dynamically loads `management-ui-episodes`  
+- **Episode Management** (`/episodes`) - Dynamically loads `management-ui-episodes`
 - **Upload Portal** (`/upload`) - Dynamically loads `management-ui-upload`
 - **Testing Tools** (`/test`) - Dynamically loads `management-ui-test`
 

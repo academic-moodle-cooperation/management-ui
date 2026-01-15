@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 
 export type UserInfo = {
   org: {
@@ -32,4 +32,4 @@ export function useGetUserInfo(): UseQueryResult<UserInfo> {
     queryFn: fetchUserInfo,
     staleTime: 3000,
   });
-} 
+}

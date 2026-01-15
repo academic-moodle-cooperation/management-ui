@@ -33,7 +33,7 @@ export interface Event {
 /**
  * Parsed event with Date objects for easier manipulation
  */
-export interface ParsedEvent extends Omit<Event, 'datum' | 'beginn' | 'ende'> {
+export interface ParsedEvent extends Omit<Event, "datum" | "beginn" | "ende"> {
   date: Date;
   startTime: Date;
   endTime: Date;

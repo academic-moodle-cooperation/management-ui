@@ -1,14 +1,14 @@
-import { type UserConfig, type PluginOption } from "vite";
-import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react-swc";
+import { type UserConfig, type PluginOption } from "vite";
 // import path from "node:path"; // path.resolve for '@' alias is app-specific
 
 export interface CreateBaseConfigOptions {
   isProduction: boolean;
   plugins?: PluginOption[];
   resolveAliases?: Record<string, string>; // Aliases are passed in by the specific config creator.
-  serverOptions?: UserConfig['server'];   // Server options are passed in.
-  buildOptions?: UserConfig['build'];     // Build options are passed in; 'base' will be set by the caller.
+  serverOptions?: UserConfig["server"]; // Server options are passed in.
+  buildOptions?: UserConfig["build"]; // Build options are passed in; 'base' will be set by the caller.
 }
 
 export const createBaseConfig = ({
@@ -19,16 +19,12 @@ export const createBaseConfig = ({
   buildOptions = {},
 }: CreateBaseConfigOptions): UserConfig => {
   const baseUserConfig: UserConfig = {
-    plugins: [
-      react(),
-      tailwindcss(),
-      ...plugins
-    ],
+    plugins: [react(), tailwindcss(), ...plugins],
     resolve: {
       alias: {
         ...resolveAliases, // Specific aliases like '@monorepo-apps' or '@/' are set by the calling config creator.
       },
-      dedupe: ['lucide-react', 'react', 'react-dom'],
+      dedupe: ["lucide-react", "react", "react-dom"],
     },
     server: {
       // Specific fs.allow settings are handled by the calling config creator.
@@ -48,7 +44,7 @@ export const createBaseConfig = ({
       rollupOptions: {
         external: (id) => {
           // Don't externalize lucide-react - we want it bundled
-          if (id === 'lucide-react') return false;
+          if (id === "lucide-react") return false;
           return false;
         },
       },
@@ -59,4 +55,4 @@ export const createBaseConfig = ({
   };
 
   return baseUserConfig;
-}; 
+};

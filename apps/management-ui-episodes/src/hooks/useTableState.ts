@@ -1,12 +1,13 @@
 import { useReducer, useMemo, useCallback, useEffect } from "react";
+
 import { atomWithStorage, useAtomValue, useSetAtom } from "@workspace/store";
-import { useMatch } from "@workspace/router";
-import { OnChangeFn, SortingState, VisibilityState } from "@workspace/ui/components";
+import type { OnChangeFn, SortingState, VisibilityState } from "@workspace/ui/components";
+import { logger } from "@workspace/utils";
 
 export interface TableBaseState {
   pageIndex: number;
   pageSize: number;
-  queryFilter?: string;
+  queryFilter?: string | undefined;
   sidebarOpen: boolean;
 }
 
@@ -21,7 +22,7 @@ export interface TableAction {
 export function useTableState<State extends TableBaseState, Action extends TableAction>(
   initialState: State,
   reducer: (state: State, action: Action) => State,
-  appName: string
+  appName: string,
 ) {
   // Initialize state with reducer
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -33,12 +34,13 @@ export function useTableState<State extends TableBaseState, Action extends Table
   // Create atoms for storage
   const sortingAtom = useMemo(
     () => atomWithStorage<SortingState>(sortingAtomKey, []),
-    [sortingAtomKey]
+    [sortingAtomKey],
   );
 
   const columnVisibilityAtom = useMemo(
-    () => atomWithStorage<VisibilityState>(columnVisibilityAtomKey, { title: true } as VisibilityState),
-    [columnVisibilityAtomKey]
+    () =>
+      atomWithStorage<VisibilityState>(columnVisibilityAtomKey, { title: true } as VisibilityState),
+    [columnVisibilityAtomKey],
   );
 
   // Get values and setters from atoms
@@ -49,23 +51,30 @@ export function useTableState<State extends TableBaseState, Action extends Table
   const setColumnVisibility: OnChangeFn<VisibilityState> = useSetAtom(columnVisibilityAtom);
 
   // Utility functions
-  const setPageIndex = useCallback((index: number) =>
-    dispatch({ type: 'SET_PAGE_INDEX', payload: index } as Action), [dispatch]);
+  const setPageIndex = useCallback(
+    (index: number) => dispatch({ type: "SET_PAGE_INDEX", payload: index } as Action),
+    [dispatch],
+  );
 
-  const setPageSize = useCallback((size: number) =>
-    dispatch({ type: 'SET_PAGE_SIZE', payload: size } as Action), [dispatch]);
+  const setPageSize = useCallback(
+    (size: number) => dispatch({ type: "SET_PAGE_SIZE", payload: size } as Action),
+    [dispatch],
+  );
 
-  const setQueryFilter = useCallback((filter: string | undefined) =>
-    dispatch({ type: 'SET_QUERY_FILTER', payload: filter } as Action), [dispatch]);
+  const setQueryFilter = useCallback(
+    (filter: string | undefined) =>
+      dispatch({ type: "SET_QUERY_FILTER", payload: filter } as Action),
+    [dispatch],
+  );
 
-  const setSidebarOpen = useCallback((open: boolean) =>
-    dispatch({ type: 'SET_SIDEBAR_OPEN', payload: open } as Action), [dispatch]);
-
-
+  const setSidebarOpen = useCallback(
+    (open: boolean) => dispatch({ type: "SET_SIDEBAR_OPEN", payload: open } as Action),
+    [dispatch],
+  );
 
   useEffect(() => {
-    console.log("state", state);
-  }, [state]);
+    logger.debug("Table state updated", { state, appName });
+  }, [state, appName]);
 
   return {
     state,
@@ -79,4 +88,4 @@ export function useTableState<State extends TableBaseState, Action extends Table
     setQueryFilter,
     setSidebarOpen,
   };
-} 
+}

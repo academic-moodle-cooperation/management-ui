@@ -1,22 +1,23 @@
-import { useMemo } from 'react';
-import { useQueries } from '@tanstack/react-query';
-import { useGetEventByIdQuery } from '../gql-generated';
+import { useQueries } from "@tanstack/react-query";
+import { useMemo } from "react";
+
+import { useGetEventByIdQuery } from "../gql-generated";
 
 /**
  * Hook to fetch event titles for a list of event IDs
- * 
+ *
  * This hook efficiently fetches event titles by ID using parallel queries.
  * It's useful when you have a list of event IDs and need to display their titles
  * (e.g., in playlists, favorites, or any collection of events).
- * 
+ *
  * @param eventIds - Array of event IDs to fetch titles for
  * @returns A Map from event ID to title (falls back to ID if title not found)
- * 
+ *
  * @example
  * ```tsx
  * const eventIds = ['event-1', 'event-2', 'event-3'];
  * const eventTitleMap = useEventTitlesMap(eventIds);
- * 
+ *
  * // Use in component
  * <div>{eventTitleMap.get('event-1') || 'Unknown'}</div>
  * ```

@@ -1,7 +1,8 @@
-import React from "react";
-import { cn } from "@workspace/ui/lib/utils";
 import { CheckCircle2, Clock, PencilIcon, X, XCircle } from "lucide-react";
-import { UploadFileBlob } from "@workspace/store";
+import React from "react";
+
+import type { UploadFileBlob } from "@workspace/store";
+import { cn } from "@workspace/ui/lib/utils";
 
 export const UploadList = ({
   // zustandupload,
@@ -20,11 +21,11 @@ export const UploadList = ({
   // fileWaitingList: UploadFileBlob[];
   files: UploadFileBlob[];
   editFile:
-  | {
-    index: number;
-    name: string;
-  }
-  | undefined;
+    | {
+        index: number;
+        name: string;
+      }
+    | undefined;
   handleEditUploadName: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   editUploadName: (selectedFile: UploadFileBlob) => void;
   editUploadNameEnd: (uploadName: string) => void;
@@ -36,10 +37,7 @@ export const UploadList = ({
   return (
     <ul
       role="list"
-      className={cn(
-        "border border-b divide-y divide-border rounded-lg border-border",
-        className
-      )}
+      className={cn("border border-b divide-y divide-border rounded-lg border-border", className)}
     >
       {[...files]?.map((fileItem, index) => {
         const selectedFile = fileItem;
@@ -60,12 +58,13 @@ export const UploadList = ({
                         autoFocus
                         onKeyDown={handleEditUploadName}
                         value={editFile.name}
-                        onChange={handleEditUploadName}
+                        onChange={(e) => {
+                          // onChange handler for input value updates
+                          editUploadNameEnd(e.target.value);
+                        }}
                         onBlur={() => editUploadNameEnd(editFile.name)}
                         style={{
-                          width: `${(refsById[selectedFile.id]?.current?.offsetWidth ||
-                            0) + 20
-                            }px`,
+                          width: `${(refsById[selectedFile.id]?.current?.offsetWidth || 0) + 20}px`,
                         }}
                       />
                     ) : (
@@ -75,17 +74,11 @@ export const UploadList = ({
                         </span>
                       </>
                     )}
-                    <span
-                      className="absolute h-0 overflow-hidden"
-                      ref={refsById[selectedFile.id]}
-                    >
+                    <span className="absolute h-0 overflow-hidden" ref={refsById[selectedFile.id]}>
                       {editFile?.name || selectedFile?.uploadName}
                     </span>
                     {selectedFile.status === "waiting" && !isLoading && (
-                      <div
-                        onClick={() => editUploadName(selectedFile)}
-                        aria-label="edit"
-                      >
+                      <div onClick={() => editUploadName(selectedFile)} aria-label="edit">
                         <PencilIcon className="w-5 h-5 ml-2 space-x-2 group-hover:inline text-slate-500 hover:text-slate-900 hover:cursor-pointer" />
                       </div>
                     )}
@@ -112,7 +105,7 @@ export const UploadList = ({
                           "relative focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
                           (selectedFile.status === "completed" ||
                             selectedFile.status === "aborted") &&
-                          "hidden"
+                            "hidden",
                         )}
                         onClick={() => abortUpload(selectedFile)}
                       >

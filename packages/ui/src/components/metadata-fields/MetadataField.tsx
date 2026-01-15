@@ -1,13 +1,8 @@
 import { useI18n } from "@workspace/i18n";
+import type { MetadataFieldType } from "@workspace/query";
 import { parseDuration } from "@workspace/utils";
-import { MetadataFieldType } from "@workspace/query";
 
-export const MetadataField = ({
-  type,
-  listProvider,
-  collection,
-  value,
-}: MetadataFieldType) => {
+export const MetadataField = ({ type, listProvider, collection, value }: MetadataFieldType) => {
   const { t } = useI18n();
 
   function getKeyByValue(object: Record<string, string>, value: string) {
@@ -15,25 +10,17 @@ export const MetadataField = ({
   }
 
   if (listProvider === "SERIES") {
-    return (
-      <div className="text-sm text-foreground">
-        {getKeyByValue(collection, value)}
-      </div>
-    );
+    return <div className="text-sm text-foreground">{getKeyByValue(collection, value)}</div>;
   } else if (listProvider === "LANGUAGES") {
     return (
       <div className="text-sm text-foreground">
-        {value !== null && value !== ""
-          ? t(`languages.${value}`)
-          : t(`noOptionSelected`)}
+        {value !== null && value !== "" ? t(`languages.${value}`) : t(`noOptionSelected`)}
       </div>
     );
   } else if (listProvider === "LICENSES") {
     return (
       <div className="text-sm text-foreground">
-        {value !== null && value !== ""
-          ? t(`licences.${value}`)
-          : t(`noOptionSelected`)}
+        {value !== null && value !== "" ? t(`licences.${value}`) : t(`noOptionSelected`)}
       </div>
     );
   }
@@ -69,13 +56,13 @@ export const MetadataField = ({
         );
         break;
       case "START_DATE":
-        //TODO: change that
+        // Format START_DATE consistently with DATE (medium date, short time)
         metadataElement = (
           <>
-            {new Intl.DateTimeFormat("de-DE").format(new Date(value))}
-            {/* {new Intl.DateTimeFormat("de-DE").format(
-              new Date(value.split(";")[0].split("start=")[1])
-            )} */}
+            {new Intl.DateTimeFormat("de-DE", {
+              dateStyle: "medium",
+              timeStyle: "short",
+            }).format(new Date(value))}
           </>
         );
         break;
@@ -89,8 +76,6 @@ export const MetadataField = ({
     }
     return <div className="text-sm text-foreground">{metadataElement}</div>;
   } else {
-    return (
-      <span className="text-sm text-foreground italic">{t(`noData`)}</span>
-    );
+    return <span className="text-sm text-foreground italic">{t(`noData`)}</span>;
   }
 };

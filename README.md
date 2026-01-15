@@ -7,7 +7,7 @@ A modular, plugin-based video content management system built for educational in
 Management UI is built as a **monorepo** using **Turborepo**, structured around three core concepts:
 
 - **Apps**: Domain-specific applications for content management
-- **Packages**: Shared infrastructure and framework libraries  
+- **Packages**: Shared infrastructure and framework libraries
 - **Plugins**: Extension points and university-specific customizations
 
 ```
@@ -33,6 +33,49 @@ plugins/        ← Extension point definitions
 ├─ univie/      ← University of Vienna implementations
 └─ example-university/  ← Example implementations
 ```
+
+## 📚 Documentation
+
+**🤖 For AI Models:** Start with the [AI Development Guide](docs/AI_DEVELOPMENT_GUIDE.md) - your entry point for understanding and contributing to this codebase.
+
+### Core Documentation
+
+- **[AI Development Guide](docs/AI_DEVELOPMENT_GUIDE.md)** - Main entry point for AI models and new developers
+- **[Package Ecosystem](/packages/README.md)** - Shared infrastructure packages and dependency management
+- **[Application Architecture](/apps/README.md)** - Domain applications and dual-mode execution
+- **[Plugin System](/plugins/README.md)** - Extension points and university customizations
+- **[Coupling Analysis](/docs/internal/COUPLING_ANALYSIS.md)** - Package dependencies and refactoring priorities
+
+### Configuration & Assets
+
+- **[Config Generation](/docs/CONFIG_GENERATION.md)** - How configuration works in dev vs production
+- **[Config Order](/docs/CONFIG_ORDER.md)** - Plugin configuration precedence and merging
+- **[Favicon Configuration](/docs/internal/FAVICON_CONFIGURATION.md)** - Customizing favicons and assets per university
+
+### Development Workflows
+
+Step-by-step guides for common tasks:
+
+- **[Adding Packages](/docs/workflows/ADDING_PACKAGES.md)** - Create new workspace packages
+- **[Adding Apps](/docs/workflows/ADDING_APPS.md)** - Create new applications
+- **[Adding Plugins](/docs/workflows/ADDING_PLUGINS.md)** - Create university-specific plugins
+- **[Updating Dependencies](/docs/workflows/UPDATING_DEPENDENCIES.md)** - Safe dependency updates
+- **[Swapping Technologies](/docs/workflows/SWAPPING_TECHNOLOGIES.md)** - Replace underlying technologies
+
+### Documentation Templates
+
+Ensure consistency when creating documentation:
+
+- **[Package README Template](/docs/templates/PACKAGE_README_TEMPLATE.md)** - For workspace packages
+- **[App README Template](/docs/templates/APP_README_TEMPLATE.md)** - For applications
+- **[Plugin README Template](/docs/templates/PLUGIN_README_TEMPLATE.md)** - For plugins
+- **[Implementation README Template](/docs/templates/IMPLEMENTATION_README_TEMPLATE.md)** - For plugin implementations
+
+### Architecture Decisions
+
+Understanding why the system is designed this way:
+
+- **[Architecture Decision Records](/docs/architecture/)** - Key architectural decisions and rationale
 
 ## 🚀 Quick Start
 
@@ -67,7 +110,7 @@ Applications can now run independently for focused development:
 cd apps/management-ui-episodes
 pnpm dev    # http://127.0.0.1:3002
 
-cd apps/management-ui-series  
+cd apps/management-ui-series
 pnpm dev    # http://127.0.0.1:3001
 
 cd apps/management-ui-upload
@@ -110,7 +153,7 @@ Each university can create standalone applications that run independently:
 cd plugins/tuwien
 pnpm dev    # Runs on http://127.0.0.1:3005
 
-# University of Vienna plugin app  
+# University of Vienna plugin app
 cd plugins/univie
 pnpm dev    # Runs on http://127.0.0.1:3006
 ```
@@ -128,29 +171,29 @@ pnpm dev    # Runs on http://127.0.0.1:3006
 Plugins can register complete applications that appear in the main navigation:
 
 ```typescript
-import { createPlugin } from '@workspace/plugin-system';
-import { MyCustomApp } from './MyCustomApp';
+import { createPlugin } from "@workspace/plugin-system";
+import { MyCustomApp } from "./MyCustomApp";
 
 export const MyUniversityAppPlugin = createPlugin({
-  namespace: 'myuni',
-  type: 'app',
-  version: '1.0.0',
-  
+  namespace: "myuni",
+  type: "app",
+  version: "1.0.0",
+
   initialize(manager) {
     // Register a new application
-    manager.registerObject('apps:definitions', 'my-custom-app', {
-      id: 'my-custom-app',
-      name: 'My Custom App',
-      routePath: '/my-custom',
+    manager.registerObject("apps:definitions", "my-custom-app", {
+      id: "my-custom-app",
+      name: "My Custom App",
+      routePath: "/my-custom",
       component: MyCustomApp,
       navigation: {
-        title: 'Custom App',
-        icon: 'star',
+        title: "Custom App",
+        icon: "star",
         order: 100,
-        permissions: ['access.custom.app']
-      }
+        permissions: ["access.custom.app"],
+      },
     });
-  }
+  },
 });
 ```
 
@@ -160,8 +203,8 @@ Plugin apps can run both within the core shell and as standalone applications:
 
 ```typescript
 // plugins/my-university/main.tsx
-import { bootstrapStandaloneApp } from '@workspace/app-runtime';
-import { MyUniversityApp } from './apps/MyUniversityApp';
+import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import { MyUniversityApp } from "./apps/MyUniversityApp";
 
 const config = {
   baseUrl: "/my-university",
@@ -194,8 +237,8 @@ Use the app runtime system to bootstrap standalone applications:
 
 ```typescript
 // apps/my-app/src/main.tsx
-import { bootstrapStandaloneApp } from '@workspace/app-runtime';
-import App from './App';
+import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import App from "./App";
 
 // Configure the app for standalone execution
 const config = {
@@ -208,6 +251,7 @@ bootstrapStandaloneApp(App, "root", config);
 ```
 
 The `bootstrapStandaloneApp` function now requires a configuration object that specifies:
+
 - `baseUrl`: The base URL path for the app (e.g., "/episodes", "/series")
 - `appName`: The application name for identification and routing
 - Additional runtime configuration options as needed
@@ -234,7 +278,7 @@ const App = () => (
 cd apps/management-ui-episodes
 pnpm dev    # Runs on http://127.0.0.1:3002
 
-# Test in core shell context  
+# Test in core shell context
 cd apps/management-ui-core
 pnpm dev    # Access at http://127.0.0.1:3000/episodes
 ```
@@ -251,24 +295,24 @@ pnpm dev    # Access at http://127.0.0.1:3000/episodes
 
 ### Core Applications
 
-| Application | Purpose | Description |
-|-------------|---------|-------------|
-| **management-ui-core** | Application Shell | Main orchestration layer, plugin loading, and shared layout |
-| **management-ui-series** | Series Management | Video series creation, editing, and organization |
-| **management-ui-episodes** | Episode Management | Individual episode metadata, upload status, and workflows |
-| **management-ui-upload** | Content Upload | File upload, processing, and content ingestion |
-| **management-ui-test** | Testing & QA | Quality assurance tools and testing utilities |
+| Application                | Purpose            | Description                                                 |
+| -------------------------- | ------------------ | ----------------------------------------------------------- |
+| **management-ui-core**     | Application Shell  | Main orchestration layer, plugin loading, and shared layout |
+| **management-ui-series**   | Series Management  | Video series creation, editing, and organization            |
+| **management-ui-episodes** | Episode Management | Individual episode metadata, upload status, and workflows   |
+| **management-ui-upload**   | Content Upload     | File upload, processing, and content ingestion              |
+| **management-ui-test**     | Testing & QA       | Quality assurance tools and testing utilities               |
 
 ### Shared Packages
 
-| Package | Purpose | Description |
-|---------|---------|-------------|
-| **plugin-system** | Plugin Architecture | Core plugin loading, management, and extension point system |
-| **app-runtime** | Standalone Apps | Runtime abstraction for standalone app execution and provider hierarchy |
-| **ui** | Component Library | Shared React components, design system, and UI patterns |
-| **query** | Data Management & Configuration | GraphQL client, state management, data fetching, and application configuration |
-| **router** | Navigation | Application routing with plugin-aware route management |
-| **i18n** | Internationalization | Multi-language support and localization |
+| Package           | Purpose                         | Description                                                                    |
+| ----------------- | ------------------------------- | ------------------------------------------------------------------------------ |
+| **plugin-system** | Plugin Architecture             | Core plugin loading, management, and extension point system                    |
+| **app-runtime**   | Standalone Apps                 | Runtime abstraction for standalone app execution and provider hierarchy        |
+| **ui**            | Component Library               | Shared React components, design system, and UI patterns                        |
+| **query**         | Data Management & Configuration | GraphQL client, state management, data fetching, and application configuration |
+| **router**        | Navigation                      | Application routing with plugin-aware route management                         |
+| **i18n**          | Internationalization            | Multi-language support and localization                                        |
 
 ## 🎨 Customization
 
@@ -277,7 +321,7 @@ pnpm dev    # Access at http://127.0.0.1:3000/episodes
 The system supports extensive customization through plugins:
 
 - **TU Wien** (`plugins/tuwien/`): Header, footer, sidebar, and upload ACL implementations
-- **University of Vienna** (`plugins/univie/`): Custom sidebar and empty state components  
+- **University of Vienna** (`plugins/univie/`): Custom sidebar and empty state components
 - **Example University** (`plugins/example-university/`): Reference implementations
 
 ### Branding & Theming
@@ -286,11 +330,11 @@ Customize the interface appearance:
 
 ```typescript
 // University branding plugin
-manager.registerObject('app:branding', 'university-theme', {
-  primaryColor: '#your-color',
-  secondaryColor: '#your-secondary',
-  logoUrl: '/path/to/logo.png',
-  favicon: '/path/to/favicon.ico'
+manager.registerObject("app:branding", "university-theme", {
+  primaryColor: "#your-color",
+  secondaryColor: "#your-secondary",
+  logoUrl: "/path/to/logo.png",
+  favicon: "/path/to/favicon.ico",
 });
 ```
 
@@ -300,10 +344,10 @@ Add institution-specific content workflows:
 
 ```typescript
 // Custom approval workflow
-manager.registerObject('workflows:definitions', 'university-approval', {
-  name: 'University Content Approval',
-  steps: ['submission', 'review', 'approval', 'publication'],
-  permissions: ['content.submit', 'content.review', 'content.approve']
+manager.registerObject("workflows:definitions", "university-approval", {
+  name: "University Content Approval",
+  steps: ["submission", "review", "approval", "publication"],
+  permissions: ["content.submit", "content.review", "content.approve"],
 });
 ```
 
@@ -344,10 +388,11 @@ pnpm init
 ### App Development Patterns
 
 **Standalone Bootstrap Pattern**:
+
 ```typescript
 // main.tsx - supports both standalone and core shell execution
-import { bootstrapStandaloneApp } from '@workspace/app-runtime';
-import App from './App';
+import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import App from "./App";
 
 const config = {
   baseUrl: "/my-app",
@@ -358,6 +403,7 @@ bootstrapStandaloneApp(App, "root", config);
 ```
 
 **Adaptive Component Pattern**:
+
 ```typescript
 // App.tsx - automatically adapts to execution context
 import { AdaptiveAppWrapper } from '@workspace/app-runtime';
@@ -378,26 +424,27 @@ const App = () => (
 5. **Test Integration**: Verify plugins work with core applications
 
 **App Registration Pattern**:
+
 ```typescript
 // plugins/myuni/apps/my-app-plugin.ts
 export const myAppPlugin = createPlugin({
-  namespace: 'myuni',
-  type: 'app',
-  version: '1.0.0',
-  
+  namespace: "myuni",
+  type: "app",
+  version: "1.0.0",
+
   initialize(manager) {
-    manager.registerObject('apps:definitions', 'my-app', {
-      id: 'my-app',
-      name: 'My Custom App',
-      routePath: '/my-app',
+    manager.registerObject("apps:definitions", "my-app", {
+      id: "my-app",
+      name: "My Custom App",
+      routePath: "/my-app",
       component: MyAppComponent,
       navigation: {
-        title: 'My App',
-        icon: 'app-window',
-        order: 200
-      }
+        title: "My App",
+        icon: "app-window",
+        order: 200,
+      },
     });
-  }
+  },
 });
 ```
 
@@ -422,7 +469,7 @@ cd apps/management-ui-series && pnpm dev
 The system supports environment-specific configuration:
 
 - `.env.development` - Development settings
-- `.env.production` - Production settings  
+- `.env.production` - Production settings
 - `turbo.json` - Build pipeline configuration
 
 ## 📚 Documentation
@@ -430,7 +477,7 @@ The system supports environment-specific configuration:
 - **Plugin System**: [`packages/plugin-system/docs/README.md`](./packages/plugin-system/docs/README.md)
 - **Plugin Development**: [`plugins/README.md`](./plugins/README.md)
 - **Core Application**: [`apps/management-ui-core/README.md`](./apps/management-ui-core/README.md)
-- **Archived Documentation**: [`docs/archive/`](./docs/archive/) - Historical technical documentation
+- **Archived Documentation**: [`docs/internal/`](./docs/internal/) - Historical technical documentation
 
 ## 🤝 Contributing
 
@@ -451,4 +498,3 @@ This project is maintained by educational institutions and follows open source p
 - **Extensions**: University-specific plugin implementations
 
 ---
-

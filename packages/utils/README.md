@@ -1,204 +1,124 @@
 # @workspace/utils
 
-Shared utility functions and helper methods used across the Management UI ecosystem. This package provides common functionality for data processing, formatting, and browser interactions.
+**Version:** 0.0.0  
+**Type:** Core Infrastructure  
+**Last Updated:** 2025-01-15
 
-## 📦 Utilities
+## Purpose & Scope
 
-### Duration Handling
+The `@workspace/utils` package is a pure utility library that provides shared helper functions, constants, and logic used across the entire Management UI monorepo. It is designed to have **zero workspace dependencies**, making it the most fundamental building block in the system.
 
-Parse and format ISO 8601 duration strings for video content:
+**In Scope:**
 
-```typescript
-import { parseDuration, serializeDuration } from '@workspace/utils';
+- Logging system (`logger`).
+- Deep merging of objects (`deepMerge`).
+- Duration parsing and formatting (using `tinyduration`).
+- Cryptographic utilities (SHA-256).
+- Asset URL handling.
+- Metadata normalization helpers.
 
-// Parse duration to HH:MM:SS format
-const formatted = parseDuration('PT1H30M45S'); // "01:30:45"
-const formatted2 = parseDuration('PT2M30S');    // "00:02:30"
+**Out of Scope:**
 
-// Serialize duration object back to ISO format
-const duration = { hours: 1, minutes: 30, seconds: 45 };
-const iso = serializeDuration(duration); // "PT1H30M45S"
+- Anything related to React or UI (must be pure TypeScript/JavaScript).
+- Business logic tied to specific domain models (except for generic normalization).
+
+## Architecture & Design Decisions
+
+### Design Principles
+
+- **Zero Coupling:** This package must not depend on any other package in the workspace.
+- **Pure Functions:** Most utilities are designed as pure functions with no side effects.
+- **High Test Coverage:** Being a core dependency, this package aims for >80% test coverage.
+
+### Key Concepts
+
+#### Logger
+A centralized logger that wraps standard console methods but allows for future extensions (e.g., sending logs to a server).
+
+#### DeepMerge
+A recursive merge utility specifically designed to handle complex configuration objects, such as merging plugin configs with application defaults.
+
+### Technology Choices
+
+- **crypto-js:** Used for reliable cryptographic operations.
+- **tinyduration:** A lightweight library for ISO 8601 duration parsing.
+
+## API Surface (Public Exports)
+
+### Core API
+
+#### `logger`
+**Purpose:** Standardized logging.
+**Methods:** `info`, `warn`, `error`, `debug`.
+
+#### `deepMerge(target, source)`
+**Purpose:** Recursively merges two objects.
+
+#### `assetUrl(path)`
+**Purpose:** Normalizes asset URLs for different environment contexts.
+
+## Dependencies & Coupling
+
+### Dependency Graph
+
+```
+@workspace/utils
+└── External Dependencies
+    ├── crypto-js (^4.2.0)
+    └── tinyduration (^3.3.0)
 ```
 
-### Cryptography
+### Dependency Layer
 
-Hash generation for data integrity and caching:
+**Layer:** Core Infrastructure
 
-```typescript
-import { sha256 } from '@workspace/utils';
+**Allowed to depend on:** External dependencies only.
 
-// Generate SHA-256 hash
-const hash = sha256('my-data').toString();
-```
+## Usage Examples
 
-### Clipboard Operations
-
-Cross-platform clipboard functionality with fallbacks:
+### Using the Logger
 
 ```typescript
-import { copyText } from '@workspace/utils';
+import { logger } from "@workspace/utils";
 
-// Copy text to clipboard (handles permissions and fallbacks)
-const success = await copyText('Text to copy');
-if (success) {
-  console.log('Text copied successfully');
-}
+logger.info("Application started", { version: "1.0.0" });
 ```
 
-### Metadata Processing
-
-Normalize and clean metadata from GraphQL responses:
+### Using DeepMerge
 
 ```typescript
-import { normalizeMetadataValue, normalizeMetadataObject } from '@workspace/utils';
+import { deepMerge } from "@workspace/utils";
 
-// Normalize individual values (handles null, undefined, "null" strings)
-const clean = normalizeMetadataValue(null);        // ""
-const clean2 = normalizeMetadataValue(['a', null, 'b']); // ["a", "b"]
-
-// Normalize entire metadata objects
-const metadata = {
-  title: 'My Video',
-  description: null,
-  tags: ['tag1', null, 'tag2'],
-  category: undefined
-};
-
-const cleaned = normalizeMetadataObject(metadata);
-// { title: 'My Video', tags: ['tag1', 'tag2'] }
+const config = deepMerge(defaults, overrides);
 ```
 
-## 🔧 Features
+## Testing Strategy
 
-### Browser Compatibility
+### Unit Tests
+This package has comprehensive unit tests for all utility functions.
 
-- **Cross-platform clipboard**: Handles iOS, desktop, and legacy browsers
-- **Permission handling**: Requests clipboard permissions when available
-- **Fallback support**: Uses deprecated APIs when modern ones aren't available
-
-### Data Processing
-
-- **Null safety**: Consistent handling of null/undefined values from APIs
-- **Type normalization**: Converts mixed data types to consistent string formats
-- **Array filtering**: Removes empty values from arrays automatically
-
-### Video Content Support
-
-- **Duration parsing**: ISO 8601 duration strings to readable HH:MM:SS format
-- **Metadata normalization**: Clean GraphQL responses for UI display
-- **Hash generation**: Content integrity verification
-
-## 🚀 Usage
-
-### Installation
-
-The utils package is automatically available in all monorepo applications:
-
-```typescript
-import { parseDuration, copyText, sha256 } from '@workspace/utils';
+```bash
+pnpm test
 ```
 
-### Common Patterns
-
-#### Video Duration Display
-
-```typescript
-import { parseDuration } from '@workspace/utils';
-
-function VideoDuration({ duration }: { duration: string }) {
-  const formatted = parseDuration(duration);
-  return <span className="text-sm text-gray-500">{formatted}</span>;
-}
-```
-
-#### Metadata Form Processing
-
-```typescript
-import { normalizeMetadataObject } from '@workspace/utils';
-
-function saveMetadata(formData: FormData) {
-  const rawMetadata = Object.fromEntries(formData);
-  const cleanMetadata = normalizeMetadataObject(rawMetadata);
-  
-  // Save only non-empty values
-  return api.updateMetadata(cleanMetadata);
-}
-```
-
-#### Copy to Clipboard with Toast
-
-```typescript
-import { copyText } from '@workspace/utils';
-import { toast } from '@workspace/ui';
-
-async function handleCopyLink(url: string) {
-  const success = await copyText(url);
-  
-  if (success) {
-    toast.success('Link copied to clipboard');
-  } else {
-    toast.error('Failed to copy link');
-  }
-}
-```
-
-## 📁 Package Structure
+## File Structure
 
 ```
 packages/utils/
 ├── src/
-│   └── index.ts             # All utility functions
+│   ├── logger.ts               # Logging system
+│   ├── deepMerge.ts            # Object merging
+│   ├── duration.ts             # ISO 8601 handling
+│   ├── assetUrl.ts             # URL normalization
+│   └── index.ts                # Public API exports
 ├── package.json
-├── tsconfig.json
-└── README.md
+└── README.md                   # This file
 ```
 
-## 🧪 Testing
+---
 
-```bash
-# Type checking
-pnpm check-types
+## Contributing
 
-# Linting
-pnpm lint
-```
-
-## 🤝 Contributing
-
-### Adding New Utilities
-
-1. **Add the function** to `src/index.ts`
-2. **Export it** from the main export list
-3. **Include TypeScript types** for all parameters and return values
-4. **Add JSDoc comments** for complex functions
-5. **Consider browser compatibility** for DOM/Navigator APIs
-
-### Guidelines
-
-- **Pure functions preferred**: Avoid side effects where possible
-- **Null-safe by default**: Handle null/undefined inputs gracefully
-- **Browser compatibility**: Use feature detection for web APIs
-- **TypeScript first**: Provide full type safety
-- **Small and focused**: Keep utilities simple and reusable
-
-### Example Utility Addition
-
-```typescript
-/**
- * Formats file sizes into human-readable strings
- * @param bytes - File size in bytes
- * @param decimals - Number of decimal places (default: 2)
- * @returns Formatted string like "1.5 MB"
- */
-export function formatFileSize(bytes: number, decimals: number = 2): string {
-  if (bytes === 0) return '0 Bytes';
-  
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(decimals))} ${sizes[i]}`;
-}
-```
-
-This utilities package provides the foundational helper functions that enable consistent data processing and user interactions across the entire Management UI ecosystem. 
+1. **NO Workspace Dependencies:** Never add an import from `@workspace/*` to this package.
+2. **Pure Logic:** Ensure functions are testable and have no side effects where possible.
+3. **Tests:** Every new utility function **must** have a corresponding `.test.ts` file with high coverage.
