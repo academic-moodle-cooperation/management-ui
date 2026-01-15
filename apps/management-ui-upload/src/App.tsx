@@ -12,7 +12,7 @@ import {
   useInfiniteQuery,
  useAppConfig } from "@workspace/query";
 import type { GetMySeriesNameAndIdQuery } from "@workspace/query";
-import { useNavigate, useParams, useRouter } from "@workspace/router";
+import { useNavigate, useParams } from "@workspace/router";
 import { useStore } from "@workspace/store";
 import type { UploadFileBlob } from "@workspace/store";
 import {
@@ -50,12 +50,14 @@ export const App = () => {
     index: -1,
     name: "",
   });
-  const [isEdited, setIsEdited] = useState(false);
+  // TODO: isEdited state may be needed for future edit functionality
+  // const [isEdited, setIsEdited] = useState(false);
 
   const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(null);
   const [selectedSeries, setSelectedSeries] = useState<SelectedElement | null>(null);
 
-  const [uploadListIsOpen, setUploadListIsOpen] = useState(false);
+  // TODO: uploadListIsOpen state may be needed for future UI functionality
+  // const [uploadListIsOpen, setUploadListIsOpen] = useState(false);
   const [query, setQuery] = useState<string | undefined>(undefined);
   const [aclData, setAclData] = useState<AclData | undefined>(undefined);
 
@@ -73,7 +75,6 @@ export const App = () => {
   const { data: user } = useGetUserInfo();
   const { routeSubPath } = useParams({ strict: false });
   const navigate = useNavigate({ from: `/upload` });
-  const router = useRouter();
 
   const { t } = useI18n();
   const { config } = useAppConfig();
@@ -104,7 +105,7 @@ export const App = () => {
     };
   }, [manager]);
 
-  const { isLoading: isLoadingSeriesData, data: seriesData } = useGetMySeriesNameAndIdQuery({
+  const { data: seriesData } = useGetMySeriesNameAndIdQuery({
     query: routeSubPath,
     orderBy: {
       title: OrderDirection.Asc,
@@ -156,7 +157,7 @@ export const App = () => {
     return data?.currentUser?.mySeries?.nodes || [];
   };
 
-  const { data, refetch, fetchNextPage, hasNextPage } = useInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: ["seriesList", query],
     queryFn: ({ pageParam }) => {
       return fetchMySeries({
@@ -201,6 +202,7 @@ export const App = () => {
       ...zustandupload,
       seriesId: selectedSeriesId || "",
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSeriesId]);
 
   useEffect(() => {
@@ -306,6 +308,7 @@ export const App = () => {
           });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     zustandupload?.pending,
     zustandupload?.next,
