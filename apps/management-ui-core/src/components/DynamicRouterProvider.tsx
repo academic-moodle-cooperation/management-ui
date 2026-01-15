@@ -2,8 +2,6 @@ import {
   createRouter,
   createRoute,
   createRootRoute,
-  Outlet,
-  useRouterState,
 } from "@tanstack/react-router";
 import React, { useState, useEffect, lazy, Suspense } from "react";
 
