@@ -15,7 +15,7 @@
 
 #### 1.1 Root AI Navigation Guide ✅
 
-- **Created:** [`AI_DEVELOPMENT_GUIDE.md`](AI_DEVELOPMENT_GUIDE.md)
+- **Created:** [`docs/AI_DEVELOPMENT_GUIDE.md`](docs/AI_DEVELOPMENT_GUIDE.md)
   - Comprehensive entry point for AI models
   - Navigation instructions for all documentation
   - Common task quick links
@@ -325,7 +325,7 @@ All 14 workspace packages are now fully documented using [`PACKAGE_README_TEMPLA
 
 **Created/Updated Files:**
 
-- Root: 2 files (AI_DEVELOPMENT_GUIDE.md, README.md)
+- Root: 2 files (docs/AI_DEVELOPMENT_GUIDE.md, README.md)
 - Templates: 4 files
 - Workflows: 5 files
 - Architecture: 2 ADRs
@@ -373,7 +373,7 @@ All 14 workspace packages are now fully documented using [`PACKAGE_README_TEMPLA
 
 ### For AI Models
 
-1. **Always start:** [`AI_DEVELOPMENT_GUIDE.md`](AI_DEVELOPMENT_GUIDE.md)
+1. **Always start:** [`docs/AI_DEVELOPMENT_GUIDE.md`](docs/AI_DEVELOPMENT_GUIDE.md)
 2. **Creating new package:** [`docs/workflows/ADDING_PACKAGES.md`](docs/workflows/ADDING_PACKAGES.md)
 3. **Creating new app:** [`docs/workflows/ADDING_APPS.md`](docs/workflows/ADDING_APPS.md)
 4. **Creating new plugin:** [`docs/workflows/ADDING_PLUGINS.md`](docs/workflows/ADDING_PLUGINS.md)

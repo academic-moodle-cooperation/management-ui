@@ -556,7 +556,7 @@ pnpm build
 - [Package Ecosystem](/packages/README.md) - Dependency graph
 - [Coupling Analysis](/docs/COUPLING_ANALYSIS.md) - Dependency impact
 - [Swapping Technologies](/docs/workflows/SWAPPING_TECHNOLOGIES.md) - Replacing packages
-- [AI Development Guide](/AI_DEVELOPMENT_GUIDE.md) - Main navigation
+- [AI Development Guide](/docs/AI_DEVELOPMENT_GUIDE.md) - Main navigation
 
 ## Emergency Contacts
 

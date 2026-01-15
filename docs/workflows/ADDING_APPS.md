@@ -749,7 +749,7 @@ Before considering an app complete:
 - [Application Architecture](/apps/README.md) - Overview of app ecosystem
 - [App Template](/docs/templates/APP_README_TEMPLATE.md) - Documentation template
 - [Plugin System](/plugins/README.md) - How to provide extension points
-- [AI Development Guide](/AI_DEVELOPMENT_GUIDE.md) - AI navigation
+- [AI Development Guide](/docs/AI_DEVELOPMENT_GUIDE.md) - AI navigation
 
 ## Examples
 

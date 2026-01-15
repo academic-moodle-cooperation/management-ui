@@ -652,7 +652,7 @@ Before considering an app production-ready:
 
 ## Related Documentation
 
-- [AI Development Guide](/AI_DEVELOPMENT_GUIDE.md) - AI navigation
+- [AI Development Guide](/docs/AI_DEVELOPMENT_GUIDE.md) - AI navigation
 - [Package Documentation](/packages/README.md) - Workspace packages
 - [Plugin Documentation](/plugins/README.md) - Plugin system
 - [Adding Apps Guide](/docs/workflows/ADDING_APPS.md) - Detailed app creation

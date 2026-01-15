@@ -417,7 +417,7 @@ Before considering a package production-ready:
 
 ## Related Documentation
 
-- [AI Development Guide](/AI_DEVELOPMENT_GUIDE.md) - Main AI navigation
+- [AI Development Guide](/docs/AI_DEVELOPMENT_GUIDE.md) - Main AI navigation
 - [Application Documentation](/apps/README.md) - How apps use these packages
 - [Plugin Documentation](/plugins/README.md) - How plugins use these packages
 - [Coupling Analysis](/docs/COUPLING_ANALYSIS.md) - Detailed dependency analysis

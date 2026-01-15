@@ -20,7 +20,7 @@ Every component in this system is **documented for independent evolution**. The 
 
 ```
 Management UI/
-├── AI_DEVELOPMENT_GUIDE.md       ← YOU ARE HERE (start here)
+├── docs/AI_DEVELOPMENT_GUIDE.md       ← YOU ARE HERE (start here)
 ├── README.md                      ← Project overview
 │
 ├── /docs/                         ← Development guides & decisions

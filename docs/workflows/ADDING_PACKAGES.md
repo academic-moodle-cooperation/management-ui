@@ -596,7 +596,7 @@ Before considering a package complete:
 - [Package Ecosystem](/packages/README.md) - Package overview and layers
 - [Coupling Analysis](/docs/COUPLING_ANALYSIS.md) - Dependency rules
 - [Package Template](/docs/templates/PACKAGE_README_TEMPLATE.md) - Documentation template
-- [AI Development Guide](/AI_DEVELOPMENT_GUIDE.md) - AI navigation
+- [AI Development Guide](/docs/AI_DEVELOPMENT_GUIDE.md) - AI navigation
 
 ## Examples
 

@@ -36,11 +36,11 @@ plugins/        ← Extension point definitions
 
 ## 📚 Documentation
 
-**🤖 For AI Models:** Start with the [AI Development Guide](AI_DEVELOPMENT_GUIDE.md) - your entry point for understanding and contributing to this codebase.
+**🤖 For AI Models:** Start with the [AI Development Guide](docs/AI_DEVELOPMENT_GUIDE.md) - your entry point for understanding and contributing to this codebase.
 
 ### Core Documentation
 
-- **[AI Development Guide](AI_DEVELOPMENT_GUIDE.md)** - Main entry point for AI models and new developers
+- **[AI Development Guide](docs/AI_DEVELOPMENT_GUIDE.md)** - Main entry point for AI models and new developers
 - **[Package Ecosystem](/packages/README.md)** - Shared infrastructure packages and dependency management
 - **[Application Architecture](/apps/README.md)** - Domain applications and dual-mode execution
 - **[Plugin System](/plugins/README.md)** - Extension points and university customizations
@@ -477,7 +477,7 @@ The system supports environment-specific configuration:
 - **Plugin System**: [`packages/plugin-system/docs/README.md`](./packages/plugin-system/docs/README.md)
 - **Plugin Development**: [`plugins/README.md`](./plugins/README.md)
 - **Core Application**: [`apps/management-ui-core/README.md`](./apps/management-ui-core/README.md)
-- **Archived Documentation**: [`docs/archive/`](./docs/archive/) - Historical technical documentation
+- **Archived Documentation**: [`docs/internal/`](./docs/internal/) - Historical technical documentation
 
 ## 🤝 Contributing
 

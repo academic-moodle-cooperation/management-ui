@@ -810,7 +810,7 @@ Before considering a plugin complete:
 - [Plugin Template](/docs/templates/PLUGIN_README_TEMPLATE.md) - Documentation template
 - [Implementation Template](/docs/templates/IMPLEMENTATION_README_TEMPLATE.md) - Implementation docs
 - [Extension Points](/plugins/core/README.md) - Available extension points
-- [AI Development Guide](/AI_DEVELOPMENT_GUIDE.md) - AI navigation
+- [AI Development Guide](/docs/AI_DEVELOPMENT_GUIDE.md) - AI navigation
 
 ## Examples
 

@@ -11,7 +11,7 @@ This document tracks the progress of the comprehensive code quality improvement 
 
 ### Phase 0: Dokumentation Merge ✅ COMPLETED
 
-- [x] AI_DEVELOPMENT_GUIDE.md integriert
+- [x] docs/AI_DEVELOPMENT_GUIDE.md integriert
 - [x] IMPLEMENTATION_PROGRESS.md integriert
 - [x] README.md aktualisiert mit Dokumentations-Links
 - [x] Alle Templates übernommen (PACKAGE, APP, PLUGIN, IMPLEMENTATION)
@@ -25,7 +25,7 @@ This document tracks the progress of the comprehensive code quality improvement 
 
 - ✅ Alle Dokumentations-Dateien aus showcase Branch integriert
 - ✅ Konsistente Dokumentations-Struktur
-- ✅ AI_DEVELOPMENT_GUIDE.md aktuell und vollständig
+- ✅ docs/AI_DEVELOPMENT_GUIDE.md aktuell und vollständig
 
 ---
 
