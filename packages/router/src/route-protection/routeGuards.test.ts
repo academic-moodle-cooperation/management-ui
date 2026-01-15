@@ -94,7 +94,9 @@ describe("routeGuards", () => {
         },
       };
 
-      await expect(() => guard(context as TestRouteContext)).rejects.toThrow("Redirect to /access-denied");
+      await expect(() => guard(context as TestRouteContext)).rejects.toThrow(
+        "Redirect to /access-denied",
+      );
     });
 
     it("should allow access if user has required role", async () => {

@@ -190,4 +190,4 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => [
 ];
 
 // Keep a fallback export for compatibility or testing
-export const columns = createColumns(() => { });
+export const columns = createColumns(() => {});

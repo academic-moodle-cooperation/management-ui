@@ -10,7 +10,13 @@ import {
   type GetMyEventsQuery,
 } from "@workspace/query";
 import { useNavigate } from "@workspace/router";
-import type { Row , type ColumnDef, MUITable, createMetadataHelpers, Button } from "@workspace/ui/components";
+import type {
+  Row,
+  type ColumnDef,
+  MUITable,
+  createMetadataHelpers,
+  Button,
+} from "@workspace/ui/components";
 import { AppLoader } from "@workspace/ui/components";
 import type { MetadataItem, ColumnsField } from "@workspace/ui-config";
 import { logger } from "@workspace/utils";

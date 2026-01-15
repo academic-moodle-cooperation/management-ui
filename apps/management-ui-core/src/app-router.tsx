@@ -1,10 +1,5 @@
-import {
-  createRouter,
-  createRoute,
-  createRootRoute,
-} from "@tanstack/react-router";
+import { createRouter, createRoute, createRootRoute } from "@tanstack/react-router";
 import React, { lazy, Suspense } from "react";
-
 
 // Types for dynamic modules - will eventually come from a more robust system
 // For now, let's assume a structure similar to what useGetInstalledApps might provide.

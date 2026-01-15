@@ -12,7 +12,9 @@ import {
   MetadataField,
   MetadataUpdateField,
   createMetadataHelpers,
- CopyIcon, PencilIcon } from "@workspace/ui/components";
+  CopyIcon,
+  PencilIcon,
+} from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib/utils";
 import type { MetadataItem } from "@workspace/ui-config";
 import { copyText } from "@workspace/utils";

@@ -20,7 +20,6 @@ import { cn } from "@workspace/ui/lib/utils";
 
 import { useFileHandler } from "../uploadservice/fileHandler";
 
-
 import type { FC } from "react";
 
 interface DropzoneProps {

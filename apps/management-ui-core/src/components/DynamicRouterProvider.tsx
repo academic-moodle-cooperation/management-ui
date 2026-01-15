@@ -1,10 +1,5 @@
-import {
-  createRouter,
-  createRoute,
-  createRootRoute,
-} from "@tanstack/react-router";
+import { createRouter, createRoute, createRootRoute } from "@tanstack/react-router";
 import React, { useState, useEffect, lazy, Suspense } from "react";
-
 
 import {
   usePluginManager,

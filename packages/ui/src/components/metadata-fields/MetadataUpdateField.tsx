@@ -110,12 +110,7 @@ export const MetadataUpdateField = ({
     return data?.currentUser?.mySeries.nodes;
   };
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isLoading,
-  } = useInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery({
     queryKey: ["seriesList", query],
     queryFn: ({ pageParam }) => {
       return fetchMySeries({ pageParam, query });

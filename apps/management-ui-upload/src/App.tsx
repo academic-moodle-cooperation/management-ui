@@ -10,7 +10,7 @@ import {
   useGetMySeriesNameAndIdQuery,
   useGetUserInfo,
   useInfiniteQuery,
-  useAppConfig
+  useAppConfig,
 } from "@workspace/query";
 import type { GetMySeriesNameAndIdQuery } from "@workspace/query";
 import { useNavigate, useParams } from "@workspace/router";
@@ -39,7 +39,6 @@ import { UploadList } from "./components/UploadList";
 import { useFileHandler } from "./uploadservice/fileHandler";
 import { initializeProgressInterval } from "./uploadservice/onProgress";
 import { opencastUpload } from "./uploadservice/opencastUpload";
-
 
 import type { DragEvent, KeyboardEvent, RefObject, SetStateAction } from "react";
 
@@ -193,10 +192,10 @@ export const App = () => {
     setSelectedSeries(
       navSeries && navSeries.id && navSeries.title
         ? {
-          __typename: navSeries.__typename as "Series" | "Event",
-          id: navSeries.id,
-          title: navSeries.title,
-        }
+            __typename: navSeries.__typename as "Series" | "Event",
+            id: navSeries.id,
+            title: navSeries.title,
+          }
         : null,
     );
     routeSubPath && setSelectedSeriesId(routeSubPath);
@@ -265,12 +264,12 @@ export const App = () => {
           // Convert UserInfo to User type by adding missing provider property
           user
             ? {
-              ...user,
-              user: {
-                ...user.user,
-                provider: "internal", // Add default provider since it's missing from UserInfo
-              },
-            }
+                ...user,
+                user: {
+                  ...user.user,
+                  provider: "internal", // Add default provider since it's missing from UserInfo
+                },
+              }
             : user,
           location,
           updateFile,
@@ -591,10 +590,10 @@ export const App = () => {
                         setSelectedSeries(
                           value && value.id && value.title
                             ? {
-                              __typename: "Series" as const,
-                              id: value.id,
-                              title: value.title,
-                            }
+                                __typename: "Series" as const,
+                                id: value.id,
+                                title: value.title,
+                              }
                             : null,
                         );
                       }}

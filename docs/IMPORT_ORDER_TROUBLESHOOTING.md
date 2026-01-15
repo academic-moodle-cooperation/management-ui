@@ -6,6 +6,7 @@
 ## Problem
 
 Es gibt Inkonsistenzen in der Import-Reihenfolge im Monorepo:
+
 - Manchmal sind `external` Imports (z.B. `react`) oben
 - Manchmal sind `@workspace/*` Imports oben
 - Die Reihenfolge scheint zufällig zu sein
@@ -25,6 +26,7 @@ Es gibt Inkonsistenzen in der Import-Reihenfolge im Monorepo:
 ### 1. Korrekte Reihenfolge
 
 **KORREKT:**
+
 ```typescript
 import { useState } from "react";
 import { Film } from "lucide-react";
@@ -38,14 +40,16 @@ import "./styles.css";
 ```
 
 **FALSCH:**
+
 ```typescript
 import { useI18n } from "@workspace/i18n";
-import { useState } from "react";  // ❌ external sollte VOR internal sein
+import { useState } from "react"; // ❌ external sollte VOR internal sein
 ```
 
 ### 2. Workflow
 
 **Immer in dieser Reihenfolge:**
+
 ```bash
 # 1. ESLint fix (sortiert Imports)
 pnpm lint --fix
@@ -57,6 +61,7 @@ pnpm format
 ### 3. Auto-Fix
 
 ESLint kann die Import-Reihenfolge automatisch korrigieren:
+
 ```bash
 # Für alle Packages
 pnpm lint --fix

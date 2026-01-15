@@ -1,7 +1,6 @@
 import { createRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 
-
 import { ComponentResolver } from "@workspace/plugin-system";
 import { createLoginRoute, createLogoutRoute } from "@workspace/router";
 import { DefaultLandingPage, AppLoader, Container } from "@workspace/ui/components";

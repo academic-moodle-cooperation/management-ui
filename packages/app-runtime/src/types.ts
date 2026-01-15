@@ -1,4 +1,3 @@
-
 import type { AnyRouter } from "@tanstack/react-router";
 
 // Re-export AppDefinition from plugin-system to avoid circular dependencies

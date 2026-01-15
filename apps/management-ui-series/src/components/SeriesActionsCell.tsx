@@ -9,7 +9,6 @@ import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/c
 
 import { useSidebarStore } from "../stores/sidebarStore";
 
-
 interface SeriesActionsCellProps {
   series: SeriesDataFragment;
 }

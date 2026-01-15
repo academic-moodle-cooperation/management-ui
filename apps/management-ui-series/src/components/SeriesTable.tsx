@@ -64,7 +64,7 @@ const SeriesTable = () => {
   // Create columns with the store's setIsEditing function
   const columns = useMemo(() => createColumns(setIsEditing), [setIsEditing]);
 
-  const metadata = (config?.plugins?.["management-ui-series"]?.seriesInfo?.metadata ||
+  const metadata = (config?.plugins?.["management-ui-series"]?.seriesInfo?.metadata ??
     []) as MetadataItem[];
   const { isReadOnly } = createMetadataHelpers(metadata);
 
@@ -88,7 +88,7 @@ const SeriesTable = () => {
               typeof field === "object" &&
               "value" in field &&
               field.value !== undefined &&
-              !isReadOnly(field.id!)
+              field.id && !isReadOnly(field.id)
             ) {
               // Type assertion: field.value can be string | (string | null)[] | null
               // but SeriesUpdateData expects string | string[]
@@ -159,7 +159,7 @@ const SeriesTable = () => {
   }, [seriesData, selectedId]);
 
   // Get visible columns from app config - use the columns configuration or fallback to all columns
-  const configColumns = config?.plugins?.["management-ui-series"]?.seriesTable?.columns || [];
+  const configColumns = config?.plugins?.["management-ui-series"]?.seriesTable?.columns ?? [];
   const visibleColumns = (configColumns as Record<string, ColumnsField>[]).filter((column) => {
     if (!column || typeof column !== "object") return false;
     const key = Object.keys(column)[0];
