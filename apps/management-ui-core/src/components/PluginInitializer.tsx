@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+
 import {
   createObjectRegistryPlugin,
   createRendererPlugin,
@@ -6,10 +7,11 @@ import {
   type Plugin,
   createAppRegistryPlugin,
 } from "@workspace/plugin-system";
-import { AppLoader } from "@workspace/ui/components";
-import { loadAllAvailablePlugins } from "../loadPlugins";
 import type { AppConfig } from "@workspace/query";
+import { AppLoader } from "@workspace/ui/components";
 import { logger } from "@workspace/utils";
+
+import { loadAllAvailablePlugins } from "../loadPlugins";
 
 interface PluginInitializerProps {
   children: React.ReactNode;

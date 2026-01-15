@@ -1,18 +1,19 @@
 import React, { useMemo, useEffect, useCallback, useRef, useState } from "react";
-import { MUITable, createMetadataHelpers, type ColumnDef } from "@workspace/ui/components";
-import type { Row } from "@workspace/ui/components";
-import { AppLoader } from "@workspace/ui/components";
+
+import { useI18n } from "@workspace/i18n";
 import { useUpdateSeriesMutation, useAppConfig } from "@workspace/query";
 import type { SeriesDataFragment } from "@workspace/query";
 import { useNavigate } from "@workspace/router";
+import type { Row , MUITable, createMetadataHelpers, type ColumnDef } from "@workspace/ui/components";
+import { AppLoader } from "@workspace/ui/components";
 import type { MetadataItem, ColumnsField } from "@workspace/ui-config";
-import { useI18n } from "@workspace/i18n";
+import { logger } from "@workspace/utils";
 
 import { createColumns } from "../columns";
 import { useSeriesTable, type SeriesUpdateData } from "../hooks";
-import { SeriesTableSidebar } from "./SeriesTableSidebar";
 import { useSidebarStore } from "../stores/sidebarStore";
-import { logger } from "@workspace/utils";
+
+import { SeriesTableSidebar } from "./SeriesTableSidebar";
 
 /**
  * Component for displaying and managing series data

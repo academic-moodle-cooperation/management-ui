@@ -1,4 +1,3 @@
-import React, { useState, useEffect, lazy, Suspense } from "react";
 import {
   createRouter,
   createRoute,
@@ -6,23 +5,27 @@ import {
   Outlet,
   useRouterState,
 } from "@tanstack/react-router";
-import type { AnyRoute, AnyRouter } from "@tanstack/react-router";
+import React, { useState, useEffect, lazy, Suspense } from "react";
+
+
 import {
   usePluginManager,
   getAllApps,
   type PluginManager,
   type AppDefinition,
 } from "@workspace/plugin-system";
-import { useAppConfig } from "@workspace/query";
-import { getCachedAppConfig } from "@workspace/query";
-import { ProtectedRoute } from "@workspace/router";
 import { ComponentResolver } from "@workspace/plugin-system";
+import { getCachedAppConfig , useAppConfig } from "@workspace/query";
+import { ProtectedRoute } from "@workspace/router";
+import { DefaultLandingPage, AppLoader, Container } from "@workspace/ui/components";
 import { logger } from "@workspace/utils";
 
 // Import components from the core app
-import { ErrorBoundary, ModuleErrorFallback, NotFoundError, CoreAppShellLayout } from "./index";
-import { DefaultLandingPage, AppLoader, Container } from "@workspace/ui/components";
 import { createCommonRoutes } from "../shared/commonRoutes";
+
+import { ErrorBoundary, ModuleErrorFallback, NotFoundError, CoreAppShellLayout } from "./index";
+
+import type { AnyRoute, AnyRouter } from "@tanstack/react-router";
 
 // Base root route for the application
 const appCoreRootRoute = createRootRoute({

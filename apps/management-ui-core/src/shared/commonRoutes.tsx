@@ -1,8 +1,10 @@
-import React, { Suspense } from "react";
+import { Suspense } from "react";
+
 import { createRoute } from "@tanstack/react-router";
-import { DefaultLandingPage, AppLoader, Container } from "@workspace/ui/components";
+
 import { ComponentResolver } from "@workspace/plugin-system";
 import { createLoginRoute, createLogoutRoute } from "@workspace/router";
+import { DefaultLandingPage, AppLoader, Container } from "@workspace/ui/components";
 
 /**
  * Shared route definitions used across different router configurations.

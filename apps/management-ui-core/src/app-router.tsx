@@ -1,4 +1,3 @@
-import React, { lazy, Suspense } from "react";
 import {
   createRouter,
   createRoute,
@@ -7,23 +6,28 @@ import {
   Navigate,
   useRouterState,
 } from "@tanstack/react-router";
-import type { AnyRoute } from "@tanstack/react-router";
+import React, { lazy, Suspense } from "react";
+
+
 // Types for dynamic modules - will eventually come from a more robust system
 // For now, let's assume a structure similar to what useGetInstalledApps might provide.
-import { useAppConfig } from "@workspace/query"; // For login/logout redirects
 // Import components from the new organized structure
+import { ComponentResolver } from "@workspace/plugin-system"; // Import ComponentResolver for landing page overrides
+import { getCachedAppConfig } from "@workspace/query"; // Import the new utility
+import { useAppConfig } from "@workspace/query"; // For login/logout redirects
+import { ProtectedRoute } from "@workspace/router"; // Import ProtectedRoute for route-level protection
+import { DefaultLandingPage, AppLoader, Container } from "@workspace/ui/components"; // Import DefaultLandingPage
+import { logger } from "@workspace/utils";
+
 import {
   ErrorBoundary,
   ModuleErrorFallback,
   NotFoundError,
   CoreAppShellLayout,
 } from "./components";
-import { DefaultLandingPage, AppLoader, Container } from "@workspace/ui/components"; // Import DefaultLandingPage
-import { getCachedAppConfig } from "@workspace/query"; // Import the new utility
-import { ProtectedRoute } from "@workspace/router"; // Import ProtectedRoute for route-level protection
-import { ComponentResolver } from "@workspace/plugin-system"; // Import ComponentResolver for landing page overrides
 import { createCommonRoutes } from "./shared/commonRoutes"; // Import shared route definitions
-import { logger } from "@workspace/utils";
+
+import type { AnyRoute } from "@tanstack/react-router";
 
 // Local temporary placeholders are no longer needed and will be removed.
 

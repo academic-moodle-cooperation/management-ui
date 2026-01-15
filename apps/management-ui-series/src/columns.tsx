@@ -1,3 +1,8 @@
+import { Film, Info } from "lucide-react";
+
+import { i18next } from "@workspace/i18n";
+import type { SeriesDataFragment } from "@workspace/query";
+import { Link } from "@workspace/router";
 import {
   createColumnHelper,
   Tooltip,
@@ -8,15 +13,13 @@ import {
   OverflowTooltip,
 } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib";
-import type { SeriesDataFragment } from "@workspace/query";
-import { Film, Info } from "lucide-react";
-import { Link } from "@workspace/router";
-import { i18next } from "@workspace/i18n";
+
 import SeriesActionsCell from "./components/SeriesActionsCell";
 
 const columnHelper = createColumnHelper<SeriesDataFragment>();
 
 // Convert columns to a factory function that accepts setIsEditing
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const createColumns = (setIsEditing: (editing: boolean) => void) => [
   columnHelper.accessor("title", {
     header: ({ column }) => (

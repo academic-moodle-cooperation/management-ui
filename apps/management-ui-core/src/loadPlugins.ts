@@ -1,6 +1,6 @@
 import type { Plugin } from "@workspace/plugin-system";
-import type { AppConfig, PluginNamespaceItem } from "@workspace/query";
 import * as AllPlugins from "@workspace/plugins";
+import type { AppConfig, PluginNamespaceItem } from "@workspace/query";
 import { logger } from "@workspace/utils";
 
 // Helper function to check if an object is a valid plugin

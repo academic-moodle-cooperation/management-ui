@@ -1,8 +1,9 @@
 import React from "react";
-import { Button, toast } from "@workspace/ui/components";
+
 import { useI18n } from "@workspace/i18n";
 import { useUpdateSeriesMutation } from "@workspace/query";
 import type { CommonSeriesMetadataV2, GetSeriesByIdInputFieldsQuery } from "@workspace/query";
+import { Button, toast } from "@workspace/ui/components";
 import type { MetadataField } from "@workspace/ui-config";
 import { normalizeMetadataObject } from "@workspace/utils";
 

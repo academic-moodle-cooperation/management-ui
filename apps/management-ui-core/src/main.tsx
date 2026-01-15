@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
+
 import "@workspace/ui/globals.css";
-import { AppProviders } from "@workspace/providers";
-import { AppLoader } from "@workspace/ui/components";
-import { useAppConfig } from "@workspace/query";
-import { QueryProvider } from "@workspace/query";
-import { PluginInitializer } from "./components/PluginInitializer";
-import { PluginProvider } from "@workspace/plugin-system";
 import { loadNamespace, useTranslation } from "@workspace/i18n";
+import { PluginProvider } from "@workspace/plugin-system";
+import { AppProviders } from "@workspace/providers";
+import { useAppConfig , QueryProvider } from "@workspace/query";
+import { AppLoader } from "@workspace/ui/components";
+
 import { DynamicRouterProvider } from "./components/DynamicRouterProvider";
+import { PluginInitializer } from "./components/PluginInitializer";
+
 import type { AnyRouter } from "@tanstack/react-router";
 
 const AppContent = () => {

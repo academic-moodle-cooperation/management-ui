@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import type { ReactNode } from "react";
+
 import { logger } from "@workspace/utils";
+
+import type { ReactNode } from "react";
 
 interface ErrorBoundaryProps {
   fallback: ReactNode;

@@ -1,5 +1,9 @@
 import React, { useRef, useState } from "react";
-import type { RefObject } from "react";
+
+import { useTranslation } from "@workspace/i18n";
+import { usePluginManager } from "@workspace/plugin-system";
+import { useUpdateSeriesMutation } from "@workspace/query";
+import type { GetSeriesByIdInputFieldsQuery, SeriesDataFragment } from "@workspace/query";
 import {
   Sheet,
   SheetContent,
@@ -13,14 +17,13 @@ import {
   TabsContent,
 } from "@workspace/ui/components";
 import { useClickOutside } from "@workspace/ui/hooks";
-import { useUpdateSeriesMutation } from "@workspace/query";
-import type { GetSeriesByIdInputFieldsQuery, SeriesDataFragment } from "@workspace/query";
-import { usePluginManager } from "@workspace/plugin-system";
+import { logger } from "@workspace/utils";
+
 import { SeriesInfoContent } from "./SeriesInfoContent";
 import { SeriesInfoFooter } from "./SeriesInfoFooter";
+
 import type { SeriesUpdateData } from "../stores/sidebarStore";
-import { useTranslation } from "@workspace/i18n";
-import { logger } from "@workspace/utils";
+import type { RefObject } from "react";
 
 interface SeriesTableSidebarProps {
   isOpen: boolean;

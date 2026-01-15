@@ -10,7 +10,8 @@ import {
   useGetMySeriesNameAndIdQuery,
   useGetUserInfo,
   useInfiniteQuery,
- useAppConfig } from "@workspace/query";
+  useAppConfig
+} from "@workspace/query";
 import type { GetMySeriesNameAndIdQuery } from "@workspace/query";
 import { useNavigate, useParams } from "@workspace/router";
 import { useStore } from "@workspace/store";
@@ -40,7 +41,7 @@ import { initializeProgressInterval } from "./uploadservice/onProgress";
 import { opencastUpload } from "./uploadservice/opencastUpload";
 
 
-import type { RefObject } from "react";
+import type { DragEvent, KeyboardEvent, RefObject, SetStateAction } from "react";
 
 export const App = () => {
   const [fileWaitingList, setFileWaitingList] = useState<UploadFileBlob[]>([]);
@@ -52,7 +53,8 @@ export const App = () => {
     name: "",
   });
   // TODO: isEdited state may be needed for future edit functionality
-  // const [isEdited, setIsEdited] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isEdited, setIsEdited] = useState(false);
 
   const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(null);
   const [selectedSeries, setSelectedSeries] = useState<SelectedElement | null>(null);
@@ -191,10 +193,10 @@ export const App = () => {
     setSelectedSeries(
       navSeries && navSeries.id && navSeries.title
         ? {
-            __typename: navSeries.__typename as "Series" | "Event",
-            id: navSeries.id,
-            title: navSeries.title,
-          }
+          __typename: navSeries.__typename as "Series" | "Event",
+          id: navSeries.id,
+          title: navSeries.title,
+        }
         : null,
     );
     routeSubPath && setSelectedSeriesId(routeSubPath);
@@ -263,12 +265,12 @@ export const App = () => {
           // Convert UserInfo to User type by adding missing provider property
           user
             ? {
-                ...user,
-                user: {
-                  ...user.user,
-                  provider: "internal", // Add default provider since it's missing from UserInfo
-                },
-              }
+              ...user,
+              user: {
+                ...user.user,
+                provider: "internal", // Add default provider since it's missing from UserInfo
+              },
+            }
             : user,
           location,
           updateFile,
@@ -589,10 +591,10 @@ export const App = () => {
                         setSelectedSeries(
                           value && value.id && value.title
                             ? {
-                                __typename: "Series" as const,
-                                id: value.id,
-                                title: value.title,
-                              }
+                              __typename: "Series" as const,
+                              id: value.id,
+                              title: value.title,
+                            }
                             : null,
                         );
                       }}

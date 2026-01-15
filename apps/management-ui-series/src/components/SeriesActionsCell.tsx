@@ -1,11 +1,14 @@
-import React from "react";
-import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components";
 import { Pencil, UploadCloud } from "lucide-react";
-import { Link } from "@workspace/router";
+import React from "react";
+
 import { i18next } from "@workspace/i18n";
-import { useSidebarStore } from "../stores/sidebarStore";
-import type { SeriesDataFragment } from "@workspace/query";
 import { PluginComponent } from "@workspace/plugin-system";
+import type { SeriesDataFragment } from "@workspace/query";
+import { Link } from "@workspace/router";
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components";
+
+import { useSidebarStore } from "../stores/sidebarStore";
+
 
 interface SeriesActionsCellProps {
   series: SeriesDataFragment;
