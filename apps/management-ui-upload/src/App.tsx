@@ -57,6 +57,9 @@ export const App = () => {
   const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(null);
   const [selectedSeries, setSelectedSeries] = useState<SelectedElement | null>(null);
 
+  // uploadListIsOpen is set but not currently used in the UI
+  // It may be needed for future functionality (e.g., showing/hiding upload list)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [uploadListIsOpen, setUploadListIsOpen] = useState(false);
   const [query, setQuery] = useState<string | undefined>(undefined);
   const [aclData, setAclData] = useState<AclData | undefined>(undefined);
