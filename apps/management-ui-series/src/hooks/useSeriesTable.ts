@@ -13,7 +13,6 @@ import type { Row } from "@workspace/ui/components";
 import { useSidebarStore } from "../stores/sidebarStore";
 
 import { useTableState } from "./useTableState";
-
 import type { TableBaseState } from "./useTableState";
 import type React from "react";
 
@@ -147,7 +146,7 @@ export function useSeriesTable() {
     });
   };
 
-  const handleRowClick = (event: MouseEvent, row: Row<Record<string, unknown>>) => {
+  const handleRowClick = (event: React.MouseEvent, row: Row<Record<string, unknown>>) => {
     navigate({
       to: `${import.meta.env.BASE_URL}/series/${row.original["id"]}`,
       replace: true,
