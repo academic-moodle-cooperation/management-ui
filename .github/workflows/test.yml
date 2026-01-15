@@ -26,7 +26,11 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build packages
-        run: pnpm build
+        run: |
+          # Force rebuild to ensure all packages are built correctly
+          # This prevents issues where cached builds might have missing exports
+          # (e.g., vite-config dist files not being available for plugins)
+          pnpm turbo run build --force
 
       - name: Run linter
         run: pnpm lint
