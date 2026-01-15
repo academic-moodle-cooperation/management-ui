@@ -1,6 +1,6 @@
+import { createRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 
-import { createRoute } from "@tanstack/react-router";
 
 import { ComponentResolver } from "@workspace/plugin-system";
 import { createLoginRoute, createLogoutRoute } from "@workspace/router";
