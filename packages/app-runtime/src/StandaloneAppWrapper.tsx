@@ -1,18 +1,19 @@
+import type { RouteComponent, AnyRoute , AnyRouter } from "@tanstack/react-router";
+import type { AppRuntimeConfig } from "./types";
+
+import { createRouter, createRoute, createRootRoute, Outlet } from "@tanstack/react-router";
 import React from "react";
-import type { ReactNode } from "react";
 import ReactDOM from "react-dom/client";
-import { QueryProvider } from "@workspace/query";
+
 import { PluginProvider, RendererProvider } from "@workspace/plugin-system";
+import { QueryProvider } from "@workspace/query";
 import { AuthProvider, AuthInitializer, RouterProvider } from "@workspace/router";
 import { ErrorBoundary } from "@workspace/ui/components/errors/general-error";
-import type { RouteComponent, AnyRoute } from "@tanstack/react-router";
-import { AppRuntimeProvider, useAppRuntime } from "./AppRuntimeProvider";
-import type { AppRuntimeConfig } from "./types";
-import type { AnyRouter } from "@tanstack/react-router";
-import { createRouter, createRoute, createRootRoute, Outlet } from "@tanstack/react-router";
-import { AppLoader } from "@workspace/ui/components";
+
+import { AppRuntimeProvider, AppRuntimeContextProvider } from "./AppRuntimeProvider";
+import type { ReactNode } from "react";
+
 import "@workspace/ui/globals.css";
-import { AppRuntimeContextProvider } from "./AppRuntimeProvider";
 
 interface StandaloneAppWrapperProps {
   children?: ReactNode;
