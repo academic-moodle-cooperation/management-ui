@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import type { MouseEvent } from "react";
+
 
 import {
   useGetMySeriesQuery,
@@ -15,6 +15,7 @@ import { useSidebarStore } from "../stores/sidebarStore";
 import { useTableState } from "./useTableState";
 
 import type { TableBaseState } from "./useTableState";
+import type React from "react";
 
 export type SeriesUpdateData = {
   [key: string]: string | string[];
