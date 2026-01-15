@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import type { FC } from "react";
+
+import { useI18n } from "@workspace/i18n";
+import { useAppConfig } from "@workspace/query";
+import { useLoaderData } from "@workspace/router";
+import type { UploadFileBlob, UploadListType } from "@workspace/store";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -14,12 +18,11 @@ import {
   Label,
 } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib/utils";
-import { useI18n } from "@workspace/i18n";
-import type { UploadFileBlob, UploadListType } from "@workspace/store";
 
 import { useFileHandler } from "../uploadservice/fileHandler";
-import { useAppConfig } from "@workspace/query";
-import { useLoaderData } from "@workspace/router";
+
+
+import type { FC } from "react";
 
 interface DropzoneProps {
   handleDrop: (e: React.DragEvent<HTMLLabelElement>) => void;

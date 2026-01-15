@@ -1,5 +1,20 @@
 import React, { createRef, useCallback, useEffect, useMemo, useState } from "react";
-import type { RefObject } from "react";
+
+import { LinkText, Trans, useI18n } from "@workspace/i18n";
+import { usePluginManager, ComponentResolver } from "@workspace/plugin-system";
+import { uploadExtensionPoints, tuwienUploadAclEditorImplementation } from "@workspace/plugins";
+import {
+  gql,
+  createGraphQLClient,
+  OrderDirection,
+  useGetMySeriesNameAndIdQuery,
+  useGetUserInfo,
+  useInfiniteQuery,
+ useAppConfig } from "@workspace/query";
+import type { GetMySeriesNameAndIdQuery } from "@workspace/query";
+import { useLoaderData, useNavigate, useParams, useRouter } from "@workspace/router";
+import { useStore } from "@workspace/store";
+import type { UploadFileBlob } from "@workspace/store";
 import {
   Accordion,
   AccordionContent,
@@ -14,30 +29,21 @@ import {
   Toaster,
   toast,
 } from "@workspace/ui/components";
+
+import { AclEditor, type AclData, type SelectedElement } from "@workspace/ui/components";
 import Dropzone from "./components/Dropzone";
 
 import { useFileHandler } from "./uploadservice/fileHandler";
-import { useStore } from "@workspace/store";
-import type { UploadFileBlob } from "@workspace/store";
+
 import { opencastUpload } from "./uploadservice/opencastUpload";
-import {
-  gql,
-  createGraphQLClient,
-  OrderDirection,
-  useGetMySeriesNameAndIdQuery,
-  useGetUserInfo,
-  useInfiniteQuery,
-} from "@workspace/query";
-import type { GetMySeriesNameAndIdQuery } from "@workspace/query";
-import { LinkText, Trans, useI18n } from "@workspace/i18n";
 import { UploadList } from "./components/UploadList";
-import { useLoaderData, useNavigate, useParams, useRouter } from "@workspace/router";
-import { AclEditor, type AclData, type SelectedElement } from "@workspace/ui/components";
-import { useAppConfig } from "@workspace/query";
-import { usePluginManager, ComponentResolver } from "@workspace/plugin-system";
-import { uploadExtensionPoints, tuwienUploadAclEditorImplementation } from "@workspace/plugins";
+
+
 import { EmptyState } from "./components/EmptyState";
+
 import { logger } from "@workspace/utils";
+
+import type { RefObject } from "react";
 
 export const App = () => {
   const [fileWaitingList, setFileWaitingList] = useState<UploadFileBlob[]>([]);

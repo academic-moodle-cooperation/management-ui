@@ -1,10 +1,11 @@
 import Mustache from "mustache";
 
-import onProgress from "./onProgress";
+import { i18next } from "@workspace/i18n";
 import type { UploadFileBlob } from "@workspace/store";
 import { toast, type AclData, type ACLEntryInput } from "@workspace/ui/components";
-import { i18next } from "@workspace/i18n";
 import { logger } from "@workspace/utils";
+
+import onProgress from "./onProgress";
 
 type UploadSettings = {
   seriesId: string;

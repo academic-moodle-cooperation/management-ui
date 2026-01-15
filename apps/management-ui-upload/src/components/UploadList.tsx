@@ -1,7 +1,8 @@
-import React from "react";
-import { cn } from "@workspace/ui/lib/utils";
 import { CheckCircle2, Clock, PencilIcon, X, XCircle } from "lucide-react";
+import React from "react";
+
 import type { UploadFileBlob } from "@workspace/store";
+import { cn } from "@workspace/ui/lib/utils";
 
 export const UploadList = ({
   // zustandupload,
