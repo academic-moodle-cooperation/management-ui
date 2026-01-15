@@ -1,10 +1,10 @@
-import React from "react";
 import {
   RouterProvider as TanStackRouterProvider,
   Outlet,
   createRootRoute,
   type AnyRouter,
 } from "@tanstack/react-router";
+import React from "react";
 
 const RootLayoutComponent = () => {
   return (

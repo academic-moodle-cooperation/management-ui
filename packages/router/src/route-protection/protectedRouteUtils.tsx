@@ -1,5 +1,6 @@
-import React, { Suspense } from "react";
 import { Navigate } from "@tanstack/react-router";
+import React, { Suspense } from "react";
+
 import { useAuth } from "../auth/AuthContext";
 
 /**

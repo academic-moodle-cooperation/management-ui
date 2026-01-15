@@ -1,13 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+
+import { useRegistry, type PluginManager } from "@workspace/plugin-system";
 import {
   defaultConfig,
   type AppConfig,
   type PluginNamespaceItem,
   getAppConfig,
 } from "@workspace/ui-config";
-import { useRegistry, type PluginManager } from "@workspace/plugin-system";
-import { useMemo } from "react";
-import { deepMerge, resolveAssetUrl, logger } from "@workspace/utils";
+import { deepMerge, logger } from "@workspace/utils";
 
 const CONFIG_QUERY_KEY = ["appConfig"];
 
@@ -25,7 +26,6 @@ const fetchAndMergeConfig = async (configUrl?: string): Promise<AppConfig> => {
 
 // Non-hook version for use during plugin initialization
 export function getAppConfigSync(pluginManager?: PluginManager): AppConfig {
-  const configUrl = defaultConfig.productionConfigUrl || undefined;
   const isDev = import.meta.env.DEV;
 
   // Get plugin configs directly from manager if available

@@ -1,5 +1,6 @@
-import { useMemo } from "react";
 import { useQueries } from "@tanstack/react-query";
+import { useMemo } from "react";
+
 import { useGetEventByIdQuery } from "../gql-generated";
 
 /**

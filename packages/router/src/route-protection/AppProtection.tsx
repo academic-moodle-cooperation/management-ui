@@ -1,5 +1,7 @@
 import React from "react";
+
 import { useAppConfig } from "@workspace/query";
+
 import { useAuth } from "../auth/AuthContext";
 
 interface AppProtectionProps {

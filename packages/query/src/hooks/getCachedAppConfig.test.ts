@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getCachedAppConfig, clearAppConfigCache } from "./getCachedAppConfig";
+
 import { defaultConfig } from "@workspace/ui-config";
+
+import { getCachedAppConfig, clearAppConfigCache } from "./getCachedAppConfig";
 
 // Mock @workspace/ui-config
 vi.mock("@workspace/ui-config", () => ({

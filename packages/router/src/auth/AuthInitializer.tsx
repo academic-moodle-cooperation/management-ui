@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
+
 import { useGetCurrentUser } from "@workspace/query";
+
 import { useAuth } from "./AuthContext";
 
 interface GraphQLError {
