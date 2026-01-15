@@ -1,9 +1,8 @@
 import { ChevronDown } from "lucide-react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
 
 import { useI18n } from "@workspace/i18n";
 import {
-  useGetMySeriesNameAndIdQuery,
   useInfiniteQuery,
   createGraphQLClient,
   gql,
@@ -113,14 +112,9 @@ export const MetadataUpdateField = ({
 
   const {
     data,
-    refetch,
     fetchNextPage,
     hasNextPage,
     isLoading,
-    isFetchingNextPage,
-    error,
-    isFetching,
-    status,
   } = useInfiniteQuery({
     queryKey: ["seriesList", query],
     queryFn: ({ pageParam }) => {

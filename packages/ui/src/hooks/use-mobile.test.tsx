@@ -25,6 +25,7 @@ describe("useIsMobile", () => {
         addEventListener: vi.fn((event: string, callback: () => void) => {
           if (event === "change") {
             // Store callback for later
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (matchMediaMock as any)._changeCallback = callback;
           }
         }),
