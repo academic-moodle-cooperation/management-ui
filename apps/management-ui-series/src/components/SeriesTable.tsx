@@ -1,5 +1,5 @@
 import { useMemo, useEffect, useCallback, useRef } from "react";
-import type { MouseEvent } from "react";
+
 
 import { useI18n } from "@workspace/i18n";
 import { useUpdateSeriesMutation, useAppConfig } from "@workspace/query";
@@ -14,6 +14,8 @@ import { useSeriesTable, type SeriesUpdateData } from "../hooks";
 import { useSidebarStore } from "../stores/sidebarStore";
 
 import { SeriesTableSidebar } from "./SeriesTableSidebar";
+
+import type { MouseEvent } from "react";
 
 /**
  * Component for displaying and managing series data

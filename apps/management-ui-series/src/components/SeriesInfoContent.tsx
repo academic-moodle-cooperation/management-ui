@@ -1,4 +1,3 @@
-import React from "react";
 
 import { useI18n } from "@workspace/i18n";
 import { useAppConfig } from "@workspace/query";
@@ -46,7 +45,7 @@ const SeriesInfoContent = ({
 }: SeriesInfoContentProps) => {
   const { t } = useI18n();
   const { config } = useAppConfig();
-  const metadata = (config?.plugins?.["management-ui-series"]?.seriesInfo?.metadata ||
+  const metadata = (config?.plugins?.["management-ui-series"]?.seriesInfo?.metadata ??
     []) as MetadataItem[];
 
   // Use the createMetadataHelpers function to get visibility helpers
@@ -64,28 +63,29 @@ const SeriesInfoContent = ({
         Object.values(seriesInputFields.seriesById?.commonMetadataV2 || {})
           .sort((a, b) => ((a?.order ?? 0) > (b?.order ?? 0) ? 1 : -1))
           .map((field: GetInputFieldsMetaDataFragment | null) => {
-            if (!isVisible(field?.id!)) {
+            if (!field?.id || !isVisible(field.id)) {
               return null;
             }
             return (
               <Container
                 key={field?.id}
                 onClick={
-                  editSeries && field && !field.readOnly && !isReadOnly(field.id!)
-                    ? () => setUpdateField(field.id!)
+                  editSeries && field && field.id && !field.readOnly && !isReadOnly(field.id)
+                    ? () => setUpdateField(field.id)
                     : () => {}
                 }
                 className={cn(
                   editSeries &&
                     field &&
+                    field.id &&
                     !field.readOnly &&
-                    !isReadOnly(field.id!) &&
+                    !isReadOnly(field.id) &&
                     "cursor-pointer",
                 )}
               >
                 <div className="flex items-center space-x-2 text-sm font-medium uppercase text-muted-foreground">
                   {t(`series:seriesInfo.${field?.id}`)} {field?.required && "*"}
-                  {editSeries && !field?.readOnly && !isReadOnly(field?.id!) && (
+                  {editSeries && !field?.readOnly && field?.id && !isReadOnly(field.id) && (
                     <Button variant="ghost" size="icon" className="w-4 h-4 ml-2">
                       <PencilIcon className="inline-flex group-hover:text-slate-700 text-slate-400" />
                       <span className="sr-only">{t(`common:edit`)}</span>
@@ -98,10 +98,12 @@ const SeriesInfoContent = ({
                     {...field}
                     value={seriesUpdateData?.[field.id] ?? field?.value}
                     onUpdate={(value) => {
-                      setSeriesUpdateData({
-                        ...seriesUpdateData,
-                        [field.id!]: value,
-                      });
+                      if (field.id) {
+                        setSeriesUpdateData({
+                          ...seriesUpdateData,
+                          [field.id]: value,
+                        });
+                      }
                     }}
                   />
                 ) : field?.id === "identifier" ? (
