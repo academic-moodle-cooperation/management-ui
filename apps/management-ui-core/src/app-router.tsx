@@ -9,11 +9,9 @@ import React, { lazy, Suspense } from "react";
 // Types for dynamic modules - will eventually come from a more robust system
 // For now, let's assume a structure similar to what useGetInstalledApps might provide.
 // Import components from the new organized structure
-import { ComponentResolver } from "@workspace/plugin-system"; // Import ComponentResolver for landing page overrides
-import { getCachedAppConfig } from "@workspace/query"; // Import the new utility
-import { useAppConfig } from "@workspace/query"; // For login/logout redirects
-import { ProtectedRoute } from "@workspace/router"; // Import ProtectedRoute for route-level protection
-import { DefaultLandingPage, AppLoader, Container } from "@workspace/ui/components"; // Import DefaultLandingPage
+import { getCachedAppConfig } from "@workspace/query";
+import { ProtectedRoute } from "@workspace/router";
+import { AppLoader } from "@workspace/ui/components";
 import { logger } from "@workspace/utils";
 
 import {

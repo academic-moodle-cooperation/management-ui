@@ -12,10 +12,9 @@ import {
   type PluginManager,
   type AppDefinition,
 } from "@workspace/plugin-system";
-import { ComponentResolver } from "@workspace/plugin-system";
-import { getCachedAppConfig , useAppConfig } from "@workspace/query";
+import { getCachedAppConfig } from "@workspace/query";
 import { ProtectedRoute } from "@workspace/router";
-import { DefaultLandingPage, AppLoader, Container } from "@workspace/ui/components";
+import { AppLoader } from "@workspace/ui/components";
 import { logger } from "@workspace/utils";
 
 // Import components from the core app

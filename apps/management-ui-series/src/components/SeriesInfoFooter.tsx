@@ -150,6 +150,7 @@ const SeriesInfoFooter = ({
     };
 
     // Remove identifier if it exists (we don't want to update it)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { identifier, ...restMetadata } = metadataWithTitle as Record<string, unknown>;
     // Ensure title is always present (required by CommonSeriesMetadataInput)
     const finalMetadata = {

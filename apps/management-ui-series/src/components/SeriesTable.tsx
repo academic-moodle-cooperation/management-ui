@@ -1,10 +1,9 @@
-import React, { useMemo, useEffect, useCallback, useRef, useState } from "react";
+import React, { useMemo, useEffect, useCallback, useRef } from "react";
 
 import { useI18n } from "@workspace/i18n";
 import { useUpdateSeriesMutation, useAppConfig } from "@workspace/query";
 import type { SeriesDataFragment } from "@workspace/query";
-import { useNavigate } from "@workspace/router";
-import type { Row , MUITable, createMetadataHelpers, type ColumnDef } from "@workspace/ui/components";
+import type { Row, MUITable, createMetadataHelpers } from "@workspace/ui/components";
 import { AppLoader } from "@workspace/ui/components";
 import type { MetadataItem, ColumnsField } from "@workspace/ui-config";
 import { logger } from "@workspace/utils";
@@ -21,9 +20,6 @@ import { SeriesTableSidebar } from "./SeriesTableSidebar";
 const SeriesTable = () => {
   const { t } = useI18n();
   const { config } = useAppConfig();
-  const navigate = useNavigate({
-    from: `${import.meta.env.BASE_URL}/series`,
-  });
 
   // Create a ref for the table element
   const tableRef = useRef<HTMLDivElement>(null);
@@ -41,7 +37,6 @@ const SeriesTable = () => {
     resetUpdateFields,
     setSeriesUpdateData,
     setUpdateField,
-    openSidebarWithData,
   } = useSidebarStore();
 
   // Use the custom hook for table functionality
@@ -126,7 +121,7 @@ const SeriesTable = () => {
         });
       }
     }
-  }, [isOpen, isEditing, selectedId, seriesUpdateData, seriesInputFields, setSeriesUpdateData]);
+  }, [isOpen, isEditing, selectedId, seriesUpdateData, seriesInputFields, setSeriesUpdateData, isReadOnly]);
 
   // Mutation hook for updating series
   const saveSeriesUpdate = useUpdateSeriesMutation();
