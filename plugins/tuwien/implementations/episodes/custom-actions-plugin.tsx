@@ -14,10 +14,7 @@ interface TUWienEpisodesActionsProps {
 }
 
 // Custom TU Wien actions component that enhances the default actions
-const TUWienEpisodesActions = ({
-  maxVisibleActions,
-  children,
-}: TUWienEpisodesActionsProps) => {
+const TUWienEpisodesActions = ({ maxVisibleActions, children }: TUWienEpisodesActionsProps) => {
   const { config } = useAppConfig();
   const namespace = createOrganizationNamespace("tuwien", "episodes");
   const { t } = usePluginTranslation([

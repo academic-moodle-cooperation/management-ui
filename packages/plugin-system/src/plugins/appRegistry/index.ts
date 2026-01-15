@@ -1,10 +1,8 @@
-
 import { logger } from "@workspace/utils";
 
 import type { AppDefinition } from "../../appTypes";
 import type { Plugin } from "../../IPlugin";
 import type { PluginManager } from "../../pluginManager";
-
 
 /**
  * App registry plugin for managing registered apps

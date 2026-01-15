@@ -11,9 +11,6 @@
     "incremental": false,
     "declaration": false,
     "declarationMap": false,
-    "types": [
-      "node",
-      "react"
-    ]
+    "types": ["node", "react"]
   }
 }

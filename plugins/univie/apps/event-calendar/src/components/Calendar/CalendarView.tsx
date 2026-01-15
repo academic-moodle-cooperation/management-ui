@@ -1,11 +1,10 @@
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, RefreshCw } from "lucide-react";
 import React, { useState, useMemo } from "react";
 
-import { Card, Button, Skeleton , DatePicker } from "@workspace/ui/components";
+import { Card, Button, Skeleton, DatePicker } from "@workspace/ui/components";
 import { logger } from "@workspace/utils";
 
 import { useEventsByDate, useRooms, getRoomById } from "../api/eventCalendarApi";
-
 
 import { EventCard } from "./EventCard";
 import { RoomFilter } from "./RoomFilter";

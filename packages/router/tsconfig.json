@@ -3,20 +3,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
     "composite": false,
     "noEmit": true
   },
-  "include": [
-    "src",
-    "vite-env.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".turbo"
-  ]
+  "include": ["src", "vite-env.d.ts"],
+  "exclude": ["node_modules", "dist", ".turbo"]
 }
