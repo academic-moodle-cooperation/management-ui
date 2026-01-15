@@ -1,10 +1,12 @@
+// Import types first
+import type { AppConfig, MetadataField, MetadataItem } from "./types";
+
 // Export types from types file
 export * from "./types";
 
 // Explicitly re-export types for Vite/Rollup compatibility
 // when using 'import type' syntax
-export type { MetadataField, MetadataItem } from "./types";
-import type { AppConfig } from "./types";
+export type { MetadataField, MetadataItem };
 
 // Default or base configuration, adapted from old defaultConfig and new AppConfig
 export const defaultConfig: AppConfig = {

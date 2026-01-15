@@ -72,15 +72,15 @@ const SeriesInfoContent = ({
                 onClick={
                   editSeries && field && field.id && !field.readOnly && !isReadOnly(field.id)
                     ? () => setUpdateField(field.id ?? "")
-                    : () => {}
+                    : () => { }
                 }
                 className={cn(
                   editSeries &&
-                    field &&
-                    field.id &&
-                    !field.readOnly &&
-                    !isReadOnly(field.id) &&
-                    "cursor-pointer",
+                  field &&
+                  field.id &&
+                  !field.readOnly &&
+                  !isReadOnly(field.id) &&
+                  "cursor-pointer",
                 )}
               >
                 <div className="flex items-center space-x-2 text-sm font-medium uppercase text-muted-foreground">

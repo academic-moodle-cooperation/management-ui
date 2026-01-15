@@ -2,7 +2,7 @@ import path from "node:path";
 
 import { defineConfig, loadEnv } from "vite";
 
-import { defaultConfig } from "@workspace/ui-config";
+import { defaultConfig } from "../../packages/ui-config/src/index.ts";
 import { createShellAppViteConfig, generateConfigPlugin } from "@workspace/vite-config";
 
 const packageName = process.env["npm_package_name"] || "management-ui-core";

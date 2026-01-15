@@ -76,6 +76,7 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
       "@monorepo-apps": appsPath,
       // Minimal generic roots for workspace packages used in plugin code
       "@workspace/i18n": path.resolve(monorepoRootPath, "packages/i18n/src"),
+      "@workspace/ui-config": path.resolve(monorepoRootPath, "packages/ui-config/src"),
       "@workspace/ui/globals.css": path.resolve(
         monorepoRootPath,
         "packages/ui/src/styles/globals.css",
