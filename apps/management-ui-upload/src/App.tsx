@@ -342,7 +342,7 @@ export const App = () => {
     }
   }, [selectedSeries, navigate]);
 
-  const useHandleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
+  const useHandleDrop = (e: DragEvent<HTMLLabelElement>) => {
     const dt = e.dataTransfer;
     const files = dt.files;
 
@@ -411,7 +411,7 @@ export const App = () => {
     });
   };
 
-  const handleEditUploadName = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleEditUploadName = (event: KeyboardEvent<HTMLInputElement>) => {
     const uploadName = (event.target as HTMLInputElement).value;
     if (!editFile || (event.key === "Enter" && uploadName.trim().length)) {
       editUploadNameEnd(uploadName);
@@ -596,7 +596,7 @@ export const App = () => {
                             : null,
                         );
                       }}
-                      searchSeries={(query: React.SetStateAction<string>) => {
+                      searchSeries={(query: SetStateAction<string>) => {
                         setQuery(typeof query === "function" ? query("") : query || undefined);
                       }}
                       infiniteFetchNextPage={fetchNextPage}
