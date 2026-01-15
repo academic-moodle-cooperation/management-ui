@@ -1,6 +1,6 @@
 import React, { createRef, useCallback, useEffect, useMemo, useState } from "react";
 
-import { LinkText, Trans, useI18n } from "@workspace/i18n";
+import { useI18n } from "@workspace/i18n";
 import { usePluginManager, ComponentResolver } from "@workspace/plugin-system";
 import { uploadExtensionPoints, tuwienUploadAclEditorImplementation } from "@workspace/plugins";
 import {
@@ -12,7 +12,7 @@ import {
   useInfiniteQuery,
  useAppConfig } from "@workspace/query";
 import type { GetMySeriesNameAndIdQuery } from "@workspace/query";
-import { useLoaderData, useNavigate, useParams, useRouter } from "@workspace/router";
+import { useNavigate, useParams, useRouter } from "@workspace/router";
 import { useStore } from "@workspace/store";
 import type { UploadFileBlob } from "@workspace/store";
 import {
@@ -29,19 +29,15 @@ import {
   Toaster,
   toast,
 } from "@workspace/ui/components";
-
-import { AclEditor, type AclData, type SelectedElement } from "@workspace/ui/components";
-import Dropzone from "./components/Dropzone";
-
-import { useFileHandler } from "./uploadservice/fileHandler";
-
-import { opencastUpload } from "./uploadservice/opencastUpload";
-import { UploadList } from "./components/UploadList";
-
-
-import { EmptyState } from "./components/EmptyState";
-
+import type { AclData, SelectedElement } from "@workspace/ui/components";
 import { logger } from "@workspace/utils";
+
+import Dropzone from "./components/Dropzone";
+import { EmptyState } from "./components/EmptyState";
+import { UploadList } from "./components/UploadList";
+import { useFileHandler } from "./uploadservice/fileHandler";
+import { opencastUpload } from "./uploadservice/opencastUpload";
+
 
 import type { RefObject } from "react";
 

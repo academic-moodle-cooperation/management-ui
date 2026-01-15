@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 import { useI18n } from "@workspace/i18n";
 import { useAppConfig } from "@workspace/query";
-import { useLoaderData } from "@workspace/router";
 import type { UploadFileBlob, UploadListType } from "@workspace/store";
 import {
   AlertDialog,
