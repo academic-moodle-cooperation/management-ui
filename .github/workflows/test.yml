@@ -27,9 +27,11 @@ jobs:
 
       - name: Build packages
         run: |
-          # Build vite-config first to ensure dist files are available
-          # This prevents issues where plugins try to use vite-config before it's fully built
-          pnpm build --filter=@workspace/vite-config
+          # Build vite-config first to ensure dist files are fully available
+          # This prevents race conditions where plugins try to use vite-config before it's fully built
+          pnpm turbo run build --force --filter=@workspace/vite-config
+          # Verify vite-config was built correctly
+          test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
           # Then build everything else (vite-config will be cached)
           pnpm turbo run build --force
 
