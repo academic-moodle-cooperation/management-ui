@@ -1,9 +1,10 @@
-import type { CodegenConfig } from "@graphql-codegen/cli";
 import process from "node:process";
 
+import type { CodegenConfig } from "@graphql-codegen/cli";
+
 const graphqlEndpoint = process.env["GRAPHQL_ENDPOINT"] || "http://127.0.0.1:8080/graphql";
-const graphqlHeaders = process.env["GRAPHQL_HEADERS"]
-  ? JSON.parse(process.env["GRAPHQL_HEADERS"])
+const graphqlHeaders: Record<string, string> = process.env["GRAPHQL_HEADERS"]
+  ? (JSON.parse(process.env["GRAPHQL_HEADERS"]) as Record<string, string>)
   : {};
 
 const config: CodegenConfig = {

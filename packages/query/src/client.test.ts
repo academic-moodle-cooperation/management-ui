@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+
 import { createGraphQLClient, createQueryClient } from "./client";
 
 // Mock graphql-request - define class inside factory to avoid hoisting issues
@@ -46,6 +47,7 @@ describe("client", () => {
 
     it("should throw error for non-string input", () => {
       expect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         createGraphQLClient(null as any);
       }).toThrow("Invalid GraphQL endpoint");
     });
