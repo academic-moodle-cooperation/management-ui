@@ -71,7 +71,7 @@ const SeriesInfoContent = ({
                 key={field?.id}
                 onClick={
                   editSeries && field && field.id && !field.readOnly && !isReadOnly(field.id)
-                    ? () => setUpdateField(field.id)
+                    ? () => setUpdateField(field.id ?? "")
                     : () => {}
                 }
                 className={cn(

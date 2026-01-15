@@ -75,7 +75,7 @@ const EpisodesInfoContent = ({
                   key={field?.id}
                   onClick={
                     editEpisode && field && field.id && !field.readOnly && !isReadOnly(field.id)
-                      ? () => setUpdateField(field.id)
+                      ? () => setUpdateField(field.id ?? "")
                       : () => {}
                   }
                   className={cn(

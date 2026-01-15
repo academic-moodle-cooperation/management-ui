@@ -20,6 +20,7 @@
     "@workspace/query": "workspace:*",
     "@workspace/router": "workspace:*",
     "@workspace/ui": "workspace:*",
+    "@workspace/ui-config": "workspace:*",
     "@workspace/utils": "workspace:*",
     "@workspace/vite-config": "workspace:*",
     "react": "^19.1.0",
