@@ -50,7 +50,7 @@ plugins/        ← Extension point definitions
 
 - **[Config Generation](/docs/CONFIG_GENERATION.md)** - How configuration works in dev vs production
 - **[Config Order](/docs/CONFIG_ORDER.md)** - Plugin configuration precedence and merging
-- **[Favicon Configuration](/docs/FAVICON_CONFIGURATION.md)** - Customizing favicons and assets per university
+- **[Favicon Configuration](/docs/internal/FAVICON_CONFIGURATION.md)** - Customizing favicons and assets per university
 
 ### Development Workflows
 

@@ -125,4 +125,4 @@ All `eslint-disable` comments in the codebase are:
 
 - `docs/TYPESCRIPT_TS_IGNORE_AUDIT.md` - `@ts-ignore` audit (none found)
 - `docs/TYPESCRIPT_ANY_TYPES.md` - `any` type usage documentation
-- `docs/SHADCN_TYPESCRIPT_ERRORS.md` - shadcn/ui type error handling
+- `docs/internal/SHADCN_TYPESCRIPT_ERRORS.md` - shadcn/ui type error handling

@@ -188,13 +188,13 @@ This document tracks the progress of the comprehensive code quality improvement 
 
 #### 3.2 Test-Strategie definieren ✅
 
-- [x] Test-Strategie dokumentiert (`docs/TEST_STRATEGY.md`)
+- [x] Test-Strategie dokumentiert (`docs/internal/TEST_STRATEGY.md`)
 - [x] Coverage-Ziele definiert
 - [x] Test-Prioritäten dokumentiert
 
 **Deliverables:**
 
-- ✅ TEST_STRATEGY.md
+- ✅ TEST_STRATEGY.md (moved to internal/)
 
 #### 3.3 Test-Coverage aufbauen ⏳ IN PROGRESS
 
@@ -343,7 +343,7 @@ This document tracks the progress of the comprehensive code quality improvement 
 ## Notes
 
 - Security Audit Report: `SECURITY_AUDIT_REPORT.md`
-- Test Strategy: `docs/TEST_STRATEGY.md`
+- Test Strategy: `docs/internal/TEST_STRATEGY.md`
 - TODO List: `docs/TODO.md`
 - Plan: `.cursor/plans/vollständiger_code-qualitäts-review_1956687c.plan.md`
 

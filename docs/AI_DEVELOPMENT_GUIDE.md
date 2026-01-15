@@ -42,7 +42,8 @@ Management UI/
 │   │   ├── COUPLING_ANALYSIS.md       ← Package dependency analysis
 │   ├── CONFIG_GENERATION.md       ← Config merging in dev vs prod
 │   ├── CONFIG_ORDER.md            ← Plugin config precedence
-│   └── FAVICON_CONFIGURATION.md   ← Favicon/asset customization
+│   └── internal/
+│       └── FAVICON_CONFIGURATION.md   ← Favicon/asset customization
 │
 ├── /packages/                     ← Shared infrastructure
 │   ├── README.md                  ← Package ecosystem overview

@@ -65,5 +65,5 @@ If `@ts-ignore` or `@ts-expect-error` becomes necessary in the future:
 ## Related Documentation
 
 - `docs/TYPESCRIPT_ANY_TYPES.md` - Documentation on `any` type usage
-- `docs/TYPESCRIPT_CONFIG.md` - TypeScript configuration details
-- `docs/SHADCN_TYPESCRIPT_ERRORS.md` - shadcn/ui type error handling
+- `docs/internal/TYPESCRIPT_CONFIG.md` - TypeScript configuration details
+- `docs/internal/SHADCN_TYPESCRIPT_ERRORS.md` - shadcn/ui type error handling
