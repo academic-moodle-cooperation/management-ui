@@ -47,9 +47,11 @@ const getMediaBlob = async (url: string) => {
 
   const reader = response.body?.getReader();
 
-  const contentLength = response.headers.get("Content-Length") || 0;
+  // Note: contentLength and receivedLength are tracked but not currently used
+  // They could be used for progress tracking in the future
+  // const contentLength = response.headers.get("Content-Length") || 0;
 
-  let receivedLength = 0;
+  // let receivedLength = 0;
   const chunks = [];
   while (reader) {
     const { done, value } = await reader.read();
@@ -59,7 +61,7 @@ const getMediaBlob = async (url: string) => {
     }
 
     chunks.push(value);
-    receivedLength += value.length;
+    // receivedLength += value.length;
   }
   return new Blob(chunks);
 };
@@ -271,7 +273,7 @@ const constructAclFromData = (aclData: AclData) => {
     // Start building the XML
     let rulesXml = "";
 
-    entries.forEach((entry, index) => {
+    entries.forEach((entry) => {
       const { role, action } = entry;
 
       // For each action in the entry, create a Rule
@@ -363,7 +365,11 @@ const uploadTracks = async (
   {
     mediaPackage,
     recordings,
+    // title and presenter are passed but not directly used in this function
+    // They are used in addDcCatalog which is called before this function
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     title,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     presenter,
   }: {
     mediaPackage: string;
@@ -376,7 +382,7 @@ const uploadTracks = async (
   const totalBytes = recordings.map((r: Recording) => r.media.size).reduce((a, b) => a + b, 0);
   let finishedTracksBytes = 0;
 
-  for (const { deviceType, media, url, mimeType } of recordings) {
+  for (const { deviceType, media } of recordings) {
     const finishedBytes = finishedTracksBytes;
     let trackFlavor = "presentation/source";
     if (deviceType === "desktop") {
@@ -436,7 +442,7 @@ const uploadTracks = async (
       xhr.upload.onprogress = (e) => {
         if (onProgress) {
           const totalLoaded = e.loaded + finishedBytes;
-          () => onProgress(totalLoaded / totalBytes);
+          onProgress(totalLoaded / totalBytes);
 
           const progress = Math.round((totalLoaded / totalBytes) * 100);
 

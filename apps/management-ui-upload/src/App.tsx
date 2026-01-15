@@ -1,4 +1,4 @@
-import React, { createRef, useCallback, useEffect, useMemo, useState } from "react";
+import { createRef, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useI18n } from "@workspace/i18n";
 import { usePluginManager, ComponentResolver } from "@workspace/plugin-system";
