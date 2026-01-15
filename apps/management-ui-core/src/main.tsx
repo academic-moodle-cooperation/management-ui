@@ -64,7 +64,7 @@ const AppWithConfig = () => {
     } else if (themeName !== "default") {
       import("../../../plugins/themes/default.css");
     }
-  }, [config]);
+  }, [config, themeModules]);
 
   // If config is not ready, show a loading state
   if (isLoading) return <AppLoader>Loading configuration...</AppLoader>;
