@@ -15,7 +15,18 @@ export const config = [
   eslintConfigPrettier,
   ...tseslint.configs.recommended,
   {
-    ignores: ["**/coverage/**", "**/dist/**", "**/node_modules/**", "**/.turbo/**"],
+    ignores: [
+      "**/coverage/**",
+      "**/dist/**",
+      "**/node_modules/**",
+      "**/.turbo/**",
+      "**/*gql-generated.ts",
+      "**/*generated.ts",
+      "**/gql-generated.ts",
+      "**/generated.ts",
+      "**/target/**",
+      "**/*.d.ts",
+    ],
   },
   {
     plugins: {
