@@ -84,7 +84,7 @@ export const createColumns = (
         );
       },
       meta: {
-        translatedTitle: "episodesTable.heading.title",
+        translatedTitle: "episodes:episodesTable.heading.title",
       },
     }),
     columnHelper.accessor("seriesName", {
@@ -124,7 +124,7 @@ export const createColumns = (
         );
       },
       meta: {
-        translatedTitle: "episodesTable.heading.description",
+        translatedTitle: "episodes:episodesTable.heading.description",
       },
     }),
     columnHelper.accessor("eventStatus", {
@@ -153,7 +153,7 @@ export const createColumns = (
         );
       },
       meta: {
-        translatedTitle: "episodesTable.heading.status",
+        translatedTitle: "episodes:episodesTable.heading.status",
       },
     }),
     columnHelper.accessor("contributors", {
@@ -177,7 +177,7 @@ export const createColumns = (
         );
       },
       meta: {
-        translatedTitle: "episodesTable.heading.contributors",
+        translatedTitle: "episodes:episodesTable.heading.contributors",
       },
     }),
     columnHelper.accessor("presenters", {
@@ -225,7 +225,7 @@ export const createColumns = (
         );
       },
       meta: {
-        translatedTitle: "episodesTable.heading.location",
+        translatedTitle: "episodes:episodesTable.heading.location",
       },
     }),
     columnHelper.accessor((row) => row.muiEventInfo?.isPublic, {
@@ -256,7 +256,7 @@ export const createColumns = (
       },
       enableSorting: false,
       meta: {
-        translatedTitle: "episodesTable.heading.access",
+        translatedTitle: "episodes:episodesTable.heading.access",
       },
     }),
     columnHelper.accessor("duration", {
@@ -278,7 +278,7 @@ export const createColumns = (
         );
       },
       meta: {
-        translatedTitle: "episodesTable.heading.duration",
+        translatedTitle: "episodes:episodesTable.heading.duration",
       },
     }),
     columnHelper.accessor("startDate", {
@@ -423,7 +423,7 @@ export const createColumns = (
         );
       },
       meta: {
-        translatedTitle: "episodesTable.heading.video",
+        translatedTitle: "episodes:episodesTable.heading.video",
       },
     }),
     columnHelper.accessor("seriesName", {
@@ -443,7 +443,7 @@ export const createColumns = (
         );
       },
       meta: {
-        translatedTitle: "episodesTable.heading.series",
+        translatedTitle: "episodes:episodesTable.heading.series",
       },
     }),
     columnHelper.accessor("startDate", {
@@ -467,7 +467,7 @@ export const createColumns = (
         );
       },
       meta: {
-        translatedTitle: "episodesTable.heading.startDate",
+        translatedTitle: "episodes:episodesTable.heading.startDate",
       },
     }),
     columnHelper.accessor("presenters", {
@@ -490,7 +490,7 @@ export const createColumns = (
         );
       },
       meta: {
-        translatedTitle: "episodesTable.heading.presenters",
+        translatedTitle: "episodes:episodesTable.heading.presenters",
       },
     }),
     columnHelper.display({
@@ -504,7 +504,7 @@ export const createColumns = (
         <ActionsCell event={row.original} refetch={refetch} maxVisibleActions={3} />
       ),
       meta: {
-        translatedTitle: "episodesTable.heading.actions.title",
+        translatedTitle: "episodes:episodesTable.heading.actions.title",
       },
     }),
   ];
