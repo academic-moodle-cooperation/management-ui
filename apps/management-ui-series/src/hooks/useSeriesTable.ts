@@ -1,4 +1,5 @@
-import { useEffect, useCallback } from "react";
+import { useCallback } from "react";
+import type { MouseEvent } from "react";
 
 import {
   useGetMySeriesQuery,
@@ -145,7 +146,7 @@ export function useSeriesTable() {
     });
   };
 
-  const handleRowClick = (event: React.MouseEvent, row: Row<Record<string, unknown>>) => {
+  const handleRowClick = (event: MouseEvent, row: Row<Record<string, unknown>>) => {
     navigate({
       to: `${import.meta.env.BASE_URL}/series/${row.original["id"]}`,
       replace: true,

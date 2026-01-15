@@ -318,7 +318,7 @@ export const DynamicRouterProvider: React.FC<DynamicRouterProviderProps> = ({ ch
     };
 
     createRouterWithPlugins();
-  }, [manager.arePluginsReady]);
+  }, [manager]);
 
   if (isLoading || !router) {
     return <AppLoader />;
