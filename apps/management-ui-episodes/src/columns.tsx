@@ -495,7 +495,7 @@ export const createColumns = (
     }),
     columnHelper.display({
       id: "actions",
-      header: ({ column }: { column: Column<EventsDataFragment> }) => (
+      header: () => (
         <span className="flex justify-center items-center">
           {i18next.t("episodes:episodesTable.heading.actions.title")}
         </span>

@@ -28,7 +28,7 @@ interface EpisodesSidebarState {
 }
 
 export const useSidebarStore = create<EpisodesSidebarState>(
-  (set, get) =>
+  (set) =>
     ({
       // Initial state
       isOpen: false,

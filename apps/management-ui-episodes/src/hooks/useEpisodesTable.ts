@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useCallback } from "react";
 
 import {
   useGetMyEventsQuery,
@@ -6,7 +6,7 @@ import {
   OrderDirection,
   useGetEventByIdInputFieldsQuery,
 } from "@workspace/query";
-import { useNavigate, useParams } from "@workspace/router";
+import { useNavigate } from "@workspace/router";
 import { useSidebarContent } from "@workspace/ui/components";
 import type { Row } from "@workspace/ui/components";
 
@@ -14,7 +14,7 @@ import { useSidebarStore } from "../stores/sidebarStore";
 
 import { useTableState } from "./useTableState";
 
-import type { TableBaseState, TableAction } from "./useTableState";
+import type { TableBaseState } from "./useTableState";
 
 export type EpisodesUpdateData = {
   [key: string]: string | string[];

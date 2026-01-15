@@ -46,7 +46,7 @@ const EpisodesInfoContent = ({
 }: EpisodesInfoContentProps) => {
   const { t } = useI18n();
   const { config } = useAppConfig();
-  const metadata = (config?.plugins?.["management-ui-episodes"]?.episodeInfo?.metadata ||
+  const metadata = (config?.plugins?.["management-ui-episodes"]?.episodeInfo?.metadata ??
     []) as MetadataItem[];
 
   // Use the createMetadataHelpers function to get visibility helpers
@@ -67,28 +67,29 @@ const EpisodesInfoContent = ({
             .filter(Boolean)
             .sort((a, b) => ((a?.order ?? 0) > (b?.order ?? 0) ? 1 : -1))
             .map((field: GetInputFieldsMetaDataFragment | null) => {
-              if (!isVisible(field?.id!)) {
+              if (!field?.id || !isVisible(field.id)) {
                 return null;
               }
               return (
                 <Container
                   key={field?.id}
                   onClick={
-                    editEpisode && field && !field.readOnly && !isReadOnly(field.id!)
-                      ? () => setUpdateField(field.id!)
+                    editEpisode && field && field.id && !field.readOnly && !isReadOnly(field.id)
+                      ? () => setUpdateField(field.id)
                       : () => {}
                   }
                   className={cn(
                     editEpisode &&
                       field &&
+                      field.id &&
                       !field.readOnly &&
-                      !isReadOnly(field.id!) &&
+                      !isReadOnly(field.id) &&
                       "cursor-pointer",
                   )}
                 >
                   <div className="flex items-center space-x-2 text-sm font-medium uppercase text-muted-foreground">
                     {t(`episodes:episodesInfo.${field?.id}`)} {field?.required && "*"}
-                    {editEpisode && !field?.readOnly && !isReadOnly(field?.id!) && (
+                    {editEpisode && !field?.readOnly && field?.id && !isReadOnly(field.id) && (
                       <Button variant="ghost" size="icon" className="w-4 h-4 ml-2">
                         <PencilIcon className="inline-flex group-hover:text-slate-700 text-slate-400" />
                         <span className="sr-only">{t(`common:edit`)}</span>
@@ -101,10 +102,12 @@ const EpisodesInfoContent = ({
                       {...field}
                       value={episodesUpdateData?.[field.id] ?? field?.value}
                       onUpdate={(value) => {
-                        setEpisodesUpdateData({
-                          ...episodesUpdateData,
-                          [field.id!]: value,
-                        });
+                        if (field.id) {
+                          setEpisodesUpdateData({
+                            ...episodesUpdateData,
+                            [field.id]: value,
+                          });
+                        }
                       }}
                     />
                   ) : field?.id === "identifier" ? (

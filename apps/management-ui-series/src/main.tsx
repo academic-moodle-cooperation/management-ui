@@ -1,4 +1,3 @@
-import React from "react";
 
 import { bootstrapStandaloneApp } from "@workspace/app-runtime";
 

@@ -1,5 +1,6 @@
 import { LayoutGrid, List } from "lucide-react";
-import React, { useMemo, useEffect, useCallback, useRef } from "react";
+import { useMemo, useEffect, useCallback, useRef } from "react";
+
 
 import { useI18n } from "@workspace/i18n";
 import {
@@ -9,9 +10,8 @@ import {
   type EventsDataFragment,
   type GetMyEventsQuery,
 } from "@workspace/query";
-import { useNavigate } from "@workspace/router";
-import type {
-  Row,
+import {
+  type Row,
   type ColumnDef,
   MUITable,
   createMetadataHelpers,
@@ -27,6 +27,8 @@ import { useSidebarStore } from "../stores/sidebarStore";
 
 import { EpisodesTableSidebar } from "./EpisodesTableSidebar";
 
+import type { MouseEvent } from "react";
+
 interface EpisodesTableProps {
   seriesId?: string;
 }
@@ -37,9 +39,6 @@ interface EpisodesTableProps {
 const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   const { t } = useI18n();
   const { config } = useAppConfig();
-  const navigate = useNavigate({
-    from: `${import.meta.env.BASE_URL}/episodes`,
-  });
 
   // Create a ref for the table element
   const tableRef = useRef<HTMLDivElement>(null);
@@ -58,7 +57,6 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     resetUpdateFields,
     setEpisodesUpdateData,
     setUpdateField,
-    openSidebarWithData,
     toggleLayout,
   } = useSidebarStore();
 
@@ -89,7 +87,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     [refetch, layout],
   );
 
-  const metadata = (config?.plugins?.["management-ui-episodes"]?.episodeInfo?.metadata ||
+  const metadata = (config?.plugins?.["management-ui-episodes"]?.episodeInfo?.metadata ??
     []) as MetadataItem[];
   const { isReadOnly } = createMetadataHelpers(metadata);
 
@@ -111,7 +109,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
               typeof field === "object" &&
               "value" in field &&
               field.value !== undefined &&
-              !isReadOnly(field.id!)
+              field.id && !isReadOnly(field.id)
             ) {
               formattedData[key] = field.value;
             }
@@ -144,7 +142,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
 
   // Modified row click handler to pass inputFields directly
   const handleRowClick = useCallback(
-    (event: React.MouseEvent, row: Row<EventsDataFragment>) => {
+    (event: MouseEvent, row: Row<EventsDataFragment>) => {
       logger.debug("EpisodesTable - Row clicked", { rowId: row.original.id, seriesId });
 
       // Reset edit state when clicking on a different row
@@ -156,7 +154,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
       // By only setting the ID, we allow the reactive data flow to update the sidebar.
       openSidebar(row.original.id);
     },
-    [openSidebar, isEditing, selectedId, resetUpdateFields],
+    [openSidebar, isEditing, selectedId, resetUpdateFields, seriesId],
   );
 
   // Modified edit close handler - no URL updates
@@ -195,7 +193,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   }, [episodesData, selectedId]);
 
   // Get visible columns from app config with proper type safety
-  const configColumns = config?.plugins?.["management-ui-episodes"]?.episodesTable?.columns || [];
+  const configColumns = config?.plugins?.["management-ui-episodes"]?.episodesTable?.columns ?? [];
   const visibleColumns = (configColumns as Record<string, ColumnsField>[]).filter((column) => {
     if (!column || typeof column !== "object") return false;
     const key = Object.keys(column)[0];
@@ -211,15 +209,15 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   const sortedColumns =
     columnsKeys.length > 0
       ? columnsKeys
-          .map((columnsKey) =>
-            columns.find((column) => {
-              // TanStack table column types are complex, accessorKey and id are optional
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const col = column as any;
-              return col.accessorKey === columnsKey || col.id === columnsKey;
-            }),
-          )
-          .filter((column): column is NonNullable<typeof column> => Boolean(column))
+        .map((columnsKey) =>
+          columns.find((column) => {
+            // TanStack table column types are complex, accessorKey and id are optional
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const col = column as any;
+            return col.accessorKey === columnsKey || col.id === columnsKey;
+          }),
+        )
+        .filter((column): column is NonNullable<typeof column> => Boolean(column))
       : columns;
 
   // Error handling

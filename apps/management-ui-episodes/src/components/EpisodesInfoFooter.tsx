@@ -3,12 +3,10 @@ import React from "react";
 import { useI18n } from "@workspace/i18n";
 import { useUpdateEventMutation } from "@workspace/query";
 import type {
-  CommonEventMetadataV2,
   GetEventByIdInputFieldsQuery,
   EventsDataFragment,
 } from "@workspace/query";
 import { Button, toast } from "@workspace/ui/components";
-import type { MetadataField } from "@workspace/ui-config";
 import { normalizeMetadataObject, logger } from "@workspace/utils";
 
 type EpisodesUpdateData = {
@@ -168,6 +166,7 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
     };
 
     // Remove identifier if it exists (we don't want to update it)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { identifier, ...finalMetadata } = metadataWithTitle as Record<string, unknown>;
 
     // IMPORTANT: Validate the merged metadata BEFORE normalization, because normalizeMetadataObject removes empty values

@@ -13,8 +13,9 @@ import type { Row } from "@workspace/ui/components";
 import { useSidebarStore } from "../stores/sidebarStore";
 
 import { useTableState } from "./useTableState";
+
 import type { TableBaseState } from "./useTableState";
-import type React from "react";
+import type { MouseEvent } from "react";
 
 export type SeriesUpdateData = {
   [key: string]: string | string[];
