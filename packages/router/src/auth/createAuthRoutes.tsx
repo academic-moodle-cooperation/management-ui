@@ -1,5 +1,6 @@
-import React from "react";
 import { createRoute, useRouterState, type AnyRoute } from "@tanstack/react-router";
+import React from "react";
+
 import { useAppConfig } from "@workspace/query";
 
 /**
@@ -28,7 +29,7 @@ export const createLoginRoute = (parentRoute: AnyRoute, options: AuthRouteOption
   return createRoute({
     getParentRoute: () => parentRoute,
     path: "/login",
-    component: () => {
+    component: function LoginComponent() {
       const { config, isLoading, isError } = useAppConfig();
       const routerState = useRouterState();
 
@@ -61,7 +62,7 @@ export const createLogoutRoute = (parentRoute: AnyRoute, options: AuthRouteOptio
   return createRoute({
     getParentRoute: () => parentRoute,
     path: "/logout",
-    component: () => {
+    component: function LogoutComponent() {
       const { config, isLoading, isError } = useAppConfig();
 
       if (isLoading) return <LoadingComponent />;

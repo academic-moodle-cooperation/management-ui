@@ -1,5 +1,6 @@
-import { describe, it, expect, vi } from "vitest";
 import { redirect } from "@tanstack/react-router";
+import { describe, it, expect, vi } from "vitest";
+
 import { authGuard, protectionMetadata, isProtectedRoute, getRouteProtection } from "./routeGuards";
 
 // Mock @tanstack/react-router
@@ -10,6 +11,20 @@ vi.mock("@tanstack/react-router", () => ({
     throw error;
   }),
 }));
+
+// Type for test context
+interface TestRouteContext {
+  context: {
+    auth?: {
+      isAuthenticated: boolean;
+      user: {
+        currentUser?: {
+          userRole?: string;
+        };
+      } | null;
+    };
+  };
+}
 
 describe("routeGuards", () => {
   describe("authGuard", () => {
@@ -24,7 +39,7 @@ describe("routeGuards", () => {
         },
       };
 
-      await expect(() => guard(context as any)).rejects.toThrow("Redirect to /login");
+      await expect(() => guard(context as TestRouteContext)).rejects.toThrow("Redirect to /login");
       expect(redirect).toHaveBeenCalledWith({ to: "/login" });
     });
 
@@ -39,7 +54,7 @@ describe("routeGuards", () => {
         },
       };
 
-      await expect(guard(context as any)).resolves.not.toThrow();
+      await expect(guard(context as TestRouteContext)).resolves.not.toThrow();
     });
 
     it("should allow access if user is authenticated", async () => {
@@ -57,7 +72,7 @@ describe("routeGuards", () => {
         },
       };
 
-      await expect(guard(context as any)).resolves.not.toThrow();
+      await expect(guard(context as TestRouteContext)).resolves.not.toThrow();
     });
 
     it("should redirect if user doesn't have required role", async () => {
@@ -79,7 +94,7 @@ describe("routeGuards", () => {
         },
       };
 
-      await expect(() => guard(context as any)).rejects.toThrow("Redirect to /access-denied");
+      await expect(() => guard(context as TestRouteContext)).rejects.toThrow("Redirect to /access-denied");
     });
 
     it("should allow access if user has required role", async () => {
@@ -100,7 +115,7 @@ describe("routeGuards", () => {
         },
       };
 
-      await expect(guard(context as any)).resolves.not.toThrow();
+      await expect(guard(context as TestRouteContext)).resolves.not.toThrow();
     });
   });
 
