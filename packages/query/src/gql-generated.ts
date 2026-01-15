@@ -1,6 +1,6 @@
 /* eslint-disable */
-import type { UseQueryResult, UseSuspenseQueryResult} from "@tanstack/react-query";
-import { useQuery, useSuspenseQuery, useMutation, type UseQueryOptions, type UseSuspenseQueryOptions, type UseMutationOptions } from '@tanstack/react-query';
+import { UseQueryResult, UseSuspenseQueryResult} from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery, useMutation, UseQueryOptions, UseSuspenseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
 import { fetchData } from './fetcher';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;

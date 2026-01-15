@@ -4,7 +4,6 @@ import { createOrganizationNamespace, usePluginTranslation } from "@workspace/i1
 import { useGetCurrentUser } from "@workspace/query";
 import { useAuthActions } from "@workspace/router";
 import { Button } from "@workspace/ui/components";
-
 // Import the SVG as a URL
 import univieLogoUrl from "./assets/univie_logo.svg?url";
 
