@@ -6,7 +6,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarRail,
   useSidebar,
 } from "@workspace/ui/components";
 

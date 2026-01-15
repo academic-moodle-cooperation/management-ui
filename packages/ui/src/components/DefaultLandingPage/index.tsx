@@ -1,6 +1,4 @@
-import { Badge, Button } from "@workspace/ui/components";
-// import { ArrowRight, LogIn, Github } from 'lucide-react';
-import { Icons, ArrowRight, LogIn } from "@workspace/ui/components";
+import { Badge, Button, Icons, ArrowRight, LogIn } from "@workspace/ui/components";
 
 import type { FC } from "react";
 

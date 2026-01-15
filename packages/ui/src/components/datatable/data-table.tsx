@@ -96,13 +96,9 @@ function DataTable<TData extends Record<string, unknown>, TValue>({
   refetch,
   designButton,
 }: DataTableProps<TData, TValue>) {
-  if (!data) {
-    return null;
-  }
-
-  // Initialize table instance
+  // Initialize table instance - hooks must be called before any early returns
   const table = useReactTable({
-    data,
+    data: data || [],
     columns,
     state: {
       ...(sorting !== undefined && { sorting }),
@@ -127,6 +123,10 @@ function DataTable<TData extends Record<string, unknown>, TValue>({
     setPageIndex,
     totalRows,
   );
+
+  if (!data) {
+    return null;
+  }
 
   return (
     <>

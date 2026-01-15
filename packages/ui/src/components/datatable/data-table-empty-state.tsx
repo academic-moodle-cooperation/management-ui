@@ -1,4 +1,4 @@
-import { i18next, LinkText, Trans } from "@workspace/i18n";
+import { i18next } from "@workspace/i18n";
 import { ComponentResolver } from "@workspace/plugin-system";
 import { Link } from "@workspace/router";
 

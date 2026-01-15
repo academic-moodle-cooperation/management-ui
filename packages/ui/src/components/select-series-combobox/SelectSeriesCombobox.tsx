@@ -1,5 +1,5 @@
 import { Loader2 } from "lucide-react";
-import React, { useEffect } from "react";
+import React from "react";
 
 import { useI18n } from "@workspace/i18n";
 import type {

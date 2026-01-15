@@ -135,7 +135,8 @@ export const MetadataUpdateField = ({
     },
   });
 
-  const [selectedContributors, setSelectedContributors] = useState<Map<string, string>>(new Map());
+  // TODO: CONTRIBUTORS field implementation is work in progress
+  // const [selectedContributors, setSelectedContributors] = useState<Map<string, string>>(new Map());
 
   // if (listProvider === "SERIES" && !isLoadingSeriesData) {
   // if (listProvider === "SERIES" && !isLoading) {
