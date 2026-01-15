@@ -13,7 +13,7 @@ out
 # Generated files
 *.tsbuildinfo
 *.generated.ts
-gql-generated.ts
+**/gql-generated.ts
 
 # Logs
 *.log
