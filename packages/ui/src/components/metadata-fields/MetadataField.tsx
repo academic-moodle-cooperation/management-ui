@@ -56,13 +56,13 @@ export const MetadataField = ({ type, listProvider, collection, value }: Metadat
         );
         break;
       case "START_DATE":
-        //TODO: change that
+        // Format START_DATE consistently with DATE (medium date, short time)
         metadataElement = (
           <>
-            {new Intl.DateTimeFormat("de-DE").format(new Date(value))}
-            {/* {new Intl.DateTimeFormat("de-DE").format(
-              new Date(value.split(";")[0].split("start=")[1])
-            )} */}
+            {new Intl.DateTimeFormat("de-DE", {
+              dateStyle: "medium",
+              timeStyle: "short",
+            }).format(new Date(value))}
           </>
         );
         break;

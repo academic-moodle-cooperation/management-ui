@@ -258,7 +258,7 @@ export const MetadataUpdateField = ({
             />
           </>
         );
-      //TODO: WIP _>
+      // TODO: CONTRIBUTORS field implementation is work in progress
       // case "CONTRIBUTORS":
       //   return (
       //     <>
@@ -354,7 +354,8 @@ export const MetadataUpdateField = ({
       );
       break;
     case "START_DATE":
-      //TODO: change that
+      // START_DATE uses same DatePicker as DATE for consistency
+      // Note: If time selection is needed in the future, consider using DateTimePicker
       metadataElement = (
         <>
           <DatePicker

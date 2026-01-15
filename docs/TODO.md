@@ -22,25 +22,27 @@ _No critical items found_
 
 ## P1: Important (Should Fix)
 
-1. **`packages/ui/src/components/metadata-fields/MetadataField.tsx:72`**
-   - Comment: `//TODO: change that`
-   - Context: Needs investigation to understand what needs to be changed
-   - Action: Review code context and implement fix
+1. ~~**`packages/ui/src/components/metadata-fields/MetadataField.tsx:59`**~~ ✅ FIXED
+   - ~~Comment: `//TODO: change that`~~
+   - ~~Context: START_DATE formatting was inconsistent with DATE~~
+   - ~~Action: Updated to use consistent date/time formatting~~
 
-2. **`packages/ui/src/components/metadata-fields/MetadataUpdateField.tsx:267`**
-   - Comment: `//TODO: WIP _>`
-   - Context: Work in progress - needs completion
-   - Action: Complete the implementation
+2. **`packages/ui/src/components/metadata-fields/MetadataUpdateField.tsx:261`**
+   - Comment: `// TODO: CONTRIBUTORS field implementation is work in progress`
+   - Context: CONTRIBUTORS field implementation is incomplete (code is commented out)
+   - Action: Complete CONTRIBUTORS field implementation when needed
+   - Note: Currently not blocking, can be implemented when feature is required
 
-3. **`packages/ui/src/components/metadata-fields/MetadataUpdateField.tsx:365`**
-   - Comment: `//TODO: change that`
-   - Context: Needs investigation to understand what needs to be changed
-   - Action: Review code context and implement fix
+3. ~~**`packages/ui/src/components/metadata-fields/MetadataUpdateField.tsx:357`**~~ ✅ FIXED
+   - ~~Comment: `//TODO: change that`~~
+   - ~~Context: START_DATE DatePicker implementation~~
+   - ~~Action: Added documentation comment explaining current implementation~~
 
-4. **`apps/management-ui-series/src/columns.tsx:177`**
-   - Comment: `// TODO: set it with backend values`
-   - Context: `enableSorting: false` should be set with backend values
+4. **`apps/management-ui-series/src/columns.tsx:183`**
+   - Comment: `// TODO: Enable sorting when backend provides sortable column metadata`
+   - Context: `enableSorting: false` should be set dynamically based on backend metadata
    - Action: Implement backend integration for sorting configuration
+   - Note: Requires backend API changes to provide column metadata
 
 ---
 

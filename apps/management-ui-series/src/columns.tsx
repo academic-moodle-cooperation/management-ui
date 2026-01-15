@@ -180,7 +180,9 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => [
     meta: {
       translatedTitle: "seriesTable.heading.episodes",
     },
-    enableSorting: false, // TODO: set it with backend values
+    // TODO: Enable sorting when backend provides sortable column metadata
+    // This requires backend API to indicate which columns are sortable
+    enableSorting: false,
   }),
 ];
 
