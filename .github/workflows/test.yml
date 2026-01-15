@@ -27,9 +27,12 @@ jobs:
 
       - name: Build packages
         run: |
-          # Force rebuild to ensure all packages are built correctly
-          # This prevents issues where cached builds might have missing exports
-          # (e.g., vite-config dist files not being available for plugins)
+          # Build vite-config first to ensure dist files are fully available
+          # This prevents race conditions where plugins try to use vite-config before it's fully built
+          pnpm turbo run build --force --filter=@workspace/vite-config
+          # Verify vite-config was built correctly
+          test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
+          # Then build everything else (vite-config will be cached)
           pnpm turbo run build --force
 
       - name: Run linter
