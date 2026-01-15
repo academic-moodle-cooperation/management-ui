@@ -5,7 +5,7 @@ import {
   OrderDirection,
   useGetSeriesByIdInputFieldsQuery,
 } from "@workspace/query";
-import { useNavigate, useParams } from "@workspace/router";
+import { useNavigate } from "@workspace/router";
 import { useSidebarContent } from "@workspace/ui/components";
 import type { Row } from "@workspace/ui/components";
 
@@ -13,7 +13,7 @@ import { useSidebarStore } from "../stores/sidebarStore";
 
 import { useTableState } from "./useTableState";
 
-import type { TableBaseState, TableAction } from "./useTableState";
+import type { TableBaseState } from "./useTableState";
 
 export type SeriesUpdateData = {
   [key: string]: string | string[];

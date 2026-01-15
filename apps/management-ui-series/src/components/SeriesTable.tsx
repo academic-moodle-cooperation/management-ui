@@ -1,4 +1,5 @@
-import React, { useMemo, useEffect, useCallback, useRef } from "react";
+import { useMemo, useEffect, useCallback, useRef } from "react";
+import type { MouseEvent } from "react";
 
 import { useI18n } from "@workspace/i18n";
 import { useUpdateSeriesMutation, useAppConfig } from "@workspace/query";
@@ -128,7 +129,7 @@ const SeriesTable = () => {
 
   // Modified row click handler to pass inputFields directly
   const handleRowClick = useCallback(
-    (event: React.MouseEvent, row: Row<Record<string, unknown>>) => {
+    (event: MouseEvent, row: Row<Record<string, unknown>>) => {
       logger.debug("SeriesTable - Row clicked", { rowId: row.original["id"] });
 
       // Reset edit state when clicking on a different row
