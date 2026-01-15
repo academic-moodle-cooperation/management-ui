@@ -1,32 +1,35 @@
-import { Plugin } from '../../IPlugin';
+import type { Plugin } from "../../IPlugin";
 
 export type RegistryObject = {
   id: string;
   type: string;
   data: unknown;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown> | undefined;
 };
 
 export const createObjectRegistryPlugin = (): Plugin => {
   const registryItems = new Map<string, Map<string, RegistryObject>>();
 
   return {
-    name: 'registry',
-    version: '1.0.0',
+    name: "registry",
+    version: "1.0.0",
 
     initialize(manager) {
       // Register an object
-      manager.addFunction('registry.addObject', (type: string, id: string, data: unknown, metadata?: Record<string, unknown>) => {
-        if (!registryItems.has(type)) {
-          registryItems.set(type, new Map());
-        }
-        const typeRegistry = registryItems.get(type)!;
-        typeRegistry.set(id, { id, type, data, metadata });
-        manager.dispatchEvent('registry.objectUpdated', { type, id });
-      });
+      manager.addFunction(
+        "registry.addObject",
+        (type: string, id: string, data: unknown, metadata?: Record<string, unknown>) => {
+          if (!registryItems.has(type)) {
+            registryItems.set(type, new Map());
+          }
+          const typeRegistry = registryItems.get(type)!;
+          typeRegistry.set(id, { id, type, data, metadata: metadata ?? undefined });
+          manager.dispatchEvent("registry.objectUpdated", { type, id });
+        },
+      );
 
       // Get all objects of a specific type
-      manager.addFunction('registry.getObjects', (type: string) => {
+      manager.addFunction("registry.getObjects", (type: string) => {
         const typeRegistry = registryItems.get(type);
         if (!typeRegistry) {
           return [];
@@ -36,18 +39,18 @@ export const createObjectRegistryPlugin = (): Plugin => {
       });
 
       // Get a specific object
-      manager.addFunction('registry.getObject', (type: string, id: string) => {
+      manager.addFunction("registry.getObject", (type: string, id: string) => {
         const typeRegistry = registryItems.get(type);
         if (!typeRegistry) return null;
         return typeRegistry.get(id) || null;
       });
 
       // Remove an object
-      manager.addFunction('registry.removeObject', (type: string, id: string) => {
+      manager.addFunction("registry.removeObject", (type: string, id: string) => {
         const typeRegistry = registryItems.get(type);
         if (typeRegistry && typeRegistry.has(id)) {
           typeRegistry.delete(id);
-          manager.dispatchEvent('registry.objectUpdated', { type, id });
+          manager.dispatchEvent("registry.objectUpdated", { type, id });
           return true;
         }
         return false;
@@ -60,6 +63,6 @@ export const createObjectRegistryPlugin = (): Plugin => {
 
     deactivate() {
       // Object Registry plugin deactivated
-    }
+    },
   };
-}; 
+};

@@ -1,22 +1,16 @@
 {
-  "extends": "../typescript-config/base.json",
+  "extends": "../typescript-config/node-esm-library.json",
   "compilerOptions": {
     "rootDir": "./src",
+    "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
     "composite": false,
-    "noEmit": true
+    "noEmit": false,
+    "types": ["vitest/globals", "node"]
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".turbo"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", ".turbo", "**/*.test.ts"]
 }

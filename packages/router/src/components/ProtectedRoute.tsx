@@ -1,5 +1,6 @@
-import React from "react";
 import { Navigate } from "@tanstack/react-router";
+import React from "react";
+
 import { useAuth } from "../auth/AuthContext";
 
 interface ProtectedRouteProps {
@@ -15,9 +16,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // Check authentication directly from user data (avoid timing issues with derived state)
   const userRole = user?.currentUser?.userRole;
-  const isUserAuthenticated = Boolean(
-    user && userRole !== "ROLE_USER_ANONYMOUS"
-  );
+  const isUserAuthenticated = Boolean(user && userRole !== "ROLE_USER_ANONYMOUS");
 
   // Wait for auth state to be determined before making decisions
   // user === undefined means AuthInitializer is still loading auth data

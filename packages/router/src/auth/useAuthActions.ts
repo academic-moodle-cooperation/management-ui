@@ -1,5 +1,6 @@
-import { useAppConfig } from '@workspace/query';
-import { useCallback } from 'react';
+import { useCallback } from "react";
+
+import { useAppConfig } from "@workspace/query";
 
 export interface AuthActions {
   login: (redirectTo?: string) => void;
@@ -14,7 +15,7 @@ export interface AuthActions {
  * redirect parameters, and error handling consistently.
  */
 export const useAuthActions = (): AuthActions => {
-  const { config, isLoading, isError } = useAppConfig();
+  const { isLoading, isError } = useAppConfig();
 
   const login = useCallback((redirectTo?: string) => {
     // Use standardized /login route instead of direct config URLs
@@ -25,13 +26,13 @@ export const useAuthActions = (): AuthActions => {
 
   const logout = useCallback(() => {
     // Use standardized /logout route instead of direct config URLs
-    window.location.href = 'logout';
+    window.location.href = "logout";
   }, []);
 
   return {
     login,
     logout,
     isLoading,
-    isError
+    isError,
   };
-}; 
+};

@@ -1,13 +1,22 @@
-import React, {
-  RefObject,
-  createRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { createRef, useCallback, useEffect, useMemo, useState } from "react";
+
+import { useI18n } from "@workspace/i18n";
+import { usePluginManager, ComponentResolver } from "@workspace/plugin-system";
+import { uploadExtensionPoints, tuwienUploadAclEditorImplementation } from "@workspace/plugins";
 import {
-  ACLEntry,
+  gql,
+  createGraphQLClient,
+  OrderDirection,
+  useGetMySeriesNameAndIdQuery,
+  useGetUserInfo,
+  useInfiniteQuery,
+  useAppConfig,
+} from "@workspace/query";
+import type { GetMySeriesNameAndIdQuery } from "@workspace/query";
+import { useNavigate, useParams } from "@workspace/router";
+import { useStore } from "@workspace/store";
+import type { UploadFileBlob } from "@workspace/store";
+import {
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -21,30 +30,17 @@ import {
   Toaster,
   toast,
 } from "@workspace/ui/components";
-import Dropzone from "./components/Dropzone";
+import type { AclData, SelectedElement } from "@workspace/ui/components";
+import { logger } from "@workspace/utils";
 
-import { useFileHandler } from "./uploadservice/fileHandler";
-import { UploadFileBlob, useStore } from "@workspace/store";
-import { opencastUpload } from "./uploadservice/opencastUpload";
-import {
-  gql,
-  createGraphQLClient,
-  OrderDirection,
-  useGetMySeriesNameAndIdQuery,
-  useGetUserInfo,
-  useInfiniteQuery,
-} from "@workspace/query";
-import { LinkText, Trans, useI18n } from "@workspace/i18n";
-import { UploadList } from "./components/UploadList";
-import { useLoaderData, useNavigate, useParams, useRouter } from "@workspace/router";
-import { AclEditor, type AclData, type SelectedElement } from "@workspace/ui/components";
-import { useAppConfig } from "@workspace/query";
-import { usePluginManager, ComponentResolver } from "@workspace/plugin-system";
-import {
-  uploadExtensionPoints,
-  tuwienUploadAclEditorImplementation
-} from "@workspace/plugins";
+import Dropzone from "./components/Dropzone";
 import { EmptyState } from "./components/EmptyState";
+import { UploadList } from "./components/UploadList";
+import { useFileHandler } from "./uploadservice/fileHandler";
+import { initializeProgressInterval } from "./uploadservice/onProgress";
+import { opencastUpload } from "./uploadservice/opencastUpload";
+
+import type { DragEvent, KeyboardEvent, RefObject, SetStateAction } from "react";
 
 export const App = () => {
   const [fileWaitingList, setFileWaitingList] = useState<UploadFileBlob[]>([]);
@@ -55,13 +51,16 @@ export const App = () => {
     index: -1,
     name: "",
   });
+  // TODO: isEdited state may be needed for future edit functionality
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isEdited, setIsEdited] = useState(false);
 
   const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(null);
-  const [selectedSeries, setSelectedSeries] = useState<SelectedElement | null>(
-    null
-  );
+  const [selectedSeries, setSelectedSeries] = useState<SelectedElement | null>(null);
 
+  // uploadListIsOpen is set but not currently used in the UI
+  // It may be needed for future functionality (e.g., showing/hiding upload list)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [uploadListIsOpen, setUploadListIsOpen] = useState(false);
   const [query, setQuery] = useState<string | undefined>(undefined);
   const [aclData, setAclData] = useState<AclData | undefined>(undefined);
@@ -80,20 +79,20 @@ export const App = () => {
   const { data: user } = useGetUserInfo();
   const { routeSubPath } = useParams({ strict: false });
   const navigate = useNavigate({ from: `/upload` });
-  const router = useRouter();
 
   const { t } = useI18n();
   const { config } = useAppConfig();
   // Get upload-specific config from the real config system
-  const uploadConfig = config.plugins?.["management-ui-upload"] || {};
-  const { location, workflowId } = uploadConfig;
+  const uploadConfig = config.plugins?.["management-ui-upload"];
+  const location = uploadConfig?.location || "Upload";
+  const workflowId = uploadConfig?.workflowId || "ingest-upload";
 
   // Plugin system integration
   const manager = usePluginManager();
 
   // Register plugins on mount
   useEffect(() => {
-    console.log('🔌 Registering upload plugins...');
+    logger.debug("Registering upload plugins");
 
     // Register extension points first
     manager.register(uploadExtensionPoints);
@@ -101,29 +100,28 @@ export const App = () => {
     // Register TUWien ACL Editor implementation
     manager.register(tuwienUploadAclEditorImplementation);
 
-    console.log('✅ Upload plugins registered');
+    logger.debug("Upload plugins registered");
 
     return () => {
-      console.log('🔌 Deregistering upload plugins...');
+      logger.debug("Deregistering upload plugins");
       manager.deregister(uploadExtensionPoints.name);
       manager.deregister(tuwienUploadAclEditorImplementation.name);
     };
   }, [manager]);
 
-  const { isLoading: isLoadingSeriesData, data: seriesData } =
-    useGetMySeriesNameAndIdQuery({
-      query: routeSubPath,
-      orderBy: {
-        title: OrderDirection.Asc
-      }
-    });
+  const { data: seriesData } = useGetMySeriesNameAndIdQuery({
+    query: routeSubPath,
+    orderBy: {
+      title: OrderDirection.Asc,
+    },
+  });
 
   const seriesList = useMemo(
     () =>
       seriesData?.currentUser.mySeries.nodes?.map((series) => {
         return { id: series?.id, title: series?.title, __typename: "Series" };
       }) || [],
-    [seriesData]
+    [seriesData],
   );
 
   const FETCH_MY_SERIES = gql`
@@ -134,12 +132,7 @@ export const App = () => {
       $query: String
     ) {
       currentUser {
-        mySeries(
-          limit: $limit
-          offset: $offset
-          orderBy: $orderBy
-          query: $query
-        ) {
+        mySeries(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
           nodes {
             id
             title
@@ -149,23 +142,32 @@ export const App = () => {
     }
   `;
 
-  const fetchMySeries = async ({ pageParam = 0, query }: { pageParam?: number; query?: string }) => {
+  const fetchMySeries = async ({
+    pageParam = 0,
+    query,
+  }: {
+    pageParam?: number;
+    query?: string;
+  }) => {
     const graphQLClient = createGraphQLClient(config.api.graphqlEndpoint);
-    const data = await graphQLClient.request(FETCH_MY_SERIES, {
+    const data = (await graphQLClient.request(FETCH_MY_SERIES, {
       limit: 100,
       offset: pageParam,
       query,
       orderBy: {
         title: OrderDirection.Asc,
-      }
-    }) as any;
+      },
+    })) as GetMySeriesNameAndIdQuery;
     return data?.currentUser?.mySeries?.nodes || [];
   };
 
-  const { data, refetch, fetchNextPage, hasNextPage } = useInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: ["seriesList", query],
     queryFn: ({ pageParam }) => {
-      return fetchMySeries({ pageParam, query });
+      return fetchMySeries({
+        pageParam,
+        ...(query !== undefined && { query }),
+      });
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, pages, lastPageParam) => {
@@ -177,22 +179,25 @@ export const App = () => {
   });
 
   const refsById = useMemo(() => {
-    const uploadFileEditNameRefs: RefObject<HTMLSpanElement | null>[] = [];
+    const uploadFileEditNameRefs: RefObject<HTMLSpanElement>[] = [];
     fileWaitingList.forEach((item) => {
-      uploadFileEditNameRefs[item.id] = createRef();
+      uploadFileEditNameRefs[item.id] = createRef<HTMLSpanElement>() as RefObject<HTMLSpanElement>;
     });
     return uploadFileEditNameRefs;
   }, [fileWaitingList]);
 
   useEffect(() => {
-    const navSeries =
-      seriesList?.find((data) => data.id === routeSubPath) || null;
+    const navSeries = seriesList?.find((data) => data.id === routeSubPath) || null;
 
-    setSelectedSeries(navSeries && navSeries.id && navSeries.title ? {
-      __typename: navSeries.__typename as "Series" | "Event",
-      id: navSeries.id,
-      title: navSeries.title
-    } : null);
+    setSelectedSeries(
+      navSeries && navSeries.id && navSeries.title
+        ? {
+            __typename: navSeries.__typename as "Series" | "Event",
+            id: navSeries.id,
+            title: navSeries.title,
+          }
+        : null,
+    );
     routeSubPath && setSelectedSeriesId(routeSubPath);
   }, [routeSubPath, seriesList]);
 
@@ -201,7 +206,14 @@ export const App = () => {
       ...zustandupload,
       seriesId: selectedSeriesId || "",
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSeriesId]);
+
+  // Initialize progress interval for time estimation updates
+  useEffect(() => {
+    const cleanup = initializeProgressInterval();
+    return cleanup;
+  }, []);
 
   useEffect(() => {
     const filesList = [...zustandupload.files];
@@ -224,8 +236,7 @@ export const App = () => {
       setIsCompleted(true);
       setIsLoading(false);
     } else if (zustandupload?.status === "idle") {
-      if (!zustandupload?.pending?.filter((n) => n).length)
-        setIsCompleted(true);
+      if (!zustandupload?.pending?.filter((n) => n).length) setIsCompleted(true);
     }
   }, [zustandupload?.uploading, zustandupload?.status, zustandupload?.pending]);
 
@@ -239,9 +250,7 @@ export const App = () => {
     if (zustandupload?.pending.length && zustandupload?.next && user) {
       const { next, seriesId } = zustandupload;
 
-      const fileStatus = zustandupload?.files.find(
-        (fileItem) => fileItem?.id === next.id
-      )?.status;
+      const fileStatus = zustandupload?.files.find((fileItem) => fileItem?.id === next.id)?.status;
 
       if (fileStatus === "aborted") {
         const prev = next;
@@ -253,38 +262,42 @@ export const App = () => {
           seriesId,
           workflowId,
           // Convert UserInfo to User type by adding missing provider property
-          user ? {
-            ...user,
-            user: {
-              ...user.user,
-              provider: 'internal' // Add default provider since it's missing from UserInfo
-            }
-          } : user,
+          user
+            ? {
+                ...user,
+                user: {
+                  ...user.user,
+                  provider: "internal", // Add default provider since it's missing from UserInfo
+                },
+              }
+            : user,
           location,
           updateFile,
           setUploadError,
-          aclData
+          aclData,
         )
           .then(() => {
             const prev = next;
             const pending = zustandupload.pending.slice(1);
-            fileUploaded(prev, pending)
+            fileUploaded(prev, pending);
           })
           .catch((error) => {
             setFileWaitingList((prevState) => {
-              const updateFileIndex = prevState.findIndex(
-                (fileItem) => fileItem?.id === next.id
-              ) as number;
+              const updateFileIndex = prevState.findIndex((fileItem) => fileItem?.id === next.id);
 
-              prevState[updateFileIndex] = {
-                ...prevState[updateFileIndex],
+              if (updateFileIndex === -1) return prevState;
+
+              const existingFile = prevState[updateFileIndex];
+              if (!existingFile) return prevState;
+
+              const updatedFile: UploadFileBlob = {
+                ...existingFile,
                 status: "error",
               };
 
-              updateFile({
-                ...prevState[updateFileIndex],
-                status: "error",
-              });
+              prevState[updateFileIndex] = updatedFile;
+
+              updateFile(updatedFile);
 
               return prevState;
             });
@@ -305,6 +318,7 @@ export const App = () => {
           });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     zustandupload?.pending,
     zustandupload?.next,
@@ -329,17 +343,11 @@ export const App = () => {
     }
   }, [selectedSeries, navigate]);
 
-  const useHandleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
+  const useHandleDrop = (e: DragEvent<HTMLLabelElement>) => {
     const dt = e.dataTransfer;
     const files = dt.files;
 
-    useFileHandler(
-      files,
-      fileWaitingList,
-      routeSubPath,
-      setUpload,
-      zustandupload
-    );
+    useFileHandler(files, fileWaitingList, routeSubPath, setUpload, zustandupload);
   };
 
   const handleUpload = useCallback(() => {
@@ -355,7 +363,7 @@ export const App = () => {
         deleteUpload(fileID);
       }
     },
-    [zustandupload?.files, deleteUpload]
+    [zustandupload?.files, deleteUpload],
   );
 
   const abortUpload = (selectedFile: UploadFileBlob) => {
@@ -367,19 +375,21 @@ export const App = () => {
     }
 
     setFileWaitingList((prevState) => {
-      const updateFileIndex = prevState.findIndex(
-        (fileItem) => fileItem?.id === selectedFile.id
-      ) as number;
+      const updateFileIndex = prevState.findIndex((fileItem) => fileItem?.id === selectedFile.id);
 
-      prevState[updateFileIndex] = {
-        ...prevState[updateFileIndex],
+      if (updateFileIndex === -1) return prevState;
+
+      const existingFile = prevState[updateFileIndex];
+      if (!existingFile) return prevState;
+
+      const updatedFile: UploadFileBlob = {
+        ...existingFile,
         status: "aborted",
       };
 
-      updateFile({
-        ...prevState[updateFileIndex],
-        status: "aborted",
-      });
+      prevState[updateFileIndex] = updatedFile;
+
+      updateFile(updatedFile);
 
       return prevState;
     });
@@ -402,9 +412,7 @@ export const App = () => {
     });
   };
 
-  const handleEditUploadName = (
-    event: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const handleEditUploadName = (event: KeyboardEvent<HTMLInputElement>) => {
     const uploadName = (event.target as HTMLInputElement).value;
     if (!editFile || (event.key === "Enter" && uploadName.trim().length)) {
       editUploadNameEnd(uploadName);
@@ -422,7 +430,7 @@ export const App = () => {
     if (editFile && uploadName.trim().length > 0) {
       setFileWaitingList((prevState) => {
         const updateFileIndex = prevState.findIndex(
-          (fileItem) => fileItem?.id === editFile.index
+          (fileItem) => fileItem?.id === editFile.index,
         ) as number;
 
         if (
@@ -455,23 +463,25 @@ export const App = () => {
 
   // Handle ACL data changes from the plugin
   const onAclDataChange = useCallback((newAclData: AclData, managedAclId: string) => {
-    console.log('🔒 ACL data changed:', newAclData);
+    logger.debug("ACL data changed", { newAclData, managedAclId });
     setAclData({
-      entries: newAclData?.entries?.map((entry) => ({
-        role: entry.role,
-        action: entry.action,
-      })) ?? [],
-      managedAclEntries: newAclData?.managedAclEntries?.map((entry) => ({
-        role: entry.role,
-        action: entry.action,
-      })) ?? [],
+      entries:
+        newAclData?.entries?.map((entry) => ({
+          role: entry.role,
+          action: entry.action,
+        })) ?? [],
+      managedAclEntries:
+        newAclData?.managedAclEntries?.map((entry) => ({
+          role: entry.role,
+          action: entry.action,
+        })) ?? [],
       managedAclId: managedAclId ?? undefined,
     });
   }, []);
 
   // Refetch function for ACL editor
   const handleRefetch = useCallback(() => {
-    console.log('🔄 Refetching data...');
+    logger.debug("Refetching data");
     // Add any refetch logic here if needed
   }, []);
 
@@ -480,14 +490,14 @@ export const App = () => {
       <Container className="flex flex-row flex-wrap w-full p-8 ">
         <AppHeading heading={t("upload:heading")} description={t("upload:description")} />
         <Separator className="mt-4 mb-8" />
-        {(!query && data?.pages.flat().length === 0) ?
+        {!query && data?.pages.flat().length === 0 ? (
           <ComponentResolver
             componentType="series:empty-state"
             defaultComponent={() => <EmptyState />}
             componentProps={{}}
             loadingBehavior="none"
           />
-          :
+        ) : (
           <Container className="flex flex-row items-center justify-center w-full">
             <Container className="flex flex-col items-center justify-center w-full mt-12 sticky top-20 bottom-8">
               <Dropzone
@@ -504,9 +514,7 @@ export const App = () => {
                   <Card className="px-4 py-0">
                     <Accordion type="single" collapsible>
                       <AccordionItem value="item-1" className="border-none">
-                        <AccordionTrigger>
-                          {t("upload:lastUploads")}
-                        </AccordionTrigger>
+                        <AccordionTrigger>{t("upload:lastUploads")}</AccordionTrigger>
                         <AccordionContent>
                           <UploadList
                             files={zustandupload?.uploaded}
@@ -524,124 +532,118 @@ export const App = () => {
                     </Accordion>
                   </Card>
                 )}
-                {(!!fileWaitingList.length ||
-                  !!zustandupload.uploaded.length) && (
-                    <Card className="flex flex-col w-full h-full px-4 py-6 lg:px-8 gap-y-4">
-                      <div className="flex flex-col">
-                        <div className="flex items-center justify-between">
-                          <div className="space-y-1">
-                            <h2 className="text-xl font-semibold tracking-tight">
-                              {t("upload:headingList")}
-                            </h2>
-                            <p className="text-sm text-muted-foreground">
-                              {t("upload:descriptionList")}
-                            </p>
-                          </div>
-                          <Button
-                            color="primary"
-                            variant={"outline"}
-                            size={"sm"}
-                            className={"self-end relative"}
-                            disabled={isLoading}
-                            onClick={() => {
-                              setFileWaitingList([]);
-                              setFilesWaiting(false);
-                              resetUpload();
-                            }}
-                          >
-                            {t("upload:deleteButton")}
-                          </Button>
+                {(!!fileWaitingList.length || !!zustandupload.uploaded.length) && (
+                  <Card className="flex flex-col w-full h-full px-4 py-6 lg:px-8 gap-y-4">
+                    <div className="flex flex-col">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-1">
+                          <h2 className="text-xl font-semibold tracking-tight">
+                            {t("upload:headingList")}
+                          </h2>
+                          <p className="text-sm text-muted-foreground">
+                            {t("upload:descriptionList")}
+                          </p>
                         </div>
-                        <Separator className="my-4" />
-                      </div>
-                      {!!fileWaitingList.length && (
-                        <>
-                          <UploadList
-                            files={fileWaitingList}
-                            editFile={editFile}
-                            handleEditUploadName={handleEditUploadName}
-                            editUploadName={editUploadName}
-                            editUploadNameEnd={editUploadNameEnd}
-                            refsById={refsById}
-                            abortUpload={abortUpload}
-                            isLoading={isLoading}
-                            className={
-                              zustandupload?.uploaded.length === 0
-                                ? "rounded-b-none"
-                                : "rounded-b-lg"
-                            }
-                          />
-                        </>
-                      )}
-
-                      <h2 className="font-semibold tracking-tight my-2">
-                        {t("upload:series")}
-                      </h2>
-
-                      <SelectSeriesCombobox
-                        seriesList={data?.pages.flat()}
-                        selectedSeries={selectedSeries}
-                        setSelectedSeries={(value) => {
-                          setSelectedSeries(value && value.id && value.title ? {
-                            __typename: "Series" as const,
-                            id: value.id,
-                            title: value.title
-                          } : null);
-                        }}
-                        searchSeries={(query) => {
-                          setQuery(query || undefined);
-                        }}
-                        infiniteFetchNextPage={fetchNextPage}
-                        hasNextPage={hasNextPage}
-                        placeholder={t("upload:selectSeries")}
-                      />
-
-                      {/* TU Wien ACL Editor Plugin Integration */}
-                      <ComponentResolver
-                        componentType="upload:acl-editor"
-                        defaultComponent={() => null} // No default component
-                        componentProps={{
-                          aclData,
-                          onAclDataChange,
-                          selectedSeries,
-                          disabled: isLoading,
-                          refetch: handleRefetch,
-                        }}
-                        useOverridePrefix={false}
-                        loadingBehavior="none"
-                      />
-
-                      <div className="flex flex-row justify-center items-center my-4 sticky bottom-0 p-4 bg-white">
                         <Button
                           color="primary"
-                          variant={
-                            isLoading || !selectedSeriesId || isCompleted
-                              ? "secondary"
-                              : "default"
-                          }
-                          size={"lg"}
-                          className={"self-start ml-4 relative w-1/2"}
-                          disabled={
-                            !filesWaiting ||
-                            isLoading ||
-                            isCompleted ||
-                            !selectedSeriesId
-                          }
-                          onClick={() => handleUpload()}
+                          variant={"outline"}
+                          size={"sm"}
+                          className={"self-end relative"}
+                          disabled={isLoading}
+                          onClick={() => {
+                            setFileWaitingList([]);
+                            setFilesWaiting(false);
+                            resetUpload();
+                          }}
                         >
-                          {isCompleted
-                            ? t("upload:uploadButton.upload")
-                            : isLoading
-                              ? t("upload:uploadButton.loading")
-                              : t("upload:uploadButton.upload")}
+                          {t("upload:deleteButton")}
                         </Button>
                       </div>
-                    </Card>
-                  )}
+                      <Separator className="my-4" />
+                    </div>
+                    {!!fileWaitingList.length && (
+                      <>
+                        <UploadList
+                          files={fileWaitingList}
+                          editFile={editFile}
+                          handleEditUploadName={handleEditUploadName}
+                          editUploadName={editUploadName}
+                          editUploadNameEnd={editUploadNameEnd}
+                          refsById={refsById}
+                          abortUpload={abortUpload}
+                          isLoading={isLoading}
+                          className={
+                            zustandupload?.uploaded.length === 0 ? "rounded-b-none" : "rounded-b-lg"
+                          }
+                        />
+                      </>
+                    )}
+
+                    <h2 className="font-semibold tracking-tight my-2">{t("upload:series")}</h2>
+
+                    <SelectSeriesCombobox
+                      seriesList={data?.pages
+                        .flat()
+                        .filter((s): s is { id: string; title: string } => s !== null)}
+                      selectedSeries={selectedSeries}
+                      setSelectedSeries={(value) => {
+                        setSelectedSeries(
+                          value && value.id && value.title
+                            ? {
+                                __typename: "Series" as const,
+                                id: value.id,
+                                title: value.title,
+                              }
+                            : null,
+                        );
+                      }}
+                      searchSeries={(query: SetStateAction<string>) => {
+                        setQuery(typeof query === "function" ? query("") : query || undefined);
+                      }}
+                      infiniteFetchNextPage={fetchNextPage}
+                      hasNextPage={hasNextPage}
+                      placeholder={t("upload:selectSeries")}
+                    />
+
+                    {/* TU Wien ACL Editor Plugin Integration */}
+                    <ComponentResolver
+                      componentType="upload:acl-editor"
+                      defaultComponent={() => null} // No default component
+                      componentProps={{
+                        aclData,
+                        onAclDataChange,
+                        selectedSeries,
+                        disabled: isLoading,
+                        refetch: handleRefetch,
+                      }}
+                      useOverridePrefix={false}
+                      loadingBehavior="none"
+                    />
+
+                    <div className="flex flex-row justify-center items-center my-4 sticky bottom-0 p-4 bg-white">
+                      <Button
+                        color="primary"
+                        variant={
+                          isLoading || !selectedSeriesId || isCompleted ? "secondary" : "default"
+                        }
+                        size={"lg"}
+                        className={"self-start ml-4 relative w-1/2"}
+                        disabled={!filesWaiting || isLoading || isCompleted || !selectedSeriesId}
+                        onClick={() => handleUpload()}
+                      >
+                        {isCompleted
+                          ? t("upload:uploadButton.upload")
+                          : isLoading
+                            ? t("upload:uploadButton.loading")
+                            : t("upload:uploadButton.upload")}
+                      </Button>
+                    </div>
+                  </Card>
+                )}
               </Container>
             )}
           </Container>
-        }
+        )}
         <Toaster closeButton richColors toastOptions={{}} theme="light" />
 
         {/* TODO: Make Option for "No Series available" */}
@@ -650,4 +652,4 @@ export const App = () => {
   );
 };
 
-export default App; 
+export default App;

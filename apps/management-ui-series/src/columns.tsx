@@ -1,3 +1,8 @@
+import { Film, Info } from "lucide-react";
+
+import { i18next } from "@workspace/i18n";
+import type { SeriesDataFragment } from "@workspace/query";
+import { Link } from "@workspace/router";
 import {
   createColumnHelper,
   Tooltip,
@@ -8,16 +13,13 @@ import {
   OverflowTooltip,
 } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib";
-import { SeriesDataFragment } from "@workspace/query";
-import { Film, Info } from "lucide-react";
-import { Link } from "@workspace/router";
-import { i18next } from "@workspace/i18n";
+
 import SeriesActionsCell from "./components/SeriesActionsCell";
 
 const columnHelper = createColumnHelper<SeriesDataFragment>();
 
-
 // Convert columns to a factory function that accepts setIsEditing
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const createColumns = (setIsEditing: (editing: boolean) => void) => [
   columnHelper.accessor("title", {
     header: ({ column }) => (
@@ -106,7 +108,12 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => [
     cell: (data) => {
       const contributors = data.getValue() || [];
       return (
-        <OverflowTooltip className={cn("truncate whitespace-pre max-w-[200px] flex items-start", contributors.length === 3 ? "max-h-[48px]" : "max-h-[32px]")}>
+        <OverflowTooltip
+          className={cn(
+            "truncate whitespace-pre max-w-[200px] flex items-start",
+            contributors.length === 3 ? "max-h-[48px]" : "max-h-[32px]",
+          )}
+        >
           {contributors.join("\n")}
         </OverflowTooltip>
       );
@@ -124,10 +131,14 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => [
           <TooltipTrigger asChild>
             <Button variant="ghost" size="icon" className="w-4 h-4">
               <Info className="w-4 h-4 ml-1 hover:text-gray-900" />
-              <span className="sr-only">{i18next.t("series:seriesTable.heading.actions.info")}</span>
+              <span className="sr-only">
+                {i18next.t("series:seriesTable.heading.actions.info")}
+              </span>
             </Button>
           </TooltipTrigger>
-          <TooltipContent className="w-96">{i18next.t("series:seriesTable.heading.actions.info")}</TooltipContent>
+          <TooltipContent className="w-96">
+            {i18next.t("series:seriesTable.heading.actions.info")}
+          </TooltipContent>
         </Tooltip>
       </span>
     ),
@@ -163,9 +174,7 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => [
               <Film className="inline w-4 h-4 ml-2 group-hover:text-blue-600" />
             </Link>
           </TooltipTrigger>
-          <TooltipContent>
-            {i18next.t("series:seriesTable.heading.episodes")}
-          </TooltipContent>
+          <TooltipContent>{i18next.t("series:seriesTable.heading.episodes")}</TooltipContent>
         </Tooltip>
       ) : (
         <p className="flex items-center justify-center">–</p>
@@ -174,9 +183,11 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => [
     meta: {
       translatedTitle: "seriesTable.heading.episodes",
     },
-    enableSorting: false, // TODO: set it with backend values
+    // TODO: Enable sorting when backend provides sortable column metadata
+    // This requires backend API to indicate which columns are sortable
+    enableSorting: false,
   }),
 ];
 
 // Keep a fallback export for compatibility or testing
-export const columns = createColumns(() => { });
+export const columns = createColumns(() => {});

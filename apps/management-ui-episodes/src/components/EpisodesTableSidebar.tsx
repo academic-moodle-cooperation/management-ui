@@ -1,4 +1,9 @@
-import React, { useRef, RefObject, useState } from "react";
+import React, { useRef, useState } from "react";
+
+import { useTranslation } from "@workspace/i18n";
+import { usePluginManager } from "@workspace/plugin-system";
+import { useUpdateEventMutation } from "@workspace/query";
+import type { GetEventByIdInputFieldsQuery, EventsDataFragment } from "@workspace/query";
 import {
   Sheet,
   SheetContent,
@@ -12,22 +17,19 @@ import {
   TabsContent,
 } from "@workspace/ui/components";
 import { useClickOutside } from "@workspace/ui/hooks";
-import {
-  GetEventByIdInputFieldsQuery,
-  useUpdateEventMutation,
-  EventsDataFragment,
-} from "@workspace/query";
-import { usePluginManager } from "@workspace/plugin-system";
+import { logger } from "@workspace/utils";
+
 import { EpisodesInfoContent } from "./EpisodesInfoContent";
 import { EpisodesInfoFooter } from "./EpisodesInfoFooter";
-import { EpisodesUpdateData } from "../stores/sidebarStore";
-import { useTranslation } from "@workspace/i18n";
+
+import type { EpisodesUpdateData } from "../stores/sidebarStore";
+import type { RefObject } from "react";
 
 interface EpisodesTableSidebarProps {
   isOpen: boolean;
   onEditClose: () => void;
   heading: string;
-  description?: string;
+  description?: string | undefined;
   episodesInputFields: GetEventByIdInputFieldsQuery | undefined;
   isLoadingMetadata: boolean;
   episodesUpdateData: EpisodesUpdateData | undefined;
@@ -41,9 +43,9 @@ interface EpisodesTableSidebarProps {
   selectedEpisodeId: string;
   refetch: () => void;
   setIsEditing: (value: boolean) => void;
-  sidebarInfo?: string;
+  sidebarInfo?: string | undefined;
   tableRef: RefObject<HTMLDivElement | null>;
-  currentEpisode?: EventsDataFragment;
+  currentEpisode?: EventsDataFragment | undefined;
 }
 
 /**
@@ -85,18 +87,25 @@ export const EpisodesTableSidebar: React.FC<EpisodesTableSidebarProps> = ({
   // Plugin system integration - check for table sidebar plugins
   const tabComponents =
     manager.executeFunction<
-      Array<{ component: React.ComponentType<any>; key: string; order: number }>
+      Array<{
+        component: React.ComponentType<{
+          selectedElement?: unknown;
+          refetch?: () => void;
+          onClose?: () => void;
+        }>;
+        key: string;
+        order: number;
+      }>
     >("renderer.getComponents", "table-sidebar:episodes:tabs") || [];
 
   // Sort components by order
-  const sortedTabComponents = tabComponents.sort(
-    (a, b) => (a.order || 100) - (b.order || 100)
-  );
+  const sortedTabComponents = tabComponents.sort((a, b) => (a.order || 100) - (b.order || 100));
   const hasTabPlugins = sortedTabComponents.length > 0;
 
-  console.log(
-    `🎯 EpisodesTableSidebar: Found ${sortedTabComponents.length} tab plugins, hasTabPlugins: ${hasTabPlugins}`
-  );
+  logger.debug("EpisodesTableSidebar: Tab plugins found", {
+    count: sortedTabComponents.length,
+    hasTabPlugins,
+  });
 
   return (
     <Sheet modal={false} open={isOpen}>
@@ -125,10 +134,7 @@ export const EpisodesTableSidebar: React.FC<EpisodesTableSidebarProps> = ({
                 <TabsList className="mx-2 mb-4 grid w-auto grid-cols-2">
                   <TabsTrigger value="metadata">Metadata</TabsTrigger>
                   {sortedTabComponents.map((tabComponent) => (
-                    <TabsTrigger
-                      key={tabComponent.key}
-                      value={tabComponent.key}
-                    >
+                    <TabsTrigger key={tabComponent.key} value={tabComponent.key}>
                       {tabComponent.key
                         .replace(/^.*:/, "")
                         .replace(/-/g, " ")
@@ -187,9 +193,7 @@ export const EpisodesTableSidebar: React.FC<EpisodesTableSidebarProps> = ({
           </div>
 
           {sidebarInfo && activeTab === "metadata" && (
-            <div className="flex justify-end text-xs text-muted-foreground p-2">
-              {sidebarInfo}
-            </div>
+            <div className="flex justify-end text-xs text-muted-foreground p-2">{sidebarInfo}</div>
           )}
 
           {!isLoadingMetadata && activeTab === "metadata" && (

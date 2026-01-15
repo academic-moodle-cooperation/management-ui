@@ -116,7 +116,7 @@ interface PluginTest {
   name: string;
   description: string;
   type: 'unit' | 'integration' | 'performance' | 'accessibility';
-  
+
   async run(context: TestContext): Promise<TestResult> {
     // Plugin-specific test implementation
   }
@@ -127,20 +127,20 @@ const headerPluginTest: PluginTest = {
   name: 'Header Component Rendering',
   description: 'Validates university header plugin renders correctly',
   type: 'integration',
-  
+
   async run(context) {
     const { render, plugin } = context;
-    
+
     // Load plugin in test environment
     await plugin.initialize(context.pluginManager);
-    
+
     // Render header component
     const result = render(<HeaderTestComponent />);
-    
+
     // Validate rendering
     expect(result.getByRole('banner')).toBeInTheDocument();
     expect(result.getByAltText('University Logo')).toBeInTheDocument();
-    
+
     return { passed: true, metrics: { renderTime: 150 } };
   }
 };
@@ -160,25 +160,15 @@ interface UniversityTestConfig {
 // Test different university configurations
 const universityTests = [
   {
-    name: 'TU Wien Configuration',
+    name: "TU Wien Configuration",
     config: tuWienConfig,
-    tests: [
-      'plugin-loading',
-      'theme-application',
-      'acl-integration',
-      'navigation-customization'
-    ]
+    tests: ["plugin-loading", "theme-application", "acl-integration", "navigation-customization"],
   },
   {
-    name: 'University of Vienna Configuration',
+    name: "University of Vienna Configuration",
     config: univieConfig,
-    tests: [
-      'plugin-loading',
-      'custom-components',
-      'branding-integration',
-      'workflow-validation'
-    ]
-  }
+    tests: ["plugin-loading", "custom-components", "branding-integration", "workflow-validation"],
+  },
 ];
 ```
 
@@ -188,34 +178,34 @@ const universityTests = [
 // End-to-end workflow testing
 const integrationTests = [
   {
-    name: 'Complete Content Workflow',
-    description: 'Test series creation → episode upload → publishing',
-    
+    name: "Complete Content Workflow",
+    description: "Test series creation → episode upload → publishing",
+
     async run() {
       // 1. Create series
       const series = await createTestSeries({
-        title: 'Test Lecture Series',
-        metadata: { department: 'Computer Science' }
+        title: "Test Lecture Series",
+        metadata: { department: "Computer Science" },
       });
-      
+
       // 2. Upload episode
       const episode = await uploadTestEpisode({
         seriesId: series.id,
         file: testVideoFile,
-        metadata: { title: 'Introduction to Testing' }
+        metadata: { title: "Introduction to Testing" },
       });
-      
+
       // 3. Process and publish
       await waitForProcessing(episode.id);
       await publishEpisode(episode.id);
-      
+
       // 4. Validate end-to-end functionality
       const publishedEpisode = await getEpisode(episode.id);
-      expect(publishedEpisode.status).toBe('published');
-      
+      expect(publishedEpisode.status).toBe("published");
+
       return { passed: true };
-    }
-  }
+    },
+  },
 ];
 ```
 
@@ -231,20 +221,20 @@ interface QualityMetrics {
     duration: { min: number; max: number; average: number };
     codecCompliance: number; // percentage
   };
-  
+
   metadata: {
     completeness: number; // percentage of required fields
     consistency: number; // consistency across episodes
     validation: ValidationResult[];
   };
-  
+
   accessibility: {
-    wcagCompliance: 'A' | 'AA' | 'AAA' | 'Non-compliant';
+    wcagCompliance: "A" | "AA" | "AAA" | "Non-compliant";
     transcriptCoverage: number; // percentage
     colorContrast: boolean;
     keyboardNavigation: boolean;
   };
-  
+
   performance: {
     loadTime: number; // milliseconds
     renderTime: number; // milliseconds
@@ -282,17 +272,17 @@ const TestReport = ({ testRun }: { testRun: TestRunResult }) => {
           </div>
         </div>
       </header>
-      
+
       <section className="test-categories">
         {testRun.categories.map(category => (
           <TestCategoryReport key={category.name} category={category} />
         ))}
       </section>
-      
+
       <section className="performance-metrics">
         <PerformanceChart data={testRun.performance} />
       </section>
-      
+
       <section className="accessibility-results">
         <AccessibilityReport results={testRun.accessibility} />
       </section>
@@ -309,44 +299,44 @@ const TestReport = ({ testRun }: { testRun: TestRunResult }) => {
 // Test plugin compatibility across universities
 const pluginCompatibilityTests = [
   {
-    name: 'Header Plugin Compatibility',
-    description: 'Test header plugins work across university configurations',
-    
+    name: "Header Plugin Compatibility",
+    description: "Test header plugins work across university configurations",
+
     async run() {
-      const universities = ['tuwien', 'univie', 'example-university'];
+      const universities = ["tuwien", "univie", "example-university"];
       const results = [];
-      
+
       for (const uni of universities) {
         const config = getUniversityConfig(uni);
         const testEnv = await createTestEnvironment(config);
-        
+
         try {
           // Load university-specific plugins
           await loadUniversityPlugins(uni, testEnv);
-          
+
           // Test header rendering
           const headerTest = await testHeaderComponent(testEnv);
-          
+
           results.push({
             university: uni,
             passed: headerTest.passed,
-            issues: headerTest.issues
+            issues: headerTest.issues,
           });
         } catch (error) {
           results.push({
             university: uni,
             passed: false,
-            error: error.message
+            error: error.message,
           });
         }
       }
-      
+
       return {
-        passed: results.every(r => r.passed),
-        details: results
+        passed: results.every((r) => r.passed),
+        details: results,
       };
-    }
-  }
+    },
+  },
 ];
 ```
 
@@ -360,18 +350,18 @@ const configurationValidation = {
     // Validate font accessibility
     // Ensure responsive breakpoints
   },
-  
+
   validatePlugins: (plugins: Plugin[]) => {
     // Check plugin dependencies
     // Validate extension point usage
     // Test plugin interactions
   },
-  
+
   validateAcl: (aclConfig: AclConfig) => {
     // Test permission systems
     // Validate role hierarchies
     // Check security constraints
-  }
+  },
 };
 ```
 
@@ -400,28 +390,28 @@ const configurationValidation = {
 ```typescript
 const securityTests = [
   {
-    name: 'ACL Security Validation',
-    description: 'Test access control across university systems',
-    
+    name: "ACL Security Validation",
+    description: "Test access control across university systems",
+
     async run() {
       // Test unauthorized access attempts
       // Validate permission inheritance
       // Check role-based restrictions
       // Test data isolation between universities
-    }
+    },
   },
-  
+
   {
-    name: 'File Upload Security',
-    description: 'Validate file upload security measures',
-    
+    name: "File Upload Security",
+    description: "Validate file upload security measures",
+
     async run() {
       // Test malicious file uploads
       // Validate file type restrictions
       // Check size limits enforcement
       // Test virus scanning integration
-    }
-  }
+    },
+  },
 ];
 ```
 

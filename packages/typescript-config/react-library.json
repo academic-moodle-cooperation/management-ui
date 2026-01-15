@@ -10,6 +10,7 @@
     "declarationMap": true,
     "incremental": true,
     "outDir": "./dist",
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node", "react"]
   }
 }

@@ -1,17 +1,19 @@
-import React, { ReactNode } from 'react';
-import ReactDOM from 'react-dom/client';
-import { QueryProvider } from '@workspace/query';
-import { PluginProvider, RendererProvider } from '@workspace/plugin-system';
-import { AuthProvider, AuthInitializer, RouterProvider } from '@workspace/router';
-import { ErrorBoundary } from '@workspace/ui/components/errors/general-error';
-import type { RouteComponent } from '@tanstack/react-router';
-import { AppRuntimeProvider, useAppRuntime } from './AppRuntimeProvider';
-import type { AppRuntimeConfig } from './types';
-import type { AnyRouter } from '@tanstack/react-router';
-import { createRouter, createRoute, createRootRoute, Outlet } from '@tanstack/react-router';
-import { AppLoader } from '@workspace/ui/components';
-import '@workspace/ui/globals.css';
-import { AppRuntimeContextProvider } from './AppRuntimeProvider';
+import { createRouter, createRoute, createRootRoute, Outlet } from "@tanstack/react-router";
+import React from "react";
+import ReactDOM from "react-dom/client";
+
+import { PluginProvider, RendererProvider } from "@workspace/plugin-system";
+import { QueryProvider } from "@workspace/query";
+import { AuthProvider, AuthInitializer, RouterProvider } from "@workspace/router";
+import { ErrorBoundary } from "@workspace/ui/components/errors/general-error";
+
+import { AppRuntimeProvider, AppRuntimeContextProvider } from "./AppRuntimeProvider";
+
+import type { AppRuntimeConfig } from "./types";
+import type { RouteComponent, AnyRoute, AnyRouter } from "@tanstack/react-router";
+import type { ReactNode } from "react";
+
+import "@workspace/ui/globals.css";
 
 interface StandaloneAppWrapperProps {
   children?: ReactNode;
@@ -25,7 +27,7 @@ interface StandaloneAppWrapperProps {
 const createStandaloneDynamicRouter = (
   AppComponent: RouteComponent,
   appName?: string,
-  basePath: string = '/'
+  basePath: string = "/",
 ) => {
   // Simple root route for standalone apps
   const standaloneRootRoute = createRootRoute({
@@ -40,12 +42,12 @@ const createStandaloneDynamicRouter = (
   });
 
   // Create routes for the specific app
-  const appRoutes: any[] = [];
+  const appRoutes: AnyRoute[] = [];
 
   // Main route that renders the app component
   const mainRoute = createRoute({
     getParentRoute: () => standaloneRootRoute,
-    path: '/',
+    path: "/",
     component: AppComponent,
     loader: async () => {
       // Return empty object - app can use useAppConfig for real config
@@ -56,7 +58,7 @@ const createStandaloneDynamicRouter = (
   // Catch-all route for any path
   const catchAllRoute = createRoute({
     getParentRoute: () => standaloneRootRoute,
-    path: '$',
+    path: "$",
     component: AppComponent,
     loader: async () => {
       return {};
@@ -67,7 +69,7 @@ const createStandaloneDynamicRouter = (
 
   // If we have an appName, create a specific route for it (e.g., /episodes)
   if (appName) {
-    const routePath = appName.replace('management-ui-', '');
+    const routePath = appName.replace("management-ui-", "");
 
     const specificRoute = createRoute({
       getParentRoute: () => standaloneRootRoute,
@@ -81,7 +83,7 @@ const createStandaloneDynamicRouter = (
     // Create a subpath route for handling additional path segments
     const specificSubRoute = createRoute({
       getParentRoute: () => specificRoute,
-      path: '$routeSubPath',
+      path: "$routeSubPath",
       component: AppComponent,
       loader: async () => {
         return {};
@@ -108,16 +110,13 @@ const createStandaloneDynamicRouter = (
 export const StandaloneAppWrapper: React.FC<StandaloneAppWrapperProps> = ({
   children,
   config = {},
-  router: providedRouter
+  router: providedRouter,
 }) => {
-  const baseUrl = (import.meta as any)?.env?.BASE_URL || '/';
+  const baseUrl = import.meta.env?.BASE_URL || "/";
 
   // Create a router if none provided - use the unified dynamic router approach
-  const router = providedRouter || createStandaloneDynamicRouter(
-    () => <>{children}</>,
-    undefined,
-    baseUrl
-  );
+  const router =
+    providedRouter || createStandaloneDynamicRouter(() => <>{children}</>, undefined, baseUrl);
 
   const runtimeConfig: AppRuntimeConfig = {
     isStandalone: true,
@@ -151,15 +150,15 @@ export const StandaloneAppWrapper: React.FC<StandaloneAppWrapperProps> = ({
  */
 export const bootstrapStandaloneApp = (
   AppComponent: RouteComponent,
-  containerId = 'root',
-  config: Partial<AppRuntimeConfig>
+  containerId = "root",
+  config: Partial<AppRuntimeConfig>,
 ) => {
   const container = document.getElementById(containerId);
   if (!container) {
     throw new Error(`Container element with id "${containerId}" not found`);
   }
 
-  const baseUrl = config.baseUrl || '/';
+  const baseUrl = config.baseUrl || "/";
   const appName = config.appName || undefined;
 
   // Create a router using the unified dynamic router approach
@@ -169,12 +168,11 @@ export const bootstrapStandaloneApp = (
   root.render(
     <React.StrictMode>
       <StandaloneAppWrapper config={config} router={router} />
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 
   return root;
 };
-
 
 /**
  * Component that automatically detects if running standalone or within core
@@ -187,7 +185,7 @@ interface AdaptiveAppWrapperProps {
 
 export const AdaptiveAppWrapper: React.FC<AdaptiveAppWrapperProps> = ({
   children,
-  fallbackConfig = {}
+  fallbackConfig = {},
 }) => {
   // Try to detect if we're already within an AppRuntimeProvider
   const runtimeContext = React.useContext(AppRuntimeContextProvider);
@@ -199,9 +197,5 @@ export const AdaptiveAppWrapper: React.FC<AdaptiveAppWrapperProps> = ({
   }
 
   // We need to provide standalone context with full provider hierarchy
-  return (
-    <StandaloneAppWrapper config={fallbackConfig}>
-      {children}
-    </StandaloneAppWrapper>
-  );
+  return <StandaloneAppWrapper config={fallbackConfig}>{children}</StandaloneAppWrapper>;
 };

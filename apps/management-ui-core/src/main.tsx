@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom/client';
-import '@workspace/ui/globals.css';
-import { AppProviders } from '@workspace/providers';
-import { AppLoader } from '@workspace/ui/components';
-import { useAppConfig } from '@workspace/query';
-import { QueryProvider } from '@workspace/query';
-import { PluginInitializer } from './components/PluginInitializer';
-import { PluginProvider } from '@workspace/plugin-system';
-import { loadNamespace, useTranslation } from '@workspace/i18n';
-import { DynamicRouterProvider } from './components/DynamicRouterProvider';
-import type { AnyRouter } from '@tanstack/react-router';
+import React, { useEffect } from "react";
+import ReactDOM from "react-dom/client";
+
+import "@workspace/ui/globals.css";
+import { loadNamespace, useTranslation } from "@workspace/i18n";
+import { PluginProvider } from "@workspace/plugin-system";
+import { AppProviders } from "@workspace/providers";
+import { useAppConfig, QueryProvider } from "@workspace/query";
+import { AppLoader } from "@workspace/ui/components";
+
+import { DynamicRouterProvider } from "./components/DynamicRouterProvider";
+import { PluginInitializer } from "./components/PluginInitializer";
+
+import type { AnyRouter } from "@tanstack/react-router";
 
 const AppContent = () => {
   const { i18n } = useTranslation();
@@ -18,40 +20,38 @@ const AppContent = () => {
     loadNamespace("common", i18n.language);
   }, [i18n.language]);
 
-  return (
-    <AppWithConfig />
-  );
+  return <AppWithConfig />;
 };
 
 const AppWithConfig = () => {
   const { config, isLoading } = useAppConfig();
-  const themeModules = import.meta.glob(
-    '../../../plugins/themes/*.css',
-    { eager: false, query: '?rcss' }
-  );
+  const themeModules = import.meta.glob("../../../plugins/themes/*.css", {
+    eager: false,
+    query: "?rcss",
+  });
 
   useEffect(() => {
-    const themeName = config.app.theme || 'default';
+    const themeName = config.app.theme || "default";
     document.title = `${import.meta.env.DEV ? "[DEV] " : ""}${config.app.HtmlDocumentTitle || "Management UI"}`;
 
     // Set favicon dynamically from config
     if (config.app.faviconUrl) {
       // Remove existing favicon links
       const existingFavicons = document.querySelectorAll('link[rel*="icon"]');
-      existingFavicons.forEach(link => link.remove());
+      existingFavicons.forEach((link) => link.remove());
 
       // Add new favicon
-      const faviconLink = document.createElement('link');
-      faviconLink.rel = 'icon';
-      faviconLink.type = 'image/svg+xml';
+      const faviconLink = document.createElement("link");
+      faviconLink.rel = "icon";
+      faviconLink.type = "image/svg+xml";
       faviconLink.href = config.app.faviconUrl;
       document.head.appendChild(faviconLink);
 
       // Add fallback ICO favicon if available
-      const icoUrl = config.app.faviconUrl.replace('.svg', '.ico');
-      const icoLink = document.createElement('link');
-      icoLink.rel = 'icon';
-      icoLink.type = 'image/x-icon';
+      const icoUrl = config.app.faviconUrl.replace(".svg", ".ico");
+      const icoLink = document.createElement("link");
+      icoLink.rel = "icon";
+      icoLink.type = "image/x-icon";
       icoLink.href = icoUrl;
       document.head.appendChild(icoLink);
     }
@@ -60,17 +60,14 @@ const AppWithConfig = () => {
     const loader = themeModules[key];
 
     if (loader) {
-      loader()
-        .catch(() => import('../../../plugins/themes/default.css'));
-    } else if (themeName !== 'default') {
-      import('../../../plugins/themes/default.css');
+      loader().catch(() => import("../../../plugins/themes/default.css"));
+    } else if (themeName !== "default") {
+      import("../../../plugins/themes/default.css");
     }
-
-
-  }, [config]);
+  }, [config, themeModules]);
 
   // If config is not ready, show a loading state
-  if (isLoading) return (<AppLoader >Loading configuration...</AppLoader>);
+  if (isLoading) return <AppLoader>Loading configuration...</AppLoader>;
 
   return (
     <PluginInitializer config={config}>
@@ -82,7 +79,7 @@ const AppWithConfig = () => {
 };
 
 // Top level component that sets up QueryProvider first
-const AppContainer = () => {
+export const AppContainer = () => {
   return (
     <PluginProvider>
       <QueryProvider>
@@ -92,8 +89,8 @@ const AppContainer = () => {
   );
 };
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AppContainer />
   </React.StrictMode>,
-)
+);

@@ -1,6 +1,8 @@
-import type { Config } from "tailwindcss";
 import animatePlugin from "tailwindcss-animate";
+
 import { shadcnPlugin } from "./shadcn-plugin";
+
+import type { Config } from "tailwindcss";
 
 export const shadcnPreset: Config = {
   content: [],
@@ -15,8 +17,8 @@ export const shadcnPreset: Config = {
       },
       animation: {
         "bouncing-loader": "bouncing-loader 0.6s infinite alternate",
-      }
+      },
     },
   },
   plugins: [shadcnPlugin, animatePlugin],
-}; 
+};

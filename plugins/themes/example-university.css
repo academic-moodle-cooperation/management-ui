@@ -3,20 +3,20 @@
   /* Example University Branding Colors */
   /* --color-footer: oklch(0.577 0.245 27.325); Red primary color */
   /* --color-header: oklch(0.577 0.245 27.325); */
-  
+
   /* University-specific brand colors */
   --color-example-primary: oklch(0.577 0.245 27.325);
   --color-example-secondary: oklch(0.646 0.222 41.116);
   --color-example-accent: oklch(0.828 0.189 84.429);
-  
+
   /* Override primary colors to match university branding */
   --primary: oklch(0.577 0.245 27.325); /* Red theme from old config */
   --sidebar-primary: oklch(0.205 0 0); /* Dark sidebar primary */
   --sidebar-background: oklch(0.985 0 0); /* Light sidebar background */
-  
+
   /* University identifier */
   --university-name: "Example University";
-  
+
   /* Custom sidebar colors from old theme */
   --sidebar: oklch(0.985 0 0); /* Light sidebar */
   --sidebar-foreground: oklch(0.298 0.003 270.346);
@@ -31,7 +31,7 @@
   --color-footer: oklch(0.396 0.141 25.723); /* Darker red for dark mode */
   --color-header: oklch(0.396 0.141 25.723);
   --color-example-primary: oklch(0.396 0.141 25.723);
-  
+
   /* Dark mode sidebar overrides */
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.97 0 0);

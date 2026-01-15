@@ -1,2 +1,2 @@
-export * from './useSeriesTable';
-export * from './useTableState';
+export * from "./useSeriesTable";
+export * from "./useTableState";

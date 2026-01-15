@@ -1,12 +1,13 @@
-import { MetadataItem } from '@workspace/ui-config';
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
+
+import type { MetadataItem } from "@workspace/ui-config";
 
 /**
  * Hook for handling common sidebar content behavior like copy text functionality
  */
 export function useSidebarContent() {
   const [textCopied, setTextCopied] = useState(false);
-  const [updateField, setUpdateField] = useState('');
+  const [updateField, setUpdateField] = useState("");
 
   // Reset text copied state after 5 seconds
   useEffect(() => {
@@ -27,7 +28,7 @@ export function useSidebarContent() {
     textCopied,
     setTextCopied: handleTextCopied,
     updateField,
-    setUpdateField
+    setUpdateField,
   };
 }
 
@@ -40,13 +41,11 @@ export interface MetadataHelpers {
  * Creates helper functions for handling metadata fields
  */
 export function createMetadataHelpers(metadata: MetadataItem[]): MetadataHelpers {
-  const readonlyMetadata = metadata?.filter(
-    (field: MetadataItem) => Object.values(field)[0]?.readonly
-  ) || [];
+  const readonlyMetadata =
+    metadata?.filter((field: MetadataItem) => Object.values(field)[0]?.readonly) || [];
 
-  const visibleMetadata = metadata?.filter(
-    (field: MetadataItem) => Object.values(field)[0]?.show
-  ) || [];
+  const visibleMetadata =
+    metadata?.filter((field: MetadataItem) => Object.values(field)[0]?.show) || [];
 
   const isVisible = (field: string) => {
     return visibleMetadata.some((item) => Object.keys(item)[0] === field);
@@ -58,6 +57,6 @@ export function createMetadataHelpers(metadata: MetadataItem[]): MetadataHelpers
 
   return {
     isVisible,
-    isReadOnly
+    isReadOnly,
   };
 }

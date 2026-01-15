@@ -1,4 +1,11 @@
-import React, { useState } from 'react';
+import { Pencil, PlayCircle, Scissors, Trash2, ArrowDownToLine, MoreVertical } from "lucide-react";
+import React, { useState } from "react";
+
+import { i18next } from "@workspace/i18n";
+import { PluginComponent } from "@workspace/plugin-system";
+import { useDeleteEventMutation } from "@workspace/query";
+import type { EventsDataFragment } from "@workspace/query";
+import { Link } from "@workspace/router";
 import {
   Button,
   Tooltip,
@@ -20,19 +27,8 @@ import {
   DropdownMenuTrigger,
   toast,
 } from "@workspace/ui/components";
-import {
-  Pencil,
-  PlayCircle,
-  Scissors,
-  Trash2,
-  ArrowDownToLine,
-  MoreVertical,
-} from "lucide-react";
-import { Link } from "@workspace/router";
-import { i18next } from "@workspace/i18n";
+
 import { useSidebarStore } from "../stores/sidebarStore";
-import { EventsDataFragment, useDeleteEventMutation } from "@workspace/query";
-import { PluginComponent } from "@workspace/plugin-system";
 
 export interface ActionItem {
   id: string;
@@ -61,7 +57,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
   event,
   refetch,
   maxVisibleActions = 4,
-  customActions = []
+  customActions = [],
 }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const deleteEvent = useDeleteEventMutation();
@@ -77,8 +73,8 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
         },
         onError: () => {
           toast.error(i18next.t("episodes:episodesTable.notification.deleteError"));
-        }
-      }
+        },
+      },
     );
     setDialogOpen(false);
   };
@@ -86,7 +82,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
   // Define default actions
   const defaultActions: ActionItem[] = [
     {
-      id: 'edit-data',
+      id: "edit-data",
       icon: <Pencil />,
       label: i18next.t("episodes:episodesTable.action.editData"),
       tooltip: i18next.t("episodes:episodesTable.action.editData"),
@@ -94,27 +90,27 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
       priority: 100,
     },
     {
-      id: 'edit-video',
+      id: "edit-video",
       icon: <Scissors />,
       label: i18next.t("episodes:episodesTable.action.editVideo"),
       tooltip: i18next.t("episodes:episodesTable.action.editVideo"),
       href: `/editor-ui/index.html?mediaPackageId=${event.id}`,
-      target: '_blank',
+      target: "_blank",
       condition: (event) => !!event.hasPreview,
       priority: 90,
     },
     {
-      id: 'play',
+      id: "play",
       icon: <PlayCircle />,
       label: i18next.t("episodes:episodesTable.action.play"),
       tooltip: i18next.t("episodes:episodesTable.action.play"),
-      href: event.muiEventInfo?.publishUrl || '',
-      target: '_blank',
+      href: event.muiEventInfo?.publishUrl || "",
+      target: "_blank",
       condition: (event) => !!event.muiEventInfo?.publishUrl,
       priority: 80,
     },
     {
-      id: 'download',
+      id: "download",
       icon: <ArrowDownToLine />,
       label: i18next.t("episodes:episodesTable.action.download"),
       tooltip: i18next.t("episodes:episodesTable.action.download"),
@@ -123,7 +119,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
       priority: 70,
     },
     {
-      id: 'delete',
+      id: "delete",
       icon: <Trash2 />,
       label: i18next.t("common:delete"),
       tooltip: i18next.t("common:delete"),
@@ -144,7 +140,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
 
   // Filter actions based on conditions and sort by priority
   const availableActions = allActions
-    .filter(action => !action.condition || action.condition(event))
+    .filter((action) => !action.condition || action.condition(event))
     .sort((a, b) => (b.priority || 0) - (a.priority || 0));
 
   const visibleActions = availableActions.slice(0, maxVisibleActions);
@@ -165,8 +161,8 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
     const actionElement = action.href ? (
       <Link
         to={action.href}
-        target={action.target}
-        rel={action.target === '_blank' ? 'noopener noreferrer' : undefined}
+        {...(action.target !== undefined && { target: action.target })}
+        {...(action.target === "_blank" && { rel: "noopener noreferrer" })}
         className="flex items-center justify-end group"
         onClick={(e: React.MouseEvent) => {
           e.stopPropagation();
@@ -188,7 +184,9 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
 
     return (
       <Tooltip key={action.id} delayDuration={300}>
-        <TooltipTrigger className="flex" asChild>{actionElement}</TooltipTrigger>
+        <TooltipTrigger className="flex" asChild>
+          {actionElement}
+        </TooltipTrigger>
         <TooltipContent>{action.tooltip}</TooltipContent>
       </Tooltip>
     );
@@ -243,11 +241,11 @@ const DeleteAction: React.FC<{
 }> = ({ event, onDelete, dialogOpen, setDialogOpen }) => (
   <Dialog onOpenChange={(open) => !open && setDialogOpen(false)} open={dialogOpen}>
     <DialogTrigger
+      asChild
       onClick={(e: React.MouseEvent) => {
         e.stopPropagation();
         setDialogOpen(true);
       }}
-      className="w-4 h-4"
     >
       <Button variant="ghost" size="icon" className="w-4 h-4">
         <Trash2 />
@@ -255,14 +253,12 @@ const DeleteAction: React.FC<{
     </DialogTrigger>
     <DialogContent onClick={(e: React.MouseEvent) => e.stopPropagation()}>
       <DialogHeader>
-        <DialogTitle>
-          {i18next.t("episodes:episodesTable.deleteDialogue.heading")}
-        </DialogTitle>
+        <DialogTitle>{i18next.t("episodes:episodesTable.deleteDialogue.heading")}</DialogTitle>
         <DialogDescription
           dangerouslySetInnerHTML={{
             __html: i18next.t("episodesTable.deleteDialogue.text", {
               title: event.title || "",
-              ns: "episodes"
+              ns: "episodes",
             }),
           }}
         />
@@ -370,4 +366,4 @@ export const ActionsCell: React.FC<ActionsCellProps> = (props) => {
   );
 };
 
-export default ActionsCell; 
+export default ActionsCell;

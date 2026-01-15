@@ -3,15 +3,25 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./assetUrl": "./src/assetUrl.ts",
-    "./deepMerge": "./src/deepMerge.ts"
+    ".": "./dist/index.js",
+    "./assetUrl": "./dist/assetUrl.js",
+    "./deepMerge": "./dist/deepMerge.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "clean": "rm -rf .turbo && rm -rf dist && rm -rf node_modules",
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
     "lint": "eslint . --ext .ts,.js --report-unused-disable-directives --max-warnings 0",
-    "check-types": "tsc --noEmit -p tsconfig.json"
+    "check-types": "tsc --noEmit -p tsconfig.json",
+    "build:types": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "crypto-js": "^4.2.0",
@@ -22,6 +32,7 @@
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "eslint": "^9.9.0",
-    "typescript": "~5.5.4"
+    "typescript": "~5.5.4",
+    "vitest": "^4.0.17"
   }
 }

@@ -1,11 +1,12 @@
 import { useState } from "react";
+
+import { i18next, selectedLanguage } from "@workspace/i18n";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@workspace/ui/components";
-import { i18next, selectedLanguage } from "@workspace/i18n";
 
 export const LangSwitcher = () => {
   const getLanguage = ({ language }: { language: "en" | "de" | undefined }) => {
@@ -17,7 +18,7 @@ export const LangSwitcher = () => {
   };
 
   const [language, setLanguage] = useState<"en" | "de" | undefined>(
-    (i18next.resolvedLanguage as "en" | "de") || "en"
+    (i18next.resolvedLanguage as "en" | "de") || "en",
   );
 
   return (
@@ -50,4 +51,4 @@ export const LangSwitcher = () => {
       </DropdownMenu>
     </div>
   );
-}; 
+};

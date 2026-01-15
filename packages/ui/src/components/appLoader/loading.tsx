@@ -8,13 +8,18 @@ interface LoadingProps {
 
 export function Loading({ className, children, centered = true }: LoadingProps) {
   const spinner = (
-    <div className={cn("w-24 h-24 border-8 border-primary border-solid rounded-full border-t-transparent animate-spin", className)}></div>
+    <div
+      className={cn(
+        "w-24 h-24 border-8 border-primary border-solid rounded-full border-t-transparent animate-spin",
+        className,
+      )}
+    ></div>
   );
 
   const content = children ? (
     <div className="flex flex-col items-center gap-3">
       {spinner}
-      {typeof children === 'string' ? (
+      {typeof children === "string" ? (
         <p className="text-sm text-muted-foreground">{children}</p>
       ) : (
         children

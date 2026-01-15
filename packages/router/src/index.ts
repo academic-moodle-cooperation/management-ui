@@ -1,4 +1,4 @@
-export * from './RouterProvider';
+export * from "./RouterProvider";
 
 export {
   Route,
@@ -11,16 +11,16 @@ export {
   useParams,
   useLoaderData,
   useMatch,
-  useRouterState
-} from '@tanstack/react-router';
+  useRouterState,
+} from "@tanstack/react-router";
 
-export { AuthProvider, useAuth } from './auth/AuthContext';
-export { AuthInitializer } from './auth/AuthInitializer';
-export { useAuthActions } from './auth/useAuthActions';
-export { createLoginRoute, createLogoutRoute } from './auth/createAuthRoutes';
-export { ProtectedRoute } from './components/ProtectedRoute';
+export { AuthProvider, useAuth } from "./auth/AuthContext";
+export { AuthInitializer } from "./auth/AuthInitializer";
+export { useAuthActions } from "./auth/useAuthActions";
+export { createLoginRoute, createLogoutRoute } from "./auth/createAuthRoutes";
+export { ProtectedRoute } from "./components/ProtectedRoute";
 
 // Route protection utilities - export everything
-export * from './route-protection';
+export * from "./route-protection";
 
-export type { AuthContextType } from './auth/AuthContext';
+export type { AuthContextType } from "./auth/AuthContext";

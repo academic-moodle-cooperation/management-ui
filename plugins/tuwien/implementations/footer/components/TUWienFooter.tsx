@@ -1,14 +1,11 @@
-import React from 'react';
-import {
-  usePluginTranslation,
-  createOrganizationNamespace
-} from '@workspace/i18n';
-import { cn } from '@workspace/ui/lib/utils';
+import React from "react";
+
+import { usePluginTranslation, createOrganizationNamespace } from "@workspace/i18n";
 
 /**
  * TU Wien Footer Implementation
  * Migrated from migrate/extensions/src/tuwien/src/plugins/footer/FooterPlugin.tsx
- * 
+ *
  * Custom footer with TU Wien branding and external link icons
  */
 
@@ -71,11 +68,11 @@ const footerStyles = `
 `;
 
 const TUWienFooter: React.FC = () => {
-  const namespace = createOrganizationNamespace('tuwien', 'footer');
+  const namespace = createOrganizationNamespace("tuwien", "footer");
 
   const { t } = usePluginTranslation([
-    'core-footer',  // Reuse core translations where possible
-    namespace       // Add TU Wien specific translations (tuwien-footer)
+    "core-footer", // Reuse core translations where possible
+    namespace, // Add TU Wien specific translations (tuwien-footer)
   ]);
 
   return (
@@ -83,7 +80,10 @@ const TUWienFooter: React.FC = () => {
       {/* Inject the CSS styles */}
       <style dangerouslySetInnerHTML={{ __html: footerStyles }} />
 
-      <div className="flex w-full justify-between items-center" style={{ backgroundColor: 'var(--color-footer)' }}>
+      <div
+        className="flex w-full justify-between items-center"
+        style={{ backgroundColor: "var(--color-footer)" }}
+      >
         {/* Left: Empty space for balance */}
         <div></div>
 
@@ -94,24 +94,18 @@ const TUWienFooter: React.FC = () => {
         <div className="tuwien-footer-links">
           <ul>
             <li>
-              <a href={t('tuwien-footer:support_link')}>
-                {t('tuwien-footer:support')}
-              </a>
+              <a href={t("tuwien-footer:support_link")}>{t("tuwien-footer:support")}</a>
             </li>
             <li>
-              <a href={t('tuwien-footer:imprint_link')}>
-                {t('tuwien-footer:imprint')}
-              </a>
+              <a href={t("tuwien-footer:imprint_link")}>{t("tuwien-footer:imprint")}</a>
             </li>
             <li>
-              <a href={t('tuwien-footer:privacy_link')}>
-                {t('tuwien-footer:privacy')}
-              </a>
+              <a href={t("tuwien-footer:privacy_link")}>{t("tuwien-footer:privacy")}</a>
             </li>
             {/* Mix of university and core translations */}
             <li>
               <a href="/help">
-                {t('core-footer:help')} {/* Reuse core translation */}
+                {t("core-footer:help")} {/* Reuse core translation */}
               </a>
             </li>
           </ul>
@@ -121,4 +115,4 @@ const TUWienFooter: React.FC = () => {
   );
 };
 
-export { TUWienFooter }; 
+export { TUWienFooter };

@@ -1,6 +1,6 @@
-import React from 'react';
-import { QueryClient, QueryClientProvider, QueryClientConfig } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { QueryClient, QueryClientProvider, type QueryClientConfig } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import React from "react";
 
 interface AppQueryProviderProps {
   children: React.ReactNode;
@@ -19,10 +19,7 @@ const defaultQueryClient = new QueryClient({
   },
 });
 
-export const QueryProvider: React.FC<AppQueryProviderProps> = ({
-  children,
-  clientConfig,
-}) => {
+export const QueryProvider: React.FC<AppQueryProviderProps> = ({ children, clientConfig }) => {
   // Allow providing a custom clientConfig to override defaults or the entire client
   const queryClient = clientConfig ? new QueryClient(clientConfig) : defaultQueryClient;
 
@@ -32,4 +29,4 @@ export const QueryProvider: React.FC<AppQueryProviderProps> = ({
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
-}; 
+};

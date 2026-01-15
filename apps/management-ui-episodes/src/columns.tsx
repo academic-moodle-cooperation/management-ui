@@ -1,17 +1,3 @@
-import React from "react";
-import {
-  createColumnHelper,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  Button,
-  DataTableColumnHeader,
-  OverflowTooltip,
-  type ColumnDef,
-  type Row,
-  type Column
-} from "@workspace/ui/components";
-import { EventsDataFragment } from "@workspace/query";
 import {
   History,
   CircleEllipsis,
@@ -26,9 +12,25 @@ import {
   Globe,
   Lock,
 } from "lucide-react";
+import React from "react";
+
 import { i18next } from "@workspace/i18n";
+import type { EventsDataFragment } from "@workspace/query";
+import {
+  createColumnHelper,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  Button,
+  DataTableColumnHeader,
+  OverflowTooltip,
+  type ColumnDef,
+  type Row,
+  type Column,
+} from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib";
 import { parseDuration } from "@workspace/utils";
+
 import ActionsCell from "./components/ActionsCell";
 
 const columnHelper = createColumnHelper<EventsDataFragment>();
@@ -59,8 +61,11 @@ const getStatusIcon = (status: string) => {
 };
 
 // Convert columns to a factory function that accepts layout and refetch
-export const createColumns = (refetch: () => void, layout: 'list' | 'gallery' = 'list'): ColumnDef<EventsDataFragment, any>[] => {
-
+export const createColumns = (
+  refetch: () => void,
+  layout: "list" | "gallery" = "list",
+): ColumnDef<EventsDataFragment, unknown>[] => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const listColumns: ColumnDef<EventsDataFragment, any>[] = [
     columnHelper.accessor("title", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
@@ -138,9 +143,7 @@ export const createColumns = (refetch: () => void, layout: 'list' | 'gallery' = 
           <div className="flex justify-center space-x-2">
             <Tooltip delayDuration={300}>
               <TooltipTrigger asChild>
-                <span className="flex items-center">
-                  {statusIcon}
-                </span>
+                <span className="flex items-center">{statusIcon}</span>
               </TooltipTrigger>
               <TooltipContent>
                 {i18next.t(`episodes:episodesTable.status.${status.toLowerCase()}`)}
@@ -163,7 +166,12 @@ export const createColumns = (refetch: () => void, layout: 'list' | 'gallery' = 
       cell: (data) => {
         const contributors = data.getValue() || [];
         return (
-          <OverflowTooltip className={cn("truncate whitespace-pre max-w-[200px] flex items-start", contributors.length === 3 ? "max-h-[48px]" : "max-h-[32px]")}>
+          <OverflowTooltip
+            className={cn(
+              "truncate whitespace-pre max-w-[200px] flex items-start",
+              contributors.length === 3 ? "max-h-[48px]" : "max-h-[32px]",
+            )}
+          >
             {contributors.join("\n")}
           </OverflowTooltip>
         );
@@ -182,10 +190,15 @@ export const createColumns = (refetch: () => void, layout: 'list' | 'gallery' = 
       cell: (data) => {
         const presenters = data.getValue() || [];
         return (
-          <OverflowTooltip className={cn("truncate whitespace-pre max-w-[200px] flex items-start", presenters.length === 3 ? "max-h-[48px]" : "max-h-[32px]")}>
+          <OverflowTooltip
+            className={cn(
+              "truncate whitespace-pre max-w-[200px] flex items-start",
+              presenters.length === 3 ? "max-h-[48px]" : "max-h-[32px]",
+            )}
+          >
             {presenters.map((name: string | null, index: number) => (
               <span key={index} className="block">
-                {name || ''}
+                {name || ""}
               </span>
             ))}
           </OverflowTooltip>
@@ -206,7 +219,7 @@ export const createColumns = (refetch: () => void, layout: 'list' | 'gallery' = 
         return (
           <div className="flex space-x-2">
             <OverflowTooltip className="max-w-[200px] truncate">
-              {data.getValue() as string || ''}
+              {(data.getValue() as string) || ""}
             </OverflowTooltip>
           </div>
         );
@@ -215,8 +228,7 @@ export const createColumns = (refetch: () => void, layout: 'list' | 'gallery' = 
         translatedTitle: "episodesTable.heading.location",
       },
     }),
-    columnHelper.accessor(
-      (row) => row.muiEventInfo?.isPublic, {
+    columnHelper.accessor((row) => row.muiEventInfo?.isPublic, {
       id: "isPublic",
       header: ({ column }) => (
         <DataTableColumnHeader
@@ -226,22 +238,26 @@ export const createColumns = (refetch: () => void, layout: 'list' | 'gallery' = 
         />
       ),
       cell: ({ row }) => {
-        const isPublic = row.original.muiEventInfo?.isPublic
+        const isPublic = row.original.muiEventInfo?.isPublic;
         return (
           <div className="flex justify-center space-x-2">
             <Tooltip delayDuration={300}>
               <TooltipTrigger asChild>
                 {isPublic ? <Globe className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
               </TooltipTrigger>
-              <TooltipContent>{isPublic ? i18next.t("episodes:episodesTable.accessState.public") : i18next.t("episodes:episodesTable.accessState.private")}</TooltipContent>
+              <TooltipContent>
+                {isPublic
+                  ? i18next.t("episodes:episodesTable.accessState.public")
+                  : i18next.t("episodes:episodesTable.accessState.private")}
+              </TooltipContent>
             </Tooltip>
           </div>
         );
       },
       enableSorting: false,
       meta: {
-        translatedTitle: "episodesTable.heading.access"
-      }
+        translatedTitle: "episodesTable.heading.access",
+      },
     }),
     columnHelper.accessor("duration", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
@@ -297,19 +313,19 @@ export const createColumns = (refetch: () => void, layout: 'list' | 'gallery' = 
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" className="w-4 h-4">
                 <Info className="w-4 h-4 ml-1 hover:text-gray-900" />
-                <span className="sr-only">{i18next.t("episodes:episodesTable.heading.actions.info")}</span>
+                <span className="sr-only">
+                  {i18next.t("episodes:episodesTable.heading.actions.info")}
+                </span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent className="w-96">{i18next.t("episodes:episodesTable.heading.actions.info")}</TooltipContent>
+            <TooltipContent className="w-96">
+              {i18next.t("episodes:episodesTable.heading.actions.info")}
+            </TooltipContent>
           </Tooltip>
         </span>
       ),
       cell: ({ row }: { row: Row<EventsDataFragment> }) => (
-        <ActionsCell
-          event={row.original}
-          refetch={refetch}
-          maxVisibleActions={4}
-        />
+        <ActionsCell event={row.original} refetch={refetch} maxVisibleActions={4} />
       ),
       meta: {
         translatedTitle: "episodesTable.heading.actions.title",
@@ -317,6 +333,7 @@ export const createColumns = (refetch: () => void, layout: 'list' | 'gallery' = 
     }),
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const galleryColumns: ColumnDef<EventsDataFragment, any>[] = [
     columnHelper.accessor("title", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
@@ -328,10 +345,7 @@ export const createColumns = (refetch: () => void, layout: 'list' | 'gallery' = 
       cell: ({ row }: { row: Row<EventsDataFragment> }) => {
         const thumbnail = row.original.muiEventInfo?.thumbnailUrl;
         const parsedDuration = parseDuration(row.original.duration);
-        const duration =
-          !parsedDuration || parsedDuration === "00:00:00"
-            ? "∞"
-            : parsedDuration;
+        const duration = !parsedDuration || parsedDuration === "00:00:00" ? "∞" : parsedDuration;
         const status = row.original.eventStatus?.split(".").pop() || "";
         const statusIcon = getStatusIcon(status);
         const isProcessed = status === "PROCESSED";
@@ -363,8 +377,7 @@ export const createColumns = (refetch: () => void, layout: 'list' | 'gallery' = 
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm grayscale" />
                     <div className="absolute inset-0 flex items-center justify-center group-hover:scale-110">
                       {React.cloneElement(statusIcon, {
-                        className:
-                          "w-1/3 h-1/3 text-white drop-shadow-lg mix-blend-screen",
+                        className: "w-1/3 h-1/3 text-white drop-shadow-lg mix-blend-screen",
                       })}
                     </div>
                   </>
@@ -448,9 +461,7 @@ export const createColumns = (refetch: () => void, layout: 'list' | 'gallery' = 
         }).format(new Date(row.getValue("startDate") as string));
         return (
           <div className="grid items-center justify-start">
-            <OverflowTooltip className="truncate text-center">
-              {value}
-            </OverflowTooltip>
+            <OverflowTooltip className="truncate text-center">{value}</OverflowTooltip>
             <p className="flex justify-start">{row.original.location}</p>
           </div>
         );
@@ -484,17 +495,13 @@ export const createColumns = (refetch: () => void, layout: 'list' | 'gallery' = 
     }),
     columnHelper.display({
       id: "actions",
-      header: ({ column }: { column: Column<EventsDataFragment> }) => (
+      header: () => (
         <span className="flex justify-center items-center">
           {i18next.t("episodes:episodesTable.heading.actions.title")}
         </span>
       ),
       cell: ({ row }: { row: Row<EventsDataFragment> }) => (
-        <ActionsCell
-          event={row.original}
-          refetch={refetch}
-          maxVisibleActions={3}
-        />
+        <ActionsCell event={row.original} refetch={refetch} maxVisibleActions={3} />
       ),
       meta: {
         translatedTitle: "episodesTable.heading.actions.title",
@@ -502,5 +509,5 @@ export const createColumns = (refetch: () => void, layout: 'list' | 'gallery' = 
     }),
   ];
 
-  return layout === 'gallery' ? galleryColumns : listColumns;
-}; 
+  return layout === "gallery" ? galleryColumns : listColumns;
+};

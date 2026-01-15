@@ -8,9 +8,12 @@
     "./*": "./src/*.tsx"
   },
   "scripts": {
-    "clean": "rm -rf .turbo && rm -rf dist && rm -rf node_modules",
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
-    "check-types": "tsc --noEmit -p tsconfig.json"
+    "check-types": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.45.0",
@@ -21,13 +24,16 @@
     "react": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.16.0",
+    "@types/node": "^25.0.6",
     "@types/react": "^18.0.0 || ^19.0.0",
     "@workspace/eslint-config": "workspace:*",
-    "@workspace/typescript-config": "workspace:*",
     "@workspace/query": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
     "eslint": "^9.9.0",
     "typescript": "~5.5.4",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vitest": "^4.0.17",
+    "@testing-library/react": "^16.3.1",
+    "jsdom": "^27.4.0"
   }
 }

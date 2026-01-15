@@ -1,5 +1,5 @@
 // Export TU Wien implementations (production)
-export * from './implementations/index.js';
+export * from "./implementations/index.js";
 
 // Export TU Wien apps (production)
-export * from './apps/index.js'; 
+export * from "./apps/index.js";

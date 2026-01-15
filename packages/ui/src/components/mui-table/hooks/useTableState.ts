@@ -39,7 +39,7 @@
 //     () => atomWithStorage<SortingState>(sortingAtomKey, []),
 //     [sortingAtomKey]
 //   );
-  
+
 //   const columnVisibilityAtom = useMemo(
 //     () => atomWithStorage<VisibilityState>(columnVisibilityAtomKey, { title: true } as VisibilityState),
 //     [columnVisibilityAtomKey]
@@ -53,12 +53,12 @@
 //   const setColumnVisibility: OnChangeFn<VisibilityState> = useSetAtom(columnVisibilityAtom);
 
 //   // Utility functions
-//   const setPageIndex = (index: number) => 
+//   const setPageIndex = (index: number) =>
 //     dispatch({ type: 'SET_PAGE_INDEX', payload: index } as Action);
-  
+
 //   const setPageSize = (size: number) =>
 //     dispatch({ type: 'SET_PAGE_SIZE', payload: size } as Action);
-  
+
 //   const setQueryFilter = (filter: string | undefined) =>
 //     dispatch({ type: 'SET_QUERY_FILTER', payload: filter } as Action);
 
@@ -70,7 +70,7 @@
 //     dispatch,
 //     sorting,
 //     setSorting,
-//     columnVisibility, 
+//     columnVisibility,
 //     setColumnVisibility,
 //     setPageIndex,
 //     setPageSize,

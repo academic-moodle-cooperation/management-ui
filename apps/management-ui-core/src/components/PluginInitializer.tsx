@@ -1,8 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { createObjectRegistryPlugin, createRendererPlugin, usePluginManager, type Plugin, createAppRegistryPlugin } from '@workspace/plugin-system';
-import { AppLoader } from '@workspace/ui/components';
-import { loadAllAvailablePlugins } from '../loadPlugins';
-import type { AppConfig } from '@workspace/query';
+import React, { useState, useEffect, useRef } from "react";
+
+import {
+  createObjectRegistryPlugin,
+  createRendererPlugin,
+  usePluginManager,
+  type Plugin,
+  createAppRegistryPlugin,
+} from "@workspace/plugin-system";
+import type { AppConfig } from "@workspace/query";
+import { AppLoader } from "@workspace/ui/components";
+import { logger } from "@workspace/utils";
+
+import { loadAllAvailablePlugins } from "../loadPlugins";
 
 interface PluginInitializerProps {
   children: React.ReactNode;
@@ -58,9 +67,11 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
         const allAvailablePlugins: Plugin[] = await loadAllAvailablePlugins();
 
         // 3. Register config plugins first to establish configuration
-        const configPlugins = allAvailablePlugins.filter(plugin => plugin.name.endsWith(':config'));
+        const configPlugins = allAvailablePlugins.filter((plugin) =>
+          plugin.name.endsWith(":config"),
+        );
 
-        configPlugins.forEach(plugin => {
+        configPlugins.forEach((plugin) => {
           if (plugin && plugin.name) {
             if (!manager.plugins.has(plugin.name)) {
               manager.register(plugin);
@@ -70,36 +81,47 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
               try {
                 plugin.initialize?.(manager);
               } catch (error) {
-                console.error(`PluginInitializer: Failed to re-initialize config plugin ${plugin.name}:`, error);
+                logger.error(
+                  `PluginInitializer: Failed to re-initialize config plugin ${plugin.name}`,
+                  error instanceof Error ? error : new Error(String(error)),
+                  { pluginName: plugin.name },
+                );
               }
             }
           }
         });
 
         // 4. Get merged config from registry (now includes config plugin contributions)
-        const configObjects = manager.getObjects<AppConfig>('app:config');
-        const mergedConfig = configObjects.reduce((acc: AppConfig, obj: AppConfig) => {
-          return { ...acc, ...obj };
-        }, config || {} as AppConfig);
+        const configObjects = manager.getObjects<AppConfig>("app:config");
+        const mergedConfig = configObjects.reduce(
+          (acc: AppConfig, obj: AppConfig) => {
+            return { ...acc, ...obj };
+          },
+          config || ({} as AppConfig),
+        );
 
         // 5. Filter and load remaining plugins with the merged configuration
-        const remainingPlugins = allAvailablePlugins.filter(plugin => !plugin.name.endsWith(':config'));
+        const remainingPlugins = allAvailablePlugins.filter(
+          (plugin) => !plugin.name.endsWith(":config"),
+        );
 
-        remainingPlugins.forEach(plugin => {
+        remainingPlugins.forEach((plugin) => {
           if (plugin && plugin.name) {
             // Re-evaluate if plugin should be loaded with merged config
-            const [pluginNamespace, pluginType] = plugin.name.split(':');
+            const [pluginNamespace, pluginType] = plugin.name.split(":");
             const pluginConfig = mergedConfig?.app?.pluginNamespace || [];
 
             // Parse config to check if plugin should be loaded
             let shouldLoad = false;
             for (const item of pluginConfig) {
-              if (typeof item === 'string' && item === pluginNamespace) {
+              if (typeof item === "string" && item === pluginNamespace) {
                 shouldLoad = true;
                 break;
-              } else if (typeof item === 'object' && pluginNamespace && item[pluginNamespace]) {
+              } else if (typeof item === "object" && pluginNamespace && item[pluginNamespace]) {
                 const types = item[pluginNamespace]?.types || [];
-                shouldLoad = pluginType ? (types.includes(pluginType) || types.includes('all')) : false;
+                shouldLoad = pluginType
+                  ? types.includes(pluginType) || types.includes("all")
+                  : false;
                 if (shouldLoad) break;
               }
             }
@@ -113,7 +135,11 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                 try {
                   plugin.initialize?.(manager);
                 } catch (error) {
-                  console.error(`PluginInitializer: Failed to re-initialize plugin ${plugin.name}:`, error);
+                  logger.error(
+                    `PluginInitializer: Failed to re-initialize plugin ${plugin.name}`,
+                    error instanceof Error ? error : new Error(String(error)),
+                    { pluginName: plugin.name },
+                  );
                 }
               }
             }
@@ -130,7 +156,10 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           setPluginsReady(true);
         }
       } catch (error) {
-        console.error('PluginInitializer: Failed to initialize plugins', error);
+        logger.error(
+          "PluginInitializer: Failed to initialize plugins",
+          error instanceof Error ? error : new Error(String(error)),
+        );
         if (!didUnmount) {
           setPluginsReady(true); // Still set to true to avoid an infinite loading state on error
         }
@@ -155,4 +184,4 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
   }
 
   return <>{children}</>;
-}; 
+};

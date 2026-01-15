@@ -1,6 +1,7 @@
-import React from 'react';
-import { useAuth, useAuthActions } from '@workspace/router';
-import { Button } from '@workspace/ui/components';
+import React from "react";
+
+import { useAuth, useAuthActions } from "@workspace/router";
+import { Button } from "@workspace/ui/components";
 
 export const LoginButton = () => {
   const { isAuthenticated } = useAuth();
@@ -15,13 +16,8 @@ export const LoginButton = () => {
   };
 
   return (
-    <Button
-      type="button"
-      onClick={handleAuthAction}
-      variant="default"
-      size="sm"
-    >
-      {isAuthenticated ? 'Logout' : 'Login'}
+    <Button type="button" onClick={handleAuthAction} variant="default" size="sm">
+      {isAuthenticated ? "Logout" : "Login"}
     </Button>
   );
-}; 
+};

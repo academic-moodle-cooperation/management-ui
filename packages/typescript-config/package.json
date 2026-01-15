@@ -8,7 +8,7 @@
   },
   "exports": {
     "./base.json": "./base.json",
-    "./node-esm-library.json": "./node-esm-library.json", 
+    "./node-esm-library.json": "./node-esm-library.json",
     "./react-application.json": "./react-application.json",
     "./react-library.json": "./react-library.json"
   },
@@ -16,6 +16,6 @@
     "*.json"
   ],
   "scripts": {
-    "clean": "rm -rf .turbo && rm -rf dist && rm -rf target && rm -rf node_modules"
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf target && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo"
   }
 }

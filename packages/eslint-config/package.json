@@ -4,12 +4,13 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "clean": "rm -rf .turbo && rm -rf dist && rm -rf target && rm -rf node_modules",
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf target && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
     "lint": "eslint . --ext .js --report-unused-disable-directives --max-warnings 0"
   },
   "exports": {
     "./base": "./base.js",
-    "./react-internal": "./react-internal.js"
+    "./react-internal": "./react-internal.js",
+    "./type-aware": "./type-aware.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.27.0",

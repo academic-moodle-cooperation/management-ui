@@ -11,11 +11,13 @@ This plugin provides a custom empty state component specifically designed for th
 ## Features
 
 ### Custom Content
+
 - **University-specific links**: Directs users to Univie administration and guides
 - **Internationalization**: Supports both English and German
 - **Consistent UI**: Matches the look and feel of other Univie plugins
 
 ### Links
+
 - **u:stream administration**: Direct link to Univie capture UI
 - **Registration and administration guide**: Direct link to Univie user guides
 
@@ -35,7 +37,7 @@ Supports multiple languages via the plugin translation system:
 The plugin is automatically loaded when the `univie` namespace is included in the plugin configuration:
 
 ```typescript
-pluginNamespace: ["core", "univie"]
+pluginNamespace: ["core", "univie"];
 ```
 
 ## Technical Details
@@ -44,4 +46,4 @@ pluginNamespace: ["core", "univie"]
 - Uses `Trans` and `LinkText` for rich translation content with links
 - Registered as a component override for the series empty state
 
-This empty state implementation provides a Univie-specific experience for users when no series are available. 
+This empty state implementation provides a Univie-specific experience for users when no series are available.

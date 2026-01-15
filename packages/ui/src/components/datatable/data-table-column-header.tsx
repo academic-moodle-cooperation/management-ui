@@ -1,20 +1,20 @@
-import React from "react";
 import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from "lucide-react";
-import { Column } from "@tanstack/react-table";
+import React from "react";
 
-import { cn } from "@workspace/ui/lib";
-import { Button } from "@workspace/ui/components";
+import { useI18n } from "@workspace/i18n";
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@workspace/ui/components";
-import { useI18n } from "@workspace/i18n";
+import { cn } from "@workspace/ui/lib";
 
-interface DataTableColumnHeaderProps<TData, TValue>
-  extends React.HTMLAttributes<HTMLDivElement> {
+import type { Column } from "@tanstack/react-table";
+
+interface DataTableColumnHeaderProps<TData, TValue> extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>;
   title: string;
 }
@@ -34,11 +34,7 @@ export function DataTableColumnHeader<TData, TValue>({
     <div className={cn("flex items-center space-x-2", className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="-ml-3 h-8 data-[state=open]:bg-accent"
-          >
+          <Button variant="ghost" size="sm" className="-ml-3 h-8 data-[state=open]:bg-accent">
             <span>{title}</span>
             {column.getIsSorted() === "desc" ? (
               <ArrowDown className="w-4 h-4 ml-2" />

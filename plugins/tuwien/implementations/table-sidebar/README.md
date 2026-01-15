@@ -24,7 +24,7 @@ Replaces the previous feature flag-based system (`isUnivie` check) with a proper
 The plugin system defines extension points for table sidebar tabs:
 
 - `table-sidebar:episodes:tabs` - Episode table sidebar tabs
-- `table-sidebar:series:tabs` - Series table sidebar tabs  
+- `table-sidebar:series:tabs` - Series table sidebar tabs
 - `table-sidebar:tabs` - General table sidebar tabs
 
 ### 2. Plugin Registration
@@ -33,18 +33,18 @@ This plugin registers:
 
 ```typescript
 // Register ACL editor tab component
-manager.registerComponent('table-sidebar:episodes:tabs', AclEditorTab, {
-  key: 'access-tab',
-  order: 20
+manager.registerComponent("table-sidebar:episodes:tabs", AclEditorTab, {
+  key: "access-tab",
+  order: 20,
 });
 
 // Register tab metadata
-manager.registerObject('table-sidebar:episodes:tab-definitions', 'access', {
-  id: 'access',
-  label: 'muitable-sidebar:accessTab',
+manager.registerObject("table-sidebar:episodes:tab-definitions", "access", {
+  id: "access",
+  label: "muitable-sidebar:accessTab",
   order: 20,
-  component: 'AclEditorTab',
-  context: ['episodes']
+  component: "AclEditorTab",
+  context: ["episodes"],
 });
 ```
 
@@ -63,13 +63,15 @@ const effectiveSidebarVariant = hasTabPlugins ? "tabs" : "default";
 ## Migration from Feature Flags
 
 **Before (Feature Flag):**
+
 ```typescript
 const { isUnivie } = useFeatureFlags();
 const effectiveSidebarVariant = isUnivie ? "default" : "tabs";
 ```
 
 **After (Plugin System):**
-```typescript  
+
+```typescript
 const { hasTabPlugins } = useTableSidebarPlugins(selectedElement);
 const effectiveSidebarVariant = hasTabPlugins ? "tabs" : "default";
 ```
@@ -93,6 +95,7 @@ The plugin is automatically loaded when TU Wien namespace is enabled in the plug
 Wraps the existing `AclEditor` component for use in table sidebar tabs.
 
 **Props:**
+
 - `selectedElement` - The selected table row element
 - `refetch` - Function to refetch table data after changes
 - `onClose` - Function called when sidebar closes
@@ -112,4 +115,4 @@ This architecture enables:
 - **Multiple Tabs**: Universities can add multiple custom tabs
 - **Tab Ordering**: Control tab display order via `order` property
 - **Conditional Tabs**: Show tabs based on permissions or data type
-- **Custom Content**: Each university can create unique tab content 
+- **Custom Content**: Each university can create unique tab content

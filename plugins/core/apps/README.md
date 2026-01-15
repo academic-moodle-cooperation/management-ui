@@ -9,7 +9,7 @@ This directory contains navigation implementations that individual apps can impo
 ## Available Navigation Implementations
 
 - `episodesNavImplementation` - Adds "Episodes" to sidebar
-- `seriesNavImplementation` - Adds "Series" to sidebar  
+- `seriesNavImplementation` - Adds "Series" to sidebar
 - `uploadNavImplementation` - Adds "Upload" to sidebar
 
 ## Usage in Apps
@@ -18,7 +18,7 @@ This directory contains navigation implementations that individual apps can impo
 
 ```typescript
 // In your app's plugin loading (e.g., apps/management-ui-episodes/src/plugins/index.ts)
-import { episodesNavImplementation } from '@workspace/plugins';
+import { episodesNavImplementation } from "@workspace/plugins";
 
 export const appPlugins = [
   episodesNavImplementation,
@@ -30,8 +30,8 @@ export const appPlugins = [
 
 ```typescript
 // In your app's main file or plugin initializer
-import { usePluginManager } from '@workspace/plugin-system';
-import { episodesNavImplementation } from '@workspace/plugins';
+import { usePluginManager } from "@workspace/plugin-system";
+import { episodesNavImplementation } from "@workspace/plugins";
 
 const manager = usePluginManager();
 manager.register(episodesNavImplementation);
@@ -79,23 +79,28 @@ To add navigation for a new app:
 4. Import and register it in your app
 
 Example:
+
 ```typescript
 export const myAppNavImplementation = createPlugin({
-  namespace: 'my-app',
-  type: 'navigation',
-  version: '1.0.0',
+  namespace: "my-app",
+  type: "navigation",
+  version: "1.0.0",
   initialize(manager) {
-    manager.registerObject('sidebar:nav-items', 'my-app', {
-      title: 'My App',
-      path: '/my-app',
-      icon: 'star',
+    manager.registerObject("sidebar:nav-items", "my-app", {
+      title: "My App",
+      path: "/my-app",
+      icon: "star",
       order: 50,
-      permissions: ['my-app.view'],
+      permissions: ["my-app.view"],
       featureFlags: [],
-      category: 'custom'
+      category: "custom",
     });
   },
-  activate() { console.log('My App navigation activated'); },
-  deactivate() { console.log('My App navigation deactivated'); }
+  activate() {
+    console.log("My App navigation activated");
+  },
+  deactivate() {
+    console.log("My App navigation deactivated");
+  },
 });
-``` 
+```

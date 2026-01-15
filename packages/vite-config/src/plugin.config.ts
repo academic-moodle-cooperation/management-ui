@@ -1,8 +1,10 @@
-import path from 'node:path';
-import type { UserConfig, BuildOptions } from 'vite';
-import { createBaseConfig, type CreateBaseConfigOptions } from './base.config.js';
-import { getPluginPorts, getPluginBasePath, getAppBasePath } from './ports.js';
-import { createProxyConfig } from './proxy.js';
+import path from "node:path";
+
+import { createBaseConfig, type CreateBaseConfigOptions } from "./base.config.js";
+import { getPluginPorts, getPluginBasePath, getAppBasePath } from "./ports.js";
+import { createProxyConfig } from "./proxy.js";
+
+import type { UserConfig, BuildOptions } from "vite";
 
 export interface CreatePluginAppViteConfigOptions {
   packageName: string;
@@ -12,39 +14,42 @@ export interface CreatePluginAppViteConfigOptions {
 }
 
 export const createPluginAppViteConfig = (
-  options: CreatePluginAppViteConfigOptions
+  options: CreatePluginAppViteConfigOptions,
 ): UserConfig => {
   const { packageName, mode, env, invokerDir } = options;
-  const isProduction = mode === 'production';
+  const isProduction = mode === "production";
 
   // For event-calendar which is at plugins/univie/apps/event-calendar/, we need to go up 4 levels
   // For other plugins at plugins/plugin-name/, we need to go up 2 levels
   const isInsidePlugins = invokerDir.includes(`${path.sep}plugins${path.sep}`);
   const isPluginApp = isInsidePlugins && invokerDir.includes(`${path.sep}apps${path.sep}`);
   const monorepoRootPath = isPluginApp
-    ? path.resolve(invokerDir, '../../../..') // e.g., plugins/<name>/apps/<app> -> repo root
-    : path.resolve(invokerDir, '../..');      // e.g., apps/<app> or plugins/<name> -> repo root
+    ? path.resolve(invokerDir, "../../../..") // e.g., plugins/<name>/apps/<app> -> repo root
+    : path.resolve(invokerDir, "../.."); // e.g., apps/<app> or plugins/<name> -> repo root
 
   const baseConfigOptions: CreateBaseConfigOptions = {
     isProduction,
     resolveAliases: {
-      '@': path.resolve(invokerDir, 'src'),
+      "@": path.resolve(invokerDir, "src"),
       // Minimal generic roots for workspace packages used in plugin code
-      '@workspace/ui/globals.css': path.resolve(monorepoRootPath, 'packages/ui/src/styles/globals.css'),
-      '@workspace/i18n': path.resolve(monorepoRootPath, 'packages/i18n/src'),
-      '@workspace/router': path.resolve(monorepoRootPath, 'packages/router/src'),
-      '@workspace/plugin-system': path.resolve(monorepoRootPath, 'packages/plugin-system/src'),
-      '@workspace/ui': path.resolve(monorepoRootPath, 'packages/ui/src'),
-      '@workspace/query': path.resolve(monorepoRootPath, 'packages/query/src'),
-      '@workspace/providers': path.resolve(monorepoRootPath, 'packages/providers/src'),
-      '@workspace/utils': path.resolve(monorepoRootPath, 'packages/utils/src'),
-      '@workspace/plugins': path.resolve(monorepoRootPath, 'plugins'),
+      "@workspace/ui/globals.css": path.resolve(
+        monorepoRootPath,
+        "packages/ui/src/styles/globals.css",
+      ),
+      "@workspace/i18n": path.resolve(monorepoRootPath, "packages/i18n/src"),
+      "@workspace/router": path.resolve(monorepoRootPath, "packages/router/src"),
+      "@workspace/plugin-system": path.resolve(monorepoRootPath, "packages/plugin-system/src"),
+      "@workspace/ui": path.resolve(monorepoRootPath, "packages/ui/src"),
+      "@workspace/query": path.resolve(monorepoRootPath, "packages/query/src"),
+      "@workspace/providers": path.resolve(monorepoRootPath, "packages/providers/src"),
+      "@workspace/utils": path.resolve(monorepoRootPath, "packages/utils/src"),
+      "@workspace/plugins": path.resolve(monorepoRootPath, "plugins"),
     },
     serverOptions: {
       fs: {
         allow: [monorepoRootPath], // Allow access to monorepo root for imports if necessary
       },
-      host: '127.0.0.1',
+      host: "127.0.0.1",
     },
     buildOptions: {
       // Plugin-specific build options can go here
@@ -57,21 +62,26 @@ export const createPluginAppViteConfig = (
   const ports = getPluginPorts(packageName);
   // Provide a more deterministic fallback if plugin is not in KNOWN_PLUGIN_PACKAGE_NAMES
   // Hashing the package name to a port number could be an option for more stability than Math.random()
-  const fallbackDevPort = 3100 + (packageName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % 100);
+  const fallbackDevPort =
+    3100 + (packageName.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) % 100);
   const assignedDevPort = ports?.dev || fallbackDevPort;
-  const assignedPreviewPort = ports?.preview || (assignedDevPort + 1000); // Ensure preview is distinct
+  const assignedPreviewPort = ports?.preview || assignedDevPort + 1000; // Ensure preview is distinct
 
-  const currentShellAppBasePath = getAppBasePath(isProduction, env.VITE_APP_BASE_PATH);
-  const calculatedPluginBasePath = getPluginBasePath(isProduction, packageName, currentShellAppBasePath);
+  const currentShellAppBasePath = getAppBasePath(isProduction, env["VITE_APP_BASE_PATH"]);
+  const calculatedPluginBasePath = getPluginBasePath(
+    isProduction,
+    packageName,
+    currentShellAppBasePath,
+  );
 
   // Allow plugin-specific base path override via env, e.g., VITE_PLUGIN_MYPLUGIN_BASE_PATH
   // Example: for 'management-ui-test', check VITE_PLUGIN_MANAGEMENT_UI_TEST_BASE_PATH
-  const pluginSpecificEnvVarName = `VITE_PLUGIN_${packageName.toUpperCase().replace(/-/g, '_')}_BASE_PATH`;
+  const pluginSpecificEnvVarName = `VITE_PLUGIN_${packageName.toUpperCase().replace(/-/g, "_")}_BASE_PATH`;
   const finalPluginBasePath = env[pluginSpecificEnvVarName] || calculatedPluginBasePath;
 
   const proxyConfiguration = createProxyConfig({
     isProduction,
-    target: env.VITE_PROXY_TARGET,
+    ...(env["VITE_PROXY_TARGET"] !== undefined && { target: env["VITE_PROXY_TARGET"] }),
     // customProxies: { ... } // if plugin needs specific proxies from env or hardcoded
   });
 
@@ -97,4 +107,4 @@ export const createPluginAppViteConfig = (
     },
     build: finalBuildOptions,
   };
-}; 
+};

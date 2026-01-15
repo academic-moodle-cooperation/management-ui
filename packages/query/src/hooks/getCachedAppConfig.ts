@@ -1,5 +1,5 @@
-import type { AppConfig } from '@workspace/ui-config';
-import { defaultConfig } from '@workspace/ui-config';
+import type { AppConfig } from "@workspace/ui-config";
+import { defaultConfig } from "@workspace/ui-config";
 
 let configPromise: Promise<AppConfig> | null = null;
 
@@ -15,7 +15,7 @@ export const getCachedAppConfig = (): Promise<AppConfig> => {
     // Note: Config is served by OSGi at a different path than regular assets
     // (e.g., /ui/config/... instead of /management-ui/assets/...)
     // so we DON'T use resolveAssetUrl here
-    const configUrl = defaultConfig.productionConfigUrl.startsWith('/')
+    const configUrl = defaultConfig.productionConfigUrl.startsWith("/")
       ? defaultConfig.productionConfigUrl
       : `/${defaultConfig.productionConfigUrl}`;
     configPromise = fetch(configUrl)
@@ -46,4 +46,4 @@ export const getCachedAppConfig = (): Promise<AppConfig> => {
  */
 export const clearAppConfigCache = (): void => {
   configPromise = null;
-}; 
+};

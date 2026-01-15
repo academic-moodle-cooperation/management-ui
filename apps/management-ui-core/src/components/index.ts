@@ -1,11 +1,11 @@
 // Error components
-export { ErrorBoundary, ModuleErrorFallback, NotFoundError } from './errors/ErrorBoundary';
+export { ErrorBoundary, ModuleErrorFallback, NotFoundError } from "./errors/ErrorBoundary";
 
 // Layout components
-export { CoreAppShellLayout } from './layout/CoreAppShellLayout';
+export { CoreAppShellLayout } from "./layout/CoreAppShellLayout";
 
 // Plugin components
-export { PluginInitializer } from './PluginInitializer';
+export { PluginInitializer } from "./PluginInitializer";
 
 // Router components
-export { DynamicRouterProvider } from './DynamicRouterProvider'; 
+export { DynamicRouterProvider } from "./DynamicRouterProvider";

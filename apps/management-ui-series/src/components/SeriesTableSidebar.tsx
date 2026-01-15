@@ -1,4 +1,9 @@
-import React, { useRef, RefObject, useState } from "react";
+import React, { useRef, useState } from "react";
+
+import { useTranslation } from "@workspace/i18n";
+import { usePluginManager } from "@workspace/plugin-system";
+import { useUpdateSeriesMutation } from "@workspace/query";
+import type { GetSeriesByIdInputFieldsQuery, SeriesDataFragment } from "@workspace/query";
 import {
   Sheet,
   SheetContent,
@@ -12,18 +17,19 @@ import {
   TabsContent,
 } from "@workspace/ui/components";
 import { useClickOutside } from "@workspace/ui/hooks";
-import { GetSeriesByIdInputFieldsQuery, useUpdateSeriesMutation, SeriesDataFragment } from "@workspace/query";
-import { usePluginManager } from "@workspace/plugin-system";
+import { logger } from "@workspace/utils";
+
 import { SeriesInfoContent } from "./SeriesInfoContent";
 import { SeriesInfoFooter } from "./SeriesInfoFooter";
-import { SeriesUpdateData } from "../stores/sidebarStore";
-import { useTranslation } from "@workspace/i18n";
+
+import type { SeriesUpdateData } from "../stores/sidebarStore";
+import type { RefObject } from "react";
 
 interface SeriesTableSidebarProps {
   isOpen: boolean;
   onEditClose: () => void;
   heading: string;
-  description?: string;
+  description?: string | undefined;
   seriesInputFields: GetSeriesByIdInputFieldsQuery | undefined;
   isLoadingMetadata: boolean;
   seriesUpdateData: SeriesUpdateData | undefined;
@@ -37,9 +43,9 @@ interface SeriesTableSidebarProps {
   selectedSeriesId: string;
   refetch: () => void;
   setIsEditing: (value: boolean) => void;
-  sidebarInfo?: string;
+  sidebarInfo?: string | undefined;
   tableRef: RefObject<HTMLDivElement | null>;
-  currentSeries?: SeriesDataFragment | null;
+  currentSeries?: SeriesDataFragment | null | undefined;
 }
 
 /**
@@ -85,14 +91,13 @@ export const SeriesTableSidebar: React.FC<SeriesTableSidebarProps> = ({
     >("renderer.getComponents", "table-sidebar:series:tabs") || [];
 
   // Sort components by order
-  const sortedTabComponents = tabComponents.sort(
-    (a, b) => (a.order || 100) - (b.order || 100)
-  );
+  const sortedTabComponents = tabComponents.sort((a, b) => (a.order || 100) - (b.order || 100));
   const hasTabPlugins = sortedTabComponents.length > 0;
 
-  console.log(
-    `🎯 SeriesTableSidebar: Found ${sortedTabComponents.length} tab plugins, hasTabPlugins: ${hasTabPlugins}`
-  );
+  logger.debug("SeriesTableSidebar: Tab plugins found", {
+    count: sortedTabComponents.length,
+    hasTabPlugins,
+  });
 
   return (
     <Sheet modal={false} open={isOpen}>
@@ -121,10 +126,7 @@ export const SeriesTableSidebar: React.FC<SeriesTableSidebarProps> = ({
                 <TabsList className="mx-2 mb-4 grid w-auto grid-cols-2">
                   <TabsTrigger value="metadata">Metadata</TabsTrigger>
                   {sortedTabComponents.map((tabComponent) => (
-                    <TabsTrigger
-                      key={tabComponent.key}
-                      value={tabComponent.key}
-                    >
+                    <TabsTrigger key={tabComponent.key} value={tabComponent.key}>
                       {tabComponent.key
                         .replace(/^.*:/, "")
                         .replace(/-/g, " ")
@@ -183,9 +185,7 @@ export const SeriesTableSidebar: React.FC<SeriesTableSidebarProps> = ({
           </div>
 
           {sidebarInfo && activeTab === "metadata" && (
-            <div className="flex justify-end text-xs text-muted-foreground p-2">
-              {sidebarInfo}
-            </div>
+            <div className="flex justify-end text-xs text-muted-foreground p-2">{sidebarInfo}</div>
           )}
 
           {!isLoadingMetadata && activeTab === "metadata" && (

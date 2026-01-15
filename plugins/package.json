@@ -7,13 +7,16 @@
     ".": "./index.ts"
   },
   "scripts": {
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf target && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {
+    "@types/node": "^25.0.6",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
-    "@types/node": "^20.14.12",
     "eslint": "^9.9.0",
     "typescript": "~5.5.4"
   }

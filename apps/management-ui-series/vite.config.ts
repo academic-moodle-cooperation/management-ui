@@ -1,10 +1,11 @@
-import { defineConfig, loadEnv } from 'vite';
-import { createPluginAppViteConfig } from '@workspace/vite-config';
+import { defineConfig, loadEnv } from "vite";
 
-const packageName = process.env.npm_package_name || 'management-ui-series';
+import { createPluginAppViteConfig } from "@workspace/vite-config";
+
+const packageName = process.env["npm_package_name"] || "management-ui-series";
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
+  const env = loadEnv(mode, process.cwd(), "");
 
   return createPluginAppViteConfig({
     packageName,
@@ -12,4 +13,4 @@ export default defineConfig(({ mode }) => {
     env,
     invokerDir: __dirname,
   });
-}); 
+});

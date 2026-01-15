@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 /**
  * App definition interface for registering apps through plugins
@@ -24,7 +24,7 @@ export interface AppDefinition {
     permissions?: string[];
   };
   /** Optional loader function for app-specific data */
-  loader?: () => Promise<any>;
+  loader?: () => Promise<unknown>;
   /** App version */
   version?: string;
   /** App description */

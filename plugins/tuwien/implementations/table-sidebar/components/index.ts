@@ -1,1 +1,1 @@
-export { AclEditorTab } from './AclEditorTab'; 
+export { AclEditorTab } from "./AclEditorTab";

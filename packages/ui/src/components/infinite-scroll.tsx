@@ -1,4 +1,6 @@
-import * as React from 'react';
+import * as React from "react";
+
+import { logger } from "@workspace/utils";
 
 interface InfiniteScrollProps {
   isLoading: boolean;
@@ -17,7 +19,7 @@ export function InfiniteScroll({
   next,
   threshold = 1,
   root = null,
-  rootMargin = '0px',
+  rootMargin = "0px",
   reverse,
   children,
 }: InfiniteScrollProps) {
@@ -28,8 +30,9 @@ export function InfiniteScroll({
     (element: HTMLElement | null) => {
       let safeThreshold = threshold;
       if (threshold < 0 || threshold > 1) {
-        console.warn(
-          'threshold should be between 0 and 1. You are exceed the range. will use default value: 1',
+        logger.warn(
+          "threshold should be between 0 and 1. You are exceed the range. will use default value: 1",
+          { threshold },
         );
         safeThreshold = 1;
       }
@@ -61,15 +64,20 @@ export function InfiniteScroll({
     <>
       {flattenChildren.map((child, index) => {
         if (!React.isValidElement(child)) {
-          process.env.NODE_ENV === 'development' &&
-            console.warn('You should use a valid element with InfiniteScroll');
+          if (import.meta.env.DEV) {
+            logger.warn("You should use a valid element with InfiniteScroll", {
+              childType: typeof child,
+            });
+          }
           return child;
         }
 
         const isObserveTarget = reverse ? index === 0 : index === flattenChildren.length - 1;
         const ref = isObserveTarget ? observerRef : null;
-        // @ts-expect-error ignore ref type
-        return React.cloneElement(child, { ref });
+        // Type assertion needed because React.cloneElement's ref prop typing is complex
+        // React.cloneElement doesn't properly type ref forwarding for all component types
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return React.cloneElement(child as React.ReactElement<any>, { ref });
       })}
     </>
   );

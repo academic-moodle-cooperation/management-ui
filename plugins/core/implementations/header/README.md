@@ -15,6 +15,7 @@ The `coreHeaderImplementation` plugin provides a **complete, self-contained head
 This plugin uses the **new simplified architecture** where complete header components are registered directly on the `appshell:header` extension point.
 
 **Benefits:**
+
 - ✅ **No nesting conflicts** - No "button-in-button" HTML issues
 - ✅ **Complete layout control** - Universities design the entire header
 - ✅ **Simpler mental model** - One extension point, complete components
@@ -25,9 +26,9 @@ This plugin uses the **new simplified architecture** where complete header compo
 The plugin registers a complete header component on `appshell:header`:
 
 ```typescript
-manager.registerComponent('appshell:header', DefaultHeader, {
-  key: 'default-header',
-  order: 100
+manager.registerComponent("appshell:header", DefaultHeader, {
+  key: "default-header",
+  order: 100,
 });
 ```
 
@@ -36,11 +37,13 @@ The `DefaultHeader` component is self-contained and includes all functionality d
 ## Extension Point Used
 
 ### `appshell:header`
+
 Register complete header components:
+
 ```typescript
-manager.registerComponent('appshell:header', MyCustomHeader, {
-  key: 'university-header',
-  order: 50 // Lower order = higher priority
+manager.registerComponent("appshell:header", MyCustomHeader, {
+  key: "university-header",
+  order: 50, // Lower order = higher priority
 });
 ```
 
@@ -59,8 +62,8 @@ const UniversityHeader = () => {
       {/* Left side - Sidebar + University logo */}
       <div className="flex items-center gap-3">
         <SidebarTrigger className="-ml-1" />
-        <img 
-          src="/assets/university-logo.png" 
+        <img
+          src="/assets/university-logo.png"
           alt="University Name"
           className="h-8 w-auto"
         />
@@ -93,7 +96,7 @@ The core implementation exports reusable components that universities can use in
 - `LoginButton` - Authentication button with proper state
 
 ```typescript
-import { LangSwitcher, LoginButton } from '@workspace/plugins';
+import { LangSwitcher, LoginButton } from "@workspace/plugins";
 ```
 
 ## Usage
@@ -101,7 +104,7 @@ import { LangSwitcher, LoginButton } from '@workspace/plugins';
 The header implementation is automatically loaded when you import from `@workspace/plugins`:
 
 ```typescript
-import { coreHeaderImplementation } from '@workspace/plugins';
+import { coreHeaderImplementation } from "@workspace/plugins";
 
 // Automatically provides:
 // ✅ Complete header component (replaces minimal default)
@@ -112,17 +115,19 @@ import { coreHeaderImplementation } from '@workspace/plugins';
 ## Migration from Old Architecture
 
 **Before (Granular Extension Points):**
+
 ```typescript
 // ❌ Old way - caused nesting conflicts
-manager.registerObject('app:header-actions', 'login-button', {
-  title: 'Login',
+manager.registerObject("app:header-actions", "login-button", {
+  title: "Login",
   icon: LoginButton, // Button inside button wrapper!
   action: () => {},
-  order: 20
+  order: 20,
 });
 ```
 
 **After (Complete Components):**
+
 ```typescript
 // ✅ New way - complete control, no nesting
 const MyHeader = () => (
@@ -149,4 +154,4 @@ manager.registerComponent('appshell:header', MyHeader);
 - **Priority**: 100 (allows university overrides)
 - **Dependencies**: `@workspace/ui/components`, `@workspace/router`
 - **Plugin Type**: `header`
-- **Namespace**: `core` 
+- **Namespace**: `core`

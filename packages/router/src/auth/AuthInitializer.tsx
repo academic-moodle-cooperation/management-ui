@@ -1,6 +1,8 @@
-import React, { useEffect } from 'react';
-import { useGetCurrentUser } from '@workspace/query';
-import { useAuth } from './AuthContext';
+import React, { useEffect } from "react";
+
+import { useGetCurrentUser } from "@workspace/query";
+
+import { useAuth } from "./AuthContext";
 
 interface GraphQLError {
   extensions?: {
@@ -23,26 +25,27 @@ interface ErrorWithGraphQL extends Error {
  */
 const isAuthenticationError = (error: Error): boolean => {
   // Check for HTTP status codes in error message or properties
-  const errorMessage = error.message?.toLowerCase() || '';
+  const errorMessage = error.message?.toLowerCase() || "";
 
   // GraphQL-request errors often include HTTP status codes
-  if (errorMessage.includes('401') || errorMessage.includes('403')) {
+  if (errorMessage.includes("401") || errorMessage.includes("403")) {
     return true;
   }
 
   // Check for common authentication error messages
-  if (errorMessage.includes('unauthorized') || errorMessage.includes('forbidden')) {
+  if (errorMessage.includes("unauthorized") || errorMessage.includes("forbidden")) {
     return true;
   }
 
   // Check for GraphQL error codes (if error has graphQLErrors property)
   const graphQLErrors = (error as ErrorWithGraphQL)?.graphQLErrors;
   if (graphQLErrors && Array.isArray(graphQLErrors)) {
-    return graphQLErrors.some((gqlError: GraphQLError) =>
-      gqlError?.extensions?.code === 'UNAUTHENTICATED' ||
-      gqlError?.extensions?.code === 'FORBIDDEN' ||
-      gqlError?.message?.toLowerCase().includes('unauthorized') ||
-      gqlError?.message?.toLowerCase().includes('forbidden')
+    return graphQLErrors.some(
+      (gqlError: GraphQLError) =>
+        gqlError?.extensions?.code === "UNAUTHENTICATED" ||
+        gqlError?.extensions?.code === "FORBIDDEN" ||
+        gqlError?.message?.toLowerCase().includes("unauthorized") ||
+        gqlError?.message?.toLowerCase().includes("forbidden"),
     );
   }
 
@@ -81,4 +84,4 @@ export const AuthInitializer: React.FC<{ children: React.ReactNode }> = ({ child
 
   // Render children immediately - authentication state will update asynchronously
   return <>{children}</>;
-}; 
+};

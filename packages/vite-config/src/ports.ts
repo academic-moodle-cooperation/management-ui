@@ -1,3 +1,5 @@
+import { logger } from "@workspace/utils";
+
 export const DEFAULT_SHELL_APP_PORT = 3000;
 const PLUGIN_DEV_PORT_START = 3001;
 
@@ -11,17 +13,8 @@ const CORE_APP_NAMES = [
 
 // Known plugin packages - simplified to avoid dynamic discovery issues
 const discoverPluginPackages = (): string[] => {
-  return [
-    "plugin-tuwien",
-    "plugin-univie",
-    "plugin-example-university"
-  ];
+  return ["plugin-tuwien", "plugin-univie", "plugin-example-university"];
 };
-
-const KNOWN_PLUGIN_PACKAGE_NAMES = [
-  ...CORE_APP_NAMES,
-  ...discoverPluginPackages()
-];
 
 interface PluginPorts {
   dev: number;
@@ -56,7 +49,9 @@ export const getPluginPorts = (pluginPackageName: string): PluginPorts | undefin
     };
   }
 
-  console.warn(`[vite-config] Plugin "${pluginPackageName}" not found in known plugin list for port assignment.`);
+  logger.warn(`Plugin "${pluginPackageName}" not found in known plugin list for port assignment.`, {
+    context: "vite-config",
+  });
   return undefined;
 };
 
@@ -68,18 +63,23 @@ export const getPluginPorts = (pluginPackageName: string): PluginPorts | undefin
 export const getPluginBasePath = (
   isProduction: boolean,
   pluginPackageName: string,
-  shellAppBasePath: string = "/management-ui/"
+  shellAppBasePath: string = "/management-ui/",
 ): string => {
   // Derives "test" from "management-ui-test"
   const pluginShortName = pluginPackageName.replace(/^management-ui-/, "");
-  const ensuredShellBase = shellAppBasePath === "/" ? "/" : (shellAppBasePath.endsWith("/") ? shellAppBasePath : `${shellAppBasePath}/`);
+  const ensuredShellBase =
+    shellAppBasePath === "/"
+      ? "/"
+      : shellAppBasePath.endsWith("/")
+        ? shellAppBasePath
+        : `${shellAppBasePath}/`;
 
   if (isProduction) {
     return `${ensuredShellBase}static/plugins/${pluginShortName}/`;
   }
 
   // Development: management-ui apps should use the shell base path for consistent asset loading
-  if (pluginPackageName.startsWith('management-ui-')) {
+  if (pluginPackageName.startsWith("management-ui-")) {
     return ensuredShellBase;
   }
 
@@ -96,7 +96,7 @@ export const getAppBasePath = (isProduction: boolean, viteAppBasePathEnvVar?: st
   const defaultProdBasePath = "/management-ui/"; // Always with trailing slash for consistency
   if (isProduction) {
     const basePath = viteAppBasePathEnvVar || defaultProdBasePath;
-    return basePath.endsWith('/') ? basePath : `${basePath}/`;
+    return basePath.endsWith("/") ? basePath : `${basePath}/`;
   }
   // Development for shell app: also use /management-ui/ for consistent routing
   return defaultProdBasePath;

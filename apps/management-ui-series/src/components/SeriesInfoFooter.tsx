@@ -1,12 +1,9 @@
 import React from "react";
-import { Button, toast } from "@workspace/ui/components";
+
 import { useI18n } from "@workspace/i18n";
-import {
-  CommonSeriesMetadataV2,
-  GetSeriesByIdInputFieldsQuery,
-  useUpdateSeriesMutation,
-} from "@workspace/query";
-import { MetadataField } from "@workspace/ui-config";
+import { useUpdateSeriesMutation } from "@workspace/query";
+import type { GetSeriesByIdInputFieldsQuery } from "@workspace/query";
+import { Button, toast } from "@workspace/ui/components";
 import { normalizeMetadataObject } from "@workspace/utils";
 
 type SeriesUpdateData = {
@@ -36,10 +33,11 @@ const SeriesInfoFooter = ({
 }: SeriesInfoFooterProps) => {
   const { t } = useI18n();
 
-  const checkIfRequiredFieldsAreFilled = (metadata: Record<string, any>) => {
-    const requiredFields = Object.values(seriesInputFields?.seriesById?.commonMetadataV2 || {}).filter(
-      (field) => field?.required
-    ).map((field) => field?.id).filter(Boolean) as string[];
+  const checkIfRequiredFieldsAreFilled = (metadata: Record<string, unknown>) => {
+    const requiredFields = Object.values(seriesInputFields?.seriesById?.commonMetadataV2 || {})
+      .filter((field) => field?.required)
+      .map((field) => field?.id)
+      .filter(Boolean) as string[];
 
     // If no required fields, validation passes
     if (!requiredFields || requiredFields.length === 0) {
@@ -50,15 +48,18 @@ const SeriesInfoFooter = ({
     return requiredFields.every((fieldId: string) => {
       const value = metadata[fieldId];
       // Check for null, undefined, empty string, or empty array
-      if (value === null || value === undefined || value === '') {
+      if (value === null || value === undefined || value === "") {
         return false;
       }
       // For arrays, check if they have content
       if (Array.isArray(value)) {
-        return value.length > 0 && value.some(item => item !== null && item !== undefined && String(item).trim() !== '');
+        return (
+          value.length > 0 &&
+          value.some((item) => item !== null && item !== undefined && String(item).trim() !== "")
+        );
       }
       // For strings, check if they're not just whitespace
-      return String(value).trim() !== '';
+      return String(value).trim() !== "";
     });
   };
 
@@ -72,7 +73,7 @@ const SeriesInfoFooter = ({
 
     // Compare each field in seriesUpdateData with original values
     return Object.entries(seriesUpdateData).some(([key, newValue]) => {
-      const originalField = (originalData as any)[key];
+      const originalField = (originalData as Record<string, { value?: unknown } | undefined>)[key];
       const originalValue = originalField?.value;
 
       // Handle different value types and normalize for comparison
@@ -81,8 +82,10 @@ const SeriesInfoFooter = ({
       }
 
       // Convert both to strings for comparison to handle different types
-      const normalizedOriginal = Array.isArray(originalValue) ? originalValue.join(',') : String(originalValue);
-      const normalizedNew = Array.isArray(newValue) ? newValue.join(',') : String(newValue);
+      const normalizedOriginal = Array.isArray(originalValue)
+        ? originalValue.join(",")
+        : String(originalValue);
+      const normalizedNew = Array.isArray(newValue) ? newValue.join(",") : String(newValue);
 
       return normalizedOriginal !== normalizedNew;
     });
@@ -96,12 +99,13 @@ const SeriesInfoFooter = ({
     if (
       seriesUpdateData &&
       Object.hasOwn(seriesUpdateData, "contributor") &&
-      seriesUpdateData.contributor?.length && seriesUpdateData.contributor.length > 0
+      seriesUpdateData["contributor"]?.length &&
+      seriesUpdateData["contributor"].length > 0
     ) {
-      seriesUpdateData.contributor = (
-        Array.isArray(seriesUpdateData.contributor)
-          ? seriesUpdateData.contributor.join(",")
-          : seriesUpdateData.contributor
+      seriesUpdateData["contributor"] = (
+        Array.isArray(seriesUpdateData["contributor"])
+          ? seriesUpdateData["contributor"].join(",")
+          : seriesUpdateData["contributor"]
       )
         .replace(/\n/g, ",")
         .split(",")
@@ -112,12 +116,13 @@ const SeriesInfoFooter = ({
     if (
       seriesUpdateData &&
       Object.hasOwn(seriesUpdateData, "publisher") &&
-      seriesUpdateData.publisher?.length && seriesUpdateData.publisher.length > 0
+      seriesUpdateData["publisher"]?.length &&
+      seriesUpdateData["publisher"].length > 0
     ) {
-      seriesUpdateData.publisher = (
-        Array.isArray(seriesUpdateData.publisher)
-          ? seriesUpdateData.publisher.join(",")
-          : seriesUpdateData.publisher
+      seriesUpdateData["publisher"] = (
+        Array.isArray(seriesUpdateData["publisher"])
+          ? seriesUpdateData["publisher"].join(",")
+          : seriesUpdateData["publisher"]
       )
         .replace(/\n/g, ",")
         .split(",")
@@ -137,13 +142,21 @@ const SeriesInfoFooter = ({
     // Ensure title is always present for the mutation
     // Use the normalized metadata (which includes seriesUpdateData) and only fallback to original if truly missing
     const metadataWithTitle = {
-      title: normalizedMetadata.title || seriesInputFields?.seriesById?.commonMetadataV2?.title?.value || "",
+      title:
+        normalizedMetadata["title"] ||
+        seriesInputFields?.seriesById?.commonMetadataV2?.title?.value ||
+        "",
       ...normalizedMetadata,
     };
 
     // Remove identifier if it exists (we don't want to update it)
-    const { identifier, ...finalMetadata } = metadataWithTitle as any;
-
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { identifier, ...restMetadata } = metadataWithTitle as Record<string, unknown>;
+    // Ensure title is always present (required by CommonSeriesMetadataInput)
+    const finalMetadata = {
+      title: metadataWithTitle.title || "",
+      ...restMetadata,
+    };
 
     // IMPORTANT: Validate the merged metadata BEFORE normalization, because normalizeMetadataObject removes empty values
     // but we need to validate that required fields are not empty
@@ -153,14 +166,14 @@ const SeriesInfoFooter = ({
       saveSeriesUpdate.mutate(
         {
           seriesId: selectedSeriesId,
-          metadata: finalMetadata,
+          metadata: finalMetadata as { title: string; [key: string]: unknown },
         },
         {
           onSuccess: () => {
             toast.success(t("series:seriesTable.notification.changesSaved"));
             refetch();
           },
-        }
+        },
       );
 
       onEditClose();
@@ -171,20 +184,13 @@ const SeriesInfoFooter = ({
     <>
       {editSeries ? (
         <>
-          <Button
-            variant={"secondary"}
-            size={"sm"}
-            className=""
-            onClick={onEditClose}
-          >
+          <Button variant={"secondary"} size={"sm"} className="" onClick={onEditClose}>
             {t("common:cancel")}
           </Button>
           <Button
             variant={!hasDataChanged ? "secondary" : "default"}
             size={"sm"}
-            className={
-              !hasDataChanged ? "cursor-not-allowed" : "cursor-pointer"
-            }
+            className={!hasDataChanged ? "cursor-not-allowed" : "cursor-pointer"}
             onClick={onSave}
             disabled={!hasDataChanged}
           >
