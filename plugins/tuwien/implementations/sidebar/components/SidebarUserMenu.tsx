@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useGetCurrentUser, useAppConfig } from "@workspace/query";
+import { useGetCurrentUser } from "@workspace/query";
 import { Link } from "@workspace/router";
 import {
   Avatar,
