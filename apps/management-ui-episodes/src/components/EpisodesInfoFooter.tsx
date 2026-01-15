@@ -2,10 +2,7 @@ import React from "react";
 
 import { useI18n } from "@workspace/i18n";
 import { useUpdateEventMutation } from "@workspace/query";
-import type {
-  GetEventByIdInputFieldsQuery,
-  EventsDataFragment,
-} from "@workspace/query";
+import type { GetEventByIdInputFieldsQuery, EventsDataFragment } from "@workspace/query";
 import { Button, toast } from "@workspace/ui/components";
 import { normalizeMetadataObject, logger } from "@workspace/utils";
 

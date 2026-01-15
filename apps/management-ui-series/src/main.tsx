@@ -1,4 +1,3 @@
-
 import { bootstrapStandaloneApp } from "@workspace/app-runtime";
 
 import App from "./App";

@@ -1,6 +1,5 @@
 import { useMemo, useEffect, useCallback, useRef } from "react";
 
-
 import { useI18n } from "@workspace/i18n";
 import { useUpdateSeriesMutation, useAppConfig } from "@workspace/query";
 import type { SeriesDataFragment } from "@workspace/query";
@@ -89,7 +88,8 @@ const SeriesTable = () => {
               typeof field === "object" &&
               "value" in field &&
               field.value !== undefined &&
-              field.id && !isReadOnly(field.id)
+              field.id &&
+              !isReadOnly(field.id)
             ) {
               // Type assertion: field.value can be string | (string | null)[] | null
               // but SeriesUpdateData expects string | string[]
@@ -123,7 +123,15 @@ const SeriesTable = () => {
         });
       }
     }
-  }, [isOpen, isEditing, selectedId, seriesUpdateData, seriesInputFields, setSeriesUpdateData, isReadOnly]);
+  }, [
+    isOpen,
+    isEditing,
+    selectedId,
+    seriesUpdateData,
+    seriesInputFields,
+    setSeriesUpdateData,
+    isReadOnly,
+  ]);
 
   // Mutation hook for updating series
   const saveSeriesUpdate = useUpdateSeriesMutation();
@@ -203,11 +211,11 @@ const SeriesTable = () => {
           columns={
             sortedColumns.length > 0
               ? // Type assertion needed because TanStack table column types are complex
-              // and the filtered columns may have slightly different type structure
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (sortedColumns as any)
+                // and the filtered columns may have slightly different type structure
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (sortedColumns as any)
               : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (columns as any)
+                (columns as any)
           }
           data={(seriesData?.filter(Boolean) as SeriesDataFragment[]) || []}
           selectedId={selectedId}

@@ -1,7 +1,6 @@
 import { LayoutGrid, List } from "lucide-react";
 import { useMemo, useEffect, useCallback, useRef } from "react";
 
-
 import { useI18n } from "@workspace/i18n";
 import {
   useUpdateEventMutation,
@@ -109,7 +108,8 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
               typeof field === "object" &&
               "value" in field &&
               field.value !== undefined &&
-              field.id && !isReadOnly(field.id)
+              field.id &&
+              !isReadOnly(field.id)
             ) {
               formattedData[key] = field.value;
             }
@@ -209,15 +209,15 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   const sortedColumns =
     columnsKeys.length > 0
       ? columnsKeys
-        .map((columnsKey) =>
-          columns.find((column) => {
-            // TanStack table column types are complex, accessorKey and id are optional
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const col = column as any;
-            return col.accessorKey === columnsKey || col.id === columnsKey;
-          }),
-        )
-        .filter((column): column is NonNullable<typeof column> => Boolean(column))
+          .map((columnsKey) =>
+            columns.find((column) => {
+              // TanStack table column types are complex, accessorKey and id are optional
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const col = column as any;
+              return col.accessorKey === columnsKey || col.id === columnsKey;
+            }),
+          )
+          .filter((column): column is NonNullable<typeof column> => Boolean(column))
       : columns;
 
   // Error handling

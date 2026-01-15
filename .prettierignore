@@ -37,6 +37,12 @@ yarn.lock
 # Config files that shouldn't be formatted
 .prettierrc.json
 
+# Markdown files (preserve manual formatting)
+*.md
+
+# GitLab CI configuration (preserve YAML formatting)
+.gitlab-ci.yml
+
 # Temporary files
 *.tmp
 *.temp
