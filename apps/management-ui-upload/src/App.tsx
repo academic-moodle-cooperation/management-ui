@@ -36,8 +36,8 @@ import Dropzone from "./components/Dropzone";
 import { EmptyState } from "./components/EmptyState";
 import { UploadList } from "./components/UploadList";
 import { useFileHandler } from "./uploadservice/fileHandler";
-import { opencastUpload } from "./uploadservice/opencastUpload";
 import { initializeProgressInterval } from "./uploadservice/onProgress";
+import { opencastUpload } from "./uploadservice/opencastUpload";
 
 
 import type { RefObject } from "react";
