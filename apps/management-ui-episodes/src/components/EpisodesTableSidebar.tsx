@@ -1,5 +1,9 @@
 import React, { useRef, useState } from "react";
-import type { RefObject } from "react";
+
+import { useTranslation } from "@workspace/i18n";
+import { usePluginManager } from "@workspace/plugin-system";
+import { useUpdateEventMutation } from "@workspace/query";
+import type { GetEventByIdInputFieldsQuery, EventsDataFragment } from "@workspace/query";
 import {
   Sheet,
   SheetContent,
@@ -13,14 +17,13 @@ import {
   TabsContent,
 } from "@workspace/ui/components";
 import { useClickOutside } from "@workspace/ui/hooks";
-import { useUpdateEventMutation } from "@workspace/query";
-import type { GetEventByIdInputFieldsQuery, EventsDataFragment } from "@workspace/query";
-import { usePluginManager } from "@workspace/plugin-system";
+import { logger } from "@workspace/utils";
+
 import { EpisodesInfoContent } from "./EpisodesInfoContent";
 import { EpisodesInfoFooter } from "./EpisodesInfoFooter";
+
 import type { EpisodesUpdateData } from "../stores/sidebarStore";
-import { useTranslation } from "@workspace/i18n";
-import { logger } from "@workspace/utils";
+import type { RefObject } from "react";
 
 interface EpisodesTableSidebarProps {
   isOpen: boolean;

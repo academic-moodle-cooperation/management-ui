@@ -1,7 +1,7 @@
-import { AppHeading, Separator, Container } from "@workspace/ui/components";
 import { useI18n } from "@workspace/i18n";
-import { useParams } from "@workspace/router";
 import { useGetSeriesNameByIdQuery } from "@workspace/query";
+import { useParams } from "@workspace/router";
+import { AppHeading, Separator, Container } from "@workspace/ui/components";
 
 import { EpisodesTable } from "./components/EpisodesTable";
 

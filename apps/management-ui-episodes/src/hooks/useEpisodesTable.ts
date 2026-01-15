@@ -1,8 +1,5 @@
 import { useEffect, useCallback } from "react";
-import { useTableState } from "./useTableState";
-import type { TableBaseState, TableAction } from "./useTableState";
-import { useSidebarContent } from "@workspace/ui/components";
-import type { Row } from "@workspace/ui/components";
+
 import {
   useGetMyEventsQuery,
   useEventsFromSeriesQuery,
@@ -10,7 +7,14 @@ import {
   useGetEventByIdInputFieldsQuery,
 } from "@workspace/query";
 import { useNavigate, useParams } from "@workspace/router";
+import { useSidebarContent } from "@workspace/ui/components";
+import type { Row } from "@workspace/ui/components";
+
 import { useSidebarStore } from "../stores/sidebarStore";
+
+import { useTableState } from "./useTableState";
+
+import type { TableBaseState, TableAction } from "./useTableState";
 
 export type EpisodesUpdateData = {
   [key: string]: string | string[];

@@ -1,17 +1,3 @@
-import React from "react";
-import {
-  createColumnHelper,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  Button,
-  DataTableColumnHeader,
-  OverflowTooltip,
-  type ColumnDef,
-  type Row,
-  type Column,
-} from "@workspace/ui/components";
-import type { EventsDataFragment } from "@workspace/query";
 import {
   History,
   CircleEllipsis,
@@ -26,9 +12,25 @@ import {
   Globe,
   Lock,
 } from "lucide-react";
+import React from "react";
+
 import { i18next } from "@workspace/i18n";
+import type { EventsDataFragment } from "@workspace/query";
+import {
+  createColumnHelper,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  Button,
+  DataTableColumnHeader,
+  OverflowTooltip,
+  type ColumnDef,
+  type Row,
+  type Column,
+} from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib";
 import { parseDuration } from "@workspace/utils";
+
 import ActionsCell from "./components/ActionsCell";
 
 const columnHelper = createColumnHelper<EventsDataFragment>();

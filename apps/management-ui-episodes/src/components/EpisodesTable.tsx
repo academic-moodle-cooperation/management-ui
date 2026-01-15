@@ -1,8 +1,7 @@
-import React, { useMemo, useEffect, useCallback, useRef } from "react";
-import { type ColumnDef, MUITable, createMetadataHelpers, Button } from "@workspace/ui/components";
-import type { Row } from "@workspace/ui/components";
-import { AppLoader } from "@workspace/ui/components";
 import { LayoutGrid, List } from "lucide-react";
+import React, { useMemo, useEffect, useCallback, useRef } from "react";
+
+import { useI18n } from "@workspace/i18n";
 import {
   useUpdateEventMutation,
   useAppConfig,
@@ -11,13 +10,16 @@ import {
   type GetMyEventsQuery,
 } from "@workspace/query";
 import { useNavigate } from "@workspace/router";
+import type { Row , type ColumnDef, MUITable, createMetadataHelpers, Button } from "@workspace/ui/components";
+import { AppLoader } from "@workspace/ui/components";
 import type { MetadataItem, ColumnsField } from "@workspace/ui-config";
-import { useI18n } from "@workspace/i18n";
+import { logger } from "@workspace/utils";
+
 import { createColumns } from "../columns";
 import { useEpisodesTable } from "../hooks";
-import { EpisodesTableSidebar } from "./EpisodesTableSidebar";
 import { useSidebarStore } from "../stores/sidebarStore";
-import { logger } from "@workspace/utils";
+
+import { EpisodesTableSidebar } from "./EpisodesTableSidebar";
 
 interface EpisodesTableProps {
   seriesId?: string;

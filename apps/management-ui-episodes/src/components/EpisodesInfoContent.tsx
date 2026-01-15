@@ -1,20 +1,20 @@
 import React from "react";
-import {
-  Button,
-  Container,
-  MetadataField,
-  MetadataUpdateField,
-  createMetadataHelpers,
-} from "@workspace/ui/components";
-import { cn } from "@workspace/ui/lib/utils";
+
 import { useI18n } from "@workspace/i18n";
 import { useAppConfig } from "@workspace/query";
 import type {
   GetEventByIdInputFieldsQuery,
   GetInputFieldsMetaDataFragment,
 } from "@workspace/query";
+import {
+  Button,
+  Container,
+  MetadataField,
+  MetadataUpdateField,
+  createMetadataHelpers,
+ CopyIcon, PencilIcon } from "@workspace/ui/components";
+import { cn } from "@workspace/ui/lib/utils";
 import type { MetadataItem } from "@workspace/ui-config";
-import { CopyIcon, PencilIcon } from "@workspace/ui/components";
 import { copyText } from "@workspace/utils";
 
 type EpisodesUpdateData = {
