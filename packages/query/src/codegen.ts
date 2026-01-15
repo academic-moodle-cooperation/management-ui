@@ -24,7 +24,7 @@ const config: CodegenConfig = {
         {
           add: {
             content:
-              'import { UseQueryResult, UseSuspenseQueryResult} from "@tanstack/react-query";',
+              'import type { UseQueryResult, UseSuspenseQueryResult} from "@tanstack/react-query";',
           },
         },
         {
@@ -43,6 +43,7 @@ const config: CodegenConfig = {
         exposeQueryKeys: true,
         addSuspenseQuery: true,
         skipTypename: true,
+        useTypeImports: true,
         fetcher: {
           func: "./fetcher#fetchData",
         },
