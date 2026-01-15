@@ -37,6 +37,7 @@ import { EmptyState } from "./components/EmptyState";
 import { UploadList } from "./components/UploadList";
 import { useFileHandler } from "./uploadservice/fileHandler";
 import { opencastUpload } from "./uploadservice/opencastUpload";
+import { initializeProgressInterval } from "./uploadservice/onProgress";
 
 
 import type { RefObject } from "react";
@@ -56,8 +57,7 @@ export const App = () => {
   const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(null);
   const [selectedSeries, setSelectedSeries] = useState<SelectedElement | null>(null);
 
-  // TODO: uploadListIsOpen state may be needed for future UI functionality
-  // const [uploadListIsOpen, setUploadListIsOpen] = useState(false);
+  const [uploadListIsOpen, setUploadListIsOpen] = useState(false);
   const [query, setQuery] = useState<string | undefined>(undefined);
   const [aclData, setAclData] = useState<AclData | undefined>(undefined);
 
@@ -204,6 +204,12 @@ export const App = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSeriesId]);
+
+  // Initialize progress interval for time estimation updates
+  useEffect(() => {
+    const cleanup = initializeProgressInterval();
+    return cleanup;
+  }, []);
 
   useEffect(() => {
     const filesList = [...zustandupload.files];

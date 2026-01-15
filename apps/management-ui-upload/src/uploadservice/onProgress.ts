@@ -40,8 +40,34 @@ export default function onProgress(progress: number) {
     secondsLeft = Math.max(0, Math.round(progressLeft / progressPerSecond));
   }
 
-  // Note: This function is called from upload progress callbacks, not from React components
-  // Interval logic should be managed by the component that uses this function
-  // Removed useEffect as it violates React Hooks rules (hooks can only be called in components/hooks)
   return { secondsLeft, currentProgress: progress };
+}
+
+/**
+ * Initialize interval for time estimation updates
+ * This should be called from a React component's useEffect
+ * @returns cleanup function to clear the interval
+ */
+export function initializeProgressInterval() {
+  const interval = setInterval(() => {
+    // To still update the time estimation, we make sure to call `onProgress` at
+    // least every so often.
+    // if (uploadState.state !== STATE_UPLOADING) {
+    //     return;
+    // }
+
+    if (progressHistory.length === 0) {
+      onProgress(0);
+    } else {
+      const lastProgress = progressHistory[progressHistory.length - 1];
+      if (lastProgress) {
+        const timeSinceLastUpdate = Date.now() - lastProgress.timestamp;
+        if (timeSinceLastUpdate > 3000) {
+          onProgress(lastProgress.progress);
+        }
+      }
+    }
+  }, 1000);
+
+  return () => clearInterval(interval);
 }
