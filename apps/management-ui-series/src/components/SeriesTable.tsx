@@ -206,8 +206,10 @@ const SeriesTable = () => {
             sortedColumns.length > 0
               ? // Type assertion needed because TanStack table column types are complex
                 // and the filtered columns may have slightly different type structure
-                (sortedColumns as ColumnDef<SeriesDataFragment>[])
-              : columns
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (sortedColumns as any)
+              : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (columns as any)
           }
           data={(seriesData?.filter(Boolean) as SeriesDataFragment[]) || []}
           selectedId={selectedId}
