@@ -133,6 +133,23 @@ This document tracks the progress of the comprehensive code quality improvement 
   - [x] Unused imports entfernt
   - [x] ESLint-Warnungen behoben
 
+#### 2.4 ESLint-Warnungen & TypeScript-Fehler ✅ COMPLETED (2025-01-15)
+
+- [x] Alle ESLint-Warnungen behoben (außer Fast-refresh, die ignoriert werden können)
+  - [x] Unused imports entfernt (React, useState, useMatch, etc.)
+  - [x] Optional chain warnings behoben (replace ! with null checks)
+  - [x] Missing dependencies in useCallback/useEffect hooks behoben
+  - [x] Import order issues in allen Dateien korrigiert
+  - [x] Unused variables entfernt (navigate, openSidebarWithData, column, etc.)
+  - [x] Type imports korrigiert (createMetadataHelpers, MUITable)
+- [x] Alle TypeScript-Fehler behoben
+  - [x] Type imports in SeriesTable.tsx korrigiert
+  - [x] Null/undefined handling in SeriesInfoContent.tsx und EpisodesInfoContent.tsx behoben
+- [x] ESLint-Konfiguration erweitert
+  - [x] Generated files ignoriert monorepo-wide (target/**, *.d.ts, *generated.ts)
+- [x] Dependencies aktualisiert
+  - [x] @workspace/ui-config zu management-ui-core hinzugefügt
+
 **Deliverables:**
 
 - ✅ `.prettierrc.json`
@@ -203,16 +220,18 @@ This document tracks the progress of the comprehensive code quality improvement 
 - Prettier Config: ❌ Fehlte
 - Security Vulnerabilities: 8 gefunden
 
-### Aktuell (Nach Phase 0-3 Setup)
+### Aktuell (Nach Phase 0-3 Setup + ESLint/TypeScript Fixes)
 
 - TypeScript any Types: 8 (von ~160 reduziert, 95% Reduktion) ✅
 - Console Statements: 0 (alle produktiven durch logger ersetzt) ✅
-- TODO/FIXME: 8 (alle kategorisiert in docs/TODO.md)
+- TODO/FIXME: 8 (alle kategorisiert in docs/TODO.md, 2 P1-TODOs verbleiben)
 - Test Coverage: ~5-80% je nach Package (utils: 80%, query: 80%, ui: ~50%)
 - Package READMEs: 14/14 vorhanden (aus showcase Branch)
 - Prettier Config: ✅ Vollständig mit expliziten Einstellungen
 - Security Vulnerabilities: ✅ Alle behoben (via Overrides)
-- ESLint-Warnungen: 23 (nur in query package, hauptsächlich unused eslint-disable)
+- ESLint-Warnungen: 0 (nur Fast-refresh Warnungen, die ignoriert werden können) ✅
+- TypeScript-Fehler: 0 ✅
+- Import Order: ✅ Vollständig korrigiert
 
 ### Ziel (Nach Review)
 
@@ -327,5 +346,5 @@ This document tracks the progress of the comprehensive code quality improvement 
 
 ---
 
-**Last Updated:** 2025-01-12  
-**Next Review:** 2025-01-19
+**Last Updated:** 2025-01-15  
+**Next Review:** 2025-01-22
