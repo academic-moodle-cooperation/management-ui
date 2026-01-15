@@ -1,3 +1,4 @@
-import { defineFlatConfig } from "@workspace/eslint-config";
+import { config } from "@workspace/eslint-config/react-internal";
 
-export default defineFlatConfig(__dirname);
+/** @type {import("eslint").Linter.Config} */
+export default config;
