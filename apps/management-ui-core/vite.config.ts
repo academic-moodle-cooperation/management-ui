@@ -9,6 +9,8 @@ import { defaultConfig } from "../../packages/ui-config/src/index.ts";
 import { config as tuwienConfig } from "../../plugins/tuwien/implementations/config/config";
 import { config as univieConfig } from "../../plugins/univie/implementations/config/config";
 
+const packageName = process.env["npm_package_name"] || "management-ui-core";
+
 /**
  * EXPLICIT PLUGIN CONFIG ORDER
  *

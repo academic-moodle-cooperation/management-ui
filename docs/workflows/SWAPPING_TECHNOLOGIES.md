@@ -24,7 +24,7 @@ One of the core goals of Management UI's architecture is to enable **technology 
 4. **Interface Definitions** - Define contracts, not implementations
 5. **Loose Coupling** - Minimize dependencies between layers
 
-See [COUPLING_ANALYSIS.md](/docs/COUPLING_ANALYSIS.md) for current coupling state.
+See [COUPLING_ANALYSIS.md](/docs/internal/COUPLING_ANALYSIS.md) for current coupling state.
 
 ## Swappability Assessment
 
@@ -268,7 +268,7 @@ export { useNavigate, useLocation, Link } from "./adapters/react-router-adapter"
 **Current:** Radix UI + Tailwind  
 **Alternatives:** Material UI, Chakra UI, Ant Design
 
-This is more complex due to high coupling identified in [COUPLING_ANALYSIS.md](/docs/COUPLING_ANALYSIS.md).
+This is more complex due to high coupling identified in [COUPLING_ANALYSIS.md](/docs/internal/COUPLING_ANALYSIS.md).
 
 #### Step 1: Refactor Components (FIRST!)
 
@@ -532,7 +532,7 @@ pnpm benchmark
 
 ## Related Documentation
 
-- [Coupling Analysis](/docs/COUPLING_ANALYSIS.md) - Current coupling state
+- [Coupling Analysis](/docs/internal/COUPLING_ANALYSIS.md) - Current coupling state
 - [Package Ecosystem](/packages/README.md) - Package dependencies
 - [Updating Dependencies](/docs/workflows/UPDATING_DEPENDENCIES.md) - Safe updates
 - [Architecture Decisions](/docs/architecture/) - Design rationale
@@ -561,7 +561,7 @@ Technology swapping is **possible** when architecture supports it:
 
 **Current state:** Most packages are swappable with medium effort. The `ui` package needs refactoring to reduce coupling before swapping would be practical.
 
-**See:** [COUPLING_ANALYSIS.md](/docs/COUPLING_ANALYSIS.md) for priorities.
+**See:** [COUPLING_ANALYSIS.md](/docs/internal/COUPLING_ANALYSIS.md) for priorities.
 
 ---
 

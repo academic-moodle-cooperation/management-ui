@@ -361,14 +361,14 @@ pnpm clean        # Clean build artifacts
 
 - [Architecture Decision Records](/docs/architecture/) - Why this package exists
 - [Package Ecosystem](/packages/README.md) - How this fits in the larger system
-- [Coupling Analysis](/docs/COUPLING_ANALYSIS.md) - Dependency analysis
+- [Coupling Analysis](/docs/internal/COUPLING_ANALYSIS.md) - Dependency analysis
 
 ## Contributing
 
 When contributing to this package:
 
 1. Read this README thoroughly
-2. Check [COUPLING_ANALYSIS.md](/docs/COUPLING_ANALYSIS.md) before adding dependencies
+2. Check [COUPLING_ANALYSIS.md](/docs/internal/COUPLING_ANALYSIS.md) before adding dependencies
 3. Follow existing patterns
 4. Add tests for new features
 5. Update this documentation

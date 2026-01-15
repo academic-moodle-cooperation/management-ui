@@ -11,7 +11,7 @@ This guide walks through creating a new workspace package in the Management UI m
 - Node.js >= 20
 - pnpm >= 10.4.1
 - Understanding of [Package Ecosystem](/packages/README.md)
-- Familiarity with [Coupling Analysis](/docs/COUPLING_ANALYSIS.md)
+- Familiarity with [Coupling Analysis](/docs/internal/COUPLING_ANALYSIS.md)
 
 ## Before You Start
 
@@ -25,7 +25,7 @@ Ask yourself:
 
 ### 2. Determine the Layer
 
-Based on [Coupling Analysis](/docs/COUPLING_ANALYSIS.md), determine which layer:
+Based on [Coupling Analysis](/docs/internal/COUPLING_ANALYSIS.md), determine which layer:
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -202,7 +202,7 @@ pnpm add @workspace/[other-package] --filter @workspace/[your-package]
 1. **Check layer rules** - Can you depend on this package?
 2. **Justify the need** - Is this dependency necessary?
 3. **Consider injection** - Can it be passed as a parameter instead?
-4. **Update coupling analysis** - Document in [COUPLING_ANALYSIS.md](/docs/COUPLING_ANALYSIS.md)
+4. **Update coupling analysis** - Document in [COUPLING_ANALYSIS.md](/docs/internal/COUPLING_ANALYSIS.md)
 
 ### Step 6: Create Documentation
 
@@ -424,7 +424,7 @@ Verify:
 
 ### Step 14: Update Coupling Analysis
 
-If you've added dependencies, update [`/docs/COUPLING_ANALYSIS.md`](/docs/COUPLING_ANALYSIS.md):
+If you've added dependencies, update [`/docs/internal/COUPLING_ANALYSIS.md`](/docs/internal/COUPLING_ANALYSIS.md):
 
 ```markdown
 ### @workspace/[package-name]
@@ -444,7 +444,7 @@ If you've added dependencies, update [`/docs/COUPLING_ANALYSIS.md`](/docs/COUPLI
 # Stage changes
 git add packages/[package-name]
 git add packages/README.md
-git add docs/COUPLING_ANALYSIS.md
+git add docs/internal/COUPLING_ANALYSIS.md
 
 # Commit with descriptive message
 git commit -m "feat(packages): add [package-name] package
@@ -557,7 +557,7 @@ export const defaultConfig: MyConfig = {
 1. Review dependency graph
 2. Move shared code to lower layer
 3. Use dependency inversion (interfaces)
-4. See [Coupling Analysis](/docs/COUPLING_ANALYSIS.md)
+4. See [Coupling Analysis](/docs/internal/COUPLING_ANALYSIS.md)
 
 ### Build Failures
 
@@ -585,7 +585,7 @@ Before considering a package complete:
 - [ ] Usage examples in README
 - [ ] Tests for complex logic
 - [ ] `/packages/README.md` updated
-- [ ] `/docs/COUPLING_ANALYSIS.md` updated if needed
+- [ ] `/docs/internal/COUPLING_ANALYSIS.md` updated if needed
 - [ ] `pnpm check-types` passes
 - [ ] `pnpm lint` passes
 - [ ] Integration tested in an app
@@ -594,7 +594,7 @@ Before considering a package complete:
 ## Related Documentation
 
 - [Package Ecosystem](/packages/README.md) - Package overview and layers
-- [Coupling Analysis](/docs/COUPLING_ANALYSIS.md) - Dependency rules
+- [Coupling Analysis](/docs/internal/COUPLING_ANALYSIS.md) - Dependency rules
 - [Package Template](/docs/templates/PACKAGE_README_TEMPLATE.md) - Documentation template
 - [AI Development Guide](/docs/AI_DEVELOPMENT_GUIDE.md) - AI navigation
 
@@ -624,7 +624,7 @@ Before considering a package complete:
 
 ## Getting Help
 
-- **Questions about layers?** Read [Coupling Analysis](/docs/COUPLING_ANALYSIS.md)
+- **Questions about layers?** Read [Coupling Analysis](/docs/internal/COUPLING_ANALYSIS.md)
 - **Not sure if it's a package?** Check [Package Ecosystem](/packages/README.md)
 - **Need examples?** Look at existing packages
 - **Documentation unclear?** Update this guide!

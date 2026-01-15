@@ -148,7 +148,7 @@ utils
 
 ### Coupling Analysis
 
-For detailed coupling analysis, see: [COUPLING_ANALYSIS.md](/docs/COUPLING_ANALYSIS.md)
+For detailed coupling analysis, see: [COUPLING_ANALYSIS.md](/docs/internal/COUPLING_ANALYSIS.md)
 
 ## Package Update Guidelines
 
@@ -420,7 +420,7 @@ Before considering a package production-ready:
 - [AI Development Guide](/docs/AI_DEVELOPMENT_GUIDE.md) - Main AI navigation
 - [Application Documentation](/apps/README.md) - How apps use these packages
 - [Plugin Documentation](/plugins/README.md) - How plugins use these packages
-- [Coupling Analysis](/docs/COUPLING_ANALYSIS.md) - Detailed dependency analysis
+- [Coupling Analysis](/docs/internal/COUPLING_ANALYSIS.md) - Detailed dependency analysis
 - [Adding Packages](/docs/workflows/ADDING_PACKAGES.md) - Step-by-step guide
 - [Swapping Technologies](/docs/workflows/SWAPPING_TECHNOLOGIES.md) - Technology replacement
 

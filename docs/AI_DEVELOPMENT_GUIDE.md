@@ -38,7 +38,8 @@ Management UI/
 │   │   ├── ADDING_PLUGINS.md
 │   │   ├── UPDATING_DEPENDENCIES.md
 │   │   └── SWAPPING_TECHNOLOGIES.md
-│   ├── COUPLING_ANALYSIS.md       ← Package dependency analysis
+│   ├── internal/
+│   │   ├── COUPLING_ANALYSIS.md       ← Package dependency analysis
 │   ├── CONFIG_GENERATION.md       ← Config merging in dev vs prod
 │   ├── CONFIG_ORDER.md            ← Plugin config precedence
 │   └── FAVICON_CONFIGURATION.md   ← Favicon/asset customization
@@ -81,13 +82,13 @@ Management UI/
 
 1. **Read:** [`/docs/workflows/ADDING_PACKAGES.md`](/docs/workflows/ADDING_PACKAGES.md) - Package creation guide
 2. **Reference:** [`/docs/templates/PACKAGE_README_TEMPLATE.md`](/docs/templates/PACKAGE_README_TEMPLATE.md) - Documentation template
-3. **Check:** [`/docs/COUPLING_ANALYSIS.md`](/docs/COUPLING_ANALYSIS.md) - Understand dependency layers
+3. **Check:** [`/docs/internal/COUPLING_ANALYSIS.md`](/docs/internal/COUPLING_ANALYSIS.md) - Understand dependency layers
 4. **Understand:** [`/packages/README.md`](/packages/README.md) - Package ecosystem
 
 ### I want to MODIFY an existing package
 
 1. **Read:** The package's `README.md` file first (e.g., `/packages/query/README.md`)
-2. **Check:** [`/docs/COUPLING_ANALYSIS.md`](/docs/COUPLING_ANALYSIS.md) - Understand dependencies
+2. **Check:** [`/docs/internal/COUPLING_ANALYSIS.md`](/docs/internal/COUPLING_ANALYSIS.md) - Understand dependencies
 3. **After changes:** Update the package's README.md with your modifications
 4. **If adding features:** Document in "API Surface" section
 5. **If changing dependencies:** Update "Dependencies & Coupling" section
@@ -414,7 +415,7 @@ If you're unsure about:
 - **Package organization** → Read [`/packages/README.md`](/packages/README.md)
 - **App architecture** → Read [`/apps/README.md`](/apps/README.md)
 - **Plugin system** → Read [`/plugins/README.md`](/plugins/README.md)
-- **Dependencies** → Read [`/docs/COUPLING_ANALYSIS.md`](/docs/COUPLING_ANALYSIS.md)
+- **Dependencies** → Read [`/docs/internal/COUPLING_ANALYSIS.md`](/docs/internal/COUPLING_ANALYSIS.md)
 - **Any decision** → Check [`/docs/architecture/`](/docs/architecture/) ADRs
 
 ## Example Workflows
@@ -422,7 +423,7 @@ If you're unsure about:
 ### Workflow: Adding a New Data Fetching Hook
 
 1. Read `/packages/query/README.md` to understand current patterns
-2. Check `/docs/COUPLING_ANALYSIS.md` for query package dependencies
+2. Check `/docs/internal/COUPLING_ANALYSIS.md` for query package dependencies
 3. Create hook in `packages/query/src/hooks/useNewData.ts`
 4. Export from `packages/query/src/index.ts`
 5. Update `/packages/query/README.md` with:

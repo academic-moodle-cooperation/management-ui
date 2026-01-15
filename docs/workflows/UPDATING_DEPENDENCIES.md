@@ -31,7 +31,7 @@ Before updating any dependency:
 - [ ] **Read the changelog** - Know what's changing
 - [ ] **Check breaking changes** - Look for BREAKING CHANGE notices
 - [ ] **Review migration guides** - Follow upgrade paths
-- [ ] **Check coupling** - Read [COUPLING_ANALYSIS.md](/docs/COUPLING_ANALYSIS.md)
+- [ ] **Check coupling** - Read [COUPLING_ANALYSIS.md](/docs/internal/COUPLING_ANALYSIS.md)
 - [ ] **Identify affected packages** - Who depends on this?
 - [ ] **Plan testing** - How will you verify?
 - [ ] **Create backup** - Commit current working state
@@ -57,7 +57,7 @@ pnpm list -r --depth 0
 
 1. Check [Package Ecosystem](/packages/README.md) for dependency graph
 2. Identify all dependents
-3. Review [COUPLING_ANALYSIS.md](/docs/COUPLING_ANALYSIS.md)
+3. Review [COUPLING_ANALYSIS.md](/docs/internal/COUPLING_ANALYSIS.md)
 
 **For external packages:**
 
@@ -554,7 +554,7 @@ pnpm build
 ## Related Documentation
 
 - [Package Ecosystem](/packages/README.md) - Dependency graph
-- [Coupling Analysis](/docs/COUPLING_ANALYSIS.md) - Dependency impact
+- [Coupling Analysis](/docs/internal/COUPLING_ANALYSIS.md) - Dependency impact
 - [Swapping Technologies](/docs/workflows/SWAPPING_TECHNOLOGIES.md) - Replacing packages
 - [AI Development Guide](/docs/AI_DEVELOPMENT_GUIDE.md) - Main navigation
 

@@ -44,7 +44,7 @@ plugins/        ← Extension point definitions
 - **[Package Ecosystem](/packages/README.md)** - Shared infrastructure packages and dependency management
 - **[Application Architecture](/apps/README.md)** - Domain applications and dual-mode execution
 - **[Plugin System](/plugins/README.md)** - Extension points and university customizations
-- **[Coupling Analysis](/docs/COUPLING_ANALYSIS.md)** - Package dependencies and refactoring priorities
+- **[Coupling Analysis](/docs/internal/COUPLING_ANALYSIS.md)** - Package dependencies and refactoring priorities
 
 ### Configuration & Assets
 
