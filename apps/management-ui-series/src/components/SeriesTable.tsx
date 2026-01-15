@@ -4,9 +4,7 @@ import { useMemo, useEffect, useCallback, useRef } from "react";
 import { useI18n } from "@workspace/i18n";
 import { useUpdateSeriesMutation, useAppConfig } from "@workspace/query";
 import type { SeriesDataFragment } from "@workspace/query";
-import type { Row } from "@workspace/ui/components";
-import { MUITable, createMetadataHelpers } from "@workspace/ui/components";
-import { AppLoader } from "@workspace/ui/components";
+import { MUITable, createMetadataHelpers, AppLoader, type Row } from "@workspace/ui/components";
 import type { MetadataItem, ColumnsField } from "@workspace/ui-config";
 import { logger } from "@workspace/utils";
 

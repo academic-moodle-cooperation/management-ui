@@ -1,137 +1,127 @@
-# `@workspace/vite-config`
+# @workspace/vite-config
 
-A collection of Vite configurations and utilities for the management-ui monorepo, supporting both shell applications and micro-frontend plugins.
+**Version:** 0.0.0  
+**Type:** Core Infrastructure / Build Tooling  
+**Last Updated:** 2025-01-15
 
-## Available Exports
+## Purpose & Scope
 
-### Base Configuration (`@workspace/vite-config/base`)
+The `@workspace/vite-config` package provides centralized, reusable Vite configurations for all applications, packages, and plugins within the monorepo. It ensures a consistent build process, dev server behavior, and optimized production output across the entire platform.
 
-Core Vite configuration factory:
+**In Scope:**
 
-- `createBaseConfig(options)`: Creates a base Vite configuration with TypeScript, React, and Tailwind support
+- Shared base Vite configuration (`baseConfig`).
+- Specialized configurations for the **Core Shell** and **Plugins**.
+- Centralized dev server port management.
+- Standardized proxy settings for backend communication.
+- Custom Vite plugins for the Management UI ecosystem (e.g., config generation).
 
-### Main Export (`@workspace/vite-config`)
+**Out of Scope:**
 
-Primary configuration factories:
+- Defining package-specific build scripts (these belong in each package's `package.json`).
+- Managing the build output (handled by the `dist` folders of individual packages).
 
-- `createBaseConfig(options)`: Base configuration factory
-- `createProxyConfig(options)`: Development proxy configuration
-- `createShellAppViteConfig(options)`: Complete shell application configuration
-- `createPluginAppViteConfig(options)`: Complete plugin application configuration
+## Architecture & Design Decisions
 
-### Proxy Configuration (`@workspace/vite-config/proxy`)
+### Design Principles
 
-Development server proxy utilities:
+- **Don't Repeat Yourself (DRY):** Common plugins (React, Tailwind) and resolve aliases are defined once in the base config.
+- **Specialization:** Different module types (Apps vs. Plugins) have distinct requirements (e.g., plugins build as library modules).
+- **Collision Prevention:** Dev server ports are centrally managed to allow multiple apps to run simultaneously without conflict.
 
-- `createProxyConfig({ shellPort, plugins })`: Sets up proxy rules for micro-frontend development
+### Key Concepts
 
-### Port Management (`@workspace/vite-config/ports`)
+#### Base Configuration
+Contains the foundation: React SWC plugin, Tailwind CSS integration, and path aliases (like `@workspace/*` and `@/*`).
 
-Port allocation utilities for micro-frontend architecture:
+#### Shell vs. Plugin Config
+- **Shell Config:** Optimized for building the main entry point application.
+- **Plugin Config:** Configured for "Library Mode" to ensure plugins can be dynamically loaded by the shell.
 
-- `DEFAULT_SHELL_APP_PORT`: Default port (3000) for the shell application
-- `getPluginPorts(pluginName)`: Returns dev and preview ports for plugins
-- `getPluginBasePath(isProduction, pluginName, shellBasePath)`: Generates plugin base paths
-- `getAppBasePath(isProduction, envVarBasePath)`: Determines shell app base path
+#### Port Management (`ports.ts`)
+Defines a predictable port mapping for every application in the workspace (e.g., Core on 3000, Series on 3001, etc.).
 
-## Usage
+## API Surface (Public Exports)
 
-### Shell Application Configuration
+### Core API
 
-```typescript
-// vite.config.ts
-import { createShellAppViteConfig } from "@workspace/vite-config";
+#### `baseConfig`
+The foundational Vite configuration object.
 
-export default createShellAppViteConfig({
-  plugins: ["management-ui-episodes", "management-ui-series"],
-  // Additional Vite configuration
-});
+#### `createShellConfig(options)`
+**Purpose:** Factory for creating the Core Shell's Vite configuration.
+
+#### `createPluginConfig(options)`
+**Purpose:** Factory for creating a plugin's Vite configuration.
+
+#### `getAppPort(appName)`
+**Purpose:** Returns the assigned dev server port for a given application.
+
+## Dependencies & Coupling
+
+### Dependency Graph
+
+```
+@workspace/vite-config
+├── External Dependencies
+│   ├── vite (^6.3.5)
+│   ├── @vitejs/plugin-react-swc (^3.9.0)
+│   ├── @tailwindcss/vite (^4.1.7)
+│   └── vite-plugin-static-copy (^1.0.6)
+└── Workspace Dependencies
+    └── @workspace/utils - For logging and port logic
 ```
 
-### Plugin Application Configuration
+### Dependency Layer
+
+**Layer:** Core Infrastructure
+
+## Usage Examples
+
+### Using in a Plugin (`vite.config.ts`)
 
 ```typescript
-// vite.config.ts for a plugin
-import { createPluginAppViteConfig } from "@workspace/vite-config";
+import { defineConfig } from "vite";
+import { createPluginConfig } from "@workspace/vite-config";
 
-export default createPluginAppViteConfig({
-  pluginName: "management-ui-episodes",
-  shellPort: 3000,
-  // Additional Vite configuration
-});
+export default defineConfig(
+  createPluginConfig({
+    name: "my-plugin",
+    port: 3005
+  })
+);
 ```
 
-### Custom Base Configuration
+### Customizing the Proxy
 
 ```typescript
-// vite.config.ts
-import { createBaseConfig } from "@workspace/vite-config";
+import { devProxy } from "@workspace/vite-config/proxy";
 
-export default createBaseConfig({
-  // Your custom options
-});
+// Used within a vite.config.ts
+proxy: {
+  "/graphql": devProxy.graphql,
+}
 ```
 
-### Using Port Utilities
+## File Structure
 
-```typescript
-import { getPluginPorts, getAppBasePath } from "@workspace/vite-config/ports";
-
-// Get ports for a plugin
-const ports = getPluginPorts("management-ui-episodes");
-// Returns: { dev: 3001, preview: 3101 }
-
-// Get base path for production
-const basePath = getAppBasePath(true);
-// Returns: "/management-ui/"
+```
+packages/vite-config/
+├── src/
+│   ├── base.config.ts          # Shared foundation
+│   ├── shell.config.ts         # Main app configuration
+│   ├── plugin.config.ts        # Library mode for plugins
+│   ├── ports.ts                # Port assignments
+│   ├── proxy.ts                # Dev server proxy settings
+│   └── index.ts                # Public API exports
+├── package.json
+└── README.md                   # This file
 ```
 
-## Configuration Features
+---
 
-### Base Configuration Includes:
+## Contributing
 
-- React support with SWC for fast compilation
-- Tailwind CSS integration with Vite plugin
-- TypeScript configuration
-- Static file copying capabilities
-- Development server optimization
-
-### Shell App Configuration Adds:
-
-- Proxy configuration for plugin development
-- Base path management for deployment
-- Plugin-specific routing setup
-- Production build optimization
-
-### Plugin App Configuration Adds:
-
-- Port allocation for development
-- Base path calculation for micro-frontend integration
-- Proxy configuration for shell app communication
-- Development mode detection
-
-## Supported Plugins
-
-The port allocation system recognizes these plugins:
-
-- `management-ui-series` (port 3001/3101)
-- `management-ui-episodes` (port 3002/3102)
-- `management-ui-upload` (port 3003/3103)
-- `management-ui-test` (port 3004/3104)
-
-## Dependencies
-
-### Runtime Dependencies:
-
-- `vite`: ^6.3.5 - Core build tool
-- `@vitejs/plugin-react-swc`: ^3.9.0 - React support with SWC
-- `@tailwindcss/vite`: ^4.1.7 - Tailwind CSS integration
-- `vite-plugin-static-copy`: ^1.0.6 - Static file copying
-
-### Development Dependencies:
-
-- `@types/node`: ^20.14.12 - Node.js type definitions
-- `@workspace/eslint-config`: workspace:\* - ESLint configuration
-- `@workspace/typescript-config`: workspace:\* - TypeScript configuration
-- `eslint`: ^9.8.0 - Code linting
-- `typescript`: ~5.5.4 - TypeScript compiler
+1. **New Apps:** When adding a new application, assign it a unique port in `src/ports.ts`.
+2. **Aliases:** Keep path aliases in sync with `packages/typescript-config`.
+3. **Build Stability:** Avoid adding experimental Vite plugins here as they impact the stability of the entire monorepo.

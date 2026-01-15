@@ -1,336 +1,139 @@
-# Translation System Documentation
+# @workspace/i18n
 
-## Overview
+**Version:** 0.0.0  
+**Type:** Foundation / Internationalization  
+**Last Updated:** 2025-01-15
 
-The i18n package provides internationalization support for the management UI. It uses i18next with React integration and supports both built-in translations and plugin-specific translations.
+## Purpose & Scope
 
-## Key Features
+The `@workspace/i18n` package provides a unified internationalization system for the Management UI. Built on **i18next** and **react-i18next**, it supports multiple languages, namespaced translation files, and dynamic loading of translations—essential for the platform's plugin architecture.
 
-- External JSON translation files (no more hardcoded translations)
-- Namespace-based organization for plugin compatibility
-- HTTP backend for dynamic translation loading
-- Fallback mechanism to English when translations are missing
-- Development and production path support
+**In Scope:**
 
-## Translation File Structure
+- Centralized i18next instance and React context provider.
+- Dynamic loading of translation namespaces (`loadNamespace`).
+- Enhanced hooks for plugin-specific translations (`usePluginTranslation`).
+- Standardized translation file structure (JSON).
+- Helpers for organization-based namespacing.
+
+**Out of Scope:**
+
+- Management of the actual translation files (these are stored in `src/locales` or within plugins).
+- Server-side translation storage.
+- UI components for language switching (belongs in `@workspace/ui`).
+
+## Architecture & Design Decisions
+
+### Design Principles
+
+- **On-Demand Loading:** Translations for specific features or plugins are only loaded when needed.
+- **Namespace Isolation:** Each app or plugin should use its own namespace to prevent translation key collisions.
+- **Organization Support:** Built-in helpers for organization-specific overrides (e.g., `univie:footer.text`).
+
+### Key Concepts
+
+#### Namespaces
+Translation files are organized into namespaces (e.g., `common`, `series`, `episodes`). This allows for smaller initial bundles and better organization of keys.
+
+#### `usePluginTranslation`
+An enhanced version of the standard `useTranslation` hook that automatically ensures the requested namespaces are loaded from the backend before trying to use them.
+
+### Architecture Diagram
 
 ```
-packages/i18n/src/locales/
-├── common/        # Core UI elements and navigation (moved from ui namespace)
-│   ├── de.json    # Buttons, pagination, languages, licenses, etc.
-│   └── en.json
-├── series/        # Series-related translations (51 lines each)
-│   ├── de.json
-│   └── en.json
-├── episodes/      # Episode/video translations (106 lines each)
-│   ├── de.json
-│   └── en.json
-├── upload/       # Upload functionality (43 lines each)
-│   ├── de.json
-│   └── en.json
-└── [plugins can add their own namespaces]
+┌─────────────────────────────────────────┐
+│ @workspace/i18n Architecture            │
+├─────────────────────────────────────────┤
+│ [ I18nextProvider ]                     │
+│         ↓                               │
+│ [ usePluginTranslation Hook ]           │
+│         ↓                               │
+│ [ Dynamic Namespace Loader ]            │
+│         ↓                               │
+│ [ Locale JSON Files (src/locales/*) ]   │
+└─────────────────────────────────────────┘
 ```
 
-The UI namespace has been merged into the common namespace for better organization. All common UI elements like buttons, pagination, and form controls are now accessible through the common namespace.
+## API Surface (Public Exports)
 
-## Translation Key Naming Conventions
+### Core API
 
-- Use camelCase for consistency: `registerStreaming` not `register_streaming`
-- Use hierarchical namespaces: `series.seriesInfo.title`
-- Organize by UI component or feature: `ui.pagination.goToNextPage`
-- Keep keys descriptive but concise
+#### `I18nextProvider`
+**Purpose:** Wraps the app to provide i18next context.
 
-## Usage
+#### `usePluginTranslation(namespaces, autoLoad)`
+**Purpose:** Hook for using translations with automatic namespace loading.
+**Parameters:**
+- `namespaces` (string[]): Array of namespaces to use.
+- `autoLoad` (boolean): Whether to automatically fetch missing namespaces.
 
-### Basic Usage with Colon Notation
+#### `loadNamespace(namespace, language)`
+**Purpose:** Programmatically loads a translation bundle.
 
-```tsx
-import { useI18n } from "@workspace/i18n";
+## Dependencies & Coupling
 
-function MyComponent() {
-  // No need to specify namespaces - use colon notation instead
-  const { t } = useI18n();
+### Dependency Graph
 
-  // Access series translations using colon notation
-  return <h1>{t("series:seriesInfo.title")}</h1>;
-
-  // Access episodes translations using colon notation
-  return <p>{t("episodes:episodesInfo.description")}</p>;
-
-  // Access common translations (can omit common: prefix)
-  return <button>{t("save")}</button>;
-  // or explicitly
-  return <button>{t("common:save")}</button>;
-}
+```
+@workspace/i18n
+└── External Dependencies
+    ├── i18next (^23.10.0)
+    ├── i18next-browser-languagedetector (^7.2.0)
+    ├── i18next-http-backend (^2.5.0)
+    └── react-i18next (^14.0.5)
 ```
 
-### Using i18next.t Directly
+### Dependency Layer
 
-```tsx
-import { i18next } from "@workspace/i18n";
+**Layer:** Foundation
 
-// Use colon notation for explicit namespace references
-{
-  i18next.t("series:seriesTable.heading.episodes");
-}
-{
-  i18next.t("episodes:episodesTable.action.editData");
-}
-{
-  i18next.t("common:delete");
-}
-```
+**Allowed to depend on:** External dependencies only.
 
-### Migration from Legacy Pattern
+## Usage Examples
 
-**OLD PATTERN** (deprecated - namespace options):
-
-```tsx
-// ❌ Don't use this pattern
-{
-  i18next.t("seriesTable.heading.episodes", { ns: "series" });
-}
-{
-  i18next.t("episodesTable.action.editData", { ns: "episodes" });
-}
-{
-  t("delete", { ns: "common" });
-}
-
-// ❌ Don't load namespaces explicitly
-const { t } = useI18n(["series", "episodes"]);
-```
-
-**NEW PATTERN** (recommended - colon notation):
-
-```tsx
-// ✅ Use colon notation for explicit namespace references
-{
-  i18next.t("series:seriesTable.heading.episodes");
-}
-{
-  i18next.t("episodes:episodesTable.action.editData");
-}
-{
-  i18next.t("common:delete");
-}
-
-// ✅ Simplified useI18n call
-const { t } = useI18n();
-{
-  t("series:seriesTable.heading.episodes");
-}
-{
-  t("episodes:episodesTable.action.editData");
-}
-{
-  t("delete");
-} // Common namespace can omit prefix
-```
-
-This change provides cleaner code and more explicit namespace references.
-
-### Plugin Usage
-
-```tsx
-import { useI18n, loadNamespace } from "@workspace/i18n";
-
-function PluginComponent() {
-  const { t } = useI18n();
-
-  return <p>{t("my-plugin:welcome.message")}</p>;
-}
-```
-
-### Loading Additional Namespaces
-
-```tsx
-import { loadNamespace } from "@workspace/i18n";
-
-// Load a plugin namespace
-await loadNamespace("my-plugin", "en");
-```
-
-## Organization-Specific Content
-
-The system now uses generic terminology instead of university-specific terms:
-
-- "Organization" instead of "University"
-- "Streaming System" instead of "u:stream"
-- Generic "Studio" instead of "u:stream-Studio"
-- Configurable organization names via environment variables
-
-## Adding New Translations
-
-1. Add keys to both `de.json` and `en.json` files
-2. Use consistent naming conventions (camelCase)
-3. Test that both languages work
-4. Follow the hierarchical namespace structure
-
-## Plugin Translation Guidelines
-
-### Adding Translations for a New Plugin
-
-**CRITICAL FOR AI MODELS:** When creating a new plugin with translations, you MUST complete these steps:
-
-#### Step 1: Register the Namespace
-
-Add your namespace to the `ns` array in `packages/i18n/src/useTranslation.tsx`:
+### Basic Usage
 
 ```typescript
-// packages/i18n/src/useTranslation.tsx
-i18n.init({
-  // ...
-  ns: ["common", "series", "episodes", "upload", "playlists"], // Add your namespace here!
-  // ...
-});
+import { useTranslation } from "@workspace/i18n";
+
+const MyComponent = () => {
+  const { t } = useTranslation("common");
+  return <button>{t("actions.save")}</button>;
+};
 ```
 
-**If you skip this step, translations will NOT load and you'll see translation keys instead of text.**
-
-#### Step 2: Create Translation Files
-
-Create translation files in your plugin:
-
-```
-plugins/my-plugin/
-└── locales/
-    └── my-plugin/           # Namespace name must match
-        ├── en.json
-        └── de.json
-```
-
-Example `en.json`:
-
-```json
-{
-  "my-plugin": {
-    "heading": "My Plugin",
-    "description": "Plugin description here"
-  }
-}
-```
-
-#### Step 3: Use Translations in Components
+### Plugin Usage (Auto-loading)
 
 ```typescript
-import { useI18n } from '@workspace/i18n';
+import { usePluginTranslation } from "@workspace/i18n";
 
-function MyPluginComponent() {
-  const { t } = useI18n();
-
-  return (
-    <div>
-      <h1>{t('my-plugin:heading')}</h1>
-      <p>{t('my-plugin:description')}</p>
-    </div>
-  );
-}
+const PluginComponent = () => {
+  const { t } = usePluginTranslation(["my-plugin-namespace"]);
+  return <h1>{t("welcome_message")}</h1>;
+};
 ```
 
-### Complete Checklist for Plugin Translations
+## File Structure
 
-- [ ] Namespace added to `packages/i18n/src/useTranslation.tsx` in the `ns` array
-- [ ] `locales/{namespace}/en.json` created in plugin directory
-- [ ] `locales/{namespace}/de.json` created in plugin directory
-- [ ] JSON structure matches namespace (e.g., `{ "playlists": { ... } }`)
-- [ ] Components use `t('namespace:key')` syntax
-
-### Common Translation Keys
-
-Add these to `common` namespace (not your plugin namespace) for reuse:
-
-```json
-{
-  "save": "Save",
-  "cancel": "Cancel",
-  "delete": "Delete",
-  "edit": "Edit",
-  "create": "Create",
-  "add": "Add",
-  "remove": "Remove",
-  "action": "Action"
-}
+```
+packages/i18n/
+├── src/
+│   ├── locales/                # Core translation JSON files
+│   │   ├── common/             # Shared keys
+│   │   ├── series/             # Series-app specific
+│   │   └── ...
+│   ├── translationLoader.ts    # Logic for dynamic loading
+│   ├── useTranslation.tsx      # Custom React hooks
+│   └── index.ts                # Public API exports
+├── package.json
+└── README.md                   # This file
 ```
 
-### Best Practices
+---
 
-1. Use descriptive namespace names: `playlists` not `pl`
-2. Keep translations scoped to your plugin
-3. Reuse `common` namespace keys for standard UI (save, cancel, etc.)
-4. Test translations load correctly by checking the browser console for missing key warnings
+## Contributing
 
-## Migration from Legacy System
-
-- Old hardcoded translations have been moved to JSON files
-- University-specific content has been generalized
-- Debug mode disabled for production
-- Console logs removed for cleaner output
-- **Translation key pattern changed**: Namespace is now specified explicitly or loaded via `useI18n(['namespace'])`
-- **UI namespace merged into common**: All UI elements are now in the common namespace for better organization
-
-### Breaking Change: Translation Key Pattern
-
-All translation calls have been updated to use colon notation:
-
-**Before:**
-
-```tsx
-{
-  i18next.t("seriesTable.heading.episodes", { ns: "series" });
-}
-{
-  i18next.t("episodesTable.action.editData", { ns: "episodes" });
-}
-{
-  t("delete", { ns: "common" });
-}
-
-// Loading namespaces explicitly
-const { t } = useI18n(["series", "episodes"]);
-```
-
-**After:**
-
-```tsx
-// Use colon notation for explicit namespace references
-{
-  i18next.t("series:seriesTable.heading.episodes");
-}
-{
-  i18next.t("episodes:episodesTable.action.editData");
-}
-{
-  t("common:delete");
-}
-
-// Simplified useI18n call (no namespace arrays needed)
-const { t } = useI18n();
-{
-  t("series:seriesTable.heading.episodes");
-}
-{
-  t("episodes:episodesTable.action.editData");
-}
-{
-  t("delete");
-} // Common namespace can omit prefix
-```
-
-## Build System
-
-The build process:
-
-1. Compiles TypeScript files
-2. Copies locale JSON files to `dist/locales/`
-3. Makes translations available for runtime loading
-
-## Testing
-
-The test functionality has been removed since it was causing build issues and was not essential for the core functionality. You can verify translations work by:
-
-1. Building the package: `npm run build`
-2. Testing manually in browser console with your application
-3. Checking that translation keys resolve to expected values in your app
-
-The build process automatically validates that translation files exist and are properly structured.
+1. **New Keys:** Add shared keys to `src/locales/common/`. Add app-specific keys to their respective folders.
+2. **Naming:** Use lowercase snake_case for keys (e.g., `button_label`).
+3. **Hierarchy:** Keep JSON files shallow where possible for better readability.
+4. **Plugins:** Plugins should define their own namespaces and use `usePluginTranslation` to ensure they are available at runtime.

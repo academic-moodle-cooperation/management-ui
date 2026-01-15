@@ -1,28 +1,14 @@
 import { createRoute } from "@tanstack/react-router";
-import { Suspense } from "react";
 
-import { ComponentResolver } from "@workspace/plugin-system";
 import { createLoginRoute, createLogoutRoute } from "@workspace/router";
-import { DefaultLandingPage, AppLoader, Container } from "@workspace/ui/components";
+import { AppLoader } from "@workspace/ui/components";
+
+import { DefaultLandingComponent } from "../components/DefaultLandingComponent";
 
 /**
  * Shared route definitions used across different router configurations.
  * This eliminates duplication between app-router.tsx and DynamicRouterProvider.tsx
  */
-
-const DefaultLandingComponent = () => (
-  <Suspense fallback={<AppLoader />}>
-    <Container className="flex justify-center h-full w-full">
-      <ComponentResolver
-        componentType="appshell:landing-page"
-        defaultComponent={DefaultLandingPage}
-        componentProps={{}}
-        loadingBehavior="loader"
-        useOverridePrefix={true}
-      />
-    </Container>
-  </Suspense>
-);
 
 import type { AnyRoute } from "@tanstack/react-router";
 

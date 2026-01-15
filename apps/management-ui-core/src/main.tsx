@@ -79,7 +79,7 @@ const AppWithConfig = () => {
 };
 
 // Top level component that sets up QueryProvider first
-const AppContainer = () => {
+export const AppContainer = () => {
   return (
     <PluginProvider>
       <QueryProvider>

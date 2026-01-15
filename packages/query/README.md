@@ -1,392 +1,221 @@
 # @workspace/query
 
-Data fetching and state management package for the Management UI. Built on TanStack Query (React Query), this package provides the QueryProvider, configuration loading system, and GraphQL integration.
+**Version:** 0.0.0  
+**Type:** Integration Layer  
+**Last Updated:** 2025-01-15
 
-## Features
+## Purpose & Scope
 
-- **Query Provider**: TanStack Query client setup and configuration
-- **Configuration System**: Application config loading with plugin merging
-- **GraphQL Integration**: Generated types and hooks from GraphQL schema
-- **Caching**: Intelligent caching with stale-while-revalidate patterns
+The `@workspace/query` package serves as the centralized data fetching and state synchronization layer for the Management UI. It integrates **TanStack Query (React Query)** with **GraphQL** (via `graphql-request`) to provide a robust, type-safe, and cached data layer.
 
-## Installation
+This package is responsible for all server communication, handling GraphQL operations, managing the query cache, and providing hooks for data access throughout the monorepo.
 
-This package is automatically available in all monorepo applications:
+**In Scope:**
+
+- GraphQL client initialization and management.
+- TanStack Query client configuration and Provider.
+- Automatic TypeScript code generation from GraphQL files (`.graphql`).
+- Global hooks for common data needs (User Info, App Config).
+- Caching logic for application configuration.
+
+**Out of Scope:**
+
+- UI components for data display (belongs in `@workspace/ui` or apps).
+- Complex client-side state management not related to server data (belongs in `@workspace/store`).
+- Route-specific logic (belongs in `@workspace/router` or apps).
+
+## Architecture & Design Decisions
+
+### Design Principles
+
+- **Type Safety:** Every GraphQL operation is converted into TypeScript types and hooks via `@graphql-codegen`.
+- **Centralized Fetching:** All data fetching follows the same pattern using the centralized `fetcher` and `QueryProvider`.
+- **Config-Driven:** Data endpoints are derived from the application configuration.
+
+### Key Concepts
+
+#### GraphQL Codegen
+We use `.graphql` files to define queries and mutations. The `pnpm codegen` command generates the `gql-generated.ts` file, which contains both the types and the React Query hooks.
+
+#### Global Config Caching
+The `useAppConfig` hook provides access to the global application configuration (merging defaults with plugin-specific configs) and caches it to prevent unnecessary fetches.
+
+### Architecture Diagram
+
+```
+┌─────────────────────────────────────────┐
+│ @workspace/query Architecture           │
+├─────────────────────────────────────────┤
+│ [ React Query Provider ]                │
+│         ↓                               │
+│ [ Generated Hooks (gql-generated.ts) ]  │
+│         ↓                               │
+│ [ GraphQL Client (graphql-request) ]    │
+│         ↓                               │
+│ [ API Endpoint (/graphql) ]             │
+└─────────────────────────────────────────┘
+```
+
+### Technology Choices
+
+- **TanStack Query (v5):** Chosen for its powerful caching, revalidation, and state management capabilities for asynchronous data.
+- **graphql-request:** A lightweight GraphQL client that works perfectly with TanStack Query.
+- **GraphQL Codegen:** Ensures 100% type safety between the backend schema and frontend code.
+
+## API Surface (Public Exports)
+
+### Exports Structure
 
 ```typescript
-import { useAppConfig, QueryProvider, useQuery } from "@workspace/query";
+export { QueryProvider } from "./QueryProvider";
+export { fetchData } from "./fetcher";
+export { getGraphQLClient, createQueryClient } from "./client";
+export { useGenericQuery } from "./hooks/useGenericQuery";
+// Re-exports from @tanstack/react-query
+export { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 ```
 
-## Configuration System
+### Core API
 
-The query package handles application configuration loading with support for plugin overrides.
+#### `QueryProvider`
+**Purpose:** Wraps the application to provide the TanStack Query context and DevTools.
 
-### How It Works
+#### `useGenericQuery`
+**Purpose:** A wrapper around `useQuery` for standardizing query calls.
+
+#### `fetchData<TData, TVariables>`
+**Purpose:** The low-level fetcher used by generated hooks to execute GraphQL requests.
+
+## Dependencies & Coupling
+
+### Dependency Graph
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  defaultConfig  │────▶│  Plugin Configs │────▶│  Merged Config  │
-│  (ui-config)    │     │  (app:config)   │     │  (useAppConfig) │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-        │                       │
-        │ Development           │ Production
-        │ (runtime merge)       │ (pre-merged config.json)
-        ▼                       ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Final Application Config                      │
-└─────────────────────────────────────────────────────────────────┘
+@workspace/query
+├── External Dependencies
+│   ├── @tanstack/react-query (^5.51.15)
+│   ├── graphql (^16.9.0)
+│   └── graphql-request (^7.1.0)
+└── Workspace Dependencies
+    ├── @workspace/plugin-system - For merging plugin configurations
+    ├── @workspace/ui-config - For default application settings
+    └── @workspace/utils - For deep merging and logging
 ```
 
-### Development Mode
+### Dependency Layer
 
-In development, configs are merged at runtime:
+**Layer:** Integration Layer
 
-1. Start with `defaultConfig` from `@workspace/ui-config`
-2. Plugins register configs via `manager.registerObject('app:config', ...)`
-3. `useAppConfig()` merges all registered plugin configs using `deepMerge`
-4. Last plugin wins for conflicting keys
+**Allowed to depend on:** Core Infrastructure, Foundation.
 
-### Production Mode
+**Rules:**
+- Must not depend on UI components or App-specific logic.
+- Should remain the primary source for server data.
 
-In production, configs are pre-merged at build time:
+### Coupling Analysis
 
-1. Vite plugin generates `config.json` with all configs merged
-2. App fetches `/ui/config/management-ui/config.json`
-3. Config is used as-is (no additional runtime merging)
+- **Tight Coupling:** Specifically coupled to `ui-config` and `plugin-system` because it needs to know how to resolve endpoints and merge configurations (justified by design).
+- **Abstraction Points:** The `fetcher` abstracts the actual `fetch` call, allowing for global error handling.
 
-For detailed documentation, see [Configuration Generation](/docs/CONFIG_GENERATION.md).
+## Usage Examples
 
-### useAppConfig Hook
-
-Primary hook for accessing application configuration:
+### Basic Query (using generated hooks)
 
 ```typescript
-import { useAppConfig } from '@workspace/query';
+import { useGetEventByIdQuery } from "@workspace/query";
 
-function MyComponent() {
-  const { config, isLoading, isError, error, isFetched } = useAppConfig();
-
-  if (isLoading) return <Loading />;
-  if (isError) return <Error message={error?.message} />;
-
-  return (
-    <div style={{ color: config.app.primaryColor }}>
-      <h1>{config.app.organizationName}</h1>
-      <img src={config.app.logoUrl} alt="Logo" />
-    </div>
-  );
-}
-```
-
-**Return Values:**
-
-| Property    | Type            | Description                            |
-| ----------- | --------------- | -------------------------------------- |
-| `config`    | `AppConfig`     | Merged application configuration       |
-| `isLoading` | `boolean`       | True while fetching config (prod only) |
-| `isError`   | `boolean`       | True if fetch failed                   |
-| `error`     | `Error \| null` | Error object if fetch failed           |
-| `isFetched` | `boolean`       | True after config is available         |
-
-### getAppConfigSync
-
-Non-hook version for use during plugin initialization:
-
-```typescript
-import { getAppConfigSync } from "@workspace/query";
-
-// Use when hooks aren't available (e.g., plugin initialization)
-const config = getAppConfigSync(pluginManager);
-console.log("Current theme:", config.app.theme);
-```
-
-### getCachedAppConfig
-
-Cached config fetching for production scenarios:
-
-```typescript
-import { getCachedAppConfig, clearAppConfigCache } from "@workspace/query/hooks";
-
-// Fetch with caching (subsequent calls return cached promise)
-const config = await getCachedAppConfig();
-
-// Clear cache to force refetch
-clearAppConfigCache();
-```
-
-## Query Provider
-
-Sets up the TanStack Query client for the entire application:
-
-```tsx
-import { QueryProvider } from "@workspace/query";
-
-function App() {
-  return (
-    <QueryProvider>
-      <YourApp />
-    </QueryProvider>
-  );
-}
-```
-
-This is typically used within `@workspace/providers`:
-
-```tsx
-// @workspace/providers/src/AppProviders.tsx
-import { QueryProvider } from "@workspace/query";
-
-export const AppProviders = ({ children }) => {
-  return (
-    <QueryProvider>
-      {/* ... other providers ... */}
-      {children}
-    </QueryProvider>
-  );
+const MyComponent = ({ id }) => {
+  const { data, isLoading } = useGetEventByIdQuery({ id });
+  
+  if (isLoading) return <div>Loading...</div>;
+  return <div>{data?.event?.title}</div>;
 };
 ```
 
-## GraphQL Integration
-
-The package includes generated types and hooks from the GraphQL schema.
-
-### Available Hooks for Data Fetching
-
-**IMPORTANT FOR AI MODELS:** When building features that need data from the backend, use these generated hooks instead of creating mock implementations.
-
-#### Episode/Event Hooks
+### Mutation Example
 
 ```typescript
-import { useGetMyEventsQuery } from '@workspace/query';
+import { useMutation, gql, getGraphQLClient } from "@workspace/query";
 
-// Fetch user's events with optional search
-const { data, isLoading } = useGetMyEventsQuery({
-  limit: 20,
-  query: searchTerm || undefined,
-});
+const UPDATE_TITLE = gql`
+  mutation UpdateTitle($id: ID!, $title: String!) {
+    updateEvent(id: $id, title: $title) { id }
+  }
+`;
 
-// IMPORTANT: GraphQL arrays can contain null items - always filter them out!
-const events = (data?.currentUser?.myEvents?.nodes || []).filter(
-  (event): event is NonNullable<typeof event> => event !== null
-);
-
-// Now you can safely map over events
-events.map(event => (
-  <div key={event.id}>{event.title}</div>
-));
-```
-
-#### Series Hooks
-
-```typescript
-import { useGetSeriesQuery, useUpdateSeriesMutation } from "@workspace/query";
-
-// Fetch series by ID
-const { data, isLoading } = useGetSeriesQuery({ id });
-
-// Update series
-const { mutate: updateSeries } = useUpdateSeriesMutation();
-updateSeries({ id, title: "New Title" });
-```
-
-#### Event Title Lookup Hook
-
-When you have a list of event IDs and need to display their titles (e.g., in playlists, favorites, or collections):
-
-```typescript
-import { useEventTitlesMap } from '@workspace/query';
-
-// Get event IDs from your data structure
-const eventIds = ['event-1', 'event-2', 'event-3'];
-
-// Fetch titles efficiently (only fetches events that are needed)
-const eventTitleMap = useEventTitlesMap(eventIds);
-
-// Use in component
-<div>{eventTitleMap.get('event-1') || 'Unknown'}</div>
-
-// The hook returns a Map<string, string> where:
-// - Key: event ID
-// - Value: event title (or ID as fallback if title not found)
-```
-
-This hook is optimized to:
-
-- Only fetch events that are actually needed
-- Use parallel queries for efficient fetching
-- Scale to any number of events
-- Fall back to event ID if title is not found
-
-### Handling Nullable GraphQL Types
-
-**CRITICAL:** GraphQL queries often return nullable types. Arrays may contain `null` items. Always handle this:
-
-```typescript
-// ❌ WRONG - Will cause TypeScript errors
-const events = data?.currentUser?.myEvents?.nodes || [];
-events.map((event) => event.id); // Error: event might be null!
-
-// ✅ CORRECT - Filter out null values with type guard
-const events = (data?.currentUser?.myEvents?.nodes || []).filter(
-  (event): event is NonNullable<typeof event> => event !== null,
-);
-events.map((event) => event.id); // Safe!
-```
-
-### Common Data Fetching Patterns
-
-#### Episode Selector Component Pattern
-
-When building UI to select episodes (e.g., for playlists), use this pattern:
-
-```typescript
-import { useGetMyEventsQuery } from '@workspace/query';
-
-function EpisodeSelector({ onSelect }: { onSelect: (event: { id: string; title: string }) => void }) {
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const { data, isLoading } = useGetMyEventsQuery({
-    limit: 20,
-    query: searchTerm || undefined,
+const useUpdateTitle = () => {
+  const client = getGraphQLClient();
+  return useMutation({
+    mutationFn: (variables) => client.request(UPDATE_TITLE, variables),
   });
-
-  // Filter null items from GraphQL response
-  const events = (data?.currentUser?.myEvents?.nodes || []).filter(
-    (event): event is NonNullable<typeof event> => event !== null
-  );
-
-  return (
-    <div>
-      <Input
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search episodes..."
-      />
-      {isLoading ? <AppLoader /> : (
-        <ul>
-          {events.map(event => (
-            <li key={event.id} onClick={() => onSelect(event)}>
-              {event.title || 'Untitled'}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
+};
 ```
 
-### Using Generated Hooks
+## Testing Strategy
 
-```typescript
-import { useGetSeriesQuery, useUpdateSeriesMutation } from '@workspace/query';
-
-function SeriesDetail({ id }: { id: string }) {
-  const { data, isLoading } = useGetSeriesQuery({ id });
-  const { mutate: updateSeries } = useUpdateSeriesMutation();
-
-  if (isLoading) return <Loading />;
-
-  return (
-    <div>
-      <h1>{data?.series?.title}</h1>
-      <button onClick={() => updateSeries({ id, title: 'New Title' })}>
-        Update
-      </button>
-    </div>
-  );
-}
-```
-
-### Regenerating GraphQL Types
-
-When the GraphQL schema changes:
+### Unit Tests
+Located in `src/**/*.test.ts`. Use `vitest` and `@testing-library/react`.
 
 ```bash
-# From query package directory
-pnpm codegen
+pnpm test
 ```
 
-This reads the schema from the configured endpoint and generates TypeScript types.
+### Testing Patterns
+When testing components that use queries, wrap them in a `QueryProvider` with a clean `QueryClient`.
 
-## Re-exported APIs
+## Extension Points
 
-The package re-exports commonly used TanStack Query APIs:
+### Adding New Queries/Mutations
+1. Create or update a `.graphql` file in `src/` (e.g., `queries.graphql`).
+2. Run `pnpm codegen` from the package root or monorepo root.
+3. Use the newly generated hooks (starting with `use...Query` or `use...Mutation`) in your components.
 
-```typescript
-import {
-  useQuery,
-  useInfiniteQuery,
-  useQueryClient,
-  gql,
-  type QueryClient,
-  type InfiniteData,
-} from "@workspace/query";
-```
-
-## Package Structure
+## File Structure
 
 ```
 packages/query/
 ├── src/
-│   ├── index.ts                # Main exports
-│   ├── QueryProvider.tsx       # TanStack Query provider
-│   ├── client.ts              # GraphQL client setup
-│   ├── codegen.ts             # GraphQL codegen config
-│   ├── gql-generated/         # Generated GraphQL types/hooks
-│   └── hooks/
-│       ├── index.ts           # Hook exports
-│       ├── useAppConfig.ts    # Configuration hook
-│       └── getCachedAppConfig.ts # Cached config fetching
+│   ├── hooks/                  # Custom and cached hooks
+│   ├── client.ts               # GraphQL client setup
+│   ├── fetcher.ts              # Global fetch wrapper
+│   ├── gql-generated.ts        # AUTO-GENERATED (Do not edit)
+│   ├── queries.graphql         # GraphQL source operations
+│   ├── QueryProvider.tsx       # React Query context provider
+│   └── index.ts                # Public API exports
 ├── package.json
-├── tsconfig.json
-└── README.md
+└── README.md                   # This file
 ```
-
-## Dependencies
-
-### Workspace Dependencies
-
-- `@workspace/ui-config` - Default configuration values
-- `@workspace/plugin-system` - Plugin registry for config merging
-- `@workspace/utils` - Deep merge utility
-
-### External Dependencies
-
-- `@tanstack/react-query` - Data fetching and caching
-- `graphql-request` - GraphQL client
-- `graphql` - GraphQL utilities
 
 ## Development
 
-### Type Checking
+### Setup
 
 ```bash
-pnpm check-types
+pnpm install
+pnpm codegen  # Generates types from GraphQL schema
 ```
 
-### Linting
+### Commands
+- `pnpm codegen`: Generates `gql-generated.ts`. Requires an active backend or schema file.
+- `pnpm test`: Runs vitest suites.
+- `pnpm check-types`: Validates TypeScript.
 
-```bash
-pnpm lint
-```
+## Performance Considerations
 
-### GraphQL Codegen
+- **Stale Time:** Default `staleTime` is set to 5 minutes to reduce redundant network requests.
+- **Bundle Size:** `graphql-request` is significantly smaller than Apollo Client.
+- **Caching:** The `useAppConfig` hook uses internal caching to avoid re-fetching configuration during the session.
 
-```bash
-pnpm codegen
-```
+## Related Packages
 
-Requires a `.env` file with the GraphQL endpoint:
+- [`@workspace/plugin-system`](/packages/plugin-system/README.md) - Provides the plugin registry for config merging.
+- [`@workspace/app-runtime`](/packages/app-runtime/README.md) - Uses query hooks for application initialization.
 
-```env
-VITE_GRAPHQL_ENDPOINT=https://your-api.com/graphql
-```
+---
 
-## Related Documentation
+## Contributing
 
-- [Configuration Generation](/docs/CONFIG_GENERATION.md) - How config works in dev vs prod
-- [Configuration Order](/docs/CONFIG_ORDER.md) - Plugin config precedence
-- [UI Config Package](/packages/ui-config/README.md) - Default configuration
-- [Plugin System](/packages/plugin-system/README.md) - Plugin registry
-- [Utils Package](/packages/utils/README.md) - Deep merge utility
+1. Add GraphQL operations to `.graphql` files.
+2. **Always** run `pnpm codegen` after changing GraphQL files.
+3. Do not manually edit `gql-generated.ts`.
+4. Add tests for new custom hooks in `src/hooks/`.

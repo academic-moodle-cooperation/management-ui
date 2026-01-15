@@ -2,12 +2,9 @@ import path from "node:path";
 
 import { defineConfig, loadEnv } from "vite";
 
-import { defaultConfig } from "../../packages/ui-config/src/index.ts";
 import { createShellAppViteConfig, generateConfigPlugin } from "@workspace/vite-config";
 
-const packageName = process.env["npm_package_name"] || "management-ui-core";
-
-// Import plugin configs directly
+import { defaultConfig } from "../../packages/ui-config/src/index.ts";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { config as tuwienConfig } from "../../plugins/tuwien/implementations/config/config";
 import { config as univieConfig } from "../../plugins/univie/implementations/config/config";

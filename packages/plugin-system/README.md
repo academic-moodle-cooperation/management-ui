@@ -1,225 +1,179 @@
 # @workspace/plugin-system
 
-Core infrastructure for the Management UI plugin architecture. This package provides the plugin manager, factory functions, component resolution, and registration system.
+**Version:** 0.0.0  
+**Type:** Foundation / Core Infrastructure  
+**Last Updated:** 2025-01-15
 
-## Features
+## Purpose & Scope
 
-- **Plugin Manager**: Central registry for all plugins and their components
-- **Plugin Factory**: `createPlugin` function for standardized plugin creation
-- **Component Resolution**: Dynamic component loading and resolution
-- **Object Registry**: Store and retrieve plugin-provided objects
-- **App Registry**: Register and manage plugin applications
+The `@workspace/plugin-system` is the heart of the Management UI's extensibility architecture. it allows the application to be composed of independent modules (plugins) that can add new features, override UI components, and extend the core functionality without modifying the base codebase.
 
-## Installation
+It manages the lifecycle of plugins, provides a centralized registry for components and objects, and enables decoupled communication between modules.
 
-This package is automatically available in all monorepo applications:
+**In Scope:**
 
-```typescript
-import { createPlugin, PluginManager, PluginProvider } from "@workspace/plugin-system";
+- Plugin registration, initialization, and lifecycle management.
+- Dynamic component resolution through **Extension Points**.
+- Centralized function registry for cross-plugin communication.
+- Event system for decoupled notifications.
+- Generic object registry for shared data.
+
+**Out of Scope:**
+
+- Specific UI components (these are registered *into* the system by plugins).
+- Application-level routing logic (though it provides the registry to store routes).
+- State management for specific features.
+
+## Architecture & Design Decisions
+
+### Design Principles
+
+- **Loose Coupling:** Plugins do not import each other directly; they communicate via the `pluginManager`'s function and event systems.
+- **Inversion of Control:** The core application defines "Extension Points", and plugins provide the implementations.
+- **Namespacing:** All registered components and objects are namespaced (`namespace:plugin-type`) to prevent collisions.
+
+### Key Concepts
+
+#### Plugin Lifecycle
+Every plugin implements the `Plugin` interface:
+1.  **`initialize`**: Setup dependencies and register functions.
+2.  **`activate`**: Register components and objects.
+3.  **`deactivate`**: Clean up resources.
+
+#### Extension Points & `ComponentResolver`
+The `ComponentResolver` is a React component that looks up registered components for a specific `componentType` (the extension point). If no plugin provides a component, it falls back to a `defaultComponent`.
+
+#### Function Registry
+Plugins can "export" functionality by adding functions to the `pluginManager`. Other plugins or the core app can then execute these functions by name.
+
+### Architecture Diagram
+
+```
+┌─────────────────────────────────────────┐
+│ @workspace/plugin-system Architecture   │
+├─────────────────────────────────────────┤
+│ [ Plugin Manager (Central Service) ]    │
+│    /           |            \           │
+│ [Functions] [Events] [Registries]       │
+│    |           |            |           │
+│ [ Plugins ] <──┼──────────> [ UI ]      │
+│  (Modules)     |      (ComponentResolver)│
+└─────────────────────────────────────────┘
 ```
 
-## Creating Plugins
+## API Surface (Public Exports)
 
-### createPlugin Function
+### Core API
 
-The `createPlugin` function creates properly formatted plugins with consistent naming:
+#### `createPluginManager()`
+**Purpose:** Factory function to create a new instance of the plugin manager.
+
+#### `PluginProvider`
+**Purpose:** React context provider that makes the `pluginManager` available via `usePluginManager()`.
+
+#### `ComponentResolver`
+**Purpose:** React component for rendering plugin-provided components.
+**Props:**
+- `componentType` (string): The extension point name.
+- `defaultComponent`: Fallback component.
+- `componentProps`: Props passed to the resolved component.
+
+#### `Plugin` (Interface)
+**Purpose:** The contract that every plugin must satisfy.
+
+## Dependencies & Coupling
+
+### Dependency Graph
+
+```
+@workspace/plugin-system
+├── External Dependencies
+│   └── react (^19.1.0)
+└── Workspace Dependencies
+    └── @workspace/utils - For logging and common utilities
+```
+
+### Dependency Layer
+
+**Layer:** Foundation
+
+**Allowed to depend on:** Core Infrastructure (utils).
+
+**Rules:**
+- **CRITICAL:** This package must not depend on any higher-layer packages (query, router, ui, etc.) to avoid circular dependencies.
+
+## Usage Examples
+
+### Creating a Plugin
 
 ```typescript
-import { createPlugin } from "@workspace/plugin-system";
+import { Plugin, PluginManager } from "@workspace/plugin-system";
 
-export const myPlugin = createPlugin({
-  namespace: "my-feature",
-  type: "sidebar",
+export const MyPlugin: Plugin = {
+  name: "my-namespace:my-feature",
   version: "1.0.0",
-
-  initialize(manager) {
-    // Register components, objects, etc.
-    manager.registerComponent("sidebar:nav-items", MyNavItem, { order: 10 });
+  
+  initialize(manager: PluginManager) {
+    // Add shared functions
+    manager.addFunction("my-feature.doSomething", () => console.log("Done"));
   },
-
+  
   activate() {
-    console.log("Plugin activated");
+    // Register components to extension points
+    this.manager.registerComponent("appshell:header:top", MyHeaderIcon);
   },
-
-  deactivate() {
-    console.log("Plugin deactivated");
-  },
-});
+  
+  deactivate() {}
+};
 ```
 
-### PluginOptions Interface
-
-| Property       | Type                               | Required | Description                                                             |
-| -------------- | ---------------------------------- | -------- | ----------------------------------------------------------------------- |
-| `namespace`    | `string`                           | ✅       | Plugin namespace (e.g., 'episodes', 'series'). Must not contain colons. |
-| `type`         | `string`                           | ✅       | Plugin type (e.g., 'sidebar', 'app'). Must not contain colons.          |
-| `version`      | `string`                           | ✅       | Semantic version string                                                 |
-| `order`        | `number`                           | ❌       | Processing order, lower = first (default: 100)                          |
-| `dependencies` | `string[]`                         | ❌       | Required plugin namespaces                                              |
-| `initialize`   | `(manager: PluginManager) => void` | ❌       | Called during plugin registration                                       |
-| `activate`     | `() => void`                       | ✅       | Called after initialization                                             |
-| `deactivate`   | `() => void`                       | ✅       | Called when plugin is unregistered                                      |
-
-**Note:** `activate` and `deactivate` are **required**. They can be empty functions if no action is needed.
-
-## Plugin Manager
-
-The PluginManager provides methods for registering and retrieving plugin contributions:
-
-### Registering Components
+### Using the Component Resolver
 
 ```typescript
-initialize(manager) {
-  // Register a React component for an extension point
-  manager.registerComponent(
-    'app:header',           // Extension point
-    MyHeaderComponent,      // React component
-    {
-      priority: 10,         // Lower = higher priority
-      metadata: { name: 'My Header' }
-    }
-  );
-}
+import { ComponentResolver } from "@workspace/plugin-system";
+
+const Header = () => (
+  <header>
+    <h1>My App</h1>
+    <ComponentResolver 
+      componentType="appshell:header:top"
+      defaultComponent={() => null}
+      componentProps={{}}
+    />
+  </header>
+);
 ```
 
-### Registering Objects
+## Extension Points
 
-```typescript
-initialize(manager) {
-  // Register a configuration object
-  manager.registerObject(
-    'app:config',           // Extension point
-    'my-config',            // Unique key
-    { theme: 'dark', ... }  // Object value
-  );
-}
-```
+Common extension points used in the core application:
+- `appshell:header`: Customize the main header.
+- `appshell:footer`: Customize the main footer.
+- `appshell:sidebar:top`: Add items to the top of the sidebar.
+- `datatable:row-actions`: Add actions to table rows.
 
-### Retrieving Registrations
-
-```typescript
-// Get all components for an extension point
-const headers = manager.getComponents("app:header");
-
-// Get all objects for an extension point
-const configs = manager.getObjects("app:config");
-
-// Get a specific object
-const myConfig = manager.getObject("app:config", "my-config");
-```
-
-## React Hooks
-
-### useRegistry
-
-Access registered objects in React components:
-
-```typescript
-import { useRegistry } from '@workspace/plugin-system';
-
-function MyComponent() {
-  const { getObjects, getObject } = useRegistry();
-
-  const allConfigs = getObjects('app:config');
-  const specificConfig = getObject('app:config', 'univie-config');
-
-  return <div>{/* ... */}</div>;
-}
-```
-
-## Provider Components
-
-### PluginProvider
-
-Wrap your application to enable the plugin system:
-
-```typescript
-import { PluginProvider } from '@workspace/plugin-system';
-import { plugins } from '@workspace/plugins';
-
-function App() {
-  return (
-    <PluginProvider plugins={plugins}>
-      <YourApp />
-    </PluginProvider>
-  );
-}
-```
-
-## Package Structure
+## File Structure
 
 ```
 packages/plugin-system/
 ├── src/
-│   ├── index.ts              # Main exports
-│   ├── pluginFactory.ts      # createPlugin function
-│   ├── pluginManager.ts      # PluginManager class
-│   ├── IPlugin.ts            # Plugin interface
-│   ├── PluginProvider.tsx    # React provider
-│   ├── component-resolver.tsx # Component resolution
-│   ├── PluginComponent.tsx   # Plugin component wrapper
-│   ├── RendererContext.tsx   # Rendering context
-│   ├── types.ts              # Shared types
-│   ├── appTypes.ts           # App-specific types
-│   ├── pluginTypes.ts        # Plugin types
-│   └── plugins/
-│       ├── appRegistry/      # App registration
-│       ├── objectRegistry/   # Object registration
-│       └── renderer/         # Rendering system
+│   ├── pluginManager.ts        # Central logic
+│   ├── component-resolver.tsx  # React component for lookup
+│   ├── IPlugin.ts              # Interface definition
+│   ├── PluginProvider.tsx      # React context provider
+│   ├── plugins/                # Internal plugin implementations
+│   │   ├── appRegistry/        # App management
+│   │   └── objectRegistry/     # Data management
+│   └── index.ts                # Public API exports
 ├── package.json
-├── tsconfig.json
-└── README.md
+└── README.md                   # This file
 ```
 
-## Common Patterns
+---
 
-### Extension Point Naming
+## Contributing
 
-Extension points use a consistent naming convention:
-
-```
-[area]:[feature]
-```
-
-Examples:
-
-- `app:header` - Application header
-- `sidebar:nav-items` - Sidebar navigation items
-- `table-sidebar:tabs` - Table detail sidebar tabs
-- `upload:acl-editor` - Upload ACL editor
-
-### Priority System
-
-Lower priority numbers are processed first and take precedence:
-
-```typescript
-// High priority - processed first, wins conflicts
-manager.registerComponent("app:header", UniversityHeader, { priority: 10 });
-
-// Default priority
-manager.registerComponent("app:header", DefaultHeader, { priority: 100 });
-
-// Low priority - processed last, fallback
-manager.registerComponent("app:header", FallbackHeader, { priority: 1000 });
-```
-
-### Plugin Dependencies
-
-Specify dependencies to ensure load order:
-
-```typescript
-export const myPlugin = createPlugin({
-  namespace: "advanced-feature",
-  type: "extension",
-  version: "1.0.0",
-  dependencies: ["core", "base-feature"],
-  // ...
-});
-```
-
-## Related Documentation
-
-- [Plugin System Overview](/plugins/README.md) - Plugin architecture
-- [Adding Plugins](/docs/workflows/ADDING_PLUGINS.md) - Step-by-step guide
-- [Extension Points](/plugins/core/README.md) - Available extension points
-- [Configuration System](/docs/CONFIG_GENERATION.md) - Config merging
+1. **Keep it lean:** This is a core package. Avoid adding external dependencies.
+2. **Communication:** Use the function registry instead of direct imports for cross-plugin logic.
+3. **Naming:** Always use the `namespace:plugin-type:target` format for registration keys.
+4. **Events:** Prefer the event system for "fire and forget" notifications.
