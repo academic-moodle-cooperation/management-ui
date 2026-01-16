@@ -38,7 +38,7 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => [
       );
     },
     meta: {
-      translatedTitle: "seriesTable.heading.title",
+      translatedTitle: "series:seriesTable.heading.title",
     },
   }),
   columnHelper.accessor("created", {
@@ -61,7 +61,7 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => [
       );
     },
     meta: {
-      translatedTitle: "seriesTable.heading.created",
+      translatedTitle: "series:seriesTable.heading.created",
     },
   }),
   columnHelper.accessor("description", {
@@ -81,7 +81,7 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => [
       );
     },
     meta: {
-      translatedTitle: "seriesTable.heading.description",
+      translatedTitle: "series:seriesTable.heading.description",
     },
   }),
   columnHelper.accessor("creator", {
@@ -95,7 +95,7 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => [
       return <OverflowTooltip>{data.getValue()}</OverflowTooltip>;
     },
     meta: {
-      translatedTitle: "seriesTable.heading.creator",
+      translatedTitle: "series:seriesTable.heading.creator",
     },
   }),
   columnHelper.accessor("contributors", {
@@ -119,7 +119,7 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => [
       );
     },
     meta: {
-      translatedTitle: "seriesTable.heading.contributors",
+      translatedTitle: "series:seriesTable.heading.contributors",
     },
   }),
   columnHelper.display({
@@ -146,7 +146,7 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => [
       return <SeriesActionsCell series={data.row.original} />;
     },
     meta: {
-      translatedTitle: "seriesTable.heading.actions.title",
+      translatedTitle: "series:seriesTable.heading.actions.title",
     },
   }),
   columnHelper.accessor("events", {
@@ -181,7 +181,7 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => [
       );
     },
     meta: {
-      translatedTitle: "seriesTable.heading.episodes",
+      translatedTitle: "series:seriesTable.heading.episodes",
     },
     // TODO: Enable sorting when backend provides sortable column metadata
     // This requires backend API to indicate which columns are sortable
