@@ -104,7 +104,7 @@ export const createColumns = (
         );
       },
       meta: {
-        translatedTitle: "episodesTable.heading.series",
+        translatedTitle: "episodes:episodesTable.heading.series",
       },
     }),
     columnHelper.accessor("description", {
@@ -205,7 +205,7 @@ export const createColumns = (
         );
       },
       meta: {
-        translatedTitle: "episodesTable.heading.presenters",
+        translatedTitle: "episodes:episodesTable.heading.presenters",
       },
     }),
     columnHelper.accessor("location", {
@@ -301,7 +301,7 @@ export const createColumns = (
         );
       },
       meta: {
-        translatedTitle: "episodesTable.heading.startDate",
+        translatedTitle: "episodes:episodesTable.heading.startDate",
       },
     }),
     columnHelper.display({
@@ -328,7 +328,7 @@ export const createColumns = (
         <ActionsCell event={row.original} refetch={refetch} maxVisibleActions={4} />
       ),
       meta: {
-        translatedTitle: "episodesTable.heading.actions.title",
+        translatedTitle: "episodes:episodesTable.heading.actions.title",
       },
     }),
   ];
