@@ -45,7 +45,7 @@ export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-[150px] sidebar-portal-inside"
+        className="w-[250px] sidebar-portal-inside"
         // TODO: This is a workaround to prevent the dropdown menu from closing when the user clicks on the table
         // still needed?
         onClick={() => {
@@ -58,7 +58,7 @@ export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps
           setPreventEditClose(false);
         }}
       >
-        <DropdownMenuLabel>{t("toggleColumns")}</DropdownMenuLabel>
+        <DropdownMenuLabel>{t("common:toggleColumns")}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
