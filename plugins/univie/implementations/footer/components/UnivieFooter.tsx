@@ -52,9 +52,13 @@ const UnivieFooter: React.FC = () => {
         >
           {t("univie-footer:imprint")}
         </a>
-        {/* Mix of university and core translations */}
-        <a href="/help" className="text-xs text-white hover:underline mx-1">
-          {t("core-footer:help")} {/* Reuse core translation */}
+        <a
+          className="text-xs text-white hover:underline mx-1"
+          href={t("univie-footer:help_link")}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {t("univie-footer:help")}
         </a>
       </div>
     </div>
