@@ -245,36 +245,31 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
       {visibleActions.map(renderAction)}
 
       {hiddenActions.length > 0 && (
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="w-4 h-4">
-                  <MoreVertical />
-                  <span className="sr-only">More actions</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>More Actions</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {hiddenActions.map((action) => (
-                  <DropdownMenuItem
-                    key={action.id}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      action.onClick?.(event);
-                    }}
-                    className="gap-2 cursor-pointer"
-                  >
-                    {action.icon}
-                    <span>{action.label}</span>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </TooltipTrigger>
-          <TooltipContent>More actions</TooltipContent>
-        </Tooltip>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="w-4 h-4">
+              <MoreVertical />
+              <span className="sr-only">More actions</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>More Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {hiddenActions.map((action) => (
+              <DropdownMenuItem
+                key={action.id}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  action.onClick?.(event);
+                }}
+                className="gap-2 cursor-pointer"
+              >
+                {action.icon}
+                <span>{action.label}</span>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
     </div>
   );
