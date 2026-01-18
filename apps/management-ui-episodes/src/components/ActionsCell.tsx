@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 import { i18next } from "@workspace/i18n";
 import { PluginComponent } from "@workspace/plugin-system";
-import { useDeleteEventMutation } from "@workspace/query";
+import { useDeleteEventMutation, useAppConfig } from "@workspace/query";
 import type { EventsDataFragment } from "@workspace/query";
 import { Link } from "@workspace/router";
 import {
@@ -47,6 +47,7 @@ interface ActionsCellProps {
   event: EventsDataFragment;
   refetch: () => void;
   maxVisibleActions?: number;
+  layout?: "list" | "gallery";
 }
 
 interface ExtendedActionsCellProps extends ActionsCellProps {
@@ -56,12 +57,32 @@ interface ExtendedActionsCellProps extends ActionsCellProps {
 const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
   event,
   refetch,
-  maxVisibleActions = 4,
+  maxVisibleActions,
+  layout = "list",
   customActions = [],
 }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const deleteEvent = useDeleteEventMutation();
   const { openSidebarWithData } = useSidebarStore();
+  const { config } = useAppConfig();
+
+  // Get configuration from app config
+  const episodesTableConfig = config?.plugins?.["management-ui-episodes"]?.episodesTable as {
+    actions?: {
+      maxVisibleInList?: number;
+      maxVisibleInGallery?: number;
+      order?: string[];
+    };
+  } | undefined;
+
+  const actionsConfig = episodesTableConfig?.actions;
+
+  // Determine max visible actions based on layout and config
+  const defaultMaxVisible = layout === "gallery" 
+    ? (actionsConfig?.maxVisibleInGallery ?? 2)
+    : (actionsConfig?.maxVisibleInList ?? 3);
+  
+  const effectiveMaxVisible = maxVisibleActions ?? defaultMaxVisible;
 
   const onDelete = (id: string) => {
     deleteEvent.mutate(
@@ -138,13 +159,27 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
   // Merge default and custom actions
   const allActions = [...defaultActions, ...customActions];
 
-  // Filter actions based on conditions and sort by priority
-  const availableActions = allActions
-    .filter((action) => !action.condition || action.condition(event))
-    .sort((a, b) => (b.priority || 0) - (a.priority || 0));
+  // Filter actions based on conditions
+  const filteredActions = allActions.filter((action) => !action.condition || action.condition(event));
 
-  const visibleActions = availableActions.slice(0, maxVisibleActions);
-  const hiddenActions = availableActions.slice(maxVisibleActions);
+  // Sort by configured order if provided, otherwise by priority
+  const configOrder = actionsConfig?.order;
+  const availableActions = configOrder && configOrder.length > 0
+    ? filteredActions.sort((a, b) => {
+        const indexA = configOrder.indexOf(a.id);
+        const indexB = configOrder.indexOf(b.id);
+        // If both are in the order array, sort by position
+        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+        // If only one is in the order array, prioritize it
+        if (indexA !== -1) return -1;
+        if (indexB !== -1) return 1;
+        // Otherwise, sort by priority
+        return (b.priority || 0) - (a.priority || 0);
+      })
+    : filteredActions.sort((a, b) => (b.priority || 0) - (a.priority || 0));
+
+  const visibleActions = availableActions.slice(0, effectiveMaxVisible);
+  const hiddenActions = availableActions.slice(effectiveMaxVisible);
 
   const renderAction = (action: ActionItem) => {
     if (action.component) {
@@ -382,6 +417,7 @@ export const ActionsCell: React.FC<ActionsCellProps> = (props) => {
         event: props.event,
         refetch: props.refetch,
         maxVisibleActions: props.maxVisibleActions,
+        layout: props.layout,
       }}
     >
       <DefaultActionsCell {...props} />

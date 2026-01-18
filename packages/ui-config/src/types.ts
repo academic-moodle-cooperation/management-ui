@@ -16,16 +16,29 @@ export interface SeriesInfo {
   metadata: unknown[]; // Make this flexible to accept actual structure
 }
 
+export interface ActionsConfig {
+  maxVisible?: number; // Number of actions to show before hiding in dropdown
+  order?: string[]; // Order of action IDs to display
+}
+
 export interface SeriesTable {
   columns: unknown[]; // Make this flexible to accept actual structure
+  actions?: ActionsConfig; // Configuration for actions column
 }
 
 export interface EpisodeInfo {
   metadata: unknown[]; // Make this flexible to accept actual structure
 }
 
+export interface EpisodesActionsConfig {
+  maxVisibleInList?: number; // Number of actions to show in list view
+  maxVisibleInGallery?: number; // Number of actions to show in gallery view
+  order?: string[]; // Order of action IDs to display
+}
+
 export interface EpisodesTable {
   columns: unknown[]; // Make this flexible to accept actual structure
+  actions?: EpisodesActionsConfig; // Configuration for actions column
 }
 
 export interface UploadConfig {

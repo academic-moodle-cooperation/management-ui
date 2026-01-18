@@ -11,11 +11,12 @@ import { logger } from "@workspace/utils";
 
 interface TUWienSeriesActionsProps {
   series: SeriesDataFragment;
+  maxVisibleActions?: number;
   children: React.ReactNode;
 }
 
 // Custom TU Wien actions component that enhances the default series actions
-const TUWienSeriesActions = ({ series, children }: TUWienSeriesActionsProps) => {
+const TUWienSeriesActions = ({ series, maxVisibleActions, children }: TUWienSeriesActionsProps) => {
   const { config } = useAppConfig();
   const namespace = createOrganizationNamespace("tuwien", "series");
   const { t } = usePluginTranslation([
@@ -23,36 +24,43 @@ const TUWienSeriesActions = ({ series, children }: TUWienSeriesActionsProps) => 
     namespace, // Add TU Wien specific translations (tuwien-series)
   ]);
 
-  // Add TU Wien Tobira action to the existing actions
-  const tuwienTobiraAction = (
-    <Tooltip delayDuration={300} key="tuwien-tobira">
-      <TooltipTrigger asChild>
-        <Link
-          to={`${config["tobiraUrl"]}/!s/:${series.id}`}
-          className="flex items-center justify-end group"
-          onClick={(e: React.MouseEvent) => {
-            e.stopPropagation();
-          }}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Button variant="ghost" size="icon" className="w-4 h-4">
-            <MonitorPlay />
-            <span className="sr-only">{t("tuwien-series:tobira")}</span>
-          </Button>
-        </Link>
-      </TooltipTrigger>
-      <TooltipContent>{t("tuwien-series:tobira")}</TooltipContent>
-    </Tooltip>
-  );
+  // Define TU Wien custom actions
+  const customActions = [
+    {
+      id: "tuwien-tobira",
+      component: ({ series }: { series: SeriesDataFragment }) => (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <Link
+              to={`${config["tobiraUrl"]}/!s/:${series.id}`}
+              className="flex items-center justify-end group"
+              onClick={(e: React.MouseEvent) => {
+                e.stopPropagation();
+              }}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="ghost" size="icon" className="w-4 h-4">
+                <MonitorPlay />
+                <span className="sr-only">{t("tuwien-series:tobira")}</span>
+              </Button>
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent>{t("tuwien-series:tobira")}</TooltipContent>
+        </Tooltip>
+      ),
+      priority: 85,
+    },
+  ];
 
-  // Clone the children and inject our custom action
+  // Render enhanced actions with TU Wien customizations
   return (
-    <div className="flex items-center justify-center gap-2">
-      {/* Render existing actions */}
-      {children}
-      {/* Add TU Wien Tobira action */}
-      {tuwienTobiraAction}
+    <div className="relative">
+      {React.cloneElement(children as React.ReactElement, {
+        ...(children as React.ReactElement).props,
+        customActions,
+        maxVisibleActions,
+      })}
     </div>
   );
 };

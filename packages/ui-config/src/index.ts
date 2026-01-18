@@ -63,6 +63,10 @@ export const defaultConfig: AppConfig = {
           { events: { show: true } },
           { actions: { show: true } },
         ],
+        actions: {
+          maxVisible: 2, // Show 2 actions, hide rest in dropdown
+          order: ["edit", "upload"], // Default action order
+        },
       },
     },
     "management-ui-episodes": {
@@ -104,6 +108,11 @@ export const defaultConfig: AppConfig = {
           { startDate: { show: true } },
           { actions: { show: true } },
         ],
+        actions: {
+          maxVisibleInList: 3, // Show 3 actions in list view (was 4, now reducing as per issue)
+          maxVisibleInGallery: 2, // Show 2 actions in gallery view (was 3)
+          order: ["edit-data", "edit-video", "play", "download", "delete"], // Default action order
+        },
       },
     },
     "management-ui-upload": {

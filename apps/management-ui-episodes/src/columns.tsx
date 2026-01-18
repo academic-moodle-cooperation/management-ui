@@ -325,7 +325,7 @@ export const createColumns = (
         </span>
       ),
       cell: ({ row }: { row: Row<EventsDataFragment> }) => (
-        <ActionsCell event={row.original} refetch={refetch} maxVisibleActions={4} />
+        <ActionsCell event={row.original} refetch={refetch} layout={layout} />
       ),
       meta: {
         translatedTitle: "episodes:episodesTable.heading.actions.title",
@@ -501,7 +501,7 @@ export const createColumns = (
         </span>
       ),
       cell: ({ row }: { row: Row<EventsDataFragment> }) => (
-        <ActionsCell event={row.original} refetch={refetch} maxVisibleActions={3} />
+        <ActionsCell event={row.original} refetch={refetch} layout={layout} />
       ),
       meta: {
         translatedTitle: "episodes:episodesTable.heading.actions.title",

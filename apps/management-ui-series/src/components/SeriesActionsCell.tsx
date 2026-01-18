@@ -1,57 +1,205 @@
-import { Pencil, UploadCloud } from "lucide-react";
+import { Pencil, UploadCloud, MoreVertical } from "lucide-react";
 import React from "react";
 
 import { i18next } from "@workspace/i18n";
 import { PluginComponent } from "@workspace/plugin-system";
 import type { SeriesDataFragment } from "@workspace/query";
+import { useAppConfig } from "@workspace/query";
 import { Link } from "@workspace/router";
-import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components";
+import { 
+  Button, 
+  Tooltip, 
+  TooltipContent, 
+  TooltipTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@workspace/ui/components";
 
 import { useSidebarStore } from "../stores/sidebarStore";
 
-interface SeriesActionsCellProps {
-  series: SeriesDataFragment;
+export interface SeriesActionItem {
+  id: string;
+  icon: React.ReactNode;
+  label: string;
+  tooltip: string;
+  onClick?: (series: SeriesDataFragment) => void;
+  href?: string;
+  target?: string;
+  component?: React.ComponentType<{ series: SeriesDataFragment }>;
+  condition?: (series: SeriesDataFragment) => boolean;
+  priority?: number;
 }
 
-const DefaultSeriesActionsCell: React.FC<SeriesActionsCellProps> = ({ series }) => {
+interface SeriesActionsCellProps {
+  series: SeriesDataFragment;
+  maxVisibleActions?: number;
+}
+
+interface ExtendedSeriesActionsCellProps extends SeriesActionsCellProps {
+  customActions?: SeriesActionItem[];
+}
+
+const DefaultSeriesActionsCell: React.FC<ExtendedSeriesActionsCellProps> = ({ 
+  series, 
+  maxVisibleActions,
+  customActions = [],
+}) => {
   const { openSidebarWithData } = useSidebarStore();
+  const { config } = useAppConfig();
+
+  // Get configuration from app config
+  const seriesTableConfig = config?.plugins?.["management-ui-series"]?.seriesTable as {
+    actions?: {
+      maxVisible?: number;
+      order?: string[];
+    };
+  } | undefined;
+
+  const actionsConfig = seriesTableConfig?.actions;
+  const defaultMaxVisible = actionsConfig?.maxVisible ?? 2;
+  const effectiveMaxVisible = maxVisibleActions ?? defaultMaxVisible;
+
+  // Define default actions
+  const defaultActions: SeriesActionItem[] = [
+    {
+      id: "edit",
+      icon: <Pencil />,
+      label: i18next.t("series:seriesTable.action.editData"),
+      tooltip: i18next.t("series:seriesTable.action.editData"),
+      onClick: (series) => openSidebarWithData(series.id, true, {}),
+      priority: 100,
+    },
+    {
+      id: "upload",
+      icon: <UploadCloud />,
+      label: "Upload",
+      tooltip: "Upload",
+      href: `${import.meta.env.BASE_URL}/upload/${series.id}`,
+      priority: 90,
+    },
+  ];
+
+  // Merge default and custom actions
+  const allActions = [...defaultActions, ...customActions];
+
+  // Filter actions based on conditions
+  const filteredActions = allActions.filter((action) => !action.condition || action.condition(series));
+
+  // Sort by configured order if provided, otherwise by priority
+  const configOrder = actionsConfig?.order;
+  const availableActions = configOrder && configOrder.length > 0
+    ? filteredActions.sort((a, b) => {
+        const indexA = configOrder.indexOf(a.id);
+        const indexB = configOrder.indexOf(b.id);
+        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+        if (indexA !== -1) return -1;
+        if (indexB !== -1) return 1;
+        return (b.priority || 0) - (a.priority || 0);
+      })
+    : filteredActions.sort((a, b) => (b.priority || 0) - (a.priority || 0));
+
+  const visibleActions = availableActions.slice(0, effectiveMaxVisible);
+  const hiddenActions = availableActions.slice(effectiveMaxVisible);
+
+  const renderAction = (action: SeriesActionItem) => {
+    if (action.component) {
+      return <action.component key={action.id} series={series} />;
+    }
+
+    const button = (
+      <Button variant="ghost" size="icon" className="w-4 h-4">
+        {action.icon}
+        <span className="sr-only">{action.label}</span>
+      </Button>
+    );
+
+    const actionElement = action.href ? (
+      action.target ? (
+        <a
+          href={action.href}
+          target={action.target}
+          {...(action.target === "_blank" && { rel: "noopener noreferrer" })}
+          className="flex items-center justify-end group"
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation();
+            action.onClick?.(series);
+          }}
+        >
+          {button}
+        </a>
+      ) : (
+        <Link
+          to={action.href}
+          className="flex items-center justify-end group"
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation();
+            action.onClick?.(series);
+          }}
+        >
+          {button}
+        </Link>
+      )
+    ) : (
+      <div
+        onClick={(e: React.MouseEvent) => {
+          e.stopPropagation();
+          action.onClick?.(series);
+        }}
+      >
+        {button}
+      </div>
+    );
+
+    return (
+      <Tooltip key={action.id} delayDuration={300}>
+        <TooltipTrigger className="flex" asChild>
+          {actionElement}
+        </TooltipTrigger>
+        <TooltipContent>{action.tooltip}</TooltipContent>
+      </Tooltip>
+    );
+  };
 
   return (
     <div className="flex items-center justify-center gap-2">
-      <Tooltip delayDuration={300}>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="w-4 h-4"
-            onClick={(e) => {
-              e.stopPropagation();
-              openSidebarWithData(series.id, true, {});
-            }}
-          >
-            <Pencil />
-            <span className="sr-only">{i18next.t("series:seriesTable.action.editData")}</span>
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>{i18next.t("series:seriesTable.action.editData")}</TooltipContent>
-      </Tooltip>
-      <Tooltip delayDuration={300}>
-        <TooltipTrigger asChild>
-          <Link
-            to={`${import.meta.env.BASE_URL}/upload/${series.id}`}
-            className="flex items-center justify-end group"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <Button variant="ghost" size="icon" className="w-4 h-4">
-              <UploadCloud />
-              <span className="sr-only">Upload</span>
-            </Button>
-          </Link>
-        </TooltipTrigger>
-        <TooltipContent>Upload</TooltipContent>
-      </Tooltip>
+      {visibleActions.map(renderAction)}
+
+      {hiddenActions.length > 0 && (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="w-4 h-4">
+                  <MoreVertical />
+                  <span className="sr-only">More actions</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>More Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {hiddenActions.map((action) => (
+                  <DropdownMenuItem
+                    key={action.id}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      action.onClick?.(series);
+                    }}
+                    className="gap-2 cursor-pointer"
+                  >
+                    {action.icon}
+                    <span>{action.label}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </TooltipTrigger>
+          <TooltipContent>More actions</TooltipContent>
+        </Tooltip>
+      )}
     </div>
   );
 };
@@ -63,6 +211,7 @@ export const SeriesActionsCell: React.FC<SeriesActionsCellProps> = (props) => {
       componentType="series:table:actions"
       pluginProps={{
         series: props.series,
+        maxVisibleActions: props.maxVisibleActions,
       }}
     >
       <DefaultSeriesActionsCell {...props} />
