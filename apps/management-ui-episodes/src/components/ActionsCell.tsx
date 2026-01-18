@@ -85,22 +85,6 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
     action.onClick?.(event);
   };
 
-  const onDelete = (id: string) => {
-    deleteEvent.mutate(
-      { eventId: id },
-      {
-        onSuccess: () => {
-          toast.success(i18next.t("episodes:episodesTable.notification.deleteSuccess"));
-          refetch();
-        },
-        onError: () => {
-          toast.error(i18next.t("episodes:episodesTable.notification.deleteError"));
-        },
-      },
-    );
-    setDialogOpen(false);
-  };
-
   // Define default actions
   const defaultActions: ActionItem[] = [
     {
