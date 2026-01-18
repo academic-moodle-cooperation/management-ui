@@ -16,6 +16,7 @@ interface TUWienSeriesActionsProps {
 }
 
 // Custom TU Wien actions component that enhances the default series actions
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TUWienSeriesActions = ({ series, maxVisibleActions, children }: TUWienSeriesActionsProps) => {
   const { config } = useAppConfig();
   const namespace = createOrganizationNamespace("tuwien", "series");

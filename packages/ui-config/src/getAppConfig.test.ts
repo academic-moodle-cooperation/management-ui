@@ -175,4 +175,73 @@ describe("getAppConfig", () => {
     expect(config.app.appName).toBe(defaultConfig.app.appName);
     expect(config.app.faviconUrl).toBe(defaultConfig.app.faviconUrl);
   });
+
+  it("should include default actions configuration for episodes table", () => {
+    const config = getAppConfig();
+
+    const episodesTable = config.plugins["management-ui-episodes"]?.episodesTable as {
+      actions?: {
+        maxVisibleInList?: number;
+        maxVisibleInGallery?: number;
+        order?: string[];
+      };
+    } | undefined;
+
+    expect(episodesTable?.actions).toBeDefined();
+    expect(episodesTable?.actions?.maxVisibleInList).toBe(3);
+    expect(episodesTable?.actions?.maxVisibleInGallery).toBe(2);
+    expect(episodesTable?.actions?.order).toEqual([
+      "edit-data",
+      "edit-video",
+      "play",
+      "download",
+      "delete",
+    ]);
+  });
+
+  it("should include default actions configuration for series table", () => {
+    const config = getAppConfig();
+
+    const seriesTable = config.plugins["management-ui-series"]?.seriesTable as {
+      actions?: {
+        maxVisible?: number;
+        order?: string[];
+      };
+    } | undefined;
+
+    expect(seriesTable?.actions).toBeDefined();
+    expect(seriesTable?.actions?.maxVisible).toBe(2);
+    expect(seriesTable?.actions?.order).toEqual(["edit", "upload"]);
+  });
+
+  it("should allow overriding actions configuration", () => {
+    const instanceConfig: Partial<AppConfig> = {
+      plugins: {
+        "management-ui-episodes": {
+          episodesTable: {
+            columns: [],
+            actions: {
+              maxVisibleInList: 5,
+              maxVisibleInGallery: 3,
+              order: ["delete", "edit-data", "download"],
+            },
+          },
+        },
+      },
+    };
+
+    const config = getAppConfig(instanceConfig);
+
+    const episodesTable = config.plugins["management-ui-episodes"]?.episodesTable as {
+      actions?: {
+        maxVisibleInList?: number;
+        maxVisibleInGallery?: number;
+        order?: string[];
+      };
+    } | undefined;
+
+    expect(episodesTable?.actions?.maxVisibleInList).toBe(5);
+    expect(episodesTable?.actions?.maxVisibleInGallery).toBe(3);
+    expect(episodesTable?.actions?.order).toEqual(["delete", "edit-data", "download"]);
+  });
 });
