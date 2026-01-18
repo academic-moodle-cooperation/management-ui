@@ -219,7 +219,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
       };
 
       const linkContent = (
-        <DropdownMenuItem className="gap-2 cursor-pointer" onClick={(e) => e.stopPropagation()}>
+        <DropdownMenuItem className="gap-2 cursor-pointer">
           {action.icon}
           <span>{action.label}</span>
         </DropdownMenuItem>
