@@ -79,6 +79,28 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
     setDialogOpen(false);
   };
 
+  // Shared click handler for actions
+  const createActionClickHandler = (action: ActionItem) => (e: React.MouseEvent) => {
+    e.stopPropagation();
+    action.onClick?.(event);
+  };
+
+  const onDelete = (id: string) => {
+    deleteEvent.mutate(
+      { eventId: id },
+      {
+        onSuccess: () => {
+          toast.success(i18next.t("episodes:episodesTable.notification.deleteSuccess"));
+          refetch();
+        },
+        onError: () => {
+          toast.error(i18next.t("episodes:episodesTable.notification.deleteError"));
+        },
+      },
+    );
+    setDialogOpen(false);
+  };
+
   // Define default actions
   const defaultActions: ActionItem[] = [
     {
@@ -165,10 +187,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
           target={action.target}
           {...(action.target === "_blank" && { rel: "noopener noreferrer" })}
           className="flex items-center justify-end group"
-          onClick={(e: React.MouseEvent) => {
-            e.stopPropagation();
-            action.onClick?.(event);
-          }}
+          onClick={createActionClickHandler(action)}
         >
           {button}
         </a>
@@ -176,21 +195,13 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
         <Link
           to={action.href}
           className="flex items-center justify-end group"
-          onClick={(e: React.MouseEvent) => {
-            e.stopPropagation();
-            action.onClick?.(event);
-          }}
+          onClick={createActionClickHandler(action)}
         >
           {button}
         </Link>
       )
     ) : (
-      <div
-        onClick={(e: React.MouseEvent) => {
-          e.stopPropagation();
-          action.onClick?.(event);
-        }}
-      >
+      <div onClick={createActionClickHandler(action)}>
         {button}
       </div>
     );
@@ -213,11 +224,6 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
 
     // For actions with href, render as link
     if (action.href) {
-      const handleLinkClick = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        action.onClick?.(event);
-      };
-
       const linkContent = (
         <DropdownMenuItem className="gap-2 cursor-pointer">
           {action.icon}
@@ -231,12 +237,12 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
           href={action.href}
           target={action.target}
           {...(action.target === "_blank" && { rel: "noopener noreferrer" })}
-          onClick={handleLinkClick}
+          onClick={createActionClickHandler(action)}
         >
           {linkContent}
         </a>
       ) : (
-        <Link key={action.id} to={action.href} onClick={handleLinkClick}>
+        <Link key={action.id} to={action.href} onClick={createActionClickHandler(action)}>
           {linkContent}
         </Link>
       );
@@ -244,14 +250,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
 
     // For actions with onClick only
     return (
-      <DropdownMenuItem
-        key={action.id}
-        onClick={(e) => {
-          e.stopPropagation();
-          action.onClick?.(event);
-        }}
-        className="gap-2 cursor-pointer"
-      >
+      <DropdownMenuItem key={action.id} onClick={createActionClickHandler(action)} className="gap-2 cursor-pointer">
         {action.icon}
         <span>{action.label}</span>
       </DropdownMenuItem>
