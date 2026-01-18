@@ -213,12 +213,13 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
 
     // For actions with href, render as link
     if (action.href) {
+      const handleLinkClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        action.onClick?.(event);
+      };
+
       const linkContent = (
-        <DropdownMenuItem
-          key={action.id}
-          className="gap-2 cursor-pointer"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <DropdownMenuItem className="gap-2 cursor-pointer" onClick={(e) => e.stopPropagation()}>
           {action.icon}
           <span>{action.label}</span>
         </DropdownMenuItem>
@@ -230,22 +231,12 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
           href={action.href}
           target={action.target}
           {...(action.target === "_blank" && { rel: "noopener noreferrer" })}
-          onClick={(e: React.MouseEvent) => {
-            e.stopPropagation();
-            action.onClick?.(event);
-          }}
+          onClick={handleLinkClick}
         >
           {linkContent}
         </a>
       ) : (
-        <Link
-          key={action.id}
-          to={action.href}
-          onClick={(e: React.MouseEvent) => {
-            e.stopPropagation();
-            action.onClick?.(event);
-          }}
-        >
+        <Link key={action.id} to={action.href} onClick={handleLinkClick}>
           {linkContent}
         </Link>
       );
