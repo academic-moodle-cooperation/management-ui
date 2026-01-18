@@ -159,18 +159,31 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
     );
 
     const actionElement = action.href ? (
-      <Link
-        to={action.href}
-        {...(action.target !== undefined && { target: action.target })}
-        {...(action.target === "_blank" && { rel: "noopener noreferrer" })}
-        className="flex items-center justify-end group"
-        onClick={(e: React.MouseEvent) => {
-          e.stopPropagation();
-          action.onClick?.(event);
-        }}
-      >
-        {button}
-      </Link>
+      action.target ? (
+        <a
+          href={action.href}
+          target={action.target}
+          {...(action.target === "_blank" && { rel: "noopener noreferrer" })}
+          className="flex items-center justify-end group"
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation();
+            action.onClick?.(event);
+          }}
+        >
+          {button}
+        </a>
+      ) : (
+        <Link
+          to={action.href}
+          className="flex items-center justify-end group"
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation();
+            action.onClick?.(event);
+          }}
+        >
+          {button}
+        </Link>
+      )
     ) : (
       <div
         onClick={(e: React.MouseEvent) => {
