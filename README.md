@@ -470,7 +470,23 @@ The system supports environment-specific configuration:
 
 - `.env.development` - Development settings
 - `.env.production` - Production settings
+- `.env.example` - Example configuration with all available options
 - `turbo.json` - Build pipeline configuration
+
+#### Opencast Thumbnail Configuration
+
+If your Opencast instance uses different tags for preview images, you can configure them via environment variables:
+
+```bash
+# The channel ID to retrieve thumbnail images from (default: engage-player)
+OPENCAST_THUMBNAIL_CHANNEL_ID=engage-player
+
+# The MediaPackage element flavor for thumbnail images (default: presenter/search+preview)
+# Common alternatives: presenter/thumbnail, presenter/player+preview
+OPENCAST_THUMBNAIL_FLAVOR=presenter/search+preview
+```
+
+These settings control which preview images are displayed in the gallery view of the episodes table.
 
 ## 📚 Documentation
 

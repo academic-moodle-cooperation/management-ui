@@ -4,8 +4,8 @@
   "org.opencastproject.mui": {
     "trash.workflow.id": "trash",
     "republish.workflow.id": "republish-metadata",
-    "thumbnail.channel.id": "engage-player",
-    "thumbnail.flavor": "presenter/search+preview",
+    "thumbnail.channel.id": "$[env:OPENCAST_THUMBNAIL_CHANNEL_ID;default=engage-player]",
+    "thumbnail.flavor": "$[env:OPENCAST_THUMBNAIL_FLAVOR;default=presenter/search+preview]",
     "publication.channel.id": "engage-player",
     "managed.acl.order": ["public", "authenticated", "private"]
   }
