@@ -106,7 +106,7 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
     if (!eventStatus) return true;
 
     const status = eventStatus.split(".").pop()?.toUpperCase();
-    return !(status === "PROCESSING" || status === "PENDING");
+    return !(status === "PROCESSING" || status === "PENDING" || status === "PROCESSING_FAILURE");
   }, [currentEpisode]);
 
   const onSave = () => {
