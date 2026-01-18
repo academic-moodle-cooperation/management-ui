@@ -370,6 +370,30 @@ apps/management-ui-episodes/
 └── README.md
 ```
 
+## 🔧 Configuration
+
+### Opencast Thumbnail Configuration
+
+If your Opencast instance uses different tags for preview images in the gallery view, configure them via environment variables:
+
+```bash
+# The channel ID to retrieve thumbnail images from (default: engage-player)
+OPENCAST_THUMBNAIL_CHANNEL_ID=engage-player
+
+# The MediaPackage element flavor for thumbnail images (default: presenter/search+preview)
+# Common alternatives: presenter/thumbnail, presenter/player+preview
+OPENCAST_THUMBNAIL_FLAVOR=presenter/search+preview
+```
+
+**Troubleshooting Gallery View Thumbnails:**
+
+If thumbnails are not appearing in the gallery view:
+1. Check what flavor/tag your Opencast instance uses for preview images
+2. Set the appropriate environment variable in your deployment
+3. Restart the backend service to apply the changes
+
+The gallery view displays thumbnails from the `muiEventInfo.thumbnailUrl` field, which is populated from Opencast publications using the configured channel and flavor.
+
 ## 🤝 Contributing
 
 ### Development Guidelines
