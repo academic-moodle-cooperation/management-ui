@@ -344,8 +344,6 @@ const DownloadDropdown: React.FC<{ event: EventsDataFragment }> = ({ event }) =>
               <a
                 key={index}
                 href={track?.uri || ""}
-                target="_blank"
-                rel="noreferrer"
                 download={event.title}
                 onClick={(e: React.MouseEvent) => e.stopPropagation()}
               >
