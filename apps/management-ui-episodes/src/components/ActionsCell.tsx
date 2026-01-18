@@ -205,6 +205,68 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
     );
   };
 
+  const renderDropdownAction = (action: ActionItem) => {
+    // For actions with custom components, render the component directly
+    if (action.component) {
+      return <action.component key={action.id} event={event} />;
+    }
+
+    // For actions with href, render as link
+    if (action.href) {
+      const linkContent = (
+        <DropdownMenuItem
+          key={action.id}
+          className="gap-2 cursor-pointer"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {action.icon}
+          <span>{action.label}</span>
+        </DropdownMenuItem>
+      );
+
+      return action.target ? (
+        <a
+          key={action.id}
+          href={action.href}
+          target={action.target}
+          {...(action.target === "_blank" && { rel: "noopener noreferrer" })}
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation();
+            action.onClick?.(event);
+          }}
+        >
+          {linkContent}
+        </a>
+      ) : (
+        <Link
+          key={action.id}
+          to={action.href}
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation();
+            action.onClick?.(event);
+          }}
+        >
+          {linkContent}
+        </Link>
+      );
+    }
+
+    // For actions with onClick only
+    return (
+      <DropdownMenuItem
+        key={action.id}
+        onClick={(e) => {
+          e.stopPropagation();
+          action.onClick?.(event);
+        }}
+        className="gap-2 cursor-pointer"
+      >
+        {action.icon}
+        <span>{action.label}</span>
+      </DropdownMenuItem>
+    );
+  };
+
   return (
     <div className="flex items-center justify-center gap-2 p-3">
       {visibleActions.map(renderAction)}
@@ -222,19 +284,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
               <DropdownMenuContent>
                 <DropdownMenuLabel>More Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {hiddenActions.map((action) => (
-                  <DropdownMenuItem
-                    key={action.id}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      action.onClick?.(event);
-                    }}
-                    className="gap-2 cursor-pointer"
-                  >
-                    {action.icon}
-                    <span>{action.label}</span>
-                  </DropdownMenuItem>
-                ))}
+                {hiddenActions.map(renderDropdownAction)}
               </DropdownMenuContent>
             </DropdownMenu>
           </TooltipTrigger>
