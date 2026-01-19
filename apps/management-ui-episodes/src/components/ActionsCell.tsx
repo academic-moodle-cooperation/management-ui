@@ -25,6 +25,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
   toast,
 } from "@workspace/ui/components";
 
@@ -201,7 +204,76 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
   };
 
   const renderDropdownAction = (action: ActionItem) => {
-    // For actions with custom components, render the component directly
+    // Handle delete action specially - render as menu item that opens dialog
+    if (action.id === "delete") {
+      return (
+        <DropdownMenuItem
+          key={action.id}
+          onClick={(e) => {
+            e.stopPropagation();
+            setDialogOpen(true);
+          }}
+          className="gap-2 cursor-pointer"
+        >
+          {action.icon}
+          <span>{action.label}</span>
+        </DropdownMenuItem>
+      );
+    }
+
+    // Handle download action specially - render as submenu
+    if (action.id === "download" && event.publications?.[0]?.tracks) {
+      return (
+        <DropdownMenuSub key={action.id}>
+          <DropdownMenuSubTrigger className="gap-2 cursor-pointer">
+            {action.icon}
+            <span>{action.label}</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            {event.publications[0].tracks
+              .sort((t1, t2) => {
+                const height1 = t1?.height ?? 0;
+                const height2 = t2?.height ?? 0;
+                return height1 > height2 ? -1 : height1 < height2 ? 1 : 0;
+              })
+              .map((track, index) => {
+                if ([".m3u8", ".mpd", ".f4m", ".smil"].some((el) => track?.uri?.includes(el)))
+                  return null;
+
+                return (
+                  <a
+                    key={index}
+                    href={track?.uri || ""}
+                    target="_blank"
+                    rel="noreferrer"
+                    download={event.title}
+                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                  >
+                    <DropdownMenuItem
+                      className="gap-2 cursor-pointer"
+                      onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                    >
+                      <ArrowDownToLine className="w-4 h-4" />
+                      <span>
+                        {track?.flavor === "presentation/delivery" &&
+                          i18next.t("episodes:episodesTable.action.flavor.presentation")}
+                        {track?.flavor === "presenter/delivery" &&
+                          i18next.t("episodes:episodesTable.action.flavor.presenter")}
+                        {track?.flavor === "captions/delivery" &&
+                          i18next.t("episodes:episodesTable.action.flavor.subtitles")}
+                        {track?.width && ` (${track?.width} x ${track?.height})`}
+                        {track?.mimeType?.includes("audio") && ` (Audio)`}
+                      </span>
+                    </DropdownMenuItem>
+                  </a>
+                );
+              })}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+      );
+    }
+
+    // For other actions with custom components, render the component directly
     if (action.component) {
       return <action.component key={action.id} event={event} />;
     }
