@@ -9,6 +9,7 @@ export const config = {
       "episodes",
       "series",
       "upload",
+      "admin", // Enable admin namespace for marketplace plugin
       {
         univie: {
           types: ["config", "app", "footer", "landing-page", "sidebar", "navigation"],
