@@ -223,6 +223,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
 
     // Handle download action specially - render as submenu
     if (action.id === "download" && event.publications?.[0]?.tracks) {
+      const tracks = event.publications[0].tracks;
       return (
         <DropdownMenuSub key={action.id}>
           <DropdownMenuSubTrigger className="gap-2 cursor-pointer">
@@ -230,7 +231,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
             <span>{action.label}</span>
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
-            {event.publications[0].tracks
+            {tracks
               .sort((t1, t2) => {
                 const height1 = t1?.height ?? 0;
                 const height2 = t2?.height ?? 0;
@@ -249,10 +250,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
                     download={event.title}
                     onClick={(e: React.MouseEvent) => e.stopPropagation()}
                   >
-                    <DropdownMenuItem
-                      className="gap-2 cursor-pointer"
-                      onClick={(e: React.MouseEvent) => e.stopPropagation()}
-                    >
+                    <DropdownMenuItem className="gap-2 cursor-pointer">
                       <ArrowDownToLine className="w-4 h-4" />
                       <span>
                         {track?.flavor === "presentation/delivery" &&
