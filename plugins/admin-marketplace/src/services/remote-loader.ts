@@ -12,11 +12,26 @@ const STORAGE_KEY = "installed_remote_plugins";
 export const RemoteLoader = {
   /**
    * Dynamically import and register a remote plugin module
+   * 
+   * SECURITY NOTE: This function loads and executes arbitrary JavaScript code from remote URLs.
+   * In a production environment, you should:
+   * - Implement URL allowlisting to only allow trusted sources
+   * - Use HTTPS-only URLs
+   * - Implement code signing/hash verification
+   * - Consider implementing a plugin sandboxing mechanism
+   * - Add authentication/authorization checks
+   * 
    * @param url - URL to the remote ES module
    * @param manager - PluginManager instance to register the plugin with
    */
   async loadAndRegister(url: string, manager: PluginManager): Promise<void> {
     try {
+      // Basic URL validation - check for valid protocol
+      const parsedUrl = new URL(url);
+      if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+        throw new Error(`Invalid protocol: ${parsedUrl.protocol}. Only http: and https: are allowed.`);
+      }
+
       const module = await import(/* @vite-ignore */ url);
       const remotePlugin: Plugin = module.default;
       
@@ -57,8 +72,15 @@ export const RemoteLoader = {
    * @returns Array of plugin URLs
    */
   getInstalledUrls(): string[] {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+    try {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error("Failed to parse installed plugins from localStorage:", error);
+      // Clear corrupted data and return empty array
+      localStorage.removeItem(STORAGE_KEY);
+      return [];
+    }
   },
 
   /**

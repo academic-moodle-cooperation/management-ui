@@ -58,10 +58,17 @@ export const adminMarketplacePlugin = createPlugin({
       console.log(
         `Loading ${savedUrls.length} installed plugin(s) from localStorage...`
       );
-      savedUrls.forEach((url) => {
-        RemoteLoader.loadAndRegister(url, manager).catch((error) => {
-          console.error(`Failed to load installed plugin from ${url}:`, error);
-        });
+      
+      // Load plugins concurrently while handling individual failures
+      const loadResults = await Promise.allSettled(
+        savedUrls.map((url) => RemoteLoader.loadAndRegister(url, manager))
+      );
+
+      // Log any failures
+      loadResults.forEach((result, index) => {
+        if (result.status === "rejected") {
+          console.error(`Failed to load installed plugin from ${savedUrls[index]}:`, result.reason);
+        }
       });
     }
 

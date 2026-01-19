@@ -14,41 +14,8 @@ import {
   Badge,
 } from "@workspace/ui/components";
 
+import { AVAILABLE_PLUGINS } from "../services/plugin-registry";
 import { RemoteLoader } from "../services/remote-loader";
-
-/**
- * Available plugin registry
- * In a real implementation, this would be fetched from a remote registry API
- */
-const AVAILABLE_PLUGINS = [
-  {
-    id: "example-plugin-1",
-    name: "Example Analytics Plugin",
-    description: "Adds analytics dashboard and reporting features",
-    version: "1.0.0",
-    author: "Example Team",
-    url: "https://example.com/plugins/analytics.js",
-    category: "Analytics",
-  },
-  {
-    id: "example-plugin-2",
-    name: "Custom Theme Plugin",
-    description: "Provides additional theme customization options",
-    version: "1.2.0",
-    author: "Theme Team",
-    url: "https://example.com/plugins/theme.js",
-    category: "Theming",
-  },
-  {
-    id: "example-plugin-3",
-    name: "Export Tools Plugin",
-    description: "Advanced export functionality for episodes and series",
-    version: "2.0.0",
-    author: "Tools Team",
-    url: "https://example.com/plugins/export-tools.js",
-    category: "Utilities",
-  },
-];
 
 export interface MarketplaceDashboardProps {
   manager: PluginManager;
