@@ -26,7 +26,8 @@ export const DebouncedInput = ({
     if (!isTypingRef.current && value !== initialValue) {
       setValue(initialValue);
     }
-  }, [initialValue, value]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialValue]); // Intentionally excluding value to avoid infinite loop
 
   useEffect(() => {
     const timeout = setTimeout(() => {
