@@ -21,16 +21,18 @@ export const DebouncedInput = ({
   const isTypingRef = useRef(false);
 
   useEffect(() => {
-    // Only sync external changes, not changes that originated from user typing
-    if (!isTypingRef.current) {
+    // Only sync external changes when user is not actively typing
+    // This prevents the input from resetting while user is typing on tablets
+    if (!isTypingRef.current && value !== initialValue) {
       setValue(initialValue);
     }
-    isTypingRef.current = false;
-  }, [initialValue]);
+  }, [initialValue, value]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       onChange(value);
+      // After debounce completes, mark that we're no longer typing
+      isTypingRef.current = false;
     }, debounce);
 
     return () => clearTimeout(timeout);
