@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { PluginManager } from "@workspace/plugin-system";
+
+import type { PluginManager } from "@workspace/plugin-system";
 import {
   Button,
   Card,
@@ -11,7 +12,8 @@ import {
   Input,
   Label,
   Badge,
-} from "@workspace/ui";
+} from "@workspace/ui/components";
+
 import { RemoteLoader } from "../services/remote-loader";
 
 /**
@@ -160,7 +162,7 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
               type="url"
               placeholder="http://localhost:3001/plugin.js"
               value={customUrl}
-              onChange={(e) => setCustomUrl(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomUrl(e.target.value)}
             />
           </div>
         </CardContent>

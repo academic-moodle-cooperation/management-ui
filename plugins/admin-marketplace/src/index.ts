@@ -1,7 +1,9 @@
-import { createPlugin } from "@workspace/plugin-system";
-import { MarketplaceDashboard } from "./views/MarketplaceDashboard";
-import { RemoteLoader } from "./services/remote-loader";
 import { ShoppingBag } from "lucide-react";
+
+import { createPlugin } from "@workspace/plugin-system";
+
+import { RemoteLoader } from "./services/remote-loader";
+import { MarketplaceDashboard } from "./views/MarketplaceDashboard";
 
 /**
  * Admin Marketplace Plugin

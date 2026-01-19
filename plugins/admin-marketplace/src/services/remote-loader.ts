@@ -1,4 +1,4 @@
-import { PluginManager, Plugin } from "@workspace/plugin-system";
+import type { PluginManager, Plugin } from "@workspace/plugin-system";
 
 const STORAGE_KEY = "installed_remote_plugins";
 
