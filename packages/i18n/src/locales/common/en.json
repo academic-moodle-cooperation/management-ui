@@ -78,8 +78,5 @@
   "noData": "No data available",
   "noOptionSelected": "No option selected",
   "noEntriesHeading": "No results found",
-  "noEntriesText": "Your search returned no results. Please try adjusting your query or searching for different keywords.",
-  "moduleError": "Module Error",
-  "errorLoadingModule": "Error loading module",
-  "pleaseRefreshPage": "Please try refreshing the page."
+  "noEntriesText": "Your search returned no results. Please try adjusting your query or searching for different keywords."
 }

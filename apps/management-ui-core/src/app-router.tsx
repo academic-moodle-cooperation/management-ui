@@ -140,7 +140,7 @@ export const createDynamicRouter = async () => {
       },
       component: () => (
         <ProtectedRoute loadingComponent={AppLoader}>
-          <ErrorBoundary fallback={<ModuleErrorFallback />}>
+          <ErrorBoundary fallback={<ModuleErrorFallback name={mod.componentName} />}>
             <Suspense fallback={<AppLoader />}>
               <DynamicComponent />
             </Suspense>
@@ -175,7 +175,7 @@ export const createDynamicRouter = async () => {
       path: "$routeSubPath",
       component: () => (
         <ProtectedRoute loadingComponent={AppLoader}>
-          <ErrorBoundary fallback={<ModuleErrorFallback />}>
+          <ErrorBoundary fallback={<ModuleErrorFallback name={mod.componentName} />}>
             <Suspense fallback={<AppLoader />}>
               <DynamicComponent />
             </Suspense>

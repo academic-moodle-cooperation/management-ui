@@ -59,8 +59,6 @@ export function DataTableToolbar<TData>({
           className="h-8 w-[150px] lg:w-[250px]"
           onChange={(value) => {
             setQueryFilter(value ? value.toString() : undefined);
-          }}
-          onChangeCapture={() => {
             setPageIndex(0);
           }}
           type="text"
