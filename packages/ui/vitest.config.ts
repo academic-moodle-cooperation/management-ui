@@ -13,6 +13,9 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      "@workspace/ui/lib/utils": path.resolve(__dirname, "./src/lib/utils.ts"),
+      "@workspace/ui/lib": path.resolve(__dirname, "./src/lib"),
+      "@workspace/ui": path.resolve(__dirname, "./src"),
       "@workspace": path.resolve(__dirname, "../../packages"),
     },
   },
