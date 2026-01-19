@@ -66,9 +66,11 @@ All `eslint-disable` comments are **justified and necessary**. They are used for
 
 **Files:**
 
-- `packages/ui/src/components/debounced-input/DebouncedInput.tsx` (1 instance)
+- `packages/ui/src/components/debounced-input/DebouncedInput.tsx` (2 instances)
 
-**Reason:** Intentional dependency exclusion for debounce behavior. The effect should not re-run when the debounced value changes.
+**Reason:** Intentional dependency exclusion for debounce behavior. 
+- First instance (line 30): Excludes `value` to avoid infinite loop when syncing external changes
+- Second instance (line 41): Excludes `onChange` to prevent re-running the effect when the callback changes, which is a common pattern for debounced inputs
 
 **Status:** ✅ **Justified** - Intentional hook behavior
 
