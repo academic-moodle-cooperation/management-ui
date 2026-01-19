@@ -22,6 +22,7 @@ export const config = {
             "sidebar",
             "table-sidebar",
             "navigation",
+            "upload-acl-editor",
           ],
         },
         univie: {
