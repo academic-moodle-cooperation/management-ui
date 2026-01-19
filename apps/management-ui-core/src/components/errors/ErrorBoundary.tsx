@@ -47,8 +47,7 @@ export const ModuleErrorFallback: React.FC<{ name?: string }> = ({ name }) => {
     <div className="flex items-center justify-center min-h-64 bg-red-50 border border-red-200 rounded-lg">
       <div className="text-center text-red-700">
         <h3 className="text-lg font-semibold mb-2">{t("common:moduleError")}</h3>
-        {name && <p>{t("common:errorLoadingModule")}: {name}</p>}
-        {!name && <p>{t("common:errorLoadingModule")}</p>}
+        <p>{name ? `${t("common:errorLoadingModule")}: ${name}` : t("common:errorLoadingModule")}</p>
         <p className="text-sm mt-2">{t("common:pleaseRefreshPage")}</p>
       </div>
     </div>
