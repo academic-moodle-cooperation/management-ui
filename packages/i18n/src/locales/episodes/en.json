@@ -102,5 +102,5 @@
     "RECORDING": "Recording"
   },
   "noVideos": "There are currently no videos available.",
-  "notEditable": "This video is currently being processed and cannot be edited."
+  "notEditable": "This video cannot be edited at the moment."
 }
