@@ -30,7 +30,7 @@ export const adminMarketplacePlugin = createPlugin({
   type: "app",
   version: "1.0.0",
 
-  initialize(manager) {
+  async initialize(manager) {
     console.log("Admin Marketplace plugin initializing...");
 
     // Register the marketplace app
