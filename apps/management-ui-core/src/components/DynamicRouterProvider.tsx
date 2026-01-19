@@ -125,7 +125,7 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
         },
         component: () => (
           <ProtectedRoute loadingComponent={AppLoader}>
-            <ErrorBoundary fallback={<ModuleErrorFallback name={appDef.name} />}>
+            <ErrorBoundary fallback={<ModuleErrorFallback />}>
               <Suspense fallback={<AppLoader />}>
                 <PluginAppComponent />
               </Suspense>
@@ -154,7 +154,7 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
         path: "$routeSubPath",
         component: () => (
           <ProtectedRoute loadingComponent={AppLoader}>
-            <ErrorBoundary fallback={<ModuleErrorFallback name={appDef.name} />}>
+            <ErrorBoundary fallback={<ModuleErrorFallback />}>
               <Suspense fallback={<AppLoader />}>
                 <PluginAppComponent />
               </Suspense>
@@ -205,7 +205,7 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
         },
         component: () => (
           <ProtectedRoute loadingComponent={AppLoader}>
-            <ErrorBoundary fallback={<ModuleErrorFallback name={app.componentName} />}>
+            <ErrorBoundary fallback={<ModuleErrorFallback />}>
               <Suspense fallback={<AppLoader />}>
                 <DynamicComponent />
               </Suspense>
@@ -240,7 +240,7 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
         path: "$routeSubPath",
         component: () => (
           <ProtectedRoute loadingComponent={AppLoader}>
-            <ErrorBoundary fallback={<ModuleErrorFallback name={app.componentName} />}>
+            <ErrorBoundary fallback={<ModuleErrorFallback />}>
               <Suspense fallback={<AppLoader />}>
                 <DynamicComponent />
               </Suspense>

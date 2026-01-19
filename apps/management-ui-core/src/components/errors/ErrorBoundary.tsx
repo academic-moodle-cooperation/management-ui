@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 
+import { useI18n } from "@workspace/i18n";
 import { logger } from "@workspace/utils";
 
 import type { ReactNode } from "react";
@@ -39,15 +40,20 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 }
 
-export const ModuleErrorFallback: React.FC<{ name: string }> = ({ name }) => (
-  <div className="flex items-center justify-center min-h-64 bg-red-50 border border-red-200 rounded-lg">
-    <div className="text-center text-red-700">
-      <h3 className="text-lg font-semibold mb-2">Module Error</h3>
-      <p>Error loading module: {name}</p>
-      <p className="text-sm mt-2">Please try refreshing the page.</p>
+export const ModuleErrorFallback: React.FC<{ name?: string }> = ({ name }) => {
+  const { t } = useI18n();
+  
+  return (
+    <div className="flex items-center justify-center min-h-64 bg-red-50 border border-red-200 rounded-lg">
+      <div className="text-center text-red-700">
+        <h3 className="text-lg font-semibold mb-2">{t("common:moduleError")}</h3>
+        {name && <p>{t("common:errorLoadingModule")}: {name}</p>}
+        {!name && <p>{t("common:errorLoadingModule")}</p>}
+        <p className="text-sm mt-2">{t("common:pleaseRefreshPage")}</p>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const NotFoundError: React.FC = () => (
   <div className="flex items-center justify-center min-h-screen">

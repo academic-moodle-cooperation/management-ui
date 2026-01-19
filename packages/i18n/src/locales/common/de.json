@@ -78,5 +78,8 @@
   "noData": "Keine Daten vorhanden",
   "noOptionSelected": "Keine Option ausgewählt",
   "noEntriesHeading": "Keine Einträge gefunden",
-  "noEntriesText": "Ihre Suche lieferte keine Ergebnisse. Bitte versuchen Sie, Ihre Suche anzupassen oder nach anderen Suchbegriffen zu suchen."
+  "noEntriesText": "Ihre Suche lieferte keine Ergebnisse. Bitte versuchen Sie, Ihre Suche anzupassen oder nach anderen Suchbegriffen zu suchen.",
+  "moduleError": "Modulfehler",
+  "errorLoadingModule": "Fehler beim Laden des Moduls",
+  "pleaseRefreshPage": "Bitte versuchen Sie, die Seite neu zu laden."
 }
