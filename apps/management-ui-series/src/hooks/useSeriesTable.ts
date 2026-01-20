@@ -8,6 +8,7 @@ import {
 import { useNavigate } from "@workspace/router";
 import { useSidebarContent } from "@workspace/ui/components";
 import type { Row } from "@workspace/ui/components";
+import { hasProcessingEvents } from "@workspace/utils";
 
 import { useSidebarStore } from "../stores/sidebarStore";
 
@@ -123,22 +124,6 @@ export function useSeriesTable() {
         }
       : undefined;
 
-  // Helper function to check if any series have processing episodes
-  const checkHasProcessingEpisodes = useCallback((seriesNodes: Array<{ events?: { nodes?: Array<{ eventStatus?: string } | null> | null } } | null> | undefined | null) => {
-    if (!seriesNodes) return false;
-
-    return seriesNodes.some((series) => {
-      const events = series?.events?.nodes;
-      if (!events) return false;
-
-      return events.some((event) => {
-        if (!event?.eventStatus) return false;
-        const status = event.eventStatus.split(".").pop()?.toUpperCase();
-        return status === "PROCESSING" || status === "PENDING" || status === "PROCESSING_FAILURE";
-      });
-    });
-  }, []);
-
   // API query - Automatically refetch table data every 20 seconds when episodes are processing
   const seriesQuery = useGetMySeriesQuery(
     {
@@ -151,7 +136,15 @@ export function useSeriesTable() {
       refetchInterval: (query) => {
         // Refetch every 20 seconds if any series has processing episodes
         const seriesNodes = query.state.data?.currentUser?.mySeries.nodes;
-        return checkHasProcessingEpisodes(seriesNodes) ? 20000 : false;
+        if (!seriesNodes) return false;
+
+        // Check if any series has processing episodes
+        const hasProcessing = seriesNodes.some((series) => {
+          const events = series?.events?.nodes;
+          return hasProcessingEvents(events);
+        });
+
+        return hasProcessing ? 20000 : false;
       },
     },
   );
@@ -165,13 +158,7 @@ export function useSeriesTable() {
     const selectedSeries = seriesNodes?.find((series) => series?.id === selectedId);
     const events = selectedSeries?.events?.nodes;
 
-    if (!events) return false;
-
-    return events.some((event) => {
-      if (!event?.eventStatus) return false;
-      const status = event.eventStatus.split(".").pop()?.toUpperCase();
-      return status === "PROCESSING" || status === "PENDING" || status === "PROCESSING_FAILURE";
-    });
+    return hasProcessingEvents(events);
   }, [seriesQuery.data, selectedId]);
 
   // API queries - Use selectedId from Zustand store

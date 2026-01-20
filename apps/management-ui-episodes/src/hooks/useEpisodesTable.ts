@@ -9,6 +9,7 @@ import {
 import { useNavigate } from "@workspace/router";
 import { useSidebarContent } from "@workspace/ui/components";
 import type { Row } from "@workspace/ui/components";
+import { hasProcessingEvents, isEventProcessing } from "@workspace/utils";
 
 import { useSidebarStore } from "../stores/sidebarStore";
 
@@ -126,17 +127,6 @@ export function useEpisodesTable(seriesId?: string) {
         }
       : undefined;
 
-  // Helper function to check if any events are processing
-  const checkHasProcessingEvents = useCallback((events: Array<{ eventStatus?: string } | null> | undefined | null) => {
-    if (!events) return false;
-
-    return events.some((event) => {
-      if (!event?.eventStatus) return false;
-      const status = event.eventStatus.split(".").pop()?.toUpperCase();
-      return status === "PROCESSING" || status === "PENDING" || status === "PROCESSING_FAILURE";
-    });
-  }, []);
-
   // API queries - conditionally use different queries based on seriesId
   // Automatically refetch table data every 20 seconds when episodes are processing
   const allEventsQuery = useGetMyEventsQuery(
@@ -151,7 +141,7 @@ export function useEpisodesTable(seriesId?: string) {
       refetchInterval: (query) => {
         // Refetch every 20 seconds if there are processing episodes
         const events = query.state.data?.currentUser?.myEvents.nodes;
-        return checkHasProcessingEvents(events) ? 20000 : false;
+        return hasProcessingEvents(events) ? 20000 : false;
       },
     },
   );
@@ -169,7 +159,7 @@ export function useEpisodesTable(seriesId?: string) {
       refetchInterval: (query) => {
         // Refetch every 20 seconds if there are processing episodes
         const events = query.state.data?.seriesById?.events.nodes;
-        return checkHasProcessingEvents(events) ? 20000 : false;
+        return hasProcessingEvents(events) ? 20000 : false;
       },
     },
   );
@@ -187,10 +177,7 @@ export function useEpisodesTable(seriesId?: string) {
       : episodesQuery.data?.currentUser?.myEvents.nodes;
 
     const selectedEvent = events?.find((event) => event?.id === selectedId);
-    if (!selectedEvent?.eventStatus) return false;
-
-    const status = selectedEvent.eventStatus.split(".").pop()?.toUpperCase();
-    return status === "PROCESSING" || status === "PENDING" || status === "PROCESSING_FAILURE";
+    return isEventProcessing(selectedEvent?.eventStatus);
   }, [episodesQuery.data, selectedId, seriesId]);
 
   // API queries - Use selectedId from Zustand store
