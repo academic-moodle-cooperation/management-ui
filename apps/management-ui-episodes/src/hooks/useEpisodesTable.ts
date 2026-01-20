@@ -172,14 +172,12 @@ export function useEpisodesTable(seriesId?: string) {
   const isSelectedEpisodeProcessing = useMemo(() => {
     if (!selectedId) return false;
 
-    const events =
-      seriesId && 'seriesById' in (episodesQuery.data ?? {})
-        ? episodesQuery.data.seriesById?.events.nodes
-        : 'currentUser' in (episodesQuery.data ?? {})
-          ? episodesQuery.data.currentUser?.myEvents.nodes
-          : undefined;
+    // Type-safe access based on which query is active
+    const events = seriesId
+      ? (episodesQuery.data as { seriesById?: { events: { nodes: Array<{ id?: string; eventStatus?: string } | null> } } })?.seriesById?.events.nodes
+      : (episodesQuery.data as { currentUser?: { myEvents: { nodes: Array<{ id?: string; eventStatus?: string } | null> } } })?.currentUser?.myEvents.nodes;
 
-    const selectedEvent = events?.find((event: { id?: string; eventStatus?: string }) => event?.id === selectedId);
+    const selectedEvent = events?.find((event) => event?.id === selectedId);
     return isEventProcessing(selectedEvent?.eventStatus);
   }, [episodesQuery.data, selectedId, seriesId]);
 
