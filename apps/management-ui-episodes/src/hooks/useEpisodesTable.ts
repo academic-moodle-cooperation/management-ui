@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import {
   useGetMyEventsQuery,
@@ -126,7 +126,19 @@ export function useEpisodesTable(seriesId?: string) {
         }
       : undefined;
 
+  // Helper function to check if any events are processing
+  const checkHasProcessingEvents = useCallback((events: Array<{ eventStatus?: string } | null> | undefined | null) => {
+    if (!events) return false;
+
+    return events.some((event) => {
+      if (!event?.eventStatus) return false;
+      const status = event.eventStatus.split(".").pop()?.toUpperCase();
+      return status === "PROCESSING" || status === "PENDING" || status === "PROCESSING_FAILURE";
+    });
+  }, []);
+
   // API queries - conditionally use different queries based on seriesId
+  // Automatically refetch table data every 20 seconds when episodes are processing
   const allEventsQuery = useGetMyEventsQuery(
     {
       limit: pageSize,
@@ -136,6 +148,11 @@ export function useEpisodesTable(seriesId?: string) {
     },
     {
       enabled: !seriesId, // Only enabled when no seriesId is provided
+      refetchInterval: (query) => {
+        // Refetch every 20 seconds if there are processing episodes
+        const events = query.state.data?.currentUser?.myEvents.nodes;
+        return checkHasProcessingEvents(events) ? 20000 : false;
+      },
     },
   );
 
@@ -149,15 +166,43 @@ export function useEpisodesTable(seriesId?: string) {
     },
     {
       enabled: Boolean(seriesId), // Only enabled when seriesId is provided
+      refetchInterval: (query) => {
+        // Refetch every 20 seconds if there are processing episodes
+        const events = query.state.data?.seriesById?.events.nodes;
+        return checkHasProcessingEvents(events) ? 20000 : false;
+      },
     },
   );
 
   // Use the appropriate query result based on seriesId
   const episodesQuery = seriesId ? seriesEventsQuery : allEventsQuery;
 
+  // Determine if the selected episode is being processed
+  // This enables automatic polling for metadata when the selected video is processing
+  const isSelectedEpisodeProcessing = useMemo(() => {
+    if (!selectedId) return false;
+
+    const events = seriesId
+      ? episodesQuery.data?.seriesById?.events.nodes
+      : episodesQuery.data?.currentUser?.myEvents.nodes;
+
+    const selectedEvent = events?.find((event) => event?.id === selectedId);
+    if (!selectedEvent?.eventStatus) return false;
+
+    const status = selectedEvent.eventStatus.split(".").pop()?.toUpperCase();
+    return status === "PROCESSING" || status === "PENDING" || status === "PROCESSING_FAILURE";
+  }, [episodesQuery.data, selectedId, seriesId]);
+
   // API queries - Use selectedId from Zustand store
+  // Automatically refetch metadata every 10 seconds when the selected episode is processing
   const { data: episodesInputFields, isLoading: isLoadingMetadata } =
-    useGetEventByIdInputFieldsQuery({ eventId: selectedId }, { enabled: Boolean(selectedId) });
+    useGetEventByIdInputFieldsQuery(
+      { eventId: selectedId },
+      {
+        enabled: Boolean(selectedId),
+        refetchInterval: isSelectedEpisodeProcessing ? 10000 : false, // 10 seconds when processing
+      },
+    );
 
   // Event handlers
   const handleEditClose = () => {
