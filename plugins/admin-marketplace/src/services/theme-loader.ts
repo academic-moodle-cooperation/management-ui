@@ -32,11 +32,14 @@ export const ThemeLoader = {
   async apply(url: string): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
+        // Determine if this is a relative or absolute URL
+        const isRelative = url.startsWith("/") || !url.includes("://");
+        
         // Basic URL validation - check for valid protocol
         const parsedUrl = new URL(url, window.location.origin);
         
         // Security: Validate relative URLs to prevent directory traversal
-        if (!parsedUrl.protocol || parsedUrl.origin === window.location.origin) {
+        if (isRelative) {
           // This is a relative URL - validate it starts with the expected prefix
           if (!parsedUrl.pathname.startsWith(ALLOWED_THEME_PREFIX)) {
             throw new Error(

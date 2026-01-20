@@ -35,7 +35,7 @@ export const adminMarketplacePlugin = createPlugin({
     console.log("Admin Marketplace plugin initializing...");
 
     // Initialize theme loader - apply installed theme if present
-    ThemeLoader.initialize();
+    await ThemeLoader.initialize();
 
     // Register the marketplace app
     manager.registerObject("apps:definitions", "marketplace", {
