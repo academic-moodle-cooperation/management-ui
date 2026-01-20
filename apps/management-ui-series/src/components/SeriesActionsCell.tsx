@@ -166,8 +166,13 @@ const DefaultSeriesActionsCell: React.FC<ExtendedSeriesActionsCellProps> = ({
 
   const renderDropdownAction = (action: SeriesActionItem) => {
     // If the action has a component, render it directly (for complex actions)
+    // Wrap it in a div with gap for consistency
     if (action.component) {
-      return <div key={action.id}>{<action.component series={series} />}</div>;
+      return (
+        <div key={action.id} className="gap-2">
+          <action.component series={series} />
+        </div>
+      );
     }
 
     // For actions with href

@@ -242,8 +242,13 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
 
   const renderDropdownAction = (action: ActionItem) => {
     // If the action has a component, render it directly (for complex actions like Delete, Download)
+    // Wrap it in a DropdownMenuItem with the action label for consistency
     if (action.component) {
-      return <div key={action.id}>{<action.component event={event} />}</div>;
+      return (
+        <div key={action.id} className="gap-2">
+          <action.component event={event} />
+        </div>
+      );
     }
 
     // For actions with href
@@ -428,8 +433,6 @@ const DownloadDropdown: React.FC<{ event: EventsDataFragment }> = ({ event }) =>
               <a
                 key={index}
                 href={track?.uri || ""}
-                target="_blank"
-                rel="noreferrer"
                 download={event.title}
                 onClick={(e: React.MouseEvent) => e.stopPropagation()}
               >
