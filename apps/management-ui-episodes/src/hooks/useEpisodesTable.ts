@@ -172,14 +172,14 @@ export function useEpisodesTable(seriesId?: string) {
   const isSelectedEpisodeProcessing = useMemo(() => {
     if (!selectedId) return false;
 
-    // Type-safe access based on which query is active
+    // Read from the query that is active for this seriesId; each has the correct type.
     const events = seriesId
-      ? (episodesQuery.data as { seriesById?: { events: { nodes: Array<{ id?: string; eventStatus?: string } | null> } } })?.seriesById?.events.nodes
-      : (episodesQuery.data as { currentUser?: { myEvents: { nodes: Array<{ id?: string; eventStatus?: string } | null> } } })?.currentUser?.myEvents.nodes;
+      ? seriesEventsQuery.data?.seriesById?.events.nodes
+      : allEventsQuery.data?.currentUser?.myEvents.nodes;
 
     const selectedEvent = events?.find((event) => event?.id === selectedId);
     return isEventProcessing(selectedEvent?.eventStatus);
-  }, [episodesQuery.data, selectedId, seriesId]);
+  }, [seriesEventsQuery.data, allEventsQuery.data, selectedId, seriesId]);
 
   // API queries - Use selectedId from Zustand store
   // Automatically refetch metadata every 10 seconds when the selected episode is processing
