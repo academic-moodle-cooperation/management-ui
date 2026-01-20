@@ -240,6 +240,72 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
     );
   };
 
+  const renderDropdownAction = (action: ActionItem) => {
+    // If the action has a component, render it directly (for complex actions like Delete, Download)
+    if (action.component) {
+      return <div key={action.id}>{<action.component event={event} />}</div>;
+    }
+
+    // For actions with href
+    if (action.href) {
+      const content = (
+        <>
+          {action.icon}
+          <span>{action.label}</span>
+        </>
+      );
+
+      if (action.target) {
+        return (
+          <a
+            key={action.id}
+            href={action.href}
+            target={action.target}
+            {...(action.target === "_blank" && { rel: "noopener noreferrer" })}
+            onClick={(e: React.MouseEvent) => {
+              e.stopPropagation();
+              action.onClick?.(event);
+            }}
+          >
+            <DropdownMenuItem className="gap-2 cursor-pointer">
+              {content}
+            </DropdownMenuItem>
+          </a>
+        );
+      }
+
+      return (
+        <Link
+          key={action.id}
+          to={action.href}
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation();
+            action.onClick?.(event);
+          }}
+        >
+          <DropdownMenuItem className="gap-2 cursor-pointer">
+            {content}
+          </DropdownMenuItem>
+        </Link>
+      );
+    }
+
+    // For actions with only onClick
+    return (
+      <DropdownMenuItem
+        key={action.id}
+        onClick={(e) => {
+          e.stopPropagation();
+          action.onClick?.(event);
+        }}
+        className="gap-2 cursor-pointer"
+      >
+        {action.icon}
+        <span>{action.label}</span>
+      </DropdownMenuItem>
+    );
+  };
+
   return (
     <div className="flex items-center justify-center gap-2 p-3">
       {visibleActions.map(renderAction)}
@@ -249,25 +315,13 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="w-4 h-4">
               <MoreVertical />
-              <span className="sr-only">More actions</span>
+              <span className="sr-only">{i18next.t("common:moreActions")}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuLabel>More Actions</DropdownMenuLabel>
+            <DropdownMenuLabel>{i18next.t("common:moreActions")}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {hiddenActions.map((action) => (
-              <DropdownMenuItem
-                key={action.id}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  action.onClick?.(event);
-                }}
-                className="gap-2 cursor-pointer"
-              >
-                {action.icon}
-                <span>{action.label}</span>
-              </DropdownMenuItem>
-            ))}
+            {hiddenActions.map(renderDropdownAction)}
           </DropdownMenuContent>
         </DropdownMenu>
       )}
