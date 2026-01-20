@@ -7,6 +7,7 @@
 
 const STORAGE_KEY = "installed_theme_url";
 const THEME_LINK_ID = "marketplace-dynamic-theme";
+const ALLOWED_THEME_PREFIX = "/management-ui/plugins/themes/";
 
 /**
  * ThemeLoader Service
@@ -25,45 +26,62 @@ export const ThemeLoader = {
    * Replaces any previously applied theme
    * 
    * @param url - URL to the CSS file
+   * @returns Promise that resolves when theme loads successfully, rejects on error
    * @throws Error if URL is invalid or has unsupported protocol
    */
-  apply(url: string): void {
-    try {
-      // Basic URL validation - check for valid protocol
-      const parsedUrl = new URL(url, window.location.origin);
-      
-      // Only allow http, https, and relative URLs
-      if (parsedUrl.protocol && !["http:", "https:"].includes(parsedUrl.protocol)) {
-        throw new Error(`Invalid protocol: ${parsedUrl.protocol}. Only http: and https: are allowed.`);
+  async apply(url: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        // Basic URL validation - check for valid protocol
+        const parsedUrl = new URL(url, window.location.origin);
+        
+        // Security: Validate relative URLs to prevent directory traversal
+        if (!parsedUrl.protocol || parsedUrl.origin === window.location.origin) {
+          // This is a relative URL - validate it starts with the expected prefix
+          if (!parsedUrl.pathname.startsWith(ALLOWED_THEME_PREFIX)) {
+            throw new Error(
+              `Invalid theme path: ${parsedUrl.pathname}. Theme URLs must start with ${ALLOWED_THEME_PREFIX}`
+            );
+          }
+        } else if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+          // This is an absolute URL - validate protocol
+          throw new Error(`Invalid protocol: ${parsedUrl.protocol}. Only http: and https: are allowed.`);
+        }
+
+        // Remove existing theme link if present
+        const existingLink = document.getElementById(THEME_LINK_ID);
+        if (existingLink) {
+          existingLink.remove();
+        }
+
+        // Create and inject new theme link
+        const link = document.createElement("link");
+        link.id = THEME_LINK_ID;
+        link.rel = "stylesheet";
+        link.href = parsedUrl.href;
+        
+        // Add success handler
+        link.onload = () => {
+          console.log(`Applied theme from ${url}`);
+          resolve();
+        };
+
+        // Add error handler for failed loads
+        link.onerror = () => {
+          const error = new Error(`Failed to load theme from ${url}`);
+          console.error(error.message);
+          // Remove the failed link element
+          link.remove();
+          reject(error);
+        };
+
+        // Append to document head
+        document.head.appendChild(link);
+      } catch (error) {
+        console.error(`Failed to apply theme from ${url}:`, error);
+        reject(error);
       }
-
-      // Remove existing theme link if present
-      const existingLink = document.getElementById(THEME_LINK_ID);
-      if (existingLink) {
-        existingLink.remove();
-      }
-
-      // Create and inject new theme link
-      const link = document.createElement("link");
-      link.id = THEME_LINK_ID;
-      link.rel = "stylesheet";
-      link.href = parsedUrl.href;
-      
-      // Add error handler for failed loads
-      link.onerror = () => {
-        console.error(`Failed to load theme from ${url}`);
-        // Remove the failed link element
-        link.remove();
-      };
-
-      // Append to document head
-      document.head.appendChild(link);
-      
-      console.log(`Applied theme from ${url}`);
-    } catch (error) {
-      console.error(`Failed to apply theme from ${url}:`, error);
-      throw error;
-    }
+    });
   },
 
   /**
@@ -132,12 +150,12 @@ export const ThemeLoader = {
    * Initialize theme loading on application startup
    * Loads and applies the installed theme if one exists
    */
-  initialize(): void {
+  async initialize(): Promise<void> {
     const installedUrl = this.getInstalledUrl();
     if (installedUrl) {
       console.log(`Loading installed theme from localStorage: ${installedUrl}`);
       try {
-        this.apply(installedUrl);
+        await this.apply(installedUrl);
       } catch (error) {
         console.error("Failed to load installed theme:", error);
         // Clear the corrupted/invalid theme URL
@@ -151,18 +169,20 @@ export const ThemeLoader = {
    * This is useful for previewing themes before installation
    * 
    * @param url - URL to the CSS file
+   * @returns Promise that resolves when theme loads successfully
    */
-  tryTheme(url: string): void {
-    this.apply(url);
+  async tryTheme(url: string): Promise<void> {
+    return this.apply(url);
   },
 
   /**
    * Install a theme - apply it and persist for future page loads
    * 
    * @param url - URL to the CSS file
+   * @returns Promise that resolves when theme loads successfully
    */
-  installTheme(url: string): void {
-    this.apply(url);
+  async installTheme(url: string): Promise<void> {
+    await this.apply(url);
     this.persist(url);
   },
 

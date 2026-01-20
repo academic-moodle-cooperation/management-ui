@@ -100,11 +100,11 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
 
   const isInstalled = (url: string) => installedPlugins.includes(url);
 
-  const handleTryTheme = (url: string) => {
+  const handleTryTheme = async (url: string) => {
     setLoading(url);
     setError(null);
     try {
-      ThemeLoader.tryTheme(url);
+      await ThemeLoader.tryTheme(url);
       console.log(`Successfully applied theme from ${url}`);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
@@ -114,11 +114,11 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
     }
   };
 
-  const handleInstallTheme = (url: string) => {
+  const handleInstallTheme = async (url: string) => {
     setLoading(url);
     setError(null);
     try {
-      ThemeLoader.installTheme(url);
+      await ThemeLoader.installTheme(url);
       setInstalledTheme(url);
       console.log(`Successfully installed theme from ${url}`);
     } catch (err) {
