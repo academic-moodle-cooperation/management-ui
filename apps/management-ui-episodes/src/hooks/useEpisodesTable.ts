@@ -182,19 +182,17 @@ export function useEpisodesTable(seriesId?: string) {
 
   // API queries - Use selectedId from Zustand store
   // Automatically refetch metadata every 10 seconds when the selected episode is processing
-  const { data: episodesInputFields, isLoading: isLoadingMetadata } =
-    useGetEventByIdInputFieldsQuery(
-      { eventId: selectedId },
-      {
-        enabled: Boolean(selectedId),
-        refetchInterval: isSelectedEpisodeProcessing ? 10000 : false, // 10 seconds when processing
-      },
-    );
   const {
     data: episodesInputFields,
     isLoading: isLoadingMetadata,
     refetch: refetchMetadata,
-  } = useGetEventByIdInputFieldsQuery({ eventId: selectedId }, { enabled: Boolean(selectedId) });
+  } = useGetEventByIdInputFieldsQuery(
+    { eventId: selectedId },
+    {
+      enabled: Boolean(selectedId),
+      refetchInterval: isSelectedEpisodeProcessing ? 10000 : false, // 10 seconds when processing
+    },
+  );
 
   // Event handlers
   const handleEditClose = () => {
