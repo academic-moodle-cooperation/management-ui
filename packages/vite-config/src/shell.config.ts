@@ -65,6 +65,11 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
       },
       // Per-plugin assets (encapsulated under /assets/<plugin>/...)
       ...perPluginAssetTargets,
+      // Theme CSS files (for dynamic theme switching)
+      {
+        src: path.resolve(monorepoRootPath, "plugins/themes/**/*"),
+        dest: "plugins/themes",
+      },
     ],
   });
 
