@@ -124,8 +124,11 @@ export function useSeriesTable() {
       : undefined;
 
   // API queries - Use selectedId from Zustand store
-  const { data: seriesInputFields, isLoading: isLoadingMetadata } =
-    useGetSeriesByIdInputFieldsQuery({ seriesId: selectedId }, { enabled: Boolean(selectedId) });
+  const {
+    data: seriesInputFields,
+    isLoading: isLoadingMetadata,
+    refetch: refetchMetadata,
+  } = useGetSeriesByIdInputFieldsQuery({ seriesId: selectedId }, { enabled: Boolean(selectedId) });
 
   const seriesQuery = useGetMySeriesQuery({
     limit: pageSize,
@@ -182,6 +185,7 @@ export function useSeriesTable() {
     textCopied,
     setTextCopied,
     refetch: seriesQuery.refetch,
+    refetchMetadata,
     handleEditClose,
     handleRowClick,
     setSorting: tableState.setSorting,

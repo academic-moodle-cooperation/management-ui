@@ -42,6 +42,7 @@ interface SeriesTableSidebarProps {
   saveSeriesUpdate: ReturnType<typeof useUpdateSeriesMutation>;
   selectedSeriesId: string;
   refetch: () => void;
+  refetchMetadata: () => void;
   setIsEditing: (value: boolean) => void;
   sidebarInfo?: string | undefined;
   tableRef: RefObject<HTMLDivElement | null>;
@@ -68,6 +69,7 @@ export const SeriesTableSidebar: React.FC<SeriesTableSidebarProps> = ({
   saveSeriesUpdate,
   selectedSeriesId,
   refetch,
+  refetchMetadata,
   setIsEditing,
   sidebarInfo,
   tableRef,
@@ -198,6 +200,7 @@ export const SeriesTableSidebar: React.FC<SeriesTableSidebarProps> = ({
                 onEditClose={onEditClose}
                 selectedSeriesId={selectedSeriesId}
                 refetch={refetch}
+                refetchMetadata={refetchMetadata}
                 setEditSeries={setIsEditing}
               />
             </div>

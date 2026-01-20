@@ -156,8 +156,11 @@ export function useEpisodesTable(seriesId?: string) {
   const episodesQuery = seriesId ? seriesEventsQuery : allEventsQuery;
 
   // API queries - Use selectedId from Zustand store
-  const { data: episodesInputFields, isLoading: isLoadingMetadata } =
-    useGetEventByIdInputFieldsQuery({ eventId: selectedId }, { enabled: Boolean(selectedId) });
+  const {
+    data: episodesInputFields,
+    isLoading: isLoadingMetadata,
+    refetch: refetchMetadata,
+  } = useGetEventByIdInputFieldsQuery({ eventId: selectedId }, { enabled: Boolean(selectedId) });
 
   // Event handlers
   const handleEditClose = () => {
@@ -207,6 +210,7 @@ export function useEpisodesTable(seriesId?: string) {
     textCopied,
     setTextCopied,
     refetch: episodesQuery.refetch,
+    refetchMetadata,
     handleEditClose,
     handleRowClick,
     setSorting: tableState.setSorting,

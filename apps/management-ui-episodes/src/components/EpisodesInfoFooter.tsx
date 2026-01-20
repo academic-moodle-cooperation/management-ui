@@ -18,6 +18,7 @@ interface EpisodesInfoFooterProps {
   onEditClose: () => void;
   selectedEpisodeId: string;
   refetch: () => void;
+  refetchMetadata: () => void;
   setEditEpisode: (value: boolean) => void;
   currentEpisode?: EventsDataFragment | undefined;
 }
@@ -33,6 +34,7 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
   onEditClose,
   selectedEpisodeId,
   refetch,
+  refetchMetadata,
   setEditEpisode,
   currentEpisode,
 }) => {
@@ -180,6 +182,7 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
           onSuccess: () => {
             toast.success(t("episodes:episodesTable.notification.changesSaved"));
             refetch();
+            refetchMetadata();
           },
         },
       );
