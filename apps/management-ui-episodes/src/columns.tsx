@@ -413,6 +413,8 @@ export const createColumns = (
               {isProcessed ? (
                 <a
                   href={row.original.muiEventInfo?.publishUrl || ""}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={(e: React.MouseEvent) => {
                     e.stopPropagation();
                   }}
