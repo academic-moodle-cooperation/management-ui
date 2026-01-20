@@ -25,6 +25,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
   toast,
 } from "@workspace/ui/components";
 
@@ -241,9 +244,32 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
   };
 
   const renderDropdownAction = (action: ActionItem) => {
-    // If the action has a component, render it directly (for complex actions like Delete, Download)
-    // Wrap it in a DropdownMenuItem with the action label for consistency
+    // For component-based actions in the dropdown, we need special handling
+    // to show the label along with the action
     if (action.component) {
+      // Special handling for download action - show as expandable submenu
+      if (action.id === "download") {
+        return <DownloadDropdownMenuItem key={action.id} event={event} label={action.label} icon={action.icon} />;
+      }
+      
+      // Special handling for delete action - show as menu item that triggers dialog
+      if (action.id === "delete") {
+        return (
+          <DropdownMenuItem
+            key={action.id}
+            onClick={(e) => {
+              e.stopPropagation();
+              setDialogOpen(true);
+            }}
+            className="gap-2 cursor-pointer"
+          >
+            {action.icon}
+            <span>{action.label}</span>
+          </DropdownMenuItem>
+        );
+      }
+
+      // For other component actions, render with label
       return (
         <div key={action.id} className="gap-2">
           <action.component event={event} />
@@ -459,6 +485,72 @@ const DownloadDropdown: React.FC<{ event: EventsDataFragment }> = ({ event }) =>
     </DropdownMenu>
   </Tooltip>
 );
+
+// Download submenu component for dropdown menu
+const DownloadDropdownMenuItem: React.FC<{ 
+  event: EventsDataFragment; 
+  label: string; 
+  icon: React.ReactNode;
+}> = ({ event, label, icon }) => {
+  const handleDownload = (url: string, filename: string) => {
+    // Create a temporary anchor element to trigger download
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  return (
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger className="gap-2 cursor-pointer">
+        {icon}
+        <span>{label}</span>
+      </DropdownMenuSubTrigger>
+      <DropdownMenuSubContent>
+        <DropdownMenuLabel>
+          {i18next.t("episodes:episodesTable.action.selectDownloadVersion")}
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {event.publications?.[0]?.tracks
+          ?.sort((t1, t2) => {
+            const height1 = t1?.height ?? 0;
+            const height2 = t2?.height ?? 0;
+            return height1 > height2 ? -1 : height1 < height2 ? 1 : 0;
+          })
+          .map((track, index) => {
+            if ([".m3u8", ".mpd", ".f4m", ".smil"].some((el) => track?.uri?.includes(el)))
+              return null;
+
+            return (
+              <DropdownMenuItem
+                key={index}
+                className="gap-2 cursor-pointer"
+                onClick={(e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  handleDownload(track?.uri || "", event.title || "download");
+                }}
+              >
+                <ArrowDownToLine className="w-4 h-4" />
+                <span>
+                  {track?.flavor === "presentation/delivery" &&
+                    i18next.t("episodes:episodesTable.action.flavor.presentation")}
+                  {track?.flavor === "presenter/delivery" &&
+                    i18next.t("episodes:episodesTable.action.flavor.presenter")}
+                  {track?.flavor === "captions/delivery" &&
+                    i18next.t("episodes:episodesTable.action.flavor.subtitles")}
+                  {track?.width && ` (${track?.width} x ${track?.height})`}
+                  {track?.mimeType?.includes("audio") && ` (Audio)`}
+                </span>
+              </DropdownMenuItem>
+            );
+          })}
+      </DropdownMenuSubContent>
+    </DropdownMenuSub>
+  );
+};
 
 // Main pluggable component
 export const ActionsCell: React.FC<ActionsCellProps> = (props) => {
