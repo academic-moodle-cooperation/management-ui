@@ -3,6 +3,7 @@ import { ShoppingBag } from "lucide-react";
 import { createPlugin } from "@workspace/plugin-system";
 
 import { RemoteLoader } from "./services/remote-loader";
+import { ThemeLoader } from "./services/theme-loader";
 import { MarketplaceDashboard } from "./views/MarketplaceDashboard";
 
 /**
@@ -32,6 +33,9 @@ export const adminMarketplacePlugin = createPlugin({
 
   async initialize(manager) {
     console.log("Admin Marketplace plugin initializing...");
+
+    // Initialize theme loader - apply installed theme if present
+    await ThemeLoader.initialize();
 
     // Register the marketplace app
     manager.registerObject("apps:definitions", "marketplace", {
@@ -89,4 +93,5 @@ export default adminMarketplacePlugin;
 
 // Export services for external use if needed
 export { RemoteLoader } from "./services/remote-loader";
+export { ThemeLoader } from "./services/theme-loader";
 export { MarketplaceDashboard } from "./views/MarketplaceDashboard";

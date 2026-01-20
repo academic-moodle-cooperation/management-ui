@@ -16,6 +16,8 @@ import {
 
 import { AVAILABLE_PLUGINS } from "../services/plugin-registry";
 import { RemoteLoader } from "../services/remote-loader";
+import { ThemeLoader } from "../services/theme-loader";
+import { AVAILABLE_THEMES } from "../services/themes";
 
 export interface MarketplaceDashboardProps {
   manager: PluginManager;
@@ -37,6 +39,9 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
   const [customUrl, setCustomUrl] = useState("");
   const [installedPlugins, setInstalledPlugins] = useState<string[]>(
     RemoteLoader.getInstalledUrls()
+  );
+  const [installedTheme, setInstalledTheme] = useState<string | null>(
+    ThemeLoader.getInstalledUrl()
   );
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -95,6 +100,43 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
 
   const isInstalled = (url: string) => installedPlugins.includes(url);
 
+  const handleTryTheme = async (url: string) => {
+    setLoading(url);
+    setError(null);
+    try {
+      await ThemeLoader.tryTheme(url);
+      console.log(`Successfully applied theme from ${url}`);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
+      setError(`Failed to apply theme: ${errorMessage}`);
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  const handleInstallTheme = async (url: string) => {
+    setLoading(url);
+    setError(null);
+    try {
+      await ThemeLoader.installTheme(url);
+      setInstalledTheme(url);
+      console.log(`Successfully installed theme from ${url}`);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
+      setError(`Failed to install theme: ${errorMessage}`);
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  const handleUninstallTheme = () => {
+    ThemeLoader.uninstallTheme();
+    setInstalledTheme(null);
+    console.log("Uninstalled theme");
+  };
+
+  const isThemeInstalled = (url: string) => installedTheme === url;
+
   return (
     <div className="container mx-auto p-6 space-y-8">
       {/* Header */}
@@ -149,6 +191,69 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
           </Button>
         </CardFooter>
       </Card>
+
+      {/* Available Themes Grid */}
+      <div className="space-y-4">
+        <h2 className="text-2xl font-semibold">Available Themes</h2>
+        <p className="text-sm text-muted-foreground">
+          Customize the look and feel of your application with these theme options
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {AVAILABLE_THEMES.map((theme) => (
+            <Card key={theme.id}>
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <CardTitle className="text-lg">{theme.name}</CardTitle>
+                    <CardDescription className="text-xs">
+                      by {theme.author}
+                    </CardDescription>
+                  </div>
+                  <Badge variant="secondary">{theme.category}</Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  {theme.description}
+                </p>
+              </CardContent>
+              <CardFooter className="flex gap-2">
+                {isThemeInstalled(theme.previewUrl) ? (
+                  <>
+                    <Badge variant="default">Installed</Badge>
+                    <Button
+                      onClick={handleUninstallTheme}
+                      variant="outline"
+                      size="sm"
+                      disabled={loading !== null}
+                    >
+                      Uninstall
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      onClick={() => handleTryTheme(theme.previewUrl)}
+                      variant="outline"
+                      size="sm"
+                      disabled={loading !== null}
+                    >
+                      {loading === theme.previewUrl ? "Applying..." : "Try"}
+                    </Button>
+                    <Button
+                      onClick={() => handleInstallTheme(theme.previewUrl)}
+                      size="sm"
+                      disabled={loading !== null}
+                    >
+                      {loading === theme.previewUrl ? "Installing..." : "Install"}
+                    </Button>
+                  </>
+                )}
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </div>
 
       {/* Available Plugins Grid */}
       <div className="space-y-4">
