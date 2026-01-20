@@ -42,6 +42,7 @@ interface EpisodesTableSidebarProps {
   saveEpisodeUpdate: ReturnType<typeof useUpdateEventMutation>;
   selectedEpisodeId: string;
   refetch: () => void;
+  refetchMetadata: () => void;
   setIsEditing: (value: boolean) => void;
   sidebarInfo?: string | undefined;
   tableRef: RefObject<HTMLDivElement | null>;
@@ -68,6 +69,7 @@ export const EpisodesTableSidebar: React.FC<EpisodesTableSidebarProps> = ({
   saveEpisodeUpdate,
   selectedEpisodeId,
   refetch,
+  refetchMetadata,
   setIsEditing,
   sidebarInfo,
   tableRef,
@@ -206,6 +208,7 @@ export const EpisodesTableSidebar: React.FC<EpisodesTableSidebarProps> = ({
                 onEditClose={onEditClose}
                 selectedEpisodeId={selectedEpisodeId}
                 refetch={refetch}
+                refetchMetadata={refetchMetadata}
                 setEditEpisode={setIsEditing}
                 currentEpisode={currentEpisode}
               />
