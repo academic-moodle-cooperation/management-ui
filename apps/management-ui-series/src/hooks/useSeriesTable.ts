@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import {
   useGetMySeriesQuery,
@@ -8,6 +8,7 @@ import {
 import { useNavigate } from "@workspace/router";
 import { useSidebarContent } from "@workspace/ui/components";
 import type { Row } from "@workspace/ui/components";
+import { hasProcessingEvents } from "@workspace/utils";
 
 import { useSidebarStore } from "../stores/sidebarStore";
 
@@ -123,19 +124,56 @@ export function useSeriesTable() {
         }
       : undefined;
 
+  // API query - Automatically refetch table data every 20 seconds when episodes are processing
+  const seriesQuery = useGetMySeriesQuery(
+    {
+      limit: pageSize,
+      offset,
+      ...(orderBy !== undefined && { orderBy }),
+      ...(queryFilter !== undefined && { query: queryFilter }),
+    },
+    {
+      refetchInterval: (query) => {
+        // Refetch every 20 seconds if any series has processing episodes
+        const seriesNodes = query.state.data?.currentUser?.mySeries.nodes;
+        if (!seriesNodes) return false;
+
+        // Check if any series has processing episodes
+        const hasProcessing = seriesNodes.some((series) => {
+          const events = series?.events?.nodes;
+          return hasProcessingEvents(events);
+        });
+
+        return hasProcessing ? 20000 : false;
+      },
+    },
+  );
+
+  // Determine if the selected series has processing episodes
+  // This enables automatic polling for metadata when videos in the series are processing
+  const isSelectedSeriesProcessing = useMemo(() => {
+    if (!selectedId) return false;
+
+    const seriesNodes = seriesQuery.data?.currentUser?.mySeries.nodes;
+    const selectedSeries = seriesNodes?.find((series) => series?.id === selectedId);
+    const events = selectedSeries?.events?.nodes;
+
+    return hasProcessingEvents(events);
+  }, [seriesQuery.data, selectedId]);
+
   // API queries - Use selectedId from Zustand store
+  // Automatically refetch metadata every 10 seconds when the selected series has processing episodes
   const {
     data: seriesInputFields,
     isLoading: isLoadingMetadata,
     refetch: refetchMetadata,
-  } = useGetSeriesByIdInputFieldsQuery({ seriesId: selectedId }, { enabled: Boolean(selectedId) });
-
-  const seriesQuery = useGetMySeriesQuery({
-    limit: pageSize,
-    offset,
-    ...(orderBy !== undefined && { orderBy }),
-    ...(queryFilter !== undefined && { query: queryFilter }),
-  });
+  } = useGetSeriesByIdInputFieldsQuery(
+    { seriesId: selectedId },
+    {
+      enabled: Boolean(selectedId),
+      refetchInterval: isSelectedSeriesProcessing ? 10000 : false, // 10 seconds when processing
+    },
+  );
 
   // Event handlers
   const handleEditClose = () => {

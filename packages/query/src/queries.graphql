@@ -49,6 +49,7 @@ fragment SeriesData on Series {
     nodes {
       id
       title
+      eventStatus
     }
     totalCount
   }
