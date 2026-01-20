@@ -190,6 +190,11 @@ export function useEpisodesTable(seriesId?: string) {
         refetchInterval: isSelectedEpisodeProcessing ? 10000 : false, // 10 seconds when processing
       },
     );
+  const {
+    data: episodesInputFields,
+    isLoading: isLoadingMetadata,
+    refetch: refetchMetadata,
+  } = useGetEventByIdInputFieldsQuery({ eventId: selectedId }, { enabled: Boolean(selectedId) });
 
   // Event handlers
   const handleEditClose = () => {
@@ -239,6 +244,7 @@ export function useEpisodesTable(seriesId?: string) {
     textCopied,
     setTextCopied,
     refetch: episodesQuery.refetch,
+    refetchMetadata,
     handleEditClose,
     handleRowClick,
     setSorting: tableState.setSorting,

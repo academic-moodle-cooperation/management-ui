@@ -74,6 +74,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     setQueryFilter,
     textCopied,
     setTextCopied,
+    refetchMetadata,
   } = useEpisodesTable(seriesId);
 
   const { data, isLoading, error, refetch } = episodesQuery;
@@ -289,6 +290,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
         saveEpisodeUpdate={saveEpisodeUpdate}
         selectedEpisodeId={selectedId}
         refetch={refetch}
+        refetchMetadata={refetchMetadata}
         setIsEditing={setIsEditing}
         sidebarInfo={t(`episodes:episodesInfo.required`)}
         tableRef={tableRef} // Pass the table ref to the sidebar

@@ -171,6 +171,18 @@ export function useSeriesTable() {
         refetchInterval: isSelectedSeriesProcessing ? 10000 : false, // 10 seconds when processing
       },
     );
+  const {
+    data: seriesInputFields,
+    isLoading: isLoadingMetadata,
+    refetch: refetchMetadata,
+  } = useGetSeriesByIdInputFieldsQuery({ seriesId: selectedId }, { enabled: Boolean(selectedId) });
+
+  const seriesQuery = useGetMySeriesQuery({
+    limit: pageSize,
+    offset,
+    ...(orderBy !== undefined && { orderBy }),
+    ...(queryFilter !== undefined && { query: queryFilter }),
+  });
 
   // Event handlers
   const handleEditClose = () => {
@@ -220,6 +232,7 @@ export function useSeriesTable() {
     textCopied,
     setTextCopied,
     refetch: seriesQuery.refetch,
+    refetchMetadata,
     handleEditClose,
     handleRowClick,
     setSorting: tableState.setSorting,

@@ -55,6 +55,7 @@ const SeriesTable = () => {
     setQueryFilter,
     textCopied,
     setTextCopied,
+    refetchMetadata,
   } = useSeriesTable();
 
   const { data, isLoading, error, refetch } = seriesQuery;
@@ -255,6 +256,7 @@ const SeriesTable = () => {
         saveSeriesUpdate={saveSeriesUpdate}
         selectedSeriesId={selectedId}
         refetch={refetch}
+        refetchMetadata={refetchMetadata}
         setIsEditing={setIsEditing}
         sidebarInfo={t(`series:seriesInfo.required`)}
         tableRef={tableRef} // Pass the table ref to the sidebar
