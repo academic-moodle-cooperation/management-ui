@@ -13,6 +13,49 @@ import { logger } from "@workspace/utils";
 
 import { loadAllAvailablePlugins } from "../loadPlugins";
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Plugin Override Types & Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface PluginOverride {
+  enabled: boolean;
+  mode: "additive" | "replacement";
+}
+
+interface PluginOverrides {
+  version: 1;
+  overrides: Record<string, PluginOverride>;
+}
+
+const OVERRIDE_STORAGE_KEY = "plugin_overrides";
+
+/**
+ * Read plugin overrides from localStorage
+ */
+const getPluginOverrides = (): PluginOverrides => {
+  try {
+    const data = localStorage.getItem(OVERRIDE_STORAGE_KEY);
+    if (!data) {
+      return { version: 1, overrides: {} };
+    }
+    const parsed = JSON.parse(data) as PluginOverrides;
+    if (parsed.version !== 1) {
+      return { version: 1, overrides: {} };
+    }
+    return parsed;
+  } catch {
+    return { version: 1, overrides: {} };
+  }
+};
+
+/**
+ * Parse plugin name into namespace and type
+ */
+const parsePluginName = (name: string): { namespace: string; type: string } => {
+  const [namespace, type] = name.split(":");
+  return { namespace: namespace || "unknown", type: type || "unknown" };
+};
+
 interface PluginInitializerProps {
   children: React.ReactNode;
   config?: AppConfig; // Add config prop
@@ -66,6 +109,9 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
         // 2. Load ALL available plugins without filtering first
         const allAvailablePlugins: Plugin[] = await loadAllAvailablePlugins();
 
+        // 2b. Expose the full list for the Admin Marketplace's plugin explorer
+        manager.addFunction("marketplace.getAllPlugins", () => allAvailablePlugins);
+
         // 3. Register config plugins first to establish configuration
         const configPlugins = allAvailablePlugins.filter((plugin) =>
           plugin.name.endsWith(":config"),
@@ -100,10 +146,49 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           config || ({} as AppConfig),
         );
 
-        // 5. Filter and load remaining plugins with the merged configuration
+        // 5. Get localStorage overrides for plugin enable/disable
+        const overrides = getPluginOverrides();
+        const hasOverrides = Object.keys(overrides.overrides).length > 0;
+        if (hasOverrides) {
+          logger.info("PluginInitializer: Applying plugin overrides from localStorage", {
+            overrideCount: Object.keys(overrides.overrides).length,
+          });
+        }
+
+        // 6. Filter and load remaining plugins with the merged configuration + overrides
         const remainingPlugins = allAvailablePlugins.filter(
           (plugin) => !plugin.name.endsWith(":config"),
         );
+
+        // Build a map of plugins by type for replacement mode conflict handling
+        const pluginsByType = new Map<string, Plugin[]>();
+        remainingPlugins.forEach((plugin) => {
+          const { type } = parsePluginName(plugin.name);
+          const existing = pluginsByType.get(type) || [];
+          pluginsByType.set(type, [...existing, plugin]);
+        });
+
+        // Track which plugins to disable for replacement mode
+        const pluginsToDisable = new Set<string>();
+
+        // First pass: identify plugins to disable in replacement mode
+        for (const [pluginName, override] of Object.entries(overrides.overrides)) {
+          if (override.enabled && override.mode === "replacement") {
+            const { type: enableType, namespace: enableNamespace } = parsePluginName(pluginName);
+            
+            // Find conflicting plugins (same type, different namespace)
+            const sameTypePlugins = pluginsByType.get(enableType) || [];
+            for (const conflict of sameTypePlugins) {
+              const { namespace: conflictNamespace } = parsePluginName(conflict.name);
+              if (conflictNamespace !== enableNamespace) {
+                pluginsToDisable.add(conflict.name);
+                logger.info(
+                  `PluginInitializer: Replacement mode - will disable "${conflict.name}" for "${pluginName}"`,
+                );
+              }
+            }
+          }
+        }
 
         remainingPlugins.forEach((plugin) => {
           if (plugin && plugin.name) {
@@ -111,7 +196,33 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
             const [pluginNamespace, pluginType] = plugin.name.split(":");
             const pluginConfig = mergedConfig?.app?.pluginNamespace || [];
 
-            // Parse config to check if plugin should be loaded
+            // Check for override first
+            const override = overrides.overrides[plugin.name];
+            
+            // Check if this plugin should be disabled due to replacement mode
+            if (pluginsToDisable.has(plugin.name)) {
+              // Skip this plugin - it's being replaced
+              logger.info(`PluginInitializer: Skipping "${plugin.name}" - disabled by replacement mode`);
+              return;
+            }
+
+            // If there's an explicit override, use it
+            if (override !== undefined) {
+              if (override.enabled) {
+                // Explicitly enabled via override
+                if (!manager.plugins.has(plugin.name)) {
+                  manager.register(plugin);
+                  registeredPluginNames.push(plugin.name);
+                  logger.info(`PluginInitializer: Loaded "${plugin.name}" via override (${override.mode} mode)`);
+                }
+              } else {
+                // Explicitly disabled via override - skip
+                logger.info(`PluginInitializer: Skipping "${plugin.name}" - disabled by override`);
+              }
+              return;
+            }
+
+            // No override - use config-based loading
             let shouldLoad = false;
             for (const item of pluginConfig) {
               if (typeof item === "string" && item === pluginNamespace) {
@@ -148,10 +259,10 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           }
         });
 
-        // 6. Mark plugins as ready in the manager
+        // 8. Mark plugins as ready in the manager
         manager.markPluginsAsReady();
 
-        // 7. Update local state to render children
+        // 9. Update local state to render children
         if (!didUnmount) {
           setPluginsReady(true);
         }

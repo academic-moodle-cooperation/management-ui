@@ -10,6 +10,25 @@ const THEME_LINK_ID = "marketplace-dynamic-theme";
 const ALLOWED_THEME_PREFIX = "/management-ui/plugins/themes/";
 
 /**
+ * Ensure the marketplace theme link stays at the end of all stylesheets
+ * This maintains CSS cascade priority (last loaded wins)
+ */
+const ensureThemeLinkIsLast = (): void => {
+  const themeLink = document.getElementById(THEME_LINK_ID);
+  if (!themeLink) return;
+
+  const allStylesheets = Array.from(document.head.querySelectorAll('link[rel="stylesheet"]'));
+  if (allStylesheets.length <= 1) return; // Only our theme or no stylesheets
+
+  const lastStylesheet = allStylesheets[allStylesheets.length - 1];
+  if (lastStylesheet !== themeLink) {
+    // Move our theme link to the end
+    themeLink.remove();
+    lastStylesheet.insertAdjacentElement('afterend', themeLink);
+  }
+};
+
+/**
  * ThemeLoader Service
  *
  * Manages dynamic theme loading, application, and persistence.
@@ -34,10 +53,10 @@ export const ThemeLoader = {
       try {
         // Determine if this is a relative or absolute URL
         const isRelative = url.startsWith("/") || !url.includes("://");
-        
+
         // Basic URL validation - check for valid protocol
         const parsedUrl = new URL(url, window.location.origin);
-        
+
         // Security: Validate relative URLs to prevent directory traversal
         if (isRelative) {
           // This is a relative URL - validate it starts with the expected prefix
@@ -62,10 +81,12 @@ export const ThemeLoader = {
         link.id = THEME_LINK_ID;
         link.rel = "stylesheet";
         link.href = parsedUrl.href;
-        
+
         // Add success handler
         link.onload = () => {
           console.log(`Applied theme from ${url}`);
+          // Ensure our theme stays at the end after it loads
+          ensureThemeLinkIsLast();
           resolve();
         };
 
@@ -78,8 +99,17 @@ export const ThemeLoader = {
           reject(error);
         };
 
-        // Append to document head
-        document.head.appendChild(link);
+        // Append to document head AFTER all existing stylesheets to ensure it has highest priority
+        // This ensures marketplace themes override config-based themes
+        const existingStylesheets = document.head.querySelectorAll('link[rel="stylesheet"]');
+        if (existingStylesheets.length > 0) {
+          // Insert after the last stylesheet
+          const lastStylesheet = existingStylesheets[existingStylesheets.length - 1];
+          lastStylesheet.insertAdjacentElement('afterend', link);
+        } else {
+          // No stylesheets yet, just append to head
+          document.head.appendChild(link);
+        }
       } catch (error) {
         console.error(`Failed to apply theme from ${url}:`, error);
         reject(error);
@@ -152,13 +182,21 @@ export const ThemeLoader = {
   /**
    * Initialize theme loading on application startup
    * Loads and applies the installed theme if one exists
+   * Uses a small delay to ensure it loads after config-based themes
    */
   async initialize(): Promise<void> {
     const installedUrl = this.getInstalledUrl();
     if (installedUrl) {
       console.log(`Loading installed theme from localStorage: ${installedUrl}`);
       try {
+        // Small delay to ensure config-based themes (from main.tsx) load first
+        // This ensures marketplace themes override config themes
+        await new Promise((resolve) => setTimeout(resolve, 100));
         await this.apply(installedUrl);
+
+        // Additional delay to catch any late-loading stylesheets, then re-position
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        ensureThemeLinkIsLast();
       } catch (error) {
         console.error("Failed to load installed theme:", error);
         // Clear the corrupted/invalid theme URL

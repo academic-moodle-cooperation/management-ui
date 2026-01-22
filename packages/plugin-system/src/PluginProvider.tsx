@@ -1,11 +1,11 @@
-import React, { createContext, useContext, type ReactNode } from "react";
+import React, { createContext, useContext, useMemo, type ReactNode } from "react";
 
 import { createPluginManager } from "./pluginManager";
 
 const PluginContext = createContext<ReturnType<typeof createPluginManager> | null>(null);
 
 export const PluginProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const pluginManager = createPluginManager();
+  const pluginManager = useMemo(() => createPluginManager(), []);
 
   return <PluginContext.Provider value={pluginManager}>{children}</PluginContext.Provider>;
 };
