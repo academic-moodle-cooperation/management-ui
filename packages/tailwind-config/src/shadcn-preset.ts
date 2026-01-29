@@ -4,6 +4,9 @@ import { shadcnPlugin } from "./shadcn-plugin";
 
 import type { Config } from "tailwindcss";
 
+/**
+ * Shadcn preset for design tokens (primary, border, etc.) and animations.
+ */
 export const shadcnPreset: Config = {
   content: [],
   darkMode: "class",

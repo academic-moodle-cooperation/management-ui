@@ -15,3 +15,18 @@ export {
   generateConfigPlugin,
   type GenerateConfigPluginOptions,
 } from "./generate-config-plugin.js";
+
+// Community Plugin System
+export {
+  createCommunityPluginConfig,
+  type CreateCommunityPluginConfigOptions,
+  type ExtractedFragment,
+} from "./community-plugin.config.js";
+export {
+  fragmentExtractorPlugin,
+  type FragmentExtractorOptions,
+} from "./plugins/fragment-extractor.js";
+export {
+  localPluginsDevPlugin,
+  type LocalPluginsDevPluginOptions,
+} from "./plugins/local-plugins-dev.js";

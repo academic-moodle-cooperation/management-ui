@@ -21,7 +21,7 @@ const ensureThemeLinkIsLast = (): void => {
   if (allStylesheets.length <= 1) return; // Only our theme or no stylesheets
 
   const lastStylesheet = allStylesheets[allStylesheets.length - 1];
-  if (lastStylesheet !== themeLink) {
+  if (lastStylesheet && lastStylesheet !== themeLink) {
     // Move our theme link to the end
     themeLink.remove();
     lastStylesheet.insertAdjacentElement('afterend', themeLink);
@@ -105,7 +105,11 @@ export const ThemeLoader = {
         if (existingStylesheets.length > 0) {
           // Insert after the last stylesheet
           const lastStylesheet = existingStylesheets[existingStylesheets.length - 1];
-          lastStylesheet.insertAdjacentElement('afterend', link);
+          if (lastStylesheet) {
+            lastStylesheet.insertAdjacentElement('afterend', link);
+          } else {
+            document.head.appendChild(link);
+          }
         } else {
           // No stylesheets yet, just append to head
           document.head.appendChild(link);

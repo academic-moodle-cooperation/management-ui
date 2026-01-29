@@ -14,9 +14,12 @@ The Admin Marketplace plugin provides a dynamic plugin marketplace that allows a
 - **Plugin Registry** - Browse available plugins with metadata (name, description, version, author)
 - **Try Before Install** - Load plugins temporarily without persisting them
 - **Persistent Installation** - Install plugins and save to localStorage for automatic loading
-- **Developer Mode** - Load custom plugin URLs during development (e.g., localhost)
+- **Developer Mode** - Load custom plugin URLs during development (e.g., 127.0.0.1)
+- **Local Plugins (dev)** - In development, plugins in `.local-plugins/` are loaded by the **core** (no Marketplace required); the core fetches `/local-plugins/manifest.json` in dev
 - **Uninstall Support** - Remove installed plugins from localStorage
 - **Auto-Load** - Automatically load installed plugins on application startup
+- **Theme switching** - Try and install themes (CSS) via ThemeLoader
+- **Remote registry** - Browse and install plugins from a configurable registry API
 
 ## Plugin Structure
 
@@ -24,13 +27,22 @@ The Admin Marketplace plugin provides a dynamic plugin marketplace that allows a
 plugins/admin-marketplace/
 ├── src/
 │   ├── services/
-│   │   └── remote-loader.ts      # Remote plugin loading service
+│   │   ├── local-plugins-manifest.ts  # Dev: fetch .local-plugins manifest from core
+│   │   ├── plugin-explorer.ts         # Discover bundled plugins (enable/disable)
+│   │   ├── plugin-metadata.ts         # Plugin categories and metadata helpers
+│   │   ├── plugin-registry.ts         # Static/fallback plugin list (AVAILABLE_PLUGINS)
+│   │   ├── registry-fetcher.ts        # Remote plugin registry API
+│   │   ├── remote-loader.ts           # Load, validate, persist remote plugins
+│   │   ├── security.ts                # URL validation, version compatibility
+│   │   ├── theme-loader.ts            # Theme try/install (CSS)
+│   │   ├── themes.ts                  # Available themes list
+│   │   └── view-preferences.ts        # Dashboard view mode (localStorage)
 │   ├── views/
-│   │   └── MarketplaceDashboard.tsx  # Marketplace UI component
-│   └── index.ts                   # Plugin entry point
+│   │   └── MarketplaceDashboard.tsx   # Marketplace UI
+│   └── index.ts                       # Plugin entry point
 ├── package.json
 ├── tsconfig.json
-└── README.md                      # This file
+└── README.md
 ```
 
 ## Architecture: Parallel Engine Approach
@@ -78,20 +90,17 @@ The "Parallel Engine" approach means that remote plugins run in the **same plugi
 The RemoteLoader service handles:
 
 ```typescript
-RemoteLoader.loadAndRegister(url, manager); // Load and register plugin
-RemoteLoader.persist(url); // Save to localStorage
-RemoteLoader.remove(url); // Remove from localStorage
-RemoteLoader.getInstalledUrls(); // Get all installed plugin URLs
+await RemoteLoader.loadAndRegister(url, manager, metadata?, forceReload?); // Load and register (async)
+RemoteLoader.persist(url, pluginId, version); // Save to localStorage (id, version required)
+RemoteLoader.remove(urlOrId); // Remove from localStorage (by URL or plugin ID)
+RemoteLoader.getInstalledUrls(); // Get installed plugin URLs
+RemoteLoader.getInstalledPlugins(); // Get full installed info (url, id, version, installedAt)
 RemoteLoader.clearAll(); // Clear all installed plugins
 ```
 
 **Storage Key:** `installed_remote_plugins`
 
-**Storage Format:** JSON array of URLs
-
-```json
-["https://example.com/plugin1.js", "https://example.com/plugin2.js"]
-```
+**Storage Format:** JSON array of objects `{ url, id, version, installedAt }` (not plain URLs).
 
 ### Marketplace Dashboard
 
@@ -99,37 +108,23 @@ RemoteLoader.clearAll(); // Clear all installed plugins
 
 The MarketplaceDashboard component provides:
 
-- **Plugin Grid** - Displays available plugins with metadata
-- **Try Button** - Loads plugin without saving to localStorage
-- **Install Button** - Loads plugin and saves to localStorage
-- **Uninstall Button** - Removes plugin from localStorage
+- **Community plugins** - Grid of plugins from remote registry (or fallback list)
+- **Local plugins (dev)** - Plugins from `.local-plugins/` via core’s `/local-plugins/manifest.json` (dev only)
+- **Bundled plugins** - Explorer for built-in plugins (enable/disable)
+- **Themes** - Try and install theme CSS
+- **Try Button** - Load plugin without saving to localStorage
+- **Install Button** - Load plugin and persist (url, id, version) to localStorage
+- **Uninstall Button** - Remove plugin from localStorage
 - **Developer Mode** - Input field for custom plugin URLs
 - **Installed Plugins List** - Shows all persisted plugins
 
 ### Plugin Registry
 
-The plugin registry is currently a static array (`AVAILABLE_PLUGINS`) for demonstration purposes. In production, this should be fetched from a remote API:
+Available plugins come from:
 
-```typescript
-const AVAILABLE_PLUGINS = [
-  {
-    id: "example-plugin-1",
-    name: "Example Analytics Plugin",
-    description: "Adds analytics dashboard and reporting features",
-    version: "1.0.0",
-    author: "Example Team",
-    url: "https://example.com/plugins/analytics.js",
-    category: "Analytics",
-  },
-  // ... more plugins
-];
-```
-
-**Production Enhancement:** Replace with API call:
-
-```typescript
-const { data: plugins } = await fetch("/api/marketplace/plugins");
-```
+1. **Remote registry** – `registry-fetcher.ts` fetches from a configurable API (e.g. `VITE_MARKETPLACE_REGISTRY_URL`). Used for “Community plugins” in the UI.
+2. **Static fallback** – `plugin-registry.ts` exposes `AVAILABLE_PLUGINS` for demos or when no registry is configured.
+3. **Local plugins (dev only)** – The **core** (PluginInitializer) fetches `/local-plugins/manifest.json` in dev and loads plugins from `.local-plugins/` on disk. The Marketplace does not load them; use the core in dev to activate `.local-plugins` without the Marketplace.
 
 ## Plugin Registration
 
@@ -140,8 +135,11 @@ const { data: plugins } = await fetch("/api/marketplace/plugins");
 export const adminMarketplacePlugin = createPlugin({
   namespace: "admin",
   type: "app",
-  initialize(manager) {
-    // Register marketplace app route
+  version: "1.0.0",
+
+  async initialize(manager) {
+    void ThemeLoader.initialize();
+
     manager.registerObject("apps:definitions", "marketplace", {
       id: "marketplace",
       name: "Marketplace",
@@ -149,20 +147,20 @@ export const adminMarketplacePlugin = createPlugin({
       component: () => MarketplaceDashboard({ manager }),
     });
 
-    // Register sidebar navigation
     manager.registerObject("sidebar:nav-items", "marketplace", {
       title: "Marketplace",
       path: "/admin/marketplace",
       icon: ShoppingBag,
       order: 1000,
       permissions: ["admin.view"],
+      featureFlags: [],
+      category: "admin",
     });
 
-    // Auto-load installed plugins
     const savedUrls = RemoteLoader.getInstalledUrls();
-    savedUrls.forEach((url) => {
-      RemoteLoader.loadAndRegister(url, manager).catch(console.error);
-    });
+    await Promise.allSettled(
+      savedUrls.map((url) => RemoteLoader.loadAndRegister(url, manager))
+    );
   },
 });
 ```
@@ -191,7 +189,7 @@ This is a library plugin and does not run standalone. To develop:
 pnpm dev
 ```
 
-Then navigate to `http://127.0.0.1:3000/admin/marketplace`
+Then navigate to `http://127.0.0.1:3000/admin/marketplace` (core uses port 3000 by default). Plugins in `.local-plugins/` are loaded automatically by the core in dev (no need to open the Marketplace). Use the Marketplace to browse/install other plugins or Developer Mode for custom URLs.
 
 ### Building
 
@@ -245,7 +243,7 @@ export default createPlugin({
 2. Serve it locally (e.g., via `python -m http.server 3001`)
 3. Use Developer Mode in the marketplace to load it:
    ```
-   http://localhost:3001/my-plugin.js
+   http://127.0.0.1:5173/my-plugin.mjs
    ```
 
 ## Usage Examples
@@ -263,12 +261,19 @@ await RemoteLoader.loadAndRegister(
 ### Install a Plugin (Persistent)
 
 ```typescript
-// Load and persist to localStorage
-await RemoteLoader.loadAndRegister(
+// Load and persist to localStorage (persist requires id and version)
+const result = await RemoteLoader.loadAndRegister(
   "https://example.com/plugin.js",
-  manager
+  manager,
+  metadata
 );
-RemoteLoader.persist("https://example.com/plugin.js");
+if (result.success && result.pluginId) {
+  RemoteLoader.persist(
+    "https://example.com/plugin.js",
+    result.pluginId,
+    metadata?.version ?? "1.0.0"
+  );
+}
 ```
 
 ### Uninstall a Plugin
@@ -326,8 +331,10 @@ import { adminMarketplacePlugin } from "@workspace/plugins";
 ### Workspace Dependencies
 
 - `@workspace/plugin-system` - Plugin infrastructure
+- `@workspace/remote-plugin-loader` - Shared load/transform/register for remote ES modules
 - `@workspace/ui` - UI components (Button, Card, Input, etc.)
-- `lucide-react` - Icons (ShoppingBag)
+- `@workspace/utils` - Logger and utilities
+- `lucide-react` - Icons (ShoppingBag, etc.)
 - `react` - UI library
 
 ### External Dependencies

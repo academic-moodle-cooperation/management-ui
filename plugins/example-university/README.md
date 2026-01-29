@@ -273,8 +273,7 @@ Place your logo in `assets/`:
 - [Core Plugin](/plugins/core/README.md) - Extension point catalog
 - [Adding Plugins Guide](/docs/workflows/ADDING_PLUGINS.md) - Step-by-step instructions
 - [Plugin System Overview](/plugins/README.md) - Architecture overview
-- [UniVie Plugin](/plugins/univie/README.md) - Real-world example
-- [TU Wien Plugin](/plugins/tuwien/README.md) - Another example
+- Org plugins (univie, tuwien, etc.) live in `.local-plugins/` or separate repos; see [Community Plugin Development](/docs/COMMUNITY_PLUGIN_DEVELOPMENT.md)
 
 ## Checklist for New Plugins
 

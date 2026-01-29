@@ -12,7 +12,9 @@
   },
   "dependencies": {
     "@workspace/plugin-system": "workspace:*",
+    "@workspace/remote-plugin-loader": "workspace:*",
     "@workspace/ui": "workspace:*",
+    "@workspace/utils": "workspace:*",
     "lucide-react": "^0.417.0",
     "react": "^19.1.0"
   },

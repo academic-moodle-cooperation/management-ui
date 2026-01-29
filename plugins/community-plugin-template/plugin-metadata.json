@@ -1,0 +1,22 @@
+{
+  "id": "my-plugin",
+  "name": "My Community Plugin",
+  "description": "Short description of what this plugin does.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Your Name",
+    "email": "your.email@example.com",
+    "url": "https://example.com"
+  },
+  "category": "feature",
+  "icon": "Puzzle",
+  "tags": ["example", "community"],
+  "repositoryUrl": "https://github.com/your-org/your-plugin",
+  "homepageUrl": "https://example.com/your-plugin",
+  "license": "MIT",
+  "workspaceDependencies": {
+    "@workspace/plugin-system": ">=1.0.0",
+    "@workspace/ui": ">=1.0.0"
+  }
+}
+

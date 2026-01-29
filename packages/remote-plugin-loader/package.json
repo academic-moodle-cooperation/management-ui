@@ -1,0 +1,28 @@
+{
+  "name": "@workspace/remote-plugin-loader",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf node_modules && rm -f *.tsbuildinfo",
+    "lint": "eslint . --ext .ts --report-unused-disable-directives --max-warnings 0",
+    "check-types": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@workspace/plugin-system": "workspace:*",
+    "@workspace/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "eslint": "^9.9.0",
+    "typescript": "~5.5.4",
+    "vitest": "^4.0.17"
+  }
+}

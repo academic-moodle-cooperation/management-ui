@@ -1,4 +1,4 @@
-import { AlertTriangle, RefreshCw, Check, X, Layers, LayoutGrid, TableIcon } from "lucide-react";
+import { AlertTriangle, RefreshCw, Check, X, Layers, LayoutGrid, TableIcon, Globe, ExternalLink, Shield, ShieldCheck } from "lucide-react";
 import React, { useState, useEffect, useCallback } from "react";
 
 import type { PluginManager } from "@workspace/plugin-system";
@@ -28,14 +28,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Checkbox,
 } from "@workspace/ui/components";
 
 import { PluginExplorer, type DiscoveredPlugin, type PluginConflict } from "../services/plugin-explorer";
-import { getPluginMetadataOrDefault, CATEGORY_INFO, type PluginCategory } from "../services/plugin-metadata";
+import { getPluginMetadataOrDefault, CATEGORY_INFO, type PluginCategory, getCategoryLabel } from "../services/plugin-metadata";
 import { AVAILABLE_PLUGINS } from "../services/plugin-registry";
+import { registryFetcher, type RegistryPlugin } from "../services/registry-fetcher";
 import { RemoteLoader } from "../services/remote-loader";
+import { securityService } from "../services/security";
 import { ThemeLoader } from "../services/theme-loader";
 import { AVAILABLE_THEMES } from "../services/themes";
+import { getViewPreferences, updateViewPreference, type ViewMode } from "../services/view-preferences";
 
 export interface MarketplaceDashboardProps {
   manager: PluginManager;
@@ -56,6 +60,7 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
 }) => {
   // Remote plugins state
   const [customUrl, setCustomUrl] = useState("");
+  const [forceReload, setForceReload] = useState(false);
   const [installedPlugins, setInstalledPlugins] = useState<string[]>(
     RemoteLoader.getInstalledUrls()
   );
@@ -65,13 +70,70 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Community plugins state
+  const [communityPlugins, setCommunityPlugins] = useState<RegistryPlugin[]>([]);
+  const [communityPluginsLoading, setCommunityPluginsLoading] = useState(true);
+  const [communitySearchQuery, setCommunitySearchQuery] = useState("");
+  const [communityFilterCategory, setCommunityFilterCategory] = useState<string>("all");
+
   // Bundled plugins state
   const [bundledPlugins, setBundledPlugins] = useState<Map<string, DiscoveredPlugin[]>>(new Map());
   const [bundledPluginsLoading, setBundledPluginsLoading] = useState(true);
   const [pendingChanges, setPendingChanges] = useState(false);
   const [conflicts, setConflicts] = useState<PluginConflict[]>([]);
   const [selectedModes, setSelectedModes] = useState<Record<string, "additive" | "replacement">>({});
-  const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
+  // Local development plugins (discovered via localStorage)
+  const [localPlugins, setLocalPlugins] = useState<
+    { id: string; name: string; url: string; metadata?: unknown }[]
+  >([]);
+  
+  // View mode preferences (persisted to localStorage)
+  const [viewModes, setViewModes] = useState(() => getViewPreferences());
+  
+  const handleViewModeChange = (section: keyof typeof viewModes, mode: ViewMode) => {
+    setViewModes((prev) => {
+      const updated = { ...prev, [section]: mode };
+      updateViewPreference(section, mode);
+      return updated;
+    });
+  };
+
+  // Load local development plugins (dev-only helper via localStorage)
+  useEffect(() => {
+    let cancelled = false;
+    const loadLocal = () => {
+      if (typeof window === "undefined") return;
+      try {
+        const raw = window.localStorage.getItem("local_plugins");
+        if (!raw) {
+          if (!cancelled) setLocalPlugins([]);
+          return;
+        }
+        const parsed = JSON.parse(raw) as unknown;
+        if (!Array.isArray(parsed)) {
+          if (!cancelled) setLocalPlugins([]);
+          return;
+        }
+        const mapped = parsed
+          .filter((item): item is { id: string; name: string; url: string; metadata?: unknown } => {
+            return !!item && typeof item === "object" && "id" in item && "name" in item && "url" in item;
+          })
+          .map((item) => ({
+            id: String((item as { id: unknown }).id),
+            name: String((item as { name: unknown }).name),
+            url: String((item as { url: unknown }).url),
+            metadata: (item as { metadata?: unknown }).metadata,
+          }));
+        if (!cancelled) setLocalPlugins(mapped);
+      } catch {
+        if (!cancelled) setLocalPlugins([]);
+      }
+    };
+    loadLocal();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Load bundled plugins on mount (async: via marketplace.getAllPlugins or @workspace/plugins fallback)
   useEffect(() => {
@@ -104,6 +166,59 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
     load();
     return () => { cancelled = true; };
   }, [manager]);
+
+  // Load community plugins from registry
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadCommunityPlugins = async () => {
+      setCommunityPluginsLoading(true);
+      try {
+        const plugins = await registryFetcher.fetchAllPlugins();
+        if (!cancelled) {
+          setCommunityPlugins(plugins);
+        }
+      } catch (err) {
+        console.error("Failed to load community plugins:", err);
+        if (!cancelled) {
+          setCommunityPlugins([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setCommunityPluginsLoading(false);
+        }
+      }
+    };
+
+    loadCommunityPlugins();
+    return () => { cancelled = true; };
+  }, []);
+
+  // Refresh community plugins
+  const refreshCommunityPlugins = useCallback(async () => {
+    setCommunityPluginsLoading(true);
+    registryFetcher.clearCache();
+    try {
+      const plugins = await registryFetcher.fetchAllPlugins();
+      setCommunityPlugins(plugins);
+    } catch (err) {
+      console.error("Failed to refresh community plugins:", err);
+    } finally {
+      setCommunityPluginsLoading(false);
+    }
+  }, []);
+
+  // Filter community plugins
+  const filteredCommunityPlugins = communityPlugins.filter((plugin) => {
+    const matchesSearch = communitySearchQuery === "" ||
+      plugin.name.toLowerCase().includes(communitySearchQuery.toLowerCase()) ||
+      plugin.description.toLowerCase().includes(communitySearchQuery.toLowerCase()) ||
+      (plugin.tags || []).some(tag => tag.toLowerCase().includes(communitySearchQuery.toLowerCase()));
+
+    const matchesCategory = communityFilterCategory === "all" || plugin.category === communityFilterCategory;
+
+    return matchesSearch && matchesCategory;
+  });
 
   // Refresh bundled plugins state
   const refreshBundledPlugins = useCallback(async () => {
@@ -161,19 +276,25 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
     window.location.reload();
   };
 
-  // Clear all overrides
+  // Clear all overrides (bundled plugins only)
+  // Note: Remote plugins are not cleared here - use Uninstall button for those
   const handleClearAllOverrides = () => {
     PluginExplorer.clearAllOverrides();
     setConflicts([]);
+    setPendingChanges(false); // Clear pending flag after discarding bundled plugin changes
     void refreshBundledPlugins();
   };
 
-  const handleTryPlugin = async (url: string) => {
+  const handleTryPlugin = async (url: string, force = false) => {
     setLoading(url);
     setError(null);
     try {
-      await RemoteLoader.loadAndRegister(url, manager);
-      console.log(`Successfully loaded plugin from ${url}`);
+      const result = await RemoteLoader.loadAndRegister(url, manager, undefined, force);
+      if (!result.success) {
+        setError(result.error || "Failed to load plugin");
+      } else {
+        console.log(`Successfully loaded plugin from ${url}`);
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
       setError(`Failed to load plugin: ${errorMessage}`);
@@ -182,14 +303,20 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
     }
   };
 
-  const handleInstallPlugin = async (url: string) => {
+  const handleInstallPlugin = async (url: string, force = false) => {
     setLoading(url);
     setError(null);
     try {
-      await RemoteLoader.loadAndRegister(url, manager);
-      RemoteLoader.persist(url);
-      setInstalledPlugins(RemoteLoader.getInstalledUrls());
-      console.log(`Successfully installed plugin from ${url}`);
+      const result = await RemoteLoader.loadAndRegister(url, manager, undefined, force);
+      if (!result.success) {
+        setError(result.error || "Failed to install plugin");
+      } else {
+        RemoteLoader.persist(url, result.pluginId || "unknown", "1.0.0");
+        setInstalledPlugins(RemoteLoader.getInstalledUrls());
+        // Mark as pending changes since plugin is now persisted and will auto-load on reload
+        setPendingChanges(true);
+        console.log(`Successfully installed plugin from ${url}`);
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
       setError(`Failed to install plugin: ${errorMessage}`);
@@ -201,7 +328,54 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
   const handleUninstallPlugin = (url: string) => {
     RemoteLoader.remove(url);
     setInstalledPlugins(RemoteLoader.getInstalledUrls());
+    // Mark as pending changes since plugin is now removed and won't load on reload
+    setPendingChanges(true);
     console.log(`Uninstalled plugin from ${url}`);
+  };
+
+  // Community plugin handlers
+  const handleTryCommunityPlugin = async (plugin: RegistryPlugin) => {
+    setLoading(plugin.url);
+    setError(null);
+    try {
+      const result = await RemoteLoader.loadAndRegister(plugin.url, manager, plugin);
+      if (!result.success) {
+        setError(result.error || "Failed to load community plugin");
+      } else {
+        console.log(`Successfully loaded community plugin "${plugin.name}"`);
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
+      setError(`Failed to load community plugin: ${errorMessage}`);
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  const handleInstallCommunityPlugin = async (plugin: RegistryPlugin) => {
+    setLoading(plugin.url);
+    setError(null);
+    try {
+      const result = await RemoteLoader.loadAndRegister(plugin.url, manager, plugin);
+      if (!result.success) {
+        setError(result.error || "Failed to install community plugin");
+      } else {
+        RemoteLoader.persist(plugin.url, plugin.id, plugin.version);
+        setInstalledPlugins(RemoteLoader.getInstalledUrls());
+        // Mark as pending changes since plugin is now persisted and will auto-load on reload
+        setPendingChanges(true);
+        console.log(`Successfully installed community plugin "${plugin.name}" v${plugin.version}`);
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
+      setError(`Failed to install community plugin: ${errorMessage}`);
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  const isCommunityPluginInstalled = (pluginId: string) => {
+    return RemoteLoader.isInstalled(pluginId);
   };
 
   const handleLoadCustomUrl = async () => {
@@ -209,7 +383,7 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
       setError("Please enter a valid URL");
       return;
     }
-    await handleTryPlugin(customUrl.trim());
+    await handleTryPlugin(customUrl.trim(), forceReload);
   };
 
   const handleInstallCustomUrl = async () => {
@@ -217,7 +391,7 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
       setError("Please enter a valid URL");
       return;
     }
-    await handleInstallPlugin(customUrl.trim());
+    await handleInstallPlugin(customUrl.trim(), forceReload);
   };
 
   const isInstalled = (url: string) => installedPlugins.includes(url);
@@ -266,7 +440,7 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
         <h1 className="text-3xl font-bold">Admin Marketplace</h1>
         <p className="text-muted-foreground">
           Explore bundled plugins, switch themes, and try different configurations.
-          Changes to bundled plugins require a page reload to take effect.
+          Changes to plugins require a page reload to take effect.
         </p>
       </div>
 
@@ -331,7 +505,7 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
         <CardHeader>
           <CardTitle>Developer Mode</CardTitle>
           <CardDescription>
-            Load a plugin from a custom URL (e.g., localhost during development)
+            Load a plugin from a custom URL (e.g., 127.0.0.1 during development)
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -340,10 +514,20 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
             <Input
               id="custom-url"
               type="url"
-              placeholder="http://localhost:3001/plugin.js"
+              placeholder="http://127.0.0.1:5173/plugin.mjs"
               value={customUrl}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomUrl(e.target.value)}
             />
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="force-reload"
+              checked={forceReload}
+              onCheckedChange={(checked) => setForceReload(checked === true)}
+            />
+            <Label htmlFor="force-reload" className="text-sm font-normal cursor-pointer">
+              Force reload (bypass cache)
+            </Label>
           </div>
         </CardContent>
         <CardFooter className="flex gap-2">
@@ -365,11 +549,36 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
 
       {/* Available Themes Grid */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-semibold">Available Themes</h2>
-        <p className="text-sm text-muted-foreground">
-          Customize the look and feel of your application with these theme options
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold">Available Themes</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Customize the look and feel of your application with these theme options
+            </p>
+          </div>
+          <div className="flex border rounded-md">
+            <Button
+              variant={viewModes.themes === "cards" ? "secondary" : "ghost"}
+              size="sm"
+              className="rounded-r-none"
+              onClick={() => handleViewModeChange("themes", "cards")}
+              title="Card view"
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={viewModes.themes === "table" ? "secondary" : "ghost"}
+              size="sm"
+              className="rounded-l-none"
+              onClick={() => handleViewModeChange("themes", "table")}
+              title="Table view"
+            >
+              <TableIcon className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+        {viewModes.themes === "cards" ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {AVAILABLE_THEMES.map((theme) => (
             <Card key={theme.id}>
               <CardHeader>
@@ -423,7 +632,77 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
               </CardFooter>
             </Card>
           ))}
+          </div>
+        ) : (
+          <ThemesTable
+            themes={AVAILABLE_THEMES}
+            isInstalled={isThemeInstalled}
+            loading={loading}
+            onTry={handleTryTheme}
+            onInstall={handleInstallTheme}
+            onUninstall={handleUninstallTheme}
+          />
+        )}
+      </div>
+
+      {/* Local Development Plugins Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold flex items-center gap-2">
+              <Globe className="h-6 w-6" />
+              Local Development Plugins
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Plugins discovered from local development configuration (e.g. localStorage). Use this to
+              quickly try plugins you are working on without publishing them.
+            </p>
+          </div>
         </div>
+
+        {localPlugins.length === 0 ? (
+          <div className="text-center py-8 border rounded-lg bg-muted/30">
+            <p className="text-sm text-muted-foreground">
+              No local development plugins detected. Use Developer Mode or configure
+              <code className="mx-1">local_plugins</code> in <code>localStorage</code> with your plugin URLs.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {localPlugins.map((plugin) => (
+              <Card key={plugin.id}>
+                <CardHeader>
+                  <CardTitle className="text-base">{plugin.name}</CardTitle>
+                  <CardDescription className="text-xs break-all">
+                    {plugin.url}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    Local development plugin. It will be loaded like any other remote plugin using the given URL.
+                  </p>
+                </CardContent>
+                <CardFooter className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleTryPlugin(plugin.url)}
+                    disabled={loading !== null}
+                  >
+                    {loading === plugin.url ? "Loading..." : "Try"}
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => handleInstallPlugin(plugin.url)}
+                    disabled={loading !== null}
+                  >
+                    {loading === plugin.url ? "Installing..." : "Install"}
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Bundled Plugins Section */}
@@ -442,19 +721,19 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
             {/* View Toggle */}
             <div className="flex border rounded-md">
               <Button
-                variant={viewMode === "cards" ? "secondary" : "ghost"}
+                variant={viewModes.bundledPlugins === "cards" ? "secondary" : "ghost"}
                 size="sm"
                 className="rounded-r-none"
-                onClick={() => setViewMode("cards")}
+                onClick={() => handleViewModeChange("bundledPlugins", "cards")}
                 title="Card view"
               >
                 <LayoutGrid className="h-4 w-4" />
               </Button>
               <Button
-                variant={viewMode === "table" ? "secondary" : "ghost"}
+                variant={viewModes.bundledPlugins === "table" ? "secondary" : "ghost"}
                 size="sm"
                 className="rounded-l-none"
-                onClick={() => setViewMode("table")}
+                onClick={() => handleViewModeChange("bundledPlugins", "table")}
                 title="Table view"
               >
                 <TableIcon className="h-4 w-4" />
@@ -486,7 +765,7 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
           </TabsList>
 
           <TabsContent value="all" className="space-y-6 mt-4">
-            {viewMode === "cards" ? (
+            {viewModes.bundledPlugins === "cards" ? (
               // Card View
               Array.from(bundledPlugins.entries()).map(([namespace, plugins]) => (
                 <div key={namespace} className="space-y-3">
@@ -525,7 +804,7 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
 
           {Array.from(bundledPlugins.entries()).map(([namespace, plugins]) => (
             <TabsContent key={namespace} value={namespace} className="mt-4">
-              {viewMode === "cards" ? (
+              {viewModes.bundledPlugins === "cards" ? (
                 // Card View for namespace
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {plugins.map((discovered) => (
@@ -558,9 +837,127 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
         )}
       </div>
 
-      {/* Remote Plugins Grid */}
+      {/* Community Plugins Section */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-semibold">Remote Plugins</h2>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold flex items-center gap-2">
+              <Globe className="h-6 w-6" />
+              Community Plugins
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Discover and install plugins from the community registry.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* View Toggle */}
+            <div className="flex border rounded-md">
+              <Button
+                variant={viewModes.communityPlugins === "cards" ? "secondary" : "ghost"}
+                size="sm"
+                className="rounded-r-none"
+                onClick={() => handleViewModeChange("communityPlugins", "cards")}
+                title="Card view"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewModes.communityPlugins === "table" ? "secondary" : "ghost"}
+                size="sm"
+                className="rounded-l-none"
+                onClick={() => handleViewModeChange("communityPlugins", "table")}
+                title="Table view"
+              >
+                <TableIcon className="h-4 w-4" />
+              </Button>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => void refreshCommunityPlugins()}
+              disabled={communityPluginsLoading}
+            >
+              <RefreshCw className="h-4 w-4 mr-1" />
+              {communityPluginsLoading ? "Loading..." : "Refresh"}
+            </Button>
+          </div>
+        </div>
+
+        {/* Search and Filter */}
+        <div className="flex gap-4 items-end">
+          <div className="flex-1 space-y-2">
+            <Label htmlFor="community-search">Search</Label>
+            <Input
+              id="community-search"
+              type="text"
+              placeholder="Search plugins..."
+              value={communitySearchQuery}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCommunitySearchQuery(e.target.value)}
+            />
+          </div>
+          <div className="w-48 space-y-2">
+            <Label>Category</Label>
+            <Select value={communityFilterCategory} onValueChange={setCommunityFilterCategory}>
+              <SelectTrigger>
+                <SelectValue placeholder="All categories" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="feature">Feature</SelectItem>
+                <SelectItem value="theme">Theme</SelectItem>
+                <SelectItem value="integration">Integration</SelectItem>
+                <SelectItem value="utility">Utility</SelectItem>
+                <SelectItem value="experimental">Experimental</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Community Plugins Grid/Table */}
+        {communityPluginsLoading ? (
+          <p className="text-sm text-muted-foreground py-8 text-center">Loading community plugins...</p>
+        ) : filteredCommunityPlugins.length === 0 ? (
+          <div className="text-center py-12 border rounded-lg bg-muted/30">
+            <Globe className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-lg font-medium">No Community Plugins Found</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              {communityPlugins.length === 0
+                ? "The community registry is empty or unreachable."
+                : "Try adjusting your search or filters."}
+            </p>
+          </div>
+        ) : viewModes.communityPlugins === "cards" ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredCommunityPlugins.map((plugin) => (
+              <CommunityPluginCard
+                key={plugin.id}
+                plugin={plugin}
+                isInstalled={isCommunityPluginInstalled(plugin.id)}
+                installedVersion={RemoteLoader.getInstalledVersion(plugin.id)}
+                loading={loading}
+                onTry={() => handleTryCommunityPlugin(plugin)}
+                onInstall={() => handleInstallCommunityPlugin(plugin)}
+                onUninstall={() => handleUninstallPlugin(plugin.id)}
+              />
+            ))}
+          </div>
+        ) : (
+          <CommunityPluginsTable
+            plugins={filteredCommunityPlugins}
+            isInstalled={isCommunityPluginInstalled}
+            getInstalledVersion={(id) => RemoteLoader.getInstalledVersion(id)}
+            loading={loading}
+            onTry={handleTryCommunityPlugin}
+            onInstall={handleInstallCommunityPlugin}
+            onUninstall={handleUninstallPlugin}
+          />
+        )}
+      </div>
+
+      {/* Remote Plugins Grid (Legacy) */}
+      {AVAILABLE_PLUGINS.length > 0 && (
+      <div className="space-y-4">
+        <h2 className="text-2xl font-semibold">Remote Plugins (Legacy)</h2>
         <p className="text-sm text-muted-foreground">
           External plugins that can be loaded dynamically from remote URLs.
         </p>
@@ -620,33 +1017,65 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
           ))}
         </div>
       </div>
+      )}
 
       {/* Installed Remote Plugins Info */}
       {installedPlugins.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Installed Remote Plugins</CardTitle>
-            <CardDescription>
-              These remote plugins will be automatically loaded on next page load
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Installed Remote Plugins</CardTitle>
+                <CardDescription>
+                  These remote plugins will be automatically loaded on next page load
+                </CardDescription>
+              </div>
+              <div className="flex border rounded-md">
+                <Button
+                  variant={viewModes.installedPlugins === "cards" ? "secondary" : "ghost"}
+                  size="sm"
+                  className="rounded-r-none"
+                  onClick={() => handleViewModeChange("installedPlugins", "cards")}
+                  title="Card view"
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewModes.installedPlugins === "table" ? "secondary" : "ghost"}
+                  size="sm"
+                  className="rounded-l-none"
+                  onClick={() => handleViewModeChange("installedPlugins", "table")}
+                  title="Table view"
+                >
+                  <TableIcon className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2">
-              {installedPlugins.map((url) => (
-                <li key={url} className="flex items-center justify-between">
-                  <code className="text-sm bg-muted px-2 py-1 rounded">
-                    {url}
-                  </code>
-                  <Button
-                    onClick={() => handleUninstallPlugin(url)}
-                    variant="ghost"
-                    size="sm"
-                  >
-                    Remove
-                  </Button>
-                </li>
-              ))}
-            </ul>
+            {viewModes.installedPlugins === "cards" ? (
+              <ul className="space-y-2">
+                {installedPlugins.map((url) => (
+                  <li key={url} className="flex items-center justify-between">
+                    <code className="text-sm bg-muted px-2 py-1 rounded">
+                      {url}
+                    </code>
+                    <Button
+                      onClick={() => handleUninstallPlugin(url)}
+                      variant="ghost"
+                      size="sm"
+                    >
+                      Remove
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <InstalledPluginsTable
+                plugins={installedPlugins}
+                onUninstall={handleUninstallPlugin}
+              />
+            )}
           </CardContent>
         </Card>
       )}
@@ -948,6 +1377,462 @@ const BundledPluginsTable: React.FC<BundledPluginsTableProps> = ({
                       >
                         Enable
                       </Button>
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Community Plugin Card Component
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface CommunityPluginCardProps {
+  plugin: RegistryPlugin;
+  isInstalled: boolean;
+  installedVersion: string | null;
+  loading: string | null;
+  onTry: () => void;
+  onInstall: () => void;
+  onUninstall: () => void;
+}
+
+const CommunityPluginCard: React.FC<CommunityPluginCardProps> = ({
+  plugin,
+  isInstalled,
+  installedVersion,
+  loading,
+  onTry,
+  onInstall,
+  onUninstall,
+}) => {
+  const isLoading = loading === plugin.url;
+  const hasUpdate = isInstalled && installedVersion && installedVersion !== plugin.version;
+
+  // Check version compatibility
+  const versionCheck = plugin.workspaceDependencies
+    ? securityService.checkVersionCompatibility(plugin.workspaceDependencies)
+    : { valid: true, warnings: [] };
+
+  return (
+    <Card className={!versionCheck.valid ? "border-amber-500" : ""}>
+      <CardHeader className="pb-2">
+        <div className="flex items-start justify-between gap-2">
+          <div className="space-y-1 min-w-0 flex-1">
+            <CardTitle className="text-base truncate flex items-center gap-2" title={plugin.name}>
+              {plugin.name}
+              {plugin.verified && (
+                <ShieldCheck className="h-4 w-4 text-green-600" aria-label="Verified plugin" />
+              )}
+            </CardTitle>
+            <CardDescription className="text-xs">
+              by {plugin.author.name} • v{plugin.version}
+            </CardDescription>
+          </div>
+          <Badge variant="secondary">{getCategoryLabel(plugin.category as PluginCategory)}</Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="pb-2">
+        <p className="text-sm text-muted-foreground line-clamp-2">
+          {plugin.description}
+        </p>
+
+        {/* Tags */}
+        {plugin.tags && plugin.tags.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1">
+            {plugin.tags.slice(0, 3).map((tag) => (
+              <Badge key={tag} variant="outline" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        )}
+
+        {/* Status badges */}
+        <div className="mt-3 flex items-center gap-2">
+          {isInstalled ? (
+            <>
+              <Badge className="bg-green-600">
+                <Check className="h-3 w-3 mr-1" />
+                Installed
+              </Badge>
+              {hasUpdate && (
+                <Badge variant="secondary" className="bg-amber-100 text-amber-800">
+                  Update: v{plugin.version}
+                </Badge>
+              )}
+            </>
+          ) : (
+            <Badge variant="secondary">Available</Badge>
+          )}
+        </div>
+
+        {/* Version compatibility warning */}
+        {!versionCheck.valid && (
+          <div className="mt-2 text-xs text-amber-600 flex items-center gap-1">
+            <Shield className="h-3 w-3" />
+            {versionCheck.error}
+          </div>
+        )}
+      </CardContent>
+      <CardFooter className="flex gap-2 pt-2">
+        {isInstalled ? (
+          <>
+            {hasUpdate && (
+              <Button
+                size="sm"
+                className="flex-1"
+                onClick={onInstall}
+                disabled={isLoading || !versionCheck.valid}
+              >
+                {isLoading ? "Updating..." : "Update"}
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              className={hasUpdate ? "" : "flex-1"}
+              onClick={onUninstall}
+              disabled={isLoading}
+            >
+              Uninstall
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1"
+              onClick={onTry}
+              disabled={isLoading || !versionCheck.valid}
+            >
+              {isLoading ? "Loading..." : "Try"}
+            </Button>
+            <Button
+              size="sm"
+              className="flex-1"
+              onClick={onInstall}
+              disabled={isLoading || !versionCheck.valid}
+            >
+              {isLoading ? "Installing..." : "Install"}
+            </Button>
+          </>
+        )}
+
+        {/* External links */}
+        {(plugin.repositoryUrl || plugin.homepageUrl) && (
+          <Button
+            variant="ghost"
+            size="sm"
+            asChild
+          >
+            <a
+              href={plugin.repositoryUrl || plugin.homepageUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="View source"
+            >
+              <ExternalLink className="h-4 w-4" />
+            </a>
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Community Plugins Table Component
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface CommunityPluginsTableProps {
+  plugins: RegistryPlugin[];
+  isInstalled: (id: string) => boolean;
+  getInstalledVersion: (id: string) => string | null;
+  loading: string | null;
+  onTry: (plugin: RegistryPlugin) => void;
+  onInstall: (plugin: RegistryPlugin) => void;
+  onUninstall: (id: string) => void;
+}
+
+const CommunityPluginsTable: React.FC<CommunityPluginsTableProps> = ({
+  plugins,
+  isInstalled,
+  getInstalledVersion,
+  loading,
+  onTry,
+  onInstall,
+  onUninstall,
+}) => {
+  return (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Plugin</TableHead>
+            <TableHead>Author</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Version</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {plugins.map((plugin) => {
+            const installed = isInstalled(plugin.id);
+            const installedVersion = getInstalledVersion(plugin.id);
+            const hasUpdate = installed && installedVersion && installedVersion !== plugin.version;
+            const isLoading = loading === plugin.url;
+            const versionCheck = plugin.workspaceDependencies
+              ? securityService.checkVersionCompatibility(plugin.workspaceDependencies)
+              : { valid: true, warnings: [] };
+
+            return (
+              <TableRow key={plugin.id} className={!versionCheck.valid ? "bg-amber-50 dark:bg-amber-950/20" : ""}>
+                <TableCell className="font-medium">
+                  <div className="flex items-center gap-2">
+                    {plugin.name}
+                    {plugin.verified && (
+                      <ShieldCheck className="h-4 w-4 text-green-600" aria-label="Verified plugin" />
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
+                    {plugin.description}
+                  </p>
+                </TableCell>
+                <TableCell>{plugin.author.name}</TableCell>
+                <TableCell>
+                  <Badge variant="secondary">{getCategoryLabel(plugin.category as PluginCategory)}</Badge>
+                </TableCell>
+                <TableCell className="text-muted-foreground">v{plugin.version}</TableCell>
+                <TableCell>
+                  {installed ? (
+                    <div className="flex flex-col gap-1">
+                      <Badge className="bg-green-600">
+                        <Check className="h-3 w-3 mr-1" />
+                        Installed
+                      </Badge>
+                      {hasUpdate && (
+                        <Badge variant="secondary" className="bg-amber-100 text-amber-800 text-xs">
+                          Update: v{plugin.version}
+                        </Badge>
+                      )}
+                    </div>
+                  ) : (
+                    <Badge variant="secondary">Available</Badge>
+                  )}
+                  {!versionCheck.valid && (
+                    <div className="mt-1 text-xs text-amber-600 flex items-center gap-1">
+                      <Shield className="h-3 w-3" />
+                      {versionCheck.error}
+                    </div>
+                  )}
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-1">
+                    {installed ? (
+                      <>
+                        {hasUpdate && (
+                          <Button
+                            size="sm"
+                            onClick={() => onInstall(plugin)}
+                            disabled={isLoading || !versionCheck.valid}
+                          >
+                            {isLoading ? "Updating..." : "Update"}
+                          </Button>
+                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onUninstall(plugin.id)}
+                          disabled={isLoading}
+                        >
+                          Uninstall
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onTry(plugin)}
+                          disabled={isLoading || !versionCheck.valid}
+                        >
+                          {isLoading ? "Loading..." : "Try"}
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => onInstall(plugin)}
+                          disabled={isLoading || !versionCheck.valid}
+                        >
+                          {isLoading ? "Installing..." : "Install"}
+                        </Button>
+                      </>
+                    )}
+                    {(plugin.repositoryUrl || plugin.homepageUrl) && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        asChild
+                      >
+                        <a
+                          href={plugin.repositoryUrl || plugin.homepageUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="View source"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      </Button>
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Installed Plugins Table Component
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface InstalledPluginsTableProps {
+  plugins: string[];
+  onUninstall: (url: string) => void;
+}
+
+const InstalledPluginsTable: React.FC<InstalledPluginsTableProps> = ({
+  plugins,
+  onUninstall,
+}) => {
+  return (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Plugin URL</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {plugins.map((url) => (
+            <TableRow key={url}>
+              <TableCell>
+                <code className="text-sm bg-muted px-2 py-1 rounded">
+                  {url}
+                </code>
+              </TableCell>
+              <TableCell className="text-right">
+                <Button
+                  onClick={() => onUninstall(url)}
+                  variant="ghost"
+                  size="sm"
+                >
+                  Remove
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Themes Table Component
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface ThemesTableProps {
+  themes: typeof AVAILABLE_THEMES;
+  isInstalled: (url: string) => boolean;
+  loading: string | null;
+  onTry: (url: string) => void;
+  onInstall: (url: string) => void;
+  onUninstall: () => void;
+}
+
+const ThemesTable: React.FC<ThemesTableProps> = ({
+  themes,
+  isInstalled,
+  loading,
+  onTry,
+  onInstall,
+  onUninstall,
+}) => {
+  return (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Theme</TableHead>
+            <TableHead>Author</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Description</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {themes.map((theme) => {
+            const installed = isInstalled(theme.previewUrl);
+            const isLoading = loading === theme.previewUrl;
+
+            return (
+              <TableRow key={theme.id}>
+                <TableCell className="font-medium">{theme.name}</TableCell>
+                <TableCell>{theme.author}</TableCell>
+                <TableCell>
+                  <Badge variant="secondary">{theme.category}</Badge>
+                </TableCell>
+                <TableCell className="text-muted-foreground">{theme.description}</TableCell>
+                <TableCell>
+                  {installed ? (
+                    <Badge variant="default">Installed</Badge>
+                  ) : (
+                    <Badge variant="secondary">Available</Badge>
+                  )}
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-1">
+                    {installed ? (
+                      <Button
+                        onClick={onUninstall}
+                        variant="outline"
+                        size="sm"
+                        disabled={isLoading}
+                      >
+                        Uninstall
+                      </Button>
+                    ) : (
+                      <>
+                        <Button
+                          onClick={() => onTry(theme.previewUrl)}
+                          variant="outline"
+                          size="sm"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? "Applying..." : "Try"}
+                        </Button>
+                        <Button
+                          onClick={() => onInstall(theme.previewUrl)}
+                          size="sm"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? "Installing..." : "Install"}
+                        </Button>
+                      </>
                     )}
                   </div>
                 </TableCell>

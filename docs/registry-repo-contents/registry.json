@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "name": "Opencast Management UI Community Plugin Registry",
+  "description": "Official registry for community-developed plugins for the Management UI.",
+  "plugins": []
+}

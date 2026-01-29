@@ -4,6 +4,7 @@
 @source "../../../../apps/**/*.{ts,tsx,js,jsx}";
 @source "../../../../plugins/**/*.{ts,tsx,js,jsx}";
 @source "../**/*.{ts,tsx,js,jsx}";
+@source "../../../../.local-plugins/**/*.{ts,tsx,js,jsx}";
 
 @custom-variant dark (&:is(.dark *));
 

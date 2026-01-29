@@ -34,8 +34,8 @@ export const adminMarketplacePlugin = createPlugin({
   async initialize(manager) {
     console.log("Admin Marketplace plugin initializing...");
 
-    // Initialize theme loader - apply installed theme if present
-    await ThemeLoader.initialize();
+    // Load installed theme in background (do not block plugin init or router)
+    void ThemeLoader.initialize();
 
     // Register the marketplace app
     manager.registerObject("apps:definitions", "marketplace", {
@@ -56,25 +56,25 @@ export const adminMarketplacePlugin = createPlugin({
       category: "admin",
     });
 
-    // Load all persisted plugins from localStorage
+    // Load all persisted plugins from localStorage (validates URL + version before loading)
     const savedUrls = RemoteLoader.getInstalledUrls();
     if (savedUrls.length > 0) {
       console.log(
         `Loading ${savedUrls.length} installed plugin(s) from localStorage...`
       );
-      
-      // Load plugins concurrently while handling individual failures
+
       const loadResults = await Promise.allSettled(
         savedUrls.map((url) => RemoteLoader.loadAndRegister(url, manager))
       );
 
-      // Log any failures
       loadResults.forEach((result, index) => {
         if (result.status === "rejected") {
           console.error(`Failed to load installed plugin from ${savedUrls[index]}:`, result.reason);
         }
       });
     }
+
+    // .local-plugins/ are loaded by the core in dev (PluginInitializer); no need to load here
 
     console.log("Admin Marketplace plugin initialized");
   },

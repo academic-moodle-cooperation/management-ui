@@ -11,7 +11,13 @@ import type { AppConfig } from "@workspace/query";
 import { AppLoader } from "@workspace/ui/components";
 import { logger } from "@workspace/utils";
 
+import { loadAndRegister } from "@workspace/remote-plugin-loader";
 import { loadAllAvailablePlugins } from "../loadPlugins";
+import { loadJarPlugins } from "../services/jarPluginLoader";
+import {
+  loadLocalPluginsManifest,
+  getLocalPluginFullUrl,
+} from "../services/localPluginsManifest";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Plugin Override Types & Helpers
@@ -61,29 +67,37 @@ interface PluginInitializerProps {
   config?: AppConfig; // Add config prop
 }
 
+const initPromiseRef = { current: null as Promise<void> | null };
+
 export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, config }) => {
   const manager = usePluginManager();
   const [pluginsReady, setPluginsReady] = useState(false);
-  const initializationStarted = useRef(false);
+  const initializingRef = useRef(false);
 
   useEffect(() => {
-    // Prevent multiple initializations in React Strict Mode
-    if (initializationStarted.current) {
-      return;
-    }
-
     // If plugins are already ready, just sync local state
     if (manager.arePluginsReady) {
       setPluginsReady(true);
       return;
     }
 
-    initializationStarted.current = true;
+    // React Strict Mode: second mount may run while first init is still in progress.
+    // Wait for the in-flight init to finish so we get pluginsReady set.
+    if (initializingRef.current && initPromiseRef.current) {
+      void initPromiseRef.current.then(() => {
+        setPluginsReady(true);
+      });
+      return;
+    }
+    initializingRef.current = true;
+
     let didUnmount = false;
     const registeredPluginNames: string[] = [];
 
     const initializePlugins = async () => {
       if (didUnmount) return;
+      // Guard: another run may have already finished (e.g. Strict Mode race)
+      if (manager.arePluginsReady) return;
 
       try {
         // 1. Create and register core plugins
@@ -117,25 +131,18 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           plugin.name.endsWith(":config"),
         );
 
-        configPlugins.forEach((plugin) => {
+        for (const plugin of configPlugins) {
           if (plugin && plugin.name) {
             if (!manager.plugins.has(plugin.name)) {
-              manager.register(plugin);
+              const reg = manager.register(plugin);
               registeredPluginNames.push(plugin.name);
-            } else {
-              // Re-initialize if already registered (React Strict Mode)
-              try {
-                plugin.initialize?.(manager);
-              } catch (error) {
-                logger.error(
-                  `PluginInitializer: Failed to re-initialize config plugin ${plugin.name}`,
-                  error instanceof Error ? error : new Error(String(error)),
-                  { pluginName: plugin.name },
-                );
+              if (reg != null && typeof (reg as Promise<unknown>)?.then === "function") {
+                await reg;
               }
             }
+            // Do not re-call initialize() when already registered (avoids duplicate state in Strict Mode)
           }
-        });
+        }
 
         // 4. Get merged config from registry (now includes config plugin contributions)
         const configObjects = manager.getObjects<AppConfig>("app:config");
@@ -175,7 +182,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
         for (const [pluginName, override] of Object.entries(overrides.overrides)) {
           if (override.enabled && override.mode === "replacement") {
             const { type: enableType, namespace: enableNamespace } = parsePluginName(pluginName);
-            
+
             // Find conflicting plugins (same type, different namespace)
             const sameTypePlugins = pluginsByType.get(enableType) || [];
             for (const conflict of sameTypePlugins) {
@@ -190,7 +197,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           }
         }
 
-        remainingPlugins.forEach((plugin) => {
+        for (const plugin of remainingPlugins) {
           if (plugin && plugin.name) {
             // Re-evaluate if plugin should be loaded with merged config
             const [pluginNamespace, pluginType] = plugin.name.split(":");
@@ -198,12 +205,12 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
 
             // Check for override first
             const override = overrides.overrides[plugin.name];
-            
+
             // Check if this plugin should be disabled due to replacement mode
             if (pluginsToDisable.has(plugin.name)) {
               // Skip this plugin - it's being replaced
               logger.info(`PluginInitializer: Skipping "${plugin.name}" - disabled by replacement mode`);
-              return;
+              continue;
             }
 
             // If there's an explicit override, use it
@@ -211,15 +218,18 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
               if (override.enabled) {
                 // Explicitly enabled via override
                 if (!manager.plugins.has(plugin.name)) {
-                  manager.register(plugin);
+                  const reg = manager.register(plugin);
                   registeredPluginNames.push(plugin.name);
+                  if (reg != null && typeof (reg as Promise<unknown>)?.then === "function") {
+                    await reg;
+                  }
                   logger.info(`PluginInitializer: Loaded "${plugin.name}" via override (${override.mode} mode)`);
                 }
               } else {
                 // Explicitly disabled via override - skip
                 logger.info(`PluginInitializer: Skipping "${plugin.name}" - disabled by override`);
               }
-              return;
+              continue;
             }
 
             // No override - use config-based loading
@@ -239,30 +249,87 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
 
             if (shouldLoad) {
               if (!manager.plugins.has(plugin.name)) {
-                manager.register(plugin);
+                const reg = manager.register(plugin);
                 registeredPluginNames.push(plugin.name);
-              } else {
-                // Re-initialize if already registered (React Strict Mode)
-                try {
-                  plugin.initialize?.(manager);
-                } catch (error) {
-                  logger.error(
-                    `PluginInitializer: Failed to re-initialize plugin ${plugin.name}`,
-                    error instanceof Error ? error : new Error(String(error)),
-                    { pluginName: plugin.name },
-                  );
+                if (reg != null && typeof (reg as Promise<unknown>)?.then === "function") {
+                  await reg;
                 }
               }
+              // Do not re-call initialize() when already registered (avoids duplicate
+              // app/sidebar registration and re-loading remote plugins in Strict Mode)
             }
-          } else {
-            // Skip invalid plugin structure
           }
-        });
+        }
 
-        // 8. Mark plugins as ready in the manager
+        // 7. Load JAR plugins from backend (same-origin / backend-derived URLs)
+        try {
+          const jarPlugins = await loadJarPlugins();
+          if (jarPlugins.length > 0) {
+            logger.info("PluginInitializer: Loading JAR plugin(s) from backend", {
+              count: jarPlugins.length,
+            });
+            const jarLoadResults = await Promise.allSettled(
+              jarPlugins.map((jarPlugin) =>
+                loadAndRegister(jarPlugin.url, manager, { skipUrlValidation: true }),
+              ),
+            );
+            jarLoadResults.forEach((result, index) => {
+              const jarPlugin = jarPlugins[index];
+              if (!jarPlugin) return;
+              if (result.status === "rejected") {
+                logger.error(
+                  `PluginInitializer: Failed to load JAR plugin "${jarPlugin.name}" from ${jarPlugin.url}`,
+                  result.reason instanceof Error ? result.reason : new Error(String(result.reason)),
+                );
+              } else if (result.status === "fulfilled" && !result.value.success) {
+                logger.warn(
+                  `PluginInitializer: JAR plugin "${jarPlugin.name}" failed to load`,
+                  { error: result.value.error },
+                );
+              }
+            });
+          }
+        } catch (error) {
+          logger.debug("PluginInitializer: JAR plugins not available or failed", {
+            error: error instanceof Error ? error.message : String(error),
+          });
+        }
+
+        // 8. Load .local-plugins/ from dev server manifest (dev only, no Marketplace required)
+        try {
+          const localManifest = await loadLocalPluginsManifest();
+          if (localManifest.length > 0) {
+            logger.info("PluginInitializer: Loading .local-plugins plugin(s)", {
+              count: localManifest.length,
+            });
+            const localLoadResults = await Promise.allSettled(
+              localManifest.map((entry) =>
+                loadAndRegister(getLocalPluginFullUrl(entry), manager, {
+                  skipUrlValidation: true,
+                }),
+              ),
+            );
+            localLoadResults.forEach((result, index) => {
+              const entry = localManifest[index];
+              if (!entry) return;
+              if (result.status === "rejected") {
+                logger.error(
+                  `PluginInitializer: Failed to load .local-plugins "${entry.name}" from ${entry.url}`,
+                  result.reason instanceof Error ? result.reason : new Error(String(result.reason)),
+                );
+              }
+            });
+          }
+        } catch (error) {
+          logger.debug("PluginInitializer: .local-plugins manifest not available or failed", {
+            error: error instanceof Error ? error.message : String(error),
+          });
+        }
+
+        // 9. Mark plugins as ready in the manager
         manager.markPluginsAsReady();
 
-        // 9. Update local state to render children
+        // 10. Update local state to render children
         if (!didUnmount) {
           setPluginsReady(true);
         }
@@ -277,16 +344,18 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
       }
     };
 
-    initializePlugins();
+    const promise = initializePlugins();
+    initPromiseRef.current = promise;
+    void promise;
 
     return () => {
       didUnmount = true;
-      // Only reset initialization flag if we're actually unmounting
+      // Reset only after a delay so React Strict Mode's second effect run still
+      // sees initializingRef.current === true and skips (avoids duplicate routes/plugins)
+      const resetDelayMs = 150;
       setTimeout(() => {
-        if (didUnmount) {
-          initializationStarted.current = false;
-        }
-      }, 0);
+        initializingRef.current = false;
+      }, resetDelayMs);
     };
   }, [manager, config]); // Removed pluginsReady to prevent dependency loop
 

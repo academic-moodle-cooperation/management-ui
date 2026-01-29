@@ -10,6 +10,10 @@ import { AppLoader } from "@workspace/ui/components";
 
 import { DynamicRouterProvider } from "./components/DynamicRouterProvider";
 import { PluginInitializer } from "./components/PluginInitializer";
+import { exposeSharedModules } from "./shared/sharedModules";
+
+// Expose shared modules early for community plugins
+exposeSharedModules();
 
 import type { AnyRouter } from "@tanstack/react-router";
 

@@ -1,0 +1,62 @@
+name: Build and Release Plugin
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build plugin
+        run: npm run build
+
+      - name: Get plugin metadata
+        id: metadata
+        run: |
+          echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+          echo "name=$(node -p "require('./package.json').pluginMetadata.name")" >> $GITHUB_OUTPUT
+          echo "id=$(node -p "require('./package.json').pluginMetadata.id")" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: "${{ steps.metadata.outputs.name }} v${{ steps.metadata.outputs.version }}"
+          body: |
+            ## Installation
+
+            **CDN URL:**
+            ```
+            https://cdn.jsdelivr.net/gh/${{ github.repository }}@${{ github.ref_name }}/dist/${{ steps.metadata.outputs.id }}.mjs
+            ```
+
+            **How to install:**
+            1. Open the Management UI
+            2. Go to Admin > Marketplace
+            3. In Developer Mode, paste the CDN URL above
+            4. Click "Install"
+
+            ## What's Changed
+            See the [commit history](https://github.com/${{ github.repository }}/commits/${{ github.ref_name }}) for details.
+          files: |
+            dist/*
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

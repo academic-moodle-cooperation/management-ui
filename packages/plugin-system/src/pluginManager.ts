@@ -52,7 +52,7 @@ export interface PluginManager {
   plugins: PluginRegistry;
   functions: FunctionRegistry;
   eventListeners: Map<string, EventCallback<unknown>[]>;
-  register(plugin: Plugin): void;
+  register(plugin: Plugin): void | Promise<void>;
   deregister(pluginName: string): void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   executeFunction<T>(key: string, ...args: any[]): T | undefined;
@@ -112,7 +112,7 @@ export const createPluginManager = (): PluginManager => {
     }
 
     currentPlugin = plugin; // Set current plugin for context
-    plugin.initialize?.(manager);
+    const initResult = plugin.initialize?.(manager);
     plugins.set(plugin.name, plugin);
     plugin.activate();
     currentPlugin = undefined; // Clear current plugin
@@ -121,6 +121,11 @@ export const createPluginManager = (): PluginManager => {
 
     // Dispatch an event to notify that a plugin has been registered
     dispatchEvent("plugin:registered", { pluginName: plugin.name, plugin });
+
+    // If initialize returned a Promise, return it so the caller can await (e.g. PluginInitializer)
+    if (initResult != null && typeof (initResult as Promise<unknown>)?.then === "function") {
+      return initResult as Promise<void>;
+    }
   };
 
   const deregister = (pluginName: string) => {

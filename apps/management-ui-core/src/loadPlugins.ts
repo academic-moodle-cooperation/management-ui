@@ -3,6 +3,8 @@ import * as AllPlugins from "@workspace/plugins";
 import type { AppConfig, PluginNamespaceItem } from "@workspace/query";
 import { logger } from "@workspace/utils";
 
+import { discoverLocalPlugins } from "./services/localPluginDiscovery";
+
 // Helper function to check if an object is a valid plugin
 const isPlugin = (module: unknown): module is Plugin =>
   module !== null &&
@@ -102,17 +104,22 @@ export const loadAllAvailablePlugins = async (): Promise<Plugin[]> => {
  */
 export const loadAllPlugins = async (config?: AppConfig): Promise<Plugin[]> => {
   try {
-    // Load all available plugins and filter for Plugin type
+    // 1. Built-in core plugins (from @workspace/plugins, filtered by config)
     const allModules = Object.values(AllPlugins);
     const allPlugins = allModules.filter(isPlugin);
+    const builtInPlugins = allPlugins.filter((plugin) => shouldLoadPlugin(plugin, config));
 
-    // Filter plugins based on array configuration
-    const filteredPlugins = allPlugins.filter((plugin) => {
-      const shouldLoad = shouldLoadPlugin(plugin, config);
-      return shouldLoad;
+    // 2. Local development plugins (URLs discovered from localStorage)
+    // NOTE: These are not Plugin objects yet – they are remote ES modules
+    // that will be loaded via RemoteLoader in the Marketplace / PluginInitializer.
+    // Here we just trigger discovery to keep a single place of truth.
+    void discoverLocalPlugins().catch(() => {
+      logger.warn("loadAllPlugins: Failed to discover local development plugins");
     });
 
-    return filteredPlugins;
+    // Built-in plugins are the only ones directly returned here.
+    // Remote / community / local dev plugins are loaded via RemoteLoader.
+    return builtInPlugins;
   } catch (error) {
     logger.error(
       "CRITICAL ERROR in loadAllPlugins",

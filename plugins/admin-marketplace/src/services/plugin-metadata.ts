@@ -4,17 +4,12 @@
  * Provides human-readable metadata for plugins including descriptions,
  * extension points, and categorization for the marketplace UI.
  *
- * MIGRATION PATH (for future external plugins):
- * ─────────────────────────────────────────────
- * This metadata is currently defined statically. When plugins move to external
- * repositories, this data should be fetched from the plugin registry API:
- *
- * ```
- * const response = await fetch('/api/plugins/registry');
- * const registry = await response.json();
- * // Each plugin in registry includes its metadata
- * ```
+ * Supports both:
+ * - Bundled plugins (static metadata defined here)
+ * - Community plugins (dynamic metadata from registry)
  */
+
+import { type RegistryPlugin } from "./registry-fetcher";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -39,6 +34,42 @@ export interface PluginMetadata {
   tags?: string[];
 }
 
+/**
+ * Extended metadata for community plugins
+ */
+export interface CommunityPluginMetadata extends PluginMetadata {
+  /** Unique plugin identifier */
+  id: string;
+  /** Plugin version */
+  version: string;
+  /** URL to the plugin bundle */
+  url: string;
+  /** Author details */
+  authorInfo?: {
+    name: string;
+    email?: string;
+    url?: string;
+  };
+  /** Repository URL */
+  repositoryUrl?: string;
+  /** Homepage URL */
+  homepageUrl?: string;
+  /** License */
+  license?: string;
+  /** Version constraints for workspace packages */
+  workspaceDependencies?: Record<string, string>;
+  /** Whether this plugin is verified by maintainers */
+  verified?: boolean;
+  /** Download count (optional, for display) */
+  downloads?: number;
+  /** Rating (optional, for display) */
+  rating?: number;
+  /** Last updated timestamp */
+  lastUpdated?: string;
+  /** Whether this is a community (remote) plugin */
+  isCommunity: true;
+}
+
 export type PluginCategory =
   | "core"
   | "branding"
@@ -47,6 +78,10 @@ export type PluginCategory =
   | "customization"
   | "integration"
   | "admin"
+  | "feature"
+  | "theme"
+  | "utility"
+  | "experimental"
   | "other";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -426,8 +461,108 @@ export const CATEGORY_INFO: Record<PluginCategory, { label: string; description:
     label: "Administration",
     description: "Administrative tools and settings",
   },
+  feature: {
+    label: "Feature",
+    description: "Additional features and functionality",
+  },
+  theme: {
+    label: "Theme",
+    description: "Visual themes and styling",
+  },
+  utility: {
+    label: "Utility",
+    description: "Helper tools and utilities",
+  },
+  experimental: {
+    label: "Experimental",
+    description: "Experimental or beta features",
+  },
   other: {
     label: "Other",
     description: "Miscellaneous plugins",
   },
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Community Plugin Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Convert a RegistryPlugin to CommunityPluginMetadata
+ */
+export function registryPluginToMetadata(plugin: RegistryPlugin): CommunityPluginMetadata {
+  const metadata: CommunityPluginMetadata = {
+    id: plugin.id,
+    name: plugin.name,
+    description: plugin.description,
+    version: plugin.version,
+    url: plugin.url,
+    category: plugin.category as PluginCategory,
+    extensionPoints: [], // Community plugins don't expose extension points in registry
+    author: plugin.author.name,
+    isCommunity: true,
+  };
+
+  // Add optional icon if defined
+  if (plugin.icon) {
+    metadata.icon = plugin.icon;
+  }
+
+  // Add optional properties only if they are defined
+  if (plugin.author) {
+    metadata.authorInfo = plugin.author;
+  }
+  if (plugin.repositoryUrl) {
+    metadata.repositoryUrl = plugin.repositoryUrl;
+  }
+  if (plugin.homepageUrl) {
+    metadata.homepageUrl = plugin.homepageUrl;
+  }
+  if (plugin.license) {
+    metadata.license = plugin.license;
+  }
+  if (plugin.tags) {
+    metadata.tags = plugin.tags;
+  }
+  if (plugin.workspaceDependencies) {
+    // Convert PluginVersionConstraints to Record<string, string>
+    metadata.workspaceDependencies = plugin.workspaceDependencies as Record<string, string>;
+  }
+  if (plugin.verified !== undefined) {
+    metadata.verified = plugin.verified;
+  }
+  if (plugin.downloads !== undefined) {
+    metadata.downloads = plugin.downloads;
+  }
+  if (plugin.rating !== undefined) {
+    metadata.rating = plugin.rating;
+  }
+  if (plugin.lastUpdated) {
+    metadata.lastUpdated = plugin.lastUpdated;
+  }
+
+  return metadata;
+}
+
+/**
+ * Check if metadata is for a community plugin
+ */
+export function isCommunityPlugin(
+  metadata: PluginMetadata | CommunityPluginMetadata,
+): metadata is CommunityPluginMetadata {
+  return "isCommunity" in metadata && metadata.isCommunity === true;
+}
+
+/**
+ * Get display name for a category
+ */
+export function getCategoryLabel(category: PluginCategory): string {
+  return CATEGORY_INFO[category]?.label || category;
+}
+
+/**
+ * Get all available categories
+ */
+export function getAllCategories(): PluginCategory[] {
+  return Object.keys(CATEGORY_INFO) as PluginCategory[];
+}

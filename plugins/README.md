@@ -1,10 +1,6 @@
-# Plugin Assets Customization
+# Plugins Directory
 
-This document explains how universities can customize their favicons and fonts through the plugin system.
-
-## How It Works
-
-The build system automatically copies assets from the `plugins/assets/` directory to the final build output. This allows universities to override default assets by placing their custom files in the appropriate plugin directories.
+This directory contains **core plugins** that are bundled with the Management UI. University/organization-specific plugins should be developed separately and deployed as Community Plugins or JAR bundles.
 
 ## Directory Structure
 
@@ -20,19 +16,29 @@ plugins/
 │           ├── roboto-v20-latin-100.woff
 │           ├── roboto-v20-latin-100.woff2
 │           └── ... (other font files)
-├── tuwien/                    # TU Wien plugin
-│   └── assets/
-│       ├── favicon/
-│       │   └── favicon.svg    # TU Wien custom favicon
-│       └── fonts/
-│           └── custom-fonts/ # TU Wien custom fonts
-└── univie/                    # University of Vienna plugin
-    └── assets/
-        ├── favicon/
-        │   └── favicon.svg    # UniVie custom favicon
-        └── fonts/
-            └── custom-fonts/  # UniVie custom fonts
+├── core/                      # Core plugin (always included)
+├── admin-marketplace/         # Admin Marketplace plugin
+└── example-university/        # Example plugin template
 ```
+
+**Note:** University-specific plugins (e.g. univie, tuwien) have been moved out of this repository. Use `.local-plugins/<name>/` for local development (with `themes/<name>.css` for org themes) or deploy via Registry/JAR. See [Community Plugin Development](../../docs/COMMUNITY_PLUGIN_DEVELOPMENT.md).
+
+## Plugin Types
+
+### Core Plugins
+- **Location:** `plugins/core/`, `plugins/admin-marketplace/`
+- **Status:** Always included in the main repository
+- **Distribution:** Bundled with the Management UI
+
+### Community Plugins
+- **Location:** Separate repositories or `.local-plugins/` for development
+- **Status:** Developed independently
+- **Distribution:** Via Community Registry, CDN, or JAR deployment
+- **See:** [Community Plugin Development Guide](../../docs/COMMUNITY_PLUGIN_DEVELOPMENT.md)
+
+## Assets Customization
+
+The build system automatically copies assets from the `plugins/assets/` directory to the final build output. This allows universities to override default assets by placing their custom files in the appropriate plugin directories.
 
 ## Customizing Favicons
 
@@ -53,16 +59,15 @@ To customize fonts for a specific university:
 2. Update your CSS to reference the fonts using the `/management-ui/assets/fonts/` path
 3. The build system will copy your custom fonts to the build output
 
-## Example: TU Wien Customization
+## Example: Organization plugin in .local-plugins
 
 ```bash
-# Create TU Wien custom favicon
-mkdir -p plugins/tuwien/assets/favicon/
+# Use .local-plugins/ for org-specific plugins (e.g. tuwien, univie)
+mkdir -p .local-plugins/my-org/assets/favicon/
 # Add your custom favicon.svg, favicon.ico, and site.webmanifest
 
-# Create TU Wien custom fonts
-mkdir -p plugins/tuwien/assets/fonts/custom-fonts/
-# Add your custom font files
+mkdir -p .local-plugins/my-org/themes/
+# Add themes/my-org.css for org theme (loaded in dev from /local-plugins/my-org/themes/my-org.css)
 ```
 
 ## Build Process
@@ -89,7 +94,17 @@ In your application, reference assets using the base path:
 
 The system uses the following priority order for assets:
 
-1. Plugin-specific assets (e.g., `plugins/tuwien/assets/`)
+1. Plugin-specific assets (e.g., from Community Plugins or JAR bundles)
 2. Default plugin assets (e.g., `plugins/assets/`)
 
 This allows for both university-specific customizations and fallback to default assets.
+
+## Development
+
+For developing new plugins:
+
+1. **Core plugins:** Add to this directory and export from `plugins/index.ts`
+2. **Community plugins:** Use the [Community Plugin Template](./community-plugin-template) or create a separate repository
+3. **Local development:** Place in `.local-plugins/` (gitignored) and use Marketplace Developer Mode
+
+See [Community Plugin Development Guide](../../docs/COMMUNITY_PLUGIN_DEVELOPMENT.md) for more information.

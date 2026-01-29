@@ -2,7 +2,7 @@ import { createRef, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useI18n } from "@workspace/i18n";
 import { usePluginManager, ComponentResolver } from "@workspace/plugin-system";
-import { uploadExtensionPoints, tuwienUploadAclEditorImplementation } from "@workspace/plugins";
+import { uploadExtensionPoints } from "@workspace/plugins";
 import {
   gql,
   createGraphQLClient,
@@ -97,15 +97,11 @@ export const App = () => {
     // Register extension points first
     manager.register(uploadExtensionPoints);
 
-    // Register TUWien ACL Editor implementation
-    manager.register(tuwienUploadAclEditorImplementation);
-
     logger.debug("Upload plugins registered");
 
     return () => {
       logger.debug("Deregistering upload plugins");
       manager.deregister(uploadExtensionPoints.name);
-      manager.deregister(tuwienUploadAclEditorImplementation.name);
     };
   }, [manager]);
 

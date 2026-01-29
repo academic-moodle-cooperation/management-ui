@@ -5,12 +5,23 @@
 # -----------------------------------------------------------------------------------------------
 ## User
 # -----------------------------------------------------------------------------------------------
+# Plugin stubs merged at runtime (convention: fragment Plugin<Type>Fields on <Type>).
+
+fragment PluginCurrentUserFields on CurrentUser {
+  __typename
+}
+
+fragment PluginUserFields on User {
+  __typename
+}
+
 query User {
   currentUser {
     email
     name
     username
     userRole
+    ...PluginCurrentUserFields
   }
 }
 
@@ -24,6 +35,7 @@ query SearchUser($limit: Int, $offset: Int, $query: String!) {
       roles
       userRole
       username
+      ...PluginUserFields
     }
     pageInfo {
       limit
@@ -36,6 +48,11 @@ query SearchUser($limit: Int, $offset: Int, $query: String!) {
 # -----------------------------------------------------------------------------------------------
 ## Series
 # -----------------------------------------------------------------------------------------------
+# PluginSeriesFields: stub merged at runtime (same convention as PluginEventFields).
+
+fragment PluginSeriesFields on Series {
+  __typename
+}
 
 fragment SeriesData on Series {
   __typename
@@ -56,6 +73,7 @@ fragment SeriesData on Series {
     isPublic
     managedAclId
   }
+  ...PluginSeriesFields
 }
 
 query GetMySeries($limit: Int, $offset: Int, $orderBy: SeriesOrderByInput, $query: String) {
@@ -217,6 +235,11 @@ query GetSeriesNameById($seriesId: String!) {
 # -----------------------------------------------------------------------------------------------
 ## Events
 # -----------------------------------------------------------------------------------------------
+# PluginEventFields: stub merged at runtime (convention: fragment Plugin<Type>Fields on <Type>).
+
+fragment PluginEventFields on Event {
+  __typename
+}
 
 fragment EventsData on Event {
   __typename
@@ -256,6 +279,7 @@ fragment EventsData on Event {
     publishUrl
     thumbnailUrl
   }
+  ...PluginEventFields
 }
 
 query EventsFromSeries(
@@ -474,3 +498,4 @@ mutation UpdateSeriesAcl($seriesId: String!, $acl: AccessControlListInput!) {
     }
   }
 }
+

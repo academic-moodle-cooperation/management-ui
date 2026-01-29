@@ -1,0 +1,60 @@
+{
+  "name": "@community/my-plugin",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A community plugin for Management UI",
+  "author": {
+    "name": "Your Name",
+    "email": "your.email@example.com",
+    "url": "https://example.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/your-plugin"
+  },
+  "pluginMetadata": {
+    "id": "my-plugin",
+    "name": "My Community Plugin",
+    "description": "Description of what this plugin does",
+    "category": "feature",
+    "icon": "Puzzle",
+    "tags": [
+      "example",
+      "community"
+    ],
+    "workspaceDependencies": {
+      "@workspace/plugin-system": ">=1.0.0"
+    }
+  },
+  "main": "./dist/my-plugin.mjs",
+  "exports": {
+    ".": "./dist/my-plugin.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@workspace/plugin-system": "*",
+    "@workspace/ui": "*",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0 || ^19.0.0",
+    "@types/react-dom": "^18.0.0 || ^19.0.0",
+    "@vitejs/plugin-react-swc": "^3.9.0",
+    "@workspace/tailwind-config": "workspace:*",
+    "rollup": "^4.44.2",
+    "tailwindcss": "^4.1.7",
+    "typescript": "~5.5.4",
+    "vite": "^6.0.0"
+  }
+}

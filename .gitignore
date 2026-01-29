@@ -50,6 +50,7 @@ target/
 
 # temp
 migrate
+tmp/
 
 # TypeScript build info
 *.tsbuildinfo
@@ -79,3 +80,6 @@ node/
 # Personal workflow tools
 git-workflow.sh
 GIT_WORKFLOW.md
+
+# Local development plugins
+.local-plugins/
