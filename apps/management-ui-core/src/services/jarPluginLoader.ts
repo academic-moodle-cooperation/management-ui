@@ -50,7 +50,18 @@ export async function loadJarPlugins(): Promise<JarPluginInfo[]> {
       return [];
     }
 
-    const data = (await response.json()) as PluginsJsonResponse;
+    const contentType = response.headers.get("content-type") ?? "";
+    if (!contentType.includes("application/json")) {
+      // Backend returned HTML (e.g. SPA fallback) or other non-JSON
+      return [];
+    }
+
+    let data: PluginsJsonResponse;
+    try {
+      data = (await response.json()) as PluginsJsonResponse;
+    } catch {
+      return [];
+    }
     if (!data.plugins || !Array.isArray(data.plugins)) {
       return [];
     }

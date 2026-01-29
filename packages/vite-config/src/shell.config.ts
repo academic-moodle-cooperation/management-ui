@@ -40,6 +40,28 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
     // Silently ignore if plugins directory does not exist in certain environments
   }
 
+  // Discover .local-plugins asset directories (e.g. .local-plugins/univie/assets/**/*)
+  const localPluginsRoot = path.resolve(monorepoRootPath, ".local-plugins");
+  let localPluginAssetTargets: { src: string; dest: string }[] = [];
+  try {
+    if (fs.existsSync(localPluginsRoot) && fs.statSync(localPluginsRoot).isDirectory()) {
+      const localEntries = fs.readdirSync(localPluginsRoot, { withFileTypes: true });
+      localPluginAssetTargets = localEntries
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => entry.name)
+        .filter((name) => {
+          const assetsDir = path.join(localPluginsRoot, name, "assets");
+          return fs.existsSync(assetsDir) && fs.statSync(assetsDir).isDirectory();
+        })
+        .map((name) => ({
+          src: path.join(localPluginsRoot, name, "assets/**/*"),
+          dest: `assets/${name}`,
+        }));
+    }
+  } catch {
+    // Silently ignore
+  }
+
   // Create static assets copying plugin for i18n and custom assets support
   const staticAssetsCopyPlugin = viteStaticCopy({
     targets: [
@@ -58,6 +80,11 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
         src: path.resolve(monorepoRootPath, "plugins/**/locales/**/*"),
         dest: "locales",
       },
+      // .local-plugins locale namespaces (e.g. univie-landing-page, univie-footer)
+      {
+        src: path.resolve(monorepoRootPath, ".local-plugins/*/implementations/*/locales/**/*"),
+        dest: "locales",
+      },
       // Shared plugin assets (global)
       {
         src: path.resolve(monorepoRootPath, "plugins/assets/*"),
@@ -65,6 +92,8 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
       },
       // Per-plugin assets (encapsulated under /assets/<plugin>/...)
       ...perPluginAssetTargets,
+      // .local-plugins assets (e.g. assets/univie/logo.png)
+      ...localPluginAssetTargets,
       // Theme CSS files (for dynamic theme switching)
       {
         src: path.resolve(monorepoRootPath, "plugins/themes/**/*"),

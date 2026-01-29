@@ -716,6 +716,11 @@ If your plugin needs backend functionality (GraphQL extensions, REST endpoints, 
 - `Http-Classpath: /static/plugins/my-org` serves files from the JAR
 - Frontend files are copied to `target/classes/static/plugins/my-org/` during build
 
+**Backend POM path fixes (when backend is in `.local-plugins/<plugin>/backend`):**
+- Copy-resources directory must point to the frontend `dist` sibling: `<directory>${basedir}/../dist</directory>` (not a path under `.local-plugins/` from repo root).
+- If you use the exec plugin to run `pnpm build`, set `workingDirectory` to `${project.basedir}/..` (frontend root) and use `${project.basedir}/../../../node` for node/pnpm so it works when built with `mvn -f .local-plugins/<plugin>/backend/pom.xml`.
+- Checkstyle suppressions path from backend: `${project.basedir}/../../../docs/checkstyle/checkstyle-suppressions.xml`.
+
 #### A3.3 Build the JAR
 
 ```bash

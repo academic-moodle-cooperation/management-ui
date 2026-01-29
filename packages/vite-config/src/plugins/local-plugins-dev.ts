@@ -90,6 +90,42 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
   return entries;
 }
 
+/**
+ * Build a map: i18n namespace -> absolute path to that namespace's locale folder.
+ * Scans .local-plugins/<name>/implementations/<type>/locales/<namespace>/ for de.json, en.json, etc.
+ */
+function discoverLocalPluginLocales(monorepoRoot: string): Map<string, string> {
+  const map = new Map<string, string>();
+  const localPluginsDir = path.join(monorepoRoot, ".local-plugins");
+  if (!fs.existsSync(localPluginsDir) || !fs.statSync(localPluginsDir).isDirectory()) {
+    return map;
+  }
+  const dirs = fs.readdirSync(localPluginsDir, { withFileTypes: true });
+  for (const dirent of dirs) {
+    if (!dirent.isDirectory()) continue;
+    const pluginDir = path.join(localPluginsDir, dirent.name);
+    const implementationsDir = path.join(pluginDir, "implementations");
+    if (!fs.existsSync(implementationsDir) || !fs.statSync(implementationsDir).isDirectory()) continue;
+    const types = fs.readdirSync(implementationsDir, { withFileTypes: true });
+    for (const typeEnt of types) {
+      if (!typeEnt.isDirectory()) continue;
+      const localesDir = path.join(implementationsDir, typeEnt.name, "locales");
+      if (!fs.existsSync(localesDir) || !fs.statSync(localesDir).isDirectory()) continue;
+      const namespaces = fs.readdirSync(localesDir, { withFileTypes: true });
+      for (const nsEnt of namespaces) {
+        if (!nsEnt.isDirectory()) continue;
+        const nsPath = path.join(localesDir, nsEnt.name);
+        if (!map.has(nsEnt.name)) {
+          map.set(nsEnt.name, nsPath);
+        }
+      }
+    }
+  }
+  return map;
+}
+
+const LOCALES_PATH_RE = /^(.+)\/dist\/locales\/([^/]+)\/([a-z]{2}(-[A-Za-z0-9]+)?)\.json$/;
+
 export function localPluginsDevPlugin(options: LocalPluginsDevPluginOptions): Plugin {
   const { monorepoRoot, basePath = "" } = options;
   const normalizedBase = basePath.replace(/\/$/, "") || "";
@@ -101,8 +137,36 @@ export function localPluginsDevPlugin(options: LocalPluginsDevPluginOptions): Pl
       const localPluginsDir = path.join(monorepoRoot, ".local-plugins");
       if (!fs.existsSync(localPluginsDir)) return;
 
+      const localeNamespaceToPath = discoverLocalPluginLocales(monorepoRoot);
+
       server.middlewares.use((req, res, next) => {
         const url = (req.url?.split("?")[0] ?? "").replace(/^\/+/, "/") || "/";
+
+        // Serve .local-plugins locale files for i18n: .../dist/locales/<ns>/<lng>.json
+        const localesMatch = url.match(LOCALES_PATH_RE);
+        if (localesMatch) {
+          const basePrefix = localesMatch[1];
+          const ns = localesMatch[2];
+          const lng = localesMatch[3];
+          const baseOk = !normalizedBase || basePrefix === normalizedBase || url.startsWith(normalizedBase + "/");
+          if (baseOk && ns !== undefined && lng !== undefined) {
+            const localeDir = localeNamespaceToPath.get(ns);
+            if (localeDir) {
+              const filePath = path.join(localeDir, `${lng}.json`);
+              if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+                try {
+                  const content = fs.readFileSync(filePath, "utf-8");
+                  res.setHeader("Content-Type", "application/json");
+                  res.end(content);
+                  return;
+                } catch {
+                  // fall through to next
+                }
+              }
+            }
+          }
+        }
+
         const prefix = (normalizedBase + LOCAL_PLUGINS_PREFIX).replace(/\/+/g, "/");
 
         if (url === normalizedBase + MANIFEST_PATH) {
