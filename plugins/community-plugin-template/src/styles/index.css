@@ -1,16 +1,14 @@
 /**
  * Plugin Styles
  *
- * This file imports Tailwind's base, components, and utilities.
+ * Tailwind v4: use @import "tailwindcss" to pull in base, components, and utilities.
  * All Tailwind classes used in your plugin components will be generated here.
  *
  * This CSS is bundled with your plugin and loaded automatically when
  * the plugin is imported (via `import "./styles/index.css"` in index.ts).
  */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /**
  * Plugin-specific component styles

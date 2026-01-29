@@ -8,11 +8,16 @@ import {
   createAppRegistryPlugin,
 } from "@workspace/plugin-system";
 import type { AppConfig } from "@workspace/query";
+import { getAppConfigSync } from "@workspace/query";
 import { AppLoader } from "@workspace/ui/components";
 import { logger } from "@workspace/utils";
 
 import { loadAndRegister } from "@workspace/remote-plugin-loader";
-import { loadAllAvailablePlugins } from "../loadPlugins";
+import {
+  loadAllAvailablePlugins,
+  getEnabledPluginNamespaces,
+  getEnabledTypesForNamespace,
+} from "../loadPlugins";
 import { loadJarPlugins } from "../services/jarPluginLoader";
 import {
   loadLocalPluginsManifest,
@@ -296,29 +301,76 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
         }
 
         // 8. Load .local-plugins/ from dev server manifest (dev only, no Marketplace required)
+        // Two-phase load: first load entries matching current config (e.g. "config" namespace);
+        // then re-merge config from manager (config plugin may have registered app:config with
+        // more namespaces) and load remaining .local-plugins (e.g. univie, tuwien).
         try {
           const localManifest = await loadLocalPluginsManifest();
-          if (localManifest.length > 0) {
-            logger.info("PluginInitializer: Loading .local-plugins plugin(s)", {
-              count: localManifest.length,
-            });
-            const localLoadResults = await Promise.allSettled(
-              localManifest.map((entry) =>
-                loadAndRegister(getLocalPluginFullUrl(entry), manager, {
-                  skipUrlValidation: true,
-                }),
-              ),
+          if (localManifest.length === 0) {
+            // skip
+          } else {
+            const loadBatch = async (entries: typeof localManifest) => {
+              if (entries.length === 0) return;
+              const results = await Promise.allSettled(
+                entries.map((entry) =>
+                  loadAndRegister(getLocalPluginFullUrl(entry), manager, {
+                    skipUrlValidation: true,
+                  }),
+                ),
+              );
+              results.forEach((result, index) => {
+                const entry = entries[index];
+                if (!entry) return;
+                if (result.status === "rejected") {
+                  logger.error(
+                    `PluginInitializer: Failed to load .local-plugins "${entry.name}" from ${entry.url}`,
+                    result.reason instanceof Error
+                      ? result.reason
+                      : new Error(String(result.reason)),
+                  );
+                }
+              });
+            };
+
+            const matchesNamespaceAndType = (
+              e: (typeof localManifest)[0],
+              cfg: AppConfig | undefined,
+              enabledNamespaces: Set<string>,
+            ) => {
+              if (e.namespace === undefined || !enabledNamespaces.has(e.namespace)) return false;
+              if (e.type === undefined) return true;
+              const types = getEnabledTypesForNamespace(cfg, e.namespace);
+              return types === "all" || types.has(e.type);
+            };
+
+            // Phase 1: load entries that match current config (e.g. .local-plugins/config/)
+            const enabled1 = getEnabledPluginNamespaces(config);
+            const toLoad1 =
+              enabled1.size === 0
+                ? localManifest
+                : localManifest.filter((e) => matchesNamespaceAndType(e, config, enabled1));
+            if (toLoad1.length > 0) {
+              logger.info("PluginInitializer: Loading .local-plugins (phase 1)", {
+                count: toLoad1.length,
+              });
+              await loadBatch(toLoad1);
+            }
+
+            // Phase 2: re-merge config from manager (config plugin may have added namespaces),
+            // then load remaining .local-plugins that now match (e.g. univie, tuwien) and types
+            const mergedConfig = getAppConfigSync(manager);
+            const enabled2 = getEnabledPluginNamespaces(mergedConfig);
+            const loadedUrls = new Set(toLoad1.map((e) => e.url));
+            const toLoad2 = localManifest.filter(
+              (e) =>
+                !loadedUrls.has(e.url) && matchesNamespaceAndType(e, mergedConfig, enabled2),
             );
-            localLoadResults.forEach((result, index) => {
-              const entry = localManifest[index];
-              if (!entry) return;
-              if (result.status === "rejected") {
-                logger.error(
-                  `PluginInitializer: Failed to load .local-plugins "${entry.name}" from ${entry.url}`,
-                  result.reason instanceof Error ? result.reason : new Error(String(result.reason)),
-                );
-              }
-            });
+            if (toLoad2.length > 0) {
+              logger.info("PluginInitializer: Loading .local-plugins (phase 2)", {
+                count: toLoad2.length,
+              });
+              await loadBatch(toLoad2);
+            }
           }
         } catch (error) {
           logger.debug("PluginInitializer: .local-plugins manifest not available or failed", {

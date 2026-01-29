@@ -3,8 +3,8 @@
 ## Problem
 
 Community plugins can only import from packages that are:
-1. Exposed via `window.__SHARED_MODULES__` in the host application
-2. Listed in `SHARED_MODULE_NAMES` in `remote-loader.ts`
+1. Exposed via `window.__SHARED_MODULES__` in the host application (`apps/management-ui-core/src/shared/sharedModules.ts`)
+2. Listed in `SHARED_MODULE_NAMES` in `packages/remote-plugin-loader/src/transform.ts`
 3. Marked as `external` in the plugin's `vite.config.ts`
 
 If a plugin tries to import a package that's not available, it fails with:
@@ -29,15 +29,15 @@ We've implemented a **multi-layered approach** to prevent and handle this issue:
 
 **How to add:**
 1. Add import to `apps/management-ui-core/src/shared/sharedModules.ts`
-2. Add to `SharedModuleRegistry` interface
-3. Add to `window.__SHARED_MODULES__` object
-4. Add to `SHARED_MODULE_NAMES` in `remote-loader.ts`
-5. Update documentation
+2. Add to `SharedModuleRegistry` interface and `window.__SHARED_MODULES__` object
+3. Add to `SHARED_MODULE_NAMES` in `packages/remote-plugin-loader/src/transform.ts`
+4. Add to the "available" list in `packages/remote-plugin-loader/src/loadAndRegister.ts` (error message)
+5. Update `docs/COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md`
 
 ### 2. ✅ Better Error Messages
 
 **What we did:**
-- Enhanced error handling in `remote-loader.ts`
+- Enhanced error handling in `@workspace/remote-plugin-loader` (`loadAndRegister.ts`)
 - Detects module resolution errors
 - Provides helpful guidance with links to documentation
 - Suggests solutions (bundle it, or request addition)
@@ -45,7 +45,7 @@ We've implemented a **multi-layered approach** to prevent and handle this issue:
 **Error message example:**
 ```
 Module "package-name" is not available. 
-Available packages: react, react-dom, lucide-react, @workspace/plugin-system, ...
+Available packages: react, react-dom, lucide-react, @workspace/plugin-system, @workspace/ui/components, @workspace/ui/components/icons, @workspace/ui/lib, @workspace/ui/lib/utils, @workspace/query, @workspace/router, @workspace/utils, @workspace/i18n. See docs/COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md for the full list.
 See https://github.com/.../COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md for details.
 If you need "package-name", add it to your plugin's dependencies to bundle it.
 ```

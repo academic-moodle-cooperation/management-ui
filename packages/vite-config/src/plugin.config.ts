@@ -19,9 +19,11 @@ export const createPluginAppViteConfig = (
   const { packageName, mode, env, invokerDir } = options;
   const isProduction = mode === "production";
 
-  // For event-calendar which is at plugins/univie/apps/event-calendar/, we need to go up 4 levels
-  // For other plugins at plugins/plugin-name/, we need to go up 2 levels
-  const isInsidePlugins = invokerDir.includes(`${path.sep}plugins${path.sep}`);
+  // For plugin apps at plugins/<name>/apps/<app>/ or .local-plugins/<name>/apps/<app>/, go up 4 levels to repo root
+  // For other plugins at plugins/<name>/ or .local-plugins/<name>/, go up 2 levels
+  const isInsidePlugins =
+    invokerDir.includes(`${path.sep}plugins${path.sep}`) ||
+    invokerDir.includes(`${path.sep}.local-plugins${path.sep}`);
   const isPluginApp = isInsidePlugins && invokerDir.includes(`${path.sep}apps${path.sep}`);
   const monorepoRootPath = isPluginApp
     ? path.resolve(invokerDir, "../../../..") // e.g., plugins/<name>/apps/<app> -> repo root

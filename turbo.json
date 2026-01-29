@@ -32,9 +32,6 @@
         "dist/**"
       ]
     },
-    "plugin-univie#build": {
-      "outputs": []
-    },
     "preview": {
       "dependsOn": [
         "build"

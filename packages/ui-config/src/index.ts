@@ -26,7 +26,9 @@ export const defaultConfig: AppConfig = {
       main: "https://example.com",
     },
     theme: "default",
-    pluginNamespace: ["core", "episodes", "series", "upload"],
+    // Include "config" so a .local-plugins/config/ plugin loads first and can register
+    // app:config with pluginNamespace (e.g. univie, tuwien); remaining .local-plugins load in a second pass
+    pluginNamespace: ["core", "episodes", "series", "upload", "config"],
   },
   auth: {
     loginUrl: "/Shibboleth.sso/Login?target=/management-ui",

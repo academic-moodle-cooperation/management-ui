@@ -19,6 +19,11 @@ import * as PluginSystem from "@workspace/plugin-system";
 import * as Query from "@workspace/query";
 import * as Router from "@workspace/router";
 import * as UIComponents from "@workspace/ui/components";
+import * as UIComponentsIcons from "@workspace/ui/components/icons";
+import * as UILib from "@workspace/ui/lib";
+import * as UILibUtils from "@workspace/ui/lib/utils";
+import * as Utils from "@workspace/utils";
+import * as I18n from "@workspace/i18n";
 import { logger } from "@workspace/utils";
 
 // Re-export UI component types for consumers
@@ -34,8 +39,13 @@ export interface SharedModuleRegistry {
   "lucide-react": typeof LucideReact;
   "@workspace/plugin-system": typeof PluginSystem;
   "@workspace/ui/components": typeof UIComponents;
+  "@workspace/ui/components/icons": typeof UIComponentsIcons;
+  "@workspace/ui/lib": typeof UILib;
+  "@workspace/ui/lib/utils": typeof UILibUtils;
   "@workspace/query": typeof Query;
   "@workspace/router": typeof Router;
+  "@workspace/utils": typeof Utils;
+  "@workspace/i18n": typeof I18n;
 }
 
 declare global {
@@ -64,8 +74,13 @@ export function exposeSharedModules(): void {
     "lucide-react": LucideReact,
     "@workspace/plugin-system": PluginSystem,
     "@workspace/ui/components": UIComponents,
+    "@workspace/ui/components/icons": UIComponentsIcons,
+    "@workspace/ui/lib": UILib,
+    "@workspace/ui/lib/utils": UILibUtils,
     "@workspace/query": Query,
     "@workspace/router": Router,
+    "@workspace/utils": Utils,
+    "@workspace/i18n": I18n,
   };
 
   sharedLogger.debug("Exposed modules for community plugins", { modules: Object.keys(window.__SHARED_MODULES__) });

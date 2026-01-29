@@ -38,6 +38,47 @@ const parsePluginConfig = (
 };
 
 /**
+ * Return the set of plugin namespace names that are enabled in config.
+ * Used to filter .local-plugins manifest entries (folder name = namespace).
+ * E.g. pluginNamespace: ["core", "univie"] => Set {"core", "univie"}.
+ */
+export function getEnabledPluginNamespaces(config?: AppConfig): Set<string> {
+  const raw = config?.app?.pluginNamespace;
+  if (!raw || !Array.isArray(raw) || raw.length === 0) {
+    return new Set(); // Empty = no filter (load all .local-plugins when no config filter)
+  }
+  const set = new Set<string>();
+  for (const item of raw) {
+    if (typeof item === "string") {
+      set.add(item);
+    } else if (item && typeof item === "object") {
+      for (const key of Object.keys(item)) {
+        set.add(key);
+      }
+    }
+  }
+  return set;
+}
+
+/**
+ * Return enabled types for a namespace (for .local-plugins type filtering).
+ * E.g. univie: { types: ["sidebar", "footer"] } => Set {"sidebar", "footer"}.
+ * Returns "all" if the namespace is enabled with no type restriction (string or types: ["all"]).
+ */
+export function getEnabledTypesForNamespace(
+  config: AppConfig | undefined,
+  namespace: string,
+): Set<string> | "all" {
+  const raw = config?.app?.pluginNamespace;
+  if (!raw || !Array.isArray(raw)) return "all";
+  const configMap = parsePluginConfig(raw);
+  const types = configMap.get(namespace);
+  if (types === undefined) return "all";
+  if (types === "all") return "all";
+  return new Set(types);
+}
+
+/**
  * Check if a plugin should be loaded based on the new configuration format
  */
 const shouldLoadPlugin = (plugin: Plugin, config?: AppConfig): boolean => {

@@ -2,7 +2,7 @@
  * Vite plugin: serve .local-plugins/ in development and expose a manifest.
  *
  * - Scans .local-plugins/<name>/ for dist/*.mjs (and optional package.json for id/name).
- * - Serves .local-plugins/<name>/dist at /local-plugins/<name>/
+ * - Serves .local-plugins/<name>/ at /local-plugins/<name>/ (dist/, themes/, etc.)
  * - Serves GET /local-plugins/manifest.json with { plugins: [ { name, id, url } ] }
  *
  * Only active in dev mode. In production, .local-plugins are not used.
@@ -27,6 +27,10 @@ interface LocalPluginEntry {
   name: string;
   id: string;
   url: string;
+  /** Folder name under .local-plugins/; used for config-based filtering (pluginNamespace). */
+  namespace: string;
+  /** Type from filename (plugin-<namespace>-<type>.mjs); used to filter by config types for that namespace. */
+  type?: string;
 }
 
 function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPluginEntry[] {
@@ -46,28 +50,41 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
     if (!fs.existsSync(distDir) || !fs.statSync(distDir).isDirectory()) continue;
 
     const distFiles = fs.readdirSync(distDir);
-    const mjsFile = distFiles.find((f) => f.endsWith(".mjs"));
-    if (!mjsFile) continue;
+    const mjsFiles = distFiles.filter((f) => f.endsWith(".mjs"));
+    if (mjsFiles.length === 0) continue;
 
-    let id = dirent.name;
     let displayName = dirent.name;
+    let defaultId = dirent.name;
     const pkgPath = path.join(pluginDir, "package.json");
     if (fs.existsSync(pkgPath)) {
       try {
         const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
-        if (pkg.pluginMetadata?.id) id = pkg.pluginMetadata.id;
         if (pkg.pluginMetadata?.name) displayName = pkg.pluginMetadata.name;
+        if (pkg.pluginMetadata?.id) defaultId = pkg.pluginMetadata.id;
       } catch {
         // ignore
       }
     }
 
-    const urlPath = `${basePath}${LOCAL_PLUGINS_PREFIX}${dirent.name}/${mjsFile}`.replace(/\/+/g, "/");
-    entries.push({
-      name: displayName,
-      id,
-      url: urlPath,
-    });
+    // One manifest entry per .mjs so you can split bundles (e.g. plugin-univie-sidebar.mjs)
+    // Type from filename: plugin-<namespace>-<type>.mjs → type (e.g. "sidebar", "landing-page")
+    const namespacePrefix = `plugin-${dirent.name}-`;
+    for (const mjsFile of mjsFiles) {
+      const stem = mjsFile.replace(/\.mjs$/, "");
+      const type =
+        stem.startsWith(namespacePrefix) && stem.length > namespacePrefix.length
+          ? stem.slice(namespacePrefix.length)
+          : undefined;
+      const id = mjsFiles.length === 1 ? defaultId : `${dirent.name}/${stem}`;
+      const urlPath = `${basePath}${LOCAL_PLUGINS_PREFIX}${dirent.name}/${mjsFile}`.replace(/\/+/g, "/");
+      entries.push({
+        name: mjsFiles.length === 1 ? displayName : `${displayName} (${type ?? stem})`,
+        id,
+        url: urlPath,
+        namespace: dirent.name,
+        ...(type ? { type } : {}),
+      });
+    }
   }
 
   return entries;
@@ -102,8 +119,14 @@ export function localPluginsDevPlugin(options: LocalPluginsDevPluginOptions): Pl
             next();
             return;
           }
-          const filePath = path.join(localPluginsDir, pluginDirName, "dist", ...fileParts);
-          if (!filePath.startsWith(path.join(localPluginsDir, pluginDirName))) {
+          // Serve files under .local-plugins/<name>/: dist/<file>.mjs for plugin bundles, or themes/ etc.
+          const pluginDir = path.join(localPluginsDir, pluginDirName);
+          const firstPart = fileParts[0];
+          const filePath =
+            fileParts.length === 1 && typeof firstPart === "string" && firstPart.endsWith(".mjs")
+              ? path.join(pluginDir, "dist", firstPart)
+              : path.join(pluginDir, ...fileParts);
+          if (!filePath.startsWith(pluginDir) || path.relative(pluginDir, filePath).startsWith("..")) {
             next();
             return;
           }

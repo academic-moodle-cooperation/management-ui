@@ -161,12 +161,11 @@ Replace the second URL with your organization's private registry if needed. Then
 
 ### 4. Migration Tasks (From Implementation Plan)
 
-#### Phase 4: Migrate univie/tuwien (Future)
-- [ ] Export `plugins/univie/` as separate repository
-- [ ] Export `plugins/tuwien/` as separate repository
-- [ ] Build and publish to CDN
-- [ ] Add entries to registry
-- [ ] Remove from main repository
+#### Phase 4: Migrate univie/tuwien (Done)
+- [x] Remove `plugins/univie/` and `plugins/tuwien/` from main repository (open-source core kept clean)
+- [x] Org themes (`univie.css`, `tuwien.css`) removed from `plugins/themes/`; use `.local-plugins/<name>/themes/` in dev
+- [ ] Optional: Export as separate repositories and publish to CDN / registry
+- **To use univie/tuwien locally:** Copy from git history or a backup into `.local-plugins/univie/` and `.local-plugins/tuwien/` (each with `themes/<name>.css`). Build and run core in dev; plugins and themes load from `.local-plugins/`.
 
 #### Phase 5: Marketplace Enhancements (Optional)
 - [ ] Plugin details page

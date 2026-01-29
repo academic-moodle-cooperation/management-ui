@@ -35,7 +35,7 @@ const AppWithConfig = () => {
   });
 
   useEffect(() => {
-    const themeName = config.app.theme || "default";
+    const themeName = config.app["theme"] || "default";
     document.title = `${import.meta.env.DEV ? "[DEV] " : ""}${config.app.HtmlDocumentTitle || "Management UI"}`;
 
     // Set favicon dynamically from config
@@ -65,6 +65,17 @@ const AppWithConfig = () => {
 
     if (loader) {
       loader().catch(() => import("../../../plugins/themes/default.css"));
+    } else if (themeName !== "default" && import.meta.env.DEV) {
+      // In dev, try .local-plugins/<name>/themes/<name>.css (migrated org themes)
+      document.querySelectorAll("link[data-theme]").forEach((el) => el.remove());
+      const base = import.meta.env.BASE_URL ?? "/";
+      const themeUrl = `${base.replace(/\/$/, "")}/local-plugins/${themeName}/themes/${themeName}.css`;
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = themeUrl;
+      link.dataset["theme"] = themeName;
+      link.onerror = () => import("../../../plugins/themes/default.css");
+      document.head.appendChild(link);
     } else if (themeName !== "default") {
       import("../../../plugins/themes/default.css");
     }

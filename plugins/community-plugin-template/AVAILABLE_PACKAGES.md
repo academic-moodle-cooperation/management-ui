@@ -12,10 +12,13 @@
 ### Workspace Packages
 - `@workspace/plugin-system`
 - `@workspace/ui/components`
+- `@workspace/ui/components/icons`
+- `@workspace/ui/lib`
+- `@workspace/ui/lib/utils`
 - `@workspace/query`
 - `@workspace/router`
-- `@workspace/i18n`
 - `@workspace/utils`
+- `@workspace/i18n`
 
 ### External Libraries
 - `lucide-react` - Icon library

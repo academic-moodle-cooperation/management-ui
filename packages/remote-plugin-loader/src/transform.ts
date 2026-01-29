@@ -12,6 +12,7 @@ const remoteLoaderLogger = logger.child({ component: "RemotePluginLoader" });
 /**
  * Known shared modules that the host app provides.
  * Must match what is exposed in sharedModules (e.g. management-ui-core).
+ * Longer paths first so subpaths are replaced before parent (e.g. ui/lib/utils before ui/lib).
  */
 export const SHARED_MODULE_NAMES = [
   "react",
@@ -20,8 +21,13 @@ export const SHARED_MODULE_NAMES = [
   "lucide-react",
   "@workspace/plugin-system",
   "@workspace/ui/components",
+  "@workspace/ui/components/icons",
+  "@workspace/ui/lib",
+  "@workspace/ui/lib/utils",
   "@workspace/query",
   "@workspace/router",
+  "@workspace/utils",
+  "@workspace/i18n",
 ];
 
 /**

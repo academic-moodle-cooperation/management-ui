@@ -149,7 +149,37 @@ await RemoteLoader.loadAndRegister(
 
 ---
 
-## 5. Dynamic Modules (Legacy System)
+## 5. .local-plugins manifest (dev only)
+
+**Location:** `packages/vite-config/src/plugins/local-plugins-dev.ts` + `apps/management-ui-core/src/components/PluginInitializer.tsx` + `apps/management-ui-core/src/services/localPluginsManifest.ts`
+
+**How it works:**
+- In **development**, the Vite dev server scans `.local-plugins/<name>/dist/` for `*.mjs` files and serves them at `/local-plugins/<name>/<file>.mjs`. It exposes a manifest at `/local-plugins/manifest.json` with one entry per `.mjs` (so one folder can have multiple bundles).
+- The **core** (PluginInitializer) fetches this manifest and loads each listed plugin via `loadAndRegister` from `@workspace/remote-plugin-loader`.
+- Loading is **filtered by `config.app.pluginNamespace`**: only manifest entries whose `namespace` (folder name) is in the enabled list are loaded. If `pluginNamespace` is missing or empty, all discovered .local-plugins are loaded. Same config drives built-in plugin filtering.
+
+**Code:**
+- `packages/vite-config/src/plugins/local-plugins-dev.ts` - discovers plugins, serves files, exposes manifest (each entry has `name`, `id`, `url`, `namespace`)
+- `apps/management-ui-core/src/services/localPluginsManifest.ts` - fetches manifest
+- `apps/management-ui-core/src/loadPlugins.ts` - `getEnabledPluginNamespaces(config)` for filtering
+- `apps/management-ui-core/src/components/PluginInitializer.tsx` - filters manifest by namespace, then loads
+
+**Manifest shape:**
+```json
+{
+  "plugins": [
+    { "name": "Univie", "id": "plugin-univie", "url": "/management-ui/local-plugins/univie/plugin-univie.mjs", "namespace": "univie" }
+  ]
+}
+```
+
+**To load a .local-plugins folder:** Add its folder name to `pluginNamespace` (e.g. via a config plugin: `["core", "episodes", "series", "upload", "univie"]`).
+
+**Status:** ✅ Implemented
+
+---
+
+## 6. Dynamic Modules (Legacy System)
 
 **Location:** `apps/management-ui-core/src/components/DynamicRouterProvider.tsx`
 
@@ -183,7 +213,7 @@ await RemoteLoader.loadAndRegister(
 
 ---
 
-## 6. Plugin-based Apps (Modern System)
+## 7. Plugin-based Apps (Modern System)
 
 **Location:** `apps/management-ui-core/src/components/DynamicRouterProvider.tsx`
 
@@ -223,8 +253,9 @@ manager.registerObject("apps:definitions", "my-app", {
 | 2 | Remote Loader (package + marketplace) | Dynamic | ✅ Implemented | Community plugins from CDN/URL (marketplace validates; core uses same package for JAR) |
 | 3 | Local Discovery | Dynamic | ✅ Implemented | Local development plugins |
 | 4 | JAR Loader (core) | Dynamic | ✅ Implemented | Production JAR deployments (loaded by core; marketplace optional) |
-| 5 | Dynamic Modules | Legacy | ⚠️ Deprecated | Old standalone apps |
-| 6 | Plugin-based Apps | Modern | ✅ Working | New plugin apps (preferred) |
+| 5 | .local-plugins manifest (dev) | Dynamic | ✅ Implemented | Dev-only: plugins in `.local-plugins/<name>/`; filtered by `pluginNamespace` |
+| 6 | Dynamic Modules | Legacy | ⚠️ Deprecated | Old standalone apps |
+| 7 | Plugin-based Apps | Modern | ✅ Working | New plugin apps (preferred) |
 
 ## Testing Plan
 
@@ -234,8 +265,9 @@ We'll test each mechanism one by one:
 2. ⏳ **RemoteLoader** - Test with a sample plugin URL
 3. ⏳ **Local Discovery** - Test with localStorage plugin
 4. ⏳ **JAR Loader** - Test with backend plugins.json
-5. ⏳ **Dynamic Modules** - Test with dynamic-modules.json (if needed)
-6. ✅ **Plugin-based Apps** - Already working
+5. ✅ **.local-plugins manifest** - Build plugin in `.local-plugins/<name>/`, add namespace to config, run core in dev
+6. ⏳ **Dynamic Modules** - Test with dynamic-modules.json (if needed)
+7. ✅ **Plugin-based Apps** - Already working
 
 ## Next Steps
 

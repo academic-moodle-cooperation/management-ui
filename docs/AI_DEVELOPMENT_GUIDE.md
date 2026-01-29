@@ -329,11 +329,11 @@ See `/packages/i18n/README.md` for complete translation guide.
 Every plugin must be exported from `plugins/index.ts`:
 
 ```typescript
-// plugins/index.ts
+// plugins/index.ts — only core plugins are exported here
 export * from "./core";
-export * from "./my-feature"; // Add your plugin here!
-export * from "./tuwien";
-export * from "./univie";
+export * from "./example-university";
+export * from "./admin-marketplace";
+// Org-specific plugins (univie, tuwien, etc.) live in .local-plugins/ or separate repos; do not add here.
 ```
 
 ### Directory Naming (AVOID `/api` PREFIX AT PROJECT ROOT)

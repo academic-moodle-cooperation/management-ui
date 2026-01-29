@@ -14,10 +14,13 @@ These packages are provided by the host application and should **NOT** be bundle
 ### Workspace Packages
 - `@workspace/plugin-system` - Plugin system API
 - `@workspace/ui/components` - UI component library (shadcn/ui)
+- `@workspace/ui/components/icons` - UI icons (e.g. Home, Video, ExternalLink)
+- `@workspace/ui/lib` - UI lib (e.g. resolveFirstAssetUrl)
+- `@workspace/ui/lib/utils` - UI utilities (e.g. cn)
 - `@workspace/query` - GraphQL query hooks and client
 - `@workspace/router` - Routing utilities
+- `@workspace/utils` - Utility functions (e.g. logger, sha256)
 - `@workspace/i18n` - Internationalization
-- `@workspace/utils` - Utility functions
 
 ### External Libraries
 - `lucide-react` - Icon library (used by UI components)
@@ -29,7 +32,12 @@ These packages are provided by the host application and should **NOT** be bundle
 ```typescript
 // These imports work - packages are provided by host
 import { Button, Card } from "@workspace/ui/components";
+import { Home, Video } from "@workspace/ui/components/icons";
+import { cn } from "@workspace/ui/lib/utils";
+import { resolveFirstAssetUrl } from "@workspace/ui/lib";
 import { useGetMyEventsQuery } from "@workspace/query";
+import { logger } from "@workspace/utils";
+import { usePluginTranslation } from "@workspace/i18n";
 import { BarChart3 } from "lucide-react";
 import { createPlugin } from "@workspace/plugin-system";
 ```

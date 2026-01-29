@@ -29,7 +29,7 @@ Returns whether `url` is same-origin. Can be used by the core when trusting back
 
 ### `transformModuleSource(source)` / `SHARED_MODULE_NAMES`
 
-Exported for tests. Transform replaces bare imports of shared modules (react, @workspace/*) with references to the shim; `SHARED_MODULE_NAMES` is the list of those modules.
+Exported for tests. Transform replaces bare imports of shared modules (react, @workspace/*) with references to the shim; `SHARED_MODULE_NAMES` in `src/transform.ts` is the list of those modules. For the full list of packages community plugins can import, see [docs/COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md](../../docs/COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md).
 
 ## Security
 

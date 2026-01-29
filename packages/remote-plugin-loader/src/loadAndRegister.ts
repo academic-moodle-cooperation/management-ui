@@ -196,8 +196,13 @@ export async function loadAndRegister(
           "lucide-react",
           "@workspace/plugin-system",
           "@workspace/ui/components",
+          "@workspace/ui/components/icons",
+          "@workspace/ui/lib",
+          "@workspace/ui/lib/utils",
           "@workspace/query",
           "@workspace/router",
+          "@workspace/utils",
+          "@workspace/i18n",
         ];
         if (!available.some((m) => moduleName === m || moduleName.startsWith(m + "/"))) {
           helpfulError = `Module "${moduleName}" is not available. Available: ${available.join(", ")}. Add it to your plugin's dependencies to bundle it.`;
