@@ -12,10 +12,11 @@ import { ProtectedRoute } from "@workspace/router";
 import { AppLoader } from "@workspace/ui/components";
 import { logger } from "@workspace/utils";
 
-// Import components from the core app
+// Import components from the core app (direct imports to avoid circular dependency with ./index)
 import { createCommonRoutes } from "../shared/commonRoutes";
 
-import { ErrorBoundary, ModuleErrorFallback, NotFoundError, CoreAppShellLayout } from "./index";
+import { ErrorBoundary, ModuleErrorFallback, NotFoundError } from "./errors/ErrorBoundary";
+import { CoreAppShellLayout } from "./layout/CoreAppShellLayout";
 
 import type { AnyRoute, AnyRouter } from "@tanstack/react-router";
 

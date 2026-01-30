@@ -1,4 +1,4 @@
-import { Button } from "@workspace/ui/components";
+import { Button } from "../ui/button";
 
 export function UnauthorisedError({
   onBackClick,

@@ -9,12 +9,8 @@ import { ProtectedRoute } from "@workspace/router";
 import { AppLoader } from "@workspace/ui/components";
 import { logger } from "@workspace/utils";
 
-import {
-  ErrorBoundary,
-  ModuleErrorFallback,
-  NotFoundError,
-  CoreAppShellLayout,
-} from "./components";
+import { ErrorBoundary, ModuleErrorFallback, NotFoundError } from "./components/errors/ErrorBoundary";
+import { CoreAppShellLayout } from "./components/layout/CoreAppShellLayout";
 import { createCommonRoutes } from "./shared/commonRoutes"; // Import shared route definitions
 
 import type { AnyRoute } from "@tanstack/react-router";
