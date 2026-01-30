@@ -86,7 +86,7 @@ async function loadWithTransformation(
   }
 
   const source = await response.text();
-  const transformed = transformModuleSource(source);
+  const transformed = transformModuleSource(source, url);
 
   const isDevForBlob =
     typeof window !== "undefined" &&

@@ -70,19 +70,15 @@ export async function loadJarPlugins(): Promise<JarPluginInfo[]> {
       return [];
     }
 
+    const base = baseUrl.replace(/\/$/, "");
+
     // Convert backend plugin config to JarPluginInfo
     // The plugin .mjs file is typically at {path}/{plugin-name}.mjs
-    return data.plugins.map((plugin) => {
-      // Derive plugin filename from name (e.g., "quiz-plugin-backend" -> "quiz-plugin.mjs")
-      // Or use a convention: if path ends with plugin name, use that
+    const list = data.plugins.map((plugin) => {
       const pathParts = plugin.path.split("/").filter(Boolean);
       const pluginDir = pathParts[pathParts.length - 1] || plugin.name.replace(/^.*-/, "");
       const pluginFile = `${pluginDir}.mjs`;
-
-      // Construct full URL to the plugin module
-      const base = baseUrl.replace(/\/$/, "");
       const url = `${base}${plugin.path}/${pluginFile}`;
-
       return {
         name: plugin.name,
         path: plugin.path,
@@ -90,6 +86,22 @@ export async function loadJarPlugins(): Promise<JarPluginInfo[]> {
         url,
       };
     });
+
+    // If running without backend (e.g. pnpm preview), plugin URLs return HTML (404/SPA fallback).
+    // Check the first plugin URL: if it returns HTML, skip all JAR plugins to avoid "Unexpected token '<'" errors.
+    if (list.length > 0) {
+      try {
+        const probe = await fetch(list[0].url, { method: "GET", cache: "no-store" });
+        const contentType = probe.headers.get("content-type") ?? "";
+        if (!probe.ok || contentType.includes("text/html")) {
+          return [];
+        }
+      } catch {
+        return [];
+      }
+    }
+
+    return list;
   } catch (error) {
     // Silently fail - backend might not be available
     console.warn("Failed to load JAR plugins from backend:", error);

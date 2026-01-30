@@ -41,11 +41,15 @@ function escapeRegExp(str: string): string {
  * Transform ES module source to use shared modules from window.__SHARED_MODULES__
  *
  * Replaces bare import specifiers with references to the shared module registry.
+ * When pluginScriptUrl is provided, injects __PLUGIN_BASE_URL__ so loaders that
+ * dynamic-import sibling chunks (e.g. univie.mjs) resolve from the server path
+ * instead of the blob URL.
  *
  * @param source - ES module source code
+ * @param pluginScriptUrl - Optional URL of the plugin .mjs (used to inject base URL for dynamic imports)
  * @returns Transformed source with a preamble that provides the modules
  */
-export function transformModuleSource(source: string): string {
+export function transformModuleSource(source: string, pluginScriptUrl?: string): string {
   const sharedModules = (window as unknown as { __SHARED_MODULES__?: Record<string, unknown> })
     .__SHARED_MODULES__;
   if (typeof window === "undefined" || !sharedModules) {
@@ -55,9 +59,16 @@ export function transformModuleSource(source: string): string {
 
   const moduleNames = SHARED_MODULE_NAMES;
 
+  // Base URL for this plugin (directory of the .mjs). Used by multi-chunk plugins (e.g. univie)
+  // so dynamic imports resolve to the server path instead of the blob URL.
+  const baseUrlLine =
+    pluginScriptUrl != null
+      ? `const __PLUGIN_BASE_URL__ = ${JSON.stringify(pluginScriptUrl.replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^/]*$/, "/"))};\n`
+      : "";
+
   const preamble = `
 // === Community Plugin Module Shim ===
-const __sharedModules__ = window.__SHARED_MODULES__;
+${baseUrlLine}const __sharedModules__ = window.__SHARED_MODULES__;
 ${moduleNames
   .map((name) => {
     const varName = `__mod_${name.replace(/[^a-zA-Z0-9]/g, "_")}__`;
