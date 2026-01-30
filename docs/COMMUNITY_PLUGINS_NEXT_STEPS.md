@@ -40,6 +40,80 @@
 
 ## What's Next (A4: Community Distribution)
 
+### JAR deployment for .local-plugins
+
+Each plugin under `.local-plugins/` that should be deployable as a JAR has a **backend** module with:
+
+- **pnpm install (repo root)** and **pnpm build (plugin dir)** in the POM (like episodes), so `mvn -f .local-plugins/<name>/backend/pom.xml install` builds the frontend and packages it into the JAR.
+- **Copy-resources** from `../dist` (and `../themes` where applicable) into `target/classes/static/plugins/<name>`.
+- **maven-bundle-plugin** with `Management-Plugin: <name>` so the backend exposes the plugin and the core loads it from `plugins.json`.
+
+**Plugins with backend JAR POMs (as of now):**
+
+| Plugin | Backend path | Build output (main) |
+|--------|--------------|---------------------|
+| config | `.local-plugins/config/backend/pom.xml` | `config.mjs` (from `plugin-config.mjs`) |
+| univie | `.local-plugins/univie/backend/pom.xml` | `univie.mjs` + split chunks + theme |
+| tuwien | `.local-plugins/tuwien/backend/pom.xml` | `tuwien.mjs` + theme |
+| quiz-plugin | `.local-plugins/quiz-plugin/backend/pom.xml` | `quiz.mjs` (+ Java backend) |
+| my-org-plugin | `.local-plugins/my-org-plugin/backend/pom.xml` | `my-org.mjs` |
+| feedback-plugin | `.local-plugins/feedback-plugin/backend/pom.xml` | `feedback.mjs` |
+| stats-dashboard-plugin | `.local-plugins/stats-dashboard-plugin/backend/pom.xml` | `stats-dashboard.mjs` |
+
+**Build (from monorepo root):**
+
+1. Ensure node is available at repo root (run `mvn initialize` from root once, or have node/pnpm on PATH).
+2. Build a single plugin JAR:
+   ```bash
+   mvn -f .local-plugins/univie/backend/pom.xml clean install
+   ```
+3. Deploy the JAR to Opencast `deploy/` (e.g. `$OPENCAST_HOME/deploy/`).
+
+The POM runs **pnpm install** from repo root and **pnpm build** from the plugin directory, so no separate `pnpm install` or `pnpm build` is required before `mvn install`.
+
+**Theme and styles in production:** When `config.app.theme` is set (e.g. to `"univie"`), the core loads the theme CSS from the same path as the JAR plugin: `<base>/static/plugins/<themeName>/<themeName>.css` (e.g. `/management-ui/static/plugins/univie/univie.css`). The backend JAR must include the theme file (e.g. copy `themes/*.css` into the JAR); the current univie/tuwien backend POMs already do this.
+
+**Assets (locales, logos) and the JAR loader:** The JAR loader only fetches the plugin **.mjs** from the backend; it does not copy files to the server. All plugin static files (theme CSS, locales, logos) must be **inside the JAR** so the backend serves them from the same path as the plugin (e.g. `/management-ui/static/plugins/univie/`). So:
+
+- **JARs do not need to be built on the backend server.** Build JARs once (e.g. in CI or locally) and deploy them to the server (e.g. `$OPENCAST_HOME/deploy/`). The "correct location" for assets is **inside the JAR** at `static/plugins/<name>/`; the backend then serves everything under that path.
+- To have **locales** and **logos** available in production, the backend POM must **copy** them into the JAR at build time (e.g. copy `implementations/*/locales/**/*` to `static/plugins/<name>/locales/` and `assets/**/*` to `static/plugins/<name>/assets/`). The frontend can then load them from that path (e.g. `orgLogoUrl: "/management-ui/static/plugins/univie/assets/logo.png"` in config, or the app resolves plugin asset URLs from the plugin path).
+- Today the univie/tuwien backend POMs copy only `dist/*.mjs` and `themes/*.css`. To support logos and i18n from JARs, add copy-resources for `../assets/**` and `../implementations/*/locales/**` (or equivalent) and use full URLs in config (e.g. `orgLogoUrl`) or add resolution so the app loads plugin assets from the plugin’s base path.
+
+### Making .local-plugins a separate repository
+
+You can turn `.local-plugins/` into its **own git repo** (e.g. `management-ui-local-plugins`) and clone it into the monorepo as `.local-plugins/`.
+
+**Steps:**
+
+1. **Create the plugins repo:**
+   ```bash
+   mkdir management-ui-local-plugins
+   cd management-ui-local-plugins
+   git init
+   ```
+
+2. **Copy .local-plugins contents** (from the monorepo) into the new repo root (so `univie/`, `config/`, `tuwien/`, etc. are at repo root).
+
+3. **Add a root `package.json` and `pnpm-workspace.yaml`** so `pnpm install` at repo root installs all plugins:
+   - `package.json`: name e.g. `@local/plugins-root`, workspaces: `["univie", "config", "tuwien", "quiz-plugin", "feedback-plugin", "stats-dashboard-plugin", "my-org-plugin"]` (or use `"*"` if you want to include all subdirs with package.json).
+   - `pnpm-workspace.yaml`: `packages: ["*"]` or list plugin dirs.
+
+4. **In the monorepo:** Clone the plugins repo into `.local-plugins`:
+   ```bash
+   cd /path/to/mui-25-ai
+   git clone https://github.com/your-org/management-ui-local-plugins.git .local-plugins
+   ```
+   (Or add `.local-plugins` as a submodule, or document that developers clone it manually.)
+
+5. **Building JARs when .local-plugins is a separate repo:**
+   - From the **monorepo** root (where `backend/` and `node/` exist): run `mvn -f .local-plugins/<name>/backend/pom.xml clean install`.
+   - The backend POMs use `relativePath>../../../backend</relativePath>` and `../../../node` — they assume the plugin lives at `monorepo/.local-plugins/<name>/`, so the plugins repo must be checked out **inside** the monorepo as `.local-plugins/`.
+   - Ensure the monorepo has run `mvn initialize` at least once (so `node/` and pnpm are present). Then `pnpm install` in the POM will run from monorepo root and install monorepo workspace + `.local-plugins` packages.
+
+6. **CI:** In your pipeline, clone both the monorepo and the plugins repo (into `monorepo/.local-plugins/`), then run `mvn -f .local-plugins/<name>/backend/pom.xml install` for each plugin you want to deploy.
+
+See also [COMMUNITY_PLUGIN_DEVELOPMENT.md](COMMUNITY_PLUGIN_DEVELOPMENT.md) (JAR deployment and “.local-plugins as its own repo”).
+
 ### Option A: Keep Using Local Registry (Testing / Single Instance)
 - Edit `apps/management-ui-core/public/registry.json`: add entries with `id`, `name`, `description`, `version`, `author`, `url` (to `.mjs`), `category`, `workspaceDependencies`.
 - Build your plugin, serve the `dist/` (e.g. via CDN or same host), point `url` to the bundle.

@@ -495,6 +495,13 @@ Plugins in `.local-plugins/` are then loaded automatically. To add or update a p
 
 **Note:** `.local-plugins/` is gitignored, so this is only for local development. For production, you'd still deploy via JAR (A3) or Registry (A4).
 
+**`.local-plugins/` as its own repository (another way):** Yes. You can make `.local-plugins/` a **separate git repo** containing your personal or org plugins (e.g. univie, tuwien, config). Clone it into `.local-plugins/` on each dev machine or in CI. Then:
+
+- **Dev:** Build each plugin, run core; the Vite dev server serves from `.local-plugins/` and the manifest lists them.
+- **Production:** Either (a) build from that clone and package plugins as JARs (see A3 and "Packaging univie as JAR" below), or (b) use that repo only for development and use JAR / Registry for production.
+
+This gives you versioned, shareable plugin code without putting it in the main monorepo.
+
 #### Phase 2.3 Update plugin configuration
 
 In the new repository, ensure your plugin is self-contained:
@@ -815,6 +822,39 @@ For production:
 - ✅ No manual URL configuration
 - ✅ Works in production without CDN/Registry
 - ✅ Can include backend GraphQL extensions, REST endpoints, etc.
+
+#### Packaging univie (multi-entry plugin) as JAR
+
+The univie plugin in `.local-plugins/univie/` builds **multiple** `.mjs` files:
+
+- `dist/plugin-univie-sidebar.mjs`
+- `dist/plugin-univie-footer.mjs`
+- `dist/plugin-univie-landing-page.mjs`
+- `dist/plugin-univie-app.mjs`
+
+It also has `themes/univie.css`, `implementations/*/locales/**/*`, and `assets/logo.png`. To package it as a JAR:
+
+1. **Backend module** – Create a Maven module (e.g. `.local-plugins/univie/backend/`) with:
+   - **Parent:** Same as other plugin backends (e.g. `management-backend` with `relativePath` to repo `backend/`).
+   - **copy-resources:** Copy `../dist/*.mjs` and `../themes/*.css` to `target/classes/static/plugins/univie/`. Optionally copy `../implementations/*/locales/**/*` to a `locales/` subpath and `../assets/**/*` to `assets/univie/` if the UI expects them under the plugin path.
+   - **maven-bundle-plugin:** `Management-Plugin: univie`, `Http-Classpath: /static/plugins/univie` (or equivalent so the JAR serves files under `/static/plugins/univie/`).
+   - **exec-maven-plugin (optional):** Run `pnpm build` in `../` (frontend root) before copy-resources; use `workingDirectory` `${project.basedir}/..` and pnpm from the monorepo (or from plugin repo if self-contained).
+
+2. **One .mjs URL per JAR plugin (current limitation)** – The backend exposes **one** plugin entry per JAR (path `/static/plugins/univie`). The frontend `jarPluginLoader` builds **one** URL per plugin: `{path}/{pluginDir}.mjs`, e.g. `/static/plugins/univie/univie.mjs`. So either:
+   - **Option A:** Add a single entry point `univie.mjs` in the univie build that imports (or dynamic-imports) the four chunks; put that file in `dist/` and have the JAR copy it so the backend serves `/static/plugins/univie/univie.mjs`. Then the core loads one URL and the plugin loads the rest internally.
+   - **Option B:** Extend the backend and/or frontend so one JAR can expose multiple modules (e.g. backend lists each `.mjs` under the bundle, or frontend fetches a small manifest from the plugin path and loads each URL). Not implemented today.
+
+3. **Build order** – From repo root: build frontend first (`cd .local-plugins/univie && pnpm build`), then build the backend JAR (`mvn -f .local-plugins/univie/backend/pom.xml clean install`). Deploy the resulting JAR to Opencast `deploy/`.
+
+#### Production options: advantages and disadvantages
+
+| Option | Advantages | Disadvantages |
+|--------|-------------|----------------|
+| **In-repo** (`plugins/`) | No extra deploy step; always in sync with core; simple CI. | Plugins live in main repo; not suitable for private/org-only code. |
+| **`.local-plugins/` as own repo** | Versioned, shareable, separate from core; dev uses same clone, prod can build JARs from it. | Need to clone two repos (core + plugins); CI must checkout plugins repo into `.local-plugins/` to build JARs. |
+| **JAR deployment** | Single deploy unit; backend discovers plugins; no CDN/registry; can include backend Java. | One .mjs URL per JAR today (multi-entry like univie needs a single loader .mjs or backend/frontend extension); requires Maven and Opencast deploy. |
+| **Registry + URL (A4)** | Community distribution; users install from Marketplace; independent versioning. | Need to host plugin (CDN or server) and maintain registry; version/compat checks on client. |
+| **Baked-in registry** | Fixed set of prod URLs shipped with app; no external registry. | Plugin list is part of app build; updates need app redeploy or config override. |
 
 ### A4: Publish to Community Registry
 

@@ -77,7 +77,16 @@ const AppWithConfig = () => {
       link.onerror = () => import("../../../plugins/themes/default.css");
       document.head.appendChild(link);
     } else if (themeName !== "default") {
-      import("../../../plugins/themes/default.css");
+      // Production: load theme from JAR (same path as plugin: /static/plugins/<name>/<name>.css)
+      document.querySelectorAll("link[data-theme]").forEach((el) => el.remove());
+      const base = import.meta.env.BASE_URL ?? "/";
+      const themeUrl = `${base.replace(/\/$/, "")}/static/plugins/${themeName}/${themeName}.css`;
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = themeUrl;
+      link.dataset["theme"] = themeName;
+      link.onerror = () => import("../../../plugins/themes/default.css");
+      document.head.appendChild(link);
     }
   }, [config, themeModules]);
 

@@ -8,6 +8,8 @@
 const STORAGE_KEY = "installed_theme_url";
 const THEME_LINK_ID = "marketplace-dynamic-theme";
 const ALLOWED_THEME_PREFIX = "/management-ui/plugins/themes/";
+/** JAR plugin themes are served at /management-ui/static/plugins/<name>/<name>.css */
+const ALLOWED_JAR_THEME_PREFIX = "/management-ui/static/plugins/";
 
 /**
  * Ensure the marketplace theme link stays at the end of all stylesheets
@@ -59,10 +61,13 @@ export const ThemeLoader = {
 
         // Security: Validate relative URLs to prevent directory traversal
         if (isRelative) {
-          // This is a relative URL - validate it starts with the expected prefix
-          if (!parsedUrl.pathname.startsWith(ALLOWED_THEME_PREFIX)) {
+          const pathname = parsedUrl.pathname;
+          const allowed =
+            pathname.startsWith(ALLOWED_THEME_PREFIX) ||
+            pathname.startsWith(ALLOWED_JAR_THEME_PREFIX);
+          if (!allowed) {
             throw new Error(
-              `Invalid theme path: ${parsedUrl.pathname}. Theme URLs must start with ${ALLOWED_THEME_PREFIX}`
+              `Invalid theme path: ${pathname}. Theme URLs must start with ${ALLOWED_THEME_PREFIX} or ${ALLOWED_JAR_THEME_PREFIX}`
             );
           }
         } else if (!["http:", "https:"].includes(parsedUrl.protocol)) {

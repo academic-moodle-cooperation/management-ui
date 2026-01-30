@@ -38,11 +38,15 @@ export async function loadJarPlugins(): Promise<JarPluginInfo[]> {
       m.getCachedAppConfig(),
     );
     const productionAppPluginUrl = appConfig?.productionAppPluginUrl;
+    const pluginsJsonPath = "/management-tool/ui/config/plugins.json";
 
-    // Construct URL to plugins.json endpoint
+    // Construct URL to plugins.json endpoint.
+    // productionAppPluginUrl is the plugins.json path or full URL; do not append the path again.
     const pluginsJsonUrl = isDev
-      ? `${baseUrl.replace(/\/$/, "")}/management-tool/ui/config/plugins.json`
-      : `${productionAppPluginUrl?.replace(/\/$/, "") || baseUrl}/management-tool/ui/config/plugins.json`;
+      ? `${baseUrl.replace(/\/$/, "")}${pluginsJsonPath}`
+      : (productionAppPluginUrl?.includes("plugins.json")
+          ? productionAppPluginUrl.replace(/\/$/, "")
+          : `${(productionAppPluginUrl || baseUrl).replace(/\/$/, "")}${pluginsJsonPath}`);
 
     const response = await fetch(pluginsJsonUrl);
     if (!response.ok) {
