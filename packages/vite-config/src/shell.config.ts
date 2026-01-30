@@ -62,6 +62,17 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
     // Silently ignore
   }
 
+  // .local-plugins locales target only when folder exists (CI/prod often has no .local-plugins)
+  const localPluginsLocalesTarget =
+    fs.existsSync(localPluginsRoot) && fs.statSync(localPluginsRoot).isDirectory()
+      ? [
+          {
+            src: path.resolve(monorepoRootPath, ".local-plugins/*/implementations/*/locales/**/*"),
+            dest: "locales",
+          },
+        ]
+      : [];
+
   // Create static assets copying plugin for i18n and custom assets support
   const staticAssetsCopyPlugin = viteStaticCopy({
     targets: [
@@ -80,11 +91,8 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
         src: path.resolve(monorepoRootPath, "plugins/**/locales/**/*"),
         dest: "locales",
       },
-      // .local-plugins locale namespaces (e.g. univie-landing-page, univie-footer)
-      {
-        src: path.resolve(monorepoRootPath, ".local-plugins/*/implementations/*/locales/**/*"),
-        dest: "locales",
-      },
+      // .local-plugins locale namespaces (only when .local-plugins exists)
+      ...localPluginsLocalesTarget,
       // Shared plugin assets (global)
       {
         src: path.resolve(monorepoRootPath, "plugins/assets/*"),
