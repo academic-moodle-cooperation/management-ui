@@ -7,18 +7,23 @@ import type { PluginFunction, EventCallback, PluginComponent, RegistryMetadata }
 type PluginRegistry = Map<string, Plugin>;
 type FunctionRegistry = Map<string, PluginFunction>;
 
+/** Core plugin names that intentionally omit namespace (no warning). */
+const CORE_PLUGIN_NAMES = new Set(["registry", "renderer", "apps"]);
+
 /**
  * Validates if a plugin name follows the recommended format: 'namespace:plugin-type'
  * @param name The plugin name to validate
  * @returns True if the name is valid, false otherwise
  */
 const isValidPluginName = (name: string): boolean => {
-  // Allow legacy names for backward compatibility, but log a warning
+  // Allow legacy names for backward compatibility, but log a warning (skip for known core plugins)
   if (!name.includes(":")) {
-    logger.warn(
-      `Plugin name "${name}" doesn't follow the recommended 'namespace:plugin-type' format`,
-      { pluginName: name },
-    );
+    if (!CORE_PLUGIN_NAMES.has(name)) {
+      logger.warn(
+        `Plugin name "${name}" doesn't follow the recommended 'namespace:plugin-type' format`,
+        { pluginName: name },
+      );
+    }
     return true; // Still allow it for backward compatibility
   }
 

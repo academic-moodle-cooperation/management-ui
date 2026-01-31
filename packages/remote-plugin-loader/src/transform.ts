@@ -61,9 +61,10 @@ export function transformModuleSource(source: string, pluginScriptUrl?: string):
 
   // Base URL for this plugin (directory of the .mjs). Used by multi-chunk plugins (e.g. univie)
   // so dynamic imports resolve to the server path instead of the blob URL.
+  // __PLUGIN_BASE_URL_FULL__ = origin + path so import() gets an absolute URL (avoids "Failed to resolve module specifier" in some environments).
   const baseUrlLine =
     pluginScriptUrl != null
-      ? `const __PLUGIN_BASE_URL__ = ${JSON.stringify(pluginScriptUrl.replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^/]*$/, "/"))};\n`
+      ? `const __PLUGIN_BASE_URL__ = ${JSON.stringify(pluginScriptUrl.replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^/]*$/, "/"))};\nconst __PLUGIN_BASE_URL_FULL__ = (typeof window !== "undefined" && window.location && window.location.origin ? window.location.origin + __PLUGIN_BASE_URL__ : __PLUGIN_BASE_URL__);\n`
       : "";
 
   const preamble = `
