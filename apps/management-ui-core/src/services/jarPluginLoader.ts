@@ -1,64 +1,83 @@
 /**
- * JAR Plugin Loader
+ * JAR Plugin Loader (simplified, server-driven list)
  *
- * Loads plugins that are deployed as OSGi JAR bundles and exposed via
- * the backend's `/management-tool/ui/config/plugins.json` endpoint.
+ * Fetches the plugin list from the backend's plugins.json (path from config).
+ * Builds plugin script URLs using the app base from config (config.api.baseUrl)
+ * so the same deployed config drives both the UI and plugin URLs — no extra
+ * config fetch and no dependence on build-time BASE_URL.
  *
- * These plugins are served as static files via Http-Alias/Http-Classpath
- * and can be loaded like any other remote plugin.
+ * Plugins are served as static files via Http-Alias/Http-Classpath; each
+ * plugin is loaded individually (failed loads don't block others).
  */
+
+import type { AppConfig } from "@workspace/ui-config";
 
 export interface JarPluginInfo {
   /** Plugin name (from backend) */
   name: string;
-  /** Path where the plugin is served (e.g., /static/plugins/quiz) */
+  /** Path where the plugin is served (e.g. /static/plugins/univie) */
   path: string;
   /** Module scope (for SystemJS compatibility, if used) */
   scope: string;
-  /** URL to the plugin .mjs file (derived from path) */
+  /** URL to the plugin .mjs file */
   url: string;
 }
 
 interface PluginsJsonResponse {
-  plugins: Array<{
-    name: string;
-    path: string;
-    scope: string;
-  }>;
+  plugins: Array<{ name: string; path: string; scope: string }>;
+}
+
+const PLUGINS_JSON_PATH = "/management-tool/ui/config/plugins.json";
+
+/**
+ * App base path for plugin static URLs (no trailing slash).
+ * Prefer config.api.baseUrl so deployed config drives the path.
+ */
+function getAppBase(config?: AppConfig | null): string {
+  const raw =
+    config?.api?.baseUrl ??
+    (typeof import.meta !== "undefined" && import.meta.env?.BASE_URL) ??
+    "/";
+  const base = typeof raw === "string" ? raw : "/";
+  return base.replace(/\/$/, "");
 }
 
 /**
- * Fetch plugins from the backend's plugins.json endpoint
+ * URL for plugins.json. Prefer config.productionAppPluginUrl when it points at plugins.json.
  */
-export async function loadJarPlugins(): Promise<JarPluginInfo[]> {
+function getPluginsJsonUrl(config?: AppConfig | null): string {
+  const productionUrl = config?.productionAppPluginUrl;
+  if (productionUrl?.includes("plugins.json")) {
+    return productionUrl.replace(/\/$/, "");
+  }
+  const base = getAppBase(config);
+  return `${base}${PLUGINS_JSON_PATH}`;
+}
+
+/**
+ * Fetch the JAR plugin list from the backend and build script URLs.
+ *
+ * @param config - Merged app config (from PluginInitializer). Used for
+ *   productionAppPluginUrl and api.baseUrl so the same config drives plugin list
+ *   and URLs. If omitted, falls back to getCachedAppConfig() and build-time base.
+ */
+export async function loadJarPlugins(config?: AppConfig | null): Promise<JarPluginInfo[]> {
   try {
-    const baseUrl = import.meta.env.BASE_URL || "/";
-    const isDev = import.meta.env.DEV;
-    const appConfig = await import("@workspace/query").then((m) =>
-      m.getCachedAppConfig(),
-    );
-    const productionAppPluginUrl = appConfig?.productionAppPluginUrl;
-    const pluginsJsonPath = "/management-tool/ui/config/plugins.json";
+    let effectiveConfig = config;
+    if (effectiveConfig == null && typeof window !== "undefined") {
+      try {
+        const { getCachedAppConfig } = await import("@workspace/query");
+        effectiveConfig = (await getCachedAppConfig()) as AppConfig;
+      } catch {
+        // ignore
+      }
+    }
 
-    // Construct URL to plugins.json endpoint.
-    // productionAppPluginUrl is the plugins.json path or full URL; do not append the path again.
-    const pluginsJsonUrl = isDev
-      ? `${baseUrl.replace(/\/$/, "")}${pluginsJsonPath}`
-      : (productionAppPluginUrl?.includes("plugins.json")
-          ? productionAppPluginUrl.replace(/\/$/, "")
-          : `${(productionAppPluginUrl || baseUrl).replace(/\/$/, "")}${pluginsJsonPath}`);
-
+    const pluginsJsonUrl = getPluginsJsonUrl(effectiveConfig);
     const response = await fetch(pluginsJsonUrl);
-    if (!response.ok) {
-      // Silently fail - backend might not be available or no JAR plugins deployed
-      return [];
-    }
-
+    if (!response.ok) return [];
     const contentType = response.headers.get("content-type") ?? "";
-    if (!contentType.includes("application/json")) {
-      // Backend returned HTML (e.g. SPA fallback) or other non-JSON
-      return [];
-    }
+    if (!contentType.includes("application/json")) return [];
 
     let data: PluginsJsonResponse;
     try {
@@ -66,45 +85,21 @@ export async function loadJarPlugins(): Promise<JarPluginInfo[]> {
     } catch {
       return [];
     }
-    if (!data.plugins || !Array.isArray(data.plugins)) {
-      return [];
-    }
+    if (!data.plugins || !Array.isArray(data.plugins)) return [];
 
-    const base = baseUrl.replace(/\/$/, "");
+    const base = getAppBase(effectiveConfig);
 
-    // Convert backend plugin config to JarPluginInfo
-    // The plugin .mjs file is typically at {path}/{plugin-name}.mjs
-    const list = data.plugins.map((plugin) => {
+    return data.plugins.map((plugin) => {
       const pathParts = plugin.path.split("/").filter(Boolean);
       const pluginDir = pathParts[pathParts.length - 1] || plugin.name.replace(/^.*-/, "");
       const pluginFile = `${pluginDir}.mjs`;
       const url = `${base}${plugin.path}/${pluginFile}`;
-      return {
-        name: plugin.name,
-        path: plugin.path,
-        scope: plugin.scope,
-        url,
-      };
+      return { name: plugin.name, path: plugin.path, scope: plugin.scope, url };
     });
-
-    // If running without backend (e.g. pnpm preview), plugin URLs return HTML (404/SPA fallback).
-    // Check the first plugin URL: if it returns HTML, skip all JAR plugins to avoid "Unexpected token '<'" errors.
-    if (list.length > 0) {
-      try {
-        const probe = await fetch(list[0].url, { method: "GET", cache: "no-store" });
-        const contentType = probe.headers.get("content-type") ?? "";
-        if (!probe.ok || contentType.includes("text/html")) {
-          return [];
-        }
-      } catch {
-        return [];
-      }
-    }
-
-    return list;
   } catch (error) {
-    // Silently fail - backend might not be available
-    console.warn("Failed to load JAR plugins from backend:", error);
+    if (typeof console !== "undefined") {
+      console.warn("Failed to load JAR plugins from backend:", error);
+    }
     return [];
   }
 }

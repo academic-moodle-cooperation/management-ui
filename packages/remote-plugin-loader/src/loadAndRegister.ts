@@ -85,6 +85,13 @@ async function loadWithTransformation(
     throw new Error(`Failed to fetch plugin: ${response.status} ${response.statusText}`);
   }
 
+  const contentType = response.headers.get("content-type") ?? "";
+  if (contentType.includes("text/html")) {
+    throw new Error(
+      "Plugin URL returned HTML (404 or SPA fallback). Ensure the plugin .mjs is served at this path.",
+    );
+  }
+
   const source = await response.text();
   const transformed = transformModuleSource(source, url);
 

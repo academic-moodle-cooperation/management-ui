@@ -38,6 +38,22 @@
    - Template repository structure
    - Build configuration examples
 
+## Deployment model: JAR vs config, i18n, assets, theme
+
+**Does “build JARs locally and copy to server” work?** Yes. The server does **not** need to build JARs. Build JARs once (locally or in CI), deploy them to the server (e.g. `$OPENCAST_HOME/deploy/`). The backend serves plugin static files from the JAR under `/management-ui/static/plugins/<name>/`.
+
+**Config merging:** The merged config (default + univie etc.) is **not** inside the JAR. It is a **separate file** you deploy to the Opencast config path (e.g. `/opt/opencast/etc/ui-config/mh_default_org/management-ui/config.json`). You merge default + org config (e.g. univie) manually or in CI and deploy that file. So you have two deployment artifacts: (1) JARs (plugin code + static files), (2) merged `config.json` (theme, pluginNamespace, orgLogoUrl, etc.).
+
+**Theme CSS:** Already supported. Set `config.app.theme` (e.g. `"univie"`); the core loads `<base>/static/plugins/<themeName>/<themeName>.css`. The JAR must include the theme file (e.g. copy `themes/*.css` into the JAR); univie/tuwien POMs already do this.
+
+**Assets (logos, etc.):** To use plugin assets from JARs (e.g. `orgLogoUrl`), put them **inside the JAR** at `static/plugins/<name>/assets/` (add copy-resources in the plugin backend POM) and use full URLs in config (e.g. `orgLogoUrl: "/management-ui/static/plugins/univie/assets/logo.png"`).
+
+**i18n (plugin translation files):** To use plugin locales from JARs, put them **inside the JAR** at `static/plugins/<name>/locales/` (add copy-resources in the plugin backend POM). The app’s i18n currently has a single `loadPath`; to support plugin namespaces from JARs, the app would need to load additional namespaces from the plugin path (e.g. `/management-ui/static/plugins/univie/locales/{{ns}}/{{lng}}.json`) or register them when the plugin loads. Today the core app does not dynamically add plugin locale paths; that can be added if needed.
+
+**Summary:** JARs = plugin code + theme + (optionally) assets and locales, all built once and deployed. Config = merged JSON deployed separately. Server never builds JARs.
+
+---
+
 ## What's Next (A4: Community Distribution)
 
 ### JAR deployment for .local-plugins
@@ -70,6 +86,8 @@ Each plugin under `.local-plugins/` that should be deployable as a JAR has a **b
 3. Deploy the JAR to Opencast `deploy/` (e.g. `$OPENCAST_HOME/deploy/`).
 
 The POM runs **pnpm install** from repo root and **pnpm build** from the plugin directory, so no separate `pnpm install` or `pnpm build` is required before `mvn install`.
+
+**JAR loader (simplified, server-driven list):** The core fetches `plugins.json` from the URL in config (`productionAppPluginUrl`) and builds plugin script URLs using the app base from config (`config.api.baseUrl`). So the same deployed config drives both the UI and plugin URLs — no extra config fetch and no dependence on build-time `BASE_URL`. `PluginInitializer` passes the merged config into `loadJarPlugins(mergedConfig)`.
 
 **Theme and styles in production:** When `config.app.theme` is set (e.g. to `"univie"`), the core loads the theme CSS from the same path as the JAR plugin: `<base>/static/plugins/<themeName>/<themeName>.css` (e.g. `/management-ui/static/plugins/univie/univie.css`). The backend JAR must include the theme file (e.g. copy `themes/*.css` into the JAR); the current univie/tuwien backend POMs already do this.
 

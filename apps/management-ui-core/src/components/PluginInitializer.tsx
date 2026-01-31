@@ -266,9 +266,9 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           }
         }
 
-        // 7. Load JAR plugins from backend (same-origin / backend-derived URLs)
+        // 7. Load JAR plugins from backend (same config drives plugins.json URL and script base)
         try {
-          const jarPlugins = await loadJarPlugins();
+          const jarPlugins = await loadJarPlugins(mergedConfig);
           if (jarPlugins.length > 0) {
             logger.info("PluginInitializer: Loading JAR plugin(s) from backend", {
               count: jarPlugins.length,
