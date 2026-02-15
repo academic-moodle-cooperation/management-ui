@@ -774,7 +774,10 @@ Expected response:
     {
       "name": "my-org-plugin-backend",
       "path": "/static/plugins/my-org",
-      "scope": "management_ui_plugin_my_org"
+      "scope": "management_ui_plugin_my_org",
+      "scriptUrl": "/management-ui/static/plugins/my-org/my-org.mjs",
+      "localesUrl": "/management-ui/static/plugins/my-org/locales",
+      "i18nNamespaces": ["my-org-sidebar", "my-org-footer"]
     }
   ]
 }
@@ -784,13 +787,29 @@ Expected response:
 
 The Management UI Core automatically:
 1. Fetches `/management-tool/ui/config/plugins.json` on startup (via `admin-marketplace` plugin)
-2. Converts backend config to plugin URLs (e.g., `/static/plugins/my-org/my-plugin.mjs`)
+2. Uses `scriptUrl` when present (fallback: `/static/plugins/<id>/<id>.mjs`)
 3. Loads plugins via `RemoteLoader` (same mechanism as A2)
 4. Loads CSS files automatically (e.g., `/static/plugins/my-org/my-plugin.css`)
+5. Registers plugin i18n namespaces when `localesUrl` + `i18nNamespaces` are provided
 
 **No manual Marketplace action needed!** JAR plugins are loaded automatically on page load when the `admin-marketplace` plugin initializes.
 
 **Implementation:** The `admin-marketplace` plugin calls `loadJarPlugins()` during its `initialize()` phase and loads all discovered JAR plugins via `RemoteLoader.loadAndRegister()`. This happens automatically after built-in plugins are loaded.
+
+#### A3.6.1 Optional: Provide plugin i18n metadata
+
+If your JAR ships locale files under `static/plugins/<plugin-id>/locales/<ns>/<lng>.json`,
+add this manifest header to the backend bundle:
+
+```
+Management-Plugin-I18n: my-org-sidebar, my-org-footer
+```
+
+This makes the backend expose:
+- `localesUrl` (e.g. `/management-ui/static/plugins/my-org/locales`)
+- `i18nNamespaces` (array from the header)
+
+The frontend then loads those namespaces from the plugin’s locale path automatically.
 
 #### A3.7 Verify plugin works
 
