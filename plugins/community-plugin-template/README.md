@@ -188,6 +188,24 @@ fragment MyPluginFields on Event {
 
 These fragments are automatically extracted during build and registered with the FragmentRegistry.
 
+## JAR Deployment Notes
+
+If you package this plugin into an Opencast JAR (Http-Alias/Http-Classpath):
+
+- Copy both the `.mjs` and `.css` from `dist/` into the JAR under `static/plugins/<plugin-id>/`.
+- If you import assets with `?url` (e.g. SVGs), also copy `dist/assets/**` to
+  `static/plugins/<plugin-id>/assets/`.
+- The Management UI will automatically load `<plugin-id>.css` next to `<plugin-id>.mjs`
+  when the plugin is loaded.
+
+### JAR Build Checklist
+
+- [ ] `pnpm build` produced `dist/<plugin-id>.mjs` and `dist/<plugin-id>.css`
+- [ ] JAR copies those files to `static/plugins/<plugin-id>/`
+- [ ] JAR copies `dist/assets/**` to `static/plugins/<plugin-id>/assets/` (if any)
+- [ ] `jar tf <jar-file> | grep static/plugins/<plugin-id>/<plugin-id>.mjs` returns a match
+- [ ] After deploy, `GET /management-ui/static/plugins/<plugin-id>/<plugin-id>.mjs` returns 200
+
 ## Publishing
 
 ### GitHub Releases + jsDelivr
