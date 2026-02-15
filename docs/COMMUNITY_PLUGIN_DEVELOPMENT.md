@@ -807,6 +807,14 @@ The Management UI Core automatically:
    - URL: `/management-ui/my-org` (or whatever you configured)
    - UI should render with your Tailwind styles
 
+Production sanity checks (JAR plugins):
+- `GET /management-ui/static/plugins/<plugin-id>/<plugin-id>.mjs` returns 200 and not `text/html`
+- `GET /management-ui/static/plugins/<plugin-id>/<plugin-id>.css` returns 200 (if your build outputs CSS)
+- No 404s for core CSS (`/management-ui/assets/index-*.css`) or font files in the Network tab
+- Console has no `Plugin URL returned HTML` or `Failed to fetch plugin` errors
+- If using Tailwind v4 in plugins, prefer `@import "tailwindcss/theme"; @import "tailwindcss/utilities";` to avoid preflight resetting core fonts
+- If using `?url` assets, ensure `dist/assets/**` is copied into the JAR
+
 #### A3.8 Production deployment
 
 For production:
