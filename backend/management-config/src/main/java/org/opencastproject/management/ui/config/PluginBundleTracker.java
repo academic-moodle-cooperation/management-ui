@@ -36,6 +36,7 @@ public class PluginBundleTracker extends BundleTracker<PluginConfig> {
   protected static final String MANAGEMENT_PLUGIN = "Management-Plugin";
   protected static final String MANAGEMENT_PLUGIN_PATH = "/static/plugins";
   protected static final String MANAGEMENT_PLUGIN_PREFIX = "management_ui_plugin_";
+  protected static final String HTTP_ALIAS = "Http-Alias";
 
 
   public PluginBundleTracker(BundleContext context) {
@@ -70,10 +71,17 @@ public class PluginBundleTracker extends BundleTracker<PluginConfig> {
 
   private PluginConfig extractConfigFromHeaders(Dictionary<String, String> headers) {
     PluginConfig config = new PluginConfig();
+    String pluginName = headers.get(MANAGEMENT_PLUGIN);
     config.setScope(MANAGEMENT_PLUGIN_PREFIX
-        .concat(headers.get(MANAGEMENT_PLUGIN).replaceAll("[^a-zA-Z0-9_ ]", "_"))
+        .concat(pluginName.replaceAll("[^a-zA-Z0-9_ ]", "_"))
     );
-    config.setPath(Paths.get(MANAGEMENT_PLUGIN_PATH, headers.get(MANAGEMENT_PLUGIN)).toString());
+    config.setPath(Paths.get(MANAGEMENT_PLUGIN_PATH, pluginName).toString());
+
+    String httpAlias = headers.get(HTTP_ALIAS);
+    if (httpAlias != null && !httpAlias.isEmpty()) {
+      String scriptFile = pluginName.concat(".mjs");
+      config.setScriptUrl(Paths.get(httpAlias, scriptFile).toString());
+    }
     return config;
   }
 

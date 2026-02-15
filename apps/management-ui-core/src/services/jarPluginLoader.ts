@@ -24,7 +24,7 @@ export interface JarPluginInfo {
 }
 
 interface PluginsJsonResponse {
-  plugins: Array<{ name: string; path: string; scope: string }>;
+  plugins: Array<{ name: string; path: string; scope: string; scriptUrl?: string }>;
 }
 
 const PLUGINS_JSON_PATH = "/management-tool/ui/config/plugins.json";
@@ -93,7 +93,7 @@ export async function loadJarPlugins(config?: AppConfig | null): Promise<JarPlug
       const pathParts = plugin.path.split("/").filter(Boolean);
       const pluginDir = pathParts[pathParts.length - 1] || plugin.name.replace(/^.*-/, "");
       const pluginFile = `${pluginDir}.mjs`;
-      const url = `${base}${plugin.path}/${pluginFile}`;
+      const url = plugin.scriptUrl?.length ? plugin.scriptUrl : `${base}${plugin.path}/${pluginFile}`;
       return { name: plugin.name, path: plugin.path, scope: plugin.scope, url };
     });
   } catch (error) {

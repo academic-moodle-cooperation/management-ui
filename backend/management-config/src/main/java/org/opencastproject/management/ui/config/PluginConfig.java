@@ -29,6 +29,8 @@ public class PluginConfig {
 
   private String scope;
 
+  private String scriptUrl;
+
   public String getName() {
     return name;
   }
@@ -51,5 +53,13 @@ public class PluginConfig {
 
   public void setScope(String scope) {
     this.scope = scope;
+  }
+
+  public String getScriptUrl() {
+    return scriptUrl;
+  }
+
+  public void setScriptUrl(String scriptUrl) {
+    this.scriptUrl = scriptUrl;
   }
 }
