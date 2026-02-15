@@ -10,6 +10,7 @@
  * plugin is loaded individually (failed loads don't block others).
  */
 
+import { registerPluginI18nNamespaces } from "@workspace/i18n";
 import type { AppConfig } from "@workspace/ui-config";
 
 export interface JarPluginInfo {
@@ -24,7 +25,14 @@ export interface JarPluginInfo {
 }
 
 interface PluginsJsonResponse {
-  plugins: Array<{ name: string; path: string; scope: string; scriptUrl?: string }>;
+  plugins: Array<{
+    name: string;
+    path: string;
+    scope: string;
+    scriptUrl?: string;
+    localesUrl?: string;
+    i18nNamespaces?: string[];
+  }>;
 }
 
 const PLUGINS_JSON_PATH = "/management-tool/ui/config/plugins.json";
@@ -88,6 +96,12 @@ export async function loadJarPlugins(config?: AppConfig | null): Promise<JarPlug
     if (!data.plugins || !Array.isArray(data.plugins)) return [];
 
     const base = getAppBase(effectiveConfig);
+
+    data.plugins.forEach((plugin) => {
+      if (plugin.localesUrl && Array.isArray(plugin.i18nNamespaces) && plugin.i18nNamespaces.length > 0) {
+        registerPluginI18nNamespaces(plugin.i18nNamespaces, plugin.localesUrl);
+      }
+    });
 
     return data.plugins.map((plugin) => {
       const pathParts = plugin.path.split("/").filter(Boolean);
