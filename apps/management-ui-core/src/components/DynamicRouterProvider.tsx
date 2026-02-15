@@ -34,6 +34,8 @@ interface ClientDynamicModule {
   routePath: string;
   componentName: string;
   componentImportPath: string;
+  moduleKey?: string;
+  pluginName?: string;
   isPluginApp?: boolean;
   appDefinition?: AppDefinition;
 }
@@ -47,6 +49,15 @@ interface FetchedPluginConfig {
 interface FetchedModulesConfig {
   plugins: FetchedPluginConfig[];
 }
+
+const appModules: Record<string, () => Promise<unknown>> = import.meta.glob(
+  "@monorepo-apps/*/src/App.tsx",
+);
+
+const findAppModuleKey = (pluginName: string): string | undefined => {
+  const suffix = `/${pluginName}/src/App.tsx`;
+  return Object.keys(appModules).find((key) => key.endsWith(suffix) || key.includes(suffix));
+};
 
 // Get dynamic modules from dynamic-modules.json
 const getDynamicModules = async (): Promise<ClientDynamicModule[]> => {
@@ -69,17 +80,29 @@ const getDynamicModules = async (): Promise<ClientDynamicModule[]> => {
     }
     const config: FetchedModulesConfig = await response.json();
 
-    return config.plugins.map((plugin) => {
-      const routePath = plugin.path.replace("/static/plugins", "");
-      const componentImportPath = /* @vite-ignore */ `@monorepo-apps/${plugin.name}/src/App`;
+    return config.plugins
+      .map((plugin) => {
+        const routePath = plugin.path.replace("/static/plugins", "");
+        const componentImportPath = /* @vite-ignore */ `@monorepo-apps/${plugin.name}/src/App`;
+        const moduleKey = findAppModuleKey(plugin.name);
+        if (!moduleKey) {
+          logger.warn("Skipping dynamic module not available at build time", {
+            pluginName: plugin.name,
+            routePath,
+          });
+          return null;
+        }
 
-      return {
-        routePath,
-        componentName: "default",
-        componentImportPath: componentImportPath,
-        isPluginApp: false,
-      };
-    });
+        return {
+          routePath,
+          componentName: "default",
+          componentImportPath: componentImportPath,
+          moduleKey,
+          pluginName: plugin.name,
+          isPluginApp: false,
+        };
+      })
+      .filter((entry): entry is ClientDynamicModule => entry !== null);
   } catch (error) {
     logger.error(
       "Error fetching or parsing dynamic modules configuration",
@@ -170,8 +193,9 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
       return pluginRoute;
     } else {
       // Handle dynamic modules (existing logic)
-      const parts = app.componentImportPath.split("/");
-      const pluginname = parts.length > 1 ? parts[1] : "";
+      const pluginname = app.pluginName || app.componentImportPath.split("/")[1] || "";
+      const moduleKey = app.moduleKey;
+      const moduleLoader = moduleKey ? appModules[moduleKey] : undefined;
 
       const DynamicComponent = lazy(async () => {
         if (!pluginname) {
@@ -180,9 +204,16 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
           return { default: () => <ModuleErrorFallback name={errorMsg} /> };
         }
 
-        const importPathForLogging = `@monorepo-apps/${pluginname}/src/App.tsx`;
+        const importPathForLogging = moduleKey || `@monorepo-apps/${pluginname}/src/App.tsx`;
+        if (!moduleLoader) {
+          const errorMsg = `No built module found for plugin "${pluginname}". Is it part of the core build?`;
+          logger.error(errorMsg, { pluginname, importPath: importPathForLogging });
+          return {
+            default: () => <ModuleErrorFallback name={`Plugin: ${pluginname}, Error: ${errorMsg}`} />,
+          };
+        }
         try {
-          return await import(`@monorepo-apps/${pluginname}/src/App.tsx`);
+          return (await moduleLoader()) as { default: React.ComponentType };
         } catch (err: unknown) {
           const error = err instanceof Error ? err : new Error(String(err));
           logger.error(
