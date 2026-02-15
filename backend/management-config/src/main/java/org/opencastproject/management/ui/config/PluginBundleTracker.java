@@ -34,6 +34,7 @@ public class PluginBundleTracker extends BundleTracker<PluginConfig> {
 
   private static final int TRACKING_MASK = Bundle.RESOLVED | Bundle.ACTIVE | Bundle.UNINSTALLED;
   protected static final String MANAGEMENT_PLUGIN = "Management-Plugin";
+  protected static final String MANAGEMENT_PLUGIN_I18N = "Management-Plugin-I18n";
   protected static final String MANAGEMENT_PLUGIN_PATH = "/static/plugins";
   protected static final String MANAGEMENT_PLUGIN_PREFIX = "management_ui_plugin_";
   protected static final String HTTP_ALIAS = "Http-Alias";
@@ -81,6 +82,18 @@ public class PluginBundleTracker extends BundleTracker<PluginConfig> {
     if (httpAlias != null && !httpAlias.isEmpty()) {
       String scriptFile = pluginName.concat(".mjs");
       config.setScriptUrl(Paths.get(httpAlias, scriptFile).toString());
+      config.setLocalesUrl(Paths.get(httpAlias, "locales").toString());
+    }
+
+    String namespacesHeader = headers.get(MANAGEMENT_PLUGIN_I18N);
+    if (namespacesHeader != null) {
+      String[] namespaces = Arrays.stream(namespacesHeader.split(","))
+          .map(String::trim)
+          .filter(s -> !s.isEmpty())
+          .toArray(String[]::new);
+      if (namespaces.length > 0) {
+        config.setI18nNamespaces(namespaces);
+      }
     }
     return config;
   }
