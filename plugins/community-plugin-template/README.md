@@ -197,12 +197,26 @@ If you package this plugin into an Opencast JAR (Http-Alias/Http-Classpath):
   `static/plugins/<plugin-id>/assets/`.
 - The Management UI will automatically load `<plugin-id>.css` next to `<plugin-id>.mjs`
   when the plugin is loaded.
+- If you provide translations, place them under `locales/<namespace>/<lng>.json` and set
+  the `Management-Plugin-I18n` header in your backend bundle. The core will then load
+  those namespaces from `/static/plugins/<plugin-id>/locales/`.
+
+### Optional Backend Module
+
+This template includes an optional backend module under `backend/` that:
+- Copies `dist/` into the JAR under `static/plugins/<plugin-id>/`
+- Copies `dist/assets/**` into `static/plugins/<plugin-id>/assets/`
+- Copies `locales/**` into `static/plugins/<plugin-id>/locales/`
+- Sets `Management-Plugin` and `Management-Plugin-I18n` headers
+
+Update `pluginId` and `pluginI18nNamespaces` in `backend/pom.xml` to match your plugin.
 
 ### JAR Build Checklist
 
 - [ ] `pnpm build` produced `dist/<plugin-id>.mjs` and `dist/<plugin-id>.css`
 - [ ] JAR copies those files to `static/plugins/<plugin-id>/`
 - [ ] JAR copies `dist/assets/**` to `static/plugins/<plugin-id>/assets/` (if any)
+- [ ] (If i18n) JAR copies `locales/**` to `static/plugins/<plugin-id>/locales/`
 - [ ] `jar tf <jar-file> | grep static/plugins/<plugin-id>/<plugin-id>.mjs` returns a match
 - [ ] After deploy, `GET /management-ui/static/plugins/<plugin-id>/<plugin-id>.mjs` returns 200
 
