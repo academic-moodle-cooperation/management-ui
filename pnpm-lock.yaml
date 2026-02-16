@@ -166,9 +166,6 @@ importers:
 
   .local-plugins/quiz-plugin:
     dependencies:
-      '@tanstack/react-query':
-        specifier: ^5.0.0
-        version: 5.82.0(react@19.1.0)
       '@workspace/plugin-system':
         specifier: '*'
         version: link:../../packages/plugin-system

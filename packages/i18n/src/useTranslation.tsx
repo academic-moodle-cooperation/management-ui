@@ -36,7 +36,7 @@ i18n
     ns: ["common", "series", "episodes", "upload"], // Split namespaces for better organization
     defaultNS: "common",
     backend: {
-      loadPath: (lngs, namespaces) => {
+      loadPath: (lngs: string | string[], namespaces: string | string[]) => {
         const languages = Array.isArray(lngs) ? lngs : [lngs];
         const nsList = Array.isArray(namespaces) ? namespaces : [namespaces];
         const urls = nsList.flatMap((ns) => languages.map((lng) => buildLocaleUrl(ns, lng)));
