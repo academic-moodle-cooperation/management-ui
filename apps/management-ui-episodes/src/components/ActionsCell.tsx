@@ -132,22 +132,8 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
       icon: <Trash2 />,
       label: i18next.t("common:delete"),
       tooltip: i18next.t("common:delete"),
-      component: ({ event }) => (
-        <DeleteAction
-          event={event}
-          onDelete={onDelete}
-          dialogOpen={dialogOpen}
-          setDialogOpen={setDialogOpen}
-        />
-      ),
-      menuItem: ({ event }) => (
-        <DeleteMenuItem
-          event={event}
-          onDelete={onDelete}
-          dialogOpen={dialogOpen}
-          setDialogOpen={setDialogOpen}
-        />
-      ),
+      component: () => <DeleteAction onOpen={() => setDialogOpen(true)} />,
+      menuItem: () => <DeleteMenuItem onOpen={() => setDialogOpen(true)} />,
       priority: 10, // Lower priority = shown later
     },
   ];
@@ -289,7 +275,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
                   return (
                     <DropdownMenuItem
                       key={action.id}
-                      onClick={(e) => {
+                      onSelect={(e) => {
                         e.stopPropagation();
                         action.onClick?.(event);
                       }}
@@ -306,9 +292,26 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
           <TooltipContent>More actions</TooltipContent>
         </Tooltip>
       )}
+      <DeleteDialog
+        event={event}
+        onDelete={onDelete}
+        dialogOpen={dialogOpen}
+        setDialogOpen={setDialogOpen}
+      />
     </div>
   );
 };
+
+const DeleteDialog: React.FC<{
+  event: EventsDataFragment;
+  onDelete: (id: string) => void;
+  dialogOpen: boolean;
+  setDialogOpen: (open: boolean) => void;
+}> = ({ event, onDelete, dialogOpen, setDialogOpen }) => (
+  <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
+    <DeleteDialogContent event={event} onDelete={onDelete} setDialogOpen={setDialogOpen} />
+  </Dialog>
+);
 
 const DeleteDialogContent: React.FC<{
   event: EventsDataFragment;
@@ -360,51 +363,41 @@ const DeleteDialogContent: React.FC<{
 
 // Separate components for complex actions
 const DeleteAction: React.FC<{
-  event: EventsDataFragment;
-  onDelete: (id: string) => void;
-  dialogOpen: boolean;
-  setDialogOpen: (open: boolean) => void;
-}> = ({ event, onDelete, dialogOpen, setDialogOpen }) => (
+  onOpen: () => void;
+  event?: EventsDataFragment;
+}> = ({ onOpen }) => (
   <Tooltip delayDuration={300}>
-    <Dialog onOpenChange={(open) => !open && setDialogOpen(false)} open={dialogOpen}>
-      <TooltipTrigger asChild>
-        <DialogTrigger
-          asChild
-          onClick={(e: React.MouseEvent) => {
-            e.stopPropagation();
-            setDialogOpen(true);
-          }}
-        >
-          <Button variant="ghost" size="icon" className="w-4 h-4">
-            <Trash2 />
-          </Button>
-        </DialogTrigger>
-      </TooltipTrigger>
-      <TooltipContent>{i18next.t("common:delete")}</TooltipContent>
-      <DeleteDialogContent event={event} onDelete={onDelete} setDialogOpen={setDialogOpen} />
-    </Dialog>
+    <TooltipTrigger asChild>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="w-4 h-4"
+        onClick={(e: React.MouseEvent) => {
+          e.stopPropagation();
+          onOpen();
+        }}
+      >
+        <Trash2 />
+      </Button>
+    </TooltipTrigger>
+    <TooltipContent>{i18next.t("common:delete")}</TooltipContent>
   </Tooltip>
 );
 
 const DeleteMenuItem: React.FC<{
-  event: EventsDataFragment;
-  onDelete: (id: string) => void;
-  dialogOpen: boolean;
-  setDialogOpen: (open: boolean) => void;
-}> = ({ event, onDelete, dialogOpen, setDialogOpen }) => (
-  <Dialog onOpenChange={(open) => !open && setDialogOpen(false)} open={dialogOpen}>
-    <DropdownMenuItem
-      onClick={(e) => {
-        e.stopPropagation();
-        setDialogOpen(true);
-      }}
-      className="gap-2 cursor-pointer"
-    >
-      <Trash2 className="w-4 h-4" />
-      <span>{i18next.t("common:delete")}</span>
-    </DropdownMenuItem>
-    <DeleteDialogContent event={event} onDelete={onDelete} setDialogOpen={setDialogOpen} />
-  </Dialog>
+  onOpen: () => void;
+  event?: EventsDataFragment;
+}> = ({ onOpen }) => (
+  <DropdownMenuItem
+    onSelect={(e) => {
+      e.stopPropagation();
+      onOpen();
+    }}
+    className="gap-2 cursor-pointer"
+  >
+    <Trash2 className="w-4 h-4" />
+    <span>{i18next.t("common:delete")}</span>
+  </DropdownMenuItem>
 );
 
 const renderDownloadMenuItems = (event: EventsDataFragment) =>
@@ -419,17 +412,14 @@ const renderDownloadMenuItems = (event: EventsDataFragment) =>
         return null;
 
       return (
-        <a
-          key={index}
-          href={track?.uri || ""}
-          target="_blank"
-          rel="noreferrer"
-          download={event.title}
-          onClick={(e: React.MouseEvent) => e.stopPropagation()}
-        >
-          <DropdownMenuItem
-            className="gap-2 cursor-pointer"
+        <DropdownMenuItem key={index} asChild className="gap-2 cursor-pointer">
+          <a
+            href={track?.uri || ""}
+            target="_blank"
+            rel="noreferrer"
+            download={event.title}
             onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            className="flex items-center gap-2"
           >
             <ArrowDownToLine className="w-4 h-4" />
             <span>
@@ -442,8 +432,8 @@ const renderDownloadMenuItems = (event: EventsDataFragment) =>
               {track?.width && ` (${track?.width} x ${track?.height})`}
               {track?.mimeType?.includes("audio") && ` (Audio)`}
             </span>
-          </DropdownMenuItem>
-        </a>
+          </a>
+        </DropdownMenuItem>
       );
     })
     .filter((item): item is JSX.Element => item !== null);
