@@ -24,6 +24,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   toast,
 } from "@workspace/ui/components";
@@ -39,6 +42,7 @@ export interface ActionItem {
   href?: string;
   target?: string;
   component?: React.ComponentType<{ event: EventsDataFragment }>;
+  menuItem?: React.ComponentType<{ event: EventsDataFragment }>;
   condition?: (event: EventsDataFragment) => boolean;
   priority?: number; // Higher priority = shown first
 }
@@ -119,6 +123,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
       label: i18next.t("episodes:episodesTable.action.download"),
       tooltip: i18next.t("episodes:episodesTable.action.download"),
       component: ({ event }) => <DownloadDropdown event={event} />,
+      menuItem: ({ event }) => <DownloadMenuItem event={event} />,
       condition: (event) => !!event.muiEventInfo?.publishUrl,
       priority: 70,
     },
@@ -129,6 +134,14 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
       tooltip: i18next.t("common:delete"),
       component: ({ event }) => (
         <DeleteAction
+          event={event}
+          onDelete={onDelete}
+          dialogOpen={dialogOpen}
+          setDialogOpen={setDialogOpen}
+        />
+      ),
+      menuItem: ({ event }) => (
+        <DeleteMenuItem
           event={event}
           onDelete={onDelete}
           dialogOpen={dialogOpen}
@@ -226,19 +239,67 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
               <DropdownMenuContent>
                 <DropdownMenuLabel>More Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {hiddenActions.map((action) => (
-                  <DropdownMenuItem
-                    key={action.id}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      action.onClick?.(event);
-                    }}
-                    className="gap-2 cursor-pointer"
-                  >
-                    {action.icon}
-                    <span>{action.label}</span>
-                  </DropdownMenuItem>
-                ))}
+                {hiddenActions.map((action) => {
+                  if (action.menuItem) {
+                    return <action.menuItem key={action.id} event={event} />;
+                  }
+
+                  if (action.href) {
+                    const content = (
+                      <>
+                        {action.icon}
+                        <span>{action.label}</span>
+                      </>
+                    );
+
+                    return (
+                      <DropdownMenuItem key={action.id} asChild className="gap-2 cursor-pointer">
+                        {action.target ? (
+                          <a
+                            href={action.href}
+                            target={action.target}
+                            {...(action.target === "_blank" && { rel: "noopener noreferrer" })}
+                            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                            className="flex items-center gap-2"
+                          >
+                            {content}
+                          </a>
+                        ) : (
+                          <Link
+                            to={action.href}
+                            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                            className="flex items-center gap-2"
+                          >
+                            {content}
+                          </Link>
+                        )}
+                      </DropdownMenuItem>
+                    );
+                  }
+
+                  if (!action.onClick) {
+                    return (
+                      <DropdownMenuItem key={action.id} disabled className="gap-2">
+                        {action.icon}
+                        <span>{action.label}</span>
+                      </DropdownMenuItem>
+                    );
+                  }
+
+                  return (
+                    <DropdownMenuItem
+                      key={action.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        action.onClick?.(event);
+                      }}
+                      className="gap-2 cursor-pointer"
+                    >
+                      {action.icon}
+                      <span>{action.label}</span>
+                    </DropdownMenuItem>
+                  );
+                })}
               </DropdownMenuContent>
             </DropdownMenu>
           </TooltipTrigger>
@@ -248,6 +309,54 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
     </div>
   );
 };
+
+const DeleteDialogContent: React.FC<{
+  event: EventsDataFragment;
+  onDelete: (id: string) => void;
+  setDialogOpen: (open: boolean) => void;
+}> = ({ event, onDelete, setDialogOpen }) => (
+  <DialogContent onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+    <DialogHeader>
+      <DialogTitle>{i18next.t("episodes:episodesTable.deleteDialogue.heading")}</DialogTitle>
+      <DialogDescription
+        dangerouslySetInnerHTML={{
+          __html: i18next.t("episodesTable.deleteDialogue.text", {
+            title: event.title || "",
+            ns: "episodes",
+          }),
+        }}
+      />
+      <DialogClose
+        onClick={(e: React.MouseEvent) => {
+          e.stopPropagation();
+          setDialogOpen(false);
+        }}
+      />
+    </DialogHeader>
+    <DialogFooter>
+      <Button
+        variant="destructive"
+        onClick={(e: React.MouseEvent) => {
+          e.stopPropagation();
+          onDelete(event.id);
+        }}
+      >
+        {i18next.t("common:delete")}
+      </Button>
+      <DialogClose asChild>
+        <Button
+          variant="secondary"
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation();
+            setDialogOpen(false);
+          }}
+        >
+          {i18next.t("common:cancel")}
+        </Button>
+      </DialogClose>
+    </DialogFooter>
+  </DialogContent>
+);
 
 // Separate components for complex actions
 const DeleteAction: React.FC<{
@@ -272,50 +381,100 @@ const DeleteAction: React.FC<{
         </DialogTrigger>
       </TooltipTrigger>
       <TooltipContent>{i18next.t("common:delete")}</TooltipContent>
-      <DialogContent onClick={(e: React.MouseEvent) => e.stopPropagation()}>
-        <DialogHeader>
-          <DialogTitle>{i18next.t("episodes:episodesTable.deleteDialogue.heading")}</DialogTitle>
-          <DialogDescription
-            dangerouslySetInnerHTML={{
-              __html: i18next.t("episodesTable.deleteDialogue.text", {
-                title: event.title || "",
-                ns: "episodes",
-              }),
-            }}
-          />
-          <DialogClose
-            onClick={(e: React.MouseEvent) => {
-              e.stopPropagation();
-              setDialogOpen(false);
-            }}
-          />
-        </DialogHeader>
-        <DialogFooter>
-          <Button
-            variant="destructive"
-            onClick={(e: React.MouseEvent) => {
-              e.stopPropagation();
-              onDelete(event.id);
-            }}
-          >
-            {i18next.t("common:delete")}
-          </Button>
-          <DialogClose asChild>
-            <Button
-              variant="secondary"
-              onClick={(e: React.MouseEvent) => {
-                e.stopPropagation();
-                setDialogOpen(false);
-              }}
-            >
-              {i18next.t("common:cancel")}
-            </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
+      <DeleteDialogContent event={event} onDelete={onDelete} setDialogOpen={setDialogOpen} />
     </Dialog>
   </Tooltip>
 );
+
+const DeleteMenuItem: React.FC<{
+  event: EventsDataFragment;
+  onDelete: (id: string) => void;
+  dialogOpen: boolean;
+  setDialogOpen: (open: boolean) => void;
+}> = ({ event, onDelete, dialogOpen, setDialogOpen }) => (
+  <Dialog onOpenChange={(open) => !open && setDialogOpen(false)} open={dialogOpen}>
+    <DropdownMenuItem
+      onClick={(e) => {
+        e.stopPropagation();
+        setDialogOpen(true);
+      }}
+      className="gap-2 cursor-pointer"
+    >
+      <Trash2 className="w-4 h-4" />
+      <span>{i18next.t("common:delete")}</span>
+    </DropdownMenuItem>
+    <DeleteDialogContent event={event} onDelete={onDelete} setDialogOpen={setDialogOpen} />
+  </Dialog>
+);
+
+const renderDownloadMenuItems = (event: EventsDataFragment) =>
+  event.publications?.[0]?.tracks
+    ?.sort((t1, t2) => {
+      const height1 = t1?.height ?? 0;
+      const height2 = t2?.height ?? 0;
+      return height1 > height2 ? -1 : height1 < height2 ? 1 : 0;
+    })
+    .map((track, index) => {
+      if ([".m3u8", ".mpd", ".f4m", ".smil"].some((el) => track?.uri?.includes(el)))
+        return null;
+
+      return (
+        <a
+          key={index}
+          href={track?.uri || ""}
+          target="_blank"
+          rel="noreferrer"
+          download={event.title}
+          onClick={(e: React.MouseEvent) => e.stopPropagation()}
+        >
+          <DropdownMenuItem
+            className="gap-2 cursor-pointer"
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+          >
+            <ArrowDownToLine className="w-4 h-4" />
+            <span>
+              {track?.flavor === "presentation/delivery" &&
+                i18next.t("episodes:episodesTable.action.flavor.presentation")}
+              {track?.flavor === "presenter/delivery" &&
+                i18next.t("episodes:episodesTable.action.flavor.presenter")}
+              {track?.flavor === "captions/delivery" &&
+                i18next.t("episodes:episodesTable.action.flavor.subtitles")}
+              {track?.width && ` (${track?.width} x ${track?.height})`}
+              {track?.mimeType?.includes("audio") && ` (Audio)`}
+            </span>
+          </DropdownMenuItem>
+        </a>
+      );
+    })
+    .filter((item): item is JSX.Element => item !== null);
+
+const DownloadMenuItem: React.FC<{ event: EventsDataFragment }> = ({ event }) => {
+  const downloadItems = renderDownloadMenuItems(event);
+  if (!downloadItems || downloadItems.length === 0) {
+    return (
+      <DropdownMenuItem disabled className="gap-2">
+        <ArrowDownToLine className="w-4 h-4" />
+        <span>{i18next.t("episodes:episodesTable.action.download")}</span>
+      </DropdownMenuItem>
+    );
+  }
+
+  return (
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger className="gap-2">
+        <ArrowDownToLine className="w-4 h-4" />
+        <span>{i18next.t("episodes:episodesTable.action.download")}</span>
+      </DropdownMenuSubTrigger>
+      <DropdownMenuSubContent>
+        <DropdownMenuLabel>
+          {i18next.t("episodes:episodesTable.action.selectDownloadVersion")}
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {downloadItems}
+      </DropdownMenuSubContent>
+    </DropdownMenuSub>
+  );
+};
 
 const DownloadDropdown: React.FC<{ event: EventsDataFragment }> = ({ event }) => (
   <Tooltip delayDuration={300}>
@@ -334,42 +493,7 @@ const DownloadDropdown: React.FC<{ event: EventsDataFragment }> = ({ event }) =>
           {i18next.t("episodes:episodesTable.action.selectDownloadVersion")}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {event.publications?.[0]?.tracks
-          ?.sort((t1, t2) => {
-            const height1 = t1?.height ?? 0;
-            const height2 = t2?.height ?? 0;
-            return height1 > height2 ? -1 : height1 < height2 ? 1 : 0;
-          })
-          .map((track, index) => {
-            if ([".m3u8", ".mpd", ".f4m", ".smil"].some((el) => track?.uri?.includes(el)))
-              return null;
-
-            return (
-              <a
-                key={index}
-                href={track?.uri || ""}
-                download={event.title}
-                onClick={(e: React.MouseEvent) => e.stopPropagation()}
-              >
-                <DropdownMenuItem
-                  className="gap-2 cursor-pointer"
-                  onClick={(e: React.MouseEvent) => e.stopPropagation()}
-                >
-                  <ArrowDownToLine className="w-4 h-4" />
-                  <span>
-                    {track?.flavor === "presentation/delivery" &&
-                      i18next.t("episodes:episodesTable.action.flavor.presentation")}
-                    {track?.flavor === "presenter/delivery" &&
-                      i18next.t("episodes:episodesTable.action.flavor.presenter")}
-                    {track?.flavor === "captions/delivery" &&
-                      i18next.t("episodes:episodesTable.action.flavor.subtitles")}
-                    {track?.width && ` (${track?.width} x ${track?.height})`}
-                    {track?.mimeType?.includes("audio") && ` (Audio)`}
-                  </span>
-                </DropdownMenuItem>
-              </a>
-            );
-          })}
+        {renderDownloadMenuItems(event)}
       </DropdownMenuContent>
     </DropdownMenu>
   </Tooltip>
