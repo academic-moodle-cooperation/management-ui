@@ -20,7 +20,10 @@ const AdminAccessDenied: React.FC = () => {
     }
   };
 
-  return <ForbiddenError onBackClick={handleBack} onHomeClick={handleHome} />;
+  return React.createElement(ForbiddenError, {
+    onBackClick: handleBack,
+    onHomeClick: handleHome,
+  });
 };
 
 const ProtectedAdminDashboard = withAuthProtection(AdminDashboard, {
