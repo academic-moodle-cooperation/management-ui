@@ -63,6 +63,10 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
   maxVisibleActions = 4,
   customActions = [],
 }) => {
+  const stopRowClick = (event: React.SyntheticEvent) => {
+    event.stopPropagation();
+  };
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const deleteEvent = useDeleteEventMutation();
   const { openSidebarWithData } = useSidebarStore();
@@ -209,7 +213,11 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-center gap-2 p-3">
+    <div
+      className="flex items-center justify-center gap-2 p-3"
+      onClick={stopRowClick}
+      onPointerDown={stopRowClick}
+    >
       {visibleActions.map(renderAction)}
 
       {hiddenActions.length > 0 && (
