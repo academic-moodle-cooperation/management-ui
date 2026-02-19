@@ -24,6 +24,12 @@
     "plugin-univie#build": {
       "outputs": []
     },
+    "@workspace/plugin-admin-dashboard#build": {
+      "outputs": []
+    },
+    "@workspace/plugin-admin-marketplace#build": {
+      "outputs": []
+    },
     "preview": {
       "dependsOn": ["build"],
       "cache": false,

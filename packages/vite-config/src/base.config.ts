@@ -41,6 +41,7 @@ export const createBaseConfig = ({
       sourcemap: !isProduction,
       minify: isProduction,
       cssCodeSplit: true,
+      chunkSizeWarningLimit: 2000,
       rollupOptions: {
         external: (id) => {
           // Don't externalize lucide-react - we want it bundled

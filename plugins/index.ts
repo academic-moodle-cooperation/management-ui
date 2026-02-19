@@ -14,6 +14,5 @@
  * and by export order here for development).
  */
 export * from "./core";
-export * from "./tuwien"; // TU Wien (exported but config not active)
-export * from "./univie"; // University of Vienna (ACTIVE - config wins due to order)
 export * from "./example-university";
+// export * from "./my-org-plugin"; // Example org plugin; use .local-plugins/ or Marketplace to load
