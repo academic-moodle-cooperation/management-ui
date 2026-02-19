@@ -55,9 +55,8 @@ Plugins can provide:
 Review examples:
 
 - [`/plugins/core/`](/plugins/core/README.md) - Core extension points
-- [`/plugins/tuwien/`](/plugins/tuwien/README.md) - TU Wien implementation
-- [`/plugins/univie/`](/plugins/univie/README.md) - University of Vienna
-- [`/plugins/example-university/`](/plugins/example-university/README.md) - Reference
+- [`/plugins/example-university/`](/plugins/example-university/README.md) - Reference implementation
+- Org plugins (e.g. univie, tuwien) live in `.local-plugins/` or separate repos; see [Community Plugin Development](/docs/COMMUNITY_PLUGIN_DEVELOPMENT.md).
 
 ### 3. Plan Your Plugin
 
@@ -556,8 +555,8 @@ Follow template sections:
 
 **See examples:**
 
-- [TU Wien Plugin](/plugins/tuwien/README.md)
-- [UniVie Plugin](/plugins/univie/README.md)
+- [Example University Plugin](/plugins/example-university/README.md)
+- [Community Plugin Development](/docs/COMMUNITY_PLUGIN_DEVELOPMENT.md) (for .local-plugins or separate repos)
 
 ### Step 16: Create Implementation Documentation
 
@@ -816,9 +815,8 @@ Before considering a plugin complete:
 
 **Excellent Examples:**
 
-- `plugins/tuwien` - Comprehensive implementation
-- `plugins/univie` - Clean structure
-- `plugins/example-university` - Reference implementation
+- `plugins/example-university` - Reference implementation (in-repo)
+- `.local-plugins/<name>` - Org-specific plugins (univie, tuwien, etc.); see [Community Plugin Development](/docs/COMMUNITY_PLUGIN_DEVELOPMENT.md)
 
 ## Best Practices
 

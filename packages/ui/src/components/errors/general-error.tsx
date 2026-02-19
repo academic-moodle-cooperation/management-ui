@@ -1,6 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
-import { Button } from "@workspace/ui/components";
+import { Button } from "../ui/button";
 import { cn } from "@workspace/ui/lib/utils";
 import { logger } from "@workspace/utils";
 

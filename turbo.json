@@ -1,9 +1,11 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "stream",
+  "concurrency": "20",
   "globalEnv": [
     "DEV",
     "BASE_URL",
+    "MODE",
     "NODE_ENV",
     "VITE_PROXY_TARGET",
     "GRAPHQL_ENDPOINT",
@@ -14,15 +16,21 @@
   ],
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
     },
     "@workspace/utils#build": {
-      "outputs": ["dist/**"]
-    },
-    "plugin-univie#build": {
-      "outputs": []
+      "outputs": [
+        "dist/**"
+      ]
     },
     "@workspace/plugin-admin-dashboard#build": {
       "outputs": []
@@ -31,15 +39,21 @@
       "outputs": []
     },
     "preview": {
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "cache": false,
       "persistent": true
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": [
+        "^lint"
+      ]
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": [
+        "^check-types"
+      ]
     },
     "dev": {
       "cache": false,
@@ -55,7 +69,9 @@
       "cache": false
     },
     "test": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     },
     "test:watch": {
@@ -63,7 +79,9 @@
       "persistent": true
     },
     "test:coverage": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     }
   }

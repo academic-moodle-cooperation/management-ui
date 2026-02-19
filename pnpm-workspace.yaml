@@ -4,3 +4,4 @@ packages:
   - "plugins"
   - "plugins/*"
   - "plugins/*/apps/*"
+  - ".local-plugins/*"

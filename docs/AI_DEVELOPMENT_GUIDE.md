@@ -329,11 +329,11 @@ See `/packages/i18n/README.md` for complete translation guide.
 Every plugin must be exported from `plugins/index.ts`:
 
 ```typescript
-// plugins/index.ts
+// plugins/index.ts — only core plugins are exported here
 export * from "./core";
-export * from "./my-feature"; // Add your plugin here!
-export * from "./tuwien";
-export * from "./univie";
+export * from "./example-university";
+export * from "./admin-marketplace";
+// Org-specific plugins (univie, tuwien, etc.) live in .local-plugins/ or separate repos; do not add here.
 ```
 
 ### Directory Naming (AVOID `/api` PREFIX AT PROJECT ROOT)
@@ -444,6 +444,93 @@ If you're unsure about:
 6. Create comprehensive README.md
 7. Test in standalone mode: `cd plugins/myuni && pnpm dev`
 8. Test in core shell: `cd apps/management-ui-core && pnpm dev`
+
+## Community Plugin Development
+
+The Management UI supports **Community Plugins** - externally developed plugins that can be loaded dynamically at runtime without rebuilding the core application.
+
+### Key Documentation
+
+- **Full Guide:** [`/docs/COMMUNITY_PLUGIN_DEVELOPMENT.md`](/docs/COMMUNITY_PLUGIN_DEVELOPMENT.md)
+- **Template:** [`/plugins/community-plugin-template/`](/plugins/community-plugin-template/)
+
+### Community Plugin Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Management UI Core                    │
+│                                                          │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
+│  │ Plugin       │  │ Fragment     │  │ Security     │  │
+│  │ Manager      │  │ Registry     │  │ Service      │  │
+│  └──────────────┘  └──────────────┘  └──────────────┘  │
+│         ▲                 ▲                  ▲          │
+│         └─────────────────┼──────────────────┘          │
+│                           │                              │
+│                    ┌──────┴───────┐                     │
+│                    │ Remote Loader │                     │
+│                    └──────┬───────┘                     │
+└───────────────────────────┼─────────────────────────────┘
+                            │ dynamic import()
+                            ▼
+┌───────────────────────────────────────────────────────────┐
+│              Community Plugin (ES Module)                  │
+│  - Loaded from CDN (jsDelivr)                             │
+│  - External deps: react, @workspace/*                      │
+│  - Optional: __injected_fragments__ for GraphQL            │
+└───────────────────────────────────────────────────────────┘
+```
+
+### Quick Start for Community Plugins
+
+```bash
+# Clone template
+git clone https://github.com/opencast/community-plugin-template my-plugin
+cd my-plugin
+
+# Install and build
+npm install
+npm run build
+
+# Test locally
+npx http-server dist --cors -p 5173
+# Load in Management UI via Developer Mode: http://127.0.0.1:5173/my-plugin.mjs
+```
+
+### Key Services for Community Plugins
+
+| Service | Location | Purpose |
+|---------|----------|---------|
+| `RemoteLoader` | `plugins/admin-marketplace/src/services/remote-loader.ts` | Loads remote plugins |
+| `SecurityService` | `plugins/admin-marketplace/src/services/security.ts` | URL allowlist & validation |
+| `RegistryFetcher` | `plugins/admin-marketplace/src/services/registry-fetcher.ts` | Fetches plugin registry |
+| `FragmentRegistry` | `packages/plugin-system/src/services/FragmentRegistry.ts` | GraphQL fragment management |
+
+### Security Considerations
+
+Community plugins are loaded from allowed domains only:
+- `cdn.jsdelivr.net` (primary)
+- `raw.githubusercontent.com`
+- `*.github.io`
+- `127.0.0.1` (development only)
+
+Version compatibility is checked against `workspaceDependencies` in plugin metadata.
+
+### GraphQL Fragment Extension
+
+Community plugins can extend core GraphQL queries:
+
+```graphql
+# In plugin: src/gql/my-fields.graphql
+fragment MyPluginFields on Event {
+  customField
+  nestedData {
+    value
+  }
+}
+```
+
+Fragments are auto-extracted during build and registered with `FragmentRegistry` at load time.
 
 ## Success Indicators
 

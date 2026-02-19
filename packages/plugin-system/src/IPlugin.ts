@@ -10,7 +10,7 @@ export interface Plugin {
    */
   order?: number | undefined;
 
-  initialize?: ((manager: PluginManager) => void) | undefined;
+  initialize?: ((manager: PluginManager) => void | Promise<void>) | undefined;
   activate(): void;
   deactivate(): void;
 }

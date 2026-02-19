@@ -7,18 +7,23 @@ import type { PluginFunction, EventCallback, PluginComponent, RegistryMetadata }
 type PluginRegistry = Map<string, Plugin>;
 type FunctionRegistry = Map<string, PluginFunction>;
 
+/** Core plugin names that intentionally omit namespace (no warning). */
+const CORE_PLUGIN_NAMES = new Set(["registry", "renderer", "apps"]);
+
 /**
  * Validates if a plugin name follows the recommended format: 'namespace:plugin-type'
  * @param name The plugin name to validate
  * @returns True if the name is valid, false otherwise
  */
 const isValidPluginName = (name: string): boolean => {
-  // Allow legacy names for backward compatibility, but log a warning
+  // Allow legacy names for backward compatibility, but log a warning (skip for known core plugins)
   if (!name.includes(":")) {
-    logger.warn(
-      `Plugin name "${name}" doesn't follow the recommended 'namespace:plugin-type' format`,
-      { pluginName: name },
-    );
+    if (!CORE_PLUGIN_NAMES.has(name)) {
+      logger.warn(
+        `Plugin name "${name}" doesn't follow the recommended 'namespace:plugin-type' format`,
+        { pluginName: name },
+      );
+    }
     return true; // Still allow it for backward compatibility
   }
 
@@ -52,7 +57,7 @@ export interface PluginManager {
   plugins: PluginRegistry;
   functions: FunctionRegistry;
   eventListeners: Map<string, EventCallback<unknown>[]>;
-  register(plugin: Plugin): void;
+  register(plugin: Plugin): void | Promise<void>;
   deregister(pluginName: string): void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   executeFunction<T>(key: string, ...args: any[]): T | undefined;
@@ -112,7 +117,7 @@ export const createPluginManager = (): PluginManager => {
     }
 
     currentPlugin = plugin; // Set current plugin for context
-    plugin.initialize?.(manager);
+    const initResult = plugin.initialize?.(manager);
     plugins.set(plugin.name, plugin);
     plugin.activate();
     currentPlugin = undefined; // Clear current plugin
@@ -121,6 +126,11 @@ export const createPluginManager = (): PluginManager => {
 
     // Dispatch an event to notify that a plugin has been registered
     dispatchEvent("plugin:registered", { pluginName: plugin.name, plugin });
+
+    // If initialize returned a Promise, return it so the caller can await (e.g. PluginInitializer)
+    if (initResult != null && typeof (initResult as Promise<unknown>)?.then === "function") {
+      return initResult as Promise<void>;
+    }
   };
 
   const deregister = (pluginName: string) => {

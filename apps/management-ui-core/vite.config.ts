@@ -2,31 +2,30 @@ import path from "node:path";
 
 import { defineConfig, loadEnv } from "vite";
 
-import { createShellAppViteConfig, generateConfigPlugin } from "@workspace/vite-config";
+import {
+  createShellAppViteConfig,
+  generateConfigPlugin,
+  localPluginsDevPlugin,
+} from "@workspace/vite-config";
 
 import { defaultConfig } from "../../packages/ui-config/src/index.ts";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { config as tuwienConfig } from "../../plugins/tuwien/implementations/config/config";
-import { config as univieConfig } from "../../plugins/univie/implementations/config/config";
 
 const packageName = process.env["npm_package_name"] || "management-ui-core";
 
 /**
- * EXPLICIT PLUGIN CONFIG ORDER
+ * PLUGIN CONFIG ORDER
  *
  * This array defines which organization's configuration is active.
  * The order matters - later configs override earlier ones.
  *
- * To switch organizations:
- * 1. Comment out the current active config
- * 2. Uncomment the desired organization's config
+ * Note: University/organization-specific configs should be provided via:
+ * - Community Plugins (loaded via Registry)
+ * - Local development plugins (.local-plugins/)
+ * - JAR deployment (plugins.json)
  *
- * This same order is used in both dev and production modes for consistency.
+ * Only default/core config is used here for the OSS version.
  */
-const PLUGIN_CONFIGS = [
-  // tuwienConfig,  // TU Wien configuration (commented out)
-  univieConfig, // University of Vienna configuration (ACTIVE)
-];
+const PLUGIN_CONFIGS: typeof defaultConfig[] = [];
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -40,6 +39,19 @@ export default defineConfig(({ mode }) => {
     env,
     invokerDir: __dirname, // Pass the directory of the current vite.config.ts
   });
+
+  // In dev, serve .local-plugins/ and expose /local-plugins/manifest.json
+  if (mode === "development") {
+    const monorepoRootPath = path.resolve(__dirname, "../..");
+    const shellBasePath = baseConfig.base ?? "/";
+    baseConfig.plugins = baseConfig.plugins || [];
+    baseConfig.plugins.push(
+      localPluginsDevPlugin({
+        monorepoRoot: monorepoRootPath,
+        basePath: shellBasePath.replace(/\/$/, ""),
+      }),
+    );
+  }
 
   // Add config generation plugin in production mode
   // This ensures the same merge order is used in both dev and prod

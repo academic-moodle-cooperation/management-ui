@@ -281,8 +281,12 @@ interface TimeFieldProps extends AriaTimeFieldProps<TimeValue> {
   className?: string;
 }
 
-const TimePicker = React.forwardRef<HTMLDivElement, TimeFieldProps>((props) => {
-  return <TimeField {...props} />;
+const TimePicker = React.forwardRef<HTMLDivElement, TimeFieldProps>((props, ref) => {
+  return (
+    <div ref={ref}>
+      <TimeField {...props} />
+    </div>
+  );
 });
 
 TimePicker.displayName = "TimePicker";

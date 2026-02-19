@@ -9,6 +9,23 @@ export const selectedLanguage = {
   en: "English",
 };
 
+const defaultLocalesBase = import.meta.env.DEV ? "/management-ui/dist/locales" : "/management-ui/locales";
+const pluginNamespaceBases = new Map<string, string>();
+
+const buildLocaleUrl = (namespace: string, language: string) => {
+  const base = pluginNamespaceBases.get(namespace) ?? defaultLocalesBase;
+  return `${base.replace(/\/$/, "")}/${namespace}/${language}.json`;
+};
+
+export const registerPluginI18nNamespaces = (namespaces: string[], localesUrl: string) => {
+  if (!localesUrl || !Array.isArray(namespaces)) return;
+  const base = localesUrl.replace(/\/$/, "");
+  namespaces.forEach((ns) => {
+    if (!ns) return;
+    pluginNamespaceBases.set(ns, base);
+  });
+};
+
 i18n
   .use(HttpBackend) // Enables loading translations via HTTP
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -19,9 +36,12 @@ i18n
     ns: ["common", "series", "episodes", "upload"], // Split namespaces for better organization
     defaultNS: "common",
     backend: {
-      loadPath: import.meta.env.DEV
-        ? "/management-ui/dist/locales/{{ns}}/{{lng}}.json"
-        : "/management-ui/locales/{{ns}}/{{lng}}.json", // Path to translation files
+      loadPath: (lngs: string | string[], namespaces: string | string[]) => {
+        const languages = Array.isArray(lngs) ? lngs : [lngs];
+        const nsList = Array.isArray(namespaces) ? namespaces : [namespaces];
+        const urls = nsList.flatMap((ns) => languages.map((lng) => buildLocaleUrl(ns, lng)));
+        return urls.length === 1 ? urls[0] : urls;
+      }, // Dynamic path to translation files (core + JAR plugin locales)
     },
     debug: false,
     react: {

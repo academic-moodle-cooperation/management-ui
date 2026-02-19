@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "name": "Management UI Community Plugin Registry",
+  "description": "Registry for community-developed plugins. In development, this file is used when present. In production, the Marketplace fetches from the configured registry URL(s).",
+  "plugins": []
+}

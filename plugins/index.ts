@@ -1,18 +1,26 @@
 /**
- * Export all plugins from their respective packages
+ * Export all plugins from their respective packages.
  *
- * IMPORTANT: The order of exports determines the configuration merge order in dev mode.
- * Later exports override earlier ones.
+ * IMPORTANT: Only built-in (core) plugins should be committed here.
+ * University/organization-specific plugins should be:
+ * - Developed in .local-plugins/ (gitignored), or
+ * - Distributed as Community Plugins via a Registry, or
+ * - Deployed as JAR files (backend bundles, served via plugins.json)
  *
- * To ensure consistency between dev and prod:
- * 1. This export order should match the PLUGIN_CONFIGS order in apps/management-ui-core/vite.config.ts
- * 2. The order here determines which config wins in dev mode (last one wins)
+ * Loading:
+ * - Plugins exported here are loaded at app startup.
+ * - Other plugins are loaded dynamically:
+ *   - JAR: core fetches backend /management-tool/ui/config/plugins.json and loads each plugin URL.
+ *   - Registry and .local-plugins: discovered/installed via Admin Marketplace (registry API or dev manifest at /local-plugins/manifest.json).
  *
- * Current active organization: univie (University of Vienna)
- * Note: All plugins are exported for compatibility, but only the active organization's
- * config is used (controlled by PLUGIN_CONFIGS in vite.config.ts for production,
- * and by export order here for development).
+ * Dieses Barrel bleibt bewusst explizit:
+ * - Neue Core-Plugins müssen hier manuell exportiert werden.
+ * - Organisations-/Uniplugins gehören NICHT in dieses Repo, sondern
+ *   werden als Community-Plugin oder JAR eingebunden.
  */
+
 export * from "./core";
 export * from "./example-university";
+export * from "./admin-marketplace";
+export * from "./admin-dashboard";
 // export * from "./my-org-plugin"; // Example org plugin; use .local-plugins/ or Marketplace to load

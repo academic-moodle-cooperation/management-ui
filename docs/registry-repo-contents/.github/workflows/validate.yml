@@ -1,0 +1,28 @@
+name: Validate Plugin Registry
+
+on:
+  pull_request:
+    paths:
+      - "registry.json"
+  push:
+    branches:
+      - main
+    paths:
+      - "registry.json"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate registry.json
+        run: node validate-registry.js
+        env:
+          # Set to 1 if plugin URLs are not publicly reachable from GitHub (e.g. private CDN)
+          SKIP_URL_CHECK: "0"

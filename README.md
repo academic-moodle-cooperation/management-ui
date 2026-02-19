@@ -149,13 +149,9 @@ plugins/
 Each university can create standalone applications that run independently:
 
 ```bash
-# TU Wien plugin app
-cd plugins/tuwien
-pnpm dev    # Runs on http://127.0.0.1:3005
-
-# University of Vienna plugin app
-cd plugins/univie
-pnpm dev    # Runs on http://127.0.0.1:3006
+# Org plugins live in .local-plugins/ (e.g. univie, tuwien)
+cd .local-plugins/my-org
+pnpm build && pnpm dev   # Build then run standalone, or use core in dev to load from /local-plugins/
 ```
 
 ### Extension Points
@@ -320,9 +316,8 @@ pnpm dev    # Access at http://127.0.0.1:3000/episodes
 
 The system supports extensive customization through plugins:
 
-- **TU Wien** (`plugins/tuwien/`): Header, footer, sidebar, and upload ACL implementations
-- **University of Vienna** (`plugins/univie/`): Custom sidebar and empty state components
-- **Example University** (`plugins/example-university/`): Reference implementations
+- **Example University** (`plugins/example-university/`): Reference implementations (in-repo)
+- **Org plugins** (e.g. TU Wien, University of Vienna): Use `.local-plugins/<name>/` or separate repos; see [Community Plugin Development](docs/COMMUNITY_PLUGIN_DEVELOPMENT.md)
 
 ### Branding & Theming
 

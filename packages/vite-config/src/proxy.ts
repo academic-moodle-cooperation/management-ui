@@ -6,7 +6,9 @@ export interface CreateProxyConfigOptions {
   customProxies?: Record<string, string | ProxyOptions>;
 }
 
-const defaultBackendTarget = "http://127.0.0.1:8080";
+const defaultBackendTarget =
+  (typeof process !== "undefined" && process.env["VITE_PROXY_TARGET"]) ||
+  "http://localhost:8080";
 
 const defaultProxyPaths: Record<string, string | ProxyOptions> = {
   "/j_spring_security_login": "",

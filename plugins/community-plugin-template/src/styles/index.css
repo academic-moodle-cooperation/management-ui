@@ -1,0 +1,39 @@
+/**
+ * Plugin Styles
+ *
+ * Tailwind v4: use @import "tailwindcss/theme" + "tailwindcss/utilities"
+ * to avoid overriding core app styles via preflight.
+ * All Tailwind classes used in your plugin components will be generated here.
+ *
+ * This CSS is bundled with your plugin and loaded automatically when
+ * the plugin is imported (via `import "./styles/index.css"` in index.ts).
+ */
+
+@import "tailwindcss/theme";
+@import "tailwindcss/utilities";
+@source "../**/*.{ts,tsx,js,jsx}";
+
+/**
+ * Plugin-specific component styles
+ *
+ * Use @layer components to define custom component classes that
+ * use Tailwind utilities. These will be included in the final CSS.
+ */
+@layer components {
+  /* Example: Custom component class */
+  /* .my-plugin-card {
+    @apply bg-card text-card-foreground rounded-lg p-4;
+  } */
+}
+
+/**
+ * Plugin-specific utility styles
+ *
+ * Use @layer utilities to define custom utility classes.
+ */
+@layer utilities {
+  /* Example: Custom utility */
+  /* .my-plugin-gradient {
+    @apply bg-gradient-to-r from-primary to-secondary;
+  } */
+}

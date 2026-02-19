@@ -17,3 +17,6 @@ export * from "./plugins/renderer";
 export * from "./plugins/objectRegistry";
 export * from "./plugins/objectRegistry/hooks/useRegistry";
 export * from "./plugins/appRegistry";
+
+// Export services (Community Plugin System)
+export * from "./services";

@@ -805,10 +805,14 @@ export type UserList = {
   totalCount: Scalars['Long']['output'];
 };
 
+export type PluginCurrentUserFieldsFragment = { __typename: 'CurrentUser' };
+
+export type PluginUserFieldsFragment = { __typename: 'User' };
+
 export type UserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserQuery = { currentUser: { email?: string | null, name?: string | null, username?: string | null, userRole: string } };
+export type UserQuery = { currentUser: { __typename: 'CurrentUser', email?: string | null, name?: string | null, username?: string | null, userRole: string } };
 
 export type SearchUserQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -817,7 +821,9 @@ export type SearchUserQueryVariables = Exact<{
 }>;
 
 
-export type SearchUserQuery = { searchUser: { totalCount: any, nodes: Array<{ email?: string | null, name?: string | null, provider?: string | null, roles: Array<string | null>, userRole: string, username?: string | null } | null>, pageInfo: { limit: any, offset: any, pageCount: any } } };
+export type SearchUserQuery = { searchUser: { totalCount: any, nodes: Array<{ __typename: 'User', email?: string | null, name?: string | null, provider?: string | null, roles: Array<string | null>, userRole: string, username?: string | null } | null>, pageInfo: { limit: any, offset: any, pageCount: any } } };
+
+export type PluginSeriesFieldsFragment = { __typename: 'Series' };
 
 export type SeriesDataFragment = { __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string, eventStatus: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null };
 
@@ -871,6 +877,8 @@ export type GetSeriesNameByIdQueryVariables = Exact<{
 
 
 export type GetSeriesNameByIdQuery = { seriesById?: { title: string } | null };
+
+export type PluginEventFieldsFragment = { __typename: 'Event' };
 
 export type EventsDataFragment = { __typename: 'Event', contributors?: Array<string | null> | null, seriesName?: string | null, seriesId?: string | null, title: string, creator?: string | null, created?: any | null, description?: string | null, displayableStatus?: string | null, eventStatus: string, duration?: any | null, hasPreview: boolean, id: string, location?: string | null, presenters?: Array<string | null> | null, startDate?: any | null, publications?: Array<{ uri?: string | null, tracks?: Array<{ width?: number | null, uri?: string | null, tags?: Array<string | null> | null, mimeType?: string | null, logicalName?: string | null, isLive?: boolean | null, height?: number | null, frameRate?: number | null, flavor?: string | null } | null> | null } | null> | null, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null };
 
@@ -980,6 +988,21 @@ export type UpdateSeriesAclMutationVariables = Exact<{
 export type UpdateSeriesAclMutation = { updateSeriesAcl: { muiSeriesInfo?: { managedAclId?: any | null } | null } };
 
 
+export const PluginCurrentUserFieldsFragmentDoc = `
+    fragment PluginCurrentUserFields on CurrentUser {
+  __typename
+}
+    `;
+export const PluginUserFieldsFragmentDoc = `
+    fragment PluginUserFields on User {
+  __typename
+}
+    `;
+export const PluginSeriesFieldsFragmentDoc = `
+    fragment PluginSeriesFields on Series {
+  __typename
+}
+    `;
 export const SeriesDataFragmentDoc = `
     fragment SeriesData on Series {
   __typename
@@ -1001,8 +1024,9 @@ export const SeriesDataFragmentDoc = `
     isPublic
     managedAclId
   }
+  ...PluginSeriesFields
 }
-    `;
+    ${PluginSeriesFieldsFragmentDoc}`;
 export const GetInputFieldsMetaDataFragmentDoc = `
     fragment GetInputFieldsMetaData on JsonMetadataField {
   collectionId
@@ -1073,6 +1097,11 @@ export const GetDateTimeInputFieldsMetaDataFragmentDoc = `
   value
 }
     `;
+export const PluginEventFieldsFragmentDoc = `
+    fragment PluginEventFields on Event {
+  __typename
+}
+    `;
 export const EventsDataFragmentDoc = `
     fragment EventsData on Event {
   __typename
@@ -1112,8 +1141,9 @@ export const EventsDataFragmentDoc = `
     publishUrl
     thumbnailUrl
   }
+  ...PluginEventFields
 }
-    `;
+    ${PluginEventFieldsFragmentDoc}`;
 export const EventsAclDataFragmentDoc = `
     fragment EventsAclData on Query {
   eventById(id: $id) {
@@ -1147,9 +1177,10 @@ export const UserDocument = `
     name
     username
     userRole
+    ...PluginCurrentUserFields
   }
 }
-    `;
+    ${PluginCurrentUserFieldsFragmentDoc}`;
 
 export const useUserQuery = <
       TData = UserQuery,
@@ -1201,6 +1232,7 @@ export const SearchUserDocument = `
       roles
       userRole
       username
+      ...PluginUserFields
     }
     pageInfo {
       limit
@@ -1209,7 +1241,7 @@ export const SearchUserDocument = `
     }
   }
 }
-    `;
+    ${PluginUserFieldsFragmentDoc}`;
 
 export const useSearchUserQuery = <
       TData = SearchUserQuery,

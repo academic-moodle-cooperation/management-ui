@@ -3,6 +3,8 @@ import * as AllPlugins from "@workspace/plugins";
 import type { AppConfig, PluginNamespaceItem } from "@workspace/query";
 import { logger } from "@workspace/utils";
 
+import { discoverLocalPlugins } from "./services/localPluginDiscovery";
+
 // Helper function to check if an object is a valid plugin
 const isPlugin = (module: unknown): module is Plugin =>
   module !== null &&
@@ -34,6 +36,47 @@ const parsePluginConfig = (
 
   return configMap;
 };
+
+/**
+ * Return the set of plugin namespace names that are enabled in config.
+ * Used to filter .local-plugins manifest entries (folder name = namespace).
+ * E.g. pluginNamespace: ["core", "univie"] => Set {"core", "univie"}.
+ */
+export function getEnabledPluginNamespaces(config?: AppConfig): Set<string> {
+  const raw = config?.app?.pluginNamespace;
+  if (!raw || !Array.isArray(raw) || raw.length === 0) {
+    return new Set(); // Empty = no filter (load all .local-plugins when no config filter)
+  }
+  const set = new Set<string>();
+  for (const item of raw) {
+    if (typeof item === "string") {
+      set.add(item);
+    } else if (item && typeof item === "object") {
+      for (const key of Object.keys(item)) {
+        set.add(key);
+      }
+    }
+  }
+  return set;
+}
+
+/**
+ * Return enabled types for a namespace (for .local-plugins type filtering).
+ * E.g. univie: { types: ["sidebar", "footer"] } => Set {"sidebar", "footer"}.
+ * Returns "all" if the namespace is enabled with no type restriction (string or types: ["all"]).
+ */
+export function getEnabledTypesForNamespace(
+  config: AppConfig | undefined,
+  namespace: string,
+): Set<string> | "all" {
+  const raw = config?.app?.pluginNamespace;
+  if (!raw || !Array.isArray(raw)) return "all";
+  const configMap = parsePluginConfig(raw);
+  const types = configMap.get(namespace);
+  if (types === undefined) return "all";
+  if (types === "all") return "all";
+  return new Set(types);
+}
 
 /**
  * Check if a plugin should be loaded based on the new configuration format
@@ -102,17 +145,22 @@ export const loadAllAvailablePlugins = async (): Promise<Plugin[]> => {
  */
 export const loadAllPlugins = async (config?: AppConfig): Promise<Plugin[]> => {
   try {
-    // Load all available plugins and filter for Plugin type
+    // 1. Built-in core plugins (from @workspace/plugins, filtered by config)
     const allModules = Object.values(AllPlugins);
     const allPlugins = allModules.filter(isPlugin);
+    const builtInPlugins = allPlugins.filter((plugin) => shouldLoadPlugin(plugin, config));
 
-    // Filter plugins based on array configuration
-    const filteredPlugins = allPlugins.filter((plugin) => {
-      const shouldLoad = shouldLoadPlugin(plugin, config);
-      return shouldLoad;
+    // 2. Local development plugins (URLs discovered from localStorage)
+    // NOTE: These are not Plugin objects yet – they are remote ES modules
+    // that will be loaded via RemoteLoader in the Marketplace / PluginInitializer.
+    // Here we just trigger discovery to keep a single place of truth.
+    void discoverLocalPlugins().catch(() => {
+      logger.warn("loadAllPlugins: Failed to discover local development plugins");
     });
 
-    return filteredPlugins;
+    // Built-in plugins are the only ones directly returned here.
+    // Remote / community / local dev plugins are loaded via RemoteLoader.
+    return builtInPlugins;
   } catch (error) {
     logger.error(
       "CRITICAL ERROR in loadAllPlugins",

@@ -10,7 +10,9 @@
     "./base": "./dist/base.config.js",
     "./proxy": "./dist/proxy.js",
     "./ports": "./dist/ports.js",
-    "./index": "./dist/index.js"
+    "./index": "./dist/index.js",
+    "./community-plugin": "./dist/community-plugin.config.js",
+    "./plugins/fragment-extractor": "./dist/plugins/fragment-extractor.js"
   },
   "files": [
     "dist"
