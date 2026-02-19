@@ -825,7 +825,7 @@ export type SearchUserQuery = { searchUser: { totalCount: any, nodes: Array<{ __
 
 export type PluginSeriesFieldsFragment = { __typename: 'Series' };
 
-export type SeriesDataFragment = { __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null };
+export type SeriesDataFragment = { __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string, eventStatus: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null };
 
 export type GetMySeriesQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -835,7 +835,7 @@ export type GetMySeriesQueryVariables = Exact<{
 }>;
 
 
-export type GetMySeriesQuery = { currentUser: { mySeries: { totalCount: any, nodes: Array<{ __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null } | null> } } };
+export type GetMySeriesQuery = { currentUser: { mySeries: { totalCount: any, nodes: Array<{ __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string, eventStatus: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null } | null> } } };
 
 export type GetSeriesInfoQueryVariables = Exact<{
   seriesId: Scalars['String']['input'];
@@ -946,7 +946,7 @@ export type CreateSeriesMutationVariables = Exact<{
 }>;
 
 
-export type CreateSeriesMutation = { createSeries: { __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null } };
+export type CreateSeriesMutation = { createSeries: { __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string, eventStatus: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null } };
 
 export type UpdateSeriesMutationVariables = Exact<{
   seriesId: Scalars['String']['input'];
@@ -954,7 +954,7 @@ export type UpdateSeriesMutationVariables = Exact<{
 }>;
 
 
-export type UpdateSeriesMutation = { updateSeries: { __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null } };
+export type UpdateSeriesMutation = { updateSeries: { __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string, eventStatus: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null } };
 
 export type UpdateEventMutationVariables = Exact<{
   eventId: Scalars['String']['input'];
@@ -1016,6 +1016,7 @@ export const SeriesDataFragmentDoc = `
     nodes {
       id
       title
+      eventStatus
     }
     totalCount
   }

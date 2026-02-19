@@ -87,6 +87,10 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
       label: i18next.t("episodes:episodesTable.action.editData"),
       tooltip: i18next.t("episodes:episodesTable.action.editData"),
       onClick: (event) => openSidebarWithData(event.id, true, {}),
+      condition: (event) => {
+        const status = event.eventStatus?.split(".").pop()?.toUpperCase();
+        return !(status === "PROCESSING" || status === "PENDING" || status === "PROCESSING_FAILURE");
+      },
       priority: 100,
     },
     {
@@ -344,8 +348,6 @@ const DownloadDropdown: React.FC<{ event: EventsDataFragment }> = ({ event }) =>
               <a
                 key={index}
                 href={track?.uri || ""}
-                target="_blank"
-                rel="noreferrer"
                 download={event.title}
                 onClick={(e: React.MouseEvent) => e.stopPropagation()}
               >

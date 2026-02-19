@@ -49,6 +49,13 @@
       "postcss@<8.4.31": ">=8.4.31",
       "js-yaml@>=4.0.0 <4.1.1": ">=4.1.1",
       "glob@>=10.2.0 <10.5.0": ">=10.5.0"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "@swc/core",
+      "@tailwindcss/oxide",
+      "esbuild",
+      "unrs-resolver"
+    ]
   }
 }

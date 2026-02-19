@@ -91,5 +91,6 @@ export { resolveAssetUrl, resolveFirstAssetUrl } from "./assetUrl.js";
 export { deepMerge } from "./deepMerge.js";
 export { logger, Logger } from "./logger.js";
 export { normalizeMetadataValue, normalizeMetadataObject } from "./normalizeMetadata.js";
+export { getEventStatus, isEventProcessing, hasProcessingEvents } from "./eventStatus.js";
 
 export type { LogLevel, LogContext } from "./logger.js";

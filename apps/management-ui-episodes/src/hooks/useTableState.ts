@@ -33,7 +33,7 @@ export function useTableState<State extends TableBaseState, Action extends Table
 
   // Create atoms for storage
   const sortingAtom = useMemo(
-    () => atomWithStorage<SortingState>(sortingAtomKey, []),
+    () => atomWithStorage<SortingState>(sortingAtomKey, [{ id: "startDate", desc: true }]),
     [sortingAtomKey],
   );
 

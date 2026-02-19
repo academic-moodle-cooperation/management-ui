@@ -350,66 +350,80 @@ export const createColumns = (
         const statusIcon = getStatusIcon(status);
         const isProcessed = status === "PROCESSED";
 
+        const thumbnailContent = (
+          <>
+            <img
+              src={thumbnail || "./nothumbnail.svg"}
+              className="
+                overflow-hidden
+                rounded-lg
+                w-[160px]
+                h-[90px]
+                transition-transform
+                duration-300
+                group-hover:scale-110
+              "
+              alt=""
+            />
+            {!isProcessed && (
+              <>
+                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm grayscale" />
+                <div className="absolute inset-0 flex items-center justify-center group-hover:scale-110">
+                  {React.cloneElement(statusIcon, {
+                    className: "w-1/3 h-1/3 text-white drop-shadow-lg mix-blend-screen",
+                  })}
+                </div>
+              </>
+            )}
+            {isProcessed && (
+              <div
+                className="
+                  absolute
+                  inset-0
+                  flex
+                  items-center
+                  justify-center
+                  opacity-0
+                  transition-opacity
+                  bg-black/5
+                  group-hover:opacity-100
+                  duration-300
+                "
+              ></div>
+            )}
+            <div
+              style={{
+                position: "absolute",
+                bottom: "5px",
+                right: "5px",
+                backgroundColor: "rgba(0, 0, 0, 0.7)",
+                color: "white",
+                padding: "4px",
+                borderRadius: "4px",
+              }}
+            >
+              {duration}
+            </div>
+          </>
+        );
+
         return (
           <div className="flex items-center h-[125px] w-[500px] space-x-2 group">
             <div className="relative my-2 me-2 group overflow-hidden rounded-lg">
-              <a
-                href={row.original.muiEventInfo?.publishUrl || ""}
-                onClick={(e: React.MouseEvent) => {
-                  e.stopPropagation();
-                }}
-              >
-                <img
-                  src={thumbnail || "./nothumbnail.svg"}
-                  className="
-                  overflow-hidden
-                  rounded-lg
-                  w-[160px]
-                  h-[90px]
-                  transition-transform
-                  duration-300
-                  group-hover:scale-110
-                "
-                  alt=""
-                />
-                {!isProcessed && (
-                  <>
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm grayscale" />
-                    <div className="absolute inset-0 flex items-center justify-center group-hover:scale-110">
-                      {React.cloneElement(statusIcon, {
-                        className: "w-1/3 h-1/3 text-white drop-shadow-lg mix-blend-screen",
-                      })}
-                    </div>
-                  </>
-                )}
-                <div
-                  className="
-                absolute
-                inset-0
-                flex
-                items-center
-                justify-center
-                opacity-0
-                transition-opacity
-                bg-black/5
-                group-hover:opacity-100
-                duration-300
-              "
-                ></div>
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: "5px",
-                    right: "5px",
-                    backgroundColor: "rgba(0, 0, 0, 0.7)",
-                    color: "white",
-                    padding: "4px",
-                    borderRadius: "4px",
+              {isProcessed ? (
+                <a
+                  href={row.original.muiEventInfo?.publishUrl || ""}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e: React.MouseEvent) => {
+                    e.stopPropagation();
                   }}
                 >
-                  {duration}
-                </div>
-              </a>
+                  {thumbnailContent}
+                </a>
+              ) : (
+                thumbnailContent
+              )}
             </div>
             <div className="flex-1 self-center overflow-hidden min-w-0">
               <OverflowTooltip className="block max-w-[300px] font-medium truncate whitespace-nowrap overflow-hidden">

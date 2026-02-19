@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import {
   useGetMyEventsQuery,
@@ -9,6 +9,7 @@ import {
 import { useNavigate } from "@workspace/router";
 import { useSidebarContent } from "@workspace/ui/components";
 import type { Row } from "@workspace/ui/components";
+import { hasProcessingEvents, isEventProcessing } from "@workspace/utils";
 
 import { useSidebarStore } from "../stores/sidebarStore";
 
@@ -127,6 +128,7 @@ export function useEpisodesTable(seriesId?: string) {
       : undefined;
 
   // API queries - conditionally use different queries based on seriesId
+  // Automatically refetch table data every 20 seconds when episodes are processing
   const allEventsQuery = useGetMyEventsQuery(
     {
       limit: pageSize,
@@ -136,6 +138,11 @@ export function useEpisodesTable(seriesId?: string) {
     },
     {
       enabled: !seriesId, // Only enabled when no seriesId is provided
+      refetchInterval: (query) => {
+        // Refetch every 20 seconds if there are processing episodes
+        const events = query.state.data?.currentUser?.myEvents.nodes;
+        return hasProcessingEvents(events) ? 20000 : false;
+      },
     },
   );
 
@@ -149,15 +156,44 @@ export function useEpisodesTable(seriesId?: string) {
     },
     {
       enabled: Boolean(seriesId), // Only enabled when seriesId is provided
+      refetchInterval: (query) => {
+        // Refetch every 20 seconds if there are processing episodes
+        const events = query.state.data?.seriesById?.events.nodes;
+        return hasProcessingEvents(events) ? 20000 : false;
+      },
     },
   );
 
   // Use the appropriate query result based on seriesId
   const episodesQuery = seriesId ? seriesEventsQuery : allEventsQuery;
 
+  // Determine if the selected episode is being processed
+  // This enables automatic polling for metadata when the selected video is processing
+  const isSelectedEpisodeProcessing = useMemo(() => {
+    if (!selectedId) return false;
+
+    // Read from the query that is active for this seriesId; each has the correct type.
+    const events = seriesId
+      ? seriesEventsQuery.data?.seriesById?.events.nodes
+      : allEventsQuery.data?.currentUser?.myEvents.nodes;
+
+    const selectedEvent = events?.find((event) => event?.id === selectedId);
+    return isEventProcessing(selectedEvent?.eventStatus);
+  }, [seriesEventsQuery.data, allEventsQuery.data, selectedId, seriesId]);
+
   // API queries - Use selectedId from Zustand store
-  const { data: episodesInputFields, isLoading: isLoadingMetadata } =
-    useGetEventByIdInputFieldsQuery({ eventId: selectedId }, { enabled: Boolean(selectedId) });
+  // Automatically refetch metadata every 10 seconds when the selected episode is processing
+  const {
+    data: episodesInputFields,
+    isLoading: isLoadingMetadata,
+    refetch: refetchMetadata,
+  } = useGetEventByIdInputFieldsQuery(
+    { eventId: selectedId },
+    {
+      enabled: Boolean(selectedId),
+      refetchInterval: isSelectedEpisodeProcessing ? 10000 : false, // 10 seconds when processing
+    },
+  );
 
   // Event handlers
   const handleEditClose = () => {
@@ -207,6 +243,7 @@ export function useEpisodesTable(seriesId?: string) {
     textCopied,
     setTextCopied,
     refetch: episodesQuery.refetch,
+    refetchMetadata,
     handleEditClose,
     handleRowClick,
     setSorting: tableState.setSorting,

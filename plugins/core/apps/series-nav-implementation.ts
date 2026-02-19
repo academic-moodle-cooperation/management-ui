@@ -1,4 +1,3 @@
-import { i18next } from "@workspace/i18n";
 import { createPlugin, type PluginManager } from "@workspace/plugin-system";
 import { ListVideo } from "@workspace/ui/components";
 
@@ -17,7 +16,7 @@ export const seriesNavImplementation = createPlugin({
 
   initialize(manager: PluginManager) {
     manager.registerObject("sidebar:nav-items", "series", {
-      title: i18next.t("common:series"),
+      title: "common:series", // i18n key - will be translated dynamically by CustomNavMain
       path: "/series",
       icon: ListVideo,
       order: 20, // After Home (10), before Episodes (30)

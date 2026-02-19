@@ -18,6 +18,7 @@ interface SeriesInfoFooterProps {
   onEditClose: () => void;
   selectedSeriesId: string;
   refetch: () => void;
+  refetchMetadata: () => void;
   setEditSeries: (value: boolean) => void;
 }
 
@@ -29,6 +30,7 @@ const SeriesInfoFooter = ({
   onEditClose,
   selectedSeriesId,
   refetch,
+  refetchMetadata,
   setEditSeries,
 }: SeriesInfoFooterProps) => {
   const { t } = useI18n();
@@ -172,6 +174,7 @@ const SeriesInfoFooter = ({
           onSuccess: () => {
             toast.success(t("series:seriesTable.notification.changesSaved"));
             refetch();
+            refetchMetadata();
           },
         },
       );
