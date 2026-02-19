@@ -15,9 +15,16 @@ interface SeriesActionsCellProps {
 
 const DefaultSeriesActionsCell: React.FC<SeriesActionsCellProps> = ({ series }) => {
   const { openSidebarWithData } = useSidebarStore();
+  const stopRowClick = (event: React.SyntheticEvent) => {
+    event.stopPropagation();
+  };
 
   return (
-    <div className="flex items-center justify-center gap-2">
+    <div
+      className="flex items-center justify-center gap-2"
+      onClick={stopRowClick}
+      onPointerDown={stopRowClick}
+    >
       <Tooltip delayDuration={300}>
         <TooltipTrigger asChild>
           <Button
