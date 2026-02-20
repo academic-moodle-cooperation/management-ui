@@ -1,4 +1,4 @@
-import { shadcnPreset } from "@workspace/tailwind-config/shadcn-preset";
+import { shadcnPreset } from "@workspace/tailwind-config/preset";
 
 import type { Config } from "tailwindcss";
 

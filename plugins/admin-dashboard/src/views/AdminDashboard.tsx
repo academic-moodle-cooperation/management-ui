@@ -201,7 +201,12 @@ export const AdminDashboard: React.FC = () => {
     const controller = new AbortController();
     setStatsState({ status: "loading" });
 
-    fetchGitHubStats(repo, { token: configuredToken, signal: controller.signal })
+    const options = { signal: controller.signal } as { signal: AbortSignal; token?: string };
+    if (configuredToken !== undefined) {
+      options.token = configuredToken;
+    }
+
+    fetchGitHubStats(repo, options)
       .then((result) => {
         if (controller.signal.aborted) return;
         if (result.status === "ready") {
