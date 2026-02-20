@@ -11,29 +11,32 @@
 
 @import "tailwindcss/theme";
 @import "tailwindcss/utilities";
-@source "../**/*.{ts,tsx,js,jsx}";
 
 /**
  * Plugin-specific component styles
  *
  * Use @layer components to define custom component classes that
  * use Tailwind utilities. These will be included in the final CSS.
+ *
+ * Example:
+ * @layer components {
+ *   .my-plugin-card {
+ *     @apply bg-card text-card-foreground rounded-lg p-4;
+ *   }
+ * }
  */
-@layer components {
-  /* Example: Custom component class */
-  /* .my-plugin-card {
-    @apply bg-card text-card-foreground rounded-lg p-4;
-  } */
-}
 
 /**
  * Plugin-specific utility styles
  *
  * Use @layer utilities to define custom utility classes.
+ *
+ * Example:
+ * @layer utilities {
+ *   .my-plugin-gradient {
+ *     @apply bg-gradient-to-r from-primary to-secondary;
+ *   }
+ * }
  */
-@layer utilities {
-  /* Example: Custom utility */
-  /* .my-plugin-gradient {
-    @apply bg-gradient-to-r from-primary to-secondary;
-  } */
-}
+
+@layer components, utilities;

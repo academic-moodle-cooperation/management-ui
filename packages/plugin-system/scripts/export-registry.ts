@@ -1,6 +1,4 @@
 #!/usr/bin/env ts-node
-/* eslint-disable no-console */
-
 /**
  * Simple CLI tool to generate a registry entry from a plugin's plugin-metadata.json.
  *
@@ -64,4 +62,3 @@ async function main() {
 }
 
 void main();
-

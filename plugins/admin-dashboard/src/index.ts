@@ -1,5 +1,5 @@
-import React from "react";
 import { LayoutDashboard } from "lucide-react";
+import React from "react";
 
 import { createPlugin } from "@workspace/plugin-system";
 import { withAuthProtection } from "@workspace/router";

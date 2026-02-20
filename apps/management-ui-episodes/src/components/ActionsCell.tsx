@@ -12,7 +12,6 @@ import {
   TooltipContent,
   TooltipTrigger,
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogDescription,

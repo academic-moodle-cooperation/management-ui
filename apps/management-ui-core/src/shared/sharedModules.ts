@@ -10,11 +10,12 @@
  * 2. Community plugins can then import from "@workspace/*" packages
  */
 
+import * as LucideReact from "lucide-react";
 import * as React from "react";
 import * as ReactJSXRuntime from "react/jsx-runtime";
 import * as ReactDOM from "react-dom";
-import * as LucideReact from "lucide-react";
 
+import * as I18n from "@workspace/i18n";
 import * as PluginSystem from "@workspace/plugin-system";
 import * as Query from "@workspace/query";
 import * as Router from "@workspace/router";
@@ -23,7 +24,6 @@ import * as UIComponentsIcons from "@workspace/ui/components/icons";
 import * as UILib from "@workspace/ui/lib";
 import * as UILibUtils from "@workspace/ui/lib/utils";
 import * as Utils from "@workspace/utils";
-import * as I18n from "@workspace/i18n";
 import { logger } from "@workspace/utils";
 
 // Re-export UI component types for consumers

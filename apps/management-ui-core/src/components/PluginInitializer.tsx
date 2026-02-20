@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import {
+  createAppRegistryPlugin,
   createObjectRegistryPlugin,
   createRendererPlugin,
   usePluginManager,
   type Plugin,
-  createAppRegistryPlugin,
 } from "@workspace/plugin-system";
 import type { AppConfig } from "@workspace/query";
 import { getAppConfigSync } from "@workspace/query";
+import { loadAndRegister } from "@workspace/remote-plugin-loader";
 import { AppLoader } from "@workspace/ui/components";
 import { logger } from "@workspace/utils";
 
-import { loadAndRegister } from "@workspace/remote-plugin-loader";
 import {
   loadAllAvailablePlugins,
   getEnabledPluginNamespaces,

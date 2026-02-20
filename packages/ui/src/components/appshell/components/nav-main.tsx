@@ -1,7 +1,9 @@
 "use client";
 
 import { ChevronRight, type LucideIcon } from "lucide-react";
+import * as React from "react";
 
+import { useTranslation } from "@workspace/i18n";
 import { Link } from "@workspace/router";
 import {
   Collapsible,
@@ -56,11 +58,23 @@ export function NavMain({
   customItemStyles,
   customActiveStyles,
 }: NavMainProps) {
+  const { t, i18n } = useTranslation();
+
+  const translatedItems = React.useMemo(() => {
+    return items.map((item) => {
+      if (item.title.includes(":")) {
+        const translated = i18n.exists(item.title) ? t(item.title) : item.title;
+        return { ...item, title: translated };
+      }
+      return item;
+    });
+  }, [items, t, i18n]);
+
   return (
     <SidebarGroup className={groupClassName}>
       {grouplabel && <SidebarGroupLabel>{grouplabel}</SidebarGroupLabel>}
       <SidebarMenu className={menuClassName}>
-        {items.map((item) => (
+        {translatedItems.map((item) => (
           <Collapsible
             key={item.title}
             asChild

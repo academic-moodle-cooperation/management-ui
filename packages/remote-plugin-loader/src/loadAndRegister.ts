@@ -7,8 +7,12 @@
  * for registry/local plugins (caller must validate URL and version when required).
  */
 
-import type { PluginManager, Plugin } from "@workspace/plugin-system";
-import { fragmentRegistry, type RegisteredFragment } from "@workspace/plugin-system";
+import {
+  fragmentRegistry,
+  type Plugin,
+  type PluginManager,
+  type RegisteredFragment,
+} from "@workspace/plugin-system";
 import { logger } from "@workspace/utils";
 
 import { transformModuleSource } from "./transform";
