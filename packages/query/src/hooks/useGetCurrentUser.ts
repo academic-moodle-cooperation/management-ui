@@ -4,6 +4,7 @@ import { gql } from "graphql-request";
 import { useAppConfig } from "@workspace/query";
 
 import { createGraphQLClient } from "../client";
+
 import type { UserQuery } from "../gql-generated";
 
 export function useGetCurrentUser(): UseQueryResult<UserQuery, Error> {
