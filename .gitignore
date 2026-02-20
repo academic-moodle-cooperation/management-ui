@@ -81,5 +81,6 @@ node/
 git-workflow.sh
 GIT_WORKFLOW.md
 
-# Local development plugins
-.local-plugins/
+# Local development plugins (keep empty dir in repo for CI filters)
+.local-plugins/*
+!.local-plugins/.gitkeep
