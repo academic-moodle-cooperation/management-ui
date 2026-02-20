@@ -443,7 +443,7 @@ const renderDownloadMenuItems = (event: EventsDataFragment) =>
         </DropdownMenuItem>
       );
     })
-    .filter((item): item is JSX.Element => item !== null);
+    .filter((item): item is React.ReactElement => item !== null);
 
 const DownloadMenuItem: React.FC<{ event: EventsDataFragment }> = ({ event }) => {
   const downloadItems = renderDownloadMenuItems(event);

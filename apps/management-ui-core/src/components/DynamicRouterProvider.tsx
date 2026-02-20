@@ -102,7 +102,7 @@ const getDynamicModules = async (): Promise<ClientDynamicModule[]> => {
           isPluginApp: false,
         };
       })
-      .filter((entry): entry is ClientDynamicModule => entry !== null);
+      .filter((entry): entry is NonNullable<typeof entry> => entry !== null) as ClientDynamicModule[];
   } catch (error) {
     logger.error(
       "Error fetching or parsing dynamic modules configuration",
