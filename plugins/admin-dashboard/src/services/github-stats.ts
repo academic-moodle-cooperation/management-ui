@@ -24,7 +24,7 @@ const createHeaders = (token?: string) => {
     Accept: "application/vnd.github+json",
   };
   if (token) {
-    headers.Authorization = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
   return headers;
 };
@@ -32,7 +32,7 @@ const createHeaders = (token?: string) => {
 const fetchJson = async <T>(url: string, options: FetchOptions) => {
   const response = await fetch(url, {
     headers: createHeaders(options.token),
-    signal: options.signal,
+    signal: options.signal ?? null,
   });
 
   if (response.status === 202) {

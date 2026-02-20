@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useMemo, type ReactNode } from "react";
 
+import { createPluginManager } from "./pluginManager";
 import { createAppRegistryPlugin } from "./plugins/appRegistry";
 import { createObjectRegistryPlugin } from "./plugins/objectRegistry";
 import { createRendererPlugin } from "./plugins/renderer";
-import { createPluginManager } from "./pluginManager";
 
 const PluginContext = createContext<ReturnType<typeof createPluginManager> | null>(null);
 

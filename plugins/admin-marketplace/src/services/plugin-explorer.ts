@@ -99,48 +99,21 @@ const parsePluginName = (name: string): { namespace: string; type: string } => {
 
 export const PluginExplorer = {
   /**
-   * Discover all plugins bundled in @workspace/plugins
-   *
-   * Uses dynamic import to avoid circular dependency at load time. By the time
-   * the user opens the Marketplace, @workspace/plugins is already loaded.
-   *
-   * Note: This loads plugin metadata only - plugins are not registered until
-   * explicitly enabled via the PluginManager.
-   */
-  /**
    * Discover all plugins. Uses the list provided by the app's PluginInitializer
-   * via manager.executeFunction("marketplace.getAllPlugins") when available.
-   * If that is missing or returns empty (e.g. after refresh or init race), falls
-   * back to a dynamic import of @workspace/plugins. By the time the user is in
-   * the marketplace, that module is already loaded by the app.
+   * via manager.executeFunction("marketplace.getAllPlugins"). The app is the
+   * source of truth for the bundled plugin list to avoid circular deps here.
    */
   async discoverAllPlugins(manager: PluginManager): Promise<Plugin[]> {
-    let plugins: Plugin[] = [];
     try {
       const fn = manager.executeFunction<() => Plugin[] | Promise<Plugin[]>>("marketplace.getAllPlugins");
       if (fn) {
         const raw = await Promise.resolve(fn());
-        plugins = (Array.isArray(raw) ? raw : []).filter(isPlugin);
+        return (Array.isArray(raw) ? raw : []).filter(isPlugin);
       }
     } catch {
       // Function not registered or threw (e.g. app does not inject it yet)
     }
-
-    // Fallback: if the app-injected list is empty (e.g. after refresh or init
-    // race), resolve from @workspace/plugins. The app has already loaded it for
-    // PluginInitializer, so this import resolves from module cache. We do not
-    // add @workspace/plugins as a dep to avoid circular dependencies.
-    if (plugins.length === 0) {
-      try {
-        // @ts-expect-error - @workspace/plugins not a dep (circular); resolves at runtime in the app
-        const mod = await import("@workspace/plugins");
-        const all = (Object.values(mod) as unknown[]).filter(isPlugin);
-        return all;
-      } catch {
-        // Module not available or incompatible
-      }
-    }
-    return plugins;
+    return [];
   },
 
   /**

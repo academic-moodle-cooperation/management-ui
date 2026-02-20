@@ -135,7 +135,7 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
     };
   }, []);
 
-  // Load bundled plugins on mount (async: via marketplace.getAllPlugins or @workspace/plugins fallback)
+  // Load bundled plugins on mount (async: via marketplace.getAllPlugins)
   useEffect(() => {
     let cancelled = false;
 

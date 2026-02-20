@@ -5,22 +5,12 @@ import { useAppConfig } from "@workspace/query";
 
 import { createGraphQLClient } from "../client";
 
-// Define the structure of the user data returned by the GraphQL query
-interface CurrentUser {
-  email: string;
-  name: string;
-  username: string;
-  userRole: string;
-}
+import type { UserQuery } from "../gql-generated";
 
-export interface UserQueryResponse {
-  currentUser: CurrentUser;
-}
-
-export function useGetCurrentUser(): UseQueryResult<UserQueryResponse, Error> {
+export function useGetCurrentUser(): UseQueryResult<UserQuery, Error> {
   const { config, isLoading: isConfigLoading, isError: isConfigError } = useAppConfig();
 
-  return useQuery<UserQueryResponse, Error, UserQueryResponse, [string, string | undefined]>({
+  return useQuery<UserQuery, Error, UserQuery, [string, string | undefined]>({
     queryKey: ["currentUser", config?.api.graphqlEndpoint], // Include endpoint in queryKey
     queryFn: async () => {
       if (isConfigError) {
@@ -32,9 +22,10 @@ export function useGetCurrentUser(): UseQueryResult<UserQueryResponse, Error> {
 
       // Use the createGraphQLClient function that properly handles relative URLs
       const graphQLClient = createGraphQLClient(config.api.graphqlEndpoint);
-      return graphQLClient.request<UserQueryResponse>(gql`
+      return graphQLClient.request<UserQuery>(gql`
         query GetCurrentUser {
           currentUser {
+            __typename
             email
             name
             username

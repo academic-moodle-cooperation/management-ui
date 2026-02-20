@@ -9,9 +9,10 @@
  * - React and @workspace/* packages are external (provided by host)
  * - GraphQL fragments in src/**\/*.graphql are auto-extracted
  */
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
 import { resolve } from "path";
+
+import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from "vite";
 
 // Read plugin name from package.json
 import pkg from "./package.json";

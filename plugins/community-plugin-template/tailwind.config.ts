@@ -1,5 +1,6 @@
+import { shadcnPreset } from "@workspace/tailwind-config/preset";
+
 import type { Config } from "tailwindcss";
-import { shadcnPreset } from "@workspace/tailwind-config/shadcn-preset";
 
 /**
  * Tailwind Configuration for Community Plugin

@@ -114,11 +114,14 @@ export const useUserData = (): {
   const userData = React.useMemo(() => {
     if (!data?.currentUser) return undefined;
 
+    const name = data.currentUser.name ?? data.currentUser.username ?? "";
+    const email = data.currentUser.email ?? "";
+
     return {
-      name: data.currentUser.name,
-      email: data.currentUser.email,
+      name,
+      email,
       avatarUrl: `https://www.gravatar.com/avatar/${sha256(
-        `${data.currentUser.email}`.toLowerCase()?.trim(),
+        email.toLowerCase().trim(),
       )}?s=64&d=404`,
       role: data.currentUser.userRole,
     };

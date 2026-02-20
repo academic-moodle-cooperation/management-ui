@@ -35,6 +35,9 @@ jobs:
           # Then build everything else (vite-config will be cached)
           pnpm turbo run build --force
 
+      - name: Ensure .local-plugins exists
+        run: mkdir -p .local-plugins
+
       - name: Run linter
         run: pnpm lint
 

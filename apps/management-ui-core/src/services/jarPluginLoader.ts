@@ -11,6 +11,7 @@
  */
 
 import { registerPluginI18nNamespaces } from "@workspace/i18n";
+import { getCachedAppConfig } from "@workspace/query";
 import type { AppConfig } from "@workspace/ui-config";
 
 export interface JarPluginInfo {
@@ -74,8 +75,7 @@ export async function loadJarPlugins(config?: AppConfig | null): Promise<JarPlug
     let effectiveConfig = config;
     if (effectiveConfig == null && typeof window !== "undefined") {
       try {
-        const { getCachedAppConfig } = await import("@workspace/query");
-        effectiveConfig = (await getCachedAppConfig()) as AppConfig;
+        effectiveConfig = await getCachedAppConfig();
       } catch {
         // ignore
       }

@@ -1,4 +1,3 @@
-import React, { useEffect, useMemo, useState } from "react";
 import {
   Activity,
   GitBranch,
@@ -10,6 +9,7 @@ import {
   Sparkles,
   TrendingUp,
 } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { useAppConfig } from "@workspace/query";
 import {
@@ -201,7 +201,12 @@ export const AdminDashboard: React.FC = () => {
     const controller = new AbortController();
     setStatsState({ status: "loading" });
 
-    fetchGitHubStats(repo, { token: configuredToken, signal: controller.signal })
+    const options = { signal: controller.signal } as { signal: AbortSignal; token?: string };
+    if (configuredToken !== undefined) {
+      options.token = configuredToken;
+    }
+
+    fetchGitHubStats(repo, options)
       .then((result) => {
         if (controller.signal.aborted) return;
         if (result.status === "ready") {
@@ -227,11 +232,10 @@ export const AdminDashboard: React.FC = () => {
     return () => controller.abort();
   }, [repo, configuredToken, refreshKey]);
 
-  const points = statsState.status === "ready" ? statsState.points : [];
-  const trimmedPoints = useMemo(
-    () => points.slice(Math.max(0, points.length - rangeWeeks)),
-    [points, rangeWeeks],
-  );
+  const trimmedPoints = useMemo(() => {
+    const points = statsState.status === "ready" ? statsState.points : [];
+    return points.slice(Math.max(0, points.length - rangeWeeks));
+  }, [statsState, rangeWeeks]);
 
   const totals = useMemo(() => calculateTotals(trimmedPoints), [trimmedPoints]);
   const netLines = totals.additions - totals.deletions;
