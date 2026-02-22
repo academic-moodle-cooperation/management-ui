@@ -449,6 +449,38 @@ git push -u origin main
 
 If you want to keep it in the monorepo but separate it from core plugins:
 
+**Recommended (official helper scripts):**
+
+```bash
+# Export built-in plugin to .local-plugins
+pnpm plugin:export-local my-org-plugin --move
+
+# Export and fully convert to community-style + namespace wiring
+pnpm plugin:export-local my-org-plugin --move --convert-community --wire-config
+
+# Or create a new local community-style plugin directly from template
+pnpm plugin:create-local my-org-plugin --wire-config
+```
+
+What these do:
+- Copies/moves `plugins/my-org-plugin` to `.local-plugins/my-org-plugin`
+- Removes `export * from "./my-org-plugin";` from `plugins/index.ts` (unless `--keep-barrel` is used)
+- Skips heavy/generated folders (`node_modules`, `dist`, `.turbo`, etc.)
+- Can convert a library-style plugin to community-style runtime bundle setup (`dist/*.mjs`)
+- Can add plugin namespace to `.local-plugins/config/src/config.ts` automatically
+- Prints post-export steps
+
+Useful flags:
+- `--dry-run` (preview only)
+- `--force` (overwrite target if it exists)
+- `--target-dir <dir>` (future-proof for renaming `.local-plugins`)
+- `--keep-barrel` (do not modify `plugins/index.ts`)
+- `--convert-community` (add missing template files + rewrite package/metadata for runtime plugin loading)
+- `--wire-config` (auto-add namespace to `.local-plugins/config/src/config.ts`)
+- `--namespace <name>` (override namespace used by `--wire-config`, default is plugin folder name)
+
+Manual equivalent:
+
 ```bash
 # Create .local-plugins directory (gitignored)
 mkdir -p .local-plugins
@@ -465,6 +497,7 @@ echo ".local-plugins/" >> .gitignore
 1. **Scans** `.local-plugins/` for subdirectories that contain a `dist/` folder with a `*.mjs` file (i.e. you must run `pnpm build` in each plugin first).
 2. **Serves** each plugin's `dist/` at `/local-plugins/<plugin-dir-name>/` (e.g. `http://127.0.0.1:5173/management-ui/local-plugins/my-org-plugin/my-plugin.mjs`).
 3. **Exposes** a manifest at `/local-plugins/manifest.json` listing all discovered plugins.
+4. **Serves matching CSS from `dist/`** for single-file plugin requests (e.g. loading `.../my-plugin.mjs` allows RemoteLoader to fetch `.../my-plugin.css`).
 
 The **core** (PluginInitializer) fetches this manifest on startup in dev and loads each listed plugin. You do **not** need the Admin Marketplace — just build the plugin, put it in `.local-plugins/<name>/`, start the core in dev, and refresh the app. (The Marketplace is optional for browsing/installing other plugins.)
 
@@ -480,6 +513,11 @@ pnpm dev --filter=management-ui-core
 ```
 
 Plugins in `.local-plugins/` are then loaded automatically. To add or update a plugin, rebuild it and refresh the browser.
+
+**Style gotcha (important):**
+- RemoteLoader auto-loads CSS by replacing `.mjs` with `.css`.
+- For `.local-plugins`, keep CSS in the same `dist/` folder and use the same stem (e.g. `dist/nyan-cat-rain.mjs` + `dist/nyan-cat-rain.css`).
+- If styles are missing after a loader/config change, restart the core dev server and hard-refresh.
 
 **Activating without the Marketplace:** You do **not** need the Admin Marketplace. The core (PluginInitializer) fetches `/local-plugins/manifest.json` in dev and loads plugins listed there. So: build the plugin in `.local-plugins/<name>/`, start the core in dev (`pnpm dev --filter=management-ui-core`), and refresh — the plugin is active if its namespace is enabled (see below). The Marketplace is optional (for browsing/installing other plugins).
 
@@ -501,6 +539,13 @@ Plugins in `.local-plugins/` are then loaded automatically. To add or update a p
 - **Production:** Either (a) build from that clone and package plugins as JARs (see A3 and "Packaging univie as JAR" below), or (b) use that repo only for development and use JAR / Registry for production.
 
 This gives you versioned, shareable plugin code without putting it in the main monorepo.
+
+**Can a library-style plugin have a backend part?**
+
+- Short answer: **not as a self-contained plugin artifact**.
+- A built-in/library-style plugin (`plugins/<name>`, exported from `plugins/index.ts`) is bundled into the core frontend. It can call backend APIs, but it does not carry its own deployable backend module by itself.
+- If you want plugin-owned backend code (REST endpoints, DB tables, business logic), use a community-style plugin with a backend module (`.local-plugins/<name>/backend`) and deploy via **JAR** (A3).
+- For interactive flows like QR-code voting/polls, this JAR path is the recommended architecture.
 
 #### Phase 2.3 Update plugin configuration
 
@@ -1022,6 +1067,31 @@ manager.registerObject("apps:definitions", "unique-id", {
   component: YourComponent,
 });
 ```
+
+### Public Plugin Routes (No Auth)
+
+Route protection is controlled via app config, using the **app definition id** (`id` above) as key.
+
+If you want a plugin app route to be accessible without authentication, set:
+
+```ts
+{
+  plugins: {
+    "unique-id": {
+      protection: { public: true },
+    },
+  },
+}
+```
+
+Notes:
+- If `public` is omitted or `false`, the route is treated as protected.
+- If your plugin registers multiple app ids (e.g. list view + detail view), set `protection.public` for each id.
+- In `.local-plugins` setups, this is typically added in `.local-plugins/config/src/config.ts`.
+- `public: true` only controls route protection in the UI shell. If your data layer still uses `currentUser`, `myEvents`, `mySeries`, or event/series-scoped GraphQL fields, backend auth can still block the flow.
+- For truly public audience plugins, prefer root-level GraphQL fields (for example `query { audiencePoll }`) and mutations that accept anonymous voter identifiers instead of relying on authenticated user context.
+- If a mutation should be restricted to logged-in users, do backend checks against the effective Opencast user (GraphQL context wrappers can vary by runtime).
+- If you call GraphQL with raw `fetch` inside a plugin, include `credentials: "include"` to ensure auth cookies are sent.
 
 ### Registering Sidebar Navigation
 

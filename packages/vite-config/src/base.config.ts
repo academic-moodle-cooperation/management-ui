@@ -33,6 +33,7 @@ export const createBaseConfig = ({
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
         "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization",
       },
+      allowedHosts: ["localhost", "127.0.0.1", "eddies-m4-mbp.tailade2d0.ts.net"],
       ...serverOptions, // Merges with any server options provided by the caller.
     },
     build: {

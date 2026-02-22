@@ -84,6 +84,58 @@ importers:
         specifier: '>=6.4.1'
         version: 7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)
 
+  .local-plugins/cyan-cat-rain:
+    dependencies:
+      '@workspace/plugin-system':
+        specifier: workspace:*
+        version: link:../../packages/plugin-system
+      '@workspace/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      lucide-react:
+        specifier: ^0.417.0
+        version: 0.417.0(react@19.1.0)
+      react:
+        specifier: ^19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.0(react@19.1.0)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.8
+      '@types/react-dom':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.6(@types/react@19.1.8)
+      '@vitejs/plugin-react-swc':
+        specifier: ^3.9.0
+        version: 3.10.2(@swc/helpers@0.5.17)(vite@7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
+      '@workspace/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@workspace/tailwind-config':
+        specifier: workspace:*
+        version: link:../../packages/tailwind-config
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      eslint:
+        specifier: ^9.20.0
+        version: 9.30.1(jiti@2.4.2)
+      rollup:
+        specifier: ^4.44.2
+        version: 4.44.2
+      tailwindcss:
+        specifier: ^4.1.7
+        version: 4.1.11
+      typescript:
+        specifier: ^5.3.3
+        version: 5.5.4
+      vite:
+        specifier: '>=6.4.1'
+        version: 7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)
+
   .local-plugins/feedback-plugin:
     dependencies:
       '@workspace/plugin-system':
@@ -151,6 +203,95 @@ importers:
       '@workspace/tailwind-config':
         specifier: workspace:*
         version: link:../../packages/tailwind-config
+      rollup:
+        specifier: ^4.44.2
+        version: 4.44.2
+      tailwindcss:
+        specifier: ^4.1.7
+        version: 4.1.11
+      typescript:
+        specifier: ~5.5.4
+        version: 5.5.4
+      vite:
+        specifier: '>=6.4.1'
+        version: 7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)
+
+  .local-plugins/nyan-cat-rain:
+    dependencies:
+      '@workspace/plugin-system':
+        specifier: workspace:*
+        version: link:../../packages/plugin-system
+      '@workspace/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      lucide-react:
+        specifier: ^0.417.0
+        version: 0.417.0(react@19.1.0)
+      react:
+        specifier: ^19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.0(react@19.1.0)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.8
+      '@types/react-dom':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.6(@types/react@19.1.8)
+      '@vitejs/plugin-react-swc':
+        specifier: ^3.9.0
+        version: 3.10.2(@swc/helpers@0.5.17)(vite@7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
+      '@workspace/tailwind-config':
+        specifier: workspace:*
+        version: link:../../packages/tailwind-config
+      eslint:
+        specifier: ^9.20.0
+        version: 9.30.1(jiti@2.4.2)
+      rollup:
+        specifier: ^4.44.2
+        version: 4.44.2
+      tailwindcss:
+        specifier: ^4.1.7
+        version: 4.1.11
+      typescript:
+        specifier: ~5.5.4
+        version: 5.5.4
+      vite:
+        specifier: '>=6.4.1'
+        version: 7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)
+
+  .local-plugins/poll-plugin:
+    dependencies:
+      '@workspace/plugin-system':
+        specifier: '*'
+        version: link:../../packages/plugin-system
+      '@workspace/ui':
+        specifier: '*'
+        version: link:../../packages/ui
+      react:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.0(react@19.1.0)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.8
+      '@types/react-dom':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.6(@types/react@19.1.8)
+      '@vitejs/plugin-react-swc':
+        specifier: ^3.9.0
+        version: 3.10.2(@swc/helpers@0.5.17)(vite@7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
+      '@workspace/tailwind-config':
+        specifier: workspace:*
+        version: link:../../packages/tailwind-config
+      eslint:
+        specifier: ^9.20.0
+        version: 9.30.1(jiti@2.4.2)
       rollup:
         specifier: ^4.44.2
         version: 4.44.2

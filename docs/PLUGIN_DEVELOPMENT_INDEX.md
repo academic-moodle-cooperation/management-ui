@@ -23,6 +23,9 @@ This index points plugin developers to the right docs for building, testing, and
 ## Monorepo contributors
 
 - **[Adding Plugins](workflows/ADDING_PLUGINS.md)** — How to add a new plugin inside the monorepo.
+- **`pnpm plugin:export-local <plugin-name> --move`** — Official helper command to move a prototype from `plugins/` to `.local-plugins/`.
+- **`pnpm plugin:export-local <plugin-name> --move --convert-community --wire-config`** — One-shot export + community conversion + namespace wiring.
+- **`pnpm plugin:create-local <plugin-name> --wire-config`** — Generate a new local community-style plugin from template.
 
 ## Optional / deep dives
 

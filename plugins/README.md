@@ -105,6 +105,19 @@ For developing new plugins:
 
 1. **Core plugins:** Add to this directory and export from `plugins/index.ts`
 2. **Community plugins:** Use the [Community Plugin Template](./community-plugin-template) or create a separate repository
-3. **Local development:** Place in `.local-plugins/` (gitignored) and use Marketplace Developer Mode
+3. **Export to organization plugin (official):** `pnpm plugin:export-local <plugin-name> --move`
+4. **Export + convert + wire config (recommended):** `pnpm plugin:export-local <plugin-name> --move --convert-community --wire-config`
+5. **Create directly from template:** `pnpm plugin:create-local <plugin-name> --wire-config`
+6. **Local development:** Build plugin in `.local-plugins/` and run core in dev
+
+Example:
+
+```bash
+pnpm plugin:export-local my-org-plugin --move
+pnpm plugin:export-local my-org-plugin --move --convert-community --wire-config
+pnpm plugin:create-local demo-plugin --wire-config
+```
+
+This removes the plugin from `plugins/index.ts`, migrates it to `.local-plugins/`, and can optionally convert it to runtime community format (`dist/*.mjs`) with namespace wiring.
 
 See [Community Plugin Development Guide](../../docs/COMMUNITY_PLUGIN_DEVELOPMENT.md) for more information.

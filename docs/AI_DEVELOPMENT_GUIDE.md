@@ -78,6 +78,9 @@ Management UI/
 2. **Reference:** [`/docs/templates/PLUGIN_README_TEMPLATE.md`](/docs/templates/PLUGIN_README_TEMPLATE.md) - Documentation template
 3. **Example:** [`/plugins/example-university/README.md`](/plugins/example-university/README.md) - Reference implementation
 4. **Understand:** [`/plugins/README.md`](/plugins/README.md) - Plugin system overview
+5. **Export from core to org-local (official helper):** `pnpm plugin:export-local <plugin-name> --move`
+6. **Export + convert to community-style runtime plugin:** `pnpm plugin:export-local <plugin-name> --move --convert-community --wire-config`
+7. **Create new local community-style plugin from template:** `pnpm plugin:create-local <plugin-name> --wire-config`
 
 ### I want to create a NEW PACKAGE
 

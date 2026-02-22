@@ -183,12 +183,18 @@ export function localPluginsDevPlugin(options: LocalPluginsDevPluginOptions): Pl
             next();
             return;
           }
-          // Serve files under .local-plugins/<name>/: dist/<file>.mjs for plugin bundles, or themes/ etc.
+          // Serve files under .local-plugins/<name>/: dist/<file> for plugin bundles/assets,
+          // or other files from plugin root (themes/, assets/, etc.).
           const pluginDir = path.join(localPluginsDir, pluginDirName);
           const firstPart = fileParts[0];
-          const filePath =
-            fileParts.length === 1 && typeof firstPart === "string" && firstPart.endsWith(".mjs")
+          const isSingleFileRequest = fileParts.length === 1 && typeof firstPart === "string";
+          const distCandidate =
+            isSingleFileRequest && typeof firstPart === "string"
               ? path.join(pluginDir, "dist", firstPart)
+              : null;
+          const filePath =
+            distCandidate && fs.existsSync(distCandidate) && fs.statSync(distCandidate).isFile()
+              ? distCandidate
               : path.join(pluginDir, ...fileParts);
           if (!filePath.startsWith(pluginDir) || path.relative(pluginDir, filePath).startsWith("..")) {
             next();
