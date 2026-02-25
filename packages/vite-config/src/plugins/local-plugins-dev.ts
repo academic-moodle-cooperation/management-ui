@@ -31,6 +31,8 @@ interface LocalPluginEntry {
   namespace: string;
   /** Type from filename (plugin-<namespace>-<type>.mjs); used to filter by config types for that namespace. */
   type?: string;
+  /** JAR scopes this local plugin replaces in dev (skip loading those JAR plugins when this manifest entry is loaded) */
+  replacesJarScopes?: string[];
 }
 
 function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPluginEntry[] {
@@ -55,12 +57,15 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
 
     let displayName = dirent.name;
     let defaultId = dirent.name;
+    let replacesJarScopes: string[] | undefined;
     const pkgPath = path.join(pluginDir, "package.json");
     if (fs.existsSync(pkgPath)) {
       try {
         const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
         if (pkg.pluginMetadata?.name) displayName = pkg.pluginMetadata.name;
         if (pkg.pluginMetadata?.id) defaultId = pkg.pluginMetadata.id;
+        if (Array.isArray(pkg.pluginMetadata?.replacesJarScopes))
+          replacesJarScopes = pkg.pluginMetadata.replacesJarScopes;
       } catch {
         // ignore
       }
@@ -83,6 +88,7 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
         url: urlPath,
         namespace: dirent.name,
         ...(type ? { type } : {}),
+        ...(replacesJarScopes?.length ? { replacesJarScopes } : {}),
       });
     }
   }
