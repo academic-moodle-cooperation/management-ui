@@ -10,6 +10,9 @@ const THEME_LINK_ID = "marketplace-dynamic-theme";
 const ALLOWED_THEME_PREFIX = "/management-ui/plugins/themes/";
 /** JAR plugin themes are served at /management-ui/static/plugins/<name>/<name>.css */
 const ALLOWED_JAR_THEME_PREFIX = "/management-ui/static/plugins/";
+/** Local dev themes from .local-plugins/<name>/themes/<name>.css */
+const ALLOWED_LOCAL_PLUGINS_PREFIX = "/management-ui/local-plugins/";
+const ALLOWED_LOCAL_PLUGINS_PREFIX_NO_BASE = "/local-plugins/";
 
 /**
  * Ensure the marketplace theme link stays at the end of all stylesheets
@@ -64,10 +67,12 @@ export const ThemeLoader = {
           const pathname = parsedUrl.pathname;
           const allowed =
             pathname.startsWith(ALLOWED_THEME_PREFIX) ||
-            pathname.startsWith(ALLOWED_JAR_THEME_PREFIX);
+            pathname.startsWith(ALLOWED_JAR_THEME_PREFIX) ||
+            pathname.startsWith(ALLOWED_LOCAL_PLUGINS_PREFIX) ||
+            pathname.startsWith(ALLOWED_LOCAL_PLUGINS_PREFIX_NO_BASE);
           if (!allowed) {
             throw new Error(
-              `Invalid theme path: ${pathname}. Theme URLs must start with ${ALLOWED_THEME_PREFIX} or ${ALLOWED_JAR_THEME_PREFIX}`
+              `Invalid theme path: ${pathname}. Theme URLs must start with ${ALLOWED_THEME_PREFIX}, ${ALLOWED_JAR_THEME_PREFIX}, or local-plugins path`
             );
           }
         } else if (!["http:", "https:"].includes(parsedUrl.protocol)) {

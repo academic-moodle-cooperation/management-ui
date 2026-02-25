@@ -54,4 +54,37 @@ export const AVAILABLE_THEMES: ThemeDefinition[] = [
     category: "University",
     author: "University of Vienna",
   },
+  /* Example themes (.local-plugins) – show what’s possible beyond colors */
+  {
+    id: "compact-theme",
+    name: "Compact",
+    description: "Dense, information-dense UI: small radius, tight spacing, minimal shadows",
+    previewUrl: "/management-ui/local-plugins/compact/themes/compact.css",
+    category: "Example",
+    author: "Management UI",
+  },
+  {
+    id: "rounded-theme",
+    name: "Rounded",
+    description: "Soft and friendly: large radius, soft shadows, relaxed spacing, blue accent",
+    previewUrl: "/management-ui/local-plugins/rounded/themes/rounded.css",
+    category: "Example",
+    author: "Management UI",
+  },
+  {
+    id: "minimal-theme",
+    name: "Minimal",
+    description: "Sharp and editorial: zero radius, no shadows, strong borders, high contrast",
+    previewUrl: "/management-ui/local-plugins/minimal/themes/minimal.css",
+    category: "Example",
+    author: "Management UI",
+  },
+  {
+    id: "warm-theme",
+    name: "Warm",
+    description: "Cozy cream and amber palette with soft shadows and medium radius",
+    previewUrl: "/management-ui/local-plugins/warm/themes/warm.css",
+    category: "Example",
+    author: "Management UI",
+  },
 ];
