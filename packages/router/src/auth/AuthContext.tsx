@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 import type { UserQuery } from "@workspace/query";
 
@@ -29,11 +29,9 @@ export const useAuth = () => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserQuery | undefined>(undefined);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    setIsAuthenticated(Boolean(user && user.currentUser.userRole !== "ROLE_USER_ANONYMOUS"));
-  }, [user]);
+  // Derive authentication directly from user data to avoid one-render lag
+  // (setState/useEffect timing can briefly report false after user becomes authenticated).
+  const isAuthenticated = Boolean(user && user.currentUser.userRole !== "ROLE_USER_ANONYMOUS");
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, user, setUser }}>
