@@ -267,19 +267,38 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
         }
 
         // 7. Load JAR plugins from backend (same config drives plugins.json URL and script base)
+        // In dev, skip JAR plugins whose scope is replaced by a .local-plugins manifest entry (replacesJarScopes)
         try {
+          const localManifestForDedup =
+            typeof import.meta !== "undefined" && import.meta.env.DEV
+              ? await loadLocalPluginsManifest()
+              : [];
+          const replacedJarScopes = new Set(
+            localManifestForDedup.flatMap((e) => e.replacesJarScopes ?? []),
+          );
           const jarPlugins = await loadJarPlugins(mergedConfig);
-          if (jarPlugins.length > 0) {
+          manager.addFunction("marketplace.getJarPlugins", () => jarPlugins);
+          const jarPluginsToLoad =
+            replacedJarScopes.size > 0
+              ? jarPlugins.filter((p) => !replacedJarScopes.has(p.scope))
+              : jarPlugins;
+          if (jarPluginsToLoad.length > 0) {
+            if (jarPluginsToLoad.length < jarPlugins.length) {
+              logger.info("PluginInitializer: Skipping JAR plugin(s) replaced by .local-plugins", {
+                skipped: jarPlugins.length - jarPluginsToLoad.length,
+                replacedScopes: [...replacedJarScopes],
+              });
+            }
             logger.info("PluginInitializer: Loading JAR plugin(s) from backend", {
-              count: jarPlugins.length,
+              count: jarPluginsToLoad.length,
             });
             const jarLoadResults = await Promise.allSettled(
-              jarPlugins.map((jarPlugin) =>
+              jarPluginsToLoad.map((jarPlugin) =>
                 loadAndRegister(jarPlugin.url, manager, { skipUrlValidation: true }),
               ),
             );
             jarLoadResults.forEach((result, index) => {
-              const jarPlugin = jarPlugins[index];
+              const jarPlugin = jarPluginsToLoad[index];
               if (!jarPlugin) return;
               if (result.status === "rejected") {
                 logger.error(

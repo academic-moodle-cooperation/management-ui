@@ -2,5 +2,23 @@
   "version": "1.0.0",
   "name": "Management UI Community Plugin Registry",
   "description": "Registry for community-developed plugins. In development, this file is used when present. In production, the Marketplace fetches from the configured registry URL(s).",
-  "plugins": []
+  "plugins": [
+    {
+      "id": "audience-poll-local-dev",
+      "name": "Audience Poll (Local Dev)",
+      "description": "Local development build of the Audience Poll plugin.",
+      "version": "0.1.0-dev",
+      "author": {
+        "name": "Management UI Team"
+      },
+      "url": "http://127.0.0.1:3000/management-ui/local-plugins/poll-plugin/poll-plugin.mjs",
+      "category": "feature",
+      "tags": ["poll", "demo", "local-dev"],
+      "workspaceDependencies": {
+        "@workspace/plugin-system": ">=1.0.0",
+        "@workspace/ui": ">=1.0.0",
+        "@workspace/query": ">=1.0.0"
+      }
+    }
+  ]
 }
