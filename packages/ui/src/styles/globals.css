@@ -51,6 +51,22 @@
   --error-foreground: oklch(0.979 0.015 12.18);
   --info: oklch(0.701 0.173 264.05);
   --info-foreground: oklch(0.984 0.004 210.12);
+
+  /* Themeable design tokens (themes can override these) */
+  --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --font-heading: var(--font-sans);
+  --spacing-tight: 0.5rem;
+  --spacing-normal: 0.75rem;
+  --spacing-relaxed: 1rem;
+  --spacing-card: 1rem;
+  --spacing-sidebar: 0.75rem;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-sidebar: 0 1px 0 0 rgb(0 0 0 / 0.05);
+  --duration-transition: 150ms;
 }
 
 .dark {
@@ -95,6 +111,13 @@
   --error-foreground: oklch(0.979 0.015 12.18);
   --info: oklch(0.701 0.173 264.05);
   --info-foreground: oklch(0.984 0.004 210.12);
+
+  /* Themeable design tokens (dark mode overrides; omit to inherit from :root) */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.2);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.2);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.2);
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.2), 0 1px 2px -1px rgb(0 0 0 / 0.2);
+  --shadow-sidebar: 0 1px 0 0 rgb(255 255 255 / 0.05);
 }
 
 @theme inline {
@@ -144,6 +167,22 @@
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
   --animate-bouncing-loader: bouncing-loader 0.6s infinite alternate;
+
+  /* Themeable design tokens → Tailwind theme */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-heading: var(--font-heading);
+  --spacing-tight: var(--spacing-tight);
+  --spacing-normal: var(--spacing-normal);
+  --spacing-relaxed: var(--spacing-relaxed);
+  --spacing-card: var(--spacing-card);
+  --spacing-sidebar: var(--spacing-sidebar);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-card: var(--shadow-card);
+  --shadow-sidebar: var(--shadow-sidebar);
+  --duration-transition: var(--duration-transition);
 }
 
 @keyframes bouncing-loader {
@@ -163,5 +202,6 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
   }
 }
