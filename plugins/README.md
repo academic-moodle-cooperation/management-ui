@@ -23,6 +23,15 @@ plugins/
 
 **Note:** University-specific plugins (e.g. univie, tuwien) have been moved out of this repository. Use `.local-plugins/<name>/` for local development (with `themes/<name>.css` for org themes) or deploy via Registry/JAR. See [Community Plugin Development](../../docs/COMMUNITY_PLUGIN_DEVELOPMENT.md).
 
+## Where to Develop: /plugins vs .local-plugins
+
+| Path | When to use | Build required? | How to test |
+|------|-------------|------------------|-------------|
+| **`/plugins`** | Prototyping, core/org plugins in repo | No (library) or yes (standalone) | Barrel export + config; core Vite bundles it |
+| **`.local-plugins`** | Complete org plugin, preparing for community/JAR | Yes (`pnpm build`) | Add namespace to config; core loads from manifest |
+
+See [Adding New Plugins](../../docs/workflows/ADDING_PLUGINS.md) for the full step-by-step guide and quick start.
+
 ## Plugin Types
 
 ### Core Plugins
@@ -68,6 +77,7 @@ mkdir -p .local-plugins/my-org/assets/favicon/
 
 mkdir -p .local-plugins/my-org/themes/
 # Add themes/my-org.css for org theme (loaded in dev from /local-plugins/my-org/themes/my-org.css)
+# Example theme-only folders (compact, rounded, minimal, warm) can live here for dev and appear in Admin → Marketplace → Themes when registered in the admin-marketplace plugin. See .local-plugins/README-THEMES.md when present.
 ```
 
 ## Build Process
