@@ -33,7 +33,7 @@ const ProtectedAdminDashboard = withAuthProtection(AdminDashboard, {
 
 export const adminDashboardPlugin = createPlugin({
   namespace: "admin",
-  type: "app",
+  type: "dashboard",
   version: "1.0.0",
 
   initialize(manager) {

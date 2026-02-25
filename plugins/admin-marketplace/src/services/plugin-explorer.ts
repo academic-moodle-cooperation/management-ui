@@ -105,13 +105,17 @@ export const PluginExplorer = {
    */
   async discoverAllPlugins(manager: PluginManager): Promise<Plugin[]> {
     try {
-      const fn = manager.executeFunction<() => Plugin[] | Promise<Plugin[]>>("marketplace.getAllPlugins");
-      if (fn) {
-        const raw = await Promise.resolve(fn());
-        return (Array.isArray(raw) ? raw : []).filter(isPlugin);
+      // executeFunction already calls the registered function and returns its result.
+      const rawResult = manager.executeFunction<Plugin[] | Promise<Plugin[]>>(
+        "marketplace.getAllPlugins",
+      );
+      if (rawResult !== undefined) {
+        const raw = await Promise.resolve(rawResult);
+        const arr = Array.isArray(raw) ? raw : [];
+        return arr.filter(isPlugin);
       }
-    } catch {
-      // Function not registered or threw (e.g. app does not inject it yet)
+    } catch (e) {
+      void e;
     }
     return [];
   },

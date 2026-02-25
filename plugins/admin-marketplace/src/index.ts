@@ -28,7 +28,7 @@ import { MarketplaceDashboard } from "./views/MarketplaceDashboard";
  */
 export const adminMarketplacePlugin = createPlugin({
   namespace: "admin",
-  type: "app",
+  type: "marketplace",
   version: "1.0.0",
 
   async initialize(manager) {
@@ -37,23 +37,40 @@ export const adminMarketplacePlugin = createPlugin({
     // Load installed theme in background (do not block plugin init or router)
     void ThemeLoader.initialize();
 
-    // Register the marketplace app
-    manager.registerObject("apps:definitions", "marketplace", {
-      id: "marketplace",
-      name: "Marketplace",
-      routePath: "/admin/marketplace",
-      component: () => MarketplaceDashboard({ manager }),
+    // Register the marketplace apps (separate routes for Plugins and Themes views)
+    manager.registerObject("apps:definitions", "marketplace-plugins", {
+      id: "marketplace-plugins",
+      name: "Marketplace – Plugins",
+      routePath: "/admin/marketplace/plugins",
+      component: () => MarketplaceDashboard({ manager, view: "plugins" }),
     });
 
-    // Register sidebar navigation item
+    manager.registerObject("apps:definitions", "marketplace-themes", {
+      id: "marketplace-themes",
+      name: "Marketplace – Themes",
+      routePath: "/admin/marketplace/themes",
+      component: () => MarketplaceDashboard({ manager, view: "themes" }),
+    });
+
+    // Register sidebar navigation item with sub-entries for Plugins and Themes
     manager.registerObject("sidebar:nav-items", "marketplace", {
       title: "Marketplace",
-      path: "/admin/marketplace",
+      path: "/admin/marketplace/plugins",
       icon: ShoppingBag,
       order: 1000, // Place at the end of the sidebar
       permissions: ["admin.view"],
       featureFlags: [],
       category: "admin",
+      items: [
+        {
+          title: "Plugins",
+          path: "/admin/marketplace/plugins",
+        },
+        {
+          title: "Themes",
+          path: "/admin/marketplace/themes",
+        },
+      ],
     });
 
     // Load all persisted plugins from localStorage (validates URL + version before loading)
