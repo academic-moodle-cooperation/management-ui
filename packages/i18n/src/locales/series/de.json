@@ -38,6 +38,22 @@
       "playlist": "Serien Playlist",
       "episodes": "Zu den Videos der Serie"
     },
+    "createSeries": {
+      "button": "Serie erstellen",
+      "dialog": {
+        "title": "Neue Serie erstellen",
+        "description": "Erfassen Sie die Metadaten für die neue Serie.",
+        "aclPolicyLabel": "Zugriffsrichtlinie",
+        "noPolicy": "Keine Richtlinie"
+      },
+      "toast": {
+        "success": "Serie wurde erstellt",
+        "error": "Serie konnte nicht erstellt werden"
+      },
+      "validation": {
+        "titleRequired": "Titel ist erforderlich"
+      }
+    },
     "notification": {
       "changesSaved": "Änderungen wurden gespeichert",
       "changesFailed": "Änderungen konnten nicht gespeichert werden",

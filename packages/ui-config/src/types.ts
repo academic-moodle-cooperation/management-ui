@@ -18,6 +18,9 @@ export interface SeriesInfo {
 
 export interface SeriesTable {
   columns: unknown[]; // Make this flexible to accept actual structure
+  createSeries?: {
+    enabled?: boolean;
+  };
 }
 
 export interface EpisodeInfo {

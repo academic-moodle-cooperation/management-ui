@@ -69,6 +69,8 @@ export interface DataTableProps<TData, TValue> {
   refetch?: (() => void) | undefined;
   /** Custom design button (e.g., layout toggle) */
   designButton?: React.ReactNode;
+  /** Custom buttons rendered at toolbar end (right of reload) */
+  toolbarEndButtons?: React.ReactNode;
 }
 
 /**
@@ -95,6 +97,7 @@ function DataTable<TData extends Record<string, unknown>, TValue>({
   setColumnVisibility,
   refetch,
   designButton,
+  toolbarEndButtons,
 }: DataTableProps<TData, TValue>) {
   // Initialize table instance - hooks must be called before any early returns
   const table = useReactTable({
@@ -137,6 +140,7 @@ function DataTable<TData extends Record<string, unknown>, TValue>({
         setPageIndex={setPageIndex}
         refetch={refetch}
         designButton={designButton}
+        toolbarEndButtons={toolbarEndButtons}
       />
       <div
         className={theme.wrapper({

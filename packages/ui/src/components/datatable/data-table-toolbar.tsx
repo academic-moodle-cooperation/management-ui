@@ -17,6 +17,7 @@ interface DataTableToolbarProps<TData> {
   setPageIndex: (index: number) => void;
   refetch?: (() => void) | undefined;
   designButton?: React.ReactNode | undefined;
+  toolbarEndButtons?: React.ReactNode | undefined;
 }
 
 export function DataTableToolbar<TData>({
@@ -26,6 +27,7 @@ export function DataTableToolbar<TData>({
   setPageIndex,
   refetch,
   designButton,
+  toolbarEndButtons,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = queryFilter && queryFilter?.length > 0;
 
@@ -92,6 +94,7 @@ export function DataTableToolbar<TData>({
         </div>
         {t("reloadData")}
       </Button>
+      {toolbarEndButtons && <div>{toolbarEndButtons}</div>}
     </div>
   );
 }

@@ -38,6 +38,22 @@
       "playlist": "Series Playlist",
       "episodes": "Go to video playlist for this series"
     },
+    "createSeries": {
+      "button": "Create series",
+      "dialog": {
+        "title": "Create new series",
+        "description": "Enter metadata for the new series.",
+        "aclPolicyLabel": "Access policy",
+        "noPolicy": "No policy"
+      },
+      "toast": {
+        "success": "Series created",
+        "error": "Failed to create series"
+      },
+      "validation": {
+        "titleRequired": "Title is required"
+      }
+    },
     "notification": {
       "changesSaved": "Changes have been saved!",
       "changesFailed": "Changes failed to save!",
