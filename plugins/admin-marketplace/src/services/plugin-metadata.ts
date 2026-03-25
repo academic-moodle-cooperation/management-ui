@@ -167,6 +167,21 @@ export const PLUGIN_METADATA: Record<string, PluginMetadata> = {
     extensionPoints: ["sidebar:nav-items"],
     author: "Management UI Team",
   },
+  "series:create-series": {
+    name: "Series Create Action",
+    description: "Adds a create-series button and dialog to the series toolbar",
+    category: "customization",
+    extensionPoints: ["series:table:toolbar-end-actions", "series:create-series:acl-editor"],
+    author: "Management UI Team",
+  },
+  "series-create-acl-editor-plugin:series-create-acl-editor": {
+    name: "Series Create ACL Editor",
+    description: "Adds an optional ACL editor UI to the create-series dialog",
+    category: "customization",
+    extensionPoints: ["series:create-series:acl-editor"],
+    author: "Management UI Team",
+    tags: ["series", "acl", "permissions"],
+  },
 
   // ─────────────────────────────────────────────────────────────────────────
   // Upload App

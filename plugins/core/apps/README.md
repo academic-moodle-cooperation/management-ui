@@ -1,16 +1,17 @@
-# App Navigation Strategy
+# App Plugin Strategy
 
-This directory contains navigation implementations that individual apps can import and register to contribute their navigation items to the sidebar.
+This directory contains core app-related plugin implementations.
 
 ## Architecture
 
 **Self-Contained Apps**: Each app is responsible for contributing its own navigation items, making apps swappable and independently runnable.
 
-## Available Navigation Implementations
+## Available Plugin Implementations
 
 - `episodesNavImplementation` - Adds "Episodes" to sidebar
 - `seriesNavImplementation` - Adds "Series" to sidebar
 - `uploadNavImplementation` - Adds "Upload" to sidebar
+- `seriesCreateImplementation` - Adds "Create series" action button/dialog to series table toolbar
 
 ## Usage in Apps
 
@@ -18,10 +19,11 @@ This directory contains navigation implementations that individual apps can impo
 
 ```typescript
 // In your app's plugin loading (e.g., apps/management-ui-episodes/src/plugins/index.ts)
-import { episodesNavImplementation } from "@workspace/plugins";
+import { episodesNavImplementation, seriesCreateImplementation } from "@workspace/plugins";
 
 export const appPlugins = [
   episodesNavImplementation,
+  seriesCreateImplementation,
   // ... other app-specific plugins
 ];
 ```
@@ -36,6 +38,43 @@ import { episodesNavImplementation } from "@workspace/plugins";
 const manager = usePluginManager();
 manager.register(episodesNavImplementation);
 ```
+
+## Series Toolbar End Actions
+
+`seriesCreateImplementation` registers on the `series:table:toolbar-end-actions` extension point.
+
+Schema:
+
+```typescript
+{
+  id: string; // Unique action id
+  order: number; // Display order (lower = earlier)
+  component: React.ComponentType<{ refetch?: () => void }>;
+}
+```
+
+Default registered action:
+
+```typescript
+manager.registerObject("series:table:toolbar-end-actions", "create-series", {
+  id: "create-series",
+  order: 100,
+  component: CreateSeriesToolbarAction,
+});
+```
+
+## Optional ACL Plugin For Create-Series
+
+The create-series dialog supports an optional ACL editor component extension point:
+
+`series:create-series:acl-editor`
+
+Default behavior (without plugin):
+
+- ACL policy is resolved to `private` (if available)
+- ACL entries include current user role with `read` and `write`
+- ACL is not shown in the dialog UI
+- Language and license are chosen from fixed lists (select inputs)
 
 ## Navigation Item Schema
 

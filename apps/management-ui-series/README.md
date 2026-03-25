@@ -176,6 +176,36 @@ manager.registerComponent("series:list-view", UniversitySeriesListView, {
 });
 ```
 
+#### Toolbar End Actions
+
+```typescript
+// Add custom action buttons to the right side of the series table toolbar
+manager.registerObject("series:table:toolbar-end-actions", "my-series-action", {
+  id: "my-series-action",
+  order: 200,
+  component: MySeriesToolbarAction, // receives { refetch?: () => void }
+});
+```
+
+### Default Core Behavior
+
+- Core plugin `series:create-series` is enabled by default and adds a create-series button/dialog in the series table toolbar.
+- The button is rendered to the right of `Daten neu laden`.
+- ACL editing in the create dialog is optional via component extension point `series:create-series:acl-editor`.
+- Without an ACL editor plugin, hidden defaults are used: managed ACL `private` + current user role with `read`/`write`.
+
+To disable only this default plugin while keeping series navigation, use typed plugin namespace config:
+
+```typescript
+pluginNamespace: [
+  "core",
+  { series: { types: ["navigation"] } },
+  "episodes",
+  "upload",
+  "config",
+];
+```
+
 ## 📱 User Interface
 
 ### Main Views

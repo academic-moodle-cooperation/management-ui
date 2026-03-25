@@ -8,7 +8,7 @@ The core plugin has three primary responsibilities:
 
 1. **Define Extension Points** - Declare what can be customized (header, footer, sidebar, etc.)
 2. **Provide Default Implementations** - Ship working defaults that universities can override
-3. **Export App Navigation** - Provide navigation items for Episodes, Series, Upload apps
+3. **Export App Plugins** - Provide navigation and default app actions (Episodes, Series, Upload, Series Create)
 
 ## Directory Structure
 
@@ -18,6 +18,7 @@ plugins/core/
 │   ├── index.ts                   # Extension point exports
 │   ├── app-layout-extension-points.ts    # Header, footer, branding
 │   ├── sidebar-extension-points.ts       # Navigation items
+│   ├── series-extension-points.ts        # Series table toolbar actions
 │   ├── table-sidebar-extension-points.ts # Table detail panels
 │   └── upload-extension-points.ts        # Upload customization
 ├── implementations/                # Default implementations
@@ -39,10 +40,13 @@ plugins/core/
 │           └── core-footer/
 │               ├── de.json
 │               └── en.json
-├── apps/                           # App navigation plugins
+├── apps/                           # App-related plugins
 │   ├── index.ts
 │   ├── episodes-nav-implementation.ts
+│   ├── series-create-implementation.ts
 │   ├── series-nav-implementation.ts
+│   ├── components/
+│   │   └── CreateSeriesToolbarAction.tsx
 │   └── upload-nav-implementation.ts
 ├── index.ts                        # Main exports
 └── package.json
@@ -353,6 +357,53 @@ manager.registerObject("table-sidebar:tabs", "access-control", {
 });
 ```
 
+### Series Extension Points
+
+| Extension Point                       | Description                                     | Priority    |
+| ------------------------------------- | ----------------------------------------------- | ----------- |
+| `series:table:toolbar-end-actions`    | Actions rendered to the right of reload button  | Order-based |
+| `series:create-series:acl-editor`     | Optional ACL editor in create-series dialog     | Component order |
+
+#### `series:table:toolbar-end-actions`
+
+Series table toolbar end actions (right side, after reload button).
+
+```typescript
+interface SeriesToolbarEndActionSchema {
+  id: string; // Unique action identifier
+  order: number; // Display order (lower = earlier)
+  component: React.ComponentType<{ refetch?: () => void }>; // Toolbar action component
+}
+
+// Example implementation
+manager.registerObject("series:table:toolbar-end-actions", "custom-series-action", {
+  id: "custom-series-action",
+  order: 200,
+  component: CustomSeriesToolbarAction,
+});
+```
+
+#### `series:create-series:acl-editor`
+
+Optional ACL editor component inside the create-series dialog.
+
+```typescript
+// Component props
+interface CreateSeriesAclEditorProps {
+  aclData: AclData | null;
+  onAclDataChange: (aclData: AclData, managedAclId: string) => void;
+  selectedSeries: SelectedElement | null;
+  disabled: boolean;
+  refetch?: () => void;
+}
+
+// Example implementation
+manager.registerComponent("series:create-series:acl-editor", CustomCreateSeriesAclEditor, {
+  key: "my-create-series-acl-editor",
+  order: 50,
+});
+```
+
 ### Upload Extension Points
 
 | Extension Point                | Description                 | Priority     |
@@ -463,9 +514,9 @@ manager.registerObject("sidebar:nav-items", "home", {
 });
 ```
 
-## App Navigation Plugins
+## App Plugins
 
-The core plugin exports navigation implementations for apps:
+The core plugin exports app-related implementations:
 
 ### Episodes Navigation
 
@@ -495,6 +546,35 @@ import { uploadNavImplementation } from "@workspace/plugins";
 // Registers: sidebar:nav-items/upload
 // Path: /upload
 // Order: 40
+```
+
+### Series Create Action
+
+```typescript
+import { seriesCreateImplementation } from "@workspace/plugins";
+
+// Registers: series:table:toolbar-end-actions/create-series
+// Button position: right of reload in series toolbar
+// Plugin name: series:create-series
+```
+
+Default ACL behavior in `series:create-series` (without optional ACL plugin):
+
+- uses managed ACL policy `private` when available
+- adds current user role with `read` + `write` entries
+- ACL fields are not shown in the dialog UI
+- language and license are selected from fixed option lists
+
+### Disable Series Create While Keeping Series Navigation
+
+```typescript
+pluginNamespace: [
+  "core",
+  { series: { types: ["navigation"] } },
+  "episodes",
+  "upload",
+  "config",
+];
 ```
 
 ## Reusable Components
