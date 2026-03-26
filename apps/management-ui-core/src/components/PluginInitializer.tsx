@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
+import { registerPluginI18nNamespaces } from "@workspace/i18n";
 import {
   createAppRegistryPlugin,
   createObjectRegistryPlugin,
@@ -98,6 +99,16 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
 
     let didUnmount = false;
     const registeredPluginNames: string[] = [];
+
+    const registerPluginLocales = (
+      entries: Array<{ localesUrl?: string; i18nNamespaces?: string[] }>,
+    ) => {
+      entries.forEach((entry) => {
+        if (entry.localesUrl && Array.isArray(entry.i18nNamespaces) && entry.i18nNamespaces.length > 0) {
+          registerPluginI18nNamespaces(entry.i18nNamespaces, entry.localesUrl);
+        }
+      });
+    };
 
     const initializePlugins = async () => {
       if (didUnmount) return;
@@ -283,6 +294,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
               ? jarPlugins.filter((p) => !replacedJarScopes.has(p.scope))
               : jarPlugins;
           if (jarPluginsToLoad.length > 0) {
+            registerPluginLocales(jarPluginsToLoad);
             if (jarPluginsToLoad.length < jarPlugins.length) {
               logger.info("PluginInitializer: Skipping JAR plugin(s) replaced by .local-plugins", {
                 skipped: jarPlugins.length - jarPluginsToLoad.length,
@@ -369,6 +381,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                 ? localManifest
                 : localManifest.filter((e) => matchesNamespaceAndType(e, config, enabled1));
             if (toLoad1.length > 0) {
+              registerPluginLocales(toLoad1);
               logger.info("PluginInitializer: Loading .local-plugins (phase 1)", {
                 count: toLoad1.length,
               });
@@ -385,6 +398,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                 !loadedUrls.has(e.url) && matchesNamespaceAndType(e, mergedConfig, enabled2),
             );
             if (toLoad2.length > 0) {
+              registerPluginLocales(toLoad2);
               logger.info("PluginInitializer: Loading .local-plugins (phase 2)", {
                 count: toLoad2.length,
               });

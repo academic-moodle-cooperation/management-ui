@@ -33,6 +33,33 @@ interface LocalPluginEntry {
   type?: string;
   /** JAR scopes this local plugin replaces in dev (skip loading those JAR plugins when this manifest entry is loaded) */
   replacesJarScopes?: string[];
+  /** Base URL for plugin locales exposed through the dev server */
+  localesUrl?: string;
+  /** i18n namespaces available for this plugin */
+  i18nNamespaces?: string[];
+}
+
+function discoverPluginLocaleNamespaces(pluginDir: string): string[] {
+  const namespaces = new Set<string>();
+  const implementationsDir = path.join(pluginDir, "implementations");
+  if (!fs.existsSync(implementationsDir) || !fs.statSync(implementationsDir).isDirectory()) {
+    return [];
+  }
+
+  const types = fs.readdirSync(implementationsDir, { withFileTypes: true });
+  for (const typeEnt of types) {
+    if (!typeEnt.isDirectory()) continue;
+    const localesDir = path.join(implementationsDir, typeEnt.name, "locales");
+    if (!fs.existsSync(localesDir) || !fs.statSync(localesDir).isDirectory()) continue;
+
+    const localeEntries = fs.readdirSync(localesDir, { withFileTypes: true });
+    for (const localeEnt of localeEntries) {
+      if (!localeEnt.isDirectory()) continue;
+      namespaces.add(localeEnt.name);
+    }
+  }
+
+  return [...namespaces];
 }
 
 function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPluginEntry[] {
@@ -50,6 +77,9 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
     const pluginDir = path.join(localPluginsDir, dirent.name);
     const distDir = path.join(pluginDir, "dist");
     if (!fs.existsSync(distDir) || !fs.statSync(distDir).isDirectory()) continue;
+    const i18nNamespaces = discoverPluginLocaleNamespaces(pluginDir);
+    const localesUrl =
+      i18nNamespaces.length > 0 ? `${basePath}/dist/locales`.replace(/\/+/g, "/") : undefined;
 
     const distFiles = fs.readdirSync(distDir);
     const mjsFiles = distFiles.filter((f) => f.endsWith(".mjs"));
@@ -89,6 +119,8 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
         namespace: dirent.name,
         ...(type ? { type } : {}),
         ...(replacesJarScopes?.length ? { replacesJarScopes } : {}),
+        ...(localesUrl ? { localesUrl } : {}),
+        ...(i18nNamespaces.length > 0 ? { i18nNamespaces } : {}),
       });
     }
   }

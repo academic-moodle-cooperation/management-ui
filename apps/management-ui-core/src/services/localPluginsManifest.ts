@@ -17,6 +17,10 @@ export interface LocalPluginsManifestEntry {
   type?: string;
   /** JAR scopes this local plugin replaces in dev (skip loading those JAR plugins when this manifest entry is loaded) */
   replacesJarScopes?: string[];
+  /** Optional base URL for plugin locales */
+  localesUrl?: string;
+  /** Optional i18n namespaces served from localesUrl */
+  i18nNamespaces?: string[];
 }
 
 interface LocalPluginsManifestResponse {
