@@ -180,7 +180,12 @@ export async function loadAndRegister(
           remoteLoaderLogger.warn(`Failed to load CSS for plugin "${remotePlugin.name}" from ${cssUrl}`);
         link.onload = () =>
           remoteLoaderLogger.debug(`Loaded CSS for plugin "${remotePlugin.name}" from ${cssUrl}`);
-        document.head.appendChild(link);
+        const firstStylesheet = document.head.querySelector('link[rel="stylesheet"]');
+        if (firstStylesheet) {
+          document.head.insertBefore(link, firstStylesheet);
+        } else {
+          document.head.appendChild(link);
+        }
       }
     } catch (cssError) {
       const err = cssError instanceof Error ? cssError : new Error(String(cssError));
