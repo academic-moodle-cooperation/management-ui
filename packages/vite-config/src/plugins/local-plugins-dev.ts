@@ -27,6 +27,8 @@ interface LocalPluginEntry {
   name: string;
   id: string;
   url: string;
+  /** Optional URL to the plugin stylesheet. */
+  cssUrl?: string;
   /** Folder name under .local-plugins/; used for config-based filtering (pluginNamespace). */
   namespace: string;
   /** Type from filename (plugin-<namespace>-<type>.mjs); used to filter by config types for that namespace. */
@@ -77,11 +79,15 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
     const pluginDir = path.join(localPluginsDir, dirent.name);
     const distDir = path.join(pluginDir, "dist");
     if (!fs.existsSync(distDir) || !fs.statSync(distDir).isDirectory()) continue;
+    const distFiles = fs.readdirSync(distDir);
+    const cssFiles = distFiles.filter((f) => f.endsWith(".css"));
+    const cssUrl =
+      cssFiles.length === 1
+        ? `${basePath}${LOCAL_PLUGINS_PREFIX}${dirent.name}/${cssFiles[0]}`.replace(/\/+/g, "/")
+        : undefined;
     const i18nNamespaces = discoverPluginLocaleNamespaces(pluginDir);
     const localesUrl =
       i18nNamespaces.length > 0 ? `${basePath}/dist/locales`.replace(/\/+/g, "/") : undefined;
-
-    const distFiles = fs.readdirSync(distDir);
     const mjsFiles = distFiles.filter((f) => f.endsWith(".mjs"));
     if (mjsFiles.length === 0) continue;
 
@@ -116,6 +122,7 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
         name: mjsFiles.length === 1 ? displayName : `${displayName} (${type ?? stem})`,
         id,
         url: urlPath,
+        ...(cssUrl ? { cssUrl } : {}),
         namespace: dirent.name,
         ...(type ? { type } : {}),
         ...(replacesJarScopes?.length ? { replacesJarScopes } : {}),

@@ -23,6 +23,8 @@ const remoteLoaderLogger = logger.child({ component: "RemotePluginLoader" });
 export interface LoadOptions {
   /** When true, bypass HTTP and module cache (e.g. for dev). */
   forceReload?: boolean;
+  /** Optional explicit CSS URL when the stylesheet name does not match the module name. */
+  cssUrl?: string;
   /**
    * When true, caller has already validated the URL (e.g. core for JAR URLs).
    * The package does not perform URL validation; this is for API clarity.
@@ -160,12 +162,13 @@ export async function loadAndRegister(
     }
 
     try {
-      const cssPath = url.replace(/\.mjs$/, ".css");
+      const cssPath = options?.cssUrl ?? url.replace(/\.mjs$/, ".css");
       if (cssPath !== url) {
-        const cssUrl =
+        const baseUrl =
           typeof window !== "undefined"
-            ? new URL(cssPath, url.startsWith("http") ? url : window.location.href).href
-            : cssPath;
+            ? new URL(url, window.location.href).href
+            : url;
+        const cssUrl = new URL(cssPath, baseUrl).href;
         const linkId = `plugin-css-${remotePlugin.name.replace(/[^a-z0-9]/gi, "-")}`;
         const existingLink = document.getElementById(linkId);
         if (existingLink) existingLink.remove();

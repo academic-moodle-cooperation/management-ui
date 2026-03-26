@@ -31,6 +31,8 @@ public class PluginConfig {
 
   private String scriptUrl;
 
+  private String cssUrl;
+
   private String localesUrl;
 
   private String[] i18nNamespaces;
@@ -65,6 +67,14 @@ public class PluginConfig {
 
   public void setScriptUrl(String scriptUrl) {
     this.scriptUrl = scriptUrl;
+  }
+
+  public String getCssUrl() {
+    return cssUrl;
+  }
+
+  public void setCssUrl(String cssUrl) {
+    this.cssUrl = cssUrl;
   }
 
   public String getLocalesUrl() {

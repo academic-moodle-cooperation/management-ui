@@ -34,6 +34,7 @@ public class PluginBundleTracker extends BundleTracker<PluginConfig> {
 
   private static final int TRACKING_MASK = Bundle.RESOLVED | Bundle.ACTIVE | Bundle.UNINSTALLED;
   protected static final String MANAGEMENT_PLUGIN = "Management-Plugin";
+  protected static final String MANAGEMENT_PLUGIN_CSS = "Management-Plugin-Css";
   protected static final String MANAGEMENT_PLUGIN_I18N = "Management-Plugin-I18n";
   protected static final String MANAGEMENT_PLUGIN_PATH = "/static/plugins";
   protected static final String MANAGEMENT_PLUGIN_PREFIX = "management_ui_plugin_";
@@ -81,7 +82,11 @@ public class PluginBundleTracker extends BundleTracker<PluginConfig> {
     String httpAlias = headers.get(HTTP_ALIAS);
     if (httpAlias != null && !httpAlias.isEmpty()) {
       String scriptFile = pluginName.concat(".mjs");
+      String cssFile = headers.get(MANAGEMENT_PLUGIN_CSS);
       config.setScriptUrl(Paths.get(httpAlias, scriptFile).toString());
+      config.setCssUrl(Paths.get(httpAlias, cssFile != null && !cssFile.isEmpty()
+          ? cssFile
+          : pluginName.concat(".css")).toString());
       config.setLocalesUrl(Paths.get(httpAlias, "locales").toString());
     }
 

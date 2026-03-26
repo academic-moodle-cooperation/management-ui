@@ -306,7 +306,10 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
             });
             const jarLoadResults = await Promise.allSettled(
               jarPluginsToLoad.map((jarPlugin) =>
-                loadAndRegister(jarPlugin.url, manager, { skipUrlValidation: true }),
+                loadAndRegister(jarPlugin.url, manager, {
+                  ...(jarPlugin.cssUrl ? { cssUrl: jarPlugin.cssUrl } : {}),
+                  skipUrlValidation: true,
+                }),
               ),
             );
             jarLoadResults.forEach((result, index) => {
@@ -345,6 +348,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
               const results = await Promise.allSettled(
                 entries.map((entry) =>
                   loadAndRegister(getLocalPluginFullUrl(entry), manager, {
+                    ...(entry.cssUrl ? { cssUrl: entry.cssUrl } : {}),
                     skipUrlValidation: true,
                   }),
                 ),
