@@ -136,6 +136,46 @@ importers:
         specifier: '>=6.4.1'
         version: 7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)
 
+  .local-plugins/cyan-cat-rain-backend-jar:
+    dependencies:
+      '@workspace/plugin-system':
+        specifier: '*'
+        version: link:../../packages/plugin-system
+      '@workspace/ui':
+        specifier: '*'
+        version: link:../../packages/ui
+      react:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.0(react@19.1.0)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.8
+      '@types/react-dom':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.6(@types/react@19.1.8)
+      '@vitejs/plugin-react-swc':
+        specifier: ^3.9.0
+        version: 3.10.2(@swc/helpers@0.5.17)(vite@7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
+      '@workspace/tailwind-config':
+        specifier: workspace:*
+        version: link:../../packages/tailwind-config
+      rollup:
+        specifier: ^4.44.2
+        version: 4.44.2
+      tailwindcss:
+        specifier: ^4.1.7
+        version: 4.1.11
+      typescript:
+        specifier: ~5.5.4
+        version: 5.5.4
+      vite:
+        specifier: '>=6.4.1'
+        version: 7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)
+
   .local-plugins/feedback-plugin:
     dependencies:
       '@workspace/plugin-system':
@@ -203,6 +243,9 @@ importers:
       '@workspace/tailwind-config':
         specifier: workspace:*
         version: link:../../packages/tailwind-config
+      eslint:
+        specifier: ^9.20.0
+        version: 9.30.1(jiti@2.4.2)
       rollup:
         specifier: ^4.44.2
         version: 4.44.2
@@ -360,6 +403,46 @@ importers:
         specifier: '>=6.4.1'
         version: 7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)
 
+  .local-plugins/series-create-acl-editor-plugin:
+    dependencies:
+      '@workspace/plugin-system':
+        specifier: '*'
+        version: link:../../packages/plugin-system
+      '@workspace/query':
+        specifier: '*'
+        version: link:../../packages/query
+      '@workspace/ui':
+        specifier: '*'
+        version: link:../../packages/ui
+      lucide-react:
+        specifier: '*'
+        version: 0.417.0(react@19.1.0)
+      react:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.0(react@19.1.0)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.8
+      '@types/react-dom':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.6(@types/react@19.1.8)
+      '@vitejs/plugin-react-swc':
+        specifier: ^3.9.0
+        version: 3.10.2(@swc/helpers@0.5.17)(vite@7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
+      rollup:
+        specifier: ^4.44.2
+        version: 4.44.2
+      typescript:
+        specifier: ~5.5.4
+        version: 5.5.4
+      vite:
+        specifier: '>=6.4.1'
+        version: 7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)
+
   .local-plugins/stats-dashboard-plugin:
     dependencies:
       '@workspace/plugin-system':
@@ -497,12 +580,98 @@ importers:
       '@vitejs/plugin-react-swc':
         specifier: ^3.9.0
         version: 3.10.2(@swc/helpers@0.5.17)(vite@7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
+      '@workspace/tailwind-config':
+        specifier: workspace:*
+        version: link:../../packages/tailwind-config
       '@workspace/vite-config':
         specifier: workspace:*
         version: link:../../packages/vite-config
       eslint:
         specifier: ^9.9.0
         version: 9.30.1(jiti@2.4.2)
+      tailwindcss:
+        specifier: ^4.1.7
+        version: 4.1.11
+      typescript:
+        specifier: ~5.5.4
+        version: 5.5.4
+      vite:
+        specifier: '>=6.4.1'
+        version: 7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)
+
+  .local-plugins/video-playlists-acl-editor-plugin:
+    dependencies:
+      '@workspace/plugin-system':
+        specifier: '*'
+        version: link:../../packages/plugin-system
+      '@workspace/query':
+        specifier: '*'
+        version: link:../../packages/query
+      '@workspace/ui':
+        specifier: '*'
+        version: link:../../packages/ui
+      lucide-react:
+        specifier: '*'
+        version: 0.417.0(react@19.1.0)
+      react:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.0(react@19.1.0)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.8
+      '@types/react-dom':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.6(@types/react@19.1.8)
+      '@vitejs/plugin-react-swc':
+        specifier: ^3.9.0
+        version: 3.10.2(@swc/helpers@0.5.17)(vite@7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
+      rollup:
+        specifier: ^4.44.2
+        version: 4.44.2
+      typescript:
+        specifier: ~5.5.4
+        version: 5.5.4
+      vite:
+        specifier: '>=6.4.1'
+        version: 7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)
+
+  .local-plugins/video-playlists-plugin:
+    dependencies:
+      '@workspace/plugin-system':
+        specifier: '*'
+        version: link:../../packages/plugin-system
+      '@workspace/query':
+        specifier: '*'
+        version: link:../../packages/query
+      '@workspace/ui':
+        specifier: '*'
+        version: link:../../packages/ui
+      lucide-react:
+        specifier: '*'
+        version: 0.417.0(react@19.1.0)
+      react:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.0(react@19.1.0)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.8
+      '@types/react-dom':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.6(@types/react@19.1.8)
+      '@vitejs/plugin-react-swc':
+        specifier: ^3.9.0
+        version: 3.10.2(@swc/helpers@0.5.17)(vite@7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
+      rollup:
+        specifier: ^4.44.2
+        version: 4.44.2
       typescript:
         specifier: ~5.5.4
         version: 5.5.4
@@ -1750,6 +1919,9 @@ importers:
       '@workspace/plugin-system':
         specifier: workspace:*
         version: link:../../packages/plugin-system
+      '@workspace/query':
+        specifier: workspace:*
+        version: link:../../packages/query
       '@workspace/router':
         specifier: workspace:*
         version: link:../../packages/router
