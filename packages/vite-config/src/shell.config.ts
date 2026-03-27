@@ -66,11 +66,11 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
   const localPluginsLocalesTarget =
     fs.existsSync(localPluginsRoot) && fs.statSync(localPluginsRoot).isDirectory()
       ? [
-          {
-            src: path.resolve(monorepoRootPath, ".local-plugins/*/implementations/*/locales/**/*"),
-            dest: "locales",
-          },
-        ]
+        {
+          src: path.resolve(monorepoRootPath, ".local-plugins/*/implementations/*/locales/**/*"),
+          dest: "locales",
+        },
+      ]
       : [];
 
   // Create static assets copying plugin for i18n and custom assets support

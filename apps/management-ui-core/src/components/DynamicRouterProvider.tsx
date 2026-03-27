@@ -8,7 +8,7 @@ import {
   type AppDefinition,
 } from "@workspace/plugin-system";
 import { getCachedAppConfig } from "@workspace/query";
-import { ProtectedRoute } from "@workspace/router";
+import { AppProtection } from "@workspace/router";
 import { AppLoader } from "@workspace/ui/components";
 import { logger } from "@workspace/utils";
 
@@ -148,13 +148,13 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
           appName: appDef.id,
         },
         component: () => (
-          <ProtectedRoute loadingComponent={AppLoader}>
+          <AppProtection appName={appDef.id} loadingComponent={AppLoader}>
             <ErrorBoundary fallback={<ModuleErrorFallback name={appDef.name} />}>
               <Suspense fallback={<AppLoader />}>
                 <PluginAppComponent />
               </Suspense>
             </ErrorBoundary>
-          </ProtectedRoute>
+          </AppProtection>
         ),
         loader: async () => {
           try {
@@ -177,13 +177,13 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
         getParentRoute: () => pluginRoute,
         path: "$routeSubPath",
         component: () => (
-          <ProtectedRoute loadingComponent={AppLoader}>
+          <AppProtection appName={appDef.id} loadingComponent={AppLoader}>
             <ErrorBoundary fallback={<ModuleErrorFallback name={appDef.name} />}>
               <Suspense fallback={<AppLoader />}>
                 <PluginAppComponent />
               </Suspense>
             </ErrorBoundary>
-          </ProtectedRoute>
+          </AppProtection>
         ),
       });
 
@@ -236,13 +236,13 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
           appName: pluginname,
         },
         component: () => (
-          <ProtectedRoute loadingComponent={AppLoader}>
+          <AppProtection appName={pluginname} loadingComponent={AppLoader}>
             <ErrorBoundary fallback={<ModuleErrorFallback name={app.componentName} />}>
               <Suspense fallback={<AppLoader />}>
                 <DynamicComponent />
               </Suspense>
             </ErrorBoundary>
-          </ProtectedRoute>
+          </AppProtection>
         ),
         loader: async () => {
           if (!pluginname) {
@@ -271,13 +271,13 @@ const createRoutesFromApps = (allApps: ClientDynamicModule[]): AnyRoute[] => {
         getParentRoute: () => dynamicRoute,
         path: "$routeSubPath",
         component: () => (
-          <ProtectedRoute loadingComponent={AppLoader}>
+          <AppProtection appName={pluginname} loadingComponent={AppLoader}>
             <ErrorBoundary fallback={<ModuleErrorFallback name={app.componentName} />}>
               <Suspense fallback={<AppLoader />}>
                 <DynamicComponent />
               </Suspense>
             </ErrorBoundary>
-          </ProtectedRoute>
+          </AppProtection>
         ),
       });
 

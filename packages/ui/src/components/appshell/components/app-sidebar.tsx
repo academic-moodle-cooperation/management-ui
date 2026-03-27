@@ -24,6 +24,11 @@ interface SidebarConfig {
   order?: number;
   permissions?: string[];
   featureFlags?: string[];
+  items?: {
+    title: string;
+    path: string;
+    target?: string;
+  }[];
 }
 
 const useSidebarNavItems = () => {
@@ -48,6 +53,14 @@ const useSidebarItems = () => {
       ...(config.icon !== undefined && { icon: config.icon }),
       isExternal: config.path?.startsWith("http://") || config.path?.startsWith("https://"),
       ...(config.target !== undefined && { target: config.target }),
+      ...(config.items !== undefined &&
+        config.items.length > 0 && {
+          items: config.items.map((item) => ({
+            title: item.title,
+            url: item.path,
+            ...(item.target !== undefined && { target: item.target }),
+          })),
+        }),
     }));
   }, [sidebarNavItems]);
 };

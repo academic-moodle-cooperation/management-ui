@@ -1,4 +1,4 @@
-import { AlertTriangle, RefreshCw, Check, X, Layers, LayoutGrid, TableIcon, Globe, ExternalLink, Shield, ShieldCheck } from "lucide-react";
+import { AlertTriangle, RefreshCw, Check, X, LayoutGrid, TableIcon, Globe, ExternalLink, Shield, ShieldCheck, Building2, Package } from "lucide-react";
 import React, { useState, useEffect, useCallback } from "react";
 
 import type { PluginManager } from "@workspace/plugin-system";
@@ -33,7 +33,6 @@ import {
 
 import { PluginExplorer, type DiscoveredPlugin, type PluginConflict } from "../services/plugin-explorer";
 import { getPluginMetadataOrDefault, CATEGORY_INFO, type PluginCategory, getCategoryLabel } from "../services/plugin-metadata";
-import { AVAILABLE_PLUGINS } from "../services/plugin-registry";
 import { registryFetcher, type RegistryPlugin } from "../services/registry-fetcher";
 import { RemoteLoader } from "../services/remote-loader";
 import { securityService } from "../services/security";
@@ -43,6 +42,7 @@ import { getViewPreferences, updateViewPreference, type ViewMode } from "../serv
 
 export interface MarketplaceDashboardProps {
   manager: PluginManager;
+  view?: "themes" | "plugins";
 }
 
 /**
@@ -50,13 +50,14 @@ export interface MarketplaceDashboardProps {
  *
  * Provides a UI for browsing and installing remote plugins dynamically.
  * Features:
- * - Grid display of available plugins (remote)
+ * - Community registry browser for remote plugins
  * - Bundled plugins explorer with enable/disable
  * - Theme switching
  * - Developer Mode for loading custom plugin URLs
  */
 export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
   manager,
+  view = "plugins",
 }) => {
   // Remote plugins state
   const [customUrl, setCustomUrl] = useState("");
@@ -86,10 +87,12 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
   const [localPlugins, setLocalPlugins] = useState<
     { id: string; name: string; url: string; metadata?: unknown }[]
   >([]);
-  
+  // JAR plugins from backend (exposed by PluginInitializer for Organization group)
+  const [jarPlugins, setJarPlugins] = useState<{ name: string; path: string; scope: string; url: string }[]>([]);
+
   // View mode preferences (persisted to localStorage)
   const [viewModes, setViewModes] = useState(() => getViewPreferences());
-  
+
   const handleViewModeChange = (section: keyof typeof viewModes, mode: ViewMode) => {
     setViewModes((prev) => {
       const updated = { ...prev, [section]: mode };
@@ -134,6 +137,13 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
       cancelled = true;
     };
   }, []);
+
+  // Load JAR plugins list for Organization group (from PluginInitializer)
+  useEffect(() => {
+    if (typeof manager.executeFunction !== "function") return;
+    const list = manager.executeFunction<{ name: string; path: string; scope: string; url: string }[]>("marketplace.getJarPlugins");
+    setJarPlugins(Array.isArray(list) ? list : []);
+  }, [manager]);
 
   // Load bundled plugins on mount (async: via marketplace.getAllPlugins)
   useEffect(() => {
@@ -394,8 +404,6 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
     await handleInstallPlugin(customUrl.trim(), forceReload);
   };
 
-  const isInstalled = (url: string) => installedPlugins.includes(url);
-
   const handleTryTheme = async (url: string) => {
     setLoading(url);
     setError(null);
@@ -500,223 +508,227 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
         </div>
       )}
 
-      {/* Developer Mode */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Developer Mode</CardTitle>
-          <CardDescription>
-            Load a plugin from a custom URL (e.g., 127.0.0.1 during development)
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="custom-url">Plugin URL</Label>
-            <Input
-              id="custom-url"
-              type="url"
-              placeholder="http://127.0.0.1:5173/plugin.mjs"
-              value={customUrl}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomUrl(e.target.value)}
-            />
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="force-reload"
-              checked={forceReload}
-              onCheckedChange={(checked) => setForceReload(checked === true)}
-            />
-            <Label htmlFor="force-reload" className="text-sm font-normal cursor-pointer">
-              Force reload (bypass cache)
-            </Label>
-          </div>
-        </CardContent>
-        <CardFooter className="flex gap-2">
-          <Button
-            onClick={handleLoadCustomUrl}
-            disabled={loading !== null}
-            variant="outline"
-          >
-            Try
-          </Button>
-          <Button
-            onClick={handleInstallCustomUrl}
-            disabled={loading !== null}
-          >
-            Install
-          </Button>
-        </CardFooter>
-      </Card>
-
-      {/* Available Themes Grid */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold">Available Themes</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Customize the look and feel of your application with these theme options
-            </p>
-          </div>
-          <div className="flex border rounded-md">
-            <Button
-              variant={viewModes.themes === "cards" ? "secondary" : "ghost"}
-              size="sm"
-              className="rounded-r-none"
-              onClick={() => handleViewModeChange("themes", "cards")}
-              title="Card view"
-            >
-              <LayoutGrid className="h-4 w-4" />
-            </Button>
-            <Button
-              variant={viewModes.themes === "table" ? "secondary" : "ghost"}
-              size="sm"
-              className="rounded-l-none"
-              onClick={() => handleViewModeChange("themes", "table")}
-              title="Table view"
-            >
-              <TableIcon className="h-4 w-4" />
-            </Button>
+      {view === "themes" ? (
+        <div className="space-y-6 mt-6">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-semibold">Available Themes</h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Customize the look and feel of your application with these theme options
+                </p>
+              </div>
+              <div className="flex border rounded-md">
+                <Button
+                  variant={viewModes.themes === "cards" ? "secondary" : "ghost"}
+                  size="sm"
+                  className="rounded-r-none"
+                  onClick={() => handleViewModeChange("themes", "cards")}
+                  title="Card view"
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewModes.themes === "table" ? "secondary" : "ghost"}
+                  size="sm"
+                  className="rounded-l-none"
+                  onClick={() => handleViewModeChange("themes", "table")}
+                  title="Table view"
+                >
+                  <TableIcon className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            {viewModes.themes === "cards" ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {AVAILABLE_THEMES.map((theme) => (
+                  <Card key={theme.id}>
+                    <CardHeader>
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-1">
+                          <CardTitle className="text-lg">{theme.name}</CardTitle>
+                          <CardDescription className="text-xs">
+                            by {theme.author}
+                          </CardDescription>
+                        </div>
+                        <Badge variant="secondary">{theme.category}</Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        {theme.description}
+                      </p>
+                    </CardContent>
+                    <CardFooter className="flex gap-2">
+                      {isThemeInstalled(theme.previewUrl) ? (
+                        <>
+                          <Badge variant="default">Installed</Badge>
+                          <Button
+                            onClick={handleUninstallTheme}
+                            variant="outline"
+                            size="sm"
+                            disabled={loading !== null}
+                          >
+                            Uninstall
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            onClick={() => handleTryTheme(theme.previewUrl)}
+                            variant="outline"
+                            size="sm"
+                            disabled={loading !== null}
+                          >
+                            {loading === theme.previewUrl ? "Applying..." : "Try"}
+                          </Button>
+                          <Button
+                            onClick={() => handleInstallTheme(theme.previewUrl)}
+                            size="sm"
+                            disabled={loading !== null}
+                          >
+                            {loading === theme.previewUrl ? "Installing..." : "Install"}
+                          </Button>
+                        </>
+                      )}
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <ThemesTable
+                themes={AVAILABLE_THEMES}
+                isInstalled={isThemeInstalled}
+                loading={loading}
+                onTry={handleTryTheme}
+                onInstall={handleInstallTheme}
+                onUninstall={handleUninstallTheme}
+              />
+            )}
           </div>
         </div>
-        {viewModes.themes === "cards" ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {AVAILABLE_THEMES.map((theme) => (
-            <Card key={theme.id}>
+      ) : (
+        <Tabs defaultValue="development" className="w-full mt-6">
+          <TabsList className="grid w-full max-w-2xl grid-cols-4">
+            <TabsTrigger value="development">Development / testing</TabsTrigger>
+            <TabsTrigger value="bundled">Bundled plugins</TabsTrigger>
+            <TabsTrigger value="organization">Organization</TabsTrigger>
+            <TabsTrigger value="community">Community</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="development" className="space-y-4 mt-6">
+            <div>
+              <h2 className="text-2xl font-semibold flex items-center gap-2">
+                <Globe className="h-6 w-6" />
+                Development / testing
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Try or install plugins from custom URLs. Enable/disable and uninstall apply only to this source; if a plugin still appears, it may be loaded from Organization or Built-in.
+              </p>
+            </div>
+            <Card>
               <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <CardTitle className="text-lg">{theme.name}</CardTitle>
-                    <CardDescription className="text-xs">
-                      by {theme.author}
-                    </CardDescription>
-                  </div>
-                  <Badge variant="secondary">{theme.category}</Badge>
-                </div>
+                <CardTitle>Developer Mode</CardTitle>
+                <CardDescription>
+                  Load a plugin from a custom URL (e.g., 127.0.0.1 during development)
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  {theme.description}
-                </p>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="custom-url">Plugin URL</Label>
+                  <Input
+                    id="custom-url"
+                    type="url"
+                    placeholder="http://127.0.0.1:5173/plugin.mjs"
+                    value={customUrl}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomUrl(e.target.value)}
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="force-reload"
+                    checked={forceReload}
+                    onCheckedChange={(checked) => setForceReload(checked === true)}
+                  />
+                  <Label htmlFor="force-reload" className="text-sm font-normal cursor-pointer">
+                    Force reload (bypass cache)
+                  </Label>
+                </div>
               </CardContent>
               <CardFooter className="flex gap-2">
-                {isThemeInstalled(theme.previewUrl) ? (
-                  <>
-                    <Badge variant="default">Installed</Badge>
-                    <Button
-                      onClick={handleUninstallTheme}
-                      variant="outline"
-                      size="sm"
-                      disabled={loading !== null}
-                    >
-                      Uninstall
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      onClick={() => handleTryTheme(theme.previewUrl)}
-                      variant="outline"
-                      size="sm"
-                      disabled={loading !== null}
-                    >
-                      {loading === theme.previewUrl ? "Applying..." : "Try"}
-                    </Button>
-                    <Button
-                      onClick={() => handleInstallTheme(theme.previewUrl)}
-                      size="sm"
-                      disabled={loading !== null}
-                    >
-                      {loading === theme.previewUrl ? "Installing..." : "Install"}
-                    </Button>
-                  </>
-                )}
+                <Button
+                  onClick={handleLoadCustomUrl}
+                  disabled={loading !== null}
+                  variant="outline"
+                >
+                  Try
+                </Button>
+                <Button
+                  onClick={handleInstallCustomUrl}
+                  disabled={loading !== null}
+                >
+                  Install
+                </Button>
               </CardFooter>
             </Card>
-          ))}
-          </div>
-        ) : (
-          <ThemesTable
-            themes={AVAILABLE_THEMES}
-            isInstalled={isThemeInstalled}
-            loading={loading}
-            onTry={handleTryTheme}
-            onInstall={handleInstallTheme}
-            onUninstall={handleUninstallTheme}
-          />
-        )}
-      </div>
 
-      {/* Local Development Plugins Section */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold flex items-center gap-2">
-              <Globe className="h-6 w-6" />
-              Local Development Plugins
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Plugins discovered from local development configuration (e.g. localStorage). Use this to
-              quickly try plugins you are working on without publishing them.
-            </p>
-          </div>
-        </div>
+            {localPlugins.length === 0 ? (
+              <div className="text-center py-8 border rounded-lg bg-muted/30">
+                <p className="text-sm text-muted-foreground">
+                  No local development plugins detected. Use Developer Mode or configure
+                  <code className="mx-1">local_plugins</code> in <code>localStorage</code> with your plugin URLs.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {localPlugins.map((plugin) => (
+                  <Card key={plugin.id}>
+                    <CardHeader>
+                      <CardTitle className="text-base">{plugin.name}</CardTitle>
+                      <CardDescription className="text-xs break-all">
+                        {plugin.url}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Local development plugin. It will be loaded like any other remote plugin using the given URL.
+                      </p>
+                    </CardContent>
+                    <CardFooter className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleTryPlugin(plugin.url)}
+                        disabled={loading !== null}
+                      >
+                        {loading === plugin.url ? "Loading..." : "Try"}
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => handleInstallPlugin(plugin.url)}
+                        disabled={loading !== null}
+                      >
+                        {loading === plugin.url ? "Installing..." : "Install"}
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
 
-        {localPlugins.length === 0 ? (
-          <div className="text-center py-8 border rounded-lg bg-muted/30">
-            <p className="text-sm text-muted-foreground">
-              No local development plugins detected. Use Developer Mode or configure
-              <code className="mx-1">local_plugins</code> in <code>localStorage</code> with your plugin URLs.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {localPlugins.map((plugin) => (
-              <Card key={plugin.id}>
-                <CardHeader>
-                  <CardTitle className="text-base">{plugin.name}</CardTitle>
-                  <CardDescription className="text-xs break-all">
-                    {plugin.url}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    Local development plugin. It will be loaded like any other remote plugin using the given URL.
-                  </p>
-                </CardContent>
-                <CardFooter className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleTryPlugin(plugin.url)}
-                    disabled={loading !== null}
-                  >
-                    {loading === plugin.url ? "Loading..." : "Try"}
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={() => handleInstallPlugin(plugin.url)}
-                    disabled={loading !== null}
-                  >
-                    {loading === plugin.url ? "Installing..." : "Install"}
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Bundled Plugins Section */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold flex items-center gap-2">
-              <Layers className="h-6 w-6" />
-              Bundled Plugins
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              All plugins included in this build. Enable or disable plugins to customize your experience.
-            </p>
-          </div>
+          <TabsContent value="bundled" className="space-y-4 mt-6">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-semibold flex items-center gap-2">
+                    <Package className="h-6 w-6" />
+                    Included in this installation
+                  </h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Bundled plugins. Enable/disable uses overrides (reload required). No uninstall — they are part of the app.
+                </p>
+              </div>
           <div className="flex items-center gap-2">
             {/* View Toggle */}
             <div className="flex border rounded-md">
@@ -754,25 +766,58 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
         {bundledPluginsLoading ? (
           <p className="text-sm text-muted-foreground py-8">Loading plugins...</p>
         ) : (
-        <Tabs defaultValue="all" className="w-full">
-          <TabsList>
-            <TabsTrigger value="all">All Namespaces</TabsTrigger>
-            {Array.from(bundledPlugins.keys()).map((namespace) => (
-              <TabsTrigger key={namespace} value={namespace} className="capitalize">
-                {namespace}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+          <Tabs defaultValue="all" className="w-full">
+            <TabsList>
+              <TabsTrigger value="all">All Namespaces</TabsTrigger>
+              {Array.from(bundledPlugins.keys()).map((namespace) => (
+                <TabsTrigger key={namespace} value={namespace} className="capitalize">
+                  {namespace}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-          <TabsContent value="all" className="space-y-6 mt-4">
-            {viewModes.bundledPlugins === "cards" ? (
-              // Card View
-              Array.from(bundledPlugins.entries()).map(([namespace, plugins]) => (
-                <div key={namespace} className="space-y-3">
-                  <h3 className="text-lg font-medium capitalize border-b pb-2">
-                    {namespace}
-                    <Badge variant="outline" className="ml-2">{plugins.length} plugins</Badge>
-                  </h3>
+            <TabsContent value="all" className="space-y-6 mt-4">
+              {viewModes.bundledPlugins === "cards" ? (
+                // Card View
+                Array.from(bundledPlugins.entries()).map(([namespace, plugins]) => (
+                  <div key={namespace} className="space-y-3">
+                    <h3 className="text-lg font-medium capitalize border-b pb-2">
+                      {namespace}
+                      <Badge variant="outline" className="ml-2">{plugins.length} plugins</Badge>
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {plugins.map((discovered) => (
+                        <BundledPluginCard
+                          key={discovered.plugin.name}
+                          discovered={discovered}
+                          selectedMode={selectedModes[discovered.plugin.name] || "additive"}
+                          onModeChange={(mode) => handleModeChange(discovered.plugin.name, mode)}
+                          onEnable={() => handleEnableBundledPlugin(discovered.plugin.name)}
+                          onDisable={() => handleDisableBundledPlugin(discovered.plugin.name)}
+                          onRemoveOverride={() => handleRemoveOverride(discovered.plugin.name)}
+                          loading={loading}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                // Table View
+                <BundledPluginsTable
+                  plugins={Array.from(bundledPlugins.values()).flat()}
+                  selectedModes={selectedModes}
+                  onModeChange={handleModeChange}
+                  onEnable={handleEnableBundledPlugin}
+                  onDisable={handleDisableBundledPlugin}
+                  onRemoveOverride={handleRemoveOverride}
+                />
+              )}
+            </TabsContent>
+
+            {Array.from(bundledPlugins.entries()).map(([namespace, plugins]) => (
+              <TabsContent key={namespace} value={namespace} className="mt-4">
+                {viewModes.bundledPlugins === "cards" ? (
+                  // Card View for namespace
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {plugins.map((discovered) => (
                       <BundledPluginCard
@@ -787,68 +832,75 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
                       />
                     ))}
                   </div>
-                </div>
-              ))
+                ) : (
+                  // Table View for namespace
+                  <BundledPluginsTable
+                    plugins={plugins}
+                    selectedModes={selectedModes}
+                    onModeChange={handleModeChange}
+                    onEnable={handleEnableBundledPlugin}
+                    onDisable={handleDisableBundledPlugin}
+                    onRemoveOverride={handleRemoveOverride}
+                  />
+                )}
+              </TabsContent>
+            ))}
+          </Tabs>
+        )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="organization" className="space-y-4 mt-6">
+            <div>
+              <h2 className="text-2xl font-semibold flex items-center gap-2">
+                <Building2 className="h-6 w-6" />
+                From your organization
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Plugins provided by your deployment (backend JAR). Read-only here; changes require server/deploy. In development, .local-plugins may also load from this source.
+              </p>
+            </div>
+            {jarPlugins.length === 0 ? (
+              <div className="text-center py-6 border rounded-lg bg-muted/30">
+                <p className="text-sm text-muted-foreground">
+                  No organization plugins from backend. They may be configured via server deployment.
+                </p>
+              </div>
             ) : (
-              // Table View
-              <BundledPluginsTable
-                plugins={Array.from(bundledPlugins.values()).flat()}
-                selectedModes={selectedModes}
-                onModeChange={handleModeChange}
-                onEnable={handleEnableBundledPlugin}
-                onDisable={handleDisableBundledPlugin}
-                onRemoveOverride={handleRemoveOverride}
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {jarPlugins.map((p) => (
+                  <Card key={p.scope}>
+                    <CardHeader>
+                      <CardTitle className="text-base">{p.name}</CardTitle>
+                      <CardDescription className="text-xs break-all">
+                        {p.path} • scope: {p.scope}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Loaded from backend (JAR). Managed by your organization.
+                      </p>
+                    </CardContent>
+                    <CardFooter>
+                      <Badge variant="secondary">Organization (JAR)</Badge>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
             )}
           </TabsContent>
 
-          {Array.from(bundledPlugins.entries()).map(([namespace, plugins]) => (
-            <TabsContent key={namespace} value={namespace} className="mt-4">
-              {viewModes.bundledPlugins === "cards" ? (
-                // Card View for namespace
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {plugins.map((discovered) => (
-                    <BundledPluginCard
-                      key={discovered.plugin.name}
-                      discovered={discovered}
-                      selectedMode={selectedModes[discovered.plugin.name] || "additive"}
-                      onModeChange={(mode) => handleModeChange(discovered.plugin.name, mode)}
-                      onEnable={() => handleEnableBundledPlugin(discovered.plugin.name)}
-                      onDisable={() => handleDisableBundledPlugin(discovered.plugin.name)}
-                      onRemoveOverride={() => handleRemoveOverride(discovered.plugin.name)}
-                      loading={loading}
-                    />
-                  ))}
-                </div>
-              ) : (
-                // Table View for namespace
-                <BundledPluginsTable
-                  plugins={plugins}
-                  selectedModes={selectedModes}
-                  onModeChange={handleModeChange}
-                  onEnable={handleEnableBundledPlugin}
-                  onDisable={handleDisableBundledPlugin}
-                  onRemoveOverride={handleRemoveOverride}
-                />
-              )}
-            </TabsContent>
-          ))}
-        </Tabs>
-        )}
-      </div>
-
-      {/* Community Plugins Section */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold flex items-center gap-2">
-              <Globe className="h-6 w-6" />
-              Community Plugins
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Discover and install plugins from the community registry.
-            </p>
-          </div>
+          <TabsContent value="community" className="space-y-4 mt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-semibold flex items-center gap-2">
+                  <Globe className="h-6 w-6" />
+                  From the community
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Registry and installed remote plugins. Install = persist URL; Uninstall = remove from this list. If a plugin still appears after uninstall, it may be loaded from Organization or Built-in.
+                </p>
+              </div>
           <div className="flex items-center gap-2">
             {/* View Toggle */}
             <div className="flex border rounded-md">
@@ -952,132 +1004,69 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
             onUninstall={handleUninstallPlugin}
           />
         )}
-      </div>
 
-      {/* Remote Plugins Grid (Legacy) */}
-      {AVAILABLE_PLUGINS.length > 0 && (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-semibold">Remote Plugins (Legacy)</h2>
-        <p className="text-sm text-muted-foreground">
-          External plugins that can be loaded dynamically from remote URLs.
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {AVAILABLE_PLUGINS.map((plugin) => (
-            <Card key={plugin.id}>
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <CardTitle className="text-lg">{plugin.name}</CardTitle>
-                    <CardDescription className="text-xs">
-                      by {plugin.author} • v{plugin.version}
-                    </CardDescription>
+            {/* Installed Runtime (from community / browser-installed) */}
+            {installedPlugins.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle>Installed Runtime Plugins</CardTitle>
+                      <CardDescription>
+                        These runtime-loaded plugins will be automatically loaded on next page load. Uninstall removes only from this list.
+                      </CardDescription>
+                    </div>
+                    <div className="flex border rounded-md">
+                      <Button
+                        variant={viewModes.installedPlugins === "cards" ? "secondary" : "ghost"}
+                        size="sm"
+                        className="rounded-r-none"
+                        onClick={() => handleViewModeChange("installedPlugins", "cards")}
+                        title="Card view"
+                      >
+                        <LayoutGrid className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant={viewModes.installedPlugins === "table" ? "secondary" : "ghost"}
+                        size="sm"
+                        className="rounded-l-none"
+                        onClick={() => handleViewModeChange("installedPlugins", "table")}
+                        title="Table view"
+                      >
+                        <TableIcon className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                  <Badge variant="secondary">{plugin.category}</Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  {plugin.description}
-                </p>
-              </CardContent>
-              <CardFooter className="flex gap-2">
-                {isInstalled(plugin.url) ? (
-                  <>
-                    <Badge variant="default">Installed</Badge>
-                    <Button
-                      onClick={() => handleUninstallPlugin(plugin.url)}
-                      variant="outline"
-                      size="sm"
-                      disabled={loading !== null}
-                    >
-                      Uninstall
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      onClick={() => handleTryPlugin(plugin.url)}
-                      variant="outline"
-                      size="sm"
-                      disabled={loading !== null}
-                    >
-                      {loading === plugin.url ? "Loading..." : "Try"}
-                    </Button>
-                    <Button
-                      onClick={() => handleInstallPlugin(plugin.url)}
-                      size="sm"
-                      disabled={loading !== null}
-                    >
-                      {loading === plugin.url ? "Installing..." : "Install"}
-                    </Button>
-                  </>
-                )}
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      </div>
-      )}
-
-      {/* Installed Remote Plugins Info */}
-      {installedPlugins.length > 0 && (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Installed Remote Plugins</CardTitle>
-                <CardDescription>
-                  These remote plugins will be automatically loaded on next page load
-                </CardDescription>
-              </div>
-              <div className="flex border rounded-md">
-                <Button
-                  variant={viewModes.installedPlugins === "cards" ? "secondary" : "ghost"}
-                  size="sm"
-                  className="rounded-r-none"
-                  onClick={() => handleViewModeChange("installedPlugins", "cards")}
-                  title="Card view"
-                >
-                  <LayoutGrid className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={viewModes.installedPlugins === "table" ? "secondary" : "ghost"}
-                  size="sm"
-                  className="rounded-l-none"
-                  onClick={() => handleViewModeChange("installedPlugins", "table")}
-                  title="Table view"
-                >
-                  <TableIcon className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {viewModes.installedPlugins === "cards" ? (
-              <ul className="space-y-2">
-                {installedPlugins.map((url) => (
-                  <li key={url} className="flex items-center justify-between">
-                    <code className="text-sm bg-muted px-2 py-1 rounded">
-                      {url}
-                    </code>
-                    <Button
-                      onClick={() => handleUninstallPlugin(url)}
-                      variant="ghost"
-                      size="sm"
-                    >
-                      Remove
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <InstalledPluginsTable
-                plugins={installedPlugins}
-                onUninstall={handleUninstallPlugin}
-              />
+                </CardHeader>
+                <CardContent>
+                  {viewModes.installedPlugins === "cards" ? (
+                    <ul className="space-y-2">
+                      {installedPlugins.map((url) => (
+                        <li key={url} className="flex items-center justify-between">
+                          <code className="text-sm bg-muted px-2 py-1 rounded">
+                            {url}
+                          </code>
+                          <Button
+                            onClick={() => handleUninstallPlugin(url)}
+                            variant="ghost"
+                            size="sm"
+                          >
+                            Remove
+                          </Button>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <InstalledPluginsTable
+                      plugins={installedPlugins}
+                      onUninstall={handleUninstallPlugin}
+                    />
+                  )}
+                </CardContent>
+              </Card>
             )}
-          </CardContent>
-        </Card>
+          </TabsContent>
+        </Tabs>
       )}
     </div>
   );

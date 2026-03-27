@@ -14,6 +14,18 @@ This guide walks through creating a new university plugin for the Management UI 
 - Familiarity with extension points
 - Knowledge of [Package Ecosystem](/packages/README.md)
 
+## Quick Start: Choose Your Path
+
+Use **`/plugins`** for fast prototyping or core/org plugins in the repo. Use **`.local-plugins`** for a complete, tested org plugin or to prepare for publishing as a community plugin.
+
+| Path | When to use | Build required? | How to test |
+|------|-------------|------------------|-------------|
+| **`/plugins`** | Prototyping, core/org plugins in repo | No (library) or yes (standalone) | Barrel export + config; core Vite bundles it |
+| **`.local-plugins`** | Complete org plugin, preparing for community/JAR | Yes (`pnpm build`) | Add namespace to config; core loads from manifest |
+
+- **For prototyping:** Copy `example-university` to `plugins/my-plugin`, export from barrel, add namespace to config.
+- **For org/community:** Run `pnpm plugin:create-local my-plugin --wire-config`, then build and run the core.
+
 ## Before You Start
 
 ### 0. Choose Plugin Type
@@ -266,6 +278,7 @@ export const [universityName]Config: Partial<AppConfig> = {
     accentColor: '#hexcolor',      // Accent color
     logoUrl: '/assets/logo.svg',   // Path to logo
     faviconUrl: '/assets/favicon.svg',
+    // orgLogoUrl (sidebar logo): use path without app base, e.g. "local-plugins/univie/assets/logo.png" (dev) or "static/plugins/univie/assets/logo.png" (prod), so resolveAssetUrl can prepend base once
   },
 
   // Features

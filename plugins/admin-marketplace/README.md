@@ -2,7 +2,7 @@
 
 **Version:** 1.0.0  
 **Type:** App Plugin (Library)  
-**Last Updated:** 2026-01-19
+**Last Updated:** 2026-02-23
 
 ## Purpose
 
@@ -30,7 +30,6 @@ plugins/admin-marketplace/
 │   │   ├── local-plugins-manifest.ts  # Dev: fetch .local-plugins manifest from core
 │   │   ├── plugin-explorer.ts         # Discover bundled plugins (enable/disable)
 │   │   ├── plugin-metadata.ts         # Plugin categories and metadata helpers
-│   │   ├── plugin-registry.ts         # Static/fallback plugin list (AVAILABLE_PLUGINS)
 │   │   ├── registry-fetcher.ts        # Remote plugin registry API
 │   │   ├── remote-loader.ts           # Load, validate, persist remote plugins
 │   │   ├── security.ts                # URL validation, version compatibility
@@ -108,23 +107,22 @@ RemoteLoader.clearAll(); // Clear all installed plugins
 
 The MarketplaceDashboard component provides:
 
-- **Community plugins** - Grid of plugins from remote registry (or fallback list)
+- **Community plugins** - Grid of plugins from remote registry
 - **Local plugins (dev)** - Plugins from `.local-plugins/` via core’s `/local-plugins/manifest.json` (dev only)
 - **Bundled plugins** - Explorer for built-in plugins (enable/disable)
-- **Themes** - Try and install theme CSS
+- **Themes** - Try and install theme CSS. The list (`src/services/themes.ts`) includes bundled themes, JAR/local-plugins themes (e.g. univie, tuwien), and example themes (Compact, Rounded, Minimal, Warm) when served from `.local-plugins/` in dev. ThemeLoader allows URLs under `plugins/themes/`, `static/plugins/`, and `local-plugins/`.
 - **Try Button** - Load plugin without saving to localStorage
 - **Install Button** - Load plugin and persist (url, id, version) to localStorage
 - **Uninstall Button** - Remove plugin from localStorage
 - **Developer Mode** - Input field for custom plugin URLs
-- **Installed Plugins List** - Shows all persisted plugins
+- **Installed Runtime Plugins** - Shows all persisted runtime plugin URLs
 
 ### Plugin Registry
 
 Available plugins come from:
 
-1. **Remote registry** – `registry-fetcher.ts` fetches from a configurable API (e.g. `VITE_MARKETPLACE_REGISTRY_URL`). Used for “Community plugins” in the UI.
-2. **Static fallback** – `plugin-registry.ts` exposes `AVAILABLE_PLUGINS` for demos or when no registry is configured.
-3. **Local plugins (dev only)** – The **core** (PluginInitializer) fetches `/local-plugins/manifest.json` in dev and loads plugins from `.local-plugins/` on disk. The Marketplace does not load them; use the core in dev to activate `.local-plugins` without the Marketplace.
+1. **Remote registry** – `registry-fetcher.ts` fetches from configured registry URLs. In development it first tries local `/registry.json`; if no URLs are configured it falls back to the default community registry URL.
+2. **Local plugins (dev only)** – The **core** (PluginInitializer) fetches `/local-plugins/manifest.json` in dev and loads plugins from `.local-plugins/` on disk. The Marketplace does not load them; use the core in dev to activate `.local-plugins` without the Marketplace.
 
 ## Plugin Registration
 

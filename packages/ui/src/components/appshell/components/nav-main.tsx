@@ -4,7 +4,7 @@ import { ChevronRight, type LucideIcon } from "lucide-react";
 import * as React from "react";
 
 import { useTranslation } from "@workspace/i18n";
-import { Link } from "@workspace/router";
+import { Link, useRouterState } from "@workspace/router";
 import {
   Collapsible,
   CollapsibleContent,
@@ -59,6 +59,7 @@ export function NavMain({
   customActiveStyles,
 }: NavMainProps) {
   const { t, i18n } = useTranslation();
+  const pathname = useRouterState({ select: (s) => s?.location?.pathname ?? "" });
 
   const translatedItems = React.useMemo(() => {
     return items.map((item) => {
@@ -74,21 +75,38 @@ export function NavMain({
     <SidebarGroup className={groupClassName}>
       {grouplabel && <SidebarGroupLabel>{grouplabel}</SidebarGroupLabel>}
       <SidebarMenu className={menuClassName}>
-        {translatedItems.map((item) => (
+        {translatedItems.map((item) => {
+          const parentIsActive =
+            item.items &&
+            (pathname === item.url || item.items.some((sub) => pathname === sub.url || pathname.startsWith(sub.url + "/")));
+          const defaultOpen = item.isActive !== undefined ? item.isActive : !!parentIsActive;
+          return (
           <Collapsible
             key={item.title}
             asChild
-            {...(item.isActive !== undefined && { defaultOpen: item.isActive })}
+            defaultOpen={defaultOpen}
             className="group/collapsible"
           >
             <SidebarMenuItem className={menuItemClassName}>
               {item.items ? (
                 <>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title}>
-                      {item.icon && <item.icon />}
-                      <span>{item.title}</span>
-                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      isActive={!!parentIsActive}
+                      className={cn(
+                        "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                        parentIsActive && !open ? "outline-1 outline-primary outline-offset-0" : "",
+                        customItemStyles,
+                        customActiveStyles,
+                      )}
+                    >
+                      <>
+                        {renderActiveIndicator(!!parentIsActive, !!open)}
+                        {item.icon && <item.icon />}
+                        <span>{item.title}</span>
+                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      </>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
@@ -151,7 +169,8 @@ export function NavMain({
               )}
             </SidebarMenuItem>
           </Collapsible>
-        ))}
+          );
+        })}
       </SidebarMenu>
     </SidebarGroup>
   );

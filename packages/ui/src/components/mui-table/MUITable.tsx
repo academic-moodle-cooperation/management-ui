@@ -13,6 +13,7 @@ interface MUITableProps<TData, TValue> extends DataTableProps<TData, TValue> {
   refetch?: () => void;
   selectedId?: string;
   designButton?: React.ReactNode;
+  toolbarEndButtons?: React.ReactNode;
 }
 
 function MUITable<TData extends Record<string, unknown>, TValue>({
@@ -36,6 +37,7 @@ function MUITable<TData extends Record<string, unknown>, TValue>({
   columnVisibility,
   setColumnVisibility,
   designButton,
+  toolbarEndButtons,
 }: MUITableProps<TData, TValue>) {
   const { i18n } = useI18n();
 
@@ -70,6 +72,7 @@ function MUITable<TData extends Record<string, unknown>, TValue>({
             columnVisibility={columnVisibility}
             setColumnVisibility={setColumnVisibility}
             designButton={designButton}
+            toolbarEndButtons={toolbarEndButtons}
             refetch={refetch}
           />
         </Container>

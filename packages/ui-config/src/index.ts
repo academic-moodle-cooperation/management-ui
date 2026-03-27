@@ -56,6 +56,9 @@ export const defaultConfig: AppConfig = {
         ],
       },
       seriesTable: {
+        createSeries: {
+          enabled: true,
+        },
         columns: [
           { title: { show: true } },
           { created: { show: true } },

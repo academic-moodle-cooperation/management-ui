@@ -1,6 +1,7 @@
 import { useMemo, useEffect, useCallback, useRef } from "react";
 
 import { useI18n } from "@workspace/i18n";
+import { useRegistry } from "@workspace/plugin-system";
 import { useUpdateSeriesMutation, useAppConfig } from "@workspace/query";
 import type { SeriesDataFragment } from "@workspace/query";
 import { MUITable, createMetadataHelpers, AppLoader, type Row } from "@workspace/ui/components";
@@ -13,7 +14,13 @@ import { useSidebarStore } from "../stores/sidebarStore";
 
 import { SeriesTableSidebar } from "./SeriesTableSidebar";
 
-import type { MouseEvent } from "react";
+import type { ComponentType, MouseEvent } from "react";
+
+interface SeriesToolbarEndAction {
+  id: string;
+  order?: number;
+  component: ComponentType<{ refetch?: () => void }>;
+}
 
 /**
  * Component for displaying and managing series data
@@ -136,6 +143,9 @@ const SeriesTable = () => {
 
   // Mutation hook for updating series
   const saveSeriesUpdate = useUpdateSeriesMutation();
+  const { items: seriesToolbarEndActions } = useRegistry<SeriesToolbarEndAction>(
+    "series:table:toolbar-end-actions",
+  );
 
   // Modified row click handler to pass inputFields directly
   const handleRowClick = useCallback(
@@ -192,6 +202,30 @@ const SeriesTable = () => {
     )
     .filter((column): column is NonNullable<typeof column> => Boolean(column));
 
+  const isCreateSeriesEnabled =
+    config?.plugins?.["management-ui-series"]?.seriesTable?.createSeries?.enabled !== false;
+
+  const toolbarEndButtons = useMemo(() => {
+    const sortedActions = [...seriesToolbarEndActions]
+      .filter((action) => (isCreateSeriesEnabled ? true : action.id !== "create-series"))
+      .filter((action) => typeof action.component === "function")
+      .sort((a, b) => (a.order || 100) - (b.order || 100));
+
+    if (sortedActions.length === 0) {
+      return undefined;
+    }
+
+    return (
+      <>
+        {sortedActions.map((action, index) => {
+          const ActionComponent = action.component;
+          const actionId = action.id || `series-toolbar-action-${index}`;
+          return <ActionComponent key={actionId} refetch={refetch} />;
+        })}
+      </>
+    );
+  }, [seriesToolbarEndActions, refetch, isCreateSeriesEnabled]);
+
   // Error handling
   if (error && typeof error === "object" && "message" in error) {
     return (
@@ -236,6 +270,7 @@ const SeriesTable = () => {
           setQueryFilter={setQueryFilter}
           columnVisibility={columnVisibility}
           setColumnVisibility={setColumnVisibility}
+          toolbarEndButtons={toolbarEndButtons}
         />
       </div>
 

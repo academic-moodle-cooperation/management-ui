@@ -27,10 +27,41 @@ interface LocalPluginEntry {
   name: string;
   id: string;
   url: string;
+  /** Optional URL to the plugin stylesheet. */
+  cssUrl?: string;
   /** Folder name under .local-plugins/; used for config-based filtering (pluginNamespace). */
   namespace: string;
   /** Type from filename (plugin-<namespace>-<type>.mjs); used to filter by config types for that namespace. */
   type?: string;
+  /** JAR scopes this local plugin replaces in dev (skip loading those JAR plugins when this manifest entry is loaded) */
+  replacesJarScopes?: string[];
+  /** Base URL for plugin locales exposed through the dev server */
+  localesUrl?: string;
+  /** i18n namespaces available for this plugin */
+  i18nNamespaces?: string[];
+}
+
+function discoverPluginLocaleNamespaces(pluginDir: string): string[] {
+  const namespaces = new Set<string>();
+  const implementationsDir = path.join(pluginDir, "implementations");
+  if (!fs.existsSync(implementationsDir) || !fs.statSync(implementationsDir).isDirectory()) {
+    return [];
+  }
+
+  const types = fs.readdirSync(implementationsDir, { withFileTypes: true });
+  for (const typeEnt of types) {
+    if (!typeEnt.isDirectory()) continue;
+    const localesDir = path.join(implementationsDir, typeEnt.name, "locales");
+    if (!fs.existsSync(localesDir) || !fs.statSync(localesDir).isDirectory()) continue;
+
+    const localeEntries = fs.readdirSync(localesDir, { withFileTypes: true });
+    for (const localeEnt of localeEntries) {
+      if (!localeEnt.isDirectory()) continue;
+      namespaces.add(localeEnt.name);
+    }
+  }
+
+  return [...namespaces];
 }
 
 function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPluginEntry[] {
@@ -48,19 +79,29 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
     const pluginDir = path.join(localPluginsDir, dirent.name);
     const distDir = path.join(pluginDir, "dist");
     if (!fs.existsSync(distDir) || !fs.statSync(distDir).isDirectory()) continue;
-
     const distFiles = fs.readdirSync(distDir);
+    const cssFiles = distFiles.filter((f) => f.endsWith(".css"));
+    const cssUrl =
+      cssFiles.length === 1
+        ? `${basePath}${LOCAL_PLUGINS_PREFIX}${dirent.name}/${cssFiles[0]}`.replace(/\/+/g, "/")
+        : undefined;
+    const i18nNamespaces = discoverPluginLocaleNamespaces(pluginDir);
+    const localesUrl =
+      i18nNamespaces.length > 0 ? `${basePath}/dist/locales`.replace(/\/+/g, "/") : undefined;
     const mjsFiles = distFiles.filter((f) => f.endsWith(".mjs"));
     if (mjsFiles.length === 0) continue;
 
     let displayName = dirent.name;
     let defaultId = dirent.name;
+    let replacesJarScopes: string[] | undefined;
     const pkgPath = path.join(pluginDir, "package.json");
     if (fs.existsSync(pkgPath)) {
       try {
         const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
         if (pkg.pluginMetadata?.name) displayName = pkg.pluginMetadata.name;
         if (pkg.pluginMetadata?.id) defaultId = pkg.pluginMetadata.id;
+        if (Array.isArray(pkg.pluginMetadata?.replacesJarScopes))
+          replacesJarScopes = pkg.pluginMetadata.replacesJarScopes;
       } catch {
         // ignore
       }
@@ -81,8 +122,12 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
         name: mjsFiles.length === 1 ? displayName : `${displayName} (${type ?? stem})`,
         id,
         url: urlPath,
+        ...(cssUrl ? { cssUrl } : {}),
         namespace: dirent.name,
         ...(type ? { type } : {}),
+        ...(replacesJarScopes?.length ? { replacesJarScopes } : {}),
+        ...(localesUrl ? { localesUrl } : {}),
+        ...(i18nNamespaces.length > 0 ? { i18nNamespaces } : {}),
       });
     }
   }
@@ -183,12 +228,18 @@ export function localPluginsDevPlugin(options: LocalPluginsDevPluginOptions): Pl
             next();
             return;
           }
-          // Serve files under .local-plugins/<name>/: dist/<file>.mjs for plugin bundles, or themes/ etc.
+          // Serve files under .local-plugins/<name>/: dist/<file> for plugin bundles/assets,
+          // or other files from plugin root (themes/, assets/, etc.).
           const pluginDir = path.join(localPluginsDir, pluginDirName);
           const firstPart = fileParts[0];
-          const filePath =
-            fileParts.length === 1 && typeof firstPart === "string" && firstPart.endsWith(".mjs")
+          const isSingleFileRequest = fileParts.length === 1 && typeof firstPart === "string";
+          const distCandidate =
+            isSingleFileRequest && typeof firstPart === "string"
               ? path.join(pluginDir, "dist", firstPart)
+              : null;
+          const filePath =
+            distCandidate && fs.existsSync(distCandidate) && fs.statSync(distCandidate).isFile()
+              ? distCandidate
               : path.join(pluginDir, ...fileParts);
           if (!filePath.startsWith(pluginDir) || path.relative(pluginDir, filePath).startsWith("..")) {
             next();

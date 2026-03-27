@@ -2,6 +2,8 @@
 
 Loads remote ES module plugins by URL: fetch, transform bare imports to `window.__SHARED_MODULES__`, import via blob URL, inject CSS, register GraphQL fragments, and register with the PluginManager.
 
+Plugin CSS is injected before the host shell stylesheets so generic plugin utilities do not accidentally override shared UI. If a plugin needs to intentionally restyle host components, follow the [Plugin Styling Contract](../../docs/PLUGIN_STYLING_CONTRACT.md).
+
 ## Who uses it
 
 - **management-ui-core** – Loads JAR plugins (backend-derived URLs) after built-in plugins. Uses `loadJarPlugins()` from the core’s `jarPluginLoader` and `loadAndRegister(url, manager, { skipUrlValidation: true })` from this package.

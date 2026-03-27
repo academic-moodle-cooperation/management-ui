@@ -10,7 +10,6 @@
  * plugin is loaded individually (failed loads don't block others).
  */
 
-import { registerPluginI18nNamespaces } from "@workspace/i18n";
 import { getCachedAppConfig } from "@workspace/query";
 import type { AppConfig } from "@workspace/ui-config";
 
@@ -23,6 +22,12 @@ export interface JarPluginInfo {
   scope: string;
   /** URL to the plugin .mjs file */
   url: string;
+  /** Optional URL to the plugin stylesheet */
+  cssUrl?: string;
+  /** Optional base URL for plugin locales */
+  localesUrl?: string;
+  /** Optional i18n namespaces served from localesUrl */
+  i18nNamespaces?: string[];
 }
 
 interface PluginsJsonResponse {
@@ -31,6 +36,7 @@ interface PluginsJsonResponse {
     path: string;
     scope: string;
     scriptUrl?: string;
+    cssUrl?: string;
     localesUrl?: string;
     i18nNamespaces?: string[];
   }>;
@@ -97,18 +103,22 @@ export async function loadJarPlugins(config?: AppConfig | null): Promise<JarPlug
 
     const base = getAppBase(effectiveConfig);
 
-    data.plugins.forEach((plugin) => {
-      if (plugin.localesUrl && Array.isArray(plugin.i18nNamespaces) && plugin.i18nNamespaces.length > 0) {
-        registerPluginI18nNamespaces(plugin.i18nNamespaces, plugin.localesUrl);
-      }
-    });
-
     return data.plugins.map((plugin) => {
       const pathParts = plugin.path.split("/").filter(Boolean);
       const pluginDir = pathParts[pathParts.length - 1] || plugin.name.replace(/^.*-/, "");
       const pluginFile = `${pluginDir}.mjs`;
       const url = plugin.scriptUrl?.length ? plugin.scriptUrl : `${base}${plugin.path}/${pluginFile}`;
-      return { name: plugin.name, path: plugin.path, scope: plugin.scope, url };
+      return {
+        name: plugin.name,
+        path: plugin.path,
+        scope: plugin.scope,
+        url,
+        ...(plugin.cssUrl ? { cssUrl: plugin.cssUrl } : {}),
+        ...(plugin.localesUrl ? { localesUrl: plugin.localesUrl } : {}),
+        ...(Array.isArray(plugin.i18nNamespaces) && plugin.i18nNamespaces.length > 0
+          ? { i18nNamespaces: plugin.i18nNamespaces }
+          : {}),
+      };
     });
   } catch (error) {
     if (typeof console !== "undefined") {

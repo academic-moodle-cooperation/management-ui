@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
+import { registerPluginI18nNamespaces } from "@workspace/i18n";
 import {
   createAppRegistryPlugin,
   createObjectRegistryPlugin,
@@ -98,6 +99,16 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
 
     let didUnmount = false;
     const registeredPluginNames: string[] = [];
+
+    const registerPluginLocales = (
+      entries: Array<{ localesUrl?: string; i18nNamespaces?: string[] }>,
+    ) => {
+      entries.forEach((entry) => {
+        if (entry.localesUrl && Array.isArray(entry.i18nNamespaces) && entry.i18nNamespaces.length > 0) {
+          registerPluginI18nNamespaces(entry.i18nNamespaces, entry.localesUrl);
+        }
+      });
+    };
 
     const initializePlugins = async () => {
       if (didUnmount) return;
@@ -267,19 +278,42 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
         }
 
         // 7. Load JAR plugins from backend (same config drives plugins.json URL and script base)
+        // In dev, skip JAR plugins whose scope is replaced by a .local-plugins manifest entry (replacesJarScopes)
         try {
+          const localManifestForDedup =
+            typeof import.meta !== "undefined" && import.meta.env.DEV
+              ? await loadLocalPluginsManifest()
+              : [];
+          const replacedJarScopes = new Set(
+            localManifestForDedup.flatMap((e) => e.replacesJarScopes ?? []),
+          );
           const jarPlugins = await loadJarPlugins(mergedConfig);
-          if (jarPlugins.length > 0) {
+          manager.addFunction("marketplace.getJarPlugins", () => jarPlugins);
+          const jarPluginsToLoad =
+            replacedJarScopes.size > 0
+              ? jarPlugins.filter((p) => !replacedJarScopes.has(p.scope))
+              : jarPlugins;
+          if (jarPluginsToLoad.length > 0) {
+            registerPluginLocales(jarPluginsToLoad);
+            if (jarPluginsToLoad.length < jarPlugins.length) {
+              logger.info("PluginInitializer: Skipping JAR plugin(s) replaced by .local-plugins", {
+                skipped: jarPlugins.length - jarPluginsToLoad.length,
+                replacedScopes: [...replacedJarScopes],
+              });
+            }
             logger.info("PluginInitializer: Loading JAR plugin(s) from backend", {
-              count: jarPlugins.length,
+              count: jarPluginsToLoad.length,
             });
             const jarLoadResults = await Promise.allSettled(
-              jarPlugins.map((jarPlugin) =>
-                loadAndRegister(jarPlugin.url, manager, { skipUrlValidation: true }),
+              jarPluginsToLoad.map((jarPlugin) =>
+                loadAndRegister(jarPlugin.url, manager, {
+                  ...(jarPlugin.cssUrl ? { cssUrl: jarPlugin.cssUrl } : {}),
+                  skipUrlValidation: true,
+                }),
               ),
             );
             jarLoadResults.forEach((result, index) => {
-              const jarPlugin = jarPlugins[index];
+              const jarPlugin = jarPluginsToLoad[index];
               if (!jarPlugin) return;
               if (result.status === "rejected") {
                 logger.error(
@@ -314,6 +348,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
               const results = await Promise.allSettled(
                 entries.map((entry) =>
                   loadAndRegister(getLocalPluginFullUrl(entry), manager, {
+                    ...(entry.cssUrl ? { cssUrl: entry.cssUrl } : {}),
                     skipUrlValidation: true,
                   }),
                 ),
@@ -350,6 +385,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                 ? localManifest
                 : localManifest.filter((e) => matchesNamespaceAndType(e, config, enabled1));
             if (toLoad1.length > 0) {
+              registerPluginLocales(toLoad1);
               logger.info("PluginInitializer: Loading .local-plugins (phase 1)", {
                 count: toLoad1.length,
               });
@@ -366,6 +402,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                 !loadedUrls.has(e.url) && matchesNamespaceAndType(e, mergedConfig, enabled2),
             );
             if (toLoad2.length > 0) {
+              registerPluginLocales(toLoad2);
               logger.info("PluginInitializer: Loading .local-plugins (phase 2)", {
                 count: toLoad2.length,
               });

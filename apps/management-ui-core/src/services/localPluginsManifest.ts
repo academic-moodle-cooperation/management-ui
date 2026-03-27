@@ -15,6 +15,14 @@ export interface LocalPluginsManifestEntry {
   namespace?: string;
   /** Type from filename (plugin-<namespace>-<type>.mjs); used to filter by config types for that namespace */
   type?: string;
+  /** JAR scopes this local plugin replaces in dev (skip loading those JAR plugins when this manifest entry is loaded) */
+  replacesJarScopes?: string[];
+  /** Optional URL to the plugin stylesheet */
+  cssUrl?: string;
+  /** Optional base URL for plugin locales */
+  localesUrl?: string;
+  /** Optional i18n namespaces served from localesUrl */
+  i18nNamespaces?: string[];
 }
 
 interface LocalPluginsManifestResponse {

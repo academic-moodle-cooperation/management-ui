@@ -13,6 +13,7 @@ This document lists all possible ways plugins can be loaded in the Management UI
 - Exported via `plugins/index.ts` as `@workspace/plugins`
 - Loaded during app startup in `loadPlugins.ts`
 - Filtered by `pluginNamespace` configuration
+- Backend note: this mode is frontend-bundled. Plugin-specific backend logic is not packaged as part of this loading mechanism.
 
 **Code:**
 - `apps/management-ui-core/src/loadPlugins.ts` - `loadAllPlugins()`
@@ -120,6 +121,7 @@ await RemoteLoader.loadAndRegister(
 - **Core** (not the marketplace) loads JAR plugins. After built-in plugins are registered, `PluginInitializer` calls `loadJarPlugins()` to fetch `/management-tool/ui/config/plugins.json` from the backend, then for each plugin URL calls `loadAndRegister(url, manager, { skipUrlValidation: true })` from `@workspace/remote-plugin-loader`.
 - Backend generates `plugins.json` from deployed JAR files. Plugins are served as static files via Http-Alias/Http-Classpath.
 - JAR plugins load **even when the marketplace plugin is not loaded**. The marketplace is optional and does not handle JAR loading.
+- This is the path to use when a plugin needs its own backend module (e.g. quiz/poll APIs, persistence, QR token validation).
 
 **Code:**
 - `apps/management-ui-core/src/services/jarPluginLoader.ts` - `loadJarPlugins()`
@@ -157,6 +159,7 @@ await RemoteLoader.loadAndRegister(
 - In **development**, the Vite dev server scans `.local-plugins/<name>/dist/` for `*.mjs` files and serves them at `/local-plugins/<name>/<file>.mjs`. It exposes a manifest at `/local-plugins/manifest.json` with one entry per `.mjs` (so one folder can have multiple bundles).
 - The **core** (PluginInitializer) fetches this manifest and loads each listed plugin via `loadAndRegister` from `@workspace/remote-plugin-loader`.
 - Loading is **filtered by `config.app.pluginNamespace`**: only manifest entries whose `namespace` (folder name) is in the enabled list are loaded. If `pluginNamespace` is missing or empty, all discovered .local-plugins are loaded. Same config drives built-in plugin filtering.
+- CSS behavior: `loadAndRegister` auto-requests `<module>.css` (same stem as `.mjs`). The local-plugins dev middleware resolves single-file requests from `dist/`, so `dist/<name>.css` is served when present.
 
 **Code:**
 - `packages/vite-config/src/plugins/local-plugins-dev.ts` - discovers plugins, serves files, exposes manifest (each entry has `name`, `id`, `url`, `namespace`)
@@ -174,6 +177,12 @@ await RemoteLoader.loadAndRegister(
 ```
 
 **To load a .local-plugins folder:** Add its folder name to `pluginNamespace` (e.g. via a config plugin: `["core", "episodes", "series", "upload", "univie"]`).
+
+**Troubleshooting styles:** If a plugin renders unstyled, verify:
+1. `dist/<plugin>.mjs` exists
+2. `dist/<plugin>.css` exists with matching stem
+3. Network request to `/local-plugins/<folder>/<plugin>.css` returns 200
+4. Core dev server was restarted after loader/config changes
 
 **Status:** ✅ Implemented
 
