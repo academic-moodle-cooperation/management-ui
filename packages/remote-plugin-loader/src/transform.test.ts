@@ -66,6 +66,33 @@ describe("transformModuleSource", () => {
       expect(result).toContain(varName);
     }
   });
+
+  it("normalizes absolute plugin script URLs without prefixing origin twice", () => {
+    const source = 'export default { name: "plugin" };';
+    const result = transformModuleSource(
+      source,
+      "http://127.0.0.1:3000/management-ui/local-plugins/univie/univie.mjs",
+    );
+
+    expect(result).toContain(
+      'const __PLUGIN_BASE_URL__ = "http://127.0.0.1:3000/management-ui/local-plugins/univie/";',
+    );
+    expect(result).toContain("new URL(__PLUGIN_BASE_URL__, window.location.href).href");
+    expect(result).not.toContain("window.location.origin + __PLUGIN_BASE_URL__");
+  });
+
+  it("normalizes relative plugin script URLs against the current location", () => {
+    const source = 'export default { name: "plugin" };';
+    const result = transformModuleSource(
+      source,
+      "/management-ui/static/plugins/univie/univie.mjs",
+    );
+
+    expect(result).toContain(
+      'const __PLUGIN_BASE_URL__ = "/management-ui/static/plugins/univie/";',
+    );
+    expect(result).toContain("new URL(__PLUGIN_BASE_URL__, window.location.href).href");
+  });
 });
 
 describe("isSameOriginUrl", () => {

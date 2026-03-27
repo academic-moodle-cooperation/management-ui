@@ -1,4 +1,4 @@
-import React, { useState, useEffect, type InputHTMLAttributes } from "react";
+import React, { useState, useEffect, useRef, type InputHTMLAttributes } from "react";
 
 import { cn } from "../../lib/utils"; // Adjusted path
 import { Input } from "../ui/input"; // Adjusted path
@@ -18,12 +18,25 @@ export const DebouncedInput = ({
   ...props
 }: DebouncedInputProps) => {
   const [value, setValue] = useState<string | number>(initialValue);
+  const previousExternalValue = useRef(initialValue);
+  const hasMounted = useRef(false);
 
   useEffect(() => {
+    previousExternalValue.current = initialValue;
     setValue(initialValue);
   }, [initialValue]);
 
   useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      return;
+    }
+
+    // Ignore remounts and parent-driven value sync so only user edits are debounced outward.
+    if (Object.is(value, previousExternalValue.current)) {
+      return;
+    }
+
     const timeout = setTimeout(() => {
       onChange(value);
     }, debounce);
