@@ -5,6 +5,8 @@
 
 For a full list of plugin-related docs (JAR deploy, registry, loading), see [Plugin Development Index](PLUGIN_DEVELOPMENT_INDEX.md).
 
+Before adding plugin CSS or styling shared UI, read the [Plugin Styling Contract](PLUGIN_STYLING_CONTRACT.md).
+
 ## Overview
 
 This guide explains how to create, test, and publish community plugins for the Management UI. Community plugins are dynamically loaded ES modules that extend the application at runtime without requiring a rebuild of the core application.
@@ -200,6 +202,7 @@ The template already provides:
 - `plugins/my-org-plugin/src/index.ts` → plugin entry point (default export is the plugin object)
 - `plugins/my-org-plugin/src/styles/index.css` + `tailwind.config.ts` + `postcss.config.mjs`  
   → the plugin builds and owns **its own Tailwind CSS**, independent of the host app.
+  Follow the [Plugin Styling Contract](PLUGIN_STYLING_CONTRACT.md) if you need to restyle host components.
 
 #### A1.2 Register the plugin in the barrel
 

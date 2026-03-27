@@ -266,6 +266,11 @@ Use the included GitHub Action (`.github/workflows/release.yml`) to automaticall
 
 6. **Document your extension points** if you create any
 
+7. **Follow the plugin styling contract** when overriding host UI
+   - Use plugin Tailwind utilities for plugin-owned markup
+   - Use scoped CSS overrides for shared shell components
+   - See [Plugin Styling Contract](../../docs/PLUGIN_STYLING_CONTRACT.md)
+
 ## License
 
 MIT
