@@ -180,9 +180,13 @@ export async function loadAndRegister(
           remoteLoaderLogger.warn(`Failed to load CSS for plugin "${remotePlugin.name}" from ${cssUrl}`);
         link.onload = () =>
           remoteLoaderLogger.debug(`Loaded CSS for plugin "${remotePlugin.name}" from ${cssUrl}`);
-        const firstStylesheet = document.head.querySelector('link[rel="stylesheet"]');
-        if (firstStylesheet) {
-          document.head.insertBefore(link, firstStylesheet);
+        // In Vite dev, host CSS is injected as <style> tags rather than stylesheet links.
+        // Insert plugin CSS before the first stylesheet node so host utilities keep precedence.
+        const firstStylesheetNode = document.head.querySelector(
+          'style, link[rel="stylesheet"]',
+        );
+        if (firstStylesheetNode) {
+          document.head.insertBefore(link, firstStylesheetNode);
         } else {
           document.head.appendChild(link);
         }
