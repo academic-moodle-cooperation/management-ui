@@ -35,7 +35,12 @@ export function useGetCurrentUser(): UseQueryResult<UserQuery, Error> {
       `);
     },
     enabled: !isConfigLoading && !isConfigError && !!config?.api.graphqlEndpoint, // Only run query if config is loaded and endpoint exists
-    staleTime: Infinity, // Data is considered fresh indefinitely
+    // Auth state can change outside the SPA via server-side logout, SSO timeout,
+    // or another tab, so always revalidate on mount.
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
   });
 }
 
