@@ -15,19 +15,35 @@ export interface AuthActions {
  * redirect parameters, and error handling consistently.
  */
 export const useAuthActions = (): AuthActions => {
-  const { isLoading, isError } = useAppConfig();
+  const { config, isLoading, isError } = useAppConfig();
 
-  const login = useCallback((redirectTo?: string) => {
-    // Use standardized /login route instead of direct config URLs
-    const redirect = redirectTo || window.location.pathname;
-    const loginUrl = `login?redirect=${encodeURIComponent(redirect)}`;
-    window.location.href = loginUrl;
+  const getAppRoute = useCallback((route: string) => {
+    const baseUrl = import.meta.env.BASE_URL || "/";
+    const normalizedBase = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+    return `${normalizedBase}/${route.replace(/^\/+/, "")}`;
   }, []);
+
+  const login = useCallback(
+    (redirectTo?: string) => {
+      const redirect = redirectTo || window.location.pathname;
+      const loginUrl = `${getAppRoute("login")}?redirect=${encodeURIComponent(redirect)}`;
+      window.location.assign(loginUrl);
+    },
+    [getAppRoute],
+  );
 
   const logout = useCallback(() => {
-    // Use standardized /logout route instead of direct config URLs
-    window.location.href = "logout";
-  }, []);
+    if (isLoading || isError || !config) {
+      return;
+    }
+
+    const logoutUrl =
+      import.meta.env.DEV && config.auth.logoutUrlDev
+        ? config.auth.logoutUrlDev
+        : config.auth.logoutUrl;
+
+    window.location.assign(logoutUrl);
+  }, [config, isError, isLoading]);
 
   return {
     login,
