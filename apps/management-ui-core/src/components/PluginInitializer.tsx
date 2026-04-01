@@ -169,6 +169,11 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           config || ({} as AppConfig),
         );
 
+        // Make the effective runtime config visible via app:config so plugins
+        // initialized later (e.g. navigation plugins) can read production JSON
+        // values even when no dedicated config plugin contributes them.
+        manager.registerObject("app:config", "runtime-config", mergedConfig);
+
         // 5. Get localStorage overrides for plugin enable/disable
         const overrides = getPluginOverrides();
         const hasOverrides = Object.keys(overrides.overrides).length > 0;
