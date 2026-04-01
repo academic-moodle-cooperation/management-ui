@@ -1,6 +1,7 @@
 {
   "series": "Series",
   "episodes": "Videos",
+  "studio": "Studio",
   "reloadData": "Reload Data",
   "save": "Save",
   "edit": "Edit",

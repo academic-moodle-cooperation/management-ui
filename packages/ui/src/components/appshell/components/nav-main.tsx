@@ -35,6 +35,7 @@ export type NavMainProps = {
     items?: {
       title: string;
       url: string;
+      isExternal?: boolean;
       target?: string;
     }[];
   }[];
@@ -114,12 +115,22 @@ export function NavMain({
                       {item.items?.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
-                            <Link
-                              to={subItem.url}
-                              {...(subItem.target !== undefined && { target: subItem.target })}
-                            >
-                              <span>{subItem.title}</span>
-                            </Link>
+                            {subItem.isExternal ? (
+                              <a
+                                href={subItem.url}
+                                target={subItem.target || "_blank"}
+                                rel="noopener noreferrer"
+                              >
+                                <span>{subItem.title}</span>
+                              </a>
+                            ) : (
+                              <Link
+                                to={subItem.url}
+                                {...(subItem.target !== undefined && { target: subItem.target })}
+                              >
+                                <span>{subItem.title}</span>
+                              </Link>
+                            )}
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       ))}

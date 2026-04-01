@@ -35,7 +35,7 @@ export interface PluginOptions {
    * Initialization function called when the plugin is registered
    * @param manager The plugin manager instance
    */
-  initialize?: (manager: PluginManager) => void;
+  initialize?: (manager: PluginManager) => void | Promise<void>;
 
   /**
    * Activation function called after initialization

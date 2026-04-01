@@ -84,6 +84,7 @@ export interface AppConfig {
     organizationUrls?: {
       main: string;
       support?: string;
+      studio?: string;
     };
     theme: string;
     pluginNamespace: PluginNamespaceItem[]; // New clean array-based approach

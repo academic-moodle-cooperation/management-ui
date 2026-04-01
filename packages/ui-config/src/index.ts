@@ -175,6 +175,11 @@ export const getAppConfig = (instanceConfig?: Partial<AppConfig>) => {
         ...(instanceConfig?.app?.organizationUrls?.support && {
           support: instanceConfig.app.organizationUrls.support,
         }),
+        ...(instanceConfig?.app?.organizationUrls?.studio !== undefined
+          ? { studio: instanceConfig.app.organizationUrls.studio }
+          : defaultConfig.app.organizationUrls?.studio !== undefined
+            ? { studio: defaultConfig.app.organizationUrls.studio }
+            : {}),
       },
       // Merge pluginNamespace without duplicates
       pluginNamespace: instanceConfig?.app?.pluginNamespace || defaultConfig.app.pluginNamespace,

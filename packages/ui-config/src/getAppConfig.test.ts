@@ -53,6 +53,54 @@ describe("getAppConfig", () => {
     expect(config.app.organizationUrls.support).toBe("https://support.example.com");
   });
 
+  it("should merge organizationUrls.studio correctly", () => {
+    const instanceConfig: Partial<AppConfig> = {
+      app: {
+        ...defaultConfig.app,
+        organizationUrls: {
+          main: "https://custom.example.com",
+          studio: "https://studio.example.com",
+        },
+      },
+    };
+
+    const config = getAppConfig(instanceConfig);
+
+    expect(config.app.organizationUrls.main).toBe("https://custom.example.com");
+    expect(config.app.organizationUrls.studio).toBe("https://studio.example.com");
+  });
+
+  it("should merge organizationUrls.studio with relative path", () => {
+    const instanceConfig: Partial<AppConfig> = {
+      app: {
+        ...defaultConfig.app,
+        organizationUrls: {
+          main: "https://custom.example.com",
+          studio: "/studio",
+        },
+      },
+    };
+
+    const config = getAppConfig(instanceConfig);
+
+    expect(config.app.organizationUrls.studio).toBe("/studio");
+  });
+
+  it("should not include studio in organizationUrls when not provided", () => {
+    const instanceConfig: Partial<AppConfig> = {
+      app: {
+        ...defaultConfig.app,
+        organizationUrls: {
+          main: "https://custom.example.com",
+        },
+      },
+    };
+
+    const config = getAppConfig(instanceConfig);
+
+    expect(config.app.organizationUrls.studio).toBeUndefined();
+  });
+
   it("should use default main URL when instance config doesn't provide it", () => {
     const instanceConfig: Partial<AppConfig> = {
       app: {

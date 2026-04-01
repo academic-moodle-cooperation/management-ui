@@ -20,6 +20,7 @@ interface SidebarConfig {
   title: string;
   path: string;
   target?: string;
+  isExternal?: boolean;
   icon: LucideIcon;
   order?: number;
   permissions?: string[];
@@ -28,6 +29,7 @@ interface SidebarConfig {
     title: string;
     path: string;
     target?: string;
+    isExternal?: boolean;
   }[];
 }
 
@@ -51,13 +53,20 @@ const useSidebarItems = () => {
       title: config.title,
       url: config.path,
       ...(config.icon !== undefined && { icon: config.icon }),
-      isExternal: config.path?.startsWith("http://") || config.path?.startsWith("https://"),
+      isExternal:
+        config.isExternal === true ||
+        config.path?.startsWith("http://") ||
+        config.path?.startsWith("https://"),
       ...(config.target !== undefined && { target: config.target }),
       ...(config.items !== undefined &&
         config.items.length > 0 && {
           items: config.items.map((item) => ({
             title: item.title,
             url: item.path,
+            isExternal:
+              item.isExternal === true ||
+              item.path?.startsWith("http://") ||
+              item.path?.startsWith("https://"),
             ...(item.target !== undefined && { target: item.target }),
           })),
         }),
