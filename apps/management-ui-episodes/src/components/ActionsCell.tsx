@@ -408,8 +408,14 @@ const DeleteMenuItem: React.FC<{
 );
 
 const addDownloadParam = (uri: string): string => {
-  const separator = uri.includes("?") ? "&" : "?";
-  return `${uri}${separator}download=1`;
+  try {
+    const url = new URL(uri);
+    url.searchParams.set("download", "1");
+    return url.toString();
+  } catch {
+    const separator = uri.includes("?") ? "&" : "?";
+    return `${uri}${separator}download=1`;
+  }
 };
 
 const renderDownloadMenuItems = (event: EventsDataFragment) =>
