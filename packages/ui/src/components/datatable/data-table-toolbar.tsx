@@ -75,7 +75,14 @@ export function DataTableToolbar<TData>({
         )} */}
 
         {isFiltered && (
-          <Button variant="ghost" onClick={() => setQueryFilter("")} className="h-8 px-2 lg:px-3">
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setQueryFilter(undefined);
+              setPageIndex(0);
+            }}
+            className="h-8 px-2 lg:px-3"
+          >
             Reset
             <X className="w-4 h-4 ml-2" />
           </Button>
