@@ -9,7 +9,7 @@ interface SeriesSidebarState {
   isOpen: boolean;
   isEditing: boolean;
   selectedId: string;
-  seriesUpdateData?: SeriesUpdateData;
+  seriesUpdateData: SeriesUpdateData | undefined;
   updateField: string;
 
   // Actions
