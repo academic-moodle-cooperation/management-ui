@@ -29,16 +29,18 @@ export const useSidebarStore = create<SeriesSidebarState>((set) => ({
   isOpen: false,
   isEditing: false,
   selectedId: "",
+  seriesUpdateData: undefined as SeriesUpdateData | undefined,
   updateField: "",
 
   // Actions
   openSidebar: (id) => set({ isOpen: true, selectedId: id }),
   closeSidebar: () => set({ isOpen: false }),
   setIsEditing: (isEditing) => set({ isEditing }),
-  setSeriesUpdateData: (data) => set({ ...(data !== undefined && { seriesUpdateData: data }) }),
+  setSeriesUpdateData: (data) => set({ seriesUpdateData: data }),
   setUpdateField: (field) => set({ updateField: field }),
   resetUpdateFields: () =>
     set({
+      seriesUpdateData: undefined as SeriesUpdateData | undefined,
       updateField: "",
       isEditing: false,
     }),
