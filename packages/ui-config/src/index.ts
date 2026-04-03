@@ -164,6 +164,7 @@ export const getAppConfig = (instanceConfig?: Partial<AppConfig>) => {
     productionConfigUrl: instanceConfig?.productionConfigUrl ?? defaultConfig.productionConfigUrl,
     productionAppPluginUrl:
       instanceConfig?.productionAppPluginUrl ?? defaultConfig.productionAppPluginUrl,
+    downloadBaseUrl: instanceConfig?.downloadBaseUrl ?? defaultConfig.downloadBaseUrl,
     app: {
       ...defaultConfig.app,
       ...(instanceConfig?.app || {}),
