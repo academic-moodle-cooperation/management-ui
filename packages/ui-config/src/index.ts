@@ -95,6 +95,14 @@ export const defaultConfig: AppConfig = {
         ],
       },
       episodesTable: {
+        views: {
+          list: {
+            enabled: true,
+          },
+          gallery: {
+            enabled: true,
+          },
+        },
         columns: [
           { title: { show: true } },
           { seriesName: { show: true } },

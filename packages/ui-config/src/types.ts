@@ -7,17 +7,25 @@ export interface MetadataField {
 
 export interface ColumnsField {
   show: boolean;
+  label?: string;
+  labelKey?: string;
 }
 
 // Keep these as flexible types since the actual structure varies
 export type MetadataItem = Record<string, MetadataField>;
+export type TableColumnItem = Record<string, ColumnsField>;
+
+export interface TableViewConfig {
+  enabled?: boolean;
+  columns?: TableColumnItem[];
+}
 
 export interface SeriesInfo {
   metadata: unknown[]; // Make this flexible to accept actual structure
 }
 
 export interface SeriesTable {
-  columns: unknown[]; // Make this flexible to accept actual structure
+  columns: TableColumnItem[];
   createSeries?: {
     enabled?: boolean;
   };
@@ -28,7 +36,11 @@ export interface EpisodeInfo {
 }
 
 export interface EpisodesTable {
-  columns: unknown[]; // Make this flexible to accept actual structure
+  columns?: TableColumnItem[];
+  views?: {
+    list?: TableViewConfig;
+    gallery?: TableViewConfig;
+  };
 }
 
 export interface UploadConfig {
