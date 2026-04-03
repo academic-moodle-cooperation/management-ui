@@ -12,6 +12,7 @@ export const UploadList = ({
   handleEditUploadName,
   editUploadName,
   editUploadNameEnd,
+  updateEditFileName,
   refsById,
   abortUpload,
   isLoading,
@@ -29,6 +30,7 @@ export const UploadList = ({
   handleEditUploadName: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   editUploadName: (selectedFile: UploadFileBlob) => void;
   editUploadNameEnd: (uploadName: string) => void;
+  updateEditFileName: (fileName: string) => void;
   refsById: React.RefObject<HTMLSpanElement>[];
   abortUpload: (selectedFile: UploadFileBlob) => void;
   isLoading: boolean;
@@ -59,8 +61,7 @@ export const UploadList = ({
                         onKeyDown={handleEditUploadName}
                         value={editFile.name}
                         onChange={(e) => {
-                          // onChange handler for input value updates
-                          editUploadNameEnd(e.target.value);
+                          updateEditFileName(e.target.value);
                         }}
                         onBlur={() => editUploadNameEnd(editFile.name)}
                         style={{

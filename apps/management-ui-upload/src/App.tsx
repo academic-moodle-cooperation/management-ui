@@ -408,18 +408,22 @@ export const App = () => {
     });
   };
 
+  const updateEditFileName = (fileName: string) => {
+    if (editFile) {
+      setEditFile({
+        index: editFile.index,
+        name: fileName,
+      });
+      setIsEdited(true);
+    }
+  };
+
   const handleEditUploadName = (event: KeyboardEvent<HTMLInputElement>) => {
     const uploadName = (event.target as HTMLInputElement).value;
     if (!editFile || (event.key === "Enter" && uploadName.trim().length)) {
       editUploadNameEnd(uploadName);
       return;
     }
-
-    setEditFile({
-      index: editFile.index,
-      name: uploadName,
-    });
-    setIsEdited(true);
   };
 
   const editUploadNameEnd = (uploadName: string) => {
@@ -518,6 +522,7 @@ export const App = () => {
                             handleEditUploadName={handleEditUploadName}
                             editUploadName={editUploadName}
                             editUploadNameEnd={editUploadNameEnd}
+                            updateEditFileName={updateEditFileName}
                             refsById={refsById}
                             abortUpload={abortUpload}
                             isLoading={isLoading}
@@ -565,6 +570,7 @@ export const App = () => {
                           handleEditUploadName={handleEditUploadName}
                           editUploadName={editUploadName}
                           editUploadNameEnd={editUploadNameEnd}
+                          updateEditFileName={updateEditFileName}
                           refsById={refsById}
                           abortUpload={abortUpload}
                           isLoading={isLoading}
