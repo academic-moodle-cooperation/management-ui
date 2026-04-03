@@ -428,7 +428,7 @@ const addDownloadParam = (uri: string): string => {
   }
 };
 
-const renderDownloadMenuItems = (event: EventsDataFragment) =>
+const renderDownloadMenuItems = (event: EventsDataFragment, downloadBaseUrl?: string) =>
   event.publications?.[0]?.tracks
     ?.sort((t1, t2) => {
       const height1 = t1?.height ?? 0;
@@ -458,7 +458,7 @@ const renderDownloadMenuItems = (event: EventsDataFragment) =>
       return (
         <DropdownMenuItem key={index} asChild className="gap-2 cursor-pointer">
           <a
-            href={track?.uri ? addDownloadParam(track.uri) : ""}
+            href={addDownloadParam(downloadUrl)}
             target="_blank"
             rel="noreferrer"
             download={event.title}
