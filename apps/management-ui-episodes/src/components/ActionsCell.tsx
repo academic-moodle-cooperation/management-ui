@@ -407,6 +407,17 @@ const DeleteMenuItem: React.FC<{
   </DropdownMenuItem>
 );
 
+const addDownloadParam = (uri: string): string => {
+  try {
+    const url = new URL(uri);
+    url.searchParams.set("download", "1");
+    return url.toString();
+  } catch {
+    const separator = uri.includes("?") ? "&" : "?";
+    return `${uri}${separator}download=1`;
+  }
+};
+
 const renderDownloadMenuItems = (event: EventsDataFragment) =>
   event.publications?.[0]?.tracks
     ?.sort((t1, t2) => {
@@ -421,7 +432,7 @@ const renderDownloadMenuItems = (event: EventsDataFragment) =>
       return (
         <DropdownMenuItem key={index} asChild className="gap-2 cursor-pointer">
           <a
-            href={track?.uri || ""}
+            href={track?.uri ? addDownloadParam(track.uri) : ""}
             target="_blank"
             rel="noreferrer"
             download={event.title}
