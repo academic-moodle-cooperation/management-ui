@@ -71,6 +71,7 @@ export type PluginNamespaceItem = string | Record<string, PluginNamespaceConfig>
 export interface AppConfig {
   productionConfigUrl: string;
   productionAppPluginUrl: string;
+  downloadBaseUrl?: string | undefined;
   app: {
     title: string;
     appName: string;

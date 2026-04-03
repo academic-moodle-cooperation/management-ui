@@ -160,6 +160,16 @@ describe("getAppConfig", () => {
     expect(config.productionAppPluginUrl).toBe("/custom/plugins.json");
   });
 
+  it("should merge downloadBaseUrl", () => {
+    const instanceConfig: Partial<AppConfig> = {
+      downloadBaseUrl: "https://admin.oc.univie.ac.at/static",
+    };
+
+    const config = getAppConfig(instanceConfig);
+
+    expect(config.downloadBaseUrl).toBe("https://admin.oc.univie.ac.at/static");
+  });
+
   it("should handle partial nested configs", () => {
     const instanceConfig: Partial<AppConfig> = {
       app: {

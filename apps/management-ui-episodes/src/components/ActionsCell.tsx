@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 import { i18next } from "@workspace/i18n";
 import { PluginComponent } from "@workspace/plugin-system";
-import { useDeleteEventMutation } from "@workspace/query";
+import { useAppConfig, useDeleteEventMutation } from "@workspace/query";
 import type { EventsDataFragment } from "@workspace/query";
 import { Link } from "@workspace/router";
 import {
@@ -29,6 +29,7 @@ import {
   DropdownMenuTrigger,
   toast,
 } from "@workspace/ui/components";
+import { resolveDownloadUrl } from "@workspace/utils";
 
 import { useSidebarStore } from "../stores/sidebarStore";
 
@@ -68,7 +69,10 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const deleteEvent = useDeleteEventMutation();
+  const { config } = useAppConfig();
   const { openSidebarWithData } = useSidebarStore();
+  const downloadBaseUrl =
+    typeof config.downloadBaseUrl === "string" ? config.downloadBaseUrl : undefined;
 
   const onDelete = (id: string) => {
     deleteEvent.mutate(
@@ -96,7 +100,11 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
       onClick: (event) => openSidebarWithData(event.id, true, {}),
       condition: (event) => {
         const status = event.eventStatus?.split(".").pop()?.toUpperCase();
-        return !(status === "PROCESSING" || status === "PENDING" || status === "PROCESSING_FAILURE");
+        return !(
+          status === "PROCESSING" ||
+          status === "PENDING" ||
+          status === "PROCESSING_FAILURE"
+        );
       },
       priority: 100,
     },
@@ -125,8 +133,10 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
       icon: <ArrowDownToLine />,
       label: i18next.t("episodes:episodesTable.action.download"),
       tooltip: i18next.t("episodes:episodesTable.action.download"),
-      component: ({ event }) => <DownloadDropdown event={event} />,
-      menuItem: ({ event }) => <DownloadMenuItem event={event} />,
+      component: ({ event }) => (
+        <DownloadDropdown event={event} downloadBaseUrl={downloadBaseUrl} />
+      ),
+      menuItem: ({ event }) => <DownloadMenuItem event={event} downloadBaseUrl={downloadBaseUrl} />,
       condition: (event) => !!event.muiEventInfo?.publishUrl,
       priority: 70,
     },
@@ -407,21 +417,37 @@ const DeleteMenuItem: React.FC<{
   </DropdownMenuItem>
 );
 
-const renderDownloadMenuItems = (event: EventsDataFragment) =>
-  event.publications?.[0]?.tracks
-    ?.sort((t1, t2) => {
+const renderDownloadMenuItems = (event: EventsDataFragment, downloadBaseUrl?: string) =>
+  [...(event.publications?.[0]?.tracks ?? [])]
+    .sort((t1, t2) => {
       const height1 = t1?.height ?? 0;
       const height2 = t2?.height ?? 0;
       return height1 > height2 ? -1 : height1 < height2 ? 1 : 0;
     })
     .map((track, index) => {
-      if ([".m3u8", ".mpd", ".f4m", ".smil"].some((el) => track?.uri?.includes(el)))
+      const trackReferences = [track?.logicalName, track?.uri].filter((value): value is string =>
+        Boolean(value),
+      );
+      if (
+        trackReferences.some((value) =>
+          [".m3u8", ".mpd", ".f4m", ".smil"].some((el) => value.includes(el)),
+        )
+      ) {
         return null;
+      }
+
+      const downloadUrl = resolveDownloadUrl({
+        baseUrl: downloadBaseUrl,
+        logicalName: track?.logicalName,
+        fallbackUrl: track?.uri,
+      });
+
+      if (!downloadUrl) return null;
 
       return (
         <DropdownMenuItem key={index} asChild className="gap-2 cursor-pointer">
           <a
-            href={track?.uri || ""}
+            href={downloadUrl}
             target="_blank"
             rel="noreferrer"
             download={event.title}
@@ -445,8 +471,11 @@ const renderDownloadMenuItems = (event: EventsDataFragment) =>
     })
     .filter((item): item is React.ReactElement => item !== null);
 
-const DownloadMenuItem: React.FC<{ event: EventsDataFragment }> = ({ event }) => {
-  const downloadItems = renderDownloadMenuItems(event);
+const DownloadMenuItem: React.FC<{
+  event: EventsDataFragment;
+  downloadBaseUrl: string | undefined;
+}> = ({ event, downloadBaseUrl }) => {
+  const downloadItems = renderDownloadMenuItems(event, downloadBaseUrl);
   if (!downloadItems || downloadItems.length === 0) {
     return (
       <DropdownMenuItem disabled className="gap-2">
@@ -473,7 +502,10 @@ const DownloadMenuItem: React.FC<{ event: EventsDataFragment }> = ({ event }) =>
   );
 };
 
-const DownloadDropdown: React.FC<{ event: EventsDataFragment }> = ({ event }) => (
+const DownloadDropdown: React.FC<{
+  event: EventsDataFragment;
+  downloadBaseUrl: string | undefined;
+}> = ({ event, downloadBaseUrl }) => (
   <Tooltip delayDuration={300}>
     <DropdownMenu>
       <TooltipTrigger asChild>
@@ -490,7 +522,7 @@ const DownloadDropdown: React.FC<{ event: EventsDataFragment }> = ({ event }) =>
           {i18next.t("episodes:episodesTable.action.selectDownloadVersion")}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {renderDownloadMenuItems(event)}
+        {renderDownloadMenuItems(event, downloadBaseUrl)}
       </DropdownMenuContent>
     </DropdownMenu>
   </Tooltip>
