@@ -34,9 +34,9 @@ public @interface MuiConfig {
 
   String trash_workflow_id();
 
-  String thumbnail_channel_id() default "internal";
+  String thumbnail_channel_id() default "engage-player";
 
-  String thumbnail_flavor() default "presenter/thumbnail";
+  String thumbnail_flavor() default "*/search+preview";
 
   String publication_channel_id() default "engage-player";
 
