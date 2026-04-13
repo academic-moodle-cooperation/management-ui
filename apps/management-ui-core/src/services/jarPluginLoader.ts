@@ -14,12 +14,18 @@ import { getCachedAppConfig } from "@workspace/query";
 import type { AppConfig } from "@workspace/ui-config";
 
 export interface JarPluginInfo {
+  /** Stable entry identifier */
+  id?: string;
   /** Plugin name (from backend) */
   name: string;
   /** Path where the plugin is served (e.g. /static/plugins/univie) */
   path: string;
   /** Module scope (for SystemJS compatibility, if used) */
   scope: string;
+  /** Namespace used for config-based filtering */
+  namespace?: string;
+  /** Optional type used for config-based filtering */
+  type?: string;
   /** URL to the plugin .mjs file */
   url: string;
   /** Optional URL to the plugin stylesheet */
@@ -32,9 +38,12 @@ export interface JarPluginInfo {
 
 interface PluginsJsonResponse {
   plugins: Array<{
+    id?: string;
     name: string;
     path: string;
     scope: string;
+    namespace?: string;
+    type?: string;
     scriptUrl?: string;
     cssUrl?: string;
     localesUrl?: string;
@@ -109,9 +118,12 @@ export async function loadJarPlugins(config?: AppConfig | null): Promise<JarPlug
       const pluginFile = `${pluginDir}.mjs`;
       const url = plugin.scriptUrl?.length ? plugin.scriptUrl : `${base}${plugin.path}/${pluginFile}`;
       return {
+        ...(plugin.id ? { id: plugin.id } : {}),
         name: plugin.name,
         path: plugin.path,
         scope: plugin.scope,
+        ...(plugin.namespace ? { namespace: plugin.namespace } : {}),
+        ...(plugin.type ? { type: plugin.type } : {}),
         url,
         ...(plugin.cssUrl ? { cssUrl: plugin.cssUrl } : {}),
         ...(plugin.localesUrl ? { localesUrl: plugin.localesUrl } : {}),

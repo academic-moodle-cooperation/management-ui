@@ -238,13 +238,10 @@ When you want to release a new version:
 
 ### 6.1 Update Version
 
-1. **Update `package.json`:**
+1. **Update `plugin.json` and `package.json`:**
    ```json
    {
-     "version": "1.1.0",
-     "pluginMetadata": {
-       "version": "1.1.0"
-     }
+     "version": "1.1.0"
    }
    ```
 

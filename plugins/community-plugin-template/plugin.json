@@ -1,22 +1,28 @@
 {
+  "$schema": "../../packages/plugin-system/src/schemas/plugin.schema.json",
   "id": "my-plugin",
   "name": "My Community Plugin",
-  "description": "Short description of what this plugin does.",
   "version": "1.0.0",
+  "description": "Short description of what this plugin does.",
   "author": {
     "name": "Your Name",
     "email": "your.email@example.com",
     "url": "https://example.com"
   },
+  "namespace": "my-plugin",
+  "type": "app",
   "category": "feature",
+  "apiVersion": ">=1.0.0",
+  "visibility": "public",
+  "entry": "dist/my-plugin.mjs",
+  "css": "dist/my-plugin.css",
+  "license": "MIT",
   "icon": "Puzzle",
   "tags": ["example", "community"],
   "repositoryUrl": "https://github.com/your-org/your-plugin",
   "homepageUrl": "https://example.com/your-plugin",
-  "license": "MIT",
   "workspaceDependencies": {
     "@workspace/plugin-system": ">=1.0.0",
     "@workspace/ui": ">=1.0.0"
   }
 }
-

@@ -253,11 +253,24 @@ Convention: `category:specific-point`
 - [Plugin Development Guide](/docs/workflows/ADDING_PLUGINS.md)
 - [Example Plugin](/plugins/example-university/)
 
+## Evolution (2026-04)
+
+The plugin architecture was refined based on production experience:
+
+- **Multi-entry JARs:** One deployed JAR can now expose multiple frontend modules (e.g., sidebar + footer + app), each independently activatable via `pluginNamespace` type filtering.
+- **Unified loading:** Dev (`.local-plugins` manifest) and prod (JAR `plugins.json`) now use the same two-phase loading flow: config plugins first, then remaining plugins filtered by merged config.
+- **Canonical manifest:** `plugin.json` (schema at `packages/plugin-system/src/schemas/plugin.schema.json`) is the source of truth for plugin metadata, replacing ad-hoc filename conventions.
+- **Styling contract:** Plugins must use semantic CSS tokens from the shared design system. Hardcoded colors are forbidden. See `docs/PLUGIN_STYLING_CONTRACT.md`.
+- **Activation granularity:** Changed from "one org = one artifact" to "namespace:type as the activatable unit." Config can enable `{ "univie": { "types": ["sidebar", "footer"] } }` to load only specific modules.
+
+These changes maintain backward compatibility with existing plugins while enabling finer-grained control and a clearer contract for external plugin authors.
+
 ## Review
 
-- **Last Reviewed:** 2025-11-12
-- **Next Review:** When adding major new extension point types
+- **Last Reviewed:** 2026-04-13
+- **Next Review:** When adding major new extension point types or changing the manifest schema
 
 ## Status History
 
 - 2025-11-12: Accepted - Initial ADR documenting current architecture
+- 2026-04-13: Updated - Multi-entry JARs, unified loading, canonical manifest, styling contract

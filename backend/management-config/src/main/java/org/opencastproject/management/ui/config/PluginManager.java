@@ -44,7 +44,13 @@ public class PluginManager {
   }
 
   public List<PluginConfig> getPluginConfigs() {
-    return new ArrayList<>(pluginTracker.getTracked().values());
+    List<PluginConfig> configs = new ArrayList<>();
+    for (List<PluginConfig> trackedConfigs : pluginTracker.getTracked().values()) {
+      if (trackedConfigs != null) {
+        configs.addAll(trackedConfigs);
+      }
+    }
+    return configs;
   }
 
 }

@@ -1,11 +1,9 @@
 #!/usr/bin/env ts-node
 /**
- * Simple CLI tool to generate a registry entry from a plugin's plugin-metadata.json.
+ * CLI tool to generate a registry entry from a plugin's plugin.json manifest.
  *
  * Usage:
- *   pnpm ts-node packages/plugin-system/scripts/export-registry.ts ./path/to/plugin-metadata.json
- *
- * This will print a JSON snippet suitable for inclusion in registry.json.
+ *   pnpm ts-node packages/plugin-system/scripts/export-registry.ts ./path/to/plugin.json
  */
 
 import fs from "node:fs";
@@ -17,7 +15,7 @@ async function main() {
   const [,, metadataPathArg] = process.argv;
 
   if (!metadataPathArg) {
-    console.error("Usage: export-registry.ts <path-to-plugin-metadata.json>");
+    console.error("Usage: export-registry.ts <path-to-plugin.json>");
     process.exit(1);
   }
 
@@ -33,19 +31,19 @@ async function main() {
 
   const result = validatePluginMetadata(metadata);
   if (!result.valid) {
-    console.error("plugin-metadata.json is invalid:");
+    console.error("plugin.json is invalid:");
     for (const err of result.errors) {
       console.error(`  - ${err}`);
     }
     process.exit(1);
   }
 
-  // Construct a registry entry according to REGISTRY_REPOSITORY_README.md
   const registryEntry = {
     id: metadata.id,
     name: metadata.name,
     description: metadata.description,
     version: metadata.version,
+    namespace: metadata.namespace,
     author: metadata.author,
     url: metadata.url || "<ADD_CDN_URL_HERE>",
     category: metadata.category,

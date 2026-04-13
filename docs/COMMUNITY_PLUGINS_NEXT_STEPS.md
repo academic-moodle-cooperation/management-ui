@@ -68,9 +68,9 @@ Each plugin under `.local-plugins/` that should be deployable as a JAR has a **b
 
 | Plugin | Backend path | Build output (main) |
 |--------|--------------|---------------------|
-| config | `.local-plugins/config/backend/pom.xml` | `config.mjs` (from `plugin-config.mjs`) |
-| univie | `.local-plugins/univie/backend/pom.xml` | `univie.mjs` + split chunks + theme |
-| tuwien | `.local-plugins/tuwien/backend/pom.xml` | `tuwien.mjs` + theme |
+| config | `.local-plugins/config/backend/pom.xml` | `plugin-config.mjs` |
+| univie | `.local-plugins/univie/backend/pom.xml` | `plugin-univie-*.mjs` + shared theme |
+| tuwien | `.local-plugins/tuwien/backend/pom.xml` | `plugin-tuwien.mjs` + theme |
 | quiz-plugin | `.local-plugins/quiz-plugin/backend/pom.xml` | `quiz.mjs` (+ Java backend) |
 | my-org-plugin | `.local-plugins/my-org-plugin/backend/pom.xml` | `my-org.mjs` |
 | feedback-plugin | `.local-plugins/feedback-plugin/backend/pom.xml` | `feedback.mjs` |

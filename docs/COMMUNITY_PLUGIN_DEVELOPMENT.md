@@ -1,7 +1,7 @@
 # Community Plugin Development Guide
 
-**Version:** 1.0.0  
-**Last Updated:** 2026-01-21
+**Version:** 2.0.0  
+**Last Updated:** 2026-04-13
 
 For a full list of plugin-related docs (JAR deploy, registry, loading), see [Plugin Development Index](PLUGIN_DEVELOPMENT_INDEX.md).
 
@@ -67,24 +67,29 @@ npm run build
 
 **⚠️ Before you start:** Read the [Available Packages Guide](./COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md) to understand which packages you can import. Not all npm packages are available!
 
-### 2. Edit Plugin Configuration
+### 2. Edit Plugin Manifest
 
-Update `package.json`:
+Update `plugin.json` (the canonical manifest — see [schema](../packages/plugin-system/src/schemas/plugin.schema.json)):
 
 ```json
 {
-  "name": "@community/my-plugin",
+  "$schema": "../packages/plugin-system/src/schemas/plugin.schema.json",
+  "id": "my-plugin",
+  "name": "My Amazing Plugin",
   "version": "1.0.0",
-  "pluginMetadata": {
-    "id": "my-plugin",
-    "name": "My Amazing Plugin",
-    "description": "Does amazing things",
-    "category": "feature",
-    "icon": "Star",
-    "tags": ["analytics", "dashboard"],
-    "workspaceDependencies": {
-      "@workspace/plugin-system": ">=1.0.0"
-    }
+  "description": "Does amazing things",
+  "author": { "name": "Your Name" },
+  "namespace": "my-plugin",
+  "type": "app",
+  "category": "feature",
+  "apiVersion": ">=1.0.0",
+  "entry": "dist/my-plugin.mjs",
+  "css": "dist/my-plugin.css",
+  "icon": "Star",
+  "tags": ["analytics", "dashboard"],
+  "workspaceDependencies": {
+    "@workspace/plugin-system": ">=1.0.0",
+    "@workspace/ui": ">=1.0.0"
   }
 }
 ```
@@ -178,7 +183,8 @@ my-plugin/
 │   ├── services/             # Business logic
 │   └── gql/                  # GraphQL fragments (optional)
 │       └── my-fields.graphql
-├── package.json              # With pluginMetadata
+├── plugin.json               # Plugin manifest (see plugin.schema.json)
+├── package.json
 ├── tsconfig.json
 ├── vite.config.ts
 └── README.md
@@ -568,18 +574,21 @@ In the new repository, ensure your plugin is self-contained:
 }
 ```
 
-**`plugin-metadata.json`:**
+**`plugin.json`:**
 ```json
 {
+  "$schema": "../packages/plugin-system/src/schemas/plugin.schema.json",
   "id": "my-org-plugin",
   "name": "My Org Plugin",
-  "description": "Plugin for my organization",
   "version": "1.0.0",
-  "author": {
-    "name": "Your Name",
-    "email": "your.email@example.com"
-  },
+  "description": "Plugin for my organization",
+  "author": { "name": "Your Name", "email": "your.email@example.com" },
+  "namespace": "my-org",
+  "type": "app",
   "category": "feature",
+  "apiVersion": ">=1.0.0",
+  "entry": "dist/my-org-plugin.mjs",
+  "css": "dist/my-org-plugin.css",
   "repositoryUrl": "https://github.com/your-org/my-org-plugin",
   "workspaceDependencies": {
     "@workspace/plugin-system": ">=1.0.0",
@@ -915,9 +924,7 @@ It also has `themes/univie.css`, `implementations/*/locales/**/*`, and `assets/l
    - **maven-bundle-plugin:** `Management-Plugin: univie`, `Http-Classpath: /static/plugins/univie` (or equivalent so the JAR serves files under `/static/plugins/univie/`).
    - **exec-maven-plugin (optional):** Run `pnpm build` in `../` (frontend root) before copy-resources; use `workingDirectory` `${project.basedir}/..` and pnpm from the monorepo (or from plugin repo if self-contained).
 
-2. **One .mjs URL per JAR plugin (current limitation)** – The backend exposes **one** plugin entry per JAR (path `/static/plugins/univie`). The frontend `jarPluginLoader` builds **one** URL per plugin: `{path}/{pluginDir}.mjs`, e.g. `/static/plugins/univie/univie.mjs`. So either:
-   - **Option A:** Add a single entry point `univie.mjs` in the univie build that imports (or dynamic-imports) the four chunks; put that file in `dist/` and have the JAR copy it so the backend serves `/static/plugins/univie/univie.mjs`. Then the core loads one URL and the plugin loads the rest internally.
-   - **Option B:** Extend the backend and/or frontend so one JAR can expose multiple modules (e.g. backend lists each `.mjs` under the bundle, or frontend fetches a small manifest from the plugin path and loads each URL). Not implemented today.
+2. **One plugins.json entry per discovered `.mjs` (implemented)** – The backend scans the JAR's static plugin directory and emits one `plugins.json` entry per discovered `*.mjs` file. That means the four Univie bundles above are exposed individually in production as well. The frontend loads `config` entries first, re-merges runtime config, then loads the remaining JAR entries whose `namespace/type` match `app.pluginNamespace`.
 
 3. **Build order** – From repo root: build frontend first (`cd .local-plugins/univie && pnpm build`), then build the backend JAR (`mvn -f .local-plugins/univie/backend/pom.xml clean install`). Deploy the resulting JAR to Opencast `deploy/`.
 
@@ -927,7 +934,7 @@ It also has `themes/univie.css`, `implementations/*/locales/**/*`, and `assets/l
 |--------|-------------|----------------|
 | **In-repo** (`plugins/`) | No extra deploy step; always in sync with core; simple CI. | Plugins live in main repo; not suitable for private/org-only code. |
 | **`.local-plugins/` as own repo** | Versioned, shareable, separate from core; dev uses same clone, prod can build JARs from it. | Need to clone two repos (core + plugins); CI must checkout plugins repo into `.local-plugins/` to build JARs. |
-| **JAR deployment** | Single deploy unit; backend discovers plugins; no CDN/registry; can include backend Java. | One .mjs URL per JAR today (multi-entry like univie needs a single loader .mjs or backend/frontend extension); requires Maven and Opencast deploy. |
+| **JAR deployment** | Single deploy unit; backend discovers plugins; no CDN/registry; can include backend Java; one JAR can expose multiple frontend entry modules. | Requires Maven and Opencast deploy. |
 | **Registry + URL (A4)** | Community distribution; users install from Marketplace; independent versioning. | Need to host plugin (CDN or server) and maintain registry; version/compat checks on client. |
 | **Baked-in registry** | Fixed set of prod URLs shipped with app; no external registry. | Plugin list is part of app build; updates need app redeploy or config override. |
 
@@ -948,36 +955,36 @@ export default createPlugin({...});
 // Optional: __injected_fragments__ is auto-generated if you have .graphql files
 ```
 
-### Plugin Metadata
+### Plugin Manifest (`plugin.json`)
 
-Every community plugin should include a `plugin-metadata.json` file in its root directory. This file provides essential information about your plugin for the Marketplace and Registry.
+Every plugin must have a `plugin.json` in its root directory. This is the source of truth for the runtime, marketplace, and registry.
 
-**Required fields:**
-- `id`: Unique plugin identifier (lowercase, alphanumeric, hyphens only)
-- `name`: Human-readable plugin name
-- `description`: Short description of what the plugin does
-- `version`: Semantic version (MAJOR.MINOR.PATCH)
-- `author`: Author information (at least `name` required)
-- `category`: One of: `feature`, `theme`, `integration`, `utility`, `experimental`
+**Required fields:** `id`, `name`, `version`, `description`, `author`, `namespace`
 
-**Example `plugin-metadata.json`:**
+**Recommended fields:** `type`, `category`, `apiVersion`, `entry`, `css`, `workspaceDependencies`
+
+**Example `plugin.json`:**
 ```json
 {
+  "$schema": "../packages/plugin-system/src/schemas/plugin.schema.json",
   "id": "my-plugin",
   "name": "My Community Plugin",
-  "description": "Short description of what this plugin does.",
   "version": "1.0.0",
+  "description": "Short description of what this plugin does.",
   "author": {
     "name": "Your Name",
-    "email": "your.email@example.com",
-    "url": "https://example.com"
+    "email": "your.email@example.com"
   },
+  "namespace": "my-plugin",
+  "type": "app",
   "category": "feature",
+  "apiVersion": ">=1.0.0",
+  "entry": "dist/my-plugin.mjs",
+  "css": "dist/my-plugin.css",
   "icon": "Puzzle",
   "tags": ["example", "community"],
-  "repositoryUrl": "https://github.com/your-org/your-plugin",
-  "homepageUrl": "https://example.com/your-plugin",
   "license": "MIT",
+  "repositoryUrl": "https://github.com/your-org/your-plugin",
   "workspaceDependencies": {
     "@workspace/plugin-system": ">=1.0.0",
     "@workspace/ui": ">=1.0.0"
@@ -985,14 +992,24 @@ Every community plugin should include a `plugin-metadata.json` file in its root 
 }
 ```
 
-**Validation:**
-Use the validator to check your metadata:
-```bash
-# From the monorepo root
-pnpm ts-node packages/plugin-system/src/utils/pluginMetadataValidator.ts
+**Multi-module plugins** (e.g., org plugin with sidebar + footer + app) use the `modules` array instead of `entry`/`type`:
+```json
+{
+  "id": "org.myuni",
+  "namespace": "myuni",
+  "modules": [
+    { "id": "app", "type": "app", "entry": "dist/plugin-myuni-app.mjs", "css": "dist/myuni.css" },
+    { "id": "sidebar", "type": "sidebar", "entry": "dist/plugin-myuni-sidebar.mjs" }
+  ]
+}
 ```
 
-See the [Plugin Metadata Schema](../../packages/plugin-system/src/schemas/plugin-metadata.schema.json) for the complete specification.
+**Validation:**
+```bash
+pnpm ts-node packages/plugin-system/scripts/export-registry.ts ./plugin.json
+```
+
+See the [Plugin Manifest Schema](../packages/plugin-system/src/schemas/plugin.schema.json) for the complete specification.
 
 ## Using Workspace Packages
 
@@ -1161,15 +1178,14 @@ By default, plugins can only be loaded from:
 
 ### Version Constraints
 
-Define compatible versions in your `package.json`:
+Define compatible versions in your `plugin.json`:
 
 ```json
 {
-  "pluginMetadata": {
-    "workspaceDependencies": {
-      "@workspace/plugin-system": ">=1.0.0",
-      "@workspace/ui": ">=1.0.0"
-    }
+  "apiVersion": ">=1.0.0",
+  "workspaceDependencies": {
+    "@workspace/plugin-system": ">=1.0.0",
+    "@workspace/ui": ">=1.0.0"
   }
 }
 ```
@@ -1235,11 +1251,11 @@ Before submitting your plugin to the Community Registry, generate a registry-com
 
 ```bash
 # From your plugin directory
-pnpm ts-node ../../packages/plugin-system/scripts/export-registry.ts ./plugin-metadata.json
+pnpm ts-node ../../packages/plugin-system/scripts/export-registry.ts ./plugin.json
 ```
 
 This will:
-1. Validate your `plugin-metadata.json` against the schema
+1. Validate your `plugin.json` against the schema
 2. Output a formatted JSON entry ready for the registry
 3. Include a placeholder for the CDN URL (replace `<ADD_CDN_URL_HERE>`)
 

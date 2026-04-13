@@ -68,6 +68,30 @@ const parsePluginName = (name: string): { namespace: string; type: string } => {
   return { namespace: namespace || "unknown", type: type || "unknown" };
 };
 
+interface RemotePluginEntry {
+  name: string;
+  url: string;
+  namespace?: string;
+  type?: string;
+  cssUrl?: string;
+  localesUrl?: string;
+  i18nNamespaces?: string[];
+}
+
+const matchesNamespaceAndType = (
+  entry: Pick<RemotePluginEntry, "namespace" | "type">,
+  config: AppConfig | undefined,
+  enabledNamespaces: Set<string>,
+): boolean => {
+  if (enabledNamespaces.size === 0) return true;
+  if (entry.namespace === undefined) return true;
+  if (!enabledNamespaces.has(entry.namespace)) return false;
+  if (entry.type === undefined) return true;
+
+  const types = getEnabledTypesForNamespace(config, entry.namespace);
+  return types === "all" || types.has(entry.type);
+};
+
 interface PluginInitializerProps {
   children: React.ReactNode;
   config?: AppConfig; // Add config prop
@@ -294,44 +318,72 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           );
           const jarPlugins = await loadJarPlugins(mergedConfig);
           manager.addFunction("marketplace.getJarPlugins", () => jarPlugins);
-          const jarPluginsToLoad =
+          const jarPluginsToConsider =
             replacedJarScopes.size > 0
               ? jarPlugins.filter((p) => !replacedJarScopes.has(p.scope))
               : jarPlugins;
-          if (jarPluginsToLoad.length > 0) {
-            registerPluginLocales(jarPluginsToLoad);
-            if (jarPluginsToLoad.length < jarPlugins.length) {
+          if (jarPluginsToConsider.length > 0) {
+            if (jarPluginsToConsider.length < jarPlugins.length) {
               logger.info("PluginInitializer: Skipping JAR plugin(s) replaced by .local-plugins", {
-                skipped: jarPlugins.length - jarPluginsToLoad.length,
+                skipped: jarPlugins.length - jarPluginsToConsider.length,
                 replacedScopes: [...replacedJarScopes],
               });
             }
-            logger.info("PluginInitializer: Loading JAR plugin(s) from backend", {
-              count: jarPluginsToLoad.length,
-            });
-            const jarLoadResults = await Promise.allSettled(
-              jarPluginsToLoad.map((jarPlugin) =>
-                loadAndRegister(jarPlugin.url, manager, {
-                  ...(jarPlugin.cssUrl ? { cssUrl: jarPlugin.cssUrl } : {}),
-                  skipUrlValidation: true,
-                }),
-              ),
+
+            const loadBatch = async (
+              entries: typeof jarPluginsToConsider,
+              phase: 1 | 2,
+            ) => {
+              if (entries.length === 0) return;
+              registerPluginLocales(entries);
+              logger.info(`PluginInitializer: Loading JAR plugin(s) from backend (phase ${phase})`, {
+                count: entries.length,
+              });
+              const results = await Promise.allSettled(
+                entries.map((jarPlugin) =>
+                  loadAndRegister(jarPlugin.url, manager, {
+                    ...(jarPlugin.cssUrl ? { cssUrl: jarPlugin.cssUrl } : {}),
+                    skipUrlValidation: true,
+                  }),
+                ),
+              );
+              results.forEach((result, index) => {
+                const jarPlugin = entries[index];
+                if (!jarPlugin) return;
+                if (result.status === "rejected") {
+                  logger.error(
+                    `PluginInitializer: Failed to load JAR plugin "${jarPlugin.name}" from ${jarPlugin.url}`,
+                    result.reason instanceof Error
+                      ? result.reason
+                      : new Error(String(result.reason)),
+                  );
+                } else if (result.status === "fulfilled" && !result.value.success) {
+                  logger.warn(
+                    `PluginInitializer: JAR plugin "${jarPlugin.name}" failed to load`,
+                    { error: result.value.error },
+                  );
+                }
+              });
+            };
+
+            const enabled1 = getEnabledPluginNamespaces(config);
+            const toLoad1 =
+              enabled1.size === 0
+                ? jarPluginsToConsider
+                : jarPluginsToConsider.filter((entry) =>
+                    matchesNamespaceAndType(entry, config, enabled1),
+                  );
+            await loadBatch(toLoad1, 1);
+
+            const mergedJarConfig = getAppConfigSync(manager);
+            const enabled2 = getEnabledPluginNamespaces(mergedJarConfig);
+            const loadedUrls = new Set(toLoad1.map((entry) => entry.url));
+            const toLoad2 = jarPluginsToConsider.filter(
+              (entry) =>
+                !loadedUrls.has(entry.url) &&
+                matchesNamespaceAndType(entry, mergedJarConfig, enabled2),
             );
-            jarLoadResults.forEach((result, index) => {
-              const jarPlugin = jarPluginsToLoad[index];
-              if (!jarPlugin) return;
-              if (result.status === "rejected") {
-                logger.error(
-                  `PluginInitializer: Failed to load JAR plugin "${jarPlugin.name}" from ${jarPlugin.url}`,
-                  result.reason instanceof Error ? result.reason : new Error(String(result.reason)),
-                );
-              } else if (result.status === "fulfilled" && !result.value.success) {
-                logger.warn(
-                  `PluginInitializer: JAR plugin "${jarPlugin.name}" failed to load`,
-                  { error: result.value.error },
-                );
-              }
-            });
+            await loadBatch(toLoad2, 2);
           }
         } catch (error) {
           logger.debug("PluginInitializer: JAR plugins not available or failed", {
@@ -372,23 +424,14 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
               });
             };
 
-            const matchesNamespaceAndType = (
-              e: (typeof localManifest)[0],
-              cfg: AppConfig | undefined,
-              enabledNamespaces: Set<string>,
-            ) => {
-              if (e.namespace === undefined || !enabledNamespaces.has(e.namespace)) return false;
-              if (e.type === undefined) return true;
-              const types = getEnabledTypesForNamespace(cfg, e.namespace);
-              return types === "all" || types.has(e.type);
-            };
-
             // Phase 1: load entries that match current config (e.g. .local-plugins/config/)
             const enabled1 = getEnabledPluginNamespaces(config);
             const toLoad1 =
               enabled1.size === 0
                 ? localManifest
-                : localManifest.filter((e) => matchesNamespaceAndType(e, config, enabled1));
+                : localManifest.filter((entry) =>
+                    matchesNamespaceAndType(entry, config, enabled1),
+                  );
             if (toLoad1.length > 0) {
               registerPluginLocales(toLoad1);
               logger.info("PluginInitializer: Loading .local-plugins (phase 1)", {
@@ -403,8 +446,9 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
             const enabled2 = getEnabledPluginNamespaces(mergedConfig);
             const loadedUrls = new Set(toLoad1.map((e) => e.url));
             const toLoad2 = localManifest.filter(
-              (e) =>
-                !loadedUrls.has(e.url) && matchesNamespaceAndType(e, mergedConfig, enabled2),
+              (entry) =>
+                !loadedUrls.has(entry.url) &&
+                matchesNamespaceAndType(entry, mergedConfig, enabled2),
             );
             if (toLoad2.length > 0) {
               registerPluginLocales(toLoad2);

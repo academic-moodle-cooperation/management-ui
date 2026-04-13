@@ -1,7 +1,11 @@
 /**
  * Export all plugins from their respective packages.
  *
- * IMPORTANT: Only built-in (core) plugins should be committed here.
+ * IMPORTANT: Only built-in plugins that ship with the core repo should be committed here.
+ * That includes:
+ * - `plugins/core` for mandatory extension points/defaults
+ * - optional shared plugins maintained with the core repo (for example admin tooling)
+ *
  * University/organization-specific plugins should be:
  * - Developed in .local-plugins/ (gitignored), or
  * - Distributed as Community Plugins via a Registry, or

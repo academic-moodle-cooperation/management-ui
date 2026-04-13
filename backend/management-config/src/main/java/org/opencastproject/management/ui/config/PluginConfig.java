@@ -23,11 +23,17 @@ package org.opencastproject.management.ui.config;
 
 public class PluginConfig {
 
+  private String id;
+
   private String name;
 
   private String path;
 
   private String scope;
+
+  private String namespace;
+
+  private String type;
 
   private String scriptUrl;
 
@@ -36,6 +42,14 @@ public class PluginConfig {
   private String localesUrl;
 
   private String[] i18nNamespaces;
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
 
   public String getName() {
     return name;
@@ -59,6 +73,22 @@ public class PluginConfig {
 
   public void setScope(String scope) {
     this.scope = scope;
+  }
+
+  public String getNamespace() {
+    return namespace;
+  }
+
+  public void setNamespace(String namespace) {
+    this.namespace = namespace;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
   }
 
   public String getScriptUrl() {

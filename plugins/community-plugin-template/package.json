@@ -13,20 +13,7 @@
     "type": "git",
     "url": "https://github.com/your-org/your-plugin"
   },
-  "pluginMetadata": {
-    "id": "my-plugin",
-    "name": "My Community Plugin",
-    "description": "Description of what this plugin does",
-    "category": "feature",
-    "icon": "Puzzle",
-    "tags": [
-      "example",
-      "community"
-    ],
-    "workspaceDependencies": {
-      "@workspace/plugin-system": ">=1.0.0"
-    }
-  },
+  "pluginMetadata": "./plugin.json",
   "main": "./dist/my-plugin.mjs",
   "exports": {
     ".": "./dist/my-plugin.mjs"

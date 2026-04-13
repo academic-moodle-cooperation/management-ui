@@ -1,0 +1,209 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Management UI Plugin Manifest",
+  "description": "Canonical manifest for Management UI plugins. This schema defines the contract between plugin authors and the runtime, marketplace, and registry. File should be named plugin.json in the plugin root.",
+  "type": "object",
+  "required": ["id", "name", "version", "description", "author", "namespace"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for editor support."
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9.-]*$",
+      "description": "Globally unique plugin identifier. Use kebab-case or reverse-domain notation (e.g., 'my-analytics', 'org.univie.apps'). This is the canonical ID used in dependency references, the registry, and activation config."
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable display name shown in the marketplace and admin UI."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.]+)?$",
+      "description": "Semantic version (MAJOR.MINOR.PATCH, optional prerelease suffix). Increment MAJOR for breaking changes to extension points or config shape."
+    },
+    "description": {
+      "type": "string",
+      "description": "One or two sentence summary of what the plugin does."
+    },
+    "author": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "url": { "type": "string", "format": "uri" },
+        "organization": {
+          "type": "string",
+          "description": "Organization name (e.g., 'University of Vienna')."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "namespace": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Plugin namespace for config-based activation. Typically the org or feature name (e.g., 'univie', 'tuwien', 'analytics'). The runtime uses app.pluginNamespace to enable/disable namespaces."
+    },
+    "type": {
+      "type": "string",
+      "description": "Plugin type for single-module plugins (e.g., 'app', 'sidebar', 'footer', 'config', 'theme', 'landing-page', 'navigation'). Used for per-type activation filtering. Omit when using 'modules' array."
+    },
+    "category": {
+      "type": "string",
+      "enum": ["feature", "theme", "integration", "utility", "config", "experimental"],
+      "description": "Marketplace category for discovery and grouping."
+    },
+    "visibility": {
+      "type": "string",
+      "enum": ["public", "private"],
+      "default": "public",
+      "description": "Whether this plugin is publicly discoverable in the registry or restricted to specific orgs."
+    },
+
+    "apiVersion": {
+      "type": "string",
+      "description": "Minimum Management UI core API version required (semver range, e.g., '>=1.0.0'). The runtime and marketplace use this to check compatibility before loading."
+    },
+    "workspaceDependencies": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "Version constraints for @workspace/* packages the plugin imports at runtime (e.g., { \"@workspace/plugin-system\": \">=1.0.0\", \"@workspace/ui\": \">=1.0.0\" })."
+    },
+    "pluginDependencies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "IDs of other plugins that must be loaded before this one (e.g., ['core-config', 'org.univie.config'])."
+    },
+
+    "entry": {
+      "type": "string",
+      "description": "Main .mjs entry point for single-module plugins (relative path from plugin root, e.g., 'dist/my-plugin.mjs'). Omit when using 'modules'."
+    },
+    "css": {
+      "type": "string",
+      "description": "CSS file for single-module plugins (relative path, e.g., 'dist/my-plugin.css'). Omit when using 'modules'."
+    },
+    "locales": {
+      "type": "string",
+      "description": "Directory containing locale files (relative path). Expected structure: <locales>/<i18n-namespace>/<lng>.json"
+    },
+    "i18nNamespaces": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "i18n namespace names this plugin ships translations for."
+    },
+
+    "modules": {
+      "type": "array",
+      "description": "For multi-entry plugins (e.g., an org plugin with sidebar + footer + app in one package). Each module is an independently activatable unit. When present, root-level 'entry', 'css', and 'type' are ignored.",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "entry"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Module identifier, unique within this plugin (e.g., 'sidebar', 'footer')."
+          },
+          "type": {
+            "type": "string",
+            "description": "Module type for activation filtering (e.g., 'app', 'sidebar', 'config')."
+          },
+          "entry": {
+            "type": "string",
+            "description": "Entry .mjs file (relative path from plugin root)."
+          },
+          "css": {
+            "type": "string",
+            "description": "CSS file for this module. Multiple modules can share the same CSS file."
+          },
+          "locales": {
+            "type": "string",
+            "description": "Locale directory for this module."
+          },
+          "i18nNamespaces": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "license": {
+      "type": "string",
+      "description": "SPDX license identifier (e.g., 'MIT', 'Apache-2.0', 'EUPL-1.2')."
+    },
+    "repositoryUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Git repository URL."
+    },
+    "homepageUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Project homepage or documentation URL."
+    },
+    "icon": {
+      "type": "string",
+      "description": "Lucide icon name for marketplace display (e.g., 'GraduationCap', 'BarChart3', 'Puzzle')."
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Searchable tags for registry discovery."
+    },
+    "screenshots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["url"],
+        "properties": {
+          "url": { "type": "string", "format": "uri" },
+          "caption": { "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "description": "Screenshots for marketplace display."
+    },
+
+    "backend": {
+      "type": "object",
+      "description": "Backend/hybrid plugin metadata. Present when the plugin ships as an OSGi JAR with server-side code or static assets.",
+      "properties": {
+        "managementPlugin": {
+          "type": "string",
+          "description": "OSGi Management-Plugin header value (e.g., 'univie'). The backend uses this to discover and expose the plugin."
+        },
+        "httpAlias": {
+          "type": "string",
+          "description": "HTTP alias for serving static files (e.g., '/management-ui')."
+        },
+        "httpClasspath": {
+          "type": "string",
+          "description": "Classpath for static files inside the JAR (e.g., '/static/plugins/univie')."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "replacesJarScopes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "JAR plugin scopes this .local-plugins entry replaces during dev (e.g., ['management_ui_plugin_univie']). Only used in dev when a local build overrides a deployed JAR."
+    }
+  },
+  "additionalProperties": false,
+
+  "if": {
+    "not": { "required": ["modules"] }
+  },
+  "then": {
+    "anyOf": [
+      { "required": ["entry"] },
+      { "required": ["type"] }
+    ]
+  }
+}

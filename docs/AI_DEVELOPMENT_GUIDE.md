@@ -1,553 +1,447 @@
 # AI Development Guide - Management UI
 
-**Version:** 1.0.0  
-**Last Updated:** 2025-11-12
+**Version:** 2.0.0
+**Last Updated:** 2026-04-13
 
 ## Purpose
 
-This guide serves as the **primary entry point for AI models** working with the Management UI codebase. It explains how the documentation system is organized, where to find relevant information, and the requirements for maintaining documentation when making changes.
+This guide is the **primary entry point for AI models** working with the Management UI codebase. It explains the architecture, plugin system, key contracts, and common pitfalls.
 
-## Documentation Philosophy
+For a machine-readable summary of the project, see [`/llms.txt`](/llms.txt).
 
-Every component in this system is **documented for independent evolution**. The documentation enables:
+## Architecture Overview
 
-- **Easy package updates** - Clear dependencies and boundaries
-- **Technology swapping** - Well-defined interfaces and abstractions
-- **New app/plugin creation** - Templates and examples
-- **AI-assisted development** - Structured, navigable documentation
-
-## Documentation Structure
+Management UI is a monorepo (pnpm + Turborepo) with three pillars:
 
 ```
-Management UI/
-├── docs/AI_DEVELOPMENT_GUIDE.md       ← YOU ARE HERE (start here)
-├── README.md                      ← Project overview
-│
-├── /docs/                         ← Development guides & decisions
-│   ├── /templates/                ← Documentation templates
-│   │   ├── PACKAGE_README_TEMPLATE.md
-│   │   ├── APP_README_TEMPLATE.md
-│   │   ├── PLUGIN_README_TEMPLATE.md
-│   │   └── IMPLEMENTATION_README_TEMPLATE.md
-│   ├── /architecture/             ← Architecture decision records
-│   │   ├── ADR-001-plugin-system.md
-│   │   └── ADR-002-monorepo-structure.md
-│   ├── /workflows/                ← How-to guides
-│   │   ├── ADDING_PACKAGES.md
-│   │   ├── ADDING_APPS.md
-│   │   ├── ADDING_PLUGINS.md
-│   │   ├── UPDATING_DEPENDENCIES.md
-│   │   └── SWAPPING_TECHNOLOGIES.md
-│   ├── internal/
-│   │   ├── COUPLING_ANALYSIS.md       ← Package dependency analysis
-│   ├── CONFIG_GENERATION.md       ← Config merging in dev vs prod
-│   ├── CONFIG_ORDER.md            ← Plugin config precedence
-│   └── internal/
-│       └── FAVICON_CONFIGURATION.md   ← Favicon/asset customization
-│
-├── /packages/                     ← Shared infrastructure
-│   ├── README.md                  ← Package ecosystem overview
-│   └── [package-name]/
-│       └── README.md              ← Individual package docs
-│
-├── /apps/                         ← Applications
-│   ├── README.md                  ← App architecture overview
-│   └── [app-name]/
-│       └── README.md              ← Individual app docs
-│
-└── /plugins/                      ← Extension system
-    ├── README.md                  ← Plugin system overview
-    ├── /core/                     ← Core extension points
-    │   └── README.md
-    └── /[university]/             ← University-specific plugins
-        └── README.md
+apps/                ← Domain applications (series, episodes, upload, core shell)
+packages/            ← Shared infrastructure (layered, lower never depends on higher)
+plugins/             ← Built-in core/shared plugins (shipped with the OSS repo)
+.local-plugins/      ← External org plugins (gitignored, separate repo or checkout)
 ```
-
-## Quick Navigation for Common Tasks
-
-### I want to create a NEW APPLICATION
-
-1. **Read:** [`/docs/workflows/ADDING_APPS.md`](/docs/workflows/ADDING_APPS.md) - Step-by-step app creation guide
-2. **Reference:** [`/docs/templates/APP_README_TEMPLATE.md`](/docs/templates/APP_README_TEMPLATE.md) - Documentation template
-3. **Example:** [`/apps/management-ui-episodes/README.md`](/apps/management-ui-episodes/README.md) - Well-documented app
-4. **Understand:** [`/apps/README.md`](/apps/README.md) - Application architecture patterns
-
-### I want to create a NEW PLUGIN
-
-1. **Read:** [`/docs/workflows/ADDING_PLUGINS.md`](/docs/workflows/ADDING_PLUGINS.md) - Plugin creation guide
-2. **Reference:** [`/docs/templates/PLUGIN_README_TEMPLATE.md`](/docs/templates/PLUGIN_README_TEMPLATE.md) - Documentation template
-3. **Example:** [`/plugins/example-university/README.md`](/plugins/example-university/README.md) - Reference implementation
-4. **Understand:** [`/plugins/README.md`](/plugins/README.md) - Plugin system overview
-5. **Export from core to org-local (official helper):** `pnpm plugin:export-local <plugin-name> --move`
-6. **Export + convert to community-style runtime plugin:** `pnpm plugin:export-local <plugin-name> --move --convert-community --wire-config`
-7. **Create new local community-style plugin from template:** `pnpm plugin:create-local <plugin-name> --wire-config`
-
-### I want to create a NEW PACKAGE
-
-1. **Read:** [`/docs/workflows/ADDING_PACKAGES.md`](/docs/workflows/ADDING_PACKAGES.md) - Package creation guide
-2. **Reference:** [`/docs/templates/PACKAGE_README_TEMPLATE.md`](/docs/templates/PACKAGE_README_TEMPLATE.md) - Documentation template
-3. **Check:** [`/docs/internal/COUPLING_ANALYSIS.md`](/docs/internal/COUPLING_ANALYSIS.md) - Understand dependency layers
-4. **Understand:** [`/packages/README.md`](/packages/README.md) - Package ecosystem
-
-### I want to MODIFY an existing package
-
-1. **Read:** The package's `README.md` file first (e.g., `/packages/query/README.md`)
-2. **Check:** [`/docs/internal/COUPLING_ANALYSIS.md`](/docs/internal/COUPLING_ANALYSIS.md) - Understand dependencies
-3. **After changes:** Update the package's README.md with your modifications
-4. **If adding features:** Document in "API Surface" section
-5. **If changing dependencies:** Update "Dependencies & Coupling" section
-
-### I want to UPDATE a dependency or SWAP technology
-
-1. **Read:** [`/docs/workflows/UPDATING_DEPENDENCIES.md`](/docs/workflows/UPDATING_DEPENDENCIES.md) - Safe update process
-2. **Read:** [`/docs/workflows/SWAPPING_TECHNOLOGIES.md`](/docs/workflows/SWAPPING_TECHNOLOGIES.md) - Technology replacement guide
-3. **Check:** [`/packages/README.md`](/packages/README.md) - Dependency graph and impact analysis
-4. **Test:** Follow validation steps in the workflow guides
-
-## ⚠️ Critical Warnings: Auto-Generated Files
-
-**DO NOT manually edit these folders/files - They are auto-generated and will be overwritten:**
-
-1. **`packages/ui/src/components/ui/`** - shadcn/ui components
-   - Generated by: `npx shadcn@latest add [component-name]`
-   - Configuration: `packages/ui/components.json`
-   - See: [`packages/ui/src/components/ui/README.md`](packages/ui/src/components/ui/README.md)
-   - **Exception:** Prettier formatting is acceptable, but avoid structural changes
-
-2. **Other auto-generated files** - Check for `components.json` or similar config files that indicate auto-generation
-
-**If you need to customize auto-generated components:**
-
-- Copy to a different location (e.g., `src/components/custom/`)
-- Use the plugin system to override via `component-override` extension points
-- Document your customization approach
-
-## Documentation Update Requirements
-
-**CRITICAL:** When you make ANY change to the codebase, you MUST update documentation:
-
-### For Package Changes
-
-- **Modified exports?** → Update "API Surface" section in package README.md
-- **Added dependencies?** → Update "Dependencies & Coupling" section
-- **Changed behavior?** → Update "Usage Examples" section
-- **Breaking changes?** → Add to "Migration Guide" section
-
-### For App Changes
-
-- **New features?** → Update "Key Features" section in app README.md
-- **New routes?** → Update "Architecture" or "File Structure" section
-- **Changed integration?** → Update "Integration Points" section
-
-### For Plugin Changes
-
-- **New extension point?** → Document in core plugin README.md
-- **New implementation?** → Create implementation README.md
-- **Changed registration?** → Update plugin README.md examples
-
-## Architecture Understanding
-
-Before making significant changes, understand the system architecture:
 
 ### Package Dependency Layers
 
 ```
 ┌─────────────────────────────────────────┐
-│ Application Layer                       │
-│ - app-runtime, providers, vite-config   │
+│ Layer 3 — Application                   │
+│  app-runtime, providers, vite-config,   │
+│  ui-config                              │
 ├─────────────────────────────────────────┤
-│ Integration Layer                       │
-│ - query, router, ui, ui-config          │
+│ Layer 2 — Integration                   │
+│  query, router, ui, remote-plugin-loader│
 ├─────────────────────────────────────────┤
-│ Foundation Layer                        │
-│ - plugin-system, store, i18n            │
+│ Layer 1 — Foundation                    │
+│  plugin-system, store, i18n             │
 ├─────────────────────────────────────────┤
-│ Core Infrastructure                     │
-│ - utils, typescript-config, eslint-     │
-│   config, tailwind-config               │
+│ Layer 0 — Core Infrastructure           │
+│  utils, typescript-config, eslint-      │
+│  config, tailwind-config                │
 └─────────────────────────────────────────┘
 ```
 
-**Key Principle:** Lower layers NEVER depend on higher layers.
+**Key rule:** Lower layers NEVER depend on higher layers.
 
-### Read These Architecture Decisions:
+### Plugin Boundaries
 
-- [`/docs/architecture/ADR-001-plugin-system.md`](/docs/architecture/ADR-001-plugin-system.md) - Why we use this plugin architecture
-- [`/docs/architecture/ADR-002-monorepo-structure.md`](/docs/architecture/ADR-002-monorepo-structure.md) - Why packages are organized this way
+| Location | What belongs here | Shipped with core? |
+|----------|-------------------|--------------------|
+| `plugins/core/` | Mandatory extension points and defaults | Yes |
+| `plugins/admin-*/` | Optional shared plugins (marketplace, dashboard) | Yes |
+| `plugins/example-university/` | Reference implementation for learning | Yes |
+| `plugins/community-plugin-template/` | Starter template for new plugins | Yes |
+| `.local-plugins/<org>/` | Org-specific or private plugins (dev checkout) | No |
+| External repos / JARs / CDN | Production org plugins and community plugins | No |
 
-## Key Design Principles
+**`plugins/index.ts` exports only core-shipped plugins.** Org plugins are NEVER added here.
 
-### 1. Loose Coupling
+## Documentation Structure
 
-Each package should be **independently updatable**:
+```
+docs/
+├── AI_DEVELOPMENT_GUIDE.md          ← YOU ARE HERE
+├── PLUGIN_STYLING_CONTRACT.md       ← CSS/theming rules for plugins
+├── COMMUNITY_PLUGIN_DEVELOPMENT.md  ← Full plugin development lifecycle
+├── PLUGIN_LOADING_MECHANISMS.md     ← All loading paths explained
+├── CONFIG_GENERATION.md             ← Dev vs prod config
+├── CONFIG_ORDER.md                  ← Plugin config precedence
+├── architecture/
+│   ├── ADR-001-plugin-system.md     ← Plugin architecture rationale
+│   └── ADR-002-monorepo-structure.md ← Monorepo design decisions
+├── workflows/
+│   ├── ADDING_APPS.md
+│   ├── ADDING_PACKAGES.md
+│   ├── ADDING_PLUGINS.md
+│   ├── UPDATING_DEPENDENCIES.md
+│   └── SWAPPING_TECHNOLOGIES.md
+└── templates/
+    ├── APP_README_TEMPLATE.md
+    ├── PACKAGE_README_TEMPLATE.md
+    └── PLUGIN_README_TEMPLATE.md
 
-- Minimal dependencies
-- Clear, stable interfaces
-- No circular dependencies
-- Implementation details hidden via exports
+packages/plugin-system/src/schemas/
+└── plugin.schema.json               ← Canonical plugin manifest schema
 
-### 2. Plugin-First Architecture
+llms.txt                             ← Machine-readable project summary
+```
 
-Customization through plugins, not core modifications:
+## Quick Navigation
 
-- Extension points defined by core
-- Universities implement extensions
-- Zero core code changes for customization
+### I want to create a NEW PLUGIN
 
-### 3. Explicit Over Implicit
+1. **Start:** Copy `plugins/community-plugin-template/` or use `pnpm plugin:create-local <name> --wire-config`
+2. **Manifest:** Create `plugin.json` following `packages/plugin-system/src/schemas/plugin.schema.json`
+3. **Styling:** Read [`docs/PLUGIN_STYLING_CONTRACT.md`](/docs/PLUGIN_STYLING_CONTRACT.md) — use semantic tokens only
+4. **Full guide:** [`docs/COMMUNITY_PLUGIN_DEVELOPMENT.md`](/docs/COMMUNITY_PLUGIN_DEVELOPMENT.md)
+5. **Loading:** [`docs/PLUGIN_LOADING_MECHANISMS.md`](/docs/PLUGIN_LOADING_MECHANISMS.md)
 
-Always prefer explicit definitions:
+### I want to create a NEW APPLICATION
 
-- Clear `exports` in package.json
-- Documented public APIs
-- Explicit dependency injection
-- Clear architectural boundaries
+1. **Guide:** [`docs/workflows/ADDING_APPS.md`](/docs/workflows/ADDING_APPS.md)
+2. **Template:** [`docs/templates/APP_README_TEMPLATE.md`](/docs/templates/APP_README_TEMPLATE.md)
+3. **Example:** [`apps/management-ui-episodes/README.md`](/apps/management-ui-episodes/README.md)
+4. **Architecture:** [`apps/README.md`](/apps/README.md)
 
-### 4. Documentation as Code
+### I want to create or modify a PACKAGE
 
-Documentation is not optional:
+1. **Guide:** [`docs/workflows/ADDING_PACKAGES.md`](/docs/workflows/ADDING_PACKAGES.md)
+2. **Coupling:** [`docs/internal/COUPLING_ANALYSIS.md`](/docs/internal/COUPLING_ANALYSIS.md)
+3. **Overview:** [`packages/README.md`](/packages/README.md)
 
-- Every package has README.md
-- Every app has README.md
-- Every plugin has README.md
-- Templates ensure consistency
+### I want to UPDATE dependencies or SWAP technology
 
-## CRITICAL Patterns for Plugin Development
+1. **Update:** [`docs/workflows/UPDATING_DEPENDENCIES.md`](/docs/workflows/UPDATING_DEPENDENCIES.md)
+2. **Swap:** [`docs/workflows/SWAPPING_TECHNOLOGIES.md`](/docs/workflows/SWAPPING_TECHNOLOGIES.md)
+
+## Auto-Generated Files — DO NOT Edit
+
+| Path | Generated by | Safe to format? |
+|------|-------------|-----------------|
+| `packages/ui/src/components/ui/` | `npx shadcn@latest add [name]` | Yes (Prettier only) |
+| `packages/query/src/gql-generated.ts` | GraphQL Codegen | No |
+
+To customize auto-generated components, copy to `src/components/custom/` or use the plugin system's `component-override` extension points.
+
+## Plugin System — How It Works
+
+### Plugin Definition
+
+Every plugin is created with `createPlugin()` from `@workspace/plugin-system`:
+
+```typescript
+import { createPlugin } from "@workspace/plugin-system";
+
+export default createPlugin({
+  namespace: "my-org",    // Org or feature namespace
+  type: "app",            // Plugin type for activation filtering
+  version: "1.0.0",
+
+  initialize(manager) {
+    // Register extension points here
+  },
+  activate() {},
+  deactivate() {},
+});
+```
+
+### Plugin Manifest (`plugin.json`)
+
+Every plugin should have a `plugin.json` in its root directory. This is the source of truth for the runtime, marketplace, and registry.
+
+**Schema:** `packages/plugin-system/src/schemas/plugin.schema.json`
+
+**Single-module example:**
+```json
+{
+  "$schema": "../../packages/plugin-system/src/schemas/plugin.schema.json",
+  "id": "my-analytics",
+  "name": "Analytics Dashboard",
+  "version": "1.0.0",
+  "description": "Real-time analytics for video content.",
+  "author": { "name": "Your Name", "email": "you@example.com" },
+  "namespace": "analytics",
+  "type": "app",
+  "category": "feature",
+  "apiVersion": ">=1.0.0",
+  "entry": "dist/my-analytics.mjs",
+  "css": "dist/my-analytics.css",
+  "license": "MIT",
+  "workspaceDependencies": {
+    "@workspace/plugin-system": ">=1.0.0",
+    "@workspace/ui": ">=1.0.0"
+  }
+}
+```
+
+**Multi-module example (org plugin with multiple entry points):**
+```json
+{
+  "id": "org.univie",
+  "name": "University of Vienna Plugins",
+  "version": "2.0.0",
+  "description": "Sidebar, footer, apps, and landing page for UniVie.",
+  "author": { "name": "UniVie Team", "organization": "University of Vienna" },
+  "namespace": "univie",
+  "category": "feature",
+  "apiVersion": ">=1.0.0",
+  "modules": [
+    { "id": "app", "type": "app", "entry": "dist/plugin-univie-app.mjs", "css": "dist/univie-plugin.css" },
+    { "id": "sidebar", "type": "sidebar", "entry": "dist/plugin-univie-sidebar.mjs" },
+    { "id": "footer", "type": "footer", "entry": "dist/plugin-univie-footer.mjs" },
+    { "id": "landing-page", "type": "landing-page", "entry": "dist/plugin-univie-landing-page.mjs" }
+  ],
+  "workspaceDependencies": {
+    "@workspace/plugin-system": ">=1.0.0",
+    "@workspace/ui": ">=1.0.0"
+  }
+}
+```
+
+### Extension Points
+
+Registration uses `manager.registerObject(extensionPoint, uniqueId, value)` or
+`manager.registerComponent(extensionPoint, Component, options)`.
+
+| Extension Point | Purpose | Required Fields |
+|----------------|---------|-----------------|
+| `apps:definitions` | Register a routable app | `id`, `name`, `routePath`, `component` |
+| `sidebar:nav-items` | Add sidebar navigation | `title`, `path`, `icon?`, `order`, `permissions?` |
+| `component-override:landing-page` | Override landing page | React component |
+| `component-override:appshell:header` | Override app header | React component |
+| `component-override:appshell:footer` | Override app footer | React component |
+| `app:config` | Register configuration | Config object (pluginNamespace, theme, etc.) |
+| `app:branding` | Register branding | Logo, colors, favicon |
+
+### Two-Phase Loading
+
+The runtime loads plugins in two phases to handle circular config dependencies:
+
+1. **Phase 1:** Load all `*:config` plugins (they register `app:config` with namespace lists)
+2. **Phase 2:** Merge config from all registered `app:config` objects, then load remaining plugins filtered by `app.pluginNamespace`
+
+This allows a config plugin in `.local-plugins/config/` to declare:
+```typescript
+manager.registerObject("app:config", "org-config", {
+  app: { pluginNamespace: ["core", "admin-marketplace", "univie", "tuwien"] }
+});
+```
+...and univie/tuwien plugins load in phase 2 without needing to be bundled with core.
+
+### Loading Mechanisms
+
+| Mechanism | When | Source |
+|-----------|------|--------|
+| Built-in | Always | `plugins/index.ts` exports |
+| JAR | Production | Backend scans OSGi bundles → `plugins.json` |
+| `.local-plugins` manifest | Dev only | Vite serves `dist/*.mjs`, exposes `/local-plugins/manifest.json` |
+| Marketplace/Registry | Runtime | Community plugins from CDN URLs |
+| localStorage | Dev | Developer mode: manually entered URLs |
+
+Full details: [`docs/PLUGIN_LOADING_MECHANISMS.md`](/docs/PLUGIN_LOADING_MECHANISMS.md)
+
+## CRITICAL Patterns — Common Mistakes
 
 **AI MODELS: Read this section carefully. These are the most common mistakes.**
 
-### Plugin App Registration (TWO PARTS REQUIRED!)
+### 1. Plugin App Registration Requires TWO Parts
 
-When creating a plugin that adds a new app with sidebar navigation, you need **TWO separate plugins**:
-
-1. **App Plugin** (`apps:definitions`) - Registers the route and component
-2. **Navigation Plugin** (`sidebar:nav-items`) - Adds the item to the sidebar
+A routable app needs BOTH an app definition AND a sidebar nav item:
 
 ```typescript
-// ❌ WRONG - Only registering the app (navigation won't appear!)
-export const myAppPlugin = createPlugin({
+export default createPlugin({
   namespace: "my-feature",
   type: "app",
-  initialize(manager) {
-    manager.registerObject("apps:definitions", "my-app", {
-      id: "my-app",
-      name: "My Feature",
-      routePath: "/my-feature",
-      component: MyFeatureApp,
-    });
-  },
-});
+  version: "1.0.0",
 
-// ✅ CORRECT - Register BOTH app AND navigation
-// File 1: my-feature-app-plugin.ts
-export const myFeatureAppPlugin = createPlugin({
-  namespace: "my-feature",
-  type: "app",
   initialize(manager) {
-    manager.registerObject("apps:definitions", "my-feature-app", {
+    // PART 1: Register the app route
+    manager.registerObject("apps:definitions", "my-feature:app", {
       id: "my-feature-app",
       name: "My Feature",
       routePath: "/my-feature",
       component: MyFeatureApp,
     });
-  },
-  activate() {},
-  deactivate() {},
-});
 
-// File 2: my-feature-nav-implementation.ts
-export const myFeatureNavImplementation = createPlugin({
-  namespace: "my-feature",
-  type: "navigation",
-  initialize(manager) {
-    manager.registerObject("sidebar:nav-items", "my-feature", {
+    // PART 2: Register sidebar navigation (WITHOUT THIS, no menu item appears!)
+    manager.registerObject("sidebar:nav-items", "my-feature:nav", {
       title: "My Feature",
       path: "/my-feature",
-      icon: MyIcon,
-      order: 50,
-      permissions: ["my-feature.view"],
+      icon: LayoutDashboard,
+      order: 100,
     });
   },
+
   activate() {},
   deactivate() {},
 });
-
-// File 3: index.ts - Export BOTH
-export { myFeatureAppPlugin } from "./my-feature-app-plugin";
-export { myFeatureNavImplementation } from "./my-feature-nav-implementation";
 ```
 
-### Data Fetching (USE EXISTING GraphQL HOOKS!)
+For large plugins, these can be separate `createPlugin` calls with different types (e.g., `type: "app"` and `type: "navigation"`), but both registrations are required.
 
-**Never create mock implementations. Use the existing GraphQL hooks from `@workspace/query`.**
+### 2. Use Real GraphQL Hooks — Never Mock Data
 
 ```typescript
-// ❌ WRONG - Manual text input for IDs (terrible UX!)
+// WRONG — manual input for IDs
 <Input placeholder="Enter episode ID" />
 
-// ✅ CORRECT - Use GraphQL hooks to fetch real data
-import { useGetMyEventsQuery } from '@workspace/query';
+// CORRECT — use hooks from @workspace/query
+import { useGetMyEventsQuery } from "@workspace/query";
 
-const { data, isLoading } = useGetMyEventsQuery({
-  limit: 20,
-  query: searchTerm || undefined,
-});
+const { data, isLoading } = useGetMyEventsQuery({ limit: 20 });
 
-// IMPORTANT: Filter null values from GraphQL arrays!
+// IMPORTANT: Always filter null values from GraphQL arrays
 const events = (data?.currentUser?.myEvents?.nodes || []).filter(
   (event): event is NonNullable<typeof event> => event !== null
 );
 ```
 
-See `/packages/query/README.md` for all available hooks and patterns.
+### 3. Use Semantic Tokens — Never Hardcode Colors
 
-### Translation Registration (ADD NAMESPACE!)
+```tsx
+// WRONG
+<div className="bg-white text-gray-900">
+<div className="bg-[#1a1a2e]">
+<div style={{ color: '#333' }}>
 
-**When adding translations to a plugin, you MUST register the namespace:**
+// CORRECT
+<div className="bg-background text-foreground">
+<div className="bg-card">
+<div className="text-muted-foreground">
+```
+
+Full token catalog: [`docs/PLUGIN_STYLING_CONTRACT.md`](/docs/PLUGIN_STYLING_CONTRACT.md)
+
+### 4. Don't Name Directories Starting With `/api`
+
+The Vite dev server proxies paths starting with `/api` to the backend. Any folder
+named `api/`, `api-client/`, etc. at the plugin root will cause 404 errors in dev.
+Use `services/`, `lib/`, or `backend/` instead.
+
+### 5. External Dependencies Must Not Be Bundled
+
+Plugin `vite.config.ts` must externalize React and all `@workspace/*` packages.
+These are provided by the host at runtime. Bundling them causes duplicate React
+errors and bloated bundles.
+
+### 6. Translations Need Namespace Registration
 
 ```typescript
-// Step 1: Add namespace to packages/i18n/src/useTranslation.tsx
-i18n.init({
-  ns: ["common", "series", "episodes", "upload", "my-feature"], // Add here!
-});
+// 1. Create locale files: locales/my-feature/en.json
+{ "my-feature": { "title": "My Feature", "description": "..." } }
 
-// Step 2: Create translation files in plugin
-// plugins/my-feature/locales/my-feature/en.json
-{
-  "my-feature": {
-    "heading": "My Feature",
-    "description": "Feature description"
-  }
-}
-
-// Step 3: Use in components
+// 2. Use namespaced keys in components
 const { t } = useI18n();
-return <h1>{t('my-feature:heading')}</h1>;
+return <h1>{t("my-feature:title")}</h1>;
 ```
 
-See `/packages/i18n/README.md` for complete translation guide.
+### 7. Plugin Exports for Built-in vs External
 
-### Plugin Export (DON'T FORGET plugins/index.ts!)
+- **Built-in plugins** (in `plugins/`): Export named from `plugins/index.ts`
+- **Org plugins** (in `.local-plugins/` or external): NEVER add to `plugins/index.ts`. They load via `.local-plugins` manifest, JAR, or marketplace.
 
-Every plugin must be exported from `plugins/index.ts`:
+## Key Design Principles
 
-```typescript
-// plugins/index.ts — only core plugins are exported here
-export * from "./core";
-export * from "./example-university";
-export * from "./admin-marketplace";
-// Org-specific plugins (univie, tuwien, etc.) live in .local-plugins/ or separate repos; do not add here.
-```
+### 1. Plugin-First Architecture
+Customization through plugins, not core modifications. Extension points defined by core, implemented by plugins. Zero core code changes for org customization.
 
-### Directory Naming (AVOID `/api` PREFIX AT PROJECT ROOT)
+### 2. Loose Coupling
+Each package independently updatable. Minimal dependencies. Clear, stable interfaces. No circular dependencies.
 
-**CRITICAL:** Do NOT name your directory with a path that **starts with `api`** at the root of a plugin (e.g., `plugins/my-plugin/api/` or `plugins/my-plugin/api-client/`).
+### 3. Explicit Over Implicit
+Clear `exports` in package.json. Documented public APIs. Explicit dependency injection. Plugin manifest as source of truth.
 
-- **Why?** The Vite dev server proxies paths starting with `/api` to the backend. Any folder whose path starts with `/api` (including `/api-client`, `/api-utils`, etc.) will be intercepted by the proxy, causing **404 errors** in standalone mode.
-- **Fix:** Use `services`, `backend`, or `lib` instead.
+### 4. Semantic Theming
+All visual styling through CSS custom properties. Plugins use shared UI components and semantic tokens. Org themes override tokens, not component internals.
+
+### 5. Documentation as Code
+Every package, app, and plugin has a README. Templates ensure consistency.
 
 ## Common Patterns
 
-### Creating a Component in @workspace/ui
+### Creating a Plugin Component
 
-```typescript
-// 1. Create the component
-// packages/ui/src/components/my-component/MyComponent.tsx
+```tsx
+import { Card, CardHeader, CardTitle, CardContent } from "@workspace/ui/components";
+import { useGetMyEventsQuery } from "@workspace/query";
 
-// 2. Export from index.ts
-// packages/ui/src/index.ts
-export { MyComponent } from "./components/my-component/MyComponent";
+export const MyDashboard: React.FC = () => {
+  const { data, isLoading } = useGetMyEventsQuery({ limit: 10 });
 
-// 3. Document in README.md
-// packages/ui/README.md - add to "Components" section
+  if (isLoading) return <div className="text-muted-foreground">Loading...</div>;
 
-// 4. Use in apps
-import { MyComponent } from "@workspace/ui";
+  return (
+    <div className="container mx-auto p-6 space-y-6">
+      <h1 className="text-3xl font-bold font-heading">Dashboard</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Events</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* Render data using semantic tokens */}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
 ```
 
 ### Creating an Extension Point
 
 ```typescript
-// 1. Define in core plugin
-// plugins/core/extension-points/my-extension-point.ts
+// 1. Define in core plugin (plugins/core/)
+manager.registerComponent("my:extension-point", DefaultComponent);
 
-// 2. Document in core README.md
-// plugins/core/README.md - add to extension points catalog
-
-// 3. Implement in university plugin
-// plugins/myuni/implementations/my-implementation.ts
-
-// 4. Register in plugin initialization
-manager.registerComponent("my:extension-point", MyComponent);
+// 2. Override in org plugin
+manager.registerComponent("my:extension-point", OrgComponent, { priority: 10 });
 ```
 
-### Adding a Hook to @workspace/query
+### Creating a Config Plugin
 
 ```typescript
-// 1. Create the hook
-// packages/query/src/hooks/useMyData.ts
+export default createPlugin({
+  namespace: "my-org",
+  type: "config",
+  version: "1.0.0",
 
-// 2. Export from index.ts
-// packages/query/src/index.ts
-export { useMyData } from "./hooks/useMyData";
-
-// 3. Document in README.md
-// packages/query/README.md - add usage example
-
-// 4. Use in apps/plugins
-import { useMyData } from "@workspace/query";
+  initialize(manager) {
+    manager.registerObject("app:config", "my-org-config", {
+      app: {
+        pluginNamespace: ["core", "admin-marketplace", "my-org"],
+        name: "My Org Management UI",
+      },
+    });
+  },
+  activate() {},
+  deactivate() {},
+});
 ```
 
 ## Validation Checklist
 
-Before considering your work complete:
+Before considering work complete:
 
-- [ ] All modified packages have updated README.md
-- [ ] All new files follow existing patterns
 - [ ] TypeScript compiles: `pnpm check-types`
 - [ ] Linting passes: `pnpm lint`
 - [ ] Build succeeds: `pnpm build`
-- [ ] No new circular dependencies introduced
-- [ ] Documentation follows templates
-- [ ] Examples are provided for new features
-- [ ] Migration guide updated if breaking changes
+- [ ] No hardcoded colors — only semantic tokens
+- [ ] Plugin has `plugin.json` matching the schema
+- [ ] Both `activate()` and `deactivate()` are implemented
+- [ ] App registrations include sidebar nav items
+- [ ] External deps (React, @workspace/*) are not bundled
+- [ ] Documentation updated for any changed APIs
+- [ ] No circular dependencies introduced
 
 ## Getting Help
 
-If you're unsure about:
-
-- **Package organization** → Read [`/packages/README.md`](/packages/README.md)
-- **App architecture** → Read [`/apps/README.md`](/apps/README.md)
-- **Plugin system** → Read [`/plugins/README.md`](/plugins/README.md)
-- **Dependencies** → Read [`/docs/internal/COUPLING_ANALYSIS.md`](/docs/internal/COUPLING_ANALYSIS.md)
-- **Any decision** → Check [`/docs/architecture/`](/docs/architecture/) ADRs
-
-## Example Workflows
-
-### Workflow: Adding a New Data Fetching Hook
-
-1. Read `/packages/query/README.md` to understand current patterns
-2. Check `/docs/internal/COUPLING_ANALYSIS.md` for query package dependencies
-3. Create hook in `packages/query/src/hooks/useNewData.ts`
-4. Export from `packages/query/src/index.ts`
-5. Update `/packages/query/README.md` with:
-   - Hook description in "API Surface"
-   - Usage example
-   - Any new dependencies
-6. Run `pnpm check-types` and `pnpm lint`
-7. Use in app and verify functionality
-
-### Workflow: Creating a University Plugin
-
-1. Read `/docs/workflows/ADDING_PLUGINS.md` for step-by-step guide
-2. Copy `/plugins/example-university/` as starting point
-3. Follow template from `/docs/templates/PLUGIN_README_TEMPLATE.md`
-4. Implement university-specific components
-5. Register in plugin initialization
-6. Create comprehensive README.md
-7. Test in standalone mode: `cd plugins/myuni && pnpm dev`
-8. Test in core shell: `cd apps/management-ui-core && pnpm dev`
-
-## Community Plugin Development
-
-The Management UI supports **Community Plugins** - externally developed plugins that can be loaded dynamically at runtime without rebuilding the core application.
-
-### Key Documentation
-
-- **Full Guide:** [`/docs/COMMUNITY_PLUGIN_DEVELOPMENT.md`](/docs/COMMUNITY_PLUGIN_DEVELOPMENT.md)
-- **Template:** [`/plugins/community-plugin-template/`](/plugins/community-plugin-template/)
-
-### Community Plugin Architecture
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Management UI Core                    │
-│                                                          │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │ Plugin       │  │ Fragment     │  │ Security     │  │
-│  │ Manager      │  │ Registry     │  │ Service      │  │
-│  └──────────────┘  └──────────────┘  └──────────────┘  │
-│         ▲                 ▲                  ▲          │
-│         └─────────────────┼──────────────────┘          │
-│                           │                              │
-│                    ┌──────┴───────┐                     │
-│                    │ Remote Loader │                     │
-│                    └──────┬───────┘                     │
-└───────────────────────────┼─────────────────────────────┘
-                            │ dynamic import()
-                            ▼
-┌───────────────────────────────────────────────────────────┐
-│              Community Plugin (ES Module)                  │
-│  - Loaded from CDN (jsDelivr)                             │
-│  - External deps: react, @workspace/*                      │
-│  - Optional: __injected_fragments__ for GraphQL            │
-└───────────────────────────────────────────────────────────┘
-```
-
-### Quick Start for Community Plugins
-
-```bash
-# Clone template
-git clone https://github.com/opencast/community-plugin-template my-plugin
-cd my-plugin
-
-# Install and build
-npm install
-npm run build
-
-# Test locally
-npx http-server dist --cors -p 5173
-# Load in Management UI via Developer Mode: http://127.0.0.1:5173/my-plugin.mjs
-```
-
-### Key Services for Community Plugins
-
-| Service | Location | Purpose |
-|---------|----------|---------|
-| `RemoteLoader` | `plugins/admin-marketplace/src/services/remote-loader.ts` | Loads remote plugins |
-| `SecurityService` | `plugins/admin-marketplace/src/services/security.ts` | URL allowlist & validation |
-| `RegistryFetcher` | `plugins/admin-marketplace/src/services/registry-fetcher.ts` | Fetches plugin registry |
-| `FragmentRegistry` | `packages/plugin-system/src/services/FragmentRegistry.ts` | GraphQL fragment management |
-
-### Security Considerations
-
-Community plugins are loaded from allowed domains only:
-- `cdn.jsdelivr.net` (primary)
-- `raw.githubusercontent.com`
-- `*.github.io`
-- `127.0.0.1` (development only)
-
-Version compatibility is checked against `workspaceDependencies` in plugin metadata.
-
-### GraphQL Fragment Extension
-
-Community plugins can extend core GraphQL queries:
-
-```graphql
-# In plugin: src/gql/my-fields.graphql
-fragment MyPluginFields on Event {
-  customField
-  nestedData {
-    value
-  }
-}
-```
-
-Fragments are auto-extracted during build and registered with `FragmentRegistry` at load time.
-
-## Success Indicators
-
-You're following best practices when:
-
-- ✅ You read relevant documentation BEFORE making changes
-- ✅ You update documentation AFTER making changes
-- ✅ You follow existing patterns in the codebase
-- ✅ You check coupling analysis before adding dependencies
-- ✅ Your changes pass all validation checks
-- ✅ Your documentation helps the next developer (or AI)
-
-## Remember
-
-**Good documentation enables independent evolution.** Every piece of documentation you write helps future developers (human or AI) understand, modify, and extend the system without breaking it.
-
-When in doubt, **over-document rather than under-document**.
+| Topic | Read |
+|-------|------|
+| Package organization | [`packages/README.md`](/packages/README.md) |
+| App architecture | [`apps/README.md`](/apps/README.md) |
+| Plugin system | [`plugins/README.md`](/plugins/README.md) |
+| Dependencies | [`docs/internal/COUPLING_ANALYSIS.md`](/docs/internal/COUPLING_ANALYSIS.md) |
+| Architecture decisions | [`docs/architecture/`](/docs/architecture/) |
+| Plugin manifest schema | [`packages/plugin-system/src/schemas/plugin.schema.json`](/packages/plugin-system/src/schemas/plugin.schema.json) |
+| Styling rules | [`docs/PLUGIN_STYLING_CONTRACT.md`](/docs/PLUGIN_STYLING_CONTRACT.md) |
+| Plugin development | [`docs/COMMUNITY_PLUGIN_DEVELOPMENT.md`](/docs/COMMUNITY_PLUGIN_DEVELOPMENT.md) |

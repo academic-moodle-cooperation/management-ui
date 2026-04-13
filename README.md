@@ -8,7 +8,7 @@ Management UI is built as a **monorepo** using **Turborepo**, structured around 
 
 - **Apps**: Domain-specific applications for content management
 - **Packages**: Shared infrastructure and framework libraries
-- **Plugins**: Extension points and university-specific customizations
+- **Plugins**: Extension points, built-in shared plugins, and externally deployable org customizations
 
 ```
 apps/           ← Content management applications
@@ -27,24 +27,34 @@ packages/       ← Shared infrastructure libraries
 ├─ i18n/           ← Internationalization
 └─ ...
 
-plugins/        ← Extension point definitions
-├─ core/        ← Core extension points
-├─ tuwien/      ← TU Wien specific implementations
-├─ univie/      ← University of Vienna implementations
+plugins/        ← Built-in plugins shipped with the core repo
+├─ core/        ← Core extension points and default implementations
+├─ admin-*      ← Optional shared plugins shipped with core
 └─ example-university/  ← Example implementations
+
+.local-plugins/ ← External org/plugin checkout for development
+└─ <org-or-plugin>/     ← Org-specific or privately shared plugins
 ```
 
 ## 📚 Documentation
 
-**🤖 For AI Models:** Start with the [AI Development Guide](docs/AI_DEVELOPMENT_GUIDE.md) - your entry point for understanding and contributing to this codebase.
+**🤖 For AI Models:** Start with [`llms.txt`](llms.txt) for a quick summary, then read the [AI Development Guide](docs/AI_DEVELOPMENT_GUIDE.md) for full context.
 
 ### Core Documentation
 
 - **[AI Development Guide](docs/AI_DEVELOPMENT_GUIDE.md)** - Main entry point for AI models and new developers
+- **[`llms.txt`](llms.txt)** - Machine-readable project summary for LLMs
 - **[Package Ecosystem](/packages/README.md)** - Shared infrastructure packages and dependency management
 - **[Application Architecture](/apps/README.md)** - Domain applications and dual-mode execution
 - **[Plugin System](/plugins/README.md)** - Extension points and university customizations
 - **[Coupling Analysis](/docs/internal/COUPLING_ANALYSIS.md)** - Package dependencies and refactoring priorities
+
+### Plugin Development
+
+- **[Community Plugin Development](docs/COMMUNITY_PLUGIN_DEVELOPMENT.md)** - Full plugin lifecycle guide
+- **[Plugin Styling Contract](docs/PLUGIN_STYLING_CONTRACT.md)** - CSS/theming rules for plugins
+- **[Plugin Loading Mechanisms](docs/PLUGIN_LOADING_MECHANISMS.md)** - All loading paths explained
+- **[Plugin Manifest Schema](packages/plugin-system/src/schemas/plugin.schema.json)** - Canonical `plugin.json` schema
 
 ### Configuration & Assets
 
@@ -132,16 +142,23 @@ pnpm clean        # Clean build artifacts and dependencies
 
 ## 🧩 Plugin System
 
-The Management UI features a sophisticated plugin system that allows institutions to customize functionality without modifying core code. Each university now has its own independent plugin package with standalone execution capabilities.
+The Management UI features a plugin system that keeps the core small and lets institutions ship their own customizations independently.
+
+- `plugins/core` contains mandatory extension points and default implementations.
+- Built-in shared plugins live in `plugins/` when they ship with the core repo but remain optional.
+- Org-specific plugins live in `.local-plugins/` or separate repositories and are loaded dynamically in dev or via JAR/registry in production.
 
 ### Plugin Structure
 
 ```
 plugins/
-├── core/                    # Core extension points and implementations
-├── tuwien/                  # TU Wien specific plugins and apps (Port 3005)
-├── univie/                  # University of Vienna plugins (Port 3006)
-└── example-university/      # Example implementations (Port 3007)
+├── core/                    # Core extension points and default implementations
+├── admin-marketplace/       # Built-in optional shared plugin
+├── admin-dashboard/         # Built-in optional shared plugin
+└── example-university/      # Example implementations only
+
+.local-plugins/
+└── my-org/                  # Org-specific plugin checkout
 ```
 
 ### Standalone Plugin Apps
@@ -198,7 +215,7 @@ export const MyUniversityAppPlugin = createPlugin({
 Plugin apps can run both within the core shell and as standalone applications:
 
 ```typescript
-// plugins/my-university/main.tsx
+// .local-plugins/my-university/main.tsx
 import { bootstrapStandaloneApp } from "@workspace/app-runtime";
 import { MyUniversityApp } from "./apps/MyUniversityApp";
 
@@ -211,7 +228,7 @@ bootstrapStandaloneApp(MyUniversityApp, "root", config);
 ```
 
 ```typescript
-// plugins/my-university/apps/MyUniversityApp.tsx
+// .local-plugins/my-university/apps/MyUniversityApp.tsx
 import { AdaptiveAppWrapper } from '@workspace/app-runtime';
 
 export const MyUniversityApp: React.FC = () => (

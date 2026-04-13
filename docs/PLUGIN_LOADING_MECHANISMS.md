@@ -118,8 +118,8 @@ await RemoteLoader.loadAndRegister(
 **Location:** `apps/management-ui-core/src/services/jarPluginLoader.ts` + `apps/management-ui-core/src/components/PluginInitializer.tsx`
 
 **How it works:**
-- **Core** (not the marketplace) loads JAR plugins. After built-in plugins are registered, `PluginInitializer` calls `loadJarPlugins()` to fetch `/management-tool/ui/config/plugins.json` from the backend, then for each plugin URL calls `loadAndRegister(url, manager, { skipUrlValidation: true })` from `@workspace/remote-plugin-loader`.
-- Backend generates `plugins.json` from deployed JAR files. Plugins are served as static files via Http-Alias/Http-Classpath.
+- **Core** (not the marketplace) loads JAR plugins. `PluginInitializer` first loads any JAR entries that match the current config (typically `config`), re-merges `app:config`, then loads the remaining JAR entries that match the now-effective `pluginNamespace` config.
+- Backend generates `plugins.json` from deployed JAR files. It scans the bundle's static plugin directory and emits one entry per discovered `*.mjs` file, so one deployed JAR can expose multiple frontend plugin modules.
 - JAR plugins load **even when the marketplace plugin is not loaded**. The marketplace is optional and does not handle JAR loading.
 - This is the path to use when a plugin needs its own backend module (e.g. quiz/poll APIs, persistence, QR token validation).
 
@@ -134,9 +134,16 @@ await RemoteLoader.loadAndRegister(
 {
   "plugins": [
     {
-      "name": "quiz-plugin-backend",
-      "path": "/static/plugins/quiz",
-      "scope": "quiz"
+      "id": "univie/plugin-univie-sidebar",
+      "name": "univie-plugin-backend:sidebar",
+      "path": "/static/plugins/univie",
+      "scope": "management_ui_plugin_univie",
+      "namespace": "univie",
+      "type": "sidebar",
+      "scriptUrl": "/management-ui/static/plugins/univie/plugin-univie-sidebar.mjs",
+      "cssUrl": "/management-ui/static/plugins/univie/univie-plugin.css",
+      "localesUrl": "/management-ui/static/plugins/univie/locales",
+      "i18nNamespaces": ["univie-sidebar"]
     }
   ]
 }
@@ -171,7 +178,13 @@ await RemoteLoader.loadAndRegister(
 ```json
 {
   "plugins": [
-    { "name": "Univie", "id": "plugin-univie", "url": "/management-ui/local-plugins/univie/plugin-univie.mjs", "namespace": "univie" }
+    {
+      "name": "Univie (sidebar)",
+      "id": "univie/plugin-univie-sidebar",
+      "url": "/management-ui/local-plugins/univie/plugin-univie-sidebar.mjs",
+      "namespace": "univie",
+      "type": "sidebar"
+    }
   ]
 }
 ```
