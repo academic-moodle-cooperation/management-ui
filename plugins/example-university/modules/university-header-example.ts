@@ -15,8 +15,8 @@ import { logger } from "@workspace/utils";
  * Result: [☰] [University Logo] ──── [🌐 Language] [👤 Login]
  */
 export const universityHeaderExample = createPlugin({
-  namespace: "university",
-  type: "header-extension",
+  namespace: "example-university",
+  type: "header",
   version: "1.0.0",
 
   initialize(manager: PluginManager) {

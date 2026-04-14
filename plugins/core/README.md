@@ -21,7 +21,7 @@ plugins/core/
 │   ├── series-extension-points.ts        # Series table toolbar actions
 │   ├── table-sidebar-extension-points.ts # Table detail panels
 │   └── upload-extension-points.ts        # Upload customization
-├── implementations/                # Default implementations
+├── modules/                        # Default implementations
 │   ├── index.ts                   # Implementation exports
 │   ├── defaults.ts                # Core navigation (Home)
 │   ├── header/                    # Default header

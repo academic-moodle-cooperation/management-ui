@@ -122,6 +122,72 @@ llms.txt                             ← Machine-readable project summary
 
 To customize auto-generated components, copy to `src/components/custom/` or use the plugin system's `component-override` extension points.
 
+## Naming Conventions
+
+### `namespace` — WHO provides the plugin
+
+- Lowercase kebab-case (`^[a-z0-9-]+$`)
+- Identifies the **provider/owner**, not the mechanism
+- Examples:
+
+| Namespace | Used for |
+|-----------|----------|
+| `core` | Built-in core functionality (ships with the OSS repo) |
+| `admin` | Admin tools (marketplace, dashboard) |
+| `episodes`, `series`, `upload` | Core feature-area apps |
+| `univie`, `tuwien` | Organization-specific plugins |
+| `my-org`, `poll-plugin` | Community/third-party plugins |
+| `example-university` | Reference implementation for learning |
+
+### `type` — WHAT role the plugin fills
+
+- Lowercase kebab-case
+- Describes the plugin's **role/slot**, never the mechanism
+- NEVER use suffixes like `-extension-points`, `-extension`, `-implementation`
+
+**Standard types (use these first):**
+
+| Type | Purpose |
+|------|---------|
+| `app` | Registers a routable application |
+| `config` | Registers configuration (loaded in phase 1) |
+| `navigation` | Registers sidebar nav items |
+| `sidebar` | Customizes sidebar beyond default nav items |
+| `header` | Customizes the application header |
+| `footer` | Customizes the application footer |
+| `landing-page` | Provides a landing page override |
+| `empty-state` | Custom empty state components |
+| `layout` | Core layout-level extension point slots |
+| `table-sidebar` | Table sidebar panel customization |
+| `marketplace` | Marketplace UI |
+| `dashboard` | Admin dashboard |
+
+**Custom types are allowed** for domain-specific plugins (e.g., `episodes-actions`, `series-actions`, `upload-acl-editor`), but prefer standard types when possible.
+
+### Full plugin name format: `namespace:type`
+
+The `namespace:type` pair uniquely identifies a plugin in the runtime, config, and marketplace.
+
+```
+core:layout            ← core extension point slots for layout
+core:footer            ← core default footer implementation
+univie:footer          ← univie footer override
+tuwien:episodes-actions ← tuwien custom actions for episodes
+admin:marketplace      ← marketplace plugin
+```
+
+### Folder structure
+
+| Folder | Purpose |
+|--------|---------|
+| `extension-points/` | Core extension point slot definitions |
+| `modules/` | Multi-module plugin subfolders (sidebar, footer, etc.) |
+| `apps/` | App-specific plugin registrations |
+| `src/` | Source code root (standard) |
+| `src/entries/` | Build entry points for multi-entry plugins |
+
+**Do not use:** `implementations/` (too enterprise/verbose — use `modules/` instead).
+
 ## Plugin System — How It Works
 
 ### Plugin Definition
@@ -132,8 +198,8 @@ Every plugin is created with `createPlugin()` from `@workspace/plugin-system`:
 import { createPlugin } from "@workspace/plugin-system";
 
 export default createPlugin({
-  namespace: "my-org",    // Org or feature namespace
-  type: "app",            // Plugin type for activation filtering
+  namespace: "my-org",    // WHO provides it (org or feature name)
+  type: "app",            // WHAT it is (role/slot, not mechanism)
   version: "1.0.0",
 
   initialize(manager) {

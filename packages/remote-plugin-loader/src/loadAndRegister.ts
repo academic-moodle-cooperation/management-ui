@@ -30,6 +30,12 @@ export interface LoadOptions {
    * The package does not perform URL validation; this is for API clarity.
    */
   skipUrlValidation?: boolean;
+  /**
+   * Plugin names that should NOT be registered even if loaded successfully.
+   * The plugin object is still returned in `LoadResult.plugin` so the caller
+   * can keep it for discovery (e.g. marketplace "disabled" list).
+   */
+  skipPluginNames?: Set<string>;
 }
 
 /** Result of loading a plugin. */
@@ -38,6 +44,10 @@ export interface LoadResult {
   pluginId?: string;
   error?: string;
   warnings: string[];
+  /** True when the plugin was loaded but NOT registered because its name was in skipPluginNames. */
+  skipped?: boolean;
+  /** The loaded Plugin object (always set on success, even when skipped). */
+  plugin?: Plugin;
 }
 
 /** Loaded module shape: default plugin and optional injected fragments. */
@@ -155,6 +165,13 @@ export async function loadAndRegister(
       };
     }
 
+    // If the caller asked to skip this plugin (e.g. disabled by user override),
+    // return the Plugin object without registering, injecting CSS, or fragments.
+    if (options?.skipPluginNames?.has(remotePlugin.name)) {
+      remoteLoaderLogger.info(`Skipping registration of "${remotePlugin.name}" — disabled by override`, { url });
+      return { success: true, pluginId: remotePlugin.name, plugin: remotePlugin, skipped: true, warnings };
+    }
+
     const fragments = module.__injected_fragments__;
     if (fragments && Array.isArray(fragments) && fragments.length > 0) {
       remoteLoaderLogger.debug(`Registering ${fragments.length} GraphQL fragment(s) from plugin`);
@@ -202,7 +219,7 @@ export async function loadAndRegister(
       pluginId: remotePlugin.name,
     });
 
-    return { success: true, pluginId: remotePlugin.name, warnings };
+    return { success: true, pluginId: remotePlugin.name, plugin: remotePlugin, warnings };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     remoteLoaderLogger.error(`Failed to load plugin from ${url}`, error instanceof Error ? error : new Error(errorMessage), { url });

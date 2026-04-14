@@ -10,7 +10,7 @@ import { createPlugin, type PluginManager } from "@workspace/plugin-system";
  */
 export const seriesExtensionPoints = createPlugin({
   namespace: "core",
-  type: "series-extension-points",
+  type: "series",
   version: "1.0.0",
 
   initialize(manager: PluginManager) {

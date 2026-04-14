@@ -214,7 +214,7 @@ export const UniversityPlugin = createPlugin({
 
 ```
 plugins/university-name/
-├── implementations/        # Extension point implementations
+├── modules/                # Extension point implementations
 │   ├── header/
 │   ├── footer/
 │   └── index.ts

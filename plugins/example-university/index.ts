@@ -1,5 +1,5 @@
-// Export example university implementations (for development and learning)
-export * from "./implementations/index.js";
+// Export example university modules (for development and learning)
+export * from "./modules/index.js";
 
 // Export individual examples
-export { universityHeaderExample } from "./implementations";
+export { universityHeaderExample } from "./modules";

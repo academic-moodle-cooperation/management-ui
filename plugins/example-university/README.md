@@ -23,7 +23,7 @@ This plugin demonstrates:
 cp -r plugins/example-university plugins/my-university
 
 # 2. Update package name in package.json
-# 3. Modify implementations/config/config.ts
+# 3. Modify modules/config/config.ts
 # 4. Add your logo to assets/
 # 5. Register in plugins/index.ts
 
@@ -47,7 +47,7 @@ pnpm dev
 
 ```
 plugins/example-university/
-├── implementations/              # Extension point implementations
+├── modules/              # Extension point implementations
 │   ├── config/                  # University configuration
 │   │   ├── config.ts           # Configuration values
 │   │   └── index.ts            # Config plugin registration
@@ -71,14 +71,14 @@ plugins/example-university/
 └── README.md                    # This file
 ```
 
-## Implementations
+## Modules
 
-### Configuration (`implementations/config/`)
+### Configuration (`modules/config/`)
 
 Provides university-specific settings:
 
 ```typescript
-// implementations/config/config.ts
+// modules/config/config.ts
 export const config = {
   app: {
     theme: "example-university",
@@ -101,13 +101,13 @@ export const config = {
 };
 ```
 
-### Header Extension (`implementations/university-header-example.ts`)
+### Header (`modules/university-header-example.ts`)
 
 Adds university logo to the header:
 
 ```typescript
-manager.registerObject("app:header-logo", "university-logo", {
-  src: "/assets/university-logo.png",
+manager.registerObject("app:header-logo", "example-university-logo", {
+  src: "/assets/example-university-logo.png",
   alt: "Example University",
   width: 120,
   height: 40,
@@ -115,7 +115,7 @@ manager.registerObject("app:header-logo", "university-logo", {
 });
 ```
 
-### Sidebar Navigation (`implementations/sidebar/`)
+### Sidebar Navigation (`modules/sidebar/`)
 
 Adds custom navigation items:
 
@@ -196,7 +196,7 @@ pnpm build
 
 ### Step 1: Update Configuration
 
-Edit `implementations/config/config.ts`:
+Edit `modules/config/config.ts`:
 
 - Change `organizationName` to your university
 - Update `organizationUrl` with your website
@@ -209,28 +209,28 @@ Edit `implementations/config/config.ts`:
 1. Create your logo as SVG (recommended) or PNG
 2. Place in `assets/logo.svg` or `assets/logo.png`
 3. Update `orgLogoUrl` in config.ts
-4. Update `implementations/university-header-example.ts` with correct path
+4. Update `modules/university-header-example.ts` with correct path
 
 ### Step 3: Customize Navigation
 
-Edit `implementations/sidebar/index.ts`:
+Edit `modules/sidebar/index.ts`:
 
 - Modify existing navigation items
 - Add new navigation items
 - Update help links
 - Set appropriate permissions
 
-### Step 4: Add More Implementations
+### Step 4: Add More Modules
 
-Create new implementations for other extension points:
+Create new modules for other extension points:
 
 ```bash
-# Create footer implementation
-mkdir -p implementations/footer
+# Create footer module
+mkdir -p modules/footer
 # Create components and index.ts following the pattern
 ```
 
-Export in `implementations/index.ts`:
+Export in `modules/index.ts`:
 
 ```typescript
 export { myUniversityFooterPlugin } from "./footer";
@@ -281,7 +281,7 @@ Use this checklist when creating your own plugin:
 
 - [ ] Copied this directory to `plugins/[university-name]`
 - [ ] Updated `package.json` name and description
-- [ ] Modified `implementations/config/config.ts` with university settings
+- [ ] Modified `modules/config/config.ts` with university settings
 - [ ] Added university logo to `assets/`
 - [ ] Updated header implementation with correct logo path
 - [ ] Customized sidebar navigation items

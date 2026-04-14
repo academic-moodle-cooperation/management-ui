@@ -123,6 +123,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
 
     let didUnmount = false;
     const registeredPluginNames: string[] = [];
+    const disabledByOverride: Plugin[] = [];
 
     const registerPluginLocales = (
       entries: Array<{ localesUrl?: string; i18nNamespaces?: string[] }>,
@@ -205,6 +206,12 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           logger.info("PluginInitializer: Applying plugin overrides from localStorage", {
             overrideCount: Object.keys(overrides.overrides).length,
           });
+        }
+
+        // Build set of plugin names explicitly disabled by the user
+        const disabledNames = new Set<string>();
+        for (const [name, override] of Object.entries(overrides.overrides)) {
+          if (!override.enabled) disabledNames.add(name);
         }
 
         // 6. Filter and load remaining plugins with the merged configuration + overrides
@@ -344,6 +351,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                   loadAndRegister(jarPlugin.url, manager, {
                     ...(jarPlugin.cssUrl ? { cssUrl: jarPlugin.cssUrl } : {}),
                     skipUrlValidation: true,
+                    skipPluginNames: disabledNames,
                   }),
                 ),
               );
@@ -357,6 +365,8 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                       ? result.reason
                       : new Error(String(result.reason)),
                   );
+                } else if (result.status === "fulfilled" && result.value.skipped && result.value.plugin) {
+                  disabledByOverride.push(result.value.plugin);
                 } else if (result.status === "fulfilled" && !result.value.success) {
                   logger.warn(
                     `PluginInitializer: JAR plugin "${jarPlugin.name}" failed to load`,
@@ -407,6 +417,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                   loadAndRegister(getLocalPluginFullUrl(entry), manager, {
                     ...(entry.cssUrl ? { cssUrl: entry.cssUrl } : {}),
                     skipUrlValidation: true,
+                    skipPluginNames: disabledNames,
                   }),
                 ),
               );
@@ -420,6 +431,8 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                       ? result.reason
                       : new Error(String(result.reason)),
                   );
+                } else if (result.status === "fulfilled" && result.value.skipped && result.value.plugin) {
+                  disabledByOverride.push(result.value.plugin);
                 }
               });
             };
@@ -442,13 +455,13 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
 
             // Phase 2: re-merge config from manager (config plugin may have added namespaces),
             // then load remaining .local-plugins that now match (e.g. univie, tuwien) and types
-            const mergedConfig = getAppConfigSync(manager);
-            const enabled2 = getEnabledPluginNamespaces(mergedConfig);
+            const mergedLocalConfig = getAppConfigSync(manager);
+            const enabled2 = getEnabledPluginNamespaces(mergedLocalConfig);
             const loadedUrls = new Set(toLoad1.map((e) => e.url));
             const toLoad2 = localManifest.filter(
               (entry) =>
                 !loadedUrls.has(entry.url) &&
-                matchesNamespaceAndType(entry, mergedConfig, enabled2),
+                matchesNamespaceAndType(entry, mergedLocalConfig, enabled2),
             );
             if (toLoad2.length > 0) {
               registerPluginLocales(toLoad2);
@@ -464,10 +477,15 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           });
         }
 
-        // 9. Mark plugins as ready in the manager
+        // 9. Expose disabled plugins so the marketplace can still list them
+        if (disabledByOverride.length > 0) {
+          manager.addFunction("marketplace.getDisabledPlugins", () => disabledByOverride);
+        }
+
+        // 10. Mark plugins as ready in the manager
         manager.markPluginsAsReady();
 
-        // 10. Update local state to render children
+        // 11. Update local state to render children
         if (!didUnmount) {
           setPluginsReady(true);
         }

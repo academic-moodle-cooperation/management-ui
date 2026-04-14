@@ -43,15 +43,16 @@ interface LocalPluginEntry {
 
 function discoverPluginLocaleNamespaces(pluginDir: string): string[] {
   const namespaces = new Set<string>();
-  const implementationsDir = path.join(pluginDir, "implementations");
-  if (!fs.existsSync(implementationsDir) || !fs.statSync(implementationsDir).isDirectory()) {
+
+  const modulesDir = path.join(pluginDir, "modules");
+  if (!fs.existsSync(modulesDir) || !fs.statSync(modulesDir).isDirectory()) {
     return [];
   }
 
-  const types = fs.readdirSync(implementationsDir, { withFileTypes: true });
+  const types = fs.readdirSync(modulesDir, { withFileTypes: true });
   for (const typeEnt of types) {
     if (!typeEnt.isDirectory()) continue;
-    const localesDir = path.join(implementationsDir, typeEnt.name, "locales");
+    const localesDir = path.join(modulesDir, typeEnt.name, "locales");
     if (!fs.existsSync(localesDir) || !fs.statSync(localesDir).isDirectory()) continue;
 
     const localeEntries = fs.readdirSync(localesDir, { withFileTypes: true });
@@ -151,7 +152,7 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
 
 /**
  * Build a map: i18n namespace -> absolute path to that namespace's locale folder.
- * Scans .local-plugins/<name>/implementations/<type>/locales/<namespace>/ for de.json, en.json, etc.
+ * Scans .local-plugins/<name>/modules/<type>/locales/<namespace>/ for de.json, en.json, etc.
  */
 function discoverLocalPluginLocales(monorepoRoot: string): Map<string, string> {
   const map = new Map<string, string>();
@@ -163,12 +164,12 @@ function discoverLocalPluginLocales(monorepoRoot: string): Map<string, string> {
   for (const dirent of dirs) {
     if (!dirent.isDirectory()) continue;
     const pluginDir = path.join(localPluginsDir, dirent.name);
-    const implementationsDir = path.join(pluginDir, "implementations");
-    if (!fs.existsSync(implementationsDir) || !fs.statSync(implementationsDir).isDirectory()) continue;
-    const types = fs.readdirSync(implementationsDir, { withFileTypes: true });
+    const modulesDir = path.join(pluginDir, "modules");
+    if (!fs.existsSync(modulesDir) || !fs.statSync(modulesDir).isDirectory()) continue;
+    const types = fs.readdirSync(modulesDir, { withFileTypes: true });
     for (const typeEnt of types) {
       if (!typeEnt.isDirectory()) continue;
-      const localesDir = path.join(implementationsDir, typeEnt.name, "locales");
+      const localesDir = path.join(modulesDir, typeEnt.name, "locales");
       if (!fs.existsSync(localesDir) || !fs.statSync(localesDir).isDirectory()) continue;
       const namespaces = fs.readdirSync(localesDir, { withFileTypes: true });
       for (const nsEnt of namespaces) {

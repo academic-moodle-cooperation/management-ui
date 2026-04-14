@@ -67,7 +67,7 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
     fs.existsSync(localPluginsRoot) && fs.statSync(localPluginsRoot).isDirectory()
       ? [
         {
-          src: path.resolve(monorepoRootPath, ".local-plugins/*/implementations/*/locales/**/*"),
+          src: path.resolve(monorepoRootPath, ".local-plugins/*/modules/*/locales/**/*"),
           dest: "locales",
         },
       ]

@@ -61,7 +61,7 @@ function deepMerge<T extends Record<string, unknown>>(
  *
  * This plugin:
  * 1. Imports the defaultConfig from @workspace/ui-config
- * 2. Imports plugin-specific configs (e.g., from .local-plugins/<name>/implementations/config or plugins/example-university)
+ * 2. Imports plugin-specific configs (e.g., from .local-plugins/<name>/modules/config or plugins/example-university)
  * 3. Deep merges them using the same logic as runtime
  * 4. Writes the result to dist/ui/config/management-ui/config.json
  *
@@ -69,7 +69,7 @@ function deepMerge<T extends Record<string, unknown>>(
  * ```ts
  * import { generateConfigPlugin } from '@workspace/vite-config';
  * import { defaultConfig } from '@workspace/ui-config';
- * import { config as myOrgConfig } from '../../.local-plugins/my-org/implementations/config/config';
+ * import { config as myOrgConfig } from '../../.local-plugins/my-org/modules/config/config';
  *
  * plugins: [
  *   generateConfigPlugin({

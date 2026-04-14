@@ -46,6 +46,8 @@ export interface PluginOverrides {
   overrides: Record<string, PluginOverride>;
 }
 
+export type PluginSource = "bundled" | "local-dev" | "jar" | "remote";
+
 export interface DiscoveredPlugin {
   plugin: Plugin;
   namespace: string;
@@ -53,6 +55,7 @@ export interface DiscoveredPlugin {
   isLoaded: boolean;
   isOverridden: boolean;
   override?: PluginOverride | undefined;
+  source: PluginSource;
 }
 
 export interface PluginConflict {
@@ -103,21 +106,62 @@ export const PluginExplorer = {
    * via manager.executeFunction("marketplace.getAllPlugins"). The app is the
    * source of truth for the bundled plugin list to avoid circular deps here.
    */
-  async discoverAllPlugins(manager: PluginManager): Promise<Plugin[]> {
+  async discoverAllPlugins(manager: PluginManager): Promise<{ plugin: Plugin; source: PluginSource }[]> {
+    const allKnown = new Map<string, { plugin: Plugin; source: PluginSource }>();
+    const barrelNames = new Set<string>();
+
+    // 1. Barrel-exported plugins (from plugins/ folder)
     try {
-      // executeFunction already calls the registered function and returns its result.
       const rawResult = manager.executeFunction<Plugin[] | Promise<Plugin[]>>(
         "marketplace.getAllPlugins",
       );
       if (rawResult !== undefined) {
         const raw = await Promise.resolve(rawResult);
         const arr = Array.isArray(raw) ? raw : [];
-        return arr.filter(isPlugin);
+        for (const p of arr) {
+          if (isPlugin(p)) {
+            barrelNames.add(p.name);
+            allKnown.set(p.name, { plugin: p, source: "bundled" });
+          }
+        }
       }
-    } catch (e) {
-      void e;
+    } catch {
+      // barrel unavailable
     }
-    return [];
+
+    // 2. Determine JAR and remote plugin names for source classification
+    const jarNames = new Set<string>();
+    try {
+      const jarList = manager.executeFunction<{ name: string }[]>("marketplace.getJarPlugins");
+      if (Array.isArray(jarList)) {
+        for (const j of jarList) jarNames.add(j.name);
+      }
+    } catch { /* no jar list */ }
+
+    // 3. All currently loaded plugins not in barrel
+    for (const [name, p] of manager.plugins) {
+      if (!allKnown.has(name) && isPlugin(p)) {
+        let source: PluginSource = "local-dev";
+        if (jarNames.has(name)) source = "jar";
+        allKnown.set(name, { plugin: p, source });
+      }
+    }
+
+    // 4. Plugins that were loaded but deregistered by user override (still discoverable)
+    try {
+      const disabled = manager.executeFunction<Plugin[]>("marketplace.getDisabledPlugins");
+      if (Array.isArray(disabled)) {
+        for (const p of disabled) {
+          if (isPlugin(p) && !allKnown.has(p.name)) {
+            let source: PluginSource = "local-dev";
+            if (jarNames.has(p.name)) source = "jar";
+            allKnown.set(p.name, { plugin: p, source });
+          }
+        }
+      }
+    } catch { /* no disabled list */ }
+
+    return Array.from(allKnown.values());
   },
 
   /**
@@ -127,7 +171,7 @@ export const PluginExplorer = {
     const allPlugins = await this.discoverAllPlugins(manager);
     const overrides = this.getOverrides();
 
-    return allPlugins.map((plugin) => {
+    return allPlugins.map(({ plugin, source }) => {
       const { namespace, type } = parsePluginName(plugin.name);
       const isLoaded = manager.plugins.has(plugin.name);
       const override = overrides.overrides[plugin.name];
@@ -139,6 +183,7 @@ export const PluginExplorer = {
         isLoaded,
         isOverridden: !!override,
         override,
+        source,
       };
     });
   },
@@ -170,7 +215,9 @@ export const PluginExplorer = {
    */
   async getAvailablePlugins(manager: PluginManager): Promise<Plugin[]> {
     const allPlugins = await this.discoverAllPlugins(manager);
-    return allPlugins.filter((plugin) => !manager.plugins.has(plugin.name));
+    return allPlugins
+      .filter(({ plugin }) => !manager.plugins.has(plugin.name))
+      .map(({ plugin }) => plugin);
   },
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -363,7 +410,7 @@ export const PluginExplorer = {
     const allPlugins = await this.discoverAllPlugins(manager);
     const dependents: Plugin[] = [];
 
-    for (const plugin of allPlugins) {
+    for (const { plugin } of allPlugins) {
       if (plugin.dependencies) {
         const depNames = plugin.dependencies.map((d) => d.split("@")[0]);
         if (depNames.includes(pluginName)) {
