@@ -9,7 +9,7 @@ import { createProxyConfig } from "./proxy.js";
 
 import type { UserConfig, BuildOptions } from "vite";
 
-/** True if at least one `.local-plugins/<plugin>/modules/*/locales/**` JSON exists (avoids empty glob for vite-plugin-static-copy). */
+/** True if at least one JSON file exists under `.local-plugins/<plugin>/modules/<module>/locales/` (avoids empty glob for vite-plugin-static-copy). */
 function hasLocalPluginLocaleFiles(monorepoRootPath: string): boolean {
   const localPluginsRoot = path.join(monorepoRootPath, ".local-plugins");
   if (!fs.existsSync(localPluginsRoot) || !fs.statSync(localPluginsRoot).isDirectory()) {
