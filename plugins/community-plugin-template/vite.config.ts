@@ -14,9 +14,9 @@ import { resolve } from "path";
 import react from "@vitejs/plugin-react-swc";
 import { defineConfig } from "vite";
 
-// Read plugin name from package.json
-import pkg from "./package.json";
-const pluginName = pkg.pluginMetadata?.id || "community-plugin";
+// Read plugin id from plugin.json (canonical manifest)
+import pluginManifest from "./plugin.json";
+const pluginName = pluginManifest.id || "community-plugin";
 
 export default defineConfig({
   plugins: [react()],

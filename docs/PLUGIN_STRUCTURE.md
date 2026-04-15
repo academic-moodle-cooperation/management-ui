@@ -41,7 +41,7 @@ cp -r plugins/community-plugin-template my-new-plugin
 
 1. **Update `package.json`:**
    - Change `name`, `id`, `description`
-   - Update `pluginMetadata`
+   - Update `plugin.json` manifest
 
 2. **Update `src/index.ts`:**
    - Change namespace

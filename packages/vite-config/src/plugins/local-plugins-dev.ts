@@ -94,14 +94,28 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
     let displayName = dirent.name;
     let defaultId = dirent.name;
     let replacesJarScopes: string[] | undefined;
+
+    // Read plugin.json (canonical manifest), fall back to package.json pluginMetadata
+    const pluginJsonPath = path.join(pluginDir, "plugin.json");
     const pkgPath = path.join(pluginDir, "package.json");
-    if (fs.existsSync(pkgPath)) {
+    if (fs.existsSync(pluginJsonPath)) {
+      try {
+        const manifest = JSON.parse(fs.readFileSync(pluginJsonPath, "utf-8"));
+        if (manifest.name) displayName = manifest.name;
+        if (manifest.id) defaultId = manifest.id;
+        if (Array.isArray(manifest.replacesJarScopes))
+          replacesJarScopes = manifest.replacesJarScopes;
+      } catch {
+        // ignore
+      }
+    } else if (fs.existsSync(pkgPath)) {
       try {
         const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
-        if (pkg.pluginMetadata?.name) displayName = pkg.pluginMetadata.name;
-        if (pkg.pluginMetadata?.id) defaultId = pkg.pluginMetadata.id;
-        if (Array.isArray(pkg.pluginMetadata?.replacesJarScopes))
-          replacesJarScopes = pkg.pluginMetadata.replacesJarScopes;
+        const meta = typeof pkg.pluginMetadata === "string" ? null : pkg.pluginMetadata;
+        if (meta?.name) displayName = meta.name;
+        if (meta?.id) defaultId = meta.id;
+        if (Array.isArray(meta?.replacesJarScopes))
+          replacesJarScopes = meta.replacesJarScopes;
       } catch {
         // ignore
       }

@@ -41,7 +41,7 @@ We will use a **monorepo structure with strict dependency layers** organized as:
 1. **Layer Separation** - Lower layers never depend on higher layers
 2. **Workspace Packages** - Shared code lives in `packages/` with `@workspace/*` scope
 3. **Application Independence** - Apps in `apps/` depend on packages but not other apps
-4. **Plugin Isolation** - Plugins in `plugins/` customize without modifying core
+4. **Plugin Isolation** - `plugins/` contains built-in core/shared plugins, while org-specific plugins stay outside the core repo boundary (for example in `.local-plugins/` or separate repos)
 5. **Build Orchestration** - Turborepo coordinates builds across the monorepo
 
 ### Monorepo Tools
@@ -241,11 +241,13 @@ management-ui/
 │   ├── providers/
 │   ├── ui-config/
 │   └── vite-config/
-├── plugins/                 # University customizations
+├── plugins/                 # Built-in core/shared plugins
 │   ├── core/
-│   ├── tuwien/
-│   ├── univie/
+│   ├── admin-marketplace/
+│   ├── admin-dashboard/
 │   └── example-university/
+├── .local-plugins/          # External org/private plugin checkout (optional)
+│   └── <org-or-plugin>/
 ├── package.json             # Root workspace
 ├── pnpm-workspace.yaml      # Workspace configuration
 ├── turbo.json               # Turborepo configuration
@@ -261,6 +263,7 @@ packages:
   - "packages/*"
   - "plugins"
   - "plugins/*"
+  - ".local-plugins/*"
 ```
 
 ### Build Orchestration
@@ -358,11 +361,23 @@ If layer violations are found:
 - [Turborepo Docs](https://turbo.build/repo/docs)
 - [pnpm Workspaces](https://pnpm.io/workspaces)
 
+## Evolution (2026-04)
+
+The boundary between core plugins and org plugins was tightened:
+
+- **`plugins/index.ts`** exports only core-shipped plugins (core, admin-marketplace, admin-dashboard, example-university). Org plugins are NEVER added here.
+- **`.local-plugins/`** is a dev checkout location, not an architectural boundary. It can be a separate git repo containing org-specific plugins.
+- **Plugin manifest** (`plugin.json`) is the canonical metadata source. Convention-based filename discovery still works but is documented as a contract, not an accident.
+- **`packages/remote-plugin-loader`** added as a shared package for all dynamic loading paths (JAR, `.local-plugins`, marketplace, registry).
+
+See `docs/PLUGIN_LOADING_MECHANISMS.md` for the complete loading model.
+
 ## Review
 
-- **Last Reviewed:** 2025-11-12
+- **Last Reviewed:** 2026-04-13
 - **Next Review:** When considering adding new packages or restructuring
 
 ## Status History
 
 - 2025-11-12: Accepted - Initial ADR documenting current structure
+- 2026-04-13: Updated - Plugin boundary clarification, manifest contract, remote-plugin-loader
