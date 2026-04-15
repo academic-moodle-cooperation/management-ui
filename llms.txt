@@ -33,18 +33,26 @@ Lower layers NEVER depend on higher layers.
 Org-specific plugins live outside the core repo. In dev, they go in `.local-plugins/<name>/`.
 In production, they are deployed as OSGi JARs or loaded from a registry/CDN.
 
+### Scaffold Commands
+
+- `pnpm plugin:create-local <name> --wire-config` — New plugin from template
+- `pnpm plugin:extract <org>/<module> --name <new-name>` — Extract module to standalone plugin
+- `pnpm plugin:export-local <name>` — Move built-in plugin to `.local-plugins/`
+- `pnpm validate:plugins` — Validate all `plugin.json` manifests
+
 ## Plugin System
 
 ### Creating a Plugin
 
-Every plugin is an ES module that default-exports a plugin object:
+Every plugin is an ES module that default-exports a plugin object. Per-feature
+source is organized under `modules/<area>/` (not legacy `implementations/`).
 
 ```typescript
 import { createPlugin } from "@workspace/plugin-system";
 
 export default createPlugin({
-  namespace: "my-org",
-  type: "app",
+  namespace: "my-org", // WHO provides it: org or feature name
+  type: "app", // WHAT it is: role/slot, never mechanism
   version: "1.0.0",
   initialize(manager) {
     manager.registerObject("apps:definitions", "my-org:my-app", {
@@ -179,6 +187,7 @@ Use `useI18n()` from `@workspace/i18n` with namespaced keys: `t("my-plugin:title
 
 - `docs/AI_DEVELOPMENT_GUIDE.md` — Primary guide for AI models and developers
 - `docs/COMMUNITY_PLUGIN_DEVELOPMENT.md` — Full plugin development lifecycle
+- `docs/LOCAL_PLUGINS.md` — Using `.local-plugins/` with this monorepo (clone, pnpm, JARs)
 - `docs/PLUGIN_STYLING_CONTRACT.md` — CSS/theming rules for plugins
 - `docs/PLUGIN_LOADING_MECHANISMS.md` — All plugin loading paths explained
 - `docs/architecture/ADR-001-plugin-system.md` — Plugin architecture rationale

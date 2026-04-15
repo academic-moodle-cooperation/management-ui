@@ -12,7 +12,7 @@ import { createPlugin, type PluginManager } from "@workspace/plugin-system";
  */
 export const uploadExtensionPoints = createPlugin({
   namespace: "core",
-  type: "upload-extension-points",
+  type: "upload",
   version: "1.0.0",
 
   initialize(manager: PluginManager) {

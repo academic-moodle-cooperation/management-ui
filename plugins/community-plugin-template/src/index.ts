@@ -22,8 +22,13 @@ import { MyPluginView } from "./views/MyPluginView";
  * TODO: Update the namespace and type to match your plugin's purpose.
  *
  * Naming Convention:
- * - namespace: Your organization or plugin family (e.g., "myorg", "analytics")
- * - type: The plugin's function (e.g., "app", "feature", "theme")
+ * - namespace: WHO provides it — your org or plugin name (e.g., "univie", "analytics")
+ * - type: WHAT role it fills — never describe the mechanism
+ *   Standard types: app, config, sidebar, header, footer, landing-page,
+ *   navigation, empty-state, table-sidebar, layout, marketplace, dashboard
+ *   Custom types ok for domain-specific roles (e.g., "episodes-actions")
+ *
+ * The namespace:type pair must be unique (e.g., "my-plugin:app").
  */
 const myPlugin = createPlugin({
   namespace: "my-plugin",

@@ -100,7 +100,7 @@ cd plugins/[university-name]
 
 ```bash
 # Create directory structure
-mkdir -p implementations
+mkdir -p modules
 mkdir -p apps
 mkdir -p assets/favicon
 mkdir -p assets/logo
@@ -110,7 +110,7 @@ Complete structure:
 
 ```
 plugins/[university-name]/
-├── implementations/         # Extension point implementations
+├── modules/         # Extension point implementations
 │   ├── config/             # University configuration
 │   │   ├── config.ts
 │   │   └── index.ts
@@ -211,7 +211,7 @@ Create `index.ts`:
 import { createPlugin } from '@workspace/plugin-system';
 
 // Import all implementations
-import * as implementations from './implementations';
+import * as implementations from './modules';
 
 /**
  * [University Name] Plugin
@@ -250,12 +250,12 @@ export const [UniversityName]Plugin = createPlugin({
 });
 
 // Export implementations for direct use if needed
-export * from './implementations';
+export * from './modules';
 ```
 
 ### Step 6: Create University Configuration
 
-Create `implementations/config/config.ts`:
+Create `modules/config/config.ts`:
 
 ```typescript
 import { AppConfig } from '@workspace/ui-config';
@@ -306,7 +306,7 @@ export const [universityName]Config: Partial<AppConfig> = {
 };
 ```
 
-Create `implementations/config/index.ts`:
+Create `modules/config/index.ts`:
 
 ```typescript
 import { PluginManager } from '@workspace/plugin-system';
@@ -324,7 +324,7 @@ export { [universityName]Config };
 
 ### Step 7: Create Custom Header Implementation
 
-Create `implementations/header/components/UniversityHeader.tsx`:
+Create `modules/header/components/UniversityHeader.tsx`:
 
 ```typescript
 import React from 'react';
@@ -380,7 +380,7 @@ export const UniversityHeader: React.FC<UniversityHeaderProps> = ({ user }) => {
 };
 ```
 
-Create `implementations/header/index.ts`:
+Create `modules/header/index.ts`:
 
 ```typescript
 import { PluginManager } from "@workspace/plugin-system";
@@ -402,7 +402,7 @@ export function register(manager: PluginManager) {
 export { UniversityHeader };
 ```
 
-Create `implementations/header/locales/en.json`:
+Create `modules/header/locales/en.json`:
 
 ```json
 {
@@ -419,11 +419,11 @@ Create `implementations/header/locales/en.json`:
 }
 ```
 
-Create `implementations/header/README.md` following [`IMPLEMENTATION_README_TEMPLATE.md`](/docs/templates/IMPLEMENTATION_README_TEMPLATE.md).
+Create `modules/header/README.md` following [`IMPLEMENTATION_README_TEMPLATE.md`](/docs/templates/IMPLEMENTATION_README_TEMPLATE.md).
 
 ### Step 8: Create Implementations Registry
 
-Create `implementations/index.ts`:
+Create `modules/index.ts`:
 
 ```typescript
 /**
@@ -576,7 +576,7 @@ Follow template sections:
 For each implementation, create a README:
 
 ```bash
-cp docs/templates/IMPLEMENTATION_README_TEMPLATE.md plugins/[university-name]/implementations/header/README.md
+cp docs/templates/IMPLEMENTATION_README_TEMPLATE.md plugins/[university-name]/modules/header/README.md
 ```
 
 Document:
@@ -670,7 +670,7 @@ git commit -m "feat(plugins): add [University Name] plugin
 ### Pattern: Custom Empty State
 
 ```typescript
-// implementations/empty-state/components/CustomEmptyState.tsx
+// modules/empty-state/components/CustomEmptyState.tsx
 export const CustomEmptyState: React.FC<EmptyStateProps> = ({ message, action }) => {
   return (
     <div className="text-center py-12">
@@ -681,7 +681,7 @@ export const CustomEmptyState: React.FC<EmptyStateProps> = ({ message, action })
   );
 };
 
-// implementations/empty-state/index.ts
+// modules/empty-state/index.ts
 export function register(manager: PluginManager) {
   manager.registerComponent('app:empty-state', CustomEmptyState);
   manager.registerComponent('series:empty-state', CustomEmptyState);
@@ -692,7 +692,7 @@ export function register(manager: PluginManager) {
 ### Pattern: Custom Metadata Fields
 
 ```typescript
-// implementations/metadata/components/CustomMetadataFields.tsx
+// modules/metadata/components/CustomMetadataFields.tsx
 export const CustomMetadataFields: React.FC = () => {
   return (
     <>
@@ -706,7 +706,7 @@ export const CustomMetadataFields: React.FC = () => {
   );
 };
 
-// implementations/metadata/index.ts
+// modules/metadata/index.ts
 export function register(manager: PluginManager) {
   manager.registerObject('metadata:fields', 'university-fields', {
     courseCode: {
@@ -730,7 +730,7 @@ export function register(manager: PluginManager) {
 ### Pattern: Custom Workflow
 
 ```typescript
-// implementations/workflow/index.ts
+// modules/workflow/index.ts
 export function register(manager: PluginManager) {
   manager.registerObject("workflows:definitions", "university-approval", {
     name: "University Content Approval",
@@ -801,7 +801,7 @@ Before considering a plugin complete:
 - [ ] Plugin directory created in `plugins/`
 - [ ] `package.json` with correct dependencies
 - [ ] Main `index.ts` with plugin definition
-- [ ] Configuration in `implementations/config/`
+- [ ] Configuration in `modules/config/`
 - [ ] At least one implementation (header, footer, or sidebar)
 - [ ] Translation files for all text
 - [ ] University assets (logos, favicons)

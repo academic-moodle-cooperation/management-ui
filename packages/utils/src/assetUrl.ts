@@ -2,12 +2,11 @@
  * Resolve a possibly relative asset path against the app's base URL.
  * Keeps absolute http(s) and data: URLs unchanged.
  *
- * This function runs in the browser and dynamically determines:
- * - The base path from the current script's URL or location
- * - Whether we're in dev mode (by checking for Vite's dev server)
+ * This function runs in the browser and dynamically determines the base path
+ * from the current script's URL or location.
  *
  * Examples:
- * - Dev:  'assets/logo.svg' -> '/management-ui/dist/assets/logo.svg'
+ * - Dev:  'assets/logo.svg' -> '/management-ui/assets/logo.svg'
  * - Prod: 'assets/logo.svg' -> '/management-ui/assets/logo.svg'
  */
 export function resolveAssetUrl(pathOrUrl?: string, fallbackRelative?: string): string {
@@ -52,22 +51,9 @@ export function resolveAssetUrl(pathOrUrl?: string, fallbackRelative?: string): 
 
   const ensuredBase = base.endsWith("/") ? base : `${base}/`;
 
-  // Detect dev mode by checking for Vite dev server indicators
-  const isDev =
-    typeof window !== "undefined" &&
-    // Check if @vite/client is loaded (only present in dev mode)
-    Array.from(document.getElementsByTagName("script")).some(
-      (s) => s.src && s.src.includes("/@vite/client"),
-    );
-
-  // In dev mode, vite-plugin-static-copy serves assets under 'dist/' subdirectory
-  const needsDistPrefix =
-    isDev &&
-    !normalized.startsWith("dist/") &&
-    (normalized.startsWith("assets/") || normalized.startsWith("locales/"));
-
-  const withDistIfNeeded = needsDistPrefix ? `dist/${normalized}` : normalized;
-  return `${ensuredBase}${withDistIfNeeded}`;
+  // Assets and locales are served at base + path in both dev and prod
+  // (vite-plugin-static-copy and proxy/shell serve at /management-ui/assets/ etc.)
+  return `${ensuredBase}${normalized}`;
 }
 
 /**

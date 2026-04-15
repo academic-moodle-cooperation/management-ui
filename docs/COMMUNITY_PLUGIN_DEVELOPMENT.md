@@ -11,6 +11,85 @@ Before adding plugin CSS or styling shared UI, read the [Plugin Styling Contract
 
 This guide explains how to create, test, and publish community plugins for the Management UI. Community plugins are dynamically loaded ES modules that extend the application at runtime without requiring a rebuild of the core application.
 
+## Plugin Development Lifecycle
+
+Plugins evolve through distinct stages. The tooling supports each transition:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 1. CREATE                                                            │
+│    Start from the community template or create a new local plugin    │
+│                                                                      │
+│    pnpm plugin:create-local my-plugin --wire-config                  │
+│    → Creates .local-plugins/my-plugin/ with full scaffolding         │
+├─────────────────────────────────────────────────────────────────────┤
+│ 2. DEVELOP                                                           │
+│    Build inside .local-plugins/ with hot reload                      │
+│                                                                      │
+│    pnpm dev  (watches and rebuilds your plugin)                      │
+│    → Plugin loads automatically via /local-plugins/manifest.json     │
+├─────────────────────────────────────────────────────────────────────┤
+│ 3. INTEGRATE (optional)                                              │
+│    If part of an org (multi-module) plugin, develop as a module      │
+│                                                                      │
+│    .local-plugins/my-org/modules/my-feature/                         │
+│    → Module is one entry in the org's plugin.json "modules" array    │
+├─────────────────────────────────────────────────────────────────────┤
+│ 4. EXTRACT (optional — promote module to standalone)                 │
+│    If an org module proves useful to others, extract it              │
+│                                                                      │
+│    pnpm plugin:extract my-org/my-feature --name my-feature-plugin   │
+│    → Creates .local-plugins/my-feature-plugin/ as standalone plugin  │
+│    → Generalize: remove org-specific code, add configuration         │
+├─────────────────────────────────────────────────────────────────────┤
+│ 5. PUBLISH                                                           │
+│    Share with the community via registry or CDN                      │
+│                                                                      │
+│    - Host dist/*.mjs on a CDN                                        │
+│    - Register in a plugin registry                                   │
+│    - Or deploy as an OSGi JAR (see JAR Deployment docs)              │
+├─────────────────────────────────────────────────────────────────────┤
+│ 6. INSTALL                                                           │
+│    Other instances discover and install via Admin Marketplace         │
+│                                                                      │
+│    → Marketplace UI shows community plugins from the registry        │
+│    → One-click install/preview/uninstall                             │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Extracting a Module to a Standalone Plugin
+
+When a module inside an org plugin (e.g., `tuwien/modules/table-sidebar`) is useful beyond that org:
+
+```bash
+# Extract the module into a new standalone plugin
+pnpm plugin:extract tuwien/table-sidebar --name acl-table-sidebar --wire-config
+
+# This creates:
+# .local-plugins/acl-table-sidebar/
+# ├── plugin.json          ← New manifest (neutral namespace)
+# ├── package.json         ← Standalone package
+# ├── vite.config.ts       ← Own build config
+# ├── src/
+# │   ├── index.ts         ← Rewritten entry (new namespace)
+# │   └── components/      ← Copied from the module
+# ├── locales/             ← Copied if present
+# └── README.md            ← Extraction checklist
+```
+
+After extraction, review the TODO checklist in the README to generalize the plugin.
+
+### Available Scaffold Commands
+
+| Command | Purpose |
+|---------|---------|
+| `pnpm plugin:create-local <name>` | Create a new plugin from the community template |
+| `pnpm plugin:create-local <name> --wire-config` | Same, plus auto-add to config |
+| `pnpm plugin:extract <org>/<module>` | Extract a module into a standalone plugin |
+| `pnpm plugin:extract <org>/<module> --name <new-name>` | Extract with a custom name |
+| `pnpm plugin:export-local <name>` | Move a built-in plugin to `.local-plugins/` |
+| `pnpm validate:plugins` | Validate all `plugin.json` manifests |
+
 ## Architecture
 
 ```
@@ -916,11 +995,11 @@ The univie plugin in `.local-plugins/univie/` builds **multiple** `.mjs` files:
 - `dist/plugin-univie-landing-page.mjs`
 - `dist/plugin-univie-app.mjs`
 
-It also has `themes/univie.css`, `implementations/*/locales/**/*`, and `assets/logo.png`. To package it as a JAR:
+It also has `themes/univie.css`, `modules/*/locales/**/*`, and `assets/logo.png`. To package it as a JAR:
 
 1. **Backend module** – Create a Maven module (e.g. `.local-plugins/univie/backend/`) with:
    - **Parent:** Same as other plugin backends (e.g. `management-backend` with `relativePath` to repo `backend/`).
-   - **copy-resources:** Copy `../dist/*.mjs` and `../themes/*.css` to `target/classes/static/plugins/univie/`. Optionally copy `../implementations/*/locales/**/*` to a `locales/` subpath and `../assets/**/*` to `assets/univie/` if the UI expects them under the plugin path.
+   - **copy-resources:** Copy `../dist/*.mjs` and `../themes/*.css` to `target/classes/static/plugins/univie/`. Optionally copy `../modules/*/locales/**/*` to a `locales/` subpath and `../assets/**/*` to `assets/univie/` if the UI expects them under the plugin path.
    - **maven-bundle-plugin:** `Management-Plugin: univie`, `Http-Classpath: /static/plugins/univie` (or equivalent so the JAR serves files under `/static/plugins/univie/`).
    - **exec-maven-plugin (optional):** Run `pnpm build` in `../` (frontend root) before copy-resources; use `workingDirectory` `${project.basedir}/..` and pnpm from the monorepo (or from plugin repo if self-contained).
 

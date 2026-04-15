@@ -95,21 +95,65 @@ export type PluginCategory =
  */
 export const PLUGIN_METADATA: Record<string, PluginMetadata> = {
   // ─────────────────────────────────────────────────────────────────────────
-  // Core Plugins
+  // Core Extension Point Slots
   // ─────────────────────────────────────────────────────────────────────────
-  "core:config": {
-    name: "Core Configuration",
-    description: "Base application configuration and default settings",
+  "core:layout": {
+    name: "Core Layout Slots",
+    description: "Extension point slots for header, footer, branding, and app config",
     category: "core",
-    extensionPoints: ["app:config"],
+    extensionPoints: ["app:header-logo", "app:header-actions", "app:footer", "app:branding", "app:config"],
     isCore: true,
     author: "Management UI Team",
   },
-  "core:landing-page": {
-    name: "Core Landing Page",
-    description: "Default landing page with quick actions and statistics",
+  "core:sidebar": {
+    name: "Core Sidebar Slots",
+    description: "Extension point slots for sidebar navigation, user items, admin items, and help",
     category: "core",
-    extensionPoints: ["component-override:landing-page"],
+    extensionPoints: ["sidebar:nav-items", "sidebar:user-items", "sidebar:admin-items", "sidebar:help-items"],
+    isCore: true,
+    author: "Management UI Team",
+  },
+  "core:series": {
+    name: "Core Series Slots",
+    description: "Extension point slots for series toolbar actions and ACL editor",
+    category: "core",
+    extensionPoints: ["series:table:toolbar-end-actions", "series:create-series:acl-editor"],
+    isCore: true,
+    author: "Management UI Team",
+  },
+  "core:upload": {
+    name: "Core Upload Slots",
+    description: "Extension point slots for upload ACL editor, metadata, and workflows",
+    category: "core",
+    extensionPoints: ["upload:acl-editor", "upload:metadata-editor", "upload:workflow-selector"],
+    isCore: true,
+    author: "Management UI Team",
+  },
+  "core:table-sidebar": {
+    name: "Core Table Sidebar Slots",
+    description: "Extension point slots for table sidebar tabs",
+    category: "core",
+    extensionPoints: ["table-sidebar:tabs", "table-sidebar:episodes:tabs", "table-sidebar:series:tabs"],
+    isCore: true,
+    author: "Management UI Team",
+  },
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Core Default Modules
+  // ─────────────────────────────────────────────────────────────────────────
+  "core:navigation": {
+    name: "Core Navigation",
+    description: "Default sidebar navigation and landing page",
+    category: "core",
+    extensionPoints: ["sidebar:nav-items", "component-override:landing-page"],
+    isCore: true,
+    author: "Management UI Team",
+  },
+  "core:header": {
+    name: "Core Header",
+    description: "Default application header with language switcher and login",
+    category: "core",
+    extensionPoints: ["component-override:appshell:header"],
     isCore: true,
     author: "Management UI Team",
   },
@@ -118,14 +162,6 @@ export const PLUGIN_METADATA: Record<string, PluginMetadata> = {
     description: "Default application footer",
     category: "core",
     extensionPoints: ["component-override:appshell:footer"],
-    isCore: true,
-    author: "Management UI Team",
-  },
-  "core:sidebar": {
-    name: "Core Sidebar",
-    description: "Default sidebar navigation structure",
-    category: "core",
-    extensionPoints: ["sidebar:nav-items"],
     isCore: true,
     author: "Management UI Team",
   },
@@ -203,14 +239,22 @@ export const PLUGIN_METADATA: Record<string, PluginMetadata> = {
   },
 
   // ─────────────────────────────────────────────────────────────────────────
-  // Admin Marketplace
+  // Admin Plugins
   // ─────────────────────────────────────────────────────────────────────────
-  "admin:app": {
+  "admin:marketplace": {
     name: "Admin Marketplace",
     description: "Plugin and theme marketplace for administrators",
     category: "admin",
     extensionPoints: ["apps:definitions", "sidebar:nav-items"],
     icon: "ShoppingBag",
+    author: "Management UI Team",
+  },
+  "admin:dashboard": {
+    name: "Admin Dashboard",
+    description: "Project information and community statistics",
+    category: "admin",
+    extensionPoints: ["apps:definitions", "sidebar:nav-items"],
+    icon: "LayoutDashboard",
     author: "Management UI Team",
   },
 
@@ -365,6 +409,77 @@ export const PLUGIN_METADATA: Record<string, PluginMetadata> = {
     author: "Example University",
     tags: ["example", "reference"],
   },
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // System / Internal Plugins (registered by PluginInitializer)
+  // ─────────────────────────────────────────────────────────────────────────
+  "core:app-registry": {
+    name: "App Registry",
+    description: "Internal registry for application route definitions",
+    category: "core",
+    extensionPoints: [],
+    isCore: true,
+    author: "Management UI Team",
+  },
+  "core:object-registry": {
+    name: "Object Registry",
+    description: "Internal registry for shared objects and extension points",
+    category: "core",
+    extensionPoints: [],
+    isCore: true,
+    author: "Management UI Team",
+  },
+  "core:renderer": {
+    name: "Component Renderer",
+    description: "Internal renderer for dynamic component slots",
+    category: "core",
+    extensionPoints: [],
+    isCore: true,
+    author: "Management UI Team",
+  },
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // .local-plugins (community/dev plugins loaded dynamically)
+  // ─────────────────────────────────────────────────────────────────────────
+  "core:cyan-cat-rain": {
+    name: "Cyan Cat Rain",
+    description: "Demo plugin — animated falling cyan cats",
+    category: "experimental",
+    extensionPoints: ["apps:definitions", "sidebar:nav-items"],
+    author: "Community",
+    tags: ["demo", "fun"],
+  },
+  "core:nyan-cat-rain": {
+    name: "Nyan Cat Rain",
+    description: "Demo plugin — animated falling nyan cats",
+    category: "experimental",
+    extensionPoints: ["apps:definitions", "sidebar:nav-items"],
+    author: "Community",
+    tags: ["demo", "fun"],
+  },
+  "poll-plugin:app": {
+    name: "Audience Poll",
+    description: "Interactive audience polling during live events",
+    category: "feature",
+    extensionPoints: ["apps:definitions", "sidebar:nav-items"],
+    author: "Community",
+    tags: ["interactive", "live"],
+  },
+  "video-playlists-plugin:app": {
+    name: "Video Playlists",
+    description: "Create and manage video playlist collections",
+    category: "feature",
+    extensionPoints: ["apps:definitions", "sidebar:nav-items"],
+    author: "Community",
+    tags: ["playlists", "video"],
+  },
+  "video-playlists-acl-editor-plugin:video-playlists-acl-editor": {
+    name: "Playlists ACL Editor",
+    description: "Access control editor for video playlists",
+    category: "feature",
+    extensionPoints: [],
+    author: "Community",
+  },
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -379,15 +494,26 @@ export function getPluginMetadata(pluginName: string): PluginMetadata | null {
 }
 
 /**
- * Get default metadata for unknown plugins
+ * Get default metadata for unknown plugins.
+ * Generates a human-readable display name from the namespace:type format.
  */
 export function getDefaultMetadata(pluginName: string): PluginMetadata {
   const [namespace, type] = pluginName.split(":");
+  const humanize = (s: string) =>
+    s
+      .split("-")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
+
+  const displayName = type ? humanize(type) : humanize(pluginName);
+  const displayNamespace = namespace ? humanize(namespace) : "Unknown";
+
   return {
-    name: pluginName,
-    description: `${type || "Plugin"} from ${namespace || "unknown"} namespace`,
+    name: displayName,
+    description: `Provided by ${displayNamespace}`,
     category: "other",
     extensionPoints: [],
+    author: displayNamespace,
   };
 }
 

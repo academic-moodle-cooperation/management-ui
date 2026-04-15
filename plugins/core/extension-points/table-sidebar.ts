@@ -11,7 +11,7 @@ import { createPlugin, type PluginManager } from "@workspace/plugin-system";
  */
 export const tableSidebarExtensionPoints = createPlugin({
   namespace: "core",
-  type: "table-sidebar-extension-points",
+  type: "table-sidebar",
   version: "1.0.0",
 
   initialize(manager: PluginManager) {

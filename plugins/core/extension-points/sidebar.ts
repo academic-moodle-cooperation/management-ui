@@ -12,7 +12,7 @@ import { createPlugin, type PluginManager } from "@workspace/plugin-system";
  */
 export const sidebarExtensionPoints = createPlugin({
   namespace: "core",
-  type: "sidebar-extension-points",
+  type: "sidebar",
   version: "1.0.0",
 
   initialize(manager: PluginManager) {

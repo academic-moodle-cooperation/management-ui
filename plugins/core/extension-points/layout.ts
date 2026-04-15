@@ -13,7 +13,7 @@ import { createPlugin, type PluginManager } from "@workspace/plugin-system";
  */
 export const appLayoutExtensionPoints = createPlugin({
   namespace: "core",
-  type: "app-layout-extension-points",
+  type: "layout",
   version: "1.0.0",
 
   initialize(manager: PluginManager) {

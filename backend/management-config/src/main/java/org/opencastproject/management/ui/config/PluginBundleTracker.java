@@ -21,12 +21,22 @@
 
 package org.opencastproject.management.ui.config;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.util.tracker.BundleTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +46,8 @@ import java.util.Enumeration;
 import java.util.List;
 
 public class PluginBundleTracker extends BundleTracker<List<PluginConfig>> {
+
+  private static final Logger logger = LoggerFactory.getLogger(PluginBundleTracker.class);
 
   private static final int TRACKING_MASK = Bundle.RESOLVED | Bundle.ACTIVE | Bundle.UNINSTALLED;
   protected static final String MANAGEMENT_PLUGIN = "Management-Plugin";
@@ -81,6 +93,124 @@ public class PluginBundleTracker extends BundleTracker<List<PluginConfig>> {
         .concat(pluginName.replaceAll("[^a-zA-Z0-9_ ]", "_"));
     String pluginPath = Paths.get(MANAGEMENT_PLUGIN_PATH, pluginName).toString();
     String httpAlias = headers.get(HTTP_ALIAS);
+
+    List<PluginConfig> manifestConfigs = extractFromManifest(bundle, pluginName, scope, pluginPath, httpAlias);
+    if (manifestConfigs != null) {
+      return manifestConfigs;
+    }
+
+    return extractFromFileConvention(bundle, headers, pluginName, scope, pluginPath, httpAlias);
+  }
+
+  /**
+   * Try to read plugin.json from the bundle. Returns null if the manifest
+   * doesn't exist or can't be parsed, signalling the caller to fall back.
+   */
+  private List<PluginConfig> extractFromManifest(Bundle bundle, String pluginName,
+      String scope, String pluginPath, String httpAlias) {
+    String manifestPath = Paths.get(MANAGEMENT_PLUGIN_PATH, pluginName, "plugin.json").toString();
+    URL manifestUrl = bundle.getEntry(manifestPath);
+    if (manifestUrl == null) {
+      return null;
+    }
+
+    JsonObject manifest;
+    try (Reader reader = new InputStreamReader(manifestUrl.openStream(), StandardCharsets.UTF_8)) {
+      manifest = JsonParser.parseReader(reader).getAsJsonObject();
+    } catch (Exception e) {
+      logger.warn("Failed to parse plugin.json in bundle {}: {}", bundle.getSymbolicName(), e.getMessage());
+      return null;
+    }
+
+    String manifestId = getStringOrNull(manifest, "id");
+    String manifestName = getStringOrNull(manifest, "name");
+    String namespace = getStringOrNull(manifest, "namespace");
+    String locales = getStringOrNull(manifest, "locales");
+    String[] rootI18n = getStringArrayOrNull(manifest, "i18nNamespaces");
+
+    List<PluginConfig> configs = new ArrayList<>();
+
+    if (manifest.has("modules") && manifest.get("modules").isJsonArray()) {
+      JsonArray modules = manifest.getAsJsonArray("modules");
+      for (JsonElement el : modules) {
+        if (!el.isJsonObject()) continue;
+        JsonObject mod = el.getAsJsonObject();
+
+        String modId = getStringOrNull(mod, "id");
+        String modType = getStringOrNull(mod, "type");
+        String modEntry = getStringOrNull(mod, "entry");
+        String modCss = getStringOrNull(mod, "css");
+        String modLocales = getStringOrNull(mod, "locales");
+        String[] modI18n = getStringArrayOrNull(mod, "i18nNamespaces");
+
+        PluginConfig config = new PluginConfig();
+        config.setId(manifestId != null && modId != null ? manifestId + "/" + modId : modId);
+        config.setName(manifestName != null && modType != null ? manifestName + ":" + modType : manifestName);
+        config.setScope(scope);
+        config.setPath(pluginPath);
+        config.setNamespace(namespace);
+        config.setType(modType);
+
+        if (httpAlias != null && modEntry != null) {
+          config.setScriptUrl(Paths.get(httpAlias, filename(modEntry)).toString());
+        }
+        if (httpAlias != null && modCss != null) {
+          config.setCssUrl(Paths.get(httpAlias, filename(modCss)).toString());
+        }
+
+        String effectiveLocales = modLocales != null ? modLocales : locales;
+        String[] effectiveI18n = modI18n != null ? modI18n : rootI18n;
+
+        if (httpAlias != null && effectiveLocales != null) {
+          config.setLocalesUrl(Paths.get(httpAlias, effectiveLocales).toString());
+        } else if (httpAlias != null && effectiveI18n != null && effectiveI18n.length > 0) {
+          config.setLocalesUrl(Paths.get(httpAlias, "locales").toString());
+        }
+        if (effectiveI18n != null) {
+          config.setI18nNamespaces(effectiveI18n);
+        }
+
+        configs.add(config);
+      }
+    } else {
+      String type = getStringOrNull(manifest, "type");
+      String entry = getStringOrNull(manifest, "entry");
+      String css = getStringOrNull(manifest, "css");
+
+      PluginConfig config = new PluginConfig();
+      config.setId(manifestId != null ? manifestId : pluginName);
+      config.setName(manifestName != null ? manifestName : bundle.getSymbolicName());
+      config.setScope(scope);
+      config.setPath(pluginPath);
+      config.setNamespace(namespace);
+      config.setType(type);
+
+      if (httpAlias != null && entry != null) {
+        config.setScriptUrl(Paths.get(httpAlias, filename(entry)).toString());
+      }
+      if (httpAlias != null && css != null) {
+        config.setCssUrl(Paths.get(httpAlias, filename(css)).toString());
+      }
+
+      if (httpAlias != null && locales != null) {
+        config.setLocalesUrl(Paths.get(httpAlias, locales).toString());
+      } else if (httpAlias != null && rootI18n != null && rootI18n.length > 0) {
+        config.setLocalesUrl(Paths.get(httpAlias, "locales").toString());
+      }
+      if (rootI18n != null) {
+        config.setI18nNamespaces(rootI18n);
+      }
+
+      configs.add(config);
+    }
+
+    logger.info("Loaded {} plugin config(s) from plugin.json in bundle {}", configs.size(), bundle.getSymbolicName());
+    return configs;
+  }
+
+  /** Filename-convention fallback (pre-plugin.json behaviour). */
+  private List<PluginConfig> extractFromFileConvention(Bundle bundle, Dictionary<String, String> headers,
+      String pluginName, String scope, String pluginPath, String httpAlias) {
     String cssHeader = headers.get(MANAGEMENT_PLUGIN_CSS);
     String[] i18nNamespaces = parseI18nNamespaces(headers.get(MANAGEMENT_PLUGIN_I18N));
 
@@ -124,6 +254,27 @@ public class PluginBundleTracker extends BundleTracker<List<PluginConfig>> {
     }
 
     return configs;
+  }
+
+  private static String getStringOrNull(JsonObject obj, String key) {
+    JsonElement el = obj.get(key);
+    return (el != null && el.isJsonPrimitive()) ? el.getAsString() : null;
+  }
+
+  private static String[] getStringArrayOrNull(JsonObject obj, String key) {
+    JsonElement el = obj.get(key);
+    if (el == null || !el.isJsonArray()) return null;
+    JsonArray arr = el.getAsJsonArray();
+    String[] result = new String[arr.size()];
+    for (int i = 0; i < arr.size(); i++) {
+      result[i] = arr.get(i).getAsString();
+    }
+    return result;
+  }
+
+  /** Extract just the filename from a relative path like "dist/foo.mjs". */
+  private static String filename(String relativePath) {
+    return Paths.get(relativePath).getFileName().toString();
   }
 
   private List<String> findBundleFiles(Bundle bundle, String pluginName, String pattern) {
