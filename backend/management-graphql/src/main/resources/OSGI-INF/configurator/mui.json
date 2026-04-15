@@ -5,7 +5,7 @@
     "trash.workflow.id": "trash",
     "republish.workflow.id": "republish-metadata",
     "thumbnail.channel.id": "engage-player",
-    "thumbnail.flavor": "presenter/search+preview",
+    "thumbnail.flavor": "*/search+preview",
     "publication.channel.id": "engage-player",
     "managed.acl.order": ["public", "authenticated", "private"]
   }
