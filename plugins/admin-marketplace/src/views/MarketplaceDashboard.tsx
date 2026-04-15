@@ -43,6 +43,7 @@ import { ThemeListItem } from "../components/ThemeListItem";
 import { ThemeModal } from "../components/ThemeModal";
 import { useMarketplace } from "../hooks/useMarketplace";
 import { getPluginMetadataOrDefault } from "../services/plugin-metadata";
+
 import type { ThemeDefinition } from "../services/themes";
 
 // ---------------------------------------------------------------------------

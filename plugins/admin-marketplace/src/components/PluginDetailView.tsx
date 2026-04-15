@@ -15,9 +15,10 @@ import {
 } from "lucide-react";
 import React from "react";
 
+import { Badge, Button } from "@workspace/ui/components";
+
 import type { PluginSource } from "../services/plugin-explorer";
 
-import { Badge, Button } from "@workspace/ui/components";
 
 const PendingChangesNotice: React.FC<{
   onReload: () => void;
