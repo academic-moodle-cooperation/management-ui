@@ -133,7 +133,9 @@ public class PluginBundleTracker extends BundleTracker<List<PluginConfig>> {
     if (manifest.has("modules") && manifest.get("modules").isJsonArray()) {
       JsonArray modules = manifest.getAsJsonArray("modules");
       for (JsonElement el : modules) {
-        if (!el.isJsonObject()) continue;
+        if (!el.isJsonObject()) {
+          continue;
+        }
         JsonObject mod = el.getAsJsonObject();
 
         String modId = getStringOrNull(mod, "id");
@@ -263,7 +265,9 @@ public class PluginBundleTracker extends BundleTracker<List<PluginConfig>> {
 
   private static String[] getStringArrayOrNull(JsonObject obj, String key) {
     JsonElement el = obj.get(key);
-    if (el == null || !el.isJsonArray()) return null;
+    if (el == null || !el.isJsonArray()) {
+      return null;
+    }
     JsonArray arr = el.getAsJsonArray();
     String[] result = new String[arr.size()];
     for (int i = 0; i < arr.size(); i++) {
