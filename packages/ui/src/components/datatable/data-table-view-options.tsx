@@ -20,7 +20,8 @@ interface DataTableViewOptionsProps<TData> {
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ColumnMeta<TData extends RowData, TValue> {
-    translatedTitle: string;
+    translatedTitle?: string;
+    resolvedTitle?: string;
   }
 }
 
@@ -71,7 +72,8 @@ export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
-                {t(column.columnDef.meta?.translatedTitle || column.id)}
+                {column.columnDef.meta?.resolvedTitle ??
+                  t(column.columnDef.meta?.translatedTitle || column.id)}
               </DropdownMenuCheckboxItem>
             );
           })}

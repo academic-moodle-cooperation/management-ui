@@ -32,6 +32,11 @@ import { cn } from "@workspace/ui/lib";
 import { parseDuration } from "@workspace/utils";
 
 import ActionsCell from "./components/ActionsCell";
+import {
+  resolveColumnLabel,
+  resolveColumnMeta,
+  type EpisodesColumnLabelOverrides,
+} from "./episodesTableConfig";
 
 const columnHelper = createColumnHelper<EventsDataFragment>();
 
@@ -64,14 +69,21 @@ const getStatusIcon = (status: string) => {
 export const createColumns = (
   refetch: () => void,
   layout: "list" | "gallery" = "list",
+  columnLabelOverrides: EpisodesColumnLabelOverrides = {},
 ): ColumnDef<EventsDataFragment, unknown>[] => {
+  const getTitle = (columnKey: string, fallbackLabelKey: string) =>
+    resolveColumnLabel(columnLabelOverrides, columnKey, fallbackLabelKey, i18next.t.bind(i18next));
+
+  const getMeta = (columnKey: string, fallbackLabelKey: string) =>
+    resolveColumnMeta(columnLabelOverrides, columnKey, fallbackLabelKey);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const listColumns: ColumnDef<EventsDataFragment, any>[] = [
     columnHelper.accessor("title", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("episodes:episodesTable.heading.title")}
+          title={getTitle("title", "episodes:episodesTable.heading.title")}
         />
       ),
       cell: ({ row }: { row: Row<EventsDataFragment> }) => {
@@ -83,15 +95,13 @@ export const createColumns = (
           </div>
         );
       },
-      meta: {
-        translatedTitle: "episodes:episodesTable.heading.title",
-      },
+      meta: getMeta("title", "episodes:episodesTable.heading.title"),
     }),
     columnHelper.accessor("seriesName", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("episodes:episodesTable.heading.series")}
+          title={getTitle("seriesName", "episodes:episodesTable.heading.series")}
         />
       ),
       cell: (data) => {
@@ -103,15 +113,13 @@ export const createColumns = (
           </div>
         );
       },
-      meta: {
-        translatedTitle: "episodes:episodesTable.heading.series",
-      },
+      meta: getMeta("seriesName", "episodes:episodesTable.heading.series"),
     }),
     columnHelper.accessor("description", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("episodes:episodesTable.heading.description")}
+          title={getTitle("description", "episodes:episodesTable.heading.description")}
         />
       ),
       cell: (data) => {
@@ -123,15 +131,13 @@ export const createColumns = (
           </div>
         );
       },
-      meta: {
-        translatedTitle: "episodes:episodesTable.heading.description",
-      },
+      meta: getMeta("description", "episodes:episodesTable.heading.description"),
     }),
     columnHelper.accessor("eventStatus", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("episodes:episodesTable.heading.status")}
+          title={getTitle("eventStatus", "episodes:episodesTable.heading.status")}
           className="flex justify-center"
         />
       ),
@@ -152,15 +158,13 @@ export const createColumns = (
           </div>
         );
       },
-      meta: {
-        translatedTitle: "episodes:episodesTable.heading.status",
-      },
+      meta: getMeta("eventStatus", "episodes:episodesTable.heading.status"),
     }),
     columnHelper.accessor("contributors", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("episodes:episodesTable.heading.contributors")}
+          title={getTitle("contributors", "episodes:episodesTable.heading.contributors")}
         />
       ),
       cell: (data) => {
@@ -176,15 +180,13 @@ export const createColumns = (
           </OverflowTooltip>
         );
       },
-      meta: {
-        translatedTitle: "episodes:episodesTable.heading.contributors",
-      },
+      meta: getMeta("contributors", "episodes:episodesTable.heading.contributors"),
     }),
     columnHelper.accessor("presenters", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("episodes:episodesTable.heading.presenters")}
+          title={getTitle("presenters", "episodes:episodesTable.heading.presenters")}
         />
       ),
       cell: (data) => {
@@ -204,15 +206,13 @@ export const createColumns = (
           </OverflowTooltip>
         );
       },
-      meta: {
-        translatedTitle: "episodes:episodesTable.heading.presenters",
-      },
+      meta: getMeta("presenters", "episodes:episodesTable.heading.presenters"),
     }),
     columnHelper.accessor("location", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("episodes:episodesTable.heading.location")}
+          title={getTitle("location", "episodes:episodesTable.heading.location")}
         />
       ),
       cell: (data) => {
@@ -224,16 +224,14 @@ export const createColumns = (
           </div>
         );
       },
-      meta: {
-        translatedTitle: "episodes:episodesTable.heading.location",
-      },
+      meta: getMeta("location", "episodes:episodesTable.heading.location"),
     }),
     columnHelper.accessor((row) => row.muiEventInfo?.isPublic, {
       id: "isPublic",
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("episodes:episodesTable.heading.access")}
+          title={getTitle("isPublic", "episodes:episodesTable.heading.access")}
           className="flex justify-center"
         />
       ),
@@ -255,15 +253,13 @@ export const createColumns = (
         );
       },
       enableSorting: false,
-      meta: {
-        translatedTitle: "episodes:episodesTable.heading.access",
-      },
+      meta: getMeta("isPublic", "episodes:episodesTable.heading.access"),
     }),
     columnHelper.accessor("duration", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("episodes:episodesTable.heading.duration")}
+          title={getTitle("duration", "episodes:episodesTable.heading.duration")}
           className="flex justify-center"
         />
       ),
@@ -277,15 +273,13 @@ export const createColumns = (
           </div>
         );
       },
-      meta: {
-        translatedTitle: "episodes:episodesTable.heading.duration",
-      },
+      meta: getMeta("duration", "episodes:episodesTable.heading.duration"),
     }),
     columnHelper.accessor("startDate", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("episodes:episodesTable.heading.startDate")}
+          title={getTitle("startDate", "episodes:episodesTable.heading.startDate")}
           className="flex justify-center ml-3"
         />
       ),
@@ -300,15 +294,13 @@ export const createColumns = (
           </div>
         );
       },
-      meta: {
-        translatedTitle: "episodes:episodesTable.heading.startDate",
-      },
+      meta: getMeta("startDate", "episodes:episodesTable.heading.startDate"),
     }),
     columnHelper.display({
       id: "actions",
       header: () => (
         <span className="flex justify-center items-center">
-          {i18next.t("episodes:episodesTable.heading.actions.title")}
+          {getTitle("actions", "episodes:episodesTable.heading.actions.title")}
           <Tooltip delayDuration={300}>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" className="w-4 h-4">
@@ -327,9 +319,7 @@ export const createColumns = (
       cell: ({ row }: { row: Row<EventsDataFragment> }) => (
         <ActionsCell event={row.original} refetch={refetch} maxVisibleActions={4} />
       ),
-      meta: {
-        translatedTitle: "episodes:episodesTable.heading.actions.title",
-      },
+      meta: getMeta("actions", "episodes:episodesTable.heading.actions.title"),
     }),
   ];
 
@@ -339,7 +329,7 @@ export const createColumns = (
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("episodes:episodesTable.heading.video")}
+          title={getTitle("title", "episodes:episodesTable.heading.video")}
         />
       ),
       cell: ({ row }: { row: Row<EventsDataFragment> }) => {
@@ -436,15 +426,13 @@ export const createColumns = (
           </div>
         );
       },
-      meta: {
-        translatedTitle: "episodes:episodesTable.heading.video",
-      },
+      meta: getMeta("title", "episodes:episodesTable.heading.video"),
     }),
     columnHelper.accessor("seriesName", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("episodes:episodesTable.heading.series")}
+          title={getTitle("seriesName", "episodes:episodesTable.heading.series")}
         />
       ),
       cell: ({ row }: { row: Row<EventsDataFragment> }) => {
@@ -456,15 +444,13 @@ export const createColumns = (
           </div>
         );
       },
-      meta: {
-        translatedTitle: "episodes:episodesTable.heading.series",
-      },
+      meta: getMeta("seriesName", "episodes:episodesTable.heading.series"),
     }),
     columnHelper.accessor("startDate", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("episodes:episodesTable.heading.dateAndLocation")}
+          title={getTitle("startDate", "episodes:episodesTable.heading.dateAndLocation")}
           className="grid justify-start space-x-2"
         />
       ),
@@ -480,15 +466,13 @@ export const createColumns = (
           </div>
         );
       },
-      meta: {
-        translatedTitle: "episodes:episodesTable.heading.startDate",
-      },
+      meta: getMeta("startDate", "episodes:episodesTable.heading.dateAndLocation"),
     }),
     columnHelper.accessor("presenters", {
       header: ({ column }: { column: Column<EventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("episodes:episodesTable.heading.presenters")}
+          title={getTitle("presenters", "episodes:episodesTable.heading.presenters")}
         />
       ),
       cell: (data) => {
@@ -503,23 +487,19 @@ export const createColumns = (
           </OverflowTooltip>
         );
       },
-      meta: {
-        translatedTitle: "episodes:episodesTable.heading.presenters",
-      },
+      meta: getMeta("presenters", "episodes:episodesTable.heading.presenters"),
     }),
     columnHelper.display({
       id: "actions",
       header: () => (
         <span className="flex justify-center items-center">
-          {i18next.t("episodes:episodesTable.heading.actions.title")}
+          {getTitle("actions", "episodes:episodesTable.heading.actions.title")}
         </span>
       ),
       cell: ({ row }: { row: Row<EventsDataFragment> }) => (
         <ActionsCell event={row.original} refetch={refetch} maxVisibleActions={3} />
       ),
-      meta: {
-        translatedTitle: "episodes:episodesTable.heading.actions.title",
-      },
+      meta: getMeta("actions", "episodes:episodesTable.heading.actions.title"),
     }),
   ];
 

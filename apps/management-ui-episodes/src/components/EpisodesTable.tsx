@@ -17,10 +17,14 @@ import {
   Button,
 } from "@workspace/ui/components";
 import { AppLoader } from "@workspace/ui/components";
-import type { MetadataItem, ColumnsField } from "@workspace/ui-config";
+import type { MetadataItem } from "@workspace/ui-config";
 import { logger } from "@workspace/utils";
 
 import { createColumns } from "../columns";
+import {
+  getEpisodesColumnLabelOverrides,
+  getEpisodesTableConfig,
+} from "../episodesTableConfig";
 import { useEpisodesTable } from "../hooks";
 import { useSidebarStore } from "../stores/sidebarStore";
 
@@ -57,6 +61,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     setEpisodesUpdateData,
     setUpdateField,
     toggleLayout,
+    setLayout,
   } = useSidebarStore();
 
   // Use the custom hook for table functionality
@@ -81,15 +86,30 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
 
   const { pageIndex, pageSize, queryFilter } = state;
 
+  const episodesTableConfig = useMemo(() => getEpisodesTableConfig(config), [config]);
+  const galleryEnabled = episodesTableConfig.gallery.enabled;
+  const effectiveLayout = galleryEnabled ? layout : "list";
+  const activeViewConfig = episodesTableConfig[effectiveLayout];
+  const columnLabelOverrides = useMemo(
+    () => getEpisodesColumnLabelOverrides(activeViewConfig.columns),
+    [activeViewConfig.columns],
+  );
+
   // Create columns with the current layout and refetch function
   const columns: ColumnDef<EventsDataFragment>[] = useMemo(
-    () => createColumns(refetch, layout),
-    [refetch, layout],
+    () => createColumns(refetch, effectiveLayout, columnLabelOverrides),
+    [refetch, effectiveLayout, columnLabelOverrides],
   );
 
   const metadata = (config?.plugins?.["management-ui-episodes"]?.episodeInfo?.metadata ??
     []) as MetadataItem[];
   const { isReadOnly } = createMetadataHelpers(metadata);
+
+  useEffect(() => {
+    if (!galleryEnabled && layout === "gallery") {
+      setLayout("list");
+    }
+  }, [galleryEnabled, layout, setLayout]);
 
   // Create a mechanism to ensure data is loaded when the sidebar is opened from the edit button
   useEffect(() => {
@@ -193,33 +213,22 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     return episodesData?.find((episode) => episode.id === selectedId);
   }, [episodesData, selectedId]);
 
-  // Get visible columns from app config with proper type safety
-  const configColumns = config?.plugins?.["management-ui-episodes"]?.episodesTable?.columns ?? [];
-  const visibleColumns = (configColumns as Record<string, ColumnsField>[]).filter((column) => {
-    if (!column || typeof column !== "object") return false;
-    const key = Object.keys(column)[0];
-    if (!key) return false;
-    const field = column[key];
-    return field?.show === true;
-  });
+  const configuredVisibleColumns = activeViewConfig.columns.filter((column) => column.show);
+  const configuredColumnKeys = configuredVisibleColumns.map((column) => column.key);
+  const hasConfiguredColumns = activeViewConfig.columns.length > 0;
 
-  const columnsKeys = visibleColumns
-    .map((column) => Object.keys(column)[0])
-    .filter((key): key is string => Boolean(key));
-
-  const sortedColumns =
-    columnsKeys.length > 0
-      ? columnsKeys
-          .map((columnsKey) =>
-            columns.find((column) => {
-              // TanStack table column types are complex, accessorKey and id are optional
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const col = column as any;
-              return col.accessorKey === columnsKey || col.id === columnsKey;
-            }),
-          )
-          .filter((column): column is NonNullable<typeof column> => Boolean(column))
-      : columns;
+  const sortedColumns = hasConfiguredColumns
+    ? configuredColumnKeys
+        .map((columnsKey) =>
+          columns.find((column) => {
+            // TanStack table column types are complex, accessorKey and id are optional
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const col = column as any;
+            return col.accessorKey === columnsKey || col.id === columnsKey;
+          }),
+        )
+        .filter((column): column is NonNullable<typeof column> => Boolean(column))
+    : columns;
 
   // Error handling
   if (error && typeof error === "object" && "message" in error) {
@@ -234,16 +243,20 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   if (isLoading) return <AppLoader />;
 
   // Create the layout toggle button
-  const layoutToggleButton = (
+  const layoutToggleButton = galleryEnabled ? (
     <Button
       variant="outline"
       size="sm"
       className="hidden h-8 ml-auto lg:flex"
       onClick={toggleLayout}
     >
-      {layout === "list" ? <LayoutGrid className="w-4 h-4" /> : <List className="w-4 h-4" />}
+      {effectiveLayout === "list" ? (
+        <LayoutGrid className="w-4 h-4" />
+      ) : (
+        <List className="w-4 h-4" />
+      )}
     </Button>
-  );
+  ) : undefined;
 
   return (
     <>
