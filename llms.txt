@@ -187,6 +187,7 @@ Use `useI18n()` from `@workspace/i18n` with namespaced keys: `t("my-plugin:title
 
 - `docs/AI_DEVELOPMENT_GUIDE.md` — Primary guide for AI models and developers
 - `docs/COMMUNITY_PLUGIN_DEVELOPMENT.md` — Full plugin development lifecycle
+- `docs/LOCAL_PLUGINS.md` — Using `.local-plugins/` with this monorepo (clone, pnpm, JARs)
 - `docs/PLUGIN_STYLING_CONTRACT.md` — CSS/theming rules for plugins
 - `docs/PLUGIN_LOADING_MECHANISMS.md` — All plugin loading paths explained
 - `docs/architecture/ADR-001-plugin-system.md` — Plugin architecture rationale

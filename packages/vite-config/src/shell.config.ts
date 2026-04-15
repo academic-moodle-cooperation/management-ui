@@ -9,6 +9,40 @@ import { createProxyConfig } from "./proxy.js";
 
 import type { UserConfig, BuildOptions } from "vite";
 
+/** True if at least one `.local-plugins/<plugin>/modules/*/locales/**` JSON exists (avoids empty glob for vite-plugin-static-copy). */
+function hasLocalPluginLocaleFiles(monorepoRootPath: string): boolean {
+  const localPluginsRoot = path.join(monorepoRootPath, ".local-plugins");
+  if (!fs.existsSync(localPluginsRoot) || !fs.statSync(localPluginsRoot).isDirectory()) {
+    return false;
+  }
+  for (const pluginEnt of fs.readdirSync(localPluginsRoot, { withFileTypes: true })) {
+    if (!pluginEnt.isDirectory()) continue;
+    const modulesRoot = path.join(localPluginsRoot, pluginEnt.name, "modules");
+    if (!fs.existsSync(modulesRoot) || !fs.statSync(modulesRoot).isDirectory()) continue;
+    for (const modEnt of fs.readdirSync(modulesRoot, { withFileTypes: true })) {
+      if (!modEnt.isDirectory()) continue;
+      const localesDir = path.join(modulesRoot, modEnt.name, "locales");
+      if (!fs.existsSync(localesDir) || !fs.statSync(localesDir).isDirectory()) continue;
+      for (const locEnt of fs.readdirSync(localesDir, { withFileTypes: true })) {
+        if (locEnt.isFile() && locEnt.name.endsWith(".json")) return true;
+        if (locEnt.isDirectory()) {
+          const nsDir = path.join(localesDir, locEnt.name);
+          try {
+            if (
+              fs.readdirSync(nsDir).some((name) => name.endsWith(".json"))
+            ) {
+              return true;
+            }
+          } catch {
+            // ignore
+          }
+        }
+      }
+    }
+  }
+  return false;
+}
+
 export interface CreateShellAppViteConfigOptions {
   packageName: string;
   mode: string; // 'development', 'production', etc.
@@ -62,16 +96,15 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
     // Silently ignore
   }
 
-  // .local-plugins locales target only when folder exists (CI/prod often has no .local-plugins)
-  const localPluginsLocalesTarget =
-    fs.existsSync(localPluginsRoot) && fs.statSync(localPluginsRoot).isDirectory()
-      ? [
-        {
-          src: path.resolve(monorepoRootPath, ".local-plugins/*/modules/*/locales/**/*"),
-          dest: "locales",
-        },
-      ]
-      : [];
+  // .local-plugins locales only when real files exist (missing dir, empty dir, or no locales → skip; avoids static-copy "no files" noise)
+  const localPluginsLocalesTarget = hasLocalPluginLocaleFiles(monorepoRootPath)
+    ? [
+      {
+        src: path.resolve(monorepoRootPath, ".local-plugins/*/modules/*/locales/**/*"),
+        dest: "locales",
+      },
+    ]
+    : [];
 
   // Create static assets copying plugin for i18n and custom assets support
   const staticAssetsCopyPlugin = viteStaticCopy({
