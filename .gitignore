@@ -1,83 +1,89 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# IntelliJ
-.idea
+#
+# Patterns without a leading slash match at any depth, so for example
+# `node_modules` also ignores `plugins/*/node_modules`, `apps/*/node_modules`,
+# etc. Do not add redundant `plugins/*/node_modules`-style entries.
 
 # Dependencies
 node_modules
 .pnp
 .pnp.js
+.pnpm-store/*
+package-lock.json
 
-# Local env files
+# Local env files (keep only the tracked example)
 .env*
 !.env.example
 
-# Testing
-coverage
-
-# Turbo
-.turbo
-
-# Vercel
-.vercel
-
-# Build Outputs
+# Build outputs / caches
 .next/
 out/
 build
 dist
 dist-types
+.vite/
+.parcel-cache/
+.rollup.cache/
+.rpt2_cache/
 
-# Debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Testing
+coverage
+.nyc_output
 
-# Misc
-.DS_Store
-*.pem
+# Turbo
+.turbo
 
-# Cursor
-.cursorignore
-.cursor
-*.code-workspace
-
-# VSCode
-.vscode
-vscode
-
-# Maven
-target/
-
-# temp
-migrate
-tmp/
-
-# TypeScript build info
+# TypeScript incremental build info
 *.tsbuildinfo
 
-# ESLint cache
+# Linter caches
 .eslintcache
 **/.eslintcache
 
+# Vercel
+.vercel
+
+# Maven / Java backend build artifacts
+target/
+
+# Debug / log output
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+pids
+*.pid
+*.seed
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.pem
+*.swp
+*~
+.idea/
+.vscode/
+vscode
+*.code-workspace
+
+# Cursor
+.cursorignore
+.cursor/
+
 # SpecStory
-.specstory
+.specstory/
 
-# Docs
-docs/archive
-
-# Npm
-package-lock.json
-
-# Pnpm
-.pnpm-store/*
-
-# Node
+# Temp / migration scratch dirs (not for committed code)
+migrate
+tmp/
 node/
 
-# Personal workflow tools
+# Archived docs are kept out of the repo
+docs/archive
+
+# Personal workflow tools (owner-specific, not part of the product)
 git-workflow.sh
 GIT_WORKFLOW.md
 
-# Local development plugins
+# Local development plugins (org / experimental plugins live here during dev)
 .local-plugins/
