@@ -19,7 +19,11 @@ const path = require("node:path");
 
 const REPO_ROOT = path.resolve(__dirname, "..");
 const PLUGINS_DIR = path.join(REPO_ROOT, "plugins");
-const TEMPLATE_PLUGIN_DIR = path.join(PLUGINS_DIR, "community-plugin-template");
+const TEMPLATE_PLUGIN_DIR = path.join(
+  REPO_ROOT,
+  "examples",
+  "community-plugin-template",
+);
 const BARREL_FILE = path.join(PLUGINS_DIR, "index.ts");
 const LOCAL_CONFIG_FILE = path.join(REPO_ROOT, ".local-plugins", "config", "src", "config.ts");
 
@@ -48,7 +52,7 @@ const COMMUNITY_TEMPLATE_FILES = [
 ];
 
 function printUsage() {
-  console.log(`\nPlugin local export/create helper\n\nUsage:\n  pnpm plugin:export-local <plugin-name> [options]\n  pnpm plugin:create-local <plugin-name> [options]\n\nOptions:\n  --move                  Remove source plugin folder after successful export\n  --force                 Overwrite existing target folder\n  --dry-run               Print actions without writing files\n  --target-dir <dir>      Export target directory (default: .local-plugins)\n  --keep-barrel           Keep export in plugins/index.ts (default: remove export)\n\n  --from-template         Create plugin from plugins/community-plugin-template\n                          (used by plugin:create-local alias)\n  --convert-community     Convert package to community-style runtime plugin setup\n  --community             Alias for --convert-community\n  --wire-config           Add plugin namespace to .local-plugins/config/src/config.ts\n  --namespace <name>      Namespace for --wire-config (default: plugin-name)\n\n  --help                  Show this help\n`);
+  console.log(`\nPlugin local export/create helper\n\nUsage:\n  pnpm plugin:export-local <plugin-name> [options]\n  pnpm plugin:create-local <plugin-name> [options]\n\nOptions:\n  --move                  Remove source plugin folder after successful export\n  --force                 Overwrite existing target folder\n  --dry-run               Print actions without writing files\n  --target-dir <dir>      Export target directory (default: .local-plugins)\n  --keep-barrel           Keep export in plugins/index.ts (default: remove export)\n\n  --from-template         Create plugin from examples/community-plugin-template\n                          (used by plugin:create-local alias)\n  --convert-community     Convert package to community-style runtime plugin setup\n  --community             Alias for --convert-community\n  --wire-config           Add plugin namespace to .local-plugins/config/src/config.ts\n  --namespace <name>      Namespace for --wire-config (default: plugin-name)\n\n  --help                  Show this help\n`);
 }
 
 function parseArgs(argv) {
@@ -335,7 +339,7 @@ function inspectPlugin(targetDir) {
 
 function ensureCommunityTemplateFiles(targetDir, dryRun) {
   if (!fs.existsSync(TEMPLATE_PLUGIN_DIR) || !fs.statSync(TEMPLATE_PLUGIN_DIR).isDirectory()) {
-    throw new Error("plugins/community-plugin-template not found");
+    throw new Error("examples/community-plugin-template not found");
   }
 
   let copied = 0;

@@ -26,7 +26,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
-const TEMPLATE_DIR = path.join(ROOT, "plugins", "community-plugin-template");
+const TEMPLATE_DIR = path.join(ROOT, "examples", "community-plugin-template");
 const LOCAL_CONFIG_FILE = path.join(ROOT, ".local-plugins", "config", "src", "config.ts");
 
 const EXCLUDED = new Set(["node_modules", "dist", ".turbo", ".git", "coverage", "target"]);

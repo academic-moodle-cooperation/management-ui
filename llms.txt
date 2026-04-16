@@ -26,7 +26,8 @@ Lower layers NEVER depend on higher layers.
 ### Plugins (`plugins/`)
 - `plugins/core/` — Mandatory extension points and defaults (always loaded)
 - `plugins/admin-marketplace/` — Optional shared plugin (marketplace UI)
-- `plugins/community-plugin-template/` — Starter template for new plugins
+- `plugins/example/` — Minimal brand-neutral reference plugin
+- `examples/community-plugin-template/` — Starter template for new plugins (scheduled to move into a dedicated repo; see examples/community-plugin-template/EXTRACT_ME.md)
 
 ### External Plugins (`.local-plugins/` or separate repos)
 Org-specific plugins live outside the core repo. In dev, they go in `.local-plugins/<name>/`.
@@ -192,7 +193,7 @@ Use `useI18n()` from `@workspace/i18n` with namespaced keys: `t("my-plugin:title
 - `docs/architecture/ADR-001-plugin-system.md` — Plugin architecture rationale
 - `docs/architecture/ADR-002-monorepo-structure.md` — Monorepo design decisions
 - `packages/plugin-system/src/schemas/plugin.schema.json` — Plugin manifest schema
-- `plugins/community-plugin-template/` — Working plugin template (start here)
+- `examples/community-plugin-template/` — Working plugin template (start here; will move into a dedicated repo)
 - `packages/ui/src/styles/globals.css` — All semantic CSS tokens
 
 ## Tech Stack

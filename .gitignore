@@ -40,6 +40,7 @@ yarn-error.log*
 # Cursor
 .cursorignore
 .cursor
+*.code-workspace
 
 # VSCode
 .vscode
@@ -61,9 +62,6 @@ tmp/
 
 # SpecStory
 .specstory
-
-# Examples
-examples
 
 # Docs
 docs/archive

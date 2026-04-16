@@ -114,7 +114,7 @@ This allows for both university-specific customizations and fallback to default 
 For developing new plugins:
 
 1. **Core plugins:** Add to this directory and export from `plugins/index.ts`
-2. **Community plugins:** Use the [Community Plugin Template](./community-plugin-template) or create a separate repository
+2. **Community plugins:** Use the [Community Plugin Template](../examples/community-plugin-template) or create a separate repository
 3. **Export to organization plugin (official):** `pnpm plugin:export-local <plugin-name> --move`
 4. **Export + convert + wire config (recommended):** `pnpm plugin:export-local <plugin-name> --move --convert-community --wire-config`
 5. **Create directly from template:** `pnpm plugin:create-local <plugin-name> --wire-config`
