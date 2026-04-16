@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 
 import "@workspace/ui/globals.css";
+import "./themes/default.css";
 import { loadNamespace, useTranslation } from "@workspace/i18n";
 import { PluginProvider } from "@workspace/plugin-system";
 import { AppProviders } from "@workspace/providers";
@@ -60,33 +61,37 @@ const AppWithConfig = () => {
       document.head.appendChild(icoLink);
     }
 
-    const key = `../../../plugins/themes/${themeName}.css`;
-    const loader = themeModules[key];
+    // "default" is always loaded as a baseline (see themes/default.css import
+    // at the top of this file). Only non-default themes are loaded on top.
+    if (themeName === "default") {
+      document.querySelectorAll("link[data-theme]").forEach((el) => el.remove());
+    } else {
+      const key = `../../../plugins/themes/${themeName}.css`;
+      const loader = themeModules[key];
 
-    if (loader) {
-      loader().catch(() => import("../../../plugins/themes/default.css"));
-    } else if (themeName !== "default" && import.meta.env.DEV) {
-      // In dev, try .local-plugins/<name>/themes/<name>.css (migrated org themes)
-      document.querySelectorAll("link[data-theme]").forEach((el) => el.remove());
-      const base = import.meta.env.BASE_URL ?? "/";
-      const themeUrl = `${base.replace(/\/$/, "")}/local-plugins/${themeName}/themes/${themeName}.css`;
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = themeUrl;
-      link.dataset["theme"] = themeName;
-      link.onerror = () => import("../../../plugins/themes/default.css");
-      document.head.appendChild(link);
-    } else if (themeName !== "default") {
-      // Production: load theme from JAR (same path as plugin: /static/plugins/<name>/<name>.css)
-      document.querySelectorAll("link[data-theme]").forEach((el) => el.remove());
-      const base = import.meta.env.BASE_URL ?? "/";
-      const themeUrl = `${base.replace(/\/$/, "")}/static/plugins/${themeName}/${themeName}.css`;
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = themeUrl;
-      link.dataset["theme"] = themeName;
-      link.onerror = () => import("../../../plugins/themes/default.css");
-      document.head.appendChild(link);
+      if (loader) {
+        loader().catch(() => undefined);
+      } else if (import.meta.env.DEV) {
+        // In dev, try .local-plugins/<name>/themes/<name>.css (migrated org themes)
+        document.querySelectorAll("link[data-theme]").forEach((el) => el.remove());
+        const base = import.meta.env.BASE_URL ?? "/";
+        const themeUrl = `${base.replace(/\/$/, "")}/local-plugins/${themeName}/themes/${themeName}.css`;
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = themeUrl;
+        link.dataset["theme"] = themeName;
+        document.head.appendChild(link);
+      } else {
+        // Production: load theme from JAR (same path as plugin: /static/plugins/<name>/<name>.css)
+        document.querySelectorAll("link[data-theme]").forEach((el) => el.remove());
+        const base = import.meta.env.BASE_URL ?? "/";
+        const themeUrl = `${base.replace(/\/$/, "")}/static/plugins/${themeName}/${themeName}.css`;
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = themeUrl;
+        link.dataset["theme"] = themeName;
+        document.head.appendChild(link);
+      }
     }
   }, [config, themeModules]);
 

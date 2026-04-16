@@ -22,14 +22,9 @@ export interface ThemeDefinition {
  * In a production environment, these could be fetched from a remote API or CDN.
  */
 export const AVAILABLE_THEMES: ThemeDefinition[] = [
-  {
-    id: "default-theme",
-    name: "Default Theme",
-    description: "Clean and minimal default theme with balanced colors and modern design",
-    previewUrl: "/management-ui/plugins/themes/default.css",
-    category: "Base",
-    author: "Management UI Team",
-  },
+  // The Default Theme is baked into the shell (apps/management-ui-core/src/themes/default.css)
+  // and is always applied as the baseline. Installing another theme only overrides
+  // the subset of CSS custom properties that it customizes.
   {
     id: "example-university-theme",
     name: "Example University",
