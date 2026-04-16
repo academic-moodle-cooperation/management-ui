@@ -5,6 +5,5 @@
         <bundle>mvn:org.amc.management/management-ui-config/${project.version}</bundle>
         <bundle>mvn:org.amc.management/management-ui-graphql/${project.version}</bundle>
         <bundle>mvn:org.amc.management/management-ui-core/${project.version}</bundle>
-        <bundle>mvn:org.amc.management/management-ui-upload/${project.version}</bundle>
     </feature>
 </features>

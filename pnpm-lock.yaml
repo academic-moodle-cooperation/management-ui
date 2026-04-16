@@ -679,100 +679,6 @@ importers:
         specifier: '>=6.4.1'
         version: 7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)
 
-  apps/management-ui-upload:
-    dependencies:
-      '@tanstack/react-table':
-        specifier: ^8.19.3
-        version: 8.21.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@workspace/app-runtime':
-        specifier: workspace:*
-        version: link:../../packages/app-runtime
-      '@workspace/i18n':
-        specifier: workspace:*
-        version: link:../../packages/i18n
-      '@workspace/plugin-system':
-        specifier: workspace:*
-        version: link:../../packages/plugin-system
-      '@workspace/plugins':
-        specifier: workspace:*
-        version: link:../../plugins
-      '@workspace/providers':
-        specifier: workspace:*
-        version: link:../../packages/providers
-      '@workspace/query':
-        specifier: workspace:*
-        version: link:../../packages/query
-      '@workspace/router':
-        specifier: workspace:*
-        version: link:../../packages/router
-      '@workspace/store':
-        specifier: workspace:*
-        version: link:../../packages/store
-      '@workspace/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      '@workspace/utils':
-        specifier: workspace:*
-        version: link:../../packages/utils
-      lucide-react:
-        specifier: ^0.417.0
-        version: 0.417.0(react@19.1.0)
-      mustache:
-        specifier: ^4.2.0
-        version: 4.2.0
-      react:
-        specifier: ^19.1.0
-        version: 19.1.0
-      react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
-    devDependencies:
-      '@types/mustache':
-        specifier: ^4.2.5
-        version: 4.2.6
-      '@types/node':
-        specifier: ^25.0.6
-        version: 25.0.6
-      '@types/react':
-        specifier: ^19.1.2
-        version: 19.1.8
-      '@types/react-dom':
-        specifier: ^19.1.2
-        version: 19.1.6(@types/react@19.1.8)
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^7.13.1
-        version: 7.18.0(@typescript-eslint/parser@7.18.0(eslint@9.30.1(jiti@2.4.2))(typescript@5.5.4))(eslint@9.30.1(jiti@2.4.2))(typescript@5.5.4)
-      '@typescript-eslint/parser':
-        specifier: ^7.13.1
-        version: 7.18.0(eslint@9.30.1(jiti@2.4.2))(typescript@5.5.4)
-      '@vitejs/plugin-react-swc':
-        specifier: ^3.9.0
-        version: 3.10.2(@swc/helpers@0.5.17)(vite@7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
-      '@workspace/eslint-config':
-        specifier: workspace:*
-        version: link:../../packages/eslint-config
-      '@workspace/typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/typescript-config
-      '@workspace/vite-config':
-        specifier: workspace:*
-        version: link:../../packages/vite-config
-      eslint:
-        specifier: ^9.9.0
-        version: 9.30.1(jiti@2.4.2)
-      eslint-plugin-react-hooks:
-        specifier: ^4.6.2
-        version: 4.6.2(eslint@9.30.1(jiti@2.4.2))
-      eslint-plugin-react-refresh:
-        specifier: ^0.4.7
-        version: 0.4.20(eslint@9.30.1(jiti@2.4.2))
-      typescript:
-        specifier: ~5.5.4
-        version: 5.5.4
-      vite:
-        specifier: '>=6.4.1'
-        version: 7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)
-
   apps/playground:
     dependencies:
       '@workspace/app-runtime':
@@ -1795,6 +1701,64 @@ importers:
       vitest:
         specifier: ^4.0.17
         version: 4.0.17(@types/node@25.0.6)(@vitest/ui@4.0.17)(jiti@2.4.2)(jsdom@27.4.0)(lightningcss@1.30.1)(yaml@2.8.0)
+
+  plugins/core-upload:
+    dependencies:
+      '@tanstack/react-table':
+        specifier: ^8.19.3
+        version: 8.21.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@workspace/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
+      '@workspace/plugin-system':
+        specifier: workspace:*
+        version: link:../../packages/plugin-system
+      '@workspace/query':
+        specifier: workspace:*
+        version: link:../../packages/query
+      '@workspace/router':
+        specifier: workspace:*
+        version: link:../../packages/router
+      '@workspace/store':
+        specifier: workspace:*
+        version: link:../../packages/store
+      '@workspace/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@workspace/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      lucide-react:
+        specifier: ^0.417.0
+        version: 0.417.0(react@19.1.0)
+      mustache:
+        specifier: ^4.2.0
+        version: 4.2.0
+      plugin-core:
+        specifier: workspace:*
+        version: link:../core
+      react:
+        specifier: ^19.1.0
+        version: 19.1.0
+    devDependencies:
+      '@types/mustache':
+        specifier: ^4.2.5
+        version: 4.2.6
+      '@types/react':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.8
+      '@workspace/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      eslint:
+        specifier: ^9.20.0
+        version: 9.30.1(jiti@2.4.2)
+      typescript:
+        specifier: ^5.3.3
+        version: 5.5.4
 
   plugins/example:
     dependencies:

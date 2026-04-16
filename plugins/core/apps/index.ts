@@ -5,5 +5,9 @@
  * These can be imported by apps to register their navigation items.
  */
 
-// Export individual app navigation implementations
-export { uploadNavImplementation } from "./upload-nav-implementation";
+// App navigation implementations used to live here; they have been absorbed
+// into their respective core-<feature> plugins (see plugins/core-episodes,
+// plugins/core-series, plugins/core-upload). This folder is kept as a seam
+// for any future core-app-navigation plugins and will be cleaned up in the
+// final shell-cleanup commit of Phase 3.
+export {};

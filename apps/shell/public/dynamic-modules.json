@@ -1,9 +1,3 @@
 {
-  "plugins": [
-    {
-      "name": "management-ui-upload",
-      "path": "/static/plugins/upload",
-      "scope": "management_ui_upload"
-    }
-  ]
+  "plugins": []
 }

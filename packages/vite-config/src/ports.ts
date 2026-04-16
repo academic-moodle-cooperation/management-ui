@@ -4,10 +4,7 @@ export const DEFAULT_SHELL_APP_PORT = 3000;
 const PLUGIN_DEV_PORT_START = 3001;
 
 // Core apps that are always present
-const CORE_APP_NAMES = [
-  "management-ui-upload",
-  "playground",
-];
+const CORE_APP_NAMES = ["playground"];
 
 // Known plugin packages - simplified to avoid dynamic discovery issues
 const discoverPluginPackages = (): string[] => {
