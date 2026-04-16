@@ -9,8 +9,12 @@ import { AppLoader } from "@workspace/ui/components";
 import { DefaultLandingComponent } from "../components/DefaultLandingComponent";
 
 /**
- * Shared route definitions used across different router configurations.
- * This eliminates duplication between app-router.tsx and DynamicRouterProvider.tsx
+ * Shared route definitions (landing, login, logout) used by the shell router.
+ *
+ * Previously reused across both `app-router.tsx` and `DynamicRouterProvider.tsx`;
+ * after the Phase 3 migration (ADR-003) only `DynamicRouterProvider` remains,
+ * but these routes are kept in a separate module so plugin-author-facing tests
+ * can build mini-routers with the same landing/login/logout set.
  */
 
 export const createCommonRoutes = (parentRoute: AnyRoute) => {

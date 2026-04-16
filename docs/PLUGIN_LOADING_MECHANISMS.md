@@ -201,37 +201,16 @@ await RemoteLoader.loadAndRegister(
 
 ---
 
-## 6. Dynamic Modules (Legacy System)
+## 6. Dynamic Modules (Removed)
 
-**Location:** `apps/management-ui-core/src/components/DynamicRouterProvider.tsx`
+The shell used to load standalone Vite apps from `apps/management-ui-*` via a
+`dynamic-modules.json` manifest and a `@monorepo-apps/*` Vite alias. Phase 3 of
+the open-source cleanup migrated every feature app into a core plugin that
+registers an `AppDefinition` on the `apps:definitions` extension point (see
+ADR-003), so this mechanism has been removed.
 
-**How it works:**
-- Fetches `dynamic-modules.json` (legacy format)
-- Loads standalone apps via `@monorepo-apps/*` imports
-- Creates routes dynamically
-- **Note:** This is the old system, being phased out
-
-**Code:**
-- `apps/management-ui-core/src/components/DynamicRouterProvider.tsx` - `getDynamicModules()`
-
-**Config Format:**
-```json
-{
-  "plugins": [
-    {
-      "name": "management-ui-upload",
-      "path": "/static/plugins/upload",
-      "scope": "upload"
-    }
-  ]
-}
-```
-
-**Status:** ⚠️ Legacy (still works, but deprecated)
-
-**Test:**
-- Place `dynamic-modules.json` in public folder
-- Apps should appear as routes
+**Status:** Removed. Use the plugin-based app registration (mechanism 1) for
+new features instead.
 
 ---
 

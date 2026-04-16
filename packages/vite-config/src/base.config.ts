@@ -22,7 +22,7 @@ export const createBaseConfig = ({
     plugins: [react(), tailwindcss(), ...plugins],
     resolve: {
       alias: {
-        ...resolveAliases, // Specific aliases like '@monorepo-apps' or '@/' are set by the calling config creator.
+        ...resolveAliases, // Specific aliases like '@/' are set by the calling config creator.
       },
       dedupe: ["lucide-react", "react", "react-dom"],
     },

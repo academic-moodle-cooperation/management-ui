@@ -6,20 +6,16 @@ This directory contains **core plugins** that are bundled with the Management UI
 
 ```
 plugins/
-├── assets/                    # Default/fallback assets
-│   ├── favicon/
-│   │   ├── favicon.svg
-│   │   ├── favicon.ico
-│   │   └── site.webmanifest
-│   └── fonts/
-│       └── roboto/
-│           ├── roboto-v20-latin-100.woff
-│           ├── roboto-v20-latin-100.woff2
-│           └── ... (other font files)
-├── core/                      # Core plugin (always included)
-├── admin-marketplace/         # Admin Marketplace plugin
-└── example-university/        # Example plugin template
+├── assets/                    # Default/fallback assets (favicon, fonts)
+├── core/                      # Extension-point definitions + shared core modules
+├── core-episodes/             # Core feature plugin: /episodes route + sidebar nav
+├── core-series/               # Core feature plugin: /series route + toolbar action
+├── core-upload/               # Core feature plugin: /upload route (incl. /:seriesId)
+├── admin-marketplace/         # Plugin + theme marketplace (activation UI)
+└── example/                   # Minimal reference plugin for new contributors
 ```
+
+See [ADR-003](../docs/architecture/ADR-003-shell-plus-core-plugins.md) for why feature code lives here instead of under `apps/`.
 
 **Note:** University-specific plugins (e.g. univie, tuwien) have been moved out of this repository. Use `.local-plugins/<name>/` for local development (with `themes/<name>.css` for org themes) or deploy via Registry/JAR. See [Community Plugin Development](../../docs/COMMUNITY_PLUGIN_DEVELOPMENT.md).
 

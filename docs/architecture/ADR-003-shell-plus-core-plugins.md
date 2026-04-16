@@ -126,6 +126,21 @@ The app-shell must own: routing root, theme root, i18n root, auth, error boundar
 - Phase 2 (see the repo cleanup plan) migrates apps to core plugins.
 - Phase 2b redesigns the config system in line with this ADR so org config does not require rebuilds.
 
+### Phase 3 completion (2026-04-16)
+
+The migration mandated by this ADR has been carried out:
+
+- `apps/management-ui-episodes` → `plugins/core-episodes` (route `/episodes` plus sidebar nav co-located in one plugin)
+- `apps/management-ui-series` → `plugins/core-series` (including the "Create series" toolbar action that used to be a separate `series-create-implementation` plugin)
+- `apps/management-ui-upload` → `plugins/core-upload` (route `/upload`, nested `/upload/:seriesId` handled by the shell's generic `$routeSubPath` child route)
+
+With the three features gone, the legacy loading path has been removed as well: `apps/shell/src/app-router.tsx`, `apps/shell/public/dynamic-modules.json`, the `@monorepo-apps` Vite alias and tsconfig path, and the `plugins/core/apps/` nav-only plugins all no longer exist. `apps/shell/src/components/DynamicRouterProvider.tsx` now reads exclusively from the `apps:definitions` extension point, and `apps/` contains only `shell/` and `playground/`, as the structure above prescribes.
+
+What has **not** been done yet and remains open:
+
+- App `id`s are still `"management-ui-episodes"` / `-series` / `-upload` inside `apps:definitions`, matching the existing `config.plugins[...]` keys. Normalizing to `"episodes"` / `"series"` / `"upload"` is part of the Phase 2b config redesign, not Phase 3.
+- `@tanstack/react-table` and `mustache` are kept as plugin-level dependencies in `plugins/core-upload`. A later pass may move them behind `@workspace/ui` or a shared data-table seam.
+
 ## Related Decisions
 
 - **ADR-001:** Plugin System Architecture - stays accepted, reinforced by this decision.

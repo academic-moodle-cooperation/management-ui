@@ -4,8 +4,7 @@
     "baseUrl": ".",
     "skipLibCheck": true,
     "paths": {
-      "@/*": ["./src/*"],
-      "@monorepo-apps/*": ["../../apps/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src", "vite-env.d.ts", "vite.config.ts", "postcss.config.mjs", "tailwind.config.js"],
