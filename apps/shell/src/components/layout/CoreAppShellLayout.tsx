@@ -1,6 +1,6 @@
-import { Outlet } from "@tanstack/react-router";
 import React, { Suspense } from "react";
 
+import { Outlet } from "@workspace/router";
 import { Appshell } from "@workspace/ui/components";
 
 // Development tools - only load in development

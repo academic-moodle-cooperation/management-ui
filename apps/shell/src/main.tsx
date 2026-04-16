@@ -7,6 +7,7 @@ import { loadNamespace, useTranslation } from "@workspace/i18n";
 import { PluginProvider } from "@workspace/plugin-system";
 import { AppProviders } from "@workspace/providers";
 import { useAppConfig, QueryProvider } from "@workspace/query";
+import { type AnyRouter } from "@workspace/router";
 import { AppLoader } from "@workspace/ui/components";
 
 import { DynamicRouterProvider } from "./components/DynamicRouterProvider";
@@ -15,8 +16,6 @@ import { exposeSharedModules } from "./shared/sharedModules";
 
 // Expose shared modules early for community plugins
 exposeSharedModules();
-
-import type { AnyRouter } from "@tanstack/react-router";
 
 const AppContent = () => {
   const { i18n } = useTranslation();

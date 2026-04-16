@@ -10,6 +10,16 @@ The `@workspace/router` package provides the routing infrastructure for the Mana
 
 It centralizes the routing logic and provides a bridge between the data layer (`@workspace/query`) and the UI navigation.
 
+### Stability contract
+
+This package is the **only place in the monorepo that is allowed to import from `@tanstack/react-router`**. Apps, plugins and other packages must import routing primitives (`createRouter`, `Link`, `Outlet`, `AnyRouter`, ...) from `@workspace/router`.
+
+The rule is enforced by ESLint (`no-restricted-imports` in `packages/eslint-config/base.js`) with an explicit exception for this package.
+
+Why it matters: if we ever need to replace or upgrade the router implementation across a major version, we can do so by changing the internals of `@workspace/router` without breaking plugins or apps. Deep imports into the underlying router would make that impossible.
+
+> Until we have a typed facade, the public types re-exported from here are structurally identical to TanStack Router's types. Treat the API surface as "owned by `@workspace/router`"; we may stabilize it further over time.
+
 **In Scope:**
 
 - Routing configuration and provider.

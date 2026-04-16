@@ -70,7 +70,10 @@ export const config = [
       ],
       "import/no-duplicates": "error",
       "import/no-unresolved": "off", // TypeScript handles this
-      // Prevent deep imports into UI internals - use stable exports only
+      // Prevent deep imports into UI internals - use stable exports only.
+      // Prevent direct imports of @tanstack/react-router - everything routing
+      // related must go through @workspace/router so we can swap the router
+      // later without breaking plugins (see packages/router/README.md).
       "no-restricted-imports": [
         "error",
         {
@@ -83,6 +86,11 @@ export const config = [
               ],
               message:
                 "Import from stable entrypoints like '@workspace/ui/components' or '@workspace/ui/lib/utils' instead of deep paths.",
+            },
+            {
+              group: ["@tanstack/react-router", "@tanstack/react-router/*"],
+              message:
+                "Do not import @tanstack/react-router directly. Use @workspace/router instead. (Only packages/router/ itself may import @tanstack/react-router.)",
             },
           ],
         },

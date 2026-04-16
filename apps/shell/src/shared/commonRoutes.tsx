@@ -1,6 +1,9 @@
-import { createRoute } from "@tanstack/react-router";
-
-import { createLoginRoute, createLogoutRoute } from "@workspace/router";
+import {
+  createLoginRoute,
+  createLogoutRoute,
+  createRoute,
+  type AnyRoute,
+} from "@workspace/router";
 import { AppLoader } from "@workspace/ui/components";
 
 import { DefaultLandingComponent } from "../components/DefaultLandingComponent";
@@ -9,8 +12,6 @@ import { DefaultLandingComponent } from "../components/DefaultLandingComponent";
  * Shared route definitions used across different router configurations.
  * This eliminates duplication between app-router.tsx and DynamicRouterProvider.tsx
  */
-
-import type { AnyRoute } from "@tanstack/react-router";
 
 export const createCommonRoutes = (parentRoute: AnyRoute) => {
   const rootLandingRoute = createRoute({

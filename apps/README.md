@@ -251,8 +251,8 @@ function SeriesComponent() {
 ### Pattern 2: Navigation
 
 ```typescript
-// Use workspace router
-import { useNavigate } from '@tanstack/react-router';
+// Use workspace router (never import @tanstack/react-router directly)
+import { useNavigate } from '@workspace/router';
 
 function NavigateButton() {
   const navigate = useNavigate();

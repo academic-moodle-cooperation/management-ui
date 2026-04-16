@@ -1,16 +1,25 @@
-import { createRouter, createRoute, createRootRoute, Outlet } from "@tanstack/react-router";
 import React from "react";
 import ReactDOM from "react-dom/client";
 
 import { PluginProvider, RendererProvider } from "@workspace/plugin-system";
 import { QueryProvider } from "@workspace/query";
-import { AuthProvider, AuthInitializer, RouterProvider } from "@workspace/router";
+import {
+  AuthProvider,
+  AuthInitializer,
+  RouterProvider,
+  createRouter,
+  createRoute,
+  createRootRoute,
+  Outlet,
+  type RouteComponent,
+  type AnyRoute,
+  type AnyRouter,
+} from "@workspace/router";
 import { ErrorBoundary } from "@workspace/ui/components/errors/general-error";
 
 import { AppRuntimeProvider, AppRuntimeContextProvider } from "./AppRuntimeProvider";
 
 import type { AppRuntimeConfig } from "./types";
-import type { RouteComponent, AnyRoute, AnyRouter } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
 import "@workspace/ui/globals.css";

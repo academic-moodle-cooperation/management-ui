@@ -1,4 +1,3 @@
-import { createRouter, createRoute, createRootRoute } from "@tanstack/react-router";
 import React, { useState, useEffect, lazy, Suspense } from "react";
 
 import {
@@ -8,7 +7,14 @@ import {
   type AppDefinition,
 } from "@workspace/plugin-system";
 import { getCachedAppConfig } from "@workspace/query";
-import { AppProtection } from "@workspace/router";
+import {
+  AppProtection,
+  createRouter,
+  createRoute,
+  createRootRoute,
+  type AnyRoute,
+  type AnyRouter,
+} from "@workspace/router";
 import { AppLoader } from "@workspace/ui/components";
 import { logger } from "@workspace/utils";
 
@@ -17,8 +23,6 @@ import { createCommonRoutes } from "../shared/commonRoutes";
 
 import { ErrorBoundary, ModuleErrorFallback, NotFoundError } from "./errors/ErrorBoundary";
 import { CoreAppShellLayout } from "./layout/CoreAppShellLayout";
-
-import type { AnyRoute, AnyRouter } from "@tanstack/react-router";
 
 // Base root route for the application
 const appCoreRootRoute = createRootRoute({

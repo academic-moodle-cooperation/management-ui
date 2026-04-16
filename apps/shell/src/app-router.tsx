@@ -1,19 +1,22 @@
-import { createRouter, createRoute, createRootRoute } from "@tanstack/react-router";
 import React, { lazy, Suspense } from "react";
 
 // Types for dynamic modules - will eventually come from a more robust system
 // For now, let's assume a structure similar to what useGetInstalledApps might provide.
 // Import components from the new organized structure
 import { getCachedAppConfig } from "@workspace/query";
-import { ProtectedRoute } from "@workspace/router";
+import {
+  createRouter,
+  createRoute,
+  createRootRoute,
+  ProtectedRoute,
+  type AnyRoute,
+} from "@workspace/router";
 import { AppLoader } from "@workspace/ui/components";
 import { logger } from "@workspace/utils";
 
 import { ErrorBoundary, ModuleErrorFallback, NotFoundError } from "./components/errors/ErrorBoundary";
 import { CoreAppShellLayout } from "./components/layout/CoreAppShellLayout";
 import { createCommonRoutes } from "./shared/commonRoutes"; // Import shared route definitions
-
-import type { AnyRoute } from "@tanstack/react-router";
 
 // Local temporary placeholders are no longer needed and will be removed.
 

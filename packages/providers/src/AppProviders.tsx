@@ -2,10 +2,13 @@ import React from "react";
 
 import { AppRuntimeProvider, type AppRuntimeConfig } from "@workspace/app-runtime";
 import { RendererProvider } from "@workspace/plugin-system";
-import { AuthProvider, AuthInitializer, RouterProvider } from "@workspace/router";
+import {
+  AuthProvider,
+  AuthInitializer,
+  RouterProvider,
+  type AnyRouter,
+} from "@workspace/router";
 import { ErrorBoundary } from "@workspace/ui/components/errors/general-error";
-
-import type { AnyRouter } from "@tanstack/react-router";
 
 interface AppProvidersProps {
   router: AnyRouter;

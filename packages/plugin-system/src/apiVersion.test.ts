@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+
 import {
   PLUGIN_API_VERSION,
   parseSemver,

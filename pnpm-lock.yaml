@@ -997,9 +997,6 @@ importers:
 
   apps/shell:
     dependencies:
-      '@tanstack/react-router':
-        specifier: ^1.115.8
-        version: 1.125.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@workspace/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
@@ -1088,9 +1085,6 @@ importers:
 
   packages/app-runtime:
     dependencies:
-      '@tanstack/react-router':
-        specifier: ^1.46.0
-        version: 1.125.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@workspace/plugin-system':
         specifier: workspace:*
         version: link:../plugin-system
@@ -1265,9 +1259,6 @@ importers:
 
   packages/providers:
     dependencies:
-      '@tanstack/react-router':
-        specifier: ^1.46.0
-        version: 1.125.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@workspace/app-runtime':
         specifier: workspace:*
         version: link:../app-runtime
