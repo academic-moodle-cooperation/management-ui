@@ -5,8 +5,7 @@
     "rootDir": "src",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@workspace/plugin-system/*": ["./src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src"],
