@@ -13,7 +13,7 @@ const CORE_APP_NAMES = [
 
 // Known plugin packages - simplified to avoid dynamic discovery issues
 const discoverPluginPackages = (): string[] => {
-  return ["plugin-tuwien", "plugin-univie", "plugin-example-university"];
+  return ["plugin-tuwien", "plugin-univie", "@workspace/plugin-example"];
 };
 
 interface PluginPorts {

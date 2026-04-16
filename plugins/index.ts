@@ -24,6 +24,6 @@
  */
 
 export * from "./core";
-export * from "./example-university";
+export * from "./example";
 export * from "./admin-marketplace";
 // export * from "./my-org-plugin"; // Example org plugin; use .local-plugins/ or Marketplace to load

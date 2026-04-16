@@ -26,12 +26,12 @@ export const AVAILABLE_THEMES: ThemeDefinition[] = [
   // and is always applied as the baseline. Installing another theme only overrides
   // the subset of CSS custom properties that it customizes.
   {
-    id: "example-university-theme",
-    name: "Example University",
-    description: "Red-themed university branding with custom sidebar and corporate colors",
-    previewUrl: "/management-ui/plugins/themes/example-university.css",
-    category: "University",
-    author: "Example University",
+    id: "example-theme",
+    name: "Example",
+    description: "Neutral reference theme shipped with @workspace/plugin-example",
+    previewUrl: "/management-ui/plugins/example/example.css",
+    category: "Example",
+    author: "Management UI",
   },
   {
     id: "tuwien-theme",
