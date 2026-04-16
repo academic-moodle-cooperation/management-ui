@@ -10,6 +10,14 @@ The `@workspace/query` package serves as the centralized data fetching and state
 
 This package is responsible for all server communication, handling GraphQL operations, managing the query cache, and providing hooks for data access throughout the monorepo.
 
+### Stability contract
+
+This package is the **only place in the monorepo that is allowed to import from `@tanstack/react-query`**. Apps, plugins and other packages must import query primitives (`useQuery`, `useMutation`, `QueryClient`, …) from `@workspace/query`.
+
+The rule is enforced by ESLint (`no-restricted-imports` in `packages/eslint-config/base.js`) with an explicit exception for this package.
+
+Why it matters: if we ever need to replace or upgrade the query implementation across a major version, we can do so by changing the internals of `@workspace/query` without breaking plugins or apps. Deep imports into the underlying query library would make that impossible.
+
 **In Scope:**
 
 - GraphQL client initialization and management.

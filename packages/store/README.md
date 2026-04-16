@@ -8,6 +8,14 @@
 
 The `@workspace/store` package provides a unified state management layer for the Management UI. It leverages two complementary libraries—**Zustand** and **Jotai**—to handle different types of state needs, ranging from complex persistent stores to lightweight atomic updates.
 
+### Stability contract
+
+This package is the **only place in the monorepo that is allowed to import from `jotai`** (and is also where `zustand` + `immer` are used). Apps, plugins and other packages must import store primitives from `@workspace/store`.
+
+The rule for `jotai` is enforced by ESLint (`no-restricted-imports` in `packages/eslint-config/base.js`) with an explicit exception for this package. `zustand` and `immer` are used only internally today; they are not re-exported.
+
+Why it matters: if we ever need to replace or upgrade the state management stack, we can do so by changing the internals of `@workspace/store` without breaking plugins or apps.
+
 **In Scope:**
 
 - Global, persistent application state (e.g., File Uploads).
