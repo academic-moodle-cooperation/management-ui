@@ -16,7 +16,7 @@ This document lists all possible ways plugins can be loaded in the Management UI
 - Backend note: this mode is frontend-bundled. Plugin-specific backend logic is not packaged as part of this loading mechanism.
 
 **Code:**
-- `apps/management-ui-core/src/loadPlugins.ts` - `loadAllPlugins()`
+- `apps/shell/src/loadPlugins.ts` - `loadAllAvailablePlugins()`
 - `plugins/index.ts` - Exports core plugins only
 
 **Configuration:**
@@ -72,44 +72,14 @@ await RemoteLoader.loadAndRegister(
 
 ---
 
-## 3. Local Plugin Discovery (localStorage)
+## 3. Local Plugin Discovery (Removed)
 
-**Location:** `apps/management-ui-core/src/services/localPluginDiscovery.ts`
-
-**How it works:**
-- Reads plugin URLs from `localStorage.getItem("local_plugins")`
-- Returns array of `LocalPluginInfo` objects
-- Used by Marketplace to display local dev plugins
-- Plugins are then loaded via `RemoteLoader`
-
-**Code:**
-- `apps/management-ui-core/src/services/localPluginDiscovery.ts` - `discoverLocalPlugins()`
-- `plugins/admin-marketplace/src/views/MarketplaceDashboard.tsx` - UI display
-
-**Storage Format:**
-```json
-[
-  {
-    "id": "my-plugin",
-    "name": "My Plugin",
-    "url": "http://127.0.0.1:5173/my-plugin.mjs",
-    "metadata": {...}
-  }
-]
-```
-
-**Status:** ✅ Implemented (needs testing)
-
-**Test:**
-1. Add plugin to localStorage:
-   ```javascript
-   localStorage.setItem("local_plugins", JSON.stringify([{
-     id: "test-plugin",
-     name: "Test Plugin",
-     url: "http://127.0.0.1:5173/test.mjs"
-   }]));
-   ```
-2. Refresh Marketplace - should see "Local Development Plugins" section
+Previously a `localPluginDiscovery` helper read plugin URLs from
+`localStorage.getItem("local_plugins")` and was invoked as a side-effect of
+`loadAllPlugins()`. With the switch to the `.local-plugins/` manifest served
+by the dev-server plugin (see §5) this mechanism was unused and has been
+removed. Use `.local-plugins/` for local dev, or the Marketplace Developer
+Mode (mechanism 2) for ad-hoc URLs.
 
 ---
 
@@ -252,7 +222,7 @@ manager.registerObject("apps:definitions", "my-app", {
 |---|-----------|------|--------|-------------|
 | 1 | Built-in Plugins | Static | ✅ Working | Core plugins (always bundled) |
 | 2 | Remote Loader (package + marketplace) | Dynamic | ✅ Implemented | Community plugins from CDN/URL (marketplace validates; core uses same package for JAR) |
-| 3 | Local Discovery | Dynamic | ✅ Implemented | Local development plugins |
+| 3 | Local Discovery | — | 🗑 Removed | Superseded by §5 (`.local-plugins` manifest) |
 | 4 | JAR Loader (core) | Dynamic | ✅ Implemented | Production JAR deployments (loaded by core; marketplace optional) |
 | 5 | .local-plugins manifest (dev) | Dynamic | ✅ Implemented | Dev-only: plugins in `.local-plugins/<name>/`; filtered by `pluginNamespace` |
 | 6 | Dynamic Modules | Legacy | ⚠️ Deprecated | Old standalone apps |
@@ -264,15 +234,14 @@ We'll test each mechanism one by one:
 
 1. ✅ **Built-in Plugins** - Already working
 2. ⏳ **RemoteLoader** - Test with a sample plugin URL
-3. ⏳ **Local Discovery** - Test with localStorage plugin
+3. 🗑 **Local Discovery** - Removed (use §5)
 4. ⏳ **JAR Loader** - Test with backend plugins.json
-5. ✅ **.local-plugins manifest** - Build plugin in `.local-plugins/<name>/`, add namespace to config, run core in dev
-6. ⏳ **Dynamic Modules** - Test with dynamic-modules.json (if needed)
+5. ✅ **.local-plugins manifest** - Build plugin in `.local-plugins/<name>/`, add namespace to config, run shell in dev
+6. 🗑 **Dynamic Modules** - Removed (see ADR-003)
 7. ✅ **Plugin-based Apps** - Already working
 
 ## Next Steps
 
 1. Create a test plugin for RemoteLoader
-2. Test Local Discovery with localStorage
-3. Test JAR Loader with mock backend response
-4. Document any issues found
+2. Test JAR Loader with mock backend response
+3. Document any issues found

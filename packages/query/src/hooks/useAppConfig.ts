@@ -4,19 +4,25 @@ import { useMemo } from "react";
 import { useRegistry, type PluginManager } from "@workspace/plugin-system";
 import {
   defaultConfig,
+  getAppConfig,
   type AppConfig,
   type PluginNamespaceItem,
-  getAppConfig,
 } from "@workspace/ui-config";
 import { deepMerge, logger } from "@workspace/utils";
 
 const CONFIG_QUERY_KEY = ["appConfig"];
 
-const fetchAndMergeConfig = async (configUrl?: string): Promise<AppConfig> => {
+/**
+ * Fetch `config.json` (if a URL is configured) and normalize it through
+ * `getAppConfig` so defaults are guaranteed. When no URL is configured we
+ * simply start from `defaultConfig`.
+ *
+ * This is the *base* layer. Plugin-contributed `app:config` overlays are
+ * merged on top at render time in {@link useAppConfig} — identical logic for
+ * dev and prod, so the order in which overrides apply is predictable.
+ */
+const fetchBaseConfig = async (configUrl?: string): Promise<AppConfig> => {
   if (!configUrl) return { ...defaultConfig };
-  // Note: Config is served by OSGi at a different path than regular assets
-  // (e.g., /ui/config/... instead of /management-ui/assets/...)
-  // so we DON'T use resolveAssetUrl here - use the URL as-is
   const resolvedUrl = configUrl.startsWith("/") ? configUrl : `/${configUrl}`;
   const response = await fetch(resolvedUrl);
   if (!response.ok) throw new Error(`Failed to fetch config: ${response.statusText}`);
@@ -24,12 +30,18 @@ const fetchAndMergeConfig = async (configUrl?: string): Promise<AppConfig> => {
   return getAppConfig(customConfig);
 };
 
-// Non-hook version for use during plugin initialization
-export function getAppConfigSync(pluginManager?: PluginManager): AppConfig {
-  const isDev = import.meta.env.DEV;
-
-  // Get plugin configs directly from manager if available
-  // Plugin configs are partial AppConfig objects that will be merged
+/**
+ * Non-hook, synchronous snapshot of the current effective config.
+ *
+ * Used inside `PluginInitializer` (two-phase plugin loading) where we need to
+ * inspect the currently registered `app:config` overlays *without* subscribing
+ * to React state. Callers should pass the already-fetched base config so the
+ * snapshot reflects both the deployed `config.json` and registry overlays.
+ */
+export function getAppConfigSync(
+  pluginManager?: PluginManager,
+  baseConfig?: AppConfig,
+): AppConfig {
   let pluginConfigObjects: Partial<AppConfig>[] = [];
   if (pluginManager) {
     try {
@@ -41,51 +53,35 @@ export function getAppConfigSync(pluginManager?: PluginManager): AppConfig {
     }
   }
 
-  // In dev mode, just use default config merged with plugin configs
-  // In production, this would need to be called after config is fetched
-  const baseConfig = isDev ? { ...defaultConfig } : { ...defaultConfig };
-
-  return deepMerge(baseConfig, ...(pluginConfigObjects || [])) as AppConfig;
+  const base = baseConfig ?? defaultConfig;
+  return deepMerge({ ...base }, ...pluginConfigObjects) as AppConfig;
 }
 
 export function useAppConfig() {
   const configUrl = defaultConfig.productionConfigUrl || undefined;
-  const isDev = import.meta.env.DEV;
 
-  // Get plugin configs (only used in dev mode)
   const { items: pluginConfigObjects } = useRegistry("app:config");
 
-  // In production, fetch pre-merged config.json (no runtime merging needed)
-  // In dev, use defaultConfig and merge plugin configs at runtime
   const queryResult = useQuery({
     queryKey: CONFIG_QUERY_KEY,
-    queryFn: () => fetchAndMergeConfig(configUrl),
-    enabled: !isDev && !!configUrl,
-    initialData: isDev ? { ...defaultConfig } : undefined,
+    queryFn: () => fetchBaseConfig(configUrl),
+    enabled: !!configUrl,
+    initialData: configUrl ? undefined : { ...defaultConfig },
     staleTime: Infinity,
   });
 
-  // In dev mode: merge plugin configs at runtime (same order as build)
-  // In prod mode: use pre-merged config.json as-is (no additional merging)
+  // Unified merge: default/fetched base → plugin overlays, dev and prod alike.
   const mergedConfig = useMemo(() => {
-    if (isDev) {
-      // Dev: Runtime merging with explicit order
-      // Plugin configs are partial AppConfig objects
-      // Type assertion needed because useRegistry returns unknown[]
-      const pluginConfigs = (pluginConfigObjects || []) as Partial<AppConfig>[];
-      // deepMerge accepts rest parameters, so we need to spread the array
-      return deepMerge(queryResult.data ?? { ...defaultConfig }, ...pluginConfigs) as AppConfig;
-    } else {
-      // Prod: Use pre-merged config.json directly
-      return (queryResult.data ?? { ...defaultConfig }) as AppConfig;
-    }
-  }, [queryResult.data, pluginConfigObjects, isDev]);
+    const base = queryResult.data ?? { ...defaultConfig };
+    const overlays = (pluginConfigObjects || []) as Partial<AppConfig>[];
+    return deepMerge({ ...base }, ...overlays) as AppConfig;
+  }, [queryResult.data, pluginConfigObjects]);
 
-  // Emulate loading/error state logic as before
-  const isLoading = !isDev && !!configUrl ? queryResult.isLoading : false;
-  const isError = !isDev && !!configUrl ? queryResult.isError : false;
-  const error = !isDev && !!configUrl ? queryResult.error : null;
-  const isFetched = !isDev && !!configUrl ? queryResult.isFetched : true;
+  const hasFetch = !!configUrl;
+  const isLoading = hasFetch ? queryResult.isLoading : false;
+  const isError = hasFetch ? queryResult.isError : false;
+  const error = hasFetch ? queryResult.error : null;
+  const isFetched = hasFetch ? queryResult.isFetched : true;
 
   return {
     config: mergedConfig,

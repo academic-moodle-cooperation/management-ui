@@ -4,11 +4,14 @@ import { defaultConfig } from "@workspace/ui-config";
 
 import { getCachedAppConfig, clearAppConfigCache } from "./getCachedAppConfig";
 
-// Mock @workspace/ui-config
+// Mock @workspace/ui-config. `getAppConfig` is the normalizer used by the
+// real hook + cache — the identity passthrough keeps assertions focused on
+// caching behaviour without coupling tests to the default-merge details.
 vi.mock("@workspace/ui-config", () => ({
   defaultConfig: {
     productionConfigUrl: "/ui/config/config.json",
   },
+  getAppConfig: (data: unknown) => data,
 }));
 
 // Mock global fetch

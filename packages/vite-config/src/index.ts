@@ -11,10 +11,6 @@ export {
   createPluginAppViteConfig,
   type CreatePluginAppViteConfigOptions,
 } from "./plugin.config.js";
-export {
-  generateConfigPlugin,
-  type GenerateConfigPluginOptions,
-} from "./generate-config-plugin.js";
 
 // Community Plugin System
 export {

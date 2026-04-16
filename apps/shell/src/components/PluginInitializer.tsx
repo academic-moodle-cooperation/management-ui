@@ -12,7 +12,7 @@ import type { AppConfig } from "@workspace/query";
 import { getAppConfigSync } from "@workspace/query";
 import { loadAndRegister } from "@workspace/remote-plugin-loader";
 import { AppLoader } from "@workspace/ui/components";
-import { logger } from "@workspace/utils";
+import { deepMerge, logger } from "@workspace/utils";
 
 import {
   loadAllAvailablePlugins,
@@ -185,14 +185,14 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           }
         }
 
-        // 4. Get merged config from registry (now includes config plugin contributions)
-        const configObjects = manager.getObjects<AppConfig>("app:config");
-        const mergedConfig = configObjects.reduce(
-          (acc: AppConfig, obj: AppConfig) => {
-            return { ...acc, ...obj };
-          },
-          config || ({} as AppConfig),
-        );
+        // 4. Get merged config from registry (now includes config plugin contributions).
+        //    Uses the same deep-merge semantics as `useAppConfig` so build-time
+        //    and runtime produce identical results.
+        const configObjects = manager.getObjects<Partial<AppConfig>>("app:config");
+        const mergedConfig = deepMerge(
+          { ...(config || {}) } as AppConfig,
+          ...configObjects,
+        ) as AppConfig;
 
         // Make the effective runtime config visible via app:config so plugins
         // initialized later (e.g. navigation plugins) can read production JSON
@@ -385,7 +385,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                   );
             await loadBatch(toLoad1, 1);
 
-            const mergedJarConfig = getAppConfigSync(manager);
+            const mergedJarConfig = getAppConfigSync(manager, config);
             const enabled2 = getEnabledPluginNamespaces(mergedJarConfig);
             const loadedUrls = new Set(toLoad1.map((entry) => entry.url));
             const toLoad2 = jarPluginsToConsider.filter(
@@ -455,7 +455,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
 
             // Phase 2: re-merge config from manager (config plugin may have added namespaces),
             // then load remaining .local-plugins that now match (e.g. univie, tuwien) and types
-            const mergedLocalConfig = getAppConfigSync(manager);
+            const mergedLocalConfig = getAppConfigSync(manager, config);
             const enabled2 = getEnabledPluginNamespaces(mergedLocalConfig);
             const loadedUrls = new Set(toLoad1.map((e) => e.url));
             const toLoad2 = localManifest.filter(
