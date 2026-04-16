@@ -1,11 +1,6 @@
 {
   "plugins": [
     {
-      "name": "management-ui-test",
-      "path": "/static/plugins/test",
-      "scope": "management_ui_test"
-    },
-    {
       "name": "management-ui-series",
       "path": "/static/plugins/series",
       "scope": "management_ui_series"

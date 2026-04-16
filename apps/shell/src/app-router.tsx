@@ -30,16 +30,16 @@ const commonRoutes = createCommonRoutes(appCoreRootRoute);
 
 // This is the internal representation for client-side route generation
 interface ClientDynamicModule {
-  routePath: string; // e.g., /test
+  routePath: string; // e.g., /episodes
   componentName: string; // Conventionally 'default' for React.lazy with default export
-  componentImportPath: string; // e.g., @monorepo-apps/management-ui-test/src/App
+  componentImportPath: string; // e.g., @monorepo-apps/management-ui-episodes/src/App
 }
 
 // This interface matches the structure in dynamic-modules.json (for one plugin/app)
 interface FetchedPluginConfig {
-  name: string; // e.g., management-ui-test
-  path: string; // e.g., /static/plugins/test (server path)
-  scope: string; // e.g., management_ui_test
+  name: string; // e.g., management-ui-episodes
+  path: string; // e.g., /static/plugins/episodes (server path)
+  scope: string; // e.g., management_ui_episodes
   // No longer expecting clientRoute, clientComponentExportName, clientComponentPath from JSON
 }
 
@@ -70,9 +70,9 @@ const getDynamicModules = async (): Promise<ClientDynamicModule[]> => {
     const config: FetchedModulesConfig = await response.json();
 
     return config.plugins.map((plugin) => {
-      // Derive routePath: /static/plugins/test -> /test
+      // Derive routePath: /static/plugins/episodes -> /episodes
       const routePath = plugin.path.replace("/static/plugins", "");
-      // Construct componentImportPath. Example: @monorepo-apps/management-ui-test/src/App
+      // Construct componentImportPath. Example: @monorepo-apps/management-ui-episodes/src/App
       const componentImportPath = /* @vite-ignore */ `@monorepo-apps/${plugin.name}/src/App`;
 
       return {
@@ -94,10 +94,10 @@ export const createDynamicRouter = async () => {
   const dynamicModules = await getDynamicModules();
 
   const dynamicRoutes: AnyRoute[] = dynamicModules.map((mod) => {
-    // mod.componentImportPath is e.g., "@monorepo-apps/management-ui-test/src/App"
-    // We need to extract "management-ui-test" to use in the template literal.
+    // mod.componentImportPath is e.g., "@monorepo-apps/management-ui-episodes/src/App"
+    // We need to extract "management-ui-episodes" to use in the template literal.
     const parts = mod.componentImportPath.split("/");
-    const pluginname = parts.length > 1 ? parts[1] : ""; // Extracts "management-ui-test"
+    const pluginname = parts.length > 1 ? parts[1] : ""; // Extracts "management-ui-episodes"
 
     const DynamicComponent = lazy(async () => {
       if (!pluginname) {

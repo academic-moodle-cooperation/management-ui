@@ -8,7 +8,7 @@ const CORE_APP_NAMES = [
   "management-ui-series",
   "management-ui-episodes",
   "management-ui-upload",
-  "management-ui-test",
+  "playground",
 ];
 
 // Known plugin packages - simplified to avoid dynamic discovery issues
@@ -65,7 +65,7 @@ export const getPluginBasePath = (
   pluginPackageName: string,
   shellAppBasePath: string = "/management-ui/",
 ): string => {
-  // Derives "test" from "management-ui-test"
+  // Derives "series" from "management-ui-series" etc.
   const pluginShortName = pluginPackageName.replace(/^management-ui-/, "");
   const ensuredShellBase =
     shellAppBasePath === "/"

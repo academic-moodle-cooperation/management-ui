@@ -22,7 +22,6 @@
     <module>management-ui-episodes</module>
     <module>management-ui-series</module>
     <module>management-ui-upload</module>
-    <module>management-ui-test</module>
   </modules>
 
   <dependencies>

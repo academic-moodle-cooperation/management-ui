@@ -48,10 +48,5 @@
       <artifactId>management-ui-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.amc.management</groupId>
-      <artifactId>management-ui-test</artifactId>
-      <version>${project.version}</version>
-    </dependency>
   </dependencies>
 </project>
