@@ -22,7 +22,7 @@ export interface ThemeDefinition {
  * In a production environment, these could be fetched from a remote API or CDN.
  */
 export const AVAILABLE_THEMES: ThemeDefinition[] = [
-  // The Default Theme is baked into the shell (apps/management-ui-core/src/themes/default.css)
+  // The Default Theme is baked into the shell (apps/shell/src/themes/default.css)
   // and is always applied as the baseline. Installing another theme only overrides
   // the subset of CSS custom properties that it customizes.
   {

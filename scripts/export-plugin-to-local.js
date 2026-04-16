@@ -771,7 +771,7 @@ function main() {
   console.log("\nNext steps:");
   console.log(`1. cd ${path.relative(REPO_ROOT, targetDir)}`);
   console.log("2. pnpm build");
-  console.log("3. cd ../.. && pnpm dev --filter=management-ui-core");
+  console.log("3. cd ../.. && pnpm dev --filter=shell");
 
   if (!communityResult && inspection.isLibraryStyle) {
     console.log("\nWarning:");

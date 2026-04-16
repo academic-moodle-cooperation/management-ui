@@ -9,7 +9,7 @@
 Three-layer monorepo: apps (domain UIs), packages (shared infrastructure), plugins (extension system).
 
 ### Apps (`apps/`)
-- `management-ui-core` — Main application shell, plugin orchestrator, layout
+- `shell` — Main application shell (formerly `management-ui-core`), plugin orchestrator, layout
 - `management-ui-series` — Video series management
 - `management-ui-episodes` — Episode management
 - `management-ui-upload` — Content upload and processing

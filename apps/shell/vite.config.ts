@@ -10,7 +10,7 @@ import {
 
 import { defaultConfig } from "../../packages/ui-config/src/index.ts";
 
-const packageName = process.env["npm_package_name"] || "management-ui-core";
+const packageName = process.env["npm_package_name"] || "shell";
 
 /**
  * PLUGIN CONFIG ORDER
@@ -29,7 +29,7 @@ const PLUGIN_CONFIGS: typeof defaultConfig[] = [];
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
-  // Calculate monorepo root path (two levels up from apps/management-ui-core)
+  // Calculate monorepo root path (two levels up from apps/shell)
   const monorepoRootPath = path.resolve(__dirname, "../..");
   const env = loadEnv(mode, monorepoRootPath, ""); // Load all env variables from monorepo root
 

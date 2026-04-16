@@ -8,7 +8,7 @@ export default [
   ...baseConfig,
   ...reactConfig,
   {
-    // Configuration specific to this app (management-ui-core)
+    // Configuration specific to this app (shell)
     files: ["src/**/*.{ts,tsx}"], // Apply only to src files
     plugins: {
       "react-refresh": eslintPluginReactRefresh,

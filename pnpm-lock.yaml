@@ -679,97 +679,6 @@ importers:
         specifier: '>=6.4.1'
         version: 7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)
 
-  apps/management-ui-core:
-    dependencies:
-      '@tanstack/react-router':
-        specifier: ^1.115.8
-        version: 1.125.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@workspace/i18n':
-        specifier: workspace:*
-        version: link:../../packages/i18n
-      '@workspace/plugin-system':
-        specifier: workspace:*
-        version: link:../../packages/plugin-system
-      '@workspace/plugins':
-        specifier: workspace:*
-        version: link:../../plugins
-      '@workspace/providers':
-        specifier: workspace:*
-        version: link:../../packages/providers
-      '@workspace/query':
-        specifier: workspace:*
-        version: link:../../packages/query
-      '@workspace/remote-plugin-loader':
-        specifier: workspace:*
-        version: link:../../packages/remote-plugin-loader
-      '@workspace/router':
-        specifier: workspace:*
-        version: link:../../packages/router
-      '@workspace/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      '@workspace/ui-config':
-        specifier: workspace:*
-        version: link:../../packages/ui-config
-      '@workspace/utils':
-        specifier: workspace:*
-        version: link:../../packages/utils
-      '@workspace/vite-config':
-        specifier: workspace:*
-        version: link:../../packages/vite-config
-      react:
-        specifier: ^19.1.0
-        version: 19.1.0
-      react-dom:
-        specifier: ^19.1.0
-        version: 19.1.0(react@19.1.0)
-    devDependencies:
-      '@tailwindcss/vite':
-        specifier: ^4.1.7
-        version: 4.1.11(vite@7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
-      '@tanstack/router-devtools':
-        specifier: ^1.125.6
-        version: 1.125.6(@tanstack/react-router@1.125.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@tanstack/router-core@1.125.4)(csstype@3.1.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.7)(tiny-invariant@1.3.3)
-      '@types/node':
-        specifier: ^25.0.6
-        version: 25.0.6
-      '@types/react':
-        specifier: ^18.0.0 || ^19.0.0
-        version: 19.1.8
-      '@types/react-dom':
-        specifier: ^18.0.0 || ^19.0.0
-        version: 19.1.6(@types/react@19.1.8)
-      '@vitejs/plugin-react-swc':
-        specifier: ^3.9.0
-        version: 3.10.2(@swc/helpers@0.5.17)(vite@7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
-      '@workspace/eslint-config':
-        specifier: workspace:*
-        version: link:../../packages/eslint-config
-      '@workspace/typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/typescript-config
-      autoprefixer:
-        specifier: ^10.4.21
-        version: 10.4.21(postcss@8.5.6)
-      eslint:
-        specifier: ^9.20.0
-        version: 9.30.1(jiti@2.4.2)
-      eslint-plugin-react-refresh:
-        specifier: ^0.4.19
-        version: 0.4.20(eslint@9.30.1(jiti@2.4.2))
-      postcss:
-        specifier: ^8.5.3
-        version: 8.5.6
-      tailwindcss:
-        specifier: ^4.1.7
-        version: 4.1.11
-      typescript:
-        specifier: ~5.5.4
-        version: 5.5.4
-      vite:
-        specifier: '>=6.4.1'
-        version: 7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)
-
   apps/management-ui-episodes:
     dependencies:
       '@workspace/app-runtime':
@@ -1079,6 +988,97 @@ importers:
       eslint-plugin-react-refresh:
         specifier: ^0.4.7
         version: 0.4.20(eslint@9.30.1(jiti@2.4.2))
+      typescript:
+        specifier: ~5.5.4
+        version: 5.5.4
+      vite:
+        specifier: '>=6.4.1'
+        version: 7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)
+
+  apps/shell:
+    dependencies:
+      '@tanstack/react-router':
+        specifier: ^1.115.8
+        version: 1.125.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@workspace/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
+      '@workspace/plugin-system':
+        specifier: workspace:*
+        version: link:../../packages/plugin-system
+      '@workspace/plugins':
+        specifier: workspace:*
+        version: link:../../plugins
+      '@workspace/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
+      '@workspace/query':
+        specifier: workspace:*
+        version: link:../../packages/query
+      '@workspace/remote-plugin-loader':
+        specifier: workspace:*
+        version: link:../../packages/remote-plugin-loader
+      '@workspace/router':
+        specifier: workspace:*
+        version: link:../../packages/router
+      '@workspace/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@workspace/ui-config':
+        specifier: workspace:*
+        version: link:../../packages/ui-config
+      '@workspace/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      '@workspace/vite-config':
+        specifier: workspace:*
+        version: link:../../packages/vite-config
+      react:
+        specifier: ^19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.1.0(react@19.1.0)
+    devDependencies:
+      '@tailwindcss/vite':
+        specifier: ^4.1.7
+        version: 4.1.11(vite@7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
+      '@tanstack/router-devtools':
+        specifier: ^1.125.6
+        version: 1.125.6(@tanstack/react-router@1.125.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@tanstack/router-core@1.125.4)(csstype@3.1.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.7)(tiny-invariant@1.3.3)
+      '@types/node':
+        specifier: ^25.0.6
+        version: 25.0.6
+      '@types/react':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.8
+      '@types/react-dom':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.6(@types/react@19.1.8)
+      '@vitejs/plugin-react-swc':
+        specifier: ^3.9.0
+        version: 3.10.2(@swc/helpers@0.5.17)(vite@7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
+      '@workspace/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      autoprefixer:
+        specifier: ^10.4.21
+        version: 10.4.21(postcss@8.5.6)
+      eslint:
+        specifier: ^9.20.0
+        version: 9.30.1(jiti@2.4.2)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.19
+        version: 0.4.20(eslint@9.30.1(jiti@2.4.2))
+      postcss:
+        specifier: ^8.5.3
+        version: 8.5.6
+      tailwindcss:
+        specifier: ^4.1.7
+        version: 4.1.11
       typescript:
         specifier: ~5.5.4
         version: 5.5.4

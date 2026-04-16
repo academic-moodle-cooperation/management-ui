@@ -17,7 +17,7 @@ import type { AnyRoute } from "@tanstack/react-router";
 
 // Local temporary placeholders are no longer needed and will be removed.
 
-// Base root route for the application, defined in management-ui-core
+// Base root route for the application, defined in apps/shell
 // This is similar to baseRootRoute from @workspace/router but specific to this app's needs
 // if it needs to carry app-specific context or layout that @workspace/router shouldn't know about.
 const appCoreRootRoute = createRootRoute({

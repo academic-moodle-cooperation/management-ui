@@ -18,7 +18,7 @@
 
   <name>Opencast Management Tool :: UI</name>
   <modules>
-    <module>management-ui-core</module>
+    <module>shell</module>
     <module>management-ui-episodes</module>
     <module>management-ui-series</module>
     <module>management-ui-upload</module>
