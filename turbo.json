@@ -1,7 +1,7 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "stream",
-  "concurrency": "20",
+  "concurrency": "30",
   "globalEnv": [
     "DEV",
     "BASE_URL",
@@ -31,9 +31,6 @@
       "outputs": [
         "dist/**"
       ]
-    },
-    "@workspace/plugin-admin-dashboard#build": {
-      "outputs": []
     },
     "@workspace/plugin-admin-marketplace#build": {
       "outputs": []

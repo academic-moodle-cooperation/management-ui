@@ -154,7 +154,6 @@ The Management UI features a plugin system that keeps the core small and lets in
 plugins/
 ├── core/                    # Core extension points and default implementations
 ├── admin-marketplace/       # Built-in optional shared plugin
-├── admin-dashboard/         # Built-in optional shared plugin
 └── example-university/      # Example implementations only
 
 .local-plugins/

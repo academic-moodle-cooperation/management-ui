@@ -26,7 +26,6 @@ Lower layers NEVER depend on higher layers.
 ### Plugins (`plugins/`)
 - `plugins/core/` — Mandatory extension points and defaults (always loaded)
 - `plugins/admin-marketplace/` — Optional shared plugin (marketplace UI)
-- `plugins/admin-dashboard/` — Optional shared plugin (admin dashboard)
 - `plugins/community-plugin-template/` — Starter template for new plugins
 
 ### External Plugins (`.local-plugins/` or separate repos)
