@@ -6,7 +6,6 @@
  */
 
 // Export individual app navigation implementations
-export { episodesNavImplementation } from "./episodes-nav-implementation";
 export { seriesNavImplementation } from "./series-nav-implementation";
 export { seriesCreateImplementation } from "./series-create-implementation";
 export { uploadNavImplementation } from "./upload-nav-implementation";

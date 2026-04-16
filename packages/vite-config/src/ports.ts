@@ -6,7 +6,6 @@ const PLUGIN_DEV_PORT_START = 3001;
 // Core apps that are always present
 const CORE_APP_NAMES = [
   "management-ui-series",
-  "management-ui-episodes",
   "management-ui-upload",
   "playground",
 ];

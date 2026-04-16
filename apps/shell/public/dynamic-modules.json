@@ -6,11 +6,6 @@
       "scope": "management_ui_series"
     },
     {
-      "name": "management-ui-episodes",
-      "path": "/static/plugins/episodes",
-      "scope": "management_ui_episodes"
-    },
-    {
       "name": "management-ui-upload",
       "path": "/static/plugins/upload",
       "scope": "management_ui_upload"
