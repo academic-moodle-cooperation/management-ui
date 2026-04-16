@@ -65,7 +65,8 @@
 
     "apiVersion": {
       "type": "string",
-      "description": "Minimum Management UI core API version required (semver range, e.g., '>=1.0.0'). The runtime and marketplace use this to check compatibility before loading."
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.]+)?$",
+      "description": "Minimum plugin runtime API version required, as a strict semver (MAJOR.MINOR.PATCH, optional prerelease). The host refuses plugins whose major mismatches the host or whose minor is higher than the host's minor. If absent, 1.0.0 is assumed. See docs/architecture/CONTRACTS.md for version semantics."
     },
     "workspaceDependencies": {
       "type": "object",

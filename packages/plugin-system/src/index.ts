@@ -6,6 +6,14 @@ export * from "./pluginTypes";
 export * from "./types";
 export * from "./appTypes";
 
+// Public API contract version (see docs/architecture/CONTRACTS.md)
+export {
+  PLUGIN_API_VERSION,
+  parseSemver,
+  checkApiVersionCompatibility,
+} from "./apiVersion";
+export type { ParsedSemver, ApiVersionCheckResult } from "./apiVersion";
+
 // Export plugin system components
 export * from "./PluginProvider";
 export * from "./RendererContext";

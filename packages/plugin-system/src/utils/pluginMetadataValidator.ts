@@ -90,6 +90,16 @@ export function validatePluginMetadata(
     );
   }
 
+  if (metadata.apiVersion !== undefined) {
+    if (typeof metadata.apiVersion !== "string") {
+      errors.push("Field 'apiVersion' must be a string");
+    } else if (!/^\d+\.\d+\.\d+(-[a-zA-Z0-9.]+)?$/.test(metadata.apiVersion)) {
+      errors.push(
+        "Field 'apiVersion' must use semantic versioning (e.g. 1.0.0). Compatibility is checked by the host loader.",
+      );
+    }
+  }
+
   if (metadata.modules !== undefined) {
     if (!Array.isArray(metadata.modules)) {
       errors.push("Field 'modules' must be an array");
