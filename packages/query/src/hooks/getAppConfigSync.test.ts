@@ -17,10 +17,14 @@ vi.mock("@workspace/ui-config", () => ({
   getAppConfig: (data: unknown) => data,
 }));
 
-const makeManager = (overlays: Array<Partial<AppConfig>>): PluginManager => {
+const makeManager = (
+  overlays: Array<Partial<AppConfig>>,
+  defaults: Array<Partial<AppConfig>> = [],
+): PluginManager => {
   return {
     getObjects: <T,>(ext: string): T[] => {
       if (ext === "app:config") return overlays as unknown as T[];
+      if (ext === "app:config:defaults") return defaults as unknown as T[];
       return [];
     },
   } as unknown as PluginManager;
@@ -70,5 +74,36 @@ describe("getAppConfigSync", () => {
 
     const result = getAppConfigSync(manager);
     expect(result.app?.theme).toBe("default");
+  });
+
+  it("merges plugin defaults below the base so the base wins on conflicts", () => {
+    const manager = makeManager(
+      [],
+      [
+        {
+          app: { theme: "plugin-default" } as AppConfig["app"],
+          plugins: { episodes: { episodeInfo: { metadata: [] } } } as AppConfig["plugins"],
+        },
+      ],
+    );
+
+    const result = getAppConfigSync(manager);
+    // Base `theme: "default"` must beat the plugin-contributed default.
+    expect(result.app?.theme).toBe("default");
+    // Plugin defaults fill gaps the base doesn't cover.
+    expect(
+      (result.plugins as { episodes?: { episodeInfo?: { metadata?: unknown[] } } }).episodes
+        ?.episodeInfo?.metadata,
+    ).toEqual([]);
+  });
+
+  it("applies overlays on top of both defaults and the base", () => {
+    const manager = makeManager(
+      [{ app: { theme: "overlay" } as AppConfig["app"] }],
+      [{ app: { theme: "plugin-default" } as AppConfig["app"] }],
+    );
+
+    const result = getAppConfigSync(manager);
+    expect(result.app?.theme).toBe("overlay");
   });
 });

@@ -1,85 +1,32 @@
-// Shared types for ui-config package
+/**
+ * Core application config types.
+ *
+ * This package intentionally does NOT know about individual plugins any more.
+ * After Phase 2b / Commit 3 the core app config only describes the shell
+ * itself (branding, auth, api, plugin loader). Each plugin owns the shape
+ * of its own slice under `AppConfig.plugins[<plugin-id>]` and contributes
+ * its defaults at runtime via the `app:config:defaults` extension point
+ * (which is merged *below* the fetched `config.json` so deployments win) —
+ * see `plugins/core-episodes/src/config.ts` for a reference implementation.
+ */
 
-export interface MetadataField {
-  show: boolean;
-  readonly: boolean;
-}
+/**
+ * Opaque map of plugin-owned config slices.
+ *
+ * The core config only guarantees that `plugins` is an object keyed by plugin
+ * id; individual values are `unknown` because their shape belongs to the
+ * plugin that owns the key. Consumers must cast through their plugin's own
+ * `readXxxConfig()` accessor before reading fields.
+ */
+export type PluginsConfig = Record<string, unknown>;
 
-export interface ColumnsField {
-  show: boolean;
-  label?: string;
-  labelKey?: string;
-}
-
-// Keep these as flexible types since the actual structure varies
-export type MetadataItem = Record<string, MetadataField>;
-export type TableColumnItem = Record<string, ColumnsField>;
-
-export interface TableViewConfig {
-  enabled?: boolean;
-  columns?: TableColumnItem[];
-}
-
-export interface SeriesInfo {
-  metadata: unknown[]; // Make this flexible to accept actual structure
-}
-
-export interface SeriesTable {
-  columns: TableColumnItem[];
-  createSeries?: {
-    enabled?: boolean;
-  };
-}
-
-export interface EpisodeInfo {
-  metadata: unknown[]; // Make this flexible to accept actual structure
-}
-
-export interface EpisodesTable {
-  columns?: TableColumnItem[];
-  views?: {
-    list?: TableViewConfig;
-    gallery?: TableViewConfig;
-  };
-}
-
-export interface UploadConfig {
-  location: string;
-  workflowId: string;
-  whitelist: string[];
-}
-
-// Simplified protection: just public or protected
-export interface AppProtectionConfig {
-  public?: boolean; // If true, app is publicly accessible. If false/undefined, requires authentication
-}
-
-// PluginsConfig keeps the three core feature shapes for now — Commit 3 of the
-// Phase 2b config redesign will collapse this to a pure `Record<string, unknown>`
-// and move the typed slices into their owning plugins.
-export interface PluginsConfig {
-  series?: {
-    seriesInfo?: SeriesInfo;
-    seriesTable?: SeriesTable;
-    protection?: AppProtectionConfig;
-  };
-  episodes?: {
-    episodeInfo?: EpisodeInfo;
-    episodesTable?: EpisodesTable;
-    protection?: AppProtectionConfig;
-  };
-  upload?: UploadConfig & {
-    protection?: AppProtectionConfig;
-  };
-  [key: string]: unknown;
-}
-
-// Plugin control types for granular activation/deactivation
+/** Plugin control entries for granular activation/deactivation. */
 export interface PluginNamespaceConfig {
-  types?: string[]; // Array of type names to enable, if omitted = enable all
+  /** Array of type names to enable; omit to enable all. */
+  types?: string[];
 }
 
-// Plugin namespace item can be either a string (enable all) or object (granular control)
+/** Plugin namespace item: string (enable all) or object (granular control). */
 export type PluginNamespaceItem = string | Record<string, PluginNamespaceConfig>;
 
 export interface AppConfig {
@@ -95,13 +42,13 @@ export interface AppConfig {
     appTitle: string;
     logoUrl?: string;
     orgLogoUrl?: string;
-    faviconUrl?: string; // URL to favicon (SVG preferred)
+    faviconUrl?: string;
     organizationUrls?: {
       main: string;
       support?: string;
     };
     theme: string;
-    pluginNamespace: PluginNamespaceItem[]; // New clean array-based approach
+    pluginNamespace: PluginNamespaceItem[];
   };
   auth: {
     loginUrl: string;
@@ -116,5 +63,5 @@ export interface AppConfig {
     timeout?: number;
     graphqlEndpoint: string;
   };
-  [key: string]: unknown; // Allow plugin-provided config keys
+  [key: string]: unknown;
 }

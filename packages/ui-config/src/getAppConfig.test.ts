@@ -49,8 +49,8 @@ describe("getAppConfig", () => {
 
     const config = getAppConfig(instanceConfig);
 
-    expect(config.app.organizationUrls.main).toBe("https://custom.example.com");
-    expect(config.app.organizationUrls.support).toBe("https://support.example.com");
+    expect(config.app.organizationUrls?.main).toBe("https://custom.example.com");
+    expect(config.app.organizationUrls?.support).toBe("https://support.example.com");
   });
 
   it("should use default main URL when instance config doesn't provide it", () => {
@@ -86,7 +86,9 @@ describe("getAppConfig", () => {
     expect(config.auth.loginUrlDev).toBe(defaultConfig.auth.loginUrlDev);
   });
 
-  it("should merge plugins config", () => {
+  it("passes through the plugins map from the instance config", () => {
+    // The core type is plugin-agnostic (`Record<string, unknown>`), so the
+    // test mirrors real plugin callers which cast to their own slice shape.
     const instanceConfig: Partial<AppConfig> = {
       plugins: {
         series: {
@@ -99,9 +101,14 @@ describe("getAppConfig", () => {
 
     const config = getAppConfig(instanceConfig);
 
-    expect(config.plugins.series?.protection?.public).toBe(true);
-    // Other plugins should still be present
-    expect(config.plugins.episodes).toBeDefined();
+    const seriesSlice = config.plugins["series"] as
+      | { protection?: { public?: boolean } }
+      | undefined;
+    expect(seriesSlice?.protection?.public).toBe(true);
+    // Core defaults no longer carry per-plugin fixtures — those are
+    // contributed at runtime via the `app:config:defaults` extension point,
+    // so an un-registered slice should simply be absent from the merged config.
+    expect(config.plugins["episodes"]).toBeUndefined();
   });
 
   it("should merge api config", () => {

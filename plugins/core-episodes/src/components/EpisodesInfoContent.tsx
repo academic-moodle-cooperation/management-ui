@@ -15,9 +15,11 @@ import {
   CopyIcon,
   PencilIcon,
 } from "@workspace/ui/components";
+import type { MetadataItem } from "@workspace/ui/config-primitives";
 import { cn } from "@workspace/ui/lib/utils";
-import type { MetadataItem } from "@workspace/ui-config";
 import { copyText } from "@workspace/utils";
+
+import { readEpisodesConfig } from "../config";
 
 type EpisodesUpdateData = {
   [T: string]: string | string[];
@@ -46,8 +48,7 @@ const EpisodesInfoContent = ({
 }: EpisodesInfoContentProps) => {
   const { t } = useI18n();
   const { config } = useAppConfig();
-  const metadata = (config?.plugins?.["episodes"]?.episodeInfo?.metadata ??
-    []) as MetadataItem[];
+  const metadata: MetadataItem[] = readEpisodesConfig(config)?.episodeInfo?.metadata ?? [];
 
   // Use the createMetadataHelpers function to get visibility helpers
   const { isVisible, isReadOnly } = createMetadataHelpers(metadata);

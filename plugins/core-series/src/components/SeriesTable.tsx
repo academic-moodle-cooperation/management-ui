@@ -5,10 +5,11 @@ import { useRegistry } from "@workspace/plugin-system";
 import { useUpdateSeriesMutation, useAppConfig } from "@workspace/query";
 import type { SeriesDataFragment } from "@workspace/query";
 import { MUITable, createMetadataHelpers, AppLoader, type Row } from "@workspace/ui/components";
-import type { MetadataItem, ColumnsField } from "@workspace/ui-config";
+import type { ColumnsField, MetadataItem } from "@workspace/ui/config-primitives";
 import { logger } from "@workspace/utils";
 
 import { createColumns } from "../columns";
+import { readSeriesConfig } from "../config";
 import { useSeriesTable, type SeriesUpdateData } from "../hooks";
 import { useSidebarStore } from "../stores/sidebarStore";
 
@@ -72,8 +73,8 @@ const SeriesTable = () => {
   // Create columns with the store's setIsEditing function
   const columns = useMemo(() => createColumns(setIsEditing), [setIsEditing]);
 
-  const metadata = (config?.plugins?.["series"]?.seriesInfo?.metadata ??
-    []) as MetadataItem[];
+  const seriesConfig = readSeriesConfig(config);
+  const metadata: MetadataItem[] = seriesConfig?.seriesInfo?.metadata ?? [];
   const { isReadOnly } = createMetadataHelpers(metadata);
 
   // Create a mechanism to ensure data is loaded when the sidebar is opened from the edit button
@@ -181,7 +182,7 @@ const SeriesTable = () => {
   }, [seriesData, selectedId]);
 
   // Get visible columns from app config - use the columns configuration or fallback to all columns
-  const configColumns = config?.plugins?.["series"]?.seriesTable?.columns ?? [];
+  const configColumns = seriesConfig?.seriesTable?.columns ?? [];
   const visibleColumns = (configColumns as Record<string, ColumnsField>[]).filter((column) => {
     if (!column || typeof column !== "object") return false;
     const key = Object.keys(column)[0];
@@ -204,8 +205,7 @@ const SeriesTable = () => {
     )
     .filter((column): column is NonNullable<typeof column> => Boolean(column));
 
-  const isCreateSeriesEnabled =
-    config?.plugins?.["series"]?.seriesTable?.createSeries?.enabled !== false;
+  const isCreateSeriesEnabled = seriesConfig?.seriesTable?.createSeries?.enabled !== false;
 
   const toolbarEndButtons = useMemo(() => {
     const sortedActions = [...seriesToolbarEndActions]

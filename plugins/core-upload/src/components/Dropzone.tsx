@@ -18,6 +18,7 @@ import {
 } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib/utils";
 
+import { readUploadConfig } from "../config";
 import { useFileHandler } from "../uploadservice/fileHandler";
 
 import type { FC } from "react";
@@ -39,8 +40,7 @@ const Dropzone: FC<DropzoneProps> = ({
 }) => {
   const { t } = useI18n();
   const { config } = useAppConfig();
-  const uploadConfig = (config.plugins?.["upload"] as { whitelist?: string[] }) || {};
-  const { whitelist = [] } = uploadConfig;
+  const { whitelist = [] } = readUploadConfig(config) ?? {};
 
   const [onFileDrop, setOnFileDrop] = useState(false);
   const [open, setOpen] = React.useState(false);

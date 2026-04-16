@@ -13,13 +13,29 @@ import { deepMerge, logger } from "@workspace/utils";
 const CONFIG_QUERY_KEY = ["appConfig"];
 
 /**
- * Fetch `config.json` (if a URL is configured) and normalize it through
- * `getAppConfig` so defaults are guaranteed. When no URL is configured we
- * simply start from `defaultConfig`.
+ * Layered merge precedence used across both the hook and the sync snapshot.
  *
- * This is the *base* layer. Plugin-contributed `app:config` overlays are
- * merged on top at render time in {@link useAppConfig} — identical logic for
- * dev and prod, so the order in which overrides apply is predictable.
+ *   defaults   (`app:config:defaults`)          — lowest, plugin-provided
+ *   base       (`defaultConfig` ⊕ `config.json`) — shell + deployment
+ *   overrides  (`app:config`)                    — highest, runtime overlays
+ *
+ * Plugins contribute their slice defaults via `app:config:defaults` in
+ * `initialize()`. The deployment's `config.json` (loaded via `getAppConfig`)
+ * can override any of those defaults key-by-key. Finally, `.local-plugins/`
+ * and similar runtime integrations layer on top via `app:config`. This order
+ * is identical in dev and prod so the same `config.json` behaves the same
+ * way everywhere.
+ */
+const CONFIG_DEFAULTS_EXTENSION = "app:config:defaults";
+const CONFIG_OVERLAYS_EXTENSION = "app:config";
+
+/**
+ * Fetch `config.json` (if a URL is configured) and normalize it through
+ * `getAppConfig` so shell defaults are guaranteed. When no URL is configured
+ * we simply start from `defaultConfig`.
+ *
+ * This is the *base* layer. Plugin-contributed defaults and overlays are
+ * merged around it at render time in {@link useAppConfig}.
  */
 const fetchBaseConfig = async (configUrl?: string): Promise<AppConfig> => {
   if (!configUrl) return { ...defaultConfig };
@@ -33,19 +49,22 @@ const fetchBaseConfig = async (configUrl?: string): Promise<AppConfig> => {
 /**
  * Non-hook, synchronous snapshot of the current effective config.
  *
- * Used inside `PluginInitializer` (two-phase plugin loading) where we need to
- * inspect the currently registered `app:config` overlays *without* subscribing
- * to React state. Callers should pass the already-fetched base config so the
- * snapshot reflects both the deployed `config.json` and registry overlays.
+ * Used inside `PluginInitializer` (two-phase plugin loading) where we need
+ * to inspect the currently registered `app:config` overlays *without*
+ * subscribing to React state. Callers should pass the already-fetched base
+ * config so the snapshot reflects both the deployed `config.json` and the
+ * registry layers described at the top of this file.
  */
 export function getAppConfigSync(
   pluginManager?: PluginManager,
   baseConfig?: AppConfig,
 ): AppConfig {
-  let pluginConfigObjects: Partial<AppConfig>[] = [];
+  let defaults: Partial<AppConfig>[] = [];
+  let overlays: Partial<AppConfig>[] = [];
   if (pluginManager) {
     try {
-      pluginConfigObjects = pluginManager.getObjects<Partial<AppConfig>>("app:config");
+      defaults = pluginManager.getObjects<Partial<AppConfig>>(CONFIG_DEFAULTS_EXTENSION);
+      overlays = pluginManager.getObjects<Partial<AppConfig>>(CONFIG_OVERLAYS_EXTENSION);
     } catch (error) {
       logger.warn("getAppConfigSync: Failed to get plugin configs from manager", {
         error: error instanceof Error ? error.message : String(error),
@@ -54,13 +73,19 @@ export function getAppConfigSync(
   }
 
   const base = baseConfig ?? defaultConfig;
-  return deepMerge({ ...base }, ...pluginConfigObjects) as AppConfig;
+  return deepMerge<AppConfig>(
+    {} as AppConfig,
+    ...defaults,
+    { ...base },
+    ...overlays,
+  ) as AppConfig;
 }
 
 export function useAppConfig() {
   const configUrl = defaultConfig.productionConfigUrl || undefined;
 
-  const { items: pluginConfigObjects } = useRegistry("app:config");
+  const { items: pluginDefaults } = useRegistry(CONFIG_DEFAULTS_EXTENSION);
+  const { items: pluginOverlays } = useRegistry(CONFIG_OVERLAYS_EXTENSION);
 
   const queryResult = useQuery({
     queryKey: CONFIG_QUERY_KEY,
@@ -70,12 +95,17 @@ export function useAppConfig() {
     staleTime: Infinity,
   });
 
-  // Unified merge: default/fetched base → plugin overlays, dev and prod alike.
   const mergedConfig = useMemo(() => {
     const base = queryResult.data ?? { ...defaultConfig };
-    const overlays = (pluginConfigObjects || []) as Partial<AppConfig>[];
-    return deepMerge({ ...base }, ...overlays) as AppConfig;
-  }, [queryResult.data, pluginConfigObjects]);
+    const defaults = (pluginDefaults || []) as Partial<AppConfig>[];
+    const overlays = (pluginOverlays || []) as Partial<AppConfig>[];
+    return deepMerge<AppConfig>(
+      {} as AppConfig,
+      ...defaults,
+      { ...base },
+      ...overlays,
+    ) as AppConfig;
+  }, [queryResult.data, pluginDefaults, pluginOverlays]);
 
   const hasFetch = !!configUrl;
   const isLoading = hasFetch ? queryResult.isLoading : false;

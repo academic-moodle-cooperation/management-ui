@@ -17,10 +17,11 @@ import {
   Button,
 } from "@workspace/ui/components";
 import { AppLoader } from "@workspace/ui/components";
-import type { MetadataItem } from "@workspace/ui-config";
+import type { MetadataItem } from "@workspace/ui/config-primitives";
 import { logger } from "@workspace/utils";
 
 import { createColumns } from "../columns";
+import { readEpisodesConfig } from "../config";
 import {
   getEpisodesColumnLabelOverrides,
   getEpisodesTableConfig,
@@ -101,8 +102,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     [refetch, effectiveLayout, columnLabelOverrides],
   );
 
-  const metadata = (config?.plugins?.["episodes"]?.episodeInfo?.metadata ??
-    []) as MetadataItem[];
+  const metadata: MetadataItem[] = readEpisodesConfig(config)?.episodeInfo?.metadata ?? [];
   const { isReadOnly } = createMetadataHelpers(metadata);
 
   useEffect(() => {

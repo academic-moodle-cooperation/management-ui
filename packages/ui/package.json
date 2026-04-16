@@ -15,6 +15,7 @@
     ".": "./src/index.ts",
     "./components": "./src/components/index.ts",
     "./components/*": "./src/components/*.tsx",
+    "./config-primitives": "./src/config-primitives.ts",
     "./hooks": "./src/hooks/index.ts",
     "./hooks/*": "./src/hooks/*.ts",
     "./lib": "./src/lib/index.ts",

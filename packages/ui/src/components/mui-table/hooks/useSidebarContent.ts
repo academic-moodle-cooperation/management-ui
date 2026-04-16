@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import type { MetadataItem } from "@workspace/ui-config";
+import type { MetadataItem } from "../../../config-primitives";
 
 /**
  * Hook for handling common sidebar content behavior like copy text functionality

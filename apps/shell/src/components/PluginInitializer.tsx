@@ -185,13 +185,19 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           }
         }
 
-        // 4. Get merged config from registry (now includes config plugin contributions).
-        //    Uses the same deep-merge semantics as `useAppConfig` so build-time
-        //    and runtime produce identical results.
-        const configObjects = manager.getObjects<Partial<AppConfig>>("app:config");
-        const mergedConfig = deepMerge(
+        // 4. Get merged config from registry (now includes config plugin
+        //    contributions). Uses the same layered merge order as
+        //    `useAppConfig`: plugin defaults → shell base (fetched config.json)
+        //    → runtime overlays. Keeping both sides in lockstep is what lets
+        //    `config` pick up deployment-specific values even before the
+        //    individual feature plugins get to run.
+        const configDefaults = manager.getObjects<Partial<AppConfig>>("app:config:defaults");
+        const configOverlays = manager.getObjects<Partial<AppConfig>>("app:config");
+        const mergedConfig = deepMerge<AppConfig>(
+          {} as AppConfig,
+          ...configDefaults,
           { ...(config || {}) } as AppConfig,
-          ...configObjects,
+          ...configOverlays,
         ) as AppConfig;
 
         // Make the effective runtime config visible via app:config so plugins

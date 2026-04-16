@@ -1,14 +1,16 @@
-// Import types first
-import type { AppConfig, MetadataField, MetadataItem } from "./types";
+import type { AppConfig } from "./types";
 
-// Export types from types file
 export * from "./types";
 
-// Explicitly re-export types for Vite/Rollup compatibility
-// when using 'import type' syntax
-export type { MetadataField, MetadataItem };
-
-// Default or base configuration, adapted from old defaultConfig and new AppConfig
+/**
+ * Default app config shipped with the shell.
+ *
+ * Only contains shell-level defaults (branding, auth, api, plugin loader).
+ * Plugin-specific defaults live in each plugin's own `config.ts` and are
+ * merged in at runtime through the `app:config:defaults` extension point, so this
+ * file no longer has to know about `episodes`, `series`, `upload` or any
+ * other plugin's schema.
+ */
 export const defaultConfig: AppConfig = {
   productionConfigUrl: "/ui/config/management-ui/config.json",
   productionAppPluginUrl: "/management-tool/ui/config/plugins.json",
@@ -36,129 +38,7 @@ export const defaultConfig: AppConfig = {
     loginUrlDev: "/j_spring_security_login",
     logoutUrlDev: "/j_spring_security_logout",
   },
-  plugins: {
-    series: {
-      protection: {
-        public: false, // Protected by default - requires authentication
-      },
-      seriesInfo: {
-        metadata: [
-          { title: { show: true, readonly: false } },
-          { subject: { show: true, readonly: false } },
-          { rightsHolder: { show: true, readonly: false } },
-          { publisher: { show: true, readonly: false } },
-          { license: { show: true, readonly: false } },
-          { language: { show: true, readonly: false } },
-          { identifier: { show: true, readonly: true } },
-          { description: { show: true, readonly: false } },
-          { creator: { show: true, readonly: true } },
-          { contributor: { show: true, readonly: false } },
-        ],
-      },
-      seriesTable: {
-        createSeries: {
-          enabled: true,
-        },
-        columns: [
-          { title: { show: true } },
-          { created: { show: true } },
-          { description: { show: true } },
-          { creator: { show: true } },
-          { contributors: { show: true } },
-          { events: { show: true } },
-          { actions: { show: true } },
-        ],
-      },
-    },
-    episodes: {
-      protection: {
-        public: false, // Protected by default
-      },
-      episodeInfo: {
-        metadata: [
-          { title: { show: true, readonly: false } },
-          { subject: { show: true, readonly: false } },
-          { startDate: { show: true, readonly: false } },
-          { source: { show: true, readonly: false } },
-          { rightsHolder: { show: true, readonly: false } },
-          { publisher: { show: true, readonly: true } },
-          { location: { show: true, readonly: false } },
-          { license: { show: true, readonly: false } },
-          { language: { show: true, readonly: false } },
-          { isPartOf: { show: true, readonly: false } },
-          { identifier: { show: true, readonly: true } },
-          { duration: { show: true, readonly: false } },
-          { description: { show: true, readonly: false } },
-          { creator: { show: true, readonly: true } },
-          { created: { show: true, readonly: true } },
-          { contributor: { show: true, readonly: false } },
-        ],
-      },
-      episodesTable: {
-        views: {
-          list: {
-            enabled: true,
-          },
-          gallery: {
-            enabled: true,
-          },
-        },
-        columns: [
-          { title: { show: true } },
-          { seriesName: { show: true } },
-          { description: { show: true } },
-          { contributors: { show: true } },
-          { creator: { show: true } },
-          { created: { show: true } },
-          { eventStatus: { show: true } },
-          { duration: { show: true } },
-          { location: { show: true } },
-          { presenters: { show: true } },
-          { startDate: { show: true } },
-          { actions: { show: true } },
-        ],
-      },
-    },
-    upload: {
-      location: "Upload",
-      workflowId: "ingest-upload",
-      whitelist: [
-        "h264",
-        "mov",
-        "mp4",
-        "mp3",
-        "wav",
-        "avi",
-        "m4a",
-        "wmv",
-        "mkv",
-        "ac3",
-        "webm",
-        "ts",
-        "ogg",
-        "opus",
-        "aiff",
-        "hevc",
-        "m2t",
-        "mjp",
-        "mts",
-        "mxf",
-        "ogv",
-        "rm",
-        "vob",
-        "wtv",
-        "swf",
-        "3gp",
-        "asf",
-        "f4v",
-        "m2v",
-        "flv",
-      ],
-      protection: {
-        public: false, // Protected by default
-      },
-    },
-  },
+  plugins: {},
   api: {
     baseUrl: "/management-ui",
     timeout: 30000,
@@ -166,9 +46,17 @@ export const defaultConfig: AppConfig = {
   },
 };
 
-// Updated Function to load and merge instance-specific configurations
-export const getAppConfig = (instanceConfig?: Partial<AppConfig>) => {
-  const mergedConfig = {
+/**
+ * Merges an instance config on top of {@link defaultConfig}.
+ *
+ * Keeps the legacy semantics for the shell-owned keys (app/auth/api are
+ * shallow-merged, `organizationUrls` gets a nested merge) and passes the
+ * plugin map through as-is. Per-plugin defaults are contributed at runtime
+ * via the `app:config:defaults` extension point, so this function intentionally does
+ * not carry plugin-specific knowledge any more.
+ */
+export const getAppConfig = (instanceConfig?: Partial<AppConfig>): AppConfig => {
+  return {
     productionConfigUrl: instanceConfig?.productionConfigUrl ?? defaultConfig.productionConfigUrl,
     productionAppPluginUrl:
       instanceConfig?.productionAppPluginUrl ?? defaultConfig.productionAppPluginUrl,
@@ -185,7 +73,6 @@ export const getAppConfig = (instanceConfig?: Partial<AppConfig>) => {
           support: instanceConfig.app.organizationUrls.support,
         }),
       },
-      // Merge pluginNamespace without duplicates
       pluginNamespace: instanceConfig?.app?.pluginNamespace || defaultConfig.app.pluginNamespace,
     },
     auth: {
@@ -201,6 +88,4 @@ export const getAppConfig = (instanceConfig?: Partial<AppConfig>) => {
       ...(instanceConfig?.api || {}),
     },
   };
-
-  return mergedConfig;
 };

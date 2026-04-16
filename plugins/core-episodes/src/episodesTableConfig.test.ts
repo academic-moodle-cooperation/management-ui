@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import type { EpisodesTable as EpisodesTableConfig } from "@workspace/ui-config";
-
 import {
   getEpisodesColumnLabelOverrides,
   resolveColumnLabel,
   resolveColumnMeta,
   resolveEpisodesViewConfig,
 } from "./episodesTableConfig";
+
+import type { EpisodesTable as EpisodesTableConfig } from "./config";
 
 describe("episodesTableConfig", () => {
   it("reuses legacy columns config for both list and gallery views", () => {
