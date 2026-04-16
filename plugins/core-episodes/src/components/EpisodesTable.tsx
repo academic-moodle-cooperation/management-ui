@@ -101,7 +101,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     [refetch, effectiveLayout, columnLabelOverrides],
   );
 
-  const metadata = (config?.plugins?.["management-ui-episodes"]?.episodeInfo?.metadata ??
+  const metadata = (config?.plugins?.["episodes"]?.episodeInfo?.metadata ??
     []) as MetadataItem[];
   const { isReadOnly } = createMetadataHelpers(metadata);
 

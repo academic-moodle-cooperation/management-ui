@@ -54,22 +54,24 @@ export interface AppProtectionConfig {
   public?: boolean; // If true, app is publicly accessible. If false/undefined, requires authentication
 }
 
-// Make PluginsConfig more flexible to accept any plugin structure
+// PluginsConfig keeps the three core feature shapes for now — Commit 3 of the
+// Phase 2b config redesign will collapse this to a pure `Record<string, unknown>`
+// and move the typed slices into their owning plugins.
 export interface PluginsConfig {
-  "management-ui-series"?: {
+  series?: {
     seriesInfo?: SeriesInfo;
     seriesTable?: SeriesTable;
     protection?: AppProtectionConfig;
   };
-  "management-ui-episodes"?: {
+  episodes?: {
     episodeInfo?: EpisodeInfo;
     episodesTable?: EpisodesTable;
     protection?: AppProtectionConfig;
   };
-  "management-ui-upload"?: UploadConfig & {
+  upload?: UploadConfig & {
     protection?: AppProtectionConfig;
   };
-  [key: string]: unknown; // Allow any plugin structure
+  [key: string]: unknown;
 }
 
 // Plugin control types for granular activation/deactivation

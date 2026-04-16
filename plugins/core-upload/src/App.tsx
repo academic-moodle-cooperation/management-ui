@@ -83,7 +83,7 @@ export const App = () => {
   const { t } = useI18n();
   const { config } = useAppConfig();
   // Get upload-specific config from the real config system
-  const uploadConfig = config.plugins?.["management-ui-upload"];
+  const uploadConfig = config.plugins?.["upload"];
   const location = uploadConfig?.location || "Upload";
   const workflowId = uploadConfig?.workflowId || "ingest-upload";
 

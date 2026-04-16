@@ -72,7 +72,7 @@ const SeriesTable = () => {
   // Create columns with the store's setIsEditing function
   const columns = useMemo(() => createColumns(setIsEditing), [setIsEditing]);
 
-  const metadata = (config?.plugins?.["management-ui-series"]?.seriesInfo?.metadata ??
+  const metadata = (config?.plugins?.["series"]?.seriesInfo?.metadata ??
     []) as MetadataItem[];
   const { isReadOnly } = createMetadataHelpers(metadata);
 
@@ -181,7 +181,7 @@ const SeriesTable = () => {
   }, [seriesData, selectedId]);
 
   // Get visible columns from app config - use the columns configuration or fallback to all columns
-  const configColumns = config?.plugins?.["management-ui-series"]?.seriesTable?.columns ?? [];
+  const configColumns = config?.plugins?.["series"]?.seriesTable?.columns ?? [];
   const visibleColumns = (configColumns as Record<string, ColumnsField>[]).filter((column) => {
     if (!column || typeof column !== "object") return false;
     const key = Object.keys(column)[0];
@@ -205,7 +205,7 @@ const SeriesTable = () => {
     .filter((column): column is NonNullable<typeof column> => Boolean(column));
 
   const isCreateSeriesEnabled =
-    config?.plugins?.["management-ui-series"]?.seriesTable?.createSeries?.enabled !== false;
+    config?.plugins?.["series"]?.seriesTable?.createSeries?.enabled !== false;
 
   const toolbarEndButtons = useMemo(() => {
     const sortedActions = [...seriesToolbarEndActions]

@@ -37,7 +37,7 @@ export const defaultConfig: AppConfig = {
     logoutUrlDev: "/j_spring_security_logout",
   },
   plugins: {
-    "management-ui-series": {
+    series: {
       protection: {
         public: false, // Protected by default - requires authentication
       },
@@ -70,7 +70,7 @@ export const defaultConfig: AppConfig = {
         ],
       },
     },
-    "management-ui-episodes": {
+    episodes: {
       protection: {
         public: false, // Protected by default
       },
@@ -119,7 +119,7 @@ export const defaultConfig: AppConfig = {
         ],
       },
     },
-    "management-ui-upload": {
+    upload: {
       location: "Upload",
       workflowId: "ingest-upload",
       whitelist: [

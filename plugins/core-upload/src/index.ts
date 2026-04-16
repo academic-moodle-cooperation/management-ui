@@ -18,9 +18,8 @@ import { App } from "./App";
  * param via `useParams({ strict: false })` (see App.tsx) works
  * unchanged.
  *
- * The app `id` remains `"management-ui-upload"` so that existing
- * `config.plugins["management-ui-upload"]` lookups keep working during
- * the Phase 3 migration.
+ * The app `id` is `"upload"`, matching the plugin namespace and the short
+ * key in `config.plugins["upload"]`.
  */
 export const coreUploadPlugin = createPlugin({
   namespace: "upload",
@@ -28,8 +27,8 @@ export const coreUploadPlugin = createPlugin({
   version: "1.0.0",
 
   initialize(manager: PluginManager) {
-    manager.registerObject("apps:definitions", "management-ui-upload", {
-      id: "management-ui-upload",
+    manager.registerObject("apps:definitions", "upload", {
+      id: "upload",
       name: "Upload",
       routePath: "/upload",
       component: App,

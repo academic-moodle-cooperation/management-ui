@@ -12,10 +12,8 @@ import App from "./App";
  * Vite app + the separate `episodes-nav-implementation.ts` plugin, per
  * ADR-003.
  *
- * Note: the app `id` remains `"management-ui-episodes"` so that existing
- * `config.plugins["management-ui-episodes"]` lookups (and the `appName`-based
- * route protection) keep working during the Phase 3 migration. A follow-up
- * phase (config redesign) may normalize this to `"episodes"`.
+ * The app `id` is `"episodes"`, matching the plugin namespace and the
+ * short key in `config.plugins["episodes"]`.
  */
 export const coreEpisodesPlugin = createPlugin({
   namespace: "episodes",
@@ -23,8 +21,8 @@ export const coreEpisodesPlugin = createPlugin({
   version: "1.0.0",
 
   initialize(manager: PluginManager) {
-    manager.registerObject("apps:definitions", "management-ui-episodes", {
-      id: "management-ui-episodes",
+    manager.registerObject("apps:definitions", "episodes", {
+      id: "episodes",
       name: "Episodes",
       routePath: "/episodes",
       component: App,

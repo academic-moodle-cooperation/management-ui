@@ -44,7 +44,7 @@ const SeriesInfoContent = ({
 }: SeriesInfoContentProps) => {
   const { t } = useI18n();
   const { config } = useAppConfig();
-  const metadata = (config?.plugins?.["management-ui-series"]?.seriesInfo?.metadata ??
+  const metadata = (config?.plugins?.["series"]?.seriesInfo?.metadata ??
     []) as MetadataItem[];
 
   // Use the createMetadataHelpers function to get visibility helpers

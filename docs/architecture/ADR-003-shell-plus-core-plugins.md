@@ -138,8 +138,18 @@ With the three features gone, the legacy loading path has been removed as well: 
 
 What has **not** been done yet and remains open:
 
-- App `id`s are still `"management-ui-episodes"` / `-series` / `-upload` inside `apps:definitions`, matching the existing `config.plugins[...]` keys. Normalizing to `"episodes"` / `"series"` / `"upload"` is part of the Phase 2b config redesign, not Phase 3.
 - `@tanstack/react-table` and `mustache` are kept as plugin-level dependencies in `plugins/core-upload`. A later pass may move them behind `@workspace/ui` or a shared data-table seam.
+
+### Phase 2b / C2 update (2026-04-16)
+
+App `id`s and `config.plugins[...]` keys were normalized to the short
+namespace (`episodes` / `series` / `upload`) now that Phase 3 is complete and
+the core config type is about to become plugin-agnostic. `AppDefinition.id`,
+the `apps:definitions` registry key, and every `config.plugins["management-ui-*"]`
+lookup in the three core plugins use the short id. The default config in
+`@workspace/ui-config` was updated to match. This is a breaking change for any
+`config.json` keyed on the long names — the Phase 2b docs commit carries the
+migration note.
 
 ## Related Decisions
 

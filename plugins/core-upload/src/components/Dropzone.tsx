@@ -39,7 +39,7 @@ const Dropzone: FC<DropzoneProps> = ({
 }) => {
   const { t } = useI18n();
   const { config } = useAppConfig();
-  const uploadConfig = (config.plugins?.["management-ui-upload"] as { whitelist?: string[] }) || {};
+  const uploadConfig = (config.plugins?.["upload"] as { whitelist?: string[] }) || {};
   const { whitelist = [] } = uploadConfig;
 
   const [onFileDrop, setOnFileDrop] = useState(false);

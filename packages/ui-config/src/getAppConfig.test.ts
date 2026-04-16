@@ -89,7 +89,7 @@ describe("getAppConfig", () => {
   it("should merge plugins config", () => {
     const instanceConfig: Partial<AppConfig> = {
       plugins: {
-        "management-ui-series": {
+        series: {
           protection: {
             public: true,
           },
@@ -99,9 +99,9 @@ describe("getAppConfig", () => {
 
     const config = getAppConfig(instanceConfig);
 
-    expect(config.plugins["management-ui-series"]?.protection?.public).toBe(true);
+    expect(config.plugins.series?.protection?.public).toBe(true);
     // Other plugins should still be present
-    expect(config.plugins["management-ui-episodes"]).toBeDefined();
+    expect(config.plugins.episodes).toBeDefined();
   });
 
   it("should merge api config", () => {

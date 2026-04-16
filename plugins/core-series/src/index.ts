@@ -14,9 +14,8 @@ import { CreateSeriesToolbarAction } from "./components/CreateSeriesToolbarActio
  * `series-nav-implementation.ts` and `series-create-implementation.ts`
  * plugins, per ADR-003.
  *
- * The app `id` remains `"management-ui-series"` so that existing
- * `config.plugins["management-ui-series"]` lookups keep working during
- * the Phase 3 migration.
+ * The app `id` is `"series"`, matching the plugin namespace and the short
+ * key in `config.plugins["series"]`.
  */
 export const coreSeriesPlugin = createPlugin({
   namespace: "series",
@@ -24,8 +23,8 @@ export const coreSeriesPlugin = createPlugin({
   version: "1.0.0",
 
   initialize(manager: PluginManager) {
-    manager.registerObject("apps:definitions", "management-ui-series", {
-      id: "management-ui-series",
+    manager.registerObject("apps:definitions", "series", {
+      id: "series",
       name: "Series",
       routePath: "/series",
       component: App,

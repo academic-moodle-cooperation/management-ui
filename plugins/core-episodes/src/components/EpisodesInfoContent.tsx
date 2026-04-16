@@ -46,7 +46,7 @@ const EpisodesInfoContent = ({
 }: EpisodesInfoContentProps) => {
   const { t } = useI18n();
   const { config } = useAppConfig();
-  const metadata = (config?.plugins?.["management-ui-episodes"]?.episodeInfo?.metadata ??
+  const metadata = (config?.plugins?.["episodes"]?.episodeInfo?.metadata ??
     []) as MetadataItem[];
 
   // Use the createMetadataHelpers function to get visibility helpers

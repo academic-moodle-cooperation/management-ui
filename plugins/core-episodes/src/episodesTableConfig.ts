@@ -65,7 +65,7 @@ export const resolveEpisodesViewConfig = (
 };
 
 export const getEpisodesTableConfig = (config: AppConfig | undefined) => {
-  const tableConfig = config?.plugins?.["management-ui-episodes"]?.episodesTable;
+  const tableConfig = config?.plugins?.["episodes"]?.episodesTable;
 
   return {
     list: resolveEpisodesViewConfig(tableConfig, "list"),
