@@ -1,5 +1,6 @@
 import React from "react";
 
+import { Container } from "../container";
 import {
   Sheet,
   SheetContent,
@@ -9,8 +10,7 @@ import {
   SheetFooter,
   ScrollArea,
   CardContent,
-  Container,
-} from "@workspace/ui/components";
+} from "../ui";
 
 export interface TableSidebarProps<T = unknown> {
   /** Whether the sidebar is open */

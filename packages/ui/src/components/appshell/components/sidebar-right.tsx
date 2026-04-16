@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@workspace/ui/components";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "../../ui";
 
 export function SidebarRight({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (

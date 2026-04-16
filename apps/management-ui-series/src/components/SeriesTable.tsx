@@ -149,17 +149,19 @@ const SeriesTable = () => {
 
   // Modified row click handler to pass inputFields directly
   const handleRowClick = useCallback(
-    (event: MouseEvent, row: Row<Record<string, unknown>>) => {
-      logger.debug("SeriesTable - Row clicked", { rowId: row.original["id"] });
+    (_event: MouseEvent, row: Row<SeriesDataFragment>) => {
+      logger.debug("SeriesTable - Row clicked", { rowId: row.original.id });
 
       // Reset edit state when clicking on a different row
-      if (isEditing && selectedId !== row.original["id"]) {
+      if (isEditing && selectedId !== row.original.id) {
         resetUpdateFields();
       }
 
       // This was causing the issue by passing stale data to the sidebar.
       // By only setting the ID, we allow the reactive data flow to update the sidebar.
-      openSidebar(row.original["id"] as string);
+      if (row.original.id) {
+        openSidebar(row.original.id);
+      }
     },
     [openSidebar, isEditing, selectedId, resetUpdateFields],
   );

@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
 import { useI18n } from "@workspace/i18n";
+
 import {
   Button,
   Select,
@@ -8,7 +9,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components";
+} from "../ui";
 
 import type { Table } from "@tanstack/react-table";
 

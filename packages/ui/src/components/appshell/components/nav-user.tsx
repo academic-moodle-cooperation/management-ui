@@ -4,6 +4,8 @@ import { ChevronsUpDown, LogOut } from "lucide-react";
 import React from "react";
 
 import { useGetCurrentUser } from "@workspace/query";
+import { sha256 } from "@workspace/utils";
+
 import {
   Avatar,
   AvatarFallback,
@@ -18,8 +20,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@workspace/ui/components";
-import { sha256 } from "@workspace/utils";
+} from "../../ui";
 
 // Separate data concerns from presentation
 type UserData = {

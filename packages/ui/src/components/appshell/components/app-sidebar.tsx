@@ -1,13 +1,8 @@
 import * as React from "react";
 
 import { useRegistry, ComponentResolver } from "@workspace/plugin-system";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  useSidebar,
-} from "@workspace/ui/components";
+
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, useSidebar } from "../../ui";
 
 import { Logo } from "./logo";
 import { MobileCloseButton } from "./mobile-closebutton";

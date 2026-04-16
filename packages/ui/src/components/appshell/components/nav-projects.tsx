@@ -15,7 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@workspace/ui/components";
+} from "../../ui";
 
 export function NavProjects({
   projects,

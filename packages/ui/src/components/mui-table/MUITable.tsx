@@ -1,13 +1,10 @@
 import React, { useEffect } from "react";
 
 import { useI18n, loadNamespace } from "@workspace/i18n";
-import {
-  TooltipProvider,
-  Container,
-  DataTable,
-  type DataTableProps,
-  Toaster,
-} from "@workspace/ui/components";
+
+import { Container } from "../container";
+import { DataTable, type DataTableProps } from "../datatable";
+import { TooltipProvider, Toaster } from "../ui";
 
 interface MUITableProps<TData, TValue> extends DataTableProps<TData, TValue> {
   refetch?: () => void;

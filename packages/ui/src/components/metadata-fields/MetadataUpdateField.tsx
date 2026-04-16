@@ -12,6 +12,11 @@ import {
   type Series,
 } from "@workspace/query";
 import { useAppConfig } from "@workspace/query";
+import { serializeDuration } from "@workspace/utils";
+
+import { DatePicker } from "../datepicker";
+import { TimePicker } from "../datetime-picker";
+import { SelectSeriesCombobox } from "../select-series-combobox";
 import {
   // Badge,
   // Button,
@@ -21,7 +26,6 @@ import {
   SelectContent,
   SelectItem,
   // SelectMulti,
-  SelectSeriesCombobox,
   SelectTrigger,
   SelectValue,
   Textarea,
@@ -35,10 +39,8 @@ import {
   CommandItem,
   CommandList,
   Button,
-  DatePicker,
-  TimePicker,
-} from "@workspace/ui/components";
-import { serializeDuration } from "@workspace/utils";
+} from "../ui";
+
 
 type MetadataUpdateFieldProps = MetadataFieldType & {
   value: string | string[];

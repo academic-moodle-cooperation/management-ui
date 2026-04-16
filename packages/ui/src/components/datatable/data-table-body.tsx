@@ -2,7 +2,8 @@ import { flexRender } from "@tanstack/react-table";
 import { useMemo } from "react";
 
 import { useRouter } from "@workspace/router";
-import { TableBody, TableCell, TableRow } from "@workspace/ui/components";
+
+import { TableBody, TableCell, TableRow } from "../ui";
 
 import { EmptyStateContent } from "./data-table-empty-state";
 

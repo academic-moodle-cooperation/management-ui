@@ -2,6 +2,7 @@ import { Settings2 } from "lucide-react";
 import React from "react";
 
 import { useI18n } from "@workspace/i18n";
+
 import {
   DropdownMenuTrigger,
   DropdownMenu,
@@ -10,7 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   Button,
-} from "@workspace/ui/components";
+} from "../ui";
 
 import type { Table, RowData } from "@tanstack/react-table";
 

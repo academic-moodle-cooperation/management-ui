@@ -7,6 +7,9 @@ import type {
   InfiniteData,
   InfiniteQueryObserverResult,
 } from "@workspace/query";
+
+import { cn } from "../../lib";
+import { InfiniteScroll } from "../infinite-scroll";
 import {
   Command,
   CommandInput,
@@ -15,9 +18,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  InfiniteScroll,
-} from "@workspace/ui/components";
-import { cn } from "@workspace/ui/lib";
+} from "../ui";
 
 type Series = {
   id: string | null | undefined;
