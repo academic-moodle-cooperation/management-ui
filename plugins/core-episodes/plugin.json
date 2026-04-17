@@ -1,0 +1,18 @@
+{
+  "$schema": "../../packages/plugin-system/src/schemas/plugin.schema.json",
+  "id": "episodes",
+  "name": "Episodes",
+  "version": "1.0.0",
+  "description": "Core plugin that registers the /episodes route, its sidebar entry, and the episodes config defaults. Replaces the legacy apps/management-ui-episodes Vite app (see ADR-003).",
+  "author": {
+    "name": "Management UI Core"
+  },
+  "namespace": "episodes",
+  "type": "app",
+  "category": "feature",
+  "extensionPoints": [
+    "apps:definitions",
+    "sidebar:nav-items",
+    "app:config:defaults"
+  ]
+}
