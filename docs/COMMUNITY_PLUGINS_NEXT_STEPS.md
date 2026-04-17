@@ -42,7 +42,7 @@
 
 **Does “build JARs locally and copy to server” work?** Yes. The server does **not** need to build JARs. Build JARs once (locally or in CI), deploy them to the server (e.g. `$OPENCAST_HOME/deploy/`). The backend serves plugin static files from the JAR under `/management-ui/static/plugins/<name>/`.
 
-**Config merging:** The merged config (default + univie etc.) is **not** inside the JAR. It is a **separate file** you deploy to the Opencast config path (e.g. `/opt/opencast/etc/ui-config/mh_default_org/management-ui/config.json`). You merge default + org config (e.g. univie) manually or in CI and deploy that file. So you have two deployment artifacts: (1) JARs (plugin code + static files), (2) merged `config.json` (theme, pluginNamespace, orgLogoUrl, etc.).
+**Config merging:** The merged config (default + univie etc.) is **not** inside the JAR. It is a **separate file** you deploy to the Opencast config path (e.g. `/opt/opencast/etc/ui-config/mh_default_org/management-ui/config.json`). You merge default + org config (e.g. univie) manually or in CI and deploy that file. So you have two deployment artifacts: (1) JARs (plugin code + static files), (2) merged `config.json` (theme, `app.enabledPlugins`, `orgLogoUrl`, etc.). See [`architecture/CONFIGURATION.md`](./architecture/CONFIGURATION.md) for the full layer model.
 
 **Theme CSS:** Already supported. Set `config.app.theme` (e.g. `"univie"`); the core loads `<base>/static/plugins/<themeName>/<themeName>.css`. The JAR must include the theme file (e.g. copy `themes/*.css` into the JAR); univie/tuwien POMs already do this.
 

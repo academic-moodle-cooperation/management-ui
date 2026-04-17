@@ -25,7 +25,7 @@ Consequences observed in practice:
 - Theme compatibility is harder to guarantee across app boundaries.
 - The plugin API is under-tested because core teams never use it for core features.
 - External plugin authors face a different DX than internal developers.
-- Configuration must be merged at two points (build-time in `management-ui-core/vite.config.ts` and runtime via `plugins/index.ts` exports), which can drift (see the warning in `docs/CONFIG_ORDER.md`).
+- Configuration used to be merged at two points (build-time in `management-ui-core/vite.config.ts` and runtime via `plugins/index.ts` exports), which routinely drifted. Phase 2b replaced that with a single layered runtime merge (`app:config:defaults` ⊕ base ⊕ `app:config`) documented in [`CONFIGURATION.md`](./CONFIGURATION.md).
 - Open-sourcing this model asks contributors to understand two architectures instead of one.
 
 This ADR decides the target architecture for the open-source release.

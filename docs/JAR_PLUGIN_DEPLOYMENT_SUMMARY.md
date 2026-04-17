@@ -40,7 +40,7 @@ So: **JAR generation** puts frontend files in the JAR and sets `Management-Plugi
 
 - **Core** (not the marketplace) loads JAR plugins. In `apps/management-ui-core`, **PluginInitializer** calls `loadJarPlugins()` from `src/services/jarPluginLoader.ts`:
   - Fetches `/management-tool/ui/config/plugins.json` (using app base URL in dev, or `productionAppPluginUrl` in prod).
-  - Loads matching `config` entries first, re-merges runtime config, then loads the remaining JAR entries whose `namespace/type` match `app.pluginNamespace`.
+  - Loads matching `config` entries first, re-merges runtime config, then loads the remaining JAR entries whose `namespace` matches `app.enabledPlugins`. Per-slice `config.plugins[<id>].enabled === false` is also honoured as a runtime switch. See [`architecture/CONFIGURATION.md`](./architecture/CONFIGURATION.md) for the full model.
 - For each plugin URL, the core calls **loadAndRegister(url, manager, { skipUrlValidation: true })** from `@workspace/remote-plugin-loader`.
 - The shared loader fetches the `.mjs`, transforms imports to use host shared modules, loads the module, injects a `<link>` for the matching `.css`, and registers the plugin with the PluginManager.
 

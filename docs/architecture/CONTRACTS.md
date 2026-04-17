@@ -10,7 +10,7 @@ There are **four contracts**:
 1. [Plugin Manifest Contract](#1-plugin-manifest-contract) - the shape of `plugin.json`.
 2. [Plugin Runtime API Contract](#2-plugin-runtime-api-contract) - what a plugin receives from the host at runtime and the API version semantics.
 3. [Theme Contract](#3-theme-contract) - CSS tokens and rules for styling.
-4. [Config Contract](#4-config-contract) - how plugins declare and consume configuration (finalized in Phase 2b).
+4. [Config Contract](#4-config-contract) - how plugins declare and consume configuration (full model: [`CONFIGURATION.md`](./CONFIGURATION.md)).
 
 Each contract has its own version. Breaking changes to any of them require a major version bump of `@<scope>/plugin-system`.
 
@@ -112,16 +112,27 @@ Any other module path (subpath imports, deep imports into `src/`) is **not** pub
 
 ## 4. Config Contract
 
-**Authoritative spec:** to be finalized in Phase 2b (see [the repo cleanup plan](../../).
-**Contract version:** 0.9 (pre-stable)
+**Authoritative spec:** [`CONFIGURATION.md`](./CONFIGURATION.md) — full layer model, loader phases, and the `definePluginConfig` / `useConfig` reader API.
+**Contract version:** 1.0 (stabilized at the end of Phase 2b).
 
-The current configuration system has known structural issues documented in the cleanup plan's Phase 2b. It is **not** considered a stable contract until Phase 2b ships. Authors targeting a 1.0 host should not rely on config shape beyond:
+What the core promises plugin authors and downstream apps:
 
-- `config.app.theme: string` (theme name)
-- `config.app.locale: string` (i18n locale)
-- `config.plugins[pluginId]` (opaque per-plugin section; plugins own their own sub-shape)
+- **Stable core keys:**
+  - `config.app.theme: string`
+  - `config.app.locale: string`
+  - `config.app.enabledPlugins: string[]` — flat namespace list; ship filter.
+  - `config.plugins[pluginId]` — opaque per-plugin section; plugins own the sub-shape.
+- **Stable runtime switch:** a plugin slice may carry `enabled?: boolean`. The shell loader reads this from the raw slice (before Zod validation) and skips a plugin when it is `=== false`.
+- **Stable layered merge order:** `app:config:defaults` ⊕ (`defaultConfig` ⊕ `config.json`) ⊕ `app:config`. Both the React hook and the sync snapshot apply the same order in dev and prod.
+- **Stable reader surface:** `definePluginConfig({ id, schema, defaults })` from `@workspace/query` returns a reader with `{ id, schema, defaults, register, use, read }`. The reader signature is frozen for 1.x.
 
-All other current keys (`pluginNamespace`, nested hard-coded `management-ui-series` etc.) are considered **pre-stable** and will be replaced in Phase 2b. Plugins that need org-level customization should consume their own config under `config.plugins[pluginId]` only.
+Breaking changes to any of these are **major**. Adding new optional top-level keys to `AppConfig.app` is **minor**. Adding new methods to the reader is **minor**. Removing or renaming anything is **major** and requires an ADR.
+
+**Not part of the contract:**
+
+- The exact shape of any individual plugin's slice (owned by that plugin, documented in its `src/config.ts`).
+- The specific default namespaces in `enabledPlugins` — those ship as a sensible OSS default and may change.
+- The internal representation of the `plugins` registry extension points (`app:config`, `app:config:defaults`).
 
 ## Contract Change Process
 
@@ -137,3 +148,4 @@ No contract change is allowed without the changeset - plugins cannot cope with s
 ## Changelog
 
 - **2026-04-16:** Initial freeze. Manifest 1.0, Runtime API 1.0, Theme 2.0, Config 0.9 (pre-stable).
+- **2026-04-17:** Config Contract promoted to 1.0. Stable keys: `app.theme`, `app.locale`, `app.enabledPlugins`, `config.plugins[pluginId]`, `config.plugins[pluginId].enabled`. Layered merge order (`app:config:defaults` ⊕ base ⊕ `app:config`) and the `definePluginConfig` reader API are now frozen for 1.x. See [`CONFIGURATION.md`](./CONFIGURATION.md).

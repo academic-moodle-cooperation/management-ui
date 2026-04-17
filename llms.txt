@@ -92,17 +92,18 @@ Core extension points:
 - `component-override:landing-page` — Override the landing page
 - `component-override:appshell:header` — Override the app header
 - `component-override:appshell:footer` — Override the app footer
-- `app:config` — Register configuration (pluginNamespace, theme, branding)
+- `app:config` — Register runtime config overlay (`app.enabledPlugins`, theme, branding)
+- `app:config:defaults` — Register plugin-owned defaults slice (via `definePluginConfig(...).register(manager)`)
 - `app:branding` — Register branding (logo, colors, favicon)
 
 ### Two-Phase Loading
 
 The runtime loads plugins in two phases:
 1. Phase 1: Load `*:config` plugins first (they register `app:config`)
-2. Phase 2: Merge config, then load remaining plugins filtered by `pluginNamespace`
+2. Phase 2: Merge `app:config:defaults` ⊕ base ⊕ `app:config`, then load remaining plugins filtered by `app.enabledPlugins` (ship filter) and per-slice `config.plugins[<id>].enabled` (runtime switch). Full model: `docs/architecture/CONFIGURATION.md`.
 
 This allows a config plugin (e.g., `.local-plugins/config/`) to declare which
-namespaces to enable (e.g., `pluginNamespace: ["core", "univie", "tuwien"]`),
+namespaces to enable (e.g., `enabledPlugins: ["core", "admin", "episodes", "series", "upload", "config", "univie"]`),
 and those plugins load in phase 2.
 
 ### Loading Mechanisms
@@ -117,10 +118,9 @@ and those plugins load in phase 2.
 
 One plugin package can contain multiple modules (e.g., app + sidebar + footer).
 In `plugin.json`, use the `modules` array. Each module has its own `type` and
-`entry`, and can be activated independently via `pluginNamespace` type filtering:
-```json
-{ "univie": { "types": ["sidebar", "footer"] } }
-```
+`entry`. A whole namespace is activated via `app.enabledPlugins`; to drop a
+single module without removing the namespace, set its slice's
+`config.plugins.<id>.enabled = false`.
 
 ## Styling Contract
 

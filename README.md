@@ -58,8 +58,7 @@ plugins/        ← Built-in plugins shipped with the core repo
 
 ### Configuration & Assets
 
-- **[Config Generation](/docs/CONFIG_GENERATION.md)** - How configuration works in dev vs production
-- **[Config Order](/docs/CONFIG_ORDER.md)** - Plugin configuration precedence and merging
+- **[Configuration](/docs/architecture/CONFIGURATION.md)** - Canonical layer model, `definePluginConfig` reader API, `enabledPlugins` vs. per-slice `enabled`
 - **[Favicon Configuration](/docs/internal/FAVICON_CONFIGURATION.md)** - Customizing favicons and assets per university
 
 ### Development Workflows

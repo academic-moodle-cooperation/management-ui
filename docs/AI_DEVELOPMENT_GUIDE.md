@@ -63,9 +63,8 @@ docs/
 ├── PLUGIN_STYLING_CONTRACT.md       ← CSS/theming rules for plugins
 ├── COMMUNITY_PLUGIN_DEVELOPMENT.md  ← Full plugin development lifecycle
 ├── PLUGIN_LOADING_MECHANISMS.md     ← All loading paths explained
-├── CONFIG_GENERATION.md             ← Dev vs prod config
-├── CONFIG_ORDER.md                  ← Plugin config precedence
 ├── architecture/
+│   ├── CONFIGURATION.md              ← Canonical config model
 │   ├── ADR-001-plugin-system.md     ← Plugin architecture rationale
 │   └── ADR-002-monorepo-structure.md ← Monorepo design decisions
 ├── workflows/
@@ -275,20 +274,21 @@ Registration uses `manager.registerObject(extensionPoint, uniqueId, value)` or
 | `component-override:landing-page` | Override landing page | React component |
 | `component-override:appshell:header` | Override app header | React component |
 | `component-override:appshell:footer` | Override app footer | React component |
-| `app:config` | Register configuration | Config object (pluginNamespace, theme, etc.) |
+| `app:config` | Register runtime config overlay | Config object (`app.enabledPlugins`, theme, etc.) |
+| `app:config:defaults` | Register plugin-owned defaults slice | Partial `AppConfig` (usually via `definePluginConfig().register`) |
 | `app:branding` | Register branding | Logo, colors, favicon |
 
 ### Two-Phase Loading
 
 The runtime loads plugins in two phases to handle circular config dependencies:
 
-1. **Phase 1:** Load all `*:config` plugins (they register `app:config` with namespace lists)
-2. **Phase 2:** Merge config from all registered `app:config` objects, then load remaining plugins filtered by `app.pluginNamespace`
+1. **Phase 1:** Load all `*:config` plugins (they register `app:config` with namespace lists).
+2. **Phase 2:** Merge config (`app:config:defaults` ⊕ base ⊕ `app:config`) and load the remaining plugins filtered by `app.enabledPlugins` (ship filter) and per-slice `config.plugins[<id>].enabled` (runtime switch). Full model in [`architecture/CONFIGURATION.md`](./architecture/CONFIGURATION.md).
 
 This allows a config plugin in `.local-plugins/config/` to declare:
 ```typescript
 manager.registerObject("app:config", "org-config", {
-  app: { pluginNamespace: ["core", "admin-marketplace", "univie", "tuwien"] }
+  app: { enabledPlugins: ["core", "admin", "episodes", "series", "upload", "config", "univie", "tuwien"] }
 });
 ```
 ...and univie/tuwien plugins load in phase 2 without needing to be bundled with core.
@@ -474,7 +474,7 @@ export default createPlugin({
   initialize(manager) {
     manager.registerObject("app:config", "my-org-config", {
       app: {
-        pluginNamespace: ["core", "admin-marketplace", "my-org"],
+        enabledPlugins: ["core", "admin", "episodes", "series", "upload", "config", "my-org"],
         name: "My Org Management UI",
       },
     });
