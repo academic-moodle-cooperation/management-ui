@@ -11,7 +11,7 @@ export interface LocalPluginsManifestEntry {
   id: string;
   /** Path to plugin .mjs (e.g. /management-ui/local-plugins/my-org-plugin/my-plugin.mjs) */
   url: string;
-  /** Folder name under .local-plugins/; used to filter by config.app.pluginNamespace */
+  /** Folder name under .local-plugins/; used to filter by config.app.enabledPlugins */
   namespace?: string;
   /** Type from filename (plugin-<namespace>-<type>.mjs); used to filter by config types for that namespace */
   type?: string;

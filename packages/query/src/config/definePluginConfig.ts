@@ -26,6 +26,14 @@ import { useAppConfig } from "../hooks/useAppConfig";
  * `config.plugins[id]` directly is that validation failures surface as
  * a single, contextual warning and the UI keeps rendering against the
  * defaults — a corrupt `config.json` key never crashes the shell.
+ *
+ * By convention every slice may also carry an `enabled?: boolean` flag
+ * that the shell's plugin loader reads *before* registering the plugin
+ * (see `apps/shell/src/loadPlugins.ts#isPluginEnabledAtRuntime`). Plugin
+ * authors don't need to include `enabled` in their own Zod schema —
+ * Zod's default `.strip()` behavior keeps validation passing and the
+ * loader inspects the raw slice to decide whether to activate the
+ * plugin at all.
  */
 export interface PluginConfigReader<T extends z.ZodTypeAny> {
   readonly id: string;

@@ -45,7 +45,7 @@
     "namespace": {
       "type": "string",
       "pattern": "^[a-z0-9-]+$",
-      "description": "Plugin namespace for config-based activation. Typically the org or feature name (e.g., 'univie', 'tuwien', 'analytics'). The runtime uses app.pluginNamespace to enable/disable namespaces."
+      "description": "Plugin namespace for config-based activation. Typically the org or feature name (e.g., 'univie', 'tuwien', 'analytics'). The runtime uses app.enabledPlugins to enable/disable namespaces."
     },
     "type": {
       "type": "string",

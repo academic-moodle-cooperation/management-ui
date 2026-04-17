@@ -17,7 +17,7 @@ import { deepMerge, logger } from "@workspace/utils";
 import {
   loadAllAvailablePlugins,
   getEnabledPluginNamespaces,
-  getEnabledTypesForNamespace,
+  isPluginEnabledAtRuntime,
 } from "../loadPlugins";
 import { loadJarPlugins } from "../services/jarPluginLoader";
 import {
@@ -68,28 +68,13 @@ const parsePluginName = (name: string): { namespace: string; type: string } => {
   return { namespace: namespace || "unknown", type: type || "unknown" };
 };
 
-interface RemotePluginEntry {
-  name: string;
-  url: string;
-  namespace?: string;
-  type?: string;
-  cssUrl?: string;
-  localesUrl?: string;
-  i18nNamespaces?: string[];
-}
-
-const matchesNamespaceAndType = (
-  entry: Pick<RemotePluginEntry, "namespace" | "type">,
-  config: AppConfig | undefined,
+const matchesEnabledNamespace = (
+  entry: { namespace?: string | undefined },
   enabledNamespaces: Set<string>,
 ): boolean => {
   if (enabledNamespaces.size === 0) return true;
   if (entry.namespace === undefined) return true;
-  if (!enabledNamespaces.has(entry.namespace)) return false;
-  if (entry.type === undefined) return true;
-
-  const types = getEnabledTypesForNamespace(config, entry.namespace);
-  return types === "all" || types.has(entry.type);
+  return enabledNamespaces.has(entry.namespace);
 };
 
 interface PluginInitializerProps {
@@ -255,18 +240,17 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           }
         }
 
+        const mergedEnabledNamespaces = getEnabledPluginNamespaces(mergedConfig);
+
         for (const plugin of remainingPlugins) {
           if (plugin && plugin.name) {
-            // Re-evaluate if plugin should be loaded with merged config
-            const [pluginNamespace, pluginType] = plugin.name.split(":");
-            const pluginConfig = mergedConfig?.app?.pluginNamespace || [];
+            const [pluginNamespace] = plugin.name.split(":");
 
-            // Check for override first
+            // Check for localStorage override first
             const override = overrides.overrides[plugin.name];
 
             // Check if this plugin should be disabled due to replacement mode
             if (pluginsToDisable.has(plugin.name)) {
-              // Skip this plugin - it's being replaced
               logger.info(`PluginInitializer: Skipping "${plugin.name}" - disabled by replacement mode`);
               continue;
             }
@@ -274,7 +258,6 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
             // If there's an explicit override, use it
             if (override !== undefined) {
               if (override.enabled) {
-                // Explicitly enabled via override
                 if (!manager.plugins.has(plugin.name)) {
                   const reg = manager.register(plugin);
                   registeredPluginNames.push(plugin.name);
@@ -284,38 +267,37 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                   logger.info(`PluginInitializer: Loaded "${plugin.name}" via override (${override.mode} mode)`);
                 }
               } else {
-                // Explicitly disabled via override - skip
                 logger.info(`PluginInitializer: Skipping "${plugin.name}" - disabled by override`);
               }
               continue;
             }
 
-            // No override - use config-based loading
-            let shouldLoad = false;
-            for (const item of pluginConfig) {
-              if (typeof item === "string" && item === pluginNamespace) {
-                shouldLoad = true;
-                break;
-              } else if (typeof item === "object" && pluginNamespace && item[pluginNamespace]) {
-                const types = item[pluginNamespace]?.types || [];
-                shouldLoad = pluginType
-                  ? types.includes(pluginType) || types.includes("all")
-                  : false;
-                if (shouldLoad) break;
-              }
+            // No override - apply the two-level config gate:
+            //   1. Namespace must be in `app.enabledPlugins` (ship filter).
+            //   2. Plugin slice must not be disabled via
+            //      `config.plugins[<ns>].enabled === false` (runtime switch).
+            const namespaceEnabled = matchesEnabledNamespace(
+              { namespace: pluginNamespace },
+              mergedEnabledNamespaces,
+            );
+            if (!namespaceEnabled) continue;
+
+            if (pluginNamespace && !isPluginEnabledAtRuntime(mergedConfig, pluginNamespace)) {
+              logger.info(
+                `PluginInitializer: Skipping "${plugin.name}" - disabled via config.plugins.${pluginNamespace}.enabled`,
+              );
+              continue;
             }
 
-            if (shouldLoad) {
-              if (!manager.plugins.has(plugin.name)) {
-                const reg = manager.register(plugin);
-                registeredPluginNames.push(plugin.name);
-                if (reg != null && typeof (reg as Promise<unknown>)?.then === "function") {
-                  await reg;
-                }
+            if (!manager.plugins.has(plugin.name)) {
+              const reg = manager.register(plugin);
+              registeredPluginNames.push(plugin.name);
+              if (reg != null && typeof (reg as Promise<unknown>)?.then === "function") {
+                await reg;
               }
-              // Do not re-call initialize() when already registered (avoids duplicate
-              // app/sidebar registration and re-loading remote plugins in Strict Mode)
             }
+            // Do not re-call initialize() when already registered (avoids duplicate
+            // app/sidebar registration and re-loading remote plugins in Strict Mode)
           }
         }
 
@@ -387,7 +369,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
               enabled1.size === 0
                 ? jarPluginsToConsider
                 : jarPluginsToConsider.filter((entry) =>
-                    matchesNamespaceAndType(entry, config, enabled1),
+                    matchesEnabledNamespace(entry, enabled1),
                   );
             await loadBatch(toLoad1, 1);
 
@@ -396,8 +378,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
             const loadedUrls = new Set(toLoad1.map((entry) => entry.url));
             const toLoad2 = jarPluginsToConsider.filter(
               (entry) =>
-                !loadedUrls.has(entry.url) &&
-                matchesNamespaceAndType(entry, mergedJarConfig, enabled2),
+                !loadedUrls.has(entry.url) && matchesEnabledNamespace(entry, enabled2),
             );
             await loadBatch(toLoad2, 2);
           }
@@ -448,9 +429,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
             const toLoad1 =
               enabled1.size === 0
                 ? localManifest
-                : localManifest.filter((entry) =>
-                    matchesNamespaceAndType(entry, config, enabled1),
-                  );
+                : localManifest.filter((entry) => matchesEnabledNamespace(entry, enabled1));
             if (toLoad1.length > 0) {
               registerPluginLocales(toLoad1);
               logger.info("PluginInitializer: Loading .local-plugins (phase 1)", {
@@ -466,8 +445,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
             const loadedUrls = new Set(toLoad1.map((e) => e.url));
             const toLoad2 = localManifest.filter(
               (entry) =>
-                !loadedUrls.has(entry.url) &&
-                matchesNamespaceAndType(entry, mergedLocalConfig, enabled2),
+                !loadedUrls.has(entry.url) && matchesEnabledNamespace(entry, enabled2),
             );
             if (toLoad2.length > 0) {
               registerPluginLocales(toLoad2);

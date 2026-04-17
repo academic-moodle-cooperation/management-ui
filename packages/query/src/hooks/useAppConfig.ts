@@ -2,12 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
 import { useRegistry, type PluginManager } from "@workspace/plugin-system";
-import {
-  defaultConfig,
-  getAppConfig,
-  type AppConfig,
-  type PluginNamespaceItem,
-} from "@workspace/ui-config";
+import { defaultConfig, getAppConfig, type AppConfig } from "@workspace/ui-config";
 import { deepMerge, logger } from "@workspace/utils";
 
 const CONFIG_QUERY_KEY = ["appConfig"];
@@ -121,4 +116,4 @@ export function useAppConfig() {
     isFetched,
   };
 }
-export type { AppConfig, PluginNamespaceItem };
+export type { AppConfig };

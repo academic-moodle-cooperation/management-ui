@@ -10,7 +10,7 @@ vi.mock("@workspace/ui-config", () => ({
     productionConfigUrl: "/ui/config/config.json",
     app: {
       theme: "default",
-      pluginNamespace: ["core"] as unknown[],
+      enabledPlugins: ["core"] as string[],
       organizationUrls: { main: "https://example.org" },
     },
   },
@@ -40,7 +40,7 @@ describe("getAppConfigSync", () => {
   it("prefers the explicit baseConfig over the default", () => {
     const base = {
       productionConfigUrl: "/custom.json",
-      app: { theme: "custom", pluginNamespace: [] },
+      app: { theme: "custom", enabledPlugins: [] },
     } as unknown as AppConfig;
 
     const result = getAppConfigSync(undefined, base);
@@ -62,7 +62,7 @@ describe("getAppConfigSync", () => {
     expect(result.app?.theme).toBe("dark");
     // Deep merge must preserve sibling keys from the base layer.
     expect(result.app?.organizationUrls?.main).toBe("https://overridden.example");
-    expect(result.app?.pluginNamespace).toEqual(["core"]);
+    expect(result.app?.enabledPlugins).toEqual(["core"]);
   });
 
   it("tolerates a manager that throws when reading overlays", () => {

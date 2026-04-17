@@ -1,6 +1,6 @@
 import type { Plugin } from "@workspace/plugin-system";
 import * as AllPlugins from "@workspace/plugins";
-import type { AppConfig, PluginNamespaceItem } from "@workspace/query";
+import type { AppConfig } from "@workspace/query";
 import { logger } from "@workspace/utils";
 
 const isPlugin = (module: unknown): module is Plugin =>
@@ -12,69 +12,39 @@ const isPlugin = (module: unknown): module is Plugin =>
   "deactivate" in module;
 
 /**
- * Parse plugin configuration from the array-based `pluginNamespace` format.
- */
-const parsePluginConfig = (
-  pluginNamespace: PluginNamespaceItem[],
-): Map<string, string[] | "all"> => {
-  const configMap = new Map<string, string[] | "all">();
-
-  for (const item of pluginNamespace) {
-    if (typeof item === "string") {
-      configMap.set(item, "all");
-    } else {
-      Object.entries(item).forEach(([namespace, config]) => {
-        configMap.set(namespace, config.types || ["all"]);
-      });
-    }
-  }
-
-  return configMap;
-};
-
-/**
- * Return the set of plugin namespace names that are enabled in config.
- * Used to filter .local-plugins manifest entries (folder name = namespace).
- * E.g. pluginNamespace: ["core", "univie"] => Set {"core", "univie"}.
+ * Return the set of plugin namespaces that are enabled in config.
+ *
+ * The flat `app.enabledPlugins` list is the single gate for whether a
+ * namespace (bundled or .local-plugins folder name) may load at all.
+ * Finer-grained deactivation belongs on each plugin's own config slice
+ * via `config.plugins[<id>].enabled === false`.
+ *
+ * Returning an empty set means "no filter" and keeps the dev workflow
+ * of an empty/absent config working: everything the shell can see loads.
  */
 export function getEnabledPluginNamespaces(config?: AppConfig): Set<string> {
-  const raw = config?.app?.pluginNamespace;
-  if (!raw || !Array.isArray(raw) || raw.length === 0) {
-    return new Set(); // Empty = no filter (load all .local-plugins when no config filter)
-  }
-  const set = new Set<string>();
-  for (const item of raw) {
-    if (typeof item === "string") {
-      set.add(item);
-    } else if (item && typeof item === "object") {
-      for (const key of Object.keys(item)) {
-        set.add(key);
-      }
-    }
-  }
-  return set;
+  const list = config?.app?.enabledPlugins;
+  if (!Array.isArray(list) || list.length === 0) return new Set();
+  return new Set(list);
 }
 
 /**
- * Return enabled types for a namespace (for .local-plugins type filtering).
- * E.g. univie: { types: ["sidebar", "footer"] } => Set {"sidebar", "footer"}.
- * Returns "all" if the namespace is enabled with no type restriction (string or types: ["all"]).
+ * Runtime switch per plugin slice: a plugin can be disabled without
+ * touching `enabledPlugins` by setting `config.plugins[id].enabled: false`.
+ * Missing or non-object slices default to enabled.
  */
-export function getEnabledTypesForNamespace(
+export function isPluginEnabledAtRuntime(
   config: AppConfig | undefined,
-  namespace: string,
-): Set<string> | "all" {
-  const raw = config?.app?.pluginNamespace;
-  if (!raw || !Array.isArray(raw)) return "all";
-  const configMap = parsePluginConfig(raw);
-  const types = configMap.get(namespace);
-  if (types === undefined) return "all";
-  if (types === "all") return "all";
-  return new Set(types);
+  pluginId: string,
+): boolean {
+  const slice = config?.plugins?.[pluginId];
+  if (!slice || typeof slice !== "object") return true;
+  const enabled = (slice as { enabled?: unknown }).enabled;
+  return enabled !== false;
 }
 
 /**
- * Load all plugins bundled with the shell. Filtering by `app.pluginNamespace`
+ * Load all plugins bundled with the shell. Filtering by `app.enabledPlugins`
  * happens later in {@link PluginInitializer}, after the merged config is
  * known, so this helper stays intentionally minimal.
  */

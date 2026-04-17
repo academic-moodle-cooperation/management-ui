@@ -15,19 +15,15 @@
  *
  * The core config only guarantees that `plugins` is an object keyed by plugin
  * id; individual values are `unknown` because their shape belongs to the
- * plugin that owns the key. Consumers must cast through their plugin's own
- * `readXxxConfig()` accessor before reading fields.
+ * plugin that owns the key. Consumers access them through their plugin's
+ * `definePluginConfig()` reader (`xxxConfig.use()` / `.read(config)`), which
+ * validates the slice against the plugin's Zod schema before returning it.
+ *
+ * By convention every plugin slice may carry an `enabled?: boolean` flag that
+ * the shell's plugin loader reads at runtime to deactivate a plugin without
+ * removing it from {@link AppConfig.app.enabledPlugins} or from the bundle.
  */
 export type PluginsConfig = Record<string, unknown>;
-
-/** Plugin control entries for granular activation/deactivation. */
-export interface PluginNamespaceConfig {
-  /** Array of type names to enable; omit to enable all. */
-  types?: string[];
-}
-
-/** Plugin namespace item: string (enable all) or object (granular control). */
-export type PluginNamespaceItem = string | Record<string, PluginNamespaceConfig>;
 
 export interface AppConfig {
   productionConfigUrl: string;
@@ -48,7 +44,18 @@ export interface AppConfig {
       support?: string;
     };
     theme: string;
-    pluginNamespace: PluginNamespaceItem[];
+    /**
+     * Flat list of plugin namespaces the shell is allowed to load at all
+     * (ship/load filter). Default covers the OSS core: `core`, `episodes`,
+     * `series`, `upload`, `admin` (marketplace), and the `config`
+     * namespace used by `.local-plugins/config/` to inject org-specific
+     * config at boot.
+     *
+     * Finer-grained runtime deactivation lives on each plugin's own slice:
+     * `config.plugins[<id>].enabled === false` causes the loader to skip
+     * that plugin even when its namespace is in `enabledPlugins`.
+     */
+    enabledPlugins: string[];
   };
   auth: {
     loginUrl: string;

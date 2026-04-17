@@ -28,9 +28,13 @@ export const defaultConfig: AppConfig = {
       main: "https://example.com",
     },
     theme: "default",
-    // Include "config" so a .local-plugins/config/ plugin loads first and can register
-    // app:config with pluginNamespace (e.g. univie, tuwien); remaining .local-plugins load in a second pass
-    pluginNamespace: ["core", "episodes", "series", "upload", "config"],
+    // Core OSS plugins that ship with the shell plus the two integration
+    // hooks:
+    //  - `admin`  → admin-marketplace plugin (bundled)
+    //  - `config` → `.local-plugins/config/` loader runs first in phase 1
+    //               so org-specific plugins can extend `enabledPlugins`
+    //               before phase 2 picks up the rest of .local-plugins.
+    enabledPlugins: ["core", "episodes", "series", "upload", "admin", "config"],
   },
   auth: {
     loginUrl: "/Shibboleth.sso/Login?target=/management-ui",
@@ -73,7 +77,7 @@ export const getAppConfig = (instanceConfig?: Partial<AppConfig>): AppConfig => 
           support: instanceConfig.app.organizationUrls.support,
         }),
       },
-      pluginNamespace: instanceConfig?.app?.pluginNamespace || defaultConfig.app.pluginNamespace,
+      enabledPlugins: instanceConfig?.app?.enabledPlugins || defaultConfig.app.enabledPlugins,
     },
     auth: {
       ...defaultConfig.auth,

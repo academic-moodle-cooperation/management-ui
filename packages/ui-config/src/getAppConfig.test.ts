@@ -23,7 +23,7 @@ describe("getAppConfig", () => {
         locale: defaultConfig.app.locale,
         HtmlDocumentTitle: defaultConfig.app.HtmlDocumentTitle,
         appTitle: defaultConfig.app.appTitle,
-        pluginNamespace: defaultConfig.app.pluginNamespace,
+        enabledPlugins: defaultConfig.app.enabledPlugins,
       },
     };
 
@@ -128,23 +128,23 @@ describe("getAppConfig", () => {
     expect(config.api.graphqlEndpoint).toBe(defaultConfig.api.graphqlEndpoint);
   });
 
-  it("should handle pluginNamespace override", () => {
+  it("should handle enabledPlugins override", () => {
     const instanceConfig: Partial<AppConfig> = {
       app: {
         ...defaultConfig.app,
-        pluginNamespace: ["custom", "namespace"],
+        enabledPlugins: ["custom", "namespace"],
       },
     };
 
     const config = getAppConfig(instanceConfig);
 
-    expect(config.app.pluginNamespace).toEqual(["custom", "namespace"]);
+    expect(config.app.enabledPlugins).toEqual(["custom", "namespace"]);
   });
 
-  it("should use default pluginNamespace when not provided", () => {
+  it("should use default enabledPlugins when not provided", () => {
     const config = getAppConfig();
 
-    expect(config.app.pluginNamespace).toEqual(defaultConfig.app.pluginNamespace);
+    expect(config.app.enabledPlugins).toEqual(defaultConfig.app.enabledPlugins);
   });
 
   it("should merge productionConfigUrl", () => {
