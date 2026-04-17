@@ -2,14 +2,14 @@ import { useMemo, useEffect, useCallback, useRef } from "react";
 
 import { useI18n } from "@workspace/i18n";
 import { useRegistry } from "@workspace/plugin-system";
-import { useUpdateSeriesMutation, useAppConfig } from "@workspace/query";
+import { useUpdateSeriesMutation } from "@workspace/query";
 import type { SeriesDataFragment } from "@workspace/query";
 import { MUITable, createMetadataHelpers, AppLoader, type Row } from "@workspace/ui/components";
 import type { ColumnsField, MetadataItem } from "@workspace/ui/config-primitives";
 import { logger } from "@workspace/utils";
 
 import { createColumns } from "../columns";
-import { readSeriesConfig } from "../config";
+import { seriesConfig } from "../config";
 import { useSeriesTable, type SeriesUpdateData } from "../hooks";
 import { useSidebarStore } from "../stores/sidebarStore";
 
@@ -28,7 +28,7 @@ interface SeriesToolbarEndAction {
  */
 const SeriesTable = () => {
   const { t } = useI18n();
-  const { config } = useAppConfig();
+  const cfg = seriesConfig.use();
 
   // Create a ref for the table element
   const tableRef = useRef<HTMLDivElement>(null);
@@ -73,8 +73,7 @@ const SeriesTable = () => {
   // Create columns with the store's setIsEditing function
   const columns = useMemo(() => createColumns(setIsEditing), [setIsEditing]);
 
-  const seriesConfig = readSeriesConfig(config);
-  const metadata: MetadataItem[] = seriesConfig?.seriesInfo?.metadata ?? [];
+  const metadata: MetadataItem[] = cfg.seriesInfo?.metadata ?? [];
   const { isReadOnly } = createMetadataHelpers(metadata);
 
   // Create a mechanism to ensure data is loaded when the sidebar is opened from the edit button
@@ -182,7 +181,7 @@ const SeriesTable = () => {
   }, [seriesData, selectedId]);
 
   // Get visible columns from app config - use the columns configuration or fallback to all columns
-  const configColumns = seriesConfig?.seriesTable?.columns ?? [];
+  const configColumns = cfg.seriesTable?.columns ?? [];
   const visibleColumns = (configColumns as Record<string, ColumnsField>[]).filter((column) => {
     if (!column || typeof column !== "object") return false;
     const key = Object.keys(column)[0];
@@ -205,7 +204,7 @@ const SeriesTable = () => {
     )
     .filter((column): column is NonNullable<typeof column> => Boolean(column));
 
-  const isCreateSeriesEnabled = seriesConfig?.seriesTable?.createSeries?.enabled !== false;
+  const isCreateSeriesEnabled = cfg.seriesTable?.createSeries?.enabled !== false;
 
   const toolbarEndButtons = useMemo(() => {
     const sortedActions = [...seriesToolbarEndActions]

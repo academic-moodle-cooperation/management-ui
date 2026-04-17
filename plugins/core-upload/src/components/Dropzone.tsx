@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import { useI18n } from "@workspace/i18n";
-import { useAppConfig } from "@workspace/query";
 import type { UploadFileBlob, UploadListType } from "@workspace/store";
 import {
   AlertDialog,
@@ -18,7 +17,7 @@ import {
 } from "@workspace/ui/components";
 import { cn } from "@workspace/ui/lib/utils";
 
-import { readUploadConfig } from "../config";
+import { uploadConfig } from "../config";
 import { useFileHandler } from "../uploadservice/fileHandler";
 
 import type { FC } from "react";
@@ -39,8 +38,7 @@ const Dropzone: FC<DropzoneProps> = ({
   zustandupload,
 }) => {
   const { t } = useI18n();
-  const { config } = useAppConfig();
-  const { whitelist = [] } = readUploadConfig(config) ?? {};
+  const { whitelist } = uploadConfig.use();
 
   const [onFileDrop, setOnFileDrop] = useState(false);
   const [open, setOpen] = React.useState(false);

@@ -1,25 +1,54 @@
-import type { AppConfig } from "@workspace/query";
-import type { AppProtectionConfig } from "@workspace/router";
-import type { MetadataItem, TableColumnItem } from "@workspace/ui/config-primitives";
+import { z } from "zod";
 
-export interface SeriesInfo {
-  metadata: MetadataItem[];
-}
+import { definePluginConfig } from "@workspace/query";
 
-export interface SeriesTable {
-  columns: TableColumnItem[];
-  createSeries?: {
-    enabled?: boolean;
-  };
-}
-
-export interface SeriesConfig {
-  seriesInfo?: SeriesInfo;
-  seriesTable?: SeriesTable;
-  protection?: AppProtectionConfig;
-}
+/**
+ * Series plugin config — same pattern as `plugins/core-episodes/config.ts`.
+ * See that file for the rationale behind using a reader object instead of
+ * direct `config.plugins[id]` access.
+ */
 
 export const SERIES_PLUGIN_ID = "series";
+
+const metadataFieldSchema = z.object({
+  show: z.boolean(),
+  readonly: z.boolean(),
+});
+const metadataItemSchema = z.record(z.string(), metadataFieldSchema);
+
+const columnsFieldSchema = z.object({
+  show: z.boolean(),
+  label: z.string().optional(),
+  labelKey: z.string().optional(),
+});
+const tableColumnItemSchema = z.record(z.string(), columnsFieldSchema);
+
+export const seriesConfigSchema = z.object({
+  seriesInfo: z
+    .object({
+      metadata: z.array(metadataItemSchema),
+    })
+    .optional(),
+  seriesTable: z
+    .object({
+      columns: z.array(tableColumnItemSchema).optional(),
+      createSeries: z
+        .object({
+          enabled: z.boolean().optional(),
+        })
+        .optional(),
+    })
+    .optional(),
+  protection: z
+    .object({
+      public: z.boolean().optional(),
+    })
+    .optional(),
+});
+
+export type SeriesConfig = z.infer<typeof seriesConfigSchema>;
+export type SeriesInfo = NonNullable<SeriesConfig["seriesInfo"]>;
+export type SeriesTable = NonNullable<SeriesConfig["seriesTable"]>;
 
 export const seriesConfigDefaults: SeriesConfig = {
   protection: { public: false },
@@ -51,6 +80,8 @@ export const seriesConfigDefaults: SeriesConfig = {
   },
 };
 
-export function readSeriesConfig(config: AppConfig | undefined): SeriesConfig | undefined {
-  return config?.plugins?.[SERIES_PLUGIN_ID] as SeriesConfig | undefined;
-}
+export const seriesConfig = definePluginConfig({
+  id: SERIES_PLUGIN_ID,
+  schema: seriesConfigSchema,
+  defaults: seriesConfigDefaults,
+});

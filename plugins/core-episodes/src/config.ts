@@ -1,47 +1,80 @@
-import type { AppConfig } from "@workspace/query";
-import type { AppProtectionConfig } from "@workspace/router";
-import type {
-  MetadataItem,
-  TableColumnItem,
-  TableViewConfig,
-} from "@workspace/ui/config-primitives";
+import { z } from "zod";
+
+import { definePluginConfig } from "@workspace/query";
 
 /**
- * Episodes plugin config shape.
+ * Episodes plugin config.
  *
- * The core `AppConfig.plugins` map is untyped (`Record<string, unknown>`) by
- * design, so each plugin owns its own slice and casts from `unknown` through
- * {@link readEpisodesConfig}. Once Phase 2b / Commit 4 lands, the shape is
- * also enforced at runtime via a Zod schema defined alongside this file.
+ * The Zod schema is the single source of truth for the slice shape and
+ * is consumed by {@link definePluginConfig} at the bottom of the file.
+ * Components obtain the validated slice through `episodesConfig.use()`
+ * (or `episodesConfig.read(config)` outside React) — direct reads via
+ * `useAppConfig().config.plugins.episodes` bypass validation and are
+ * flagged by lint.
  */
-
-export interface EpisodeInfo {
-  metadata: MetadataItem[];
-}
-
-export interface EpisodesTable {
-  columns?: TableColumnItem[];
-  views?: {
-    list?: TableViewConfig;
-    gallery?: TableViewConfig;
-  };
-}
-
-export interface EpisodesConfig {
-  episodeInfo?: EpisodeInfo;
-  episodesTable?: EpisodesTable;
-  protection?: AppProtectionConfig;
-}
 
 export const EPISODES_PLUGIN_ID = "episodes";
 
+/** Per-field metadata visibility contract (show/readonly). */
+const metadataFieldSchema = z.object({
+  show: z.boolean(),
+  readonly: z.boolean(),
+});
+
 /**
- * Defaults contributed by this plugin on startup via the
- * `app:config:defaults` extension point. They sit *below* the fetched
- * `config.json` and any `app:config` overlays so a deployment can override
- * any key without having to re-specify the rest. Kept small and declarative
- * so the registration in `initialize()` stays readable; Commit 4 will drive
- * this through a Zod schema so unrecognised keys produce warnings.
+ * `MetadataItem` entries are `{ [fieldName]: metadataField }` objects; we
+ * keep them as records (rather than a flat object) so the list order
+ * defined by the deployment is preserved — plugins render metadata in
+ * array order, not key order.
+ */
+const metadataItemSchema = z.record(z.string(), metadataFieldSchema);
+
+/** Per-column table display contract; `label` wins over `labelKey`. */
+const columnsFieldSchema = z.object({
+  show: z.boolean(),
+  label: z.string().optional(),
+  labelKey: z.string().optional(),
+});
+
+const tableColumnItemSchema = z.record(z.string(), columnsFieldSchema);
+
+const tableViewConfigSchema = z.object({
+  enabled: z.boolean().optional(),
+  columns: z.array(tableColumnItemSchema).optional(),
+});
+
+export const episodesConfigSchema = z.object({
+  episodeInfo: z
+    .object({
+      metadata: z.array(metadataItemSchema),
+    })
+    .optional(),
+  episodesTable: z
+    .object({
+      columns: z.array(tableColumnItemSchema).optional(),
+      views: z
+        .object({
+          list: tableViewConfigSchema.optional(),
+          gallery: tableViewConfigSchema.optional(),
+        })
+        .optional(),
+    })
+    .optional(),
+  protection: z
+    .object({
+      public: z.boolean().optional(),
+    })
+    .optional(),
+});
+
+export type EpisodesConfig = z.infer<typeof episodesConfigSchema>;
+export type EpisodeInfo = NonNullable<EpisodesConfig["episodeInfo"]>;
+export type EpisodesTable = NonNullable<EpisodesConfig["episodesTable"]>;
+
+/**
+ * Defaults contributed via `app:config:defaults` on plugin initialize.
+ * Merged below the fetched `config.json` and any `app:config` overlays,
+ * so a deployment can override any key without re-specifying the rest.
  */
 export const episodesConfigDefaults: EpisodesConfig = {
   protection: { public: false },
@@ -88,13 +121,12 @@ export const episodesConfigDefaults: EpisodesConfig = {
 };
 
 /**
- * Typed accessor for the episodes slice of `AppConfig.plugins`.
- *
- * The core type is intentionally `unknown` so the runtime contract is owned
- * by this plugin alone. Until the Zod migration we perform a structural cast;
- * callers that need a guaranteed value should `?? episodesConfigDefaults`
- * their sub-reads.
+ * Single reader for this plugin's slice. Call `.register(manager)` in
+ * `initialize()` to seed defaults, and `.use()` / `.read(config)` to
+ * consume the validated slice from component or non-React code.
  */
-export function readEpisodesConfig(config: AppConfig | undefined): EpisodesConfig | undefined {
-  return config?.plugins?.[EPISODES_PLUGIN_ID] as EpisodesConfig | undefined;
-}
+export const episodesConfig = definePluginConfig({
+  id: EPISODES_PLUGIN_ID,
+  schema: episodesConfigSchema,
+  defaults: episodesConfigDefaults,
+});

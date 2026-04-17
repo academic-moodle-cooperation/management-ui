@@ -1,14 +1,25 @@
-import type { AppConfig } from "@workspace/query";
-import type { AppProtectionConfig } from "@workspace/router";
+import { z } from "zod";
 
-export interface UploadConfig {
-  location: string;
-  workflowId: string;
-  whitelist: string[];
-  protection?: AppProtectionConfig;
-}
+import { definePluginConfig } from "@workspace/query";
+
+/**
+ * Upload plugin config — same pattern as `plugins/core-episodes/config.ts`.
+ */
 
 export const UPLOAD_PLUGIN_ID = "upload";
+
+export const uploadConfigSchema = z.object({
+  location: z.string(),
+  workflowId: z.string(),
+  whitelist: z.array(z.string()),
+  protection: z
+    .object({
+      public: z.boolean().optional(),
+    })
+    .optional(),
+});
+
+export type UploadConfig = z.infer<typeof uploadConfigSchema>;
 
 export const uploadConfigDefaults: UploadConfig = {
   location: "Upload",
@@ -48,6 +59,8 @@ export const uploadConfigDefaults: UploadConfig = {
   protection: { public: false },
 };
 
-export function readUploadConfig(config: AppConfig | undefined): UploadConfig | undefined {
-  return config?.plugins?.[UPLOAD_PLUGIN_ID] as UploadConfig | undefined;
-}
+export const uploadConfig = definePluginConfig({
+  id: UPLOAD_PLUGIN_ID,
+  schema: uploadConfigSchema,
+  defaults: uploadConfigDefaults,
+});

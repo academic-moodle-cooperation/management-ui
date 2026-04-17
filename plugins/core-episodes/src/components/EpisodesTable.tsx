@@ -21,7 +21,7 @@ import type { MetadataItem } from "@workspace/ui/config-primitives";
 import { logger } from "@workspace/utils";
 
 import { createColumns } from "../columns";
-import { readEpisodesConfig } from "../config";
+import { episodesConfig } from "../config";
 import {
   getEpisodesColumnLabelOverrides,
   getEpisodesTableConfig,
@@ -102,7 +102,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     [refetch, effectiveLayout, columnLabelOverrides],
   );
 
-  const metadata: MetadataItem[] = readEpisodesConfig(config)?.episodeInfo?.metadata ?? [];
+  const metadata: MetadataItem[] = episodesConfig.use().episodeInfo?.metadata ?? [];
   const { isReadOnly } = createMetadataHelpers(metadata);
 
   useEffect(() => {

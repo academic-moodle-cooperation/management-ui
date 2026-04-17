@@ -22,7 +22,8 @@
     "lucide-react": "^0.417.0",
     "mustache": "^4.2.0",
     "plugin-core": "workspace:*",
-    "react": "^19.1.0"
+    "react": "^19.1.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/mustache": "^4.2.5",

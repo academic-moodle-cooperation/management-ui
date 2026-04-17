@@ -1,5 +1,4 @@
 import { useI18n } from "@workspace/i18n";
-import { useAppConfig } from "@workspace/query";
 import type {
   GetSeriesByIdInputFieldsQuery,
   GetInputFieldsMetaDataFragment,
@@ -17,7 +16,7 @@ import type { MetadataItem } from "@workspace/ui/config-primitives";
 import { cn } from "@workspace/ui/lib/utils";
 import { copyText } from "@workspace/utils";
 
-import { readSeriesConfig } from "../config";
+import { seriesConfig } from "../config";
 
 type SeriesUpdateData = {
   [T: string]: string | string[];
@@ -45,8 +44,7 @@ const SeriesInfoContent = ({
   setTextCopied,
 }: SeriesInfoContentProps) => {
   const { t } = useI18n();
-  const { config } = useAppConfig();
-  const metadata: MetadataItem[] = readSeriesConfig(config)?.seriesInfo?.metadata ?? [];
+  const metadata: MetadataItem[] = seriesConfig.use().seriesInfo?.metadata ?? [];
 
   // Use the createMetadataHelpers function to get visibility helpers
   const { isVisible, isReadOnly } = createMetadataHelpers(metadata);

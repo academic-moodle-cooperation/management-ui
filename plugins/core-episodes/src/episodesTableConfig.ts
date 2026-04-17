@@ -1,7 +1,7 @@
 import type { TableColumnItem } from "@workspace/ui/config-primitives";
 import type { AppConfig } from "@workspace/ui-config";
 
-import { readEpisodesConfig, type EpisodesTable as EpisodesTableConfig } from "./config";
+import { episodesConfig, type EpisodesTable as EpisodesTableConfig } from "./config";
 
 export type EpisodesLayout = "list" | "gallery";
 
@@ -68,7 +68,7 @@ export const resolveEpisodesViewConfig = (
 };
 
 export const getEpisodesTableConfig = (config: AppConfig | undefined) => {
-  const tableConfig = readEpisodesConfig(config)?.episodesTable;
+  const tableConfig = episodesConfig.read(config).episodesTable;
 
   return {
     list: resolveEpisodesViewConfig(tableConfig, "list"),

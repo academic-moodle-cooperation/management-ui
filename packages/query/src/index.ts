@@ -36,6 +36,7 @@ export { gql } from "graphql-request";
 
 export * from "./QueryProvider";
 export * from "./hooks";
+export * from "./config";
 
 export * from "./client";
 export * from "./gql-generated";

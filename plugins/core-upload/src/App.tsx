@@ -36,7 +36,7 @@ import { logger } from "@workspace/utils";
 import Dropzone from "./components/Dropzone";
 import { EmptyState } from "./components/EmptyState";
 import { UploadList } from "./components/UploadList";
-import { readUploadConfig } from "./config";
+import { uploadConfig } from "./config";
 import { useFileHandler } from "./uploadservice/fileHandler";
 import { initializeProgressInterval } from "./uploadservice/onProgress";
 import { opencastUpload } from "./uploadservice/opencastUpload";
@@ -83,10 +83,8 @@ export const App = () => {
 
   const { t } = useI18n();
   const { config } = useAppConfig();
-  // Get upload-specific config from the real config system
-  const uploadConfig = readUploadConfig(config);
-  const location = uploadConfig?.location || "Upload";
-  const workflowId = uploadConfig?.workflowId || "ingest-upload";
+  // Get upload-specific config (validated slice; falls back to defaults on error).
+  const { location, workflowId } = uploadConfig.use();
 
   // Plugin system integration
   const manager = usePluginManager();

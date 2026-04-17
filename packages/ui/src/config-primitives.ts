@@ -19,14 +19,18 @@ export interface MetadataField {
 
 export interface ColumnsField {
   show: boolean;
-  label?: string;
-  labelKey?: string;
+  // The `| undefined` is deliberate: plugins derive these types from Zod
+  // schemas (via `z.infer<>`) and Zod's `.optional()` includes `| undefined`.
+  // With `exactOptionalPropertyTypes: true` the two wouldn't line up
+  // otherwise, so we accept `undefined` explicitly.
+  label?: string | undefined;
+  labelKey?: string | undefined;
 }
 
 export type MetadataItem = Record<string, MetadataField>;
 export type TableColumnItem = Record<string, ColumnsField>;
 
 export interface TableViewConfig {
-  enabled?: boolean;
-  columns?: TableColumnItem[];
+  enabled?: boolean | undefined;
+  columns?: TableColumnItem[] | undefined;
 }

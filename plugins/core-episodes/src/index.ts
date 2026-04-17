@@ -3,7 +3,7 @@ import { Film } from "lucide-react";
 import { createPlugin, type PluginManager } from "@workspace/plugin-system";
 
 import App from "./App";
-import { EPISODES_PLUGIN_ID, episodesConfigDefaults } from "./config";
+import { episodesConfig } from "./config";
 
 /**
  * Core Episodes Plugin
@@ -44,9 +44,7 @@ export const coreEpisodesPlugin = createPlugin({
       category: "content",
     });
 
-    manager.registerObject("app:config:defaults", `${EPISODES_PLUGIN_ID}-defaults`, {
-      plugins: { [EPISODES_PLUGIN_ID]: episodesConfigDefaults },
-    });
+    episodesConfig.register(manager);
   },
 
   activate() {},

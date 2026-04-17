@@ -1,7 +1,6 @@
 import React from "react";
 
 import { useI18n } from "@workspace/i18n";
-import { useAppConfig } from "@workspace/query";
 import type {
   GetEventByIdInputFieldsQuery,
   GetInputFieldsMetaDataFragment,
@@ -19,7 +18,7 @@ import type { MetadataItem } from "@workspace/ui/config-primitives";
 import { cn } from "@workspace/ui/lib/utils";
 import { copyText } from "@workspace/utils";
 
-import { readEpisodesConfig } from "../config";
+import { episodesConfig } from "../config";
 
 type EpisodesUpdateData = {
   [T: string]: string | string[];
@@ -47,8 +46,7 @@ const EpisodesInfoContent = ({
   setTextCopied,
 }: EpisodesInfoContentProps) => {
   const { t } = useI18n();
-  const { config } = useAppConfig();
-  const metadata: MetadataItem[] = readEpisodesConfig(config)?.episodeInfo?.metadata ?? [];
+  const metadata: MetadataItem[] = episodesConfig.use().episodeInfo?.metadata ?? [];
 
   // Use the createMetadataHelpers function to get visibility helpers
   const { isVisible, isReadOnly } = createMetadataHelpers(metadata);

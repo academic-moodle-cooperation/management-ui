@@ -4,7 +4,7 @@ import { createPlugin, type PluginManager } from "@workspace/plugin-system";
 
 import App from "./App";
 import { CreateSeriesToolbarAction } from "./components/CreateSeriesToolbarAction";
-import { SERIES_PLUGIN_ID, seriesConfigDefaults } from "./config";
+import { seriesConfig } from "./config";
 
 /**
  * Core Series Plugin
@@ -47,9 +47,7 @@ export const coreSeriesPlugin = createPlugin({
       component: CreateSeriesToolbarAction,
     });
 
-    manager.registerObject("app:config:defaults", `${SERIES_PLUGIN_ID}-defaults`, {
-      plugins: { [SERIES_PLUGIN_ID]: seriesConfigDefaults },
-    });
+    seriesConfig.register(manager);
   },
 
   activate() {},

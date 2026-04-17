@@ -3,7 +3,7 @@ import { UploadCloud } from "lucide-react";
 import { createPlugin, type PluginManager } from "@workspace/plugin-system";
 
 import { App } from "./App";
-import { UPLOAD_PLUGIN_ID, uploadConfigDefaults } from "./config";
+import { uploadConfig } from "./config";
 
 /**
  * Core Upload Plugin
@@ -45,9 +45,7 @@ export const coreUploadPlugin = createPlugin({
       category: "content",
     });
 
-    manager.registerObject("app:config:defaults", `${UPLOAD_PLUGIN_ID}-defaults`, {
-      plugins: { [UPLOAD_PLUGIN_ID]: uploadConfigDefaults },
-    });
+    uploadConfig.register(manager);
   },
 
   activate() {},
