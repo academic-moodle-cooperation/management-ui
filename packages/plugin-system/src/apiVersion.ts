@@ -10,7 +10,7 @@
  * The host loader refuses plugins whose required major does not match this host's major,
  * or whose minor is higher than this host's minor.
  */
-export const PLUGIN_API_VERSION = "1.0.0" as const;
+export const PLUGIN_API_VERSION = "1.1.0" as const;
 
 export interface ParsedSemver {
   major: number;

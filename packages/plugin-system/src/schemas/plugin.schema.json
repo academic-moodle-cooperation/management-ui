@@ -96,6 +96,11 @@
       "items": { "type": "string" },
       "description": "i18n namespace names this plugin ships translations for."
     },
+    "extensionPoints": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Optional list of extension points this plugin registers at (e.g. 'apps:definitions', 'sidebar:nav-items', 'app:config:defaults'). Added in Manifest Contract 1.1 for tooling such as the marketplace and the contract-test harness. When present, the contract harness verifies each listed extension point has been populated after activation. Absent = tooling falls back to in-test declarations."
+    },
 
     "modules": {
       "type": "array",

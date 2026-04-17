@@ -117,6 +117,18 @@ export function validatePluginMetadata(
     }
   }
 
+  if (metadata.extensionPoints !== undefined) {
+    if (!Array.isArray(metadata.extensionPoints)) {
+      errors.push("Field 'extensionPoints' must be an array of strings");
+    } else {
+      for (let i = 0; i < metadata.extensionPoints.length; i++) {
+        if (typeof metadata.extensionPoints[i] !== "string") {
+          errors.push(`extensionPoints[${i}] must be a string`);
+        }
+      }
+    }
+  }
+
   return {
     valid: errors.length === 0,
     errors,

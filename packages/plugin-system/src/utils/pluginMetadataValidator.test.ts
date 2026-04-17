@@ -97,6 +97,32 @@ describe("validatePluginMetadata", () => {
     expect(result.errors.some((e) => e.includes("modules[1].entry"))).toBe(true);
   });
 
+  it("accepts an optional extensionPoints array (Manifest 1.1)", () => {
+    const result = validatePluginMetadata({
+      ...validMinimalManifest,
+      extensionPoints: ["apps:definitions", "sidebar:nav-items"],
+    });
+    expect(result).toEqual({ valid: true, errors: [] });
+  });
+
+  it("rejects a non-array extensionPoints", () => {
+    const result = validatePluginMetadata({
+      ...validMinimalManifest,
+      extensionPoints: "apps:definitions",
+    });
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => e.includes("extensionPoints"))).toBe(true);
+  });
+
+  it("rejects non-string entries inside extensionPoints", () => {
+    const result = validatePluginMetadata({
+      ...validMinimalManifest,
+      extensionPoints: ["apps:definitions", 42],
+    });
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => e.includes("extensionPoints[1]"))).toBe(true);
+  });
+
   it("accepts a valid multi-module manifest", () => {
     const result = validatePluginMetadata({
       id: "multi",

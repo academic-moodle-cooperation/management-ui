@@ -28,3 +28,9 @@ export * from "./plugins/appRegistry";
 
 // Export services (Community Plugin System)
 export * from "./services";
+
+// Export manifest validator (see docs/architecture/CONTRACTS.md #1)
+export {
+  validatePluginMetadata,
+  type PluginMetadataValidationResult,
+} from "./utils/pluginMetadataValidator";

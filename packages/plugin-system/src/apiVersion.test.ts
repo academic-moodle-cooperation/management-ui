@@ -11,8 +11,8 @@ describe("PLUGIN_API_VERSION", () => {
     expect(parseSemver(PLUGIN_API_VERSION)).not.toBeNull();
   });
 
-  it("is currently 1.0.0 (frozen baseline for 1.x)", () => {
-    expect(PLUGIN_API_VERSION).toBe("1.0.0");
+  it("is currently 1.1.0 (Manifest 1.1 adds optional extensionPoints)", () => {
+    expect(PLUGIN_API_VERSION).toBe("1.1.0");
   });
 });
 

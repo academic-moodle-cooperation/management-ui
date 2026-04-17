@@ -5,7 +5,13 @@ import { createAppRegistryPlugin } from "./plugins/appRegistry";
 import { createObjectRegistryPlugin } from "./plugins/objectRegistry";
 import { createRendererPlugin } from "./plugins/renderer";
 
-const PluginContext = createContext<ReturnType<typeof createPluginManager> | null>(null);
+/**
+ * Plugin-system React context holding the active {@link createPluginManager}
+ * instance. Exported so testing harnesses (e.g. `@workspace/plugin-testing`)
+ * can wrap rendered plugin components with a pre-configured manager.
+ * Production code should prefer {@link PluginProvider} / {@link usePluginManager}.
+ */
+export const PluginContext = createContext<ReturnType<typeof createPluginManager> | null>(null);
 
 export const PluginProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const pluginManager = useMemo(() => {
