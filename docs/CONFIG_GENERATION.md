@@ -116,6 +116,24 @@ const mergedConfig = deepMerge(
 );
 ```
 
+### Matomo Tracking Config
+
+Deployments can enable Matomo by adding a top-level `matomo` block to the generated or deployed `config.json`. The default is disabled, so no tracking script is loaded unless the deployment opts in.
+
+```json
+{
+  "matomo": {
+    "enabled": true,
+    "url": "https://matomo.example.org/",
+    "siteId": 1,
+    "disableCookies": true,
+    "enableHeartBeatTimer": 30
+  }
+}
+```
+
+`url` and `siteId` are required when `enabled` is `true`. `scriptUrl` and `trackerUrl` can be used when the JavaScript tracker or tracking endpoint is hosted outside the default Matomo base URL. The complete settings list is documented in [`packages/ui-config/README.md`](../packages/ui-config/README.md#matomo-analytics).
+
 ## Deep Merge Logic
 
 ### Is It Duplicated?

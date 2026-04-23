@@ -12,6 +12,12 @@ export type { MetadataField, MetadataItem };
 export const defaultConfig: AppConfig = {
   productionConfigUrl: "/ui/config/management-ui/config.json",
   productionAppPluginUrl: "/management-tool/ui/config/plugins.json",
+  matomo: {
+    enabled: false,
+    trackPageViews: true,
+    enableLinkTracking: true,
+    includeSearch: true,
+  },
   app: {
     title: "management-ui",
     appName: "Video Management Platform",
@@ -173,6 +179,10 @@ export const getAppConfig = (instanceConfig?: Partial<AppConfig>) => {
     productionAppPluginUrl:
       instanceConfig?.productionAppPluginUrl ?? defaultConfig.productionAppPluginUrl,
     downloadBaseUrl: instanceConfig?.downloadBaseUrl ?? defaultConfig.downloadBaseUrl,
+    matomo: {
+      ...defaultConfig.matomo,
+      ...(instanceConfig?.matomo || {}),
+    },
     app: {
       ...defaultConfig.app,
       ...(instanceConfig?.app || {}),
