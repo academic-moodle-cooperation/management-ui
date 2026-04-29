@@ -177,6 +177,25 @@ describe("getAppConfig", () => {
     expect(config.downloadBaseUrl).toBe("https://admin.oc.univie.ac.at/static");
   });
 
+  it("should merge matomo config with defaults", () => {
+    const instanceConfig: Partial<AppConfig> = {
+      matomo: {
+        enabled: true,
+        url: "https://matomo.example.org/",
+        siteId: 42,
+      },
+    };
+
+    const config = getAppConfig(instanceConfig);
+
+    expect(config.matomo).toEqual({
+      ...defaultConfig.matomo,
+      enabled: true,
+      url: "https://matomo.example.org/",
+      siteId: 42,
+    });
+  });
+
   it("should handle partial nested configs", () => {
     const instanceConfig: Partial<AppConfig> = {
       app: {

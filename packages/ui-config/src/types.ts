@@ -25,10 +25,37 @@
  */
 export type PluginsConfig = Record<string, unknown>;
 
+export interface MatomoConfig {
+  enabled: boolean;
+  /**
+   * Base URL of the Matomo instance, for example
+   * `https://matomo.example.org/`.
+   */
+  url?: string;
+  siteId?: string | number;
+  /**
+   * Override the generated `url + "matomo.js"` script URL when the tracker
+   * script is hosted somewhere else.
+   */
+  scriptUrl?: string;
+  /**
+   * Override the generated `url + "matomo.php"` tracker endpoint.
+   */
+  trackerUrl?: string;
+  trackPageViews?: boolean;
+  enableLinkTracking?: boolean;
+  enableHeartBeatTimer?: boolean | number;
+  disableCookies?: boolean;
+  requireConsent?: boolean;
+  requireCookieConsent?: boolean;
+  includeSearch?: boolean;
+}
+
 export interface AppConfig {
   productionConfigUrl: string;
   productionAppPluginUrl: string;
   downloadBaseUrl?: string | undefined;
+  matomo: MatomoConfig;
   app: {
     title: string;
     appName: string;

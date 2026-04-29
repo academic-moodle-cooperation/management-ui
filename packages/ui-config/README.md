@@ -34,14 +34,51 @@ This package is designed to be **pure and static**, allowing it to be used early
 ### Key Concepts
 
 #### `defaultConfig`
+
 A large object containing all default values for the platform. This includes:
+
 - **`app`**: Visual identity (title, logos, theme).
 - **`auth`**: Redirect URLs for login/logout (supporting both production and dev).
 - **`api`**: Base URLs and timeouts.
+- **`matomo`**: Optional Matomo analytics integration.
 - **`plugins`**: Specific settings for the Series, Episodes, and Upload apps.
 
 #### `getAppConfig(overrides)`
+
 A pure function that takes optional overrides and merges them deeply with the `defaultConfig`.
+
+### Matomo Analytics
+
+Matomo tracking is configured through the top-level `matomo` block. It is disabled by default and only starts when `enabled`, `url`, and `siteId` are configured.
+
+```json
+{
+  "matomo": {
+    "enabled": true,
+    "url": "https://matomo.example.org/",
+    "siteId": 1,
+    "disableCookies": true,
+    "enableHeartBeatTimer": 30
+  }
+}
+```
+
+Available settings:
+
+| Setting | Type | Default | Description |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `false` | Enables or disables Matomo tracking. |
+| `url` | `string` | - | Base URL of the Matomo instance, for example `https://matomo.example.org/`. Required when tracking is enabled. |
+| `siteId` | `string \| number` | - | Matomo site ID. Required when tracking is enabled. |
+| `scriptUrl` | `string` | `${url}matomo.js` | Optional override for the Matomo JavaScript tracker URL. |
+| `trackerUrl` | `string` | `${url}matomo.php` | Optional override for the Matomo tracking endpoint. |
+| `trackPageViews` | `boolean` | `true` | Tracks the initial page view and client-side route changes. |
+| `enableLinkTracking` | `boolean` | `true` | Enables Matomo link tracking. |
+| `enableHeartBeatTimer` | `boolean \| number` | - | Enables heartbeat tracking. A number sets the heartbeat interval in seconds. |
+| `disableCookies` | `boolean` | `false` | Disables Matomo cookies. |
+| `requireConsent` | `boolean` | `false` | Requires tracking consent before Matomo records data. |
+| `requireCookieConsent` | `boolean` | `false` | Requires cookie consent before Matomo stores cookies. |
+| `includeSearch` | `boolean` | `true` | Includes query strings in tracked URLs. Set to `false` to omit query parameters. |
 
 ## API Surface (Public Exports)
 
@@ -89,7 +126,7 @@ console.log(defaultConfig.api.graphqlEndpoint); // "/graphql"
 import { getAppConfig } from "@workspace/ui-config";
 
 const myConfig = getAppConfig({
-  app: { title: "Custom Title" }
+  app: { title: "Custom Title" },
 });
 ```
 
