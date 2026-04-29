@@ -134,11 +134,6 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
       ...perPluginAssetTargets,
       // .local-plugins assets (e.g. assets/univie/logo.png)
       ...localPluginAssetTargets,
-      // Theme CSS files (for dynamic theme switching)
-      {
-        src: path.resolve(monorepoRootPath, "plugins/themes/**/*"),
-        dest: "plugins/themes",
-      },
     ],
   });
 
