@@ -80,6 +80,16 @@
         "^build"
       ],
       "cache": false
+    },
+    "test:e2e": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false,
+      "env": [
+        "CI",
+        "PLAYWRIGHT_*"
+      ]
     }
   }
 }

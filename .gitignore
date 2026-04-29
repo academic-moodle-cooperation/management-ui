@@ -29,6 +29,9 @@ dist-types
 # Testing
 coverage
 .nyc_output
+playwright-report/
+test-results/
+.playwright/
 
 # Turbo
 .turbo
