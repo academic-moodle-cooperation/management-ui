@@ -81,6 +81,12 @@
       ],
       "cache": false
     },
+    "test:contract": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false
+    },
     "test:e2e": {
       "dependsOn": [
         "^build"

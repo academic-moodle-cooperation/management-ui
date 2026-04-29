@@ -9,7 +9,8 @@
     "clean": "rm -rf .turbo && rm -rf dist && rm -rf node_modules && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "check-types": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:contract": "vitest run plugin.contract"
   },
   "dependencies": {
     "@workspace/i18n": "workspace:*",

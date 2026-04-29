@@ -7,7 +7,8 @@ on:
     branches: [main, develop]
 
 jobs:
-  test:
+  lint-types:
+    name: Lint and type-check
     runs-on: ubuntu-latest
 
     steps:
@@ -27,12 +28,10 @@ jobs:
 
       - name: Build packages
         run: |
-          # Build vite-config first to ensure dist files are fully available
-          # This prevents race conditions where plugins try to use vite-config before it's fully built
+          # Build vite-config first to ensure dist files are fully available.
+          # Prevents race conditions where plugins try to use vite-config before it's fully built.
           pnpm turbo run build --force --filter=@workspace/vite-config
-          # Verify vite-config was built correctly
           test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
-          # Then build everything else (vite-config will be cached)
           pnpm turbo run build --force
 
       - name: Ensure .local-plugins exists
@@ -43,10 +42,9 @@ jobs:
 
       - name: Run type check
         run: |
-          # Run type check and filter out shadcn/ui errors (auto-generated files)
-          # See docs/internal/SHADCN_TYPESCRIPT_ERRORS.md for details
+          # Filter out shadcn/ui errors (auto-generated files).
+          # See docs/internal/SHADCN_TYPESCRIPT_ERRORS.md for details.
           pnpm check-types 2>&1 | grep -v "packages/ui/src/components/ui" | grep -v "src/components/ui" || true
-          # Check if there are any real errors (not shadcn-related)
           if pnpm check-types 2>&1 | grep -v "packages/ui/src/components/ui" | grep -v "src/components/ui" | grep -q "error TS"; then
             echo "❌ Real TypeScript errors found (not shadcn-related)"
             exit 1
@@ -54,7 +52,36 @@ jobs:
             echo "✅ Type check passed (shadcn errors ignored)"
           fi
 
-      - name: Run tests
+  unit:
+    name: Unit tests
+    needs: lint-types
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: |
+          pnpm turbo run build --force --filter=@workspace/vite-config
+          test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
+          pnpm turbo run build --force
+
+      - name: Ensure .local-plugins exists
+        run: mkdir -p .local-plugins
+
+      - name: Run unit tests
         run: pnpm test
 
       - name: Generate coverage report
@@ -67,3 +94,79 @@ jobs:
           files: ./coverage/coverage-final.json
           flags: unittests
           name: codecov-umbrella
+
+  contract:
+    name: Plugin contract tests
+    needs: unit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: |
+          pnpm turbo run build --force --filter=@workspace/vite-config
+          test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
+          pnpm turbo run build --force
+
+      - name: Ensure .local-plugins exists
+        run: mkdir -p .local-plugins
+
+      - name: Run contract tests
+        run: pnpm test:contract
+
+  e2e:
+    name: E2E (Playwright)
+    needs: unit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build vite-config
+        run: |
+          # Shell dev needs vite-config built; the Playwright webServer starts the
+          # shell in dev mode, which imports @workspace/vite-config from dist/.
+          pnpm turbo run build --force --filter=@workspace/vite-config
+          test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
+
+      - name: Ensure .local-plugins exists
+        run: mkdir -p .local-plugins
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: pnpm test:e2e
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
