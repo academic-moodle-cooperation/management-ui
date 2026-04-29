@@ -63,6 +63,7 @@ docs/
 ├── PLUGIN_STYLING_CONTRACT.md       ← CSS/theming rules for plugins
 ├── COMMUNITY_PLUGIN_DEVELOPMENT.md  ← Full plugin development lifecycle
 ├── PLUGIN_LOADING_MECHANISMS.md     ← All loading paths explained
+├── TESTING.md                       ← Test pyramid + plugin contract harness
 ├── architecture/
 │   ├── CONFIGURATION.md              ← Canonical config model
 │   ├── ADR-001-plugin-system.md     ← Plugin architecture rationale

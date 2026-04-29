@@ -61,6 +61,10 @@ plugins/        ← Built-in plugins shipped with the core repo
 - **[Configuration](/docs/architecture/CONFIGURATION.md)** - Canonical layer model, `definePluginConfig` reader API, `enabledPlugins` vs. per-slice `enabled`
 - **[Favicon Configuration](/docs/internal/FAVICON_CONFIGURATION.md)** - Customizing favicons and assets per university
 
+### Testing
+
+- **[Testing](/docs/TESTING.md)** - Test pyramid (unit / contract / E2E), `@workspace/plugin-testing` harness, Playwright setup, CI layout, deferred follow-ups
+
 ### Development Workflows
 
 Step-by-step guides for common tasks:

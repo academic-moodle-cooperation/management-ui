@@ -14,6 +14,8 @@ There are **four contracts**:
 
 Each contract has its own version. Breaking changes to any of them require a major version bump of `@<scope>/plugin-system`.
 
+The Manifest 1.1 and Runtime API 1.0 contracts are **mechanically verified** by the contract-test harness in [`@workspace/plugin-testing`](../../packages/plugin-testing/README.md); see [`docs/TESTING.md`](../TESTING.md) for the test pyramid and harness usage.
+
 ## 1. Plugin Manifest Contract
 
 **Authoritative schema:** [`packages/plugin-system/src/schemas/plugin.schema.json`](../../packages/plugin-system/src/schemas/plugin.schema.json)
