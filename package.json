@@ -17,6 +17,7 @@
     "test:watch": "turbo run test:watch",
     "test:coverage": "turbo run test:coverage",
     "test:contract": "turbo run test:contract",
+    "verify": "pnpm turbo run lint check-types build test test:contract --filter='!./.local-plugins/*' && pnpm test:e2e",
     "validate:plugins": "node scripts/validate-plugins.mjs",
     "plugin:extract": "node scripts/extract-module-to-plugin.mjs",
     "test:e2e": "playwright test",

@@ -487,11 +487,18 @@ export default createPlugin({
 
 ## Validation Checklist
 
-Before considering work complete:
+**Before pushing**, run `pnpm verify` from the repo root. This is the single command that mirrors the four-job CI pipeline locally so you find failures before review:
 
-- [ ] TypeScript compiles: `pnpm check-types`
-- [ ] Linting passes: `pnpm lint`
-- [ ] Build succeeds: `pnpm build`
+```bash
+pnpm verify
+```
+
+It runs, in order: `lint` → `check-types` → `build` → `test` (unit) → `test:contract` → `test:e2e`. The `--filter='!./.local-plugins/*'` flag matches CI's empty-`.local-plugins/` state so unrelated org-plugin breakage in your local checkout doesn't false-positive the run. Playwright Chromium needs to be installed once with `pnpm test:e2e:install` before the first run.
+
+Why this exists: a build error in `apps/shell` once slipped through because `vite dev` warns where `vite build` fails. `pnpm verify` includes the build step so that class of bug fails fast locally instead of in CI.
+
+If `pnpm verify` is green, the four CI jobs will be too — assuming you also have:
+
 - [ ] No hardcoded colors — only semantic tokens
 - [ ] Plugin has `plugin.json` matching the schema
 - [ ] Both `activate()` and `deactivate()` are implemented
@@ -499,6 +506,8 @@ Before considering work complete:
 - [ ] External deps (React, @workspace/*) are not bundled
 - [ ] Documentation updated for any changed APIs
 - [ ] No circular dependencies introduced
+
+See [`docs/TESTING.md`](TESTING.md) for the full test pyramid and what each layer covers.
 
 ## Getting Help
 

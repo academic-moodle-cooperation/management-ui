@@ -140,6 +140,18 @@ flowchart LR
 
 `unit` is the gate before `contract` and `e2e` so a broken Vitest suite never costs us a Chromium download.
 
+## Before pushing
+
+Run the same chain locally to find failures before review:
+
+```bash
+pnpm verify
+```
+
+This runs `lint` → `check-types` → `build` → `test` → `test:contract` → `test:e2e`, with `--filter='!./.local-plugins/*'` so org-plugin checkouts in your local `.local-plugins/` don't false-positive the run (CI sees an empty `.local-plugins/`). Run `pnpm test:e2e:install` once on a new machine to download Chromium.
+
+Including `build` in the chain is intentional: `vite dev` warns where `vite build` errors out, so a missing static-copy target or a stale alias only surfaces in production builds. `pnpm verify` catches that class of bug locally.
+
 ## Follow-ups
 
 The MVP shipped in Phase 4 covers exactly **one** contract test (core-episodes) and **one** smoke E2E. The following work is deferred and tracked here so it doesn't silently fall off the radar:
