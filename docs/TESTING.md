@@ -99,6 +99,10 @@ Two ways to tell the harness which extension points a plugin must populate:
 
 The package will be picked up by `pnpm test:contract` automatically.
 
+### `localStorage` in the contract harness
+
+Node 25+ exposes a global `localStorage` placeholder (intended for use with `--localstorage-file`) that surfaces as `{}` and shadows jsdom's working `Storage`. Any contract test running under jsdom that touches `localStorage` would otherwise blow up with `localStorage.removeItem is not a function`. The shared [vitest.setup.ts](../vitest.setup.ts) installs an in-memory `Storage` shim on `globalThis` and clears it after each test — no per-plugin work needed.
+
 ## End-to-end tests (Playwright)
 
 The single smoke spec at [tests/e2e/smoke.spec.ts](../tests/e2e/smoke.spec.ts) drives a real Chromium against `apps/shell`'s Vite dev server. The repo ships no backend, so the spec stubs the four endpoints the shell touches during boot (config.json, plugins.json, /info/me.json, /graphql) and then asserts the sidebar renders without console errors.
