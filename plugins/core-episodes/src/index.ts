@@ -9,9 +9,7 @@ import { episodesConfig } from "./config";
  * Core Episodes Plugin
  *
  * Registers the `/episodes` route, its sidebar navigation entry, and the
- * plugin's default config slice through the public plugin API. Replaces the
- * legacy `apps/management-ui-episodes` Vite app + the separate
- * `episodes-nav-implementation.ts` plugin, per ADR-003.
+ * plugin's default config slice through the public plugin API.
  *
  * The app `id` is `"episodes"`, matching the plugin namespace and the short
  * key in `config.plugins["episodes"]`.

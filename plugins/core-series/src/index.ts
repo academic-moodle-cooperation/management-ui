@@ -11,9 +11,6 @@ import { seriesConfig } from "./config";
  *
  * Registers the `/series` route, its sidebar navigation entry, and the
  * default "Create series" toolbar action through the public plugin API.
- * Replaces the legacy `apps/management-ui-series` Vite app + the separate
- * `series-nav-implementation.ts` and `series-create-implementation.ts`
- * plugins, per ADR-003.
  *
  * The app `id` is `"series"`, matching the plugin namespace and the short
  * key in `config.plugins["series"]`.

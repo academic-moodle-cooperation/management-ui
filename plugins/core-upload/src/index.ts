@@ -9,9 +9,7 @@ import { uploadConfig } from "./config";
  * Core Upload Plugin
  *
  * Registers the `/upload` route and its sidebar navigation entry through
- * the public plugin API. Replaces the legacy `apps/management-ui-upload`
- * Vite app + the separate `upload-nav-implementation.ts` plugin, per
- * ADR-003.
+ * the public plugin API.
  *
  * Nested paths like `/upload/:seriesId` are served by the shell's
  * DynamicRouterProvider, which automatically creates a `$routeSubPath`
