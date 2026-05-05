@@ -12,6 +12,9 @@ import {
   useQueryClient,
 } from "@workspace/query";
 import type { SearchUserQuery } from "@workspace/query";
+import { logger } from "@workspace/utils";
+
+import { OverflowTooltip } from "../overflow-tooltip";
 import {
   Button,
   Checkbox,
@@ -36,9 +39,7 @@ import {
   CommandItem,
   CommandEmpty,
   toast,
-  OverflowTooltip,
-} from "@workspace/ui/components";
-import { logger } from "@workspace/utils";
+} from "../ui";
 
 import type { AclData, ACLEntry, ACLEntryInput, SelectedElement } from "./types";
 

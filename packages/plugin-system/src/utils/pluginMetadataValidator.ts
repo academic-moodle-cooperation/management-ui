@@ -90,6 +90,16 @@ export function validatePluginMetadata(
     );
   }
 
+  if (metadata.apiVersion !== undefined) {
+    if (typeof metadata.apiVersion !== "string") {
+      errors.push("Field 'apiVersion' must be a string");
+    } else if (!/^\d+\.\d+\.\d+(-[a-zA-Z0-9.]+)?$/.test(metadata.apiVersion)) {
+      errors.push(
+        "Field 'apiVersion' must use semantic versioning (e.g. 1.0.0). Compatibility is checked by the host loader.",
+      );
+    }
+  }
+
   if (metadata.modules !== undefined) {
     if (!Array.isArray(metadata.modules)) {
       errors.push("Field 'modules' must be an array");
@@ -103,6 +113,18 @@ export function validatePluginMetadata(
         if (typeof mod.id !== "string") errors.push(`modules[${i}].id must be a string`);
         if (typeof mod.type !== "string") errors.push(`modules[${i}].type must be a string`);
         if (typeof mod.entry !== "string") errors.push(`modules[${i}].entry must be a string`);
+      }
+    }
+  }
+
+  if (metadata.extensionPoints !== undefined) {
+    if (!Array.isArray(metadata.extensionPoints)) {
+      errors.push("Field 'extensionPoints' must be an array of strings");
+    } else {
+      for (let i = 0; i < metadata.extensionPoints.length; i++) {
+        if (typeof metadata.extensionPoints[i] !== "string") {
+          errors.push(`extensionPoints[${i}] must be a string`);
+        }
       }
     }
   }

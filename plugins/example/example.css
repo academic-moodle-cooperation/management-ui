@@ -1,0 +1,23 @@
+/**
+ * Example Theme
+ *
+ * A neutral, brand-agnostic theme used purely as a reference implementation.
+ * It overrides a handful of semantic CSS custom properties to show how
+ * theming works. Real organization themes belong in .local-plugins/<org>/
+ * or a separate community-plugin repository, not in this core example.
+ *
+ * See docs/PLUGIN_STYLING_CONTRACT.md for the full list of tokens that
+ * themes may safely override.
+ */
+:root {
+  --theme-name: "Example";
+
+  /* A muted teal that clearly differs from the default while staying neutral. */
+  --primary: oklch(0.58 0.08 200);
+  --sidebar-ring: oklch(0.58 0.08 200);
+}
+
+.dark {
+  --primary: oklch(0.72 0.08 200);
+  --sidebar-ring: oklch(0.72 0.08 200);
+}

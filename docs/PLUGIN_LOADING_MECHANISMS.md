@@ -12,18 +12,18 @@ This document lists all possible ways plugins can be loaded in the Management UI
 - Plugins are statically imported from `plugins/` directory
 - Exported via `plugins/index.ts` as `@workspace/plugins`
 - Loaded during app startup in `loadPlugins.ts`
-- Filtered by `pluginNamespace` configuration
+- Filtered by `app.enabledPlugins` (ship filter) and per-slice `config.plugins[<id>].enabled` (runtime switch). Full model in [`architecture/CONFIGURATION.md`](./architecture/CONFIGURATION.md).
 - Backend note: this mode is frontend-bundled. Plugin-specific backend logic is not packaged as part of this loading mechanism.
 
 **Code:**
-- `apps/management-ui-core/src/loadPlugins.ts` - `loadAllPlugins()`
+- `apps/shell/src/loadPlugins.ts` - `loadAllAvailablePlugins()`
 - `plugins/index.ts` - Exports core plugins only
 
 **Configuration:**
 ```json
 {
   "app": {
-    "pluginNamespace": ["core", "admin-marketplace"]
+    "enabledPlugins": ["core", "admin"]
   }
 }
 ```
@@ -72,60 +72,30 @@ await RemoteLoader.loadAndRegister(
 
 ---
 
-## 3. Local Plugin Discovery (localStorage)
+## 3. Local Plugin Discovery (Removed)
 
-**Location:** `apps/management-ui-core/src/services/localPluginDiscovery.ts`
-
-**How it works:**
-- Reads plugin URLs from `localStorage.getItem("local_plugins")`
-- Returns array of `LocalPluginInfo` objects
-- Used by Marketplace to display local dev plugins
-- Plugins are then loaded via `RemoteLoader`
-
-**Code:**
-- `apps/management-ui-core/src/services/localPluginDiscovery.ts` - `discoverLocalPlugins()`
-- `plugins/admin-marketplace/src/views/MarketplaceDashboard.tsx` - UI display
-
-**Storage Format:**
-```json
-[
-  {
-    "id": "my-plugin",
-    "name": "My Plugin",
-    "url": "http://127.0.0.1:5173/my-plugin.mjs",
-    "metadata": {...}
-  }
-]
-```
-
-**Status:** ✅ Implemented (needs testing)
-
-**Test:**
-1. Add plugin to localStorage:
-   ```javascript
-   localStorage.setItem("local_plugins", JSON.stringify([{
-     id: "test-plugin",
-     name: "Test Plugin",
-     url: "http://127.0.0.1:5173/test.mjs"
-   }]));
-   ```
-2. Refresh Marketplace - should see "Local Development Plugins" section
+Previously a `localPluginDiscovery` helper read plugin URLs from
+`localStorage.getItem("local_plugins")` and was invoked as a side-effect of
+`loadAllPlugins()`. With the switch to the `.local-plugins/` manifest served
+by the dev-server plugin (see §5) this mechanism was unused and has been
+removed. Use `.local-plugins/` for local dev, or the Marketplace Developer
+Mode (mechanism 2) for ad-hoc URLs.
 
 ---
 
 ## 4. JAR Plugin Loader (Backend plugins.json) – Core
 
-**Location:** `apps/management-ui-core/src/services/jarPluginLoader.ts` + `apps/management-ui-core/src/components/PluginInitializer.tsx`
+**Location:** `apps/shell/src/services/jarPluginLoader.ts` + `apps/shell/src/components/PluginInitializer.tsx`
 
 **How it works:**
-- **Core** (not the marketplace) loads JAR plugins. `PluginInitializer` first loads any JAR entries that match the current config (typically `config`), re-merges `app:config`, then loads the remaining JAR entries that match the now-effective `pluginNamespace` config.
+- **Core** (not the marketplace) loads JAR plugins. `PluginInitializer` first loads any JAR entries that match the current config (typically `config`), re-merges `app:config`, then loads the remaining JAR entries that match the now-effective `app.enabledPlugins` list.
 - Backend generates `plugins.json` from deployed JAR files. It scans the bundle's static plugin directory and emits one entry per discovered `*.mjs` file, so one deployed JAR can expose multiple frontend plugin modules.
 - JAR plugins load **even when the marketplace plugin is not loaded**. The marketplace is optional and does not handle JAR loading.
 - This is the path to use when a plugin needs its own backend module (e.g. quiz/poll APIs, persistence, QR token validation).
 
 **Code:**
-- `apps/management-ui-core/src/services/jarPluginLoader.ts` - `loadJarPlugins()`
-- `apps/management-ui-core/src/components/PluginInitializer.tsx` - calls `loadJarPlugins()` then `loadAndRegister()` from `@workspace/remote-plugin-loader`
+- `apps/shell/src/services/jarPluginLoader.ts` - `loadJarPlugins()`
+- `apps/shell/src/components/PluginInitializer.tsx` - calls `loadJarPlugins()` then `loadAndRegister()` from `@workspace/remote-plugin-loader`
 - `packages/remote-plugin-loader` - shared fetch/transform/register logic
 - `backend/management-config/.../PluginEndpoint.java` - Backend endpoint
 
@@ -160,19 +130,19 @@ await RemoteLoader.loadAndRegister(
 
 ## 5. .local-plugins manifest (dev only)
 
-**Location:** `packages/vite-config/src/plugins/local-plugins-dev.ts` + `apps/management-ui-core/src/components/PluginInitializer.tsx` + `apps/management-ui-core/src/services/localPluginsManifest.ts`
+**Location:** `packages/vite-config/src/plugins/local-plugins-dev.ts` + `apps/shell/src/components/PluginInitializer.tsx` + `apps/shell/src/services/localPluginsManifest.ts`
 
 **How it works:**
 - In **development**, the Vite dev server scans `.local-plugins/<name>/dist/` for `*.mjs` files and serves them at `/local-plugins/<name>/<file>.mjs`. It exposes a manifest at `/local-plugins/manifest.json` with one entry per `.mjs` (so one folder can have multiple bundles).
 - The **core** (PluginInitializer) fetches this manifest and loads each listed plugin via `loadAndRegister` from `@workspace/remote-plugin-loader`.
-- Loading is **filtered by `config.app.pluginNamespace`**: only manifest entries whose `namespace` (folder name) is in the enabled list are loaded. If `pluginNamespace` is missing or empty, all discovered .local-plugins are loaded. Same config drives built-in plugin filtering.
+- Loading is **filtered by `config.app.enabledPlugins`**: only manifest entries whose `namespace` (folder name) is in the enabled list are loaded. If `enabledPlugins` is missing or empty, all discovered .local-plugins are loaded. Same config drives built-in plugin filtering.
 - CSS behavior: `loadAndRegister` auto-requests `<module>.css` (same stem as `.mjs`). The local-plugins dev middleware resolves single-file requests from `dist/`, so `dist/<name>.css` is served when present.
 
 **Code:**
 - `packages/vite-config/src/plugins/local-plugins-dev.ts` - discovers plugins, serves files, exposes manifest (each entry has `name`, `id`, `url`, `namespace`)
-- `apps/management-ui-core/src/services/localPluginsManifest.ts` - fetches manifest
-- `apps/management-ui-core/src/loadPlugins.ts` - `getEnabledPluginNamespaces(config)` for filtering
-- `apps/management-ui-core/src/components/PluginInitializer.tsx` - filters manifest by namespace, then loads
+- `apps/shell/src/services/localPluginsManifest.ts` - fetches manifest
+- `apps/shell/src/loadPlugins.ts` - `getEnabledPluginNamespaces(config)` + `isPluginEnabledAtRuntime(config, id)` for filtering
+- `apps/shell/src/components/PluginInitializer.tsx` - filters manifest by namespace, then loads
 
 **Manifest shape:**
 ```json
@@ -189,7 +159,7 @@ await RemoteLoader.loadAndRegister(
 }
 ```
 
-**To load a .local-plugins folder:** Add its folder name to `pluginNamespace` (e.g. via a config plugin: `["core", "episodes", "series", "upload", "univie"]`).
+**To load a .local-plugins folder:** Add its folder name to `app.enabledPlugins` (e.g. via a config plugin: `["core", "episodes", "series", "upload", "admin", "config", "univie"]`).
 
 **Troubleshooting styles:** If a plugin renders unstyled, verify:
 1. `dist/<plugin>.mjs` exists
@@ -201,43 +171,22 @@ await RemoteLoader.loadAndRegister(
 
 ---
 
-## 6. Dynamic Modules (Legacy System)
+## 6. Dynamic Modules (Removed)
 
-**Location:** `apps/management-ui-core/src/components/DynamicRouterProvider.tsx`
+The shell used to load standalone Vite apps from `apps/management-ui-*` via a
+`dynamic-modules.json` manifest and a `@monorepo-apps/*` Vite alias. Phase 3 of
+the open-source cleanup migrated every feature app into a core plugin that
+registers an `AppDefinition` on the `apps:definitions` extension point (see
+ADR-003), so this mechanism has been removed.
 
-**How it works:**
-- Fetches `dynamic-modules.json` (legacy format)
-- Loads standalone apps via `@monorepo-apps/*` imports
-- Creates routes dynamically
-- **Note:** This is the old system, being phased out
-
-**Code:**
-- `apps/management-ui-core/src/components/DynamicRouterProvider.tsx` - `getDynamicModules()`
-
-**Config Format:**
-```json
-{
-  "plugins": [
-    {
-      "name": "management-ui-upload",
-      "path": "/static/plugins/upload",
-      "scope": "upload"
-    }
-  ]
-}
-```
-
-**Status:** ⚠️ Legacy (still works, but deprecated)
-
-**Test:**
-- Place `dynamic-modules.json` in public folder
-- Apps should appear as routes
+**Status:** Removed. Use the plugin-based app registration (mechanism 1) for
+new features instead.
 
 ---
 
 ## 7. Plugin-based Apps (Modern System)
 
-**Location:** `apps/management-ui-core/src/components/DynamicRouterProvider.tsx`
+**Location:** `apps/shell/src/components/DynamicRouterProvider.tsx`
 
 **How it works:**
 - Plugins register apps via `apps:definitions` extension point
@@ -246,7 +195,7 @@ await RemoteLoader.loadAndRegister(
 - This is the **preferred** way for new plugins
 
 **Code:**
-- `apps/management-ui-core/src/components/DynamicRouterProvider.tsx` - `getPluginBasedApps()`
+- `apps/shell/src/components/DynamicRouterProvider.tsx` - `getPluginBasedApps()`
 - `packages/plugin-system/src/plugins/appRegistry/index.ts` - App registry
 
 **Registration:**
@@ -273,9 +222,9 @@ manager.registerObject("apps:definitions", "my-app", {
 |---|-----------|------|--------|-------------|
 | 1 | Built-in Plugins | Static | ✅ Working | Core plugins (always bundled) |
 | 2 | Remote Loader (package + marketplace) | Dynamic | ✅ Implemented | Community plugins from CDN/URL (marketplace validates; core uses same package for JAR) |
-| 3 | Local Discovery | Dynamic | ✅ Implemented | Local development plugins |
+| 3 | Local Discovery | — | 🗑 Removed | Superseded by §5 (`.local-plugins` manifest) |
 | 4 | JAR Loader (core) | Dynamic | ✅ Implemented | Production JAR deployments (loaded by core; marketplace optional) |
-| 5 | .local-plugins manifest (dev) | Dynamic | ✅ Implemented | Dev-only: plugins in `.local-plugins/<name>/`; filtered by `pluginNamespace` |
+| 5 | .local-plugins manifest (dev) | Dynamic | ✅ Implemented | Dev-only: plugins in `.local-plugins/<name>/`; filtered by `app.enabledPlugins` |
 | 6 | Dynamic Modules | Legacy | ⚠️ Deprecated | Old standalone apps |
 | 7 | Plugin-based Apps | Modern | ✅ Working | New plugin apps (preferred) |
 
@@ -285,15 +234,14 @@ We'll test each mechanism one by one:
 
 1. ✅ **Built-in Plugins** - Already working
 2. ⏳ **RemoteLoader** - Test with a sample plugin URL
-3. ⏳ **Local Discovery** - Test with localStorage plugin
+3. 🗑 **Local Discovery** - Removed (use §5)
 4. ⏳ **JAR Loader** - Test with backend plugins.json
-5. ✅ **.local-plugins manifest** - Build plugin in `.local-plugins/<name>/`, add namespace to config, run core in dev
-6. ⏳ **Dynamic Modules** - Test with dynamic-modules.json (if needed)
+5. ✅ **.local-plugins manifest** - Build plugin in `.local-plugins/<name>/`, add namespace to config, run shell in dev
+6. 🗑 **Dynamic Modules** - Removed (see ADR-003)
 7. ✅ **Plugin-based Apps** - Already working
 
 ## Next Steps
 
 1. Create a test plugin for RemoteLoader
-2. Test Local Discovery with localStorage
-3. Test JAR Loader with mock backend response
-4. Document any issues found
+2. Test JAR Loader with mock backend response
+3. Document any issues found

@@ -15,12 +15,11 @@
     ".": "./src/index.ts",
     "./components": "./src/components/index.ts",
     "./components/*": "./src/components/*.tsx",
-    "./components/appshell/components/*": "./src/components/appshell/components/*.tsx",
+    "./config-primitives": "./src/config-primitives.ts",
     "./hooks": "./src/hooks/index.ts",
     "./hooks/*": "./src/hooks/*.ts",
     "./lib": "./src/lib/index.ts",
     "./lib/utils": "./src/lib/utils.ts",
-    "./theme/*": "./src/theme/*.tsx",
     "./styles": "./src/styles/index.ts",
     "./globals.css": "./src/styles/globals.css",
     "./postcss.config": "./postcss.config.mjs"

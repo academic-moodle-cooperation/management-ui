@@ -1,5 +1,6 @@
 import { ComponentResolver } from "@workspace/plugin-system";
-import { SidebarProvider, SidebarTrigger, SidebarInset } from "@workspace/ui/components";
+
+import { SidebarProvider, SidebarTrigger, SidebarInset } from "../ui";
 
 import { AppSidebar } from "./components/app-sidebar";
 

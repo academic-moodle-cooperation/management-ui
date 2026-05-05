@@ -5,6 +5,8 @@ import * as React from "react";
 
 import { useTranslation } from "@workspace/i18n";
 import { Link, useRouterState } from "@workspace/router";
+
+import { cn } from "../../../lib/utils";
 import {
   Collapsible,
   CollapsibleContent,
@@ -17,8 +19,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@workspace/ui/components";
-import { cn } from "@workspace/ui/lib/utils";
+} from "../../ui";
 
 export type NavMainProps = {
   groupClassName?: string;

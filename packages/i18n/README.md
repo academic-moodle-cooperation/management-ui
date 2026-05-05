@@ -8,6 +8,14 @@
 
 The `@workspace/i18n` package provides a unified internationalization system for the Management UI. Built on **i18next** and **react-i18next**, it supports multiple languages, namespaced translation files, and dynamic loading of translations—essential for the platform's plugin architecture.
 
+### Stability contract
+
+This package is the **only place in the monorepo that is allowed to import from `i18next` / `react-i18next`**. Apps, plugins and other packages must import translation primitives (`useTranslation`, `Trans`, `I18nextProvider`, …) from `@workspace/i18n`.
+
+The rule is enforced by ESLint (`no-restricted-imports` in `packages/eslint-config/base.js`) with an explicit exception for this package.
+
+Why it matters: if we ever need to replace or upgrade the i18n implementation (e.g. move to a different framework), we can do so by changing the internals of `@workspace/i18n` without breaking plugins or apps.
+
 **In Scope:**
 
 - Centralized i18next instance and React context provider.

@@ -1,7 +1,0 @@
-/* Default Theme - Base styling */
-:root {
-  /* Keep all existing Tailwind variables as they are */
-
-  /* Additional theme-specific variables can be added here */
-  --university-name: "Default";
-}

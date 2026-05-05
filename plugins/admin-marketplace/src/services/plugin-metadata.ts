@@ -399,14 +399,15 @@ export const PLUGIN_METADATA: Record<string, PluginMetadata> = {
   },
 
   // ─────────────────────────────────────────────────────────────────────────
-  // Example University
+  // @workspace/plugin-example (reference implementation)
   // ─────────────────────────────────────────────────────────────────────────
-  "example-university:header": {
-    name: "Example University Header",
-    description: "Example header implementation for reference",
+  "example:header": {
+    name: "Example Header Logo",
+    description:
+      "Reference plugin that registers a logo on the app header extension point",
     category: "branding",
-    extensionPoints: ["component-override:appshell:header"],
-    author: "Example University",
+    extensionPoints: ["app:header-logo"],
+    author: "Management UI",
     tags: ["example", "reference"],
   },
 

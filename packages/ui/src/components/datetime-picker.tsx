@@ -45,8 +45,9 @@ import {
   useTimeFieldState,
 } from "react-stately";
 
-import { Button, Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components";
-import { cn } from "@workspace/ui/lib";
+import { cn } from "../lib";
+
+import { Button, Popover, PopoverContent, PopoverTrigger } from "./ui";
 
 import type { DateSegment as IDateSegment } from "@react-stately/datepicker";
 

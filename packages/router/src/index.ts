@@ -1,17 +1,29 @@
 export * from "./RouterProvider";
 
+// Public routing API. This is the stable facade; plugin authors and apps
+// must import routing primitives from here, never from @tanstack/react-router
+// directly. Swapping router implementations later stays a contained change.
 export {
   Route,
   createRouter,
   createRoute,
+  createRootRoute,
   Link,
   Navigate,
+  Outlet,
+  redirect,
   useNavigate,
   useRouter,
   useParams,
   useLoaderData,
   useMatch,
   useRouterState,
+} from "@tanstack/react-router";
+
+export type {
+  AnyRoute,
+  AnyRouter,
+  RouteComponent,
 } from "@tanstack/react-router";
 
 export { AuthProvider, useAuth } from "./auth/AuthContext";

@@ -55,7 +55,6 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
   const isProduction = mode === "production";
 
   const monorepoRootPath = path.resolve(invokerDir, "../..");
-  const appsPath = path.resolve(invokerDir, "../../apps"); // For @monorepo-apps alias
 
   // Discover per-plugin asset directories (e.g., plugins/<plugin>/assets/**/*)
   const pluginsRoot = path.resolve(monorepoRootPath, "plugins");
@@ -135,11 +134,6 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
       ...perPluginAssetTargets,
       // .local-plugins assets (e.g. assets/univie/logo.png)
       ...localPluginAssetTargets,
-      // Theme CSS files (for dynamic theme switching)
-      {
-        src: path.resolve(monorepoRootPath, "plugins/themes/**/*"),
-        dest: "plugins/themes",
-      },
     ],
   });
 
@@ -148,7 +142,6 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
     plugins: [staticAssetsCopyPlugin], // Add static assets copying plugin
     resolveAliases: {
       "@": path.resolve(invokerDir, "src"),
-      "@monorepo-apps": appsPath,
       // Minimal generic roots for workspace packages used in plugin code
       "@workspace/i18n": path.resolve(monorepoRootPath, "packages/i18n/src"),
       "@workspace/ui-config": path.resolve(monorepoRootPath, "packages/ui-config/src"),

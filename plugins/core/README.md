@@ -567,15 +567,32 @@ Default ACL behavior in `series:create-series` (without optional ACL plugin):
 
 ### Disable Series Create While Keeping Series Navigation
 
-```typescript
-pluginNamespace: [
-  "core",
-  { series: { types: ["navigation"] } },
-  "episodes",
-  "upload",
-  "config",
-];
+The old `{ series: { types: [...] } }` object form of `pluginNamespace`
+is gone (Phase 2b, Commit 5). To turn off a single core feature while
+keeping the rest of a namespace, use the per-slice runtime switch:
+
+```jsonc
+// config.json
+{
+  "app": {
+    "enabledPlugins": ["core", "episodes", "series", "upload", "admin", "config"]
+  },
+  "plugins": {
+    "series": {
+      "seriesTable": {
+        "createSeries": { "enabled": false }
+      }
+    }
+  }
+}
 ```
+
+The core `series` plugin reads
+`config.plugins.series.seriesTable.createSeries.enabled` (via its own
+Zod schema + `definePluginConfig`) and hides the create button when it
+is `false`. To deactivate the whole series plugin instead, set
+`config.plugins.series.enabled = false`. For the full model see
+[`docs/architecture/CONFIGURATION.md`](../../docs/architecture/CONFIGURATION.md).
 
 ## Reusable Components
 

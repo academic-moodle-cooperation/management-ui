@@ -1,48 +1,44 @@
-import type { AppConfig } from "@workspace/ui-config";
-import { defaultConfig } from "@workspace/ui-config";
+import { defaultConfig, getAppConfig, type AppConfig } from "@workspace/ui-config";
 
 let configPromise: Promise<AppConfig> | null = null;
 
 /**
- * Fetches the application configuration from the configured productionConfigUrl.
- * Caches the promise of the fetch request, so subsequent calls return the cached data/promise
- * without re-fetching.
- * If a fetch fails, the cache is cleared to allow for retries on subsequent calls.
+ * Fetch-and-cache the production `config.json` for call-sites that live
+ * outside the React tree (route loaders, bootstrap utilities).
+ *
+ * The fetched payload is funnelled through `getAppConfig(customConfig)` so it
+ * goes through the same default-merge as the `useAppConfig` hook. This keeps
+ * the *base layer* consistent between the React-Query-backed hook and the
+ * imperative loader — any divergence would only come from plugin-contributed
+ * overlays, which are not relevant for these call-sites.
  */
 export const getCachedAppConfig = (): Promise<AppConfig> => {
   if (!configPromise) {
-    // Use productionConfigUrl from defaultConfig directly
-    // Note: Config is served by OSGi at a different path than regular assets
-    // (e.g., /ui/config/... instead of /management-ui/assets/...)
-    // so we DON'T use resolveAssetUrl here
-    const configUrl = defaultConfig.productionConfigUrl.startsWith("/")
-      ? defaultConfig.productionConfigUrl
-      : `/${defaultConfig.productionConfigUrl}`;
+    const rawUrl = defaultConfig.productionConfigUrl;
+    if (!rawUrl) {
+      configPromise = Promise.resolve({ ...defaultConfig });
+      return configPromise;
+    }
+    const configUrl = rawUrl.startsWith("/") ? rawUrl : `/${rawUrl}`;
     configPromise = fetch(configUrl)
       .then((res) => {
         if (!res.ok) {
-          // Reset promise on error so retries are possible
           configPromise = null;
           throw new Error(`HTTP error fetching app config! status: ${res.status}`);
         }
         return res.json();
       })
-      .then((data: AppConfig) => {
-        // Type assertion might be needed if the fetched data isn't strictly AppConfig
-        return data;
-      })
+      .then((data) => getAppConfig(data))
       .catch((err) => {
-        // Reset promise on error so retries are possible
         configPromise = null;
-        throw err; // Re-throw to allow callers to handle
+        throw err;
       });
   }
   return configPromise;
 };
 
 /**
- * Clears the cached application configuration promise.
- * Useful for testing or scenarios where a fresh fetch is explicitly required.
+ * Clear the cached promise. Useful for tests and for explicit re-fetches.
  */
 export const clearAppConfigCache = (): void => {
   configPromise = null;

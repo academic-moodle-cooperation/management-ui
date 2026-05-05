@@ -6,6 +6,14 @@ export * from "./pluginTypes";
 export * from "./types";
 export * from "./appTypes";
 
+// Public API contract version (see docs/architecture/CONTRACTS.md)
+export {
+  PLUGIN_API_VERSION,
+  parseSemver,
+  checkApiVersionCompatibility,
+} from "./apiVersion";
+export type { ParsedSemver, ApiVersionCheckResult } from "./apiVersion";
+
 // Export plugin system components
 export * from "./PluginProvider";
 export * from "./RendererContext";
@@ -20,3 +28,9 @@ export * from "./plugins/appRegistry";
 
 // Export services (Community Plugin System)
 export * from "./services";
+
+// Export manifest validator (see docs/architecture/CONTRACTS.md #1)
+export {
+  validatePluginMetadata,
+  type PluginMetadataValidationResult,
+} from "./utils/pluginMetadataValidator";

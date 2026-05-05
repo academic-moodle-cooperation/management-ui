@@ -76,8 +76,7 @@ export const createPluginAppViteConfig = (
     currentShellAppBasePath,
   );
 
-  // Allow plugin-specific base path override via env, e.g., VITE_PLUGIN_MYPLUGIN_BASE_PATH
-  // Example: for 'management-ui-test', check VITE_PLUGIN_MANAGEMENT_UI_TEST_BASE_PATH
+  // Allow plugin-specific base path override via env: VITE_PLUGIN_<UPPERCASED_PACKAGE>_BASE_PATH.
   const pluginSpecificEnvVarName = `VITE_PLUGIN_${packageName.toUpperCase().replace(/-/g, "_")}_BASE_PATH`;
   const finalPluginBasePath = env[pluginSpecificEnvVarName] || calculatedPluginBasePath;
 

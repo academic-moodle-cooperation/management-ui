@@ -3,8 +3,10 @@ import { X, RefreshCcw } from "lucide-react";
 import React from "react";
 
 import { useI18n } from "@workspace/i18n";
-import { Button, DebouncedInput } from "@workspace/ui/components";
-import { cn } from "@workspace/ui/lib";
+
+import { cn } from "../../lib";
+import { DebouncedInput } from "../debounced-input";
+import { Button } from "../ui";
 
 import { DataTableViewOptions } from "./data-table-view-options";
 

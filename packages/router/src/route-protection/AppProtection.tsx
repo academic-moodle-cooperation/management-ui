@@ -19,7 +19,7 @@ interface AppProtectionProps {
  *
  * Usage:
  * ```tsx
- * <AppProtection appName="management-ui-series">
+ * <AppProtection appName="series">
  *   <YourAppContent />
  * </AppProtection>
  * ```

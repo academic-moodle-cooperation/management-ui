@@ -6,7 +6,7 @@
  * fragments, and register with PluginManager.
  *
  * Used by:
- * - management-ui-core for JAR plugins (loadJarPlugins + loadAndRegister with skipUrlValidation)
+ * - apps/shell for JAR plugins (loadJarPlugins + loadAndRegister with skipUrlValidation)
  * - admin-marketplace for registry and local plugins (after validating URL/version)
  */
 

@@ -23,7 +23,7 @@ describe("getAppConfig", () => {
         locale: defaultConfig.app.locale,
         HtmlDocumentTitle: defaultConfig.app.HtmlDocumentTitle,
         appTitle: defaultConfig.app.appTitle,
-        pluginNamespace: defaultConfig.app.pluginNamespace,
+        enabledPlugins: defaultConfig.app.enabledPlugins,
       },
     };
 
@@ -49,8 +49,8 @@ describe("getAppConfig", () => {
 
     const config = getAppConfig(instanceConfig);
 
-    expect(config.app.organizationUrls.main).toBe("https://custom.example.com");
-    expect(config.app.organizationUrls.support).toBe("https://support.example.com");
+    expect(config.app.organizationUrls?.main).toBe("https://custom.example.com");
+    expect(config.app.organizationUrls?.support).toBe("https://support.example.com");
   });
 
   it("should use default main URL when instance config doesn't provide it", () => {
@@ -86,10 +86,12 @@ describe("getAppConfig", () => {
     expect(config.auth.loginUrlDev).toBe(defaultConfig.auth.loginUrlDev);
   });
 
-  it("should merge plugins config", () => {
+  it("passes through the plugins map from the instance config", () => {
+    // The core type is plugin-agnostic (`Record<string, unknown>`), so the
+    // test mirrors real plugin callers which cast to their own slice shape.
     const instanceConfig: Partial<AppConfig> = {
       plugins: {
-        "management-ui-series": {
+        series: {
           protection: {
             public: true,
           },
@@ -99,9 +101,14 @@ describe("getAppConfig", () => {
 
     const config = getAppConfig(instanceConfig);
 
-    expect(config.plugins["management-ui-series"]?.protection?.public).toBe(true);
-    // Other plugins should still be present
-    expect(config.plugins["management-ui-episodes"]).toBeDefined();
+    const seriesSlice = config.plugins["series"] as
+      | { protection?: { public?: boolean } }
+      | undefined;
+    expect(seriesSlice?.protection?.public).toBe(true);
+    // Core defaults no longer carry per-plugin fixtures — those are
+    // contributed at runtime via the `app:config:defaults` extension point,
+    // so an un-registered slice should simply be absent from the merged config.
+    expect(config.plugins["episodes"]).toBeUndefined();
   });
 
   it("should merge api config", () => {
@@ -121,23 +128,23 @@ describe("getAppConfig", () => {
     expect(config.api.graphqlEndpoint).toBe(defaultConfig.api.graphqlEndpoint);
   });
 
-  it("should handle pluginNamespace override", () => {
+  it("should handle enabledPlugins override", () => {
     const instanceConfig: Partial<AppConfig> = {
       app: {
         ...defaultConfig.app,
-        pluginNamespace: ["custom", "namespace"],
+        enabledPlugins: ["custom", "namespace"],
       },
     };
 
     const config = getAppConfig(instanceConfig);
 
-    expect(config.app.pluginNamespace).toEqual(["custom", "namespace"]);
+    expect(config.app.enabledPlugins).toEqual(["custom", "namespace"]);
   });
 
-  it("should use default pluginNamespace when not provided", () => {
+  it("should use default enabledPlugins when not provided", () => {
     const config = getAppConfig();
 
-    expect(config.app.pluginNamespace).toEqual(defaultConfig.app.pluginNamespace);
+    expect(config.app.enabledPlugins).toEqual(defaultConfig.app.enabledPlugins);
   });
 
   it("should merge productionConfigUrl", () => {

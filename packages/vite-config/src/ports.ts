@@ -3,17 +3,16 @@ import { logger } from "@workspace/utils";
 export const DEFAULT_SHELL_APP_PORT = 3000;
 const PLUGIN_DEV_PORT_START = 3001;
 
-// Core apps that are always present
-const CORE_APP_NAMES = [
-  "management-ui-series",
-  "management-ui-episodes",
-  "management-ui-upload",
-  "management-ui-test",
-];
+// Dev-only apps that ship in this repo but run outside the shell. Since the
+// Phase 3 migration (ADR-003), `playground` is the only such app; all feature
+// apps live as core plugins under `plugins/core-*` and are mounted by the
+// shell router at runtime. This list is kept so new dev-only sandboxes can be
+// added by appending a single name, without touching port-allocation logic.
+const CORE_APP_NAMES = ["playground"];
 
 // Known plugin packages - simplified to avoid dynamic discovery issues
 const discoverPluginPackages = (): string[] => {
-  return ["plugin-tuwien", "plugin-univie", "plugin-example-university"];
+  return ["plugin-tuwien", "plugin-univie", "@workspace/plugin-example"];
 };
 
 interface PluginPorts {
@@ -56,17 +55,16 @@ export const getPluginPorts = (pluginPackageName: string): PluginPorts | undefin
 };
 
 /**
- * Generates the base path for a plugin.
+ * Generates the base path for a plugin / dev-only app.
  * - Production/Preview: /<shell-base-path>/static/plugins/<plugin-short-name>/
- * - Development: /<shell-base-path>/ for management-ui apps, /<plugin-short-name>/ for other plugins
+ * - Development: / (served from the root of the dev server's own port)
  */
 export const getPluginBasePath = (
   isProduction: boolean,
   pluginPackageName: string,
   shellAppBasePath: string = "/management-ui/",
 ): string => {
-  // Derives "test" from "management-ui-test"
-  const pluginShortName = pluginPackageName.replace(/^management-ui-/, "");
+  const pluginShortName = pluginPackageName;
   const ensuredShellBase =
     shellAppBasePath === "/"
       ? "/"
@@ -78,12 +76,6 @@ export const getPluginBasePath = (
     return `${ensuredShellBase}static/plugins/${pluginShortName}/`;
   }
 
-  // Development: management-ui apps should use the shell base path for consistent asset loading
-  if (pluginPackageName.startsWith("management-ui-")) {
-    return ensuredShellBase;
-  }
-
-  // Other plugins serve from root of their port
   return "/";
 };
 

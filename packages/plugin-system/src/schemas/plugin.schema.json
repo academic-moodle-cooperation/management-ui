@@ -45,7 +45,7 @@
     "namespace": {
       "type": "string",
       "pattern": "^[a-z0-9-]+$",
-      "description": "Plugin namespace for config-based activation. Typically the org or feature name (e.g., 'univie', 'tuwien', 'analytics'). The runtime uses app.pluginNamespace to enable/disable namespaces."
+      "description": "Plugin namespace for config-based activation. Typically the org or feature name (e.g., 'univie', 'tuwien', 'analytics'). The runtime uses app.enabledPlugins to enable/disable namespaces."
     },
     "type": {
       "type": "string",
@@ -65,7 +65,8 @@
 
     "apiVersion": {
       "type": "string",
-      "description": "Minimum Management UI core API version required (semver range, e.g., '>=1.0.0'). The runtime and marketplace use this to check compatibility before loading."
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.]+)?$",
+      "description": "Minimum plugin runtime API version required, as a strict semver (MAJOR.MINOR.PATCH, optional prerelease). The host refuses plugins whose major mismatches the host or whose minor is higher than the host's minor. If absent, 1.0.0 is assumed. See docs/architecture/CONTRACTS.md for version semantics."
     },
     "workspaceDependencies": {
       "type": "object",
@@ -94,6 +95,11 @@
       "type": "array",
       "items": { "type": "string" },
       "description": "i18n namespace names this plugin ships translations for."
+    },
+    "extensionPoints": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Optional list of extension points this plugin registers at (e.g. 'apps:definitions', 'sidebar:nav-items', 'app:config:defaults'). Added in Manifest Contract 1.1 for tooling such as the marketplace and the contract-test harness. When present, the contract harness verifies each listed extension point has been populated after activation. Absent = tooling falls back to in-test declarations."
     },
 
     "modules": {

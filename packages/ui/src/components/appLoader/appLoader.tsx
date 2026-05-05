@@ -1,4 +1,4 @@
-import { cn } from "@workspace/ui/lib/utils";
+import { cn } from "../../lib/utils";
 
 const AppLoader = ({ className, children }: { className?: string; children?: React.ReactNode }) => {
   return (

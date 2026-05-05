@@ -63,9 +63,9 @@ docs/
 ├── PLUGIN_STYLING_CONTRACT.md       ← CSS/theming rules for plugins
 ├── COMMUNITY_PLUGIN_DEVELOPMENT.md  ← Full plugin development lifecycle
 ├── PLUGIN_LOADING_MECHANISMS.md     ← All loading paths explained
-├── CONFIG_GENERATION.md             ← Dev vs prod config
-├── CONFIG_ORDER.md                  ← Plugin config precedence
+├── TESTING.md                       ← Test pyramid + plugin contract harness
 ├── architecture/
+│   ├── CONFIGURATION.md              ← Canonical config model
 │   ├── ADR-001-plugin-system.md     ← Plugin architecture rationale
 │   └── ADR-002-monorepo-structure.md ← Monorepo design decisions
 ├── workflows/
@@ -275,20 +275,21 @@ Registration uses `manager.registerObject(extensionPoint, uniqueId, value)` or
 | `component-override:landing-page` | Override landing page | React component |
 | `component-override:appshell:header` | Override app header | React component |
 | `component-override:appshell:footer` | Override app footer | React component |
-| `app:config` | Register configuration | Config object (pluginNamespace, theme, etc.) |
+| `app:config` | Register runtime config overlay | Config object (`app.enabledPlugins`, theme, etc.) |
+| `app:config:defaults` | Register plugin-owned defaults slice | Partial `AppConfig` (usually via `definePluginConfig().register`) |
 | `app:branding` | Register branding | Logo, colors, favicon |
 
 ### Two-Phase Loading
 
 The runtime loads plugins in two phases to handle circular config dependencies:
 
-1. **Phase 1:** Load all `*:config` plugins (they register `app:config` with namespace lists)
-2. **Phase 2:** Merge config from all registered `app:config` objects, then load remaining plugins filtered by `app.pluginNamespace`
+1. **Phase 1:** Load all `*:config` plugins (they register `app:config` with namespace lists).
+2. **Phase 2:** Merge config (`app:config:defaults` ⊕ base ⊕ `app:config`) and load the remaining plugins filtered by `app.enabledPlugins` (ship filter) and per-slice `config.plugins[<id>].enabled` (runtime switch). Full model in [`architecture/CONFIGURATION.md`](./architecture/CONFIGURATION.md).
 
 This allows a config plugin in `.local-plugins/config/` to declare:
 ```typescript
 manager.registerObject("app:config", "org-config", {
-  app: { pluginNamespace: ["core", "admin-marketplace", "univie", "tuwien"] }
+  app: { enabledPlugins: ["core", "admin", "episodes", "series", "upload", "config", "univie", "tuwien"] }
 });
 ```
 ...and univie/tuwien plugins load in phase 2 without needing to be bundled with core.
@@ -474,7 +475,7 @@ export default createPlugin({
   initialize(manager) {
     manager.registerObject("app:config", "my-org-config", {
       app: {
-        pluginNamespace: ["core", "admin-marketplace", "my-org"],
+        enabledPlugins: ["core", "admin", "episodes", "series", "upload", "config", "my-org"],
         name: "My Org Management UI",
       },
     });
@@ -486,11 +487,18 @@ export default createPlugin({
 
 ## Validation Checklist
 
-Before considering work complete:
+**Before pushing**, run `pnpm verify` from the repo root. This is the single command that mirrors the four-job CI pipeline locally so you find failures before review:
 
-- [ ] TypeScript compiles: `pnpm check-types`
-- [ ] Linting passes: `pnpm lint`
-- [ ] Build succeeds: `pnpm build`
+```bash
+pnpm verify
+```
+
+It runs, in order: `lint` → `check-types` → `build` → `test` (unit) → `test:contract` → `test:e2e`. The `--filter='!./.local-plugins/*'` flag matches CI's empty-`.local-plugins/` state so unrelated org-plugin breakage in your local checkout doesn't false-positive the run. Playwright Chromium needs to be installed once with `pnpm test:e2e:install` before the first run.
+
+Why this exists: a build error in `apps/shell` once slipped through because `vite dev` warns where `vite build` fails. `pnpm verify` includes the build step so that class of bug fails fast locally instead of in CI.
+
+If `pnpm verify` is green, the four CI jobs will be too — assuming you also have:
+
 - [ ] No hardcoded colors — only semantic tokens
 - [ ] Plugin has `plugin.json` matching the schema
 - [ ] Both `activate()` and `deactivate()` are implemented
@@ -498,6 +506,8 @@ Before considering work complete:
 - [ ] External deps (React, @workspace/*) are not bundled
 - [ ] Documentation updated for any changed APIs
 - [ ] No circular dependencies introduced
+
+See [`docs/TESTING.md`](TESTING.md) for the full test pyramid and what each layer covers.
 
 ## Getting Help
 

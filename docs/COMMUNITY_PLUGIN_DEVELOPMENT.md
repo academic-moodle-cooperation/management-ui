@@ -334,7 +334,7 @@ const myPlugin = createPlugin({
 });
 ```
 
-- Make sure your `AppConfig` enables the namespace (via `pluginNamespace`, e.g. `["core", "admin", "my-org"]`).
+- Make sure your `AppConfig` enables the namespace (via `app.enabledPlugins`, e.g. `["core", "admin", "my-org"]`). For the full model of ship filter vs. per-slice `enabled`, see [`architecture/CONFIGURATION.md`](./architecture/CONFIGURATION.md).
 
 #### A1.4 Use Tailwind classes in your views
 
@@ -607,17 +607,18 @@ Plugins in `.local-plugins/` are then loaded automatically. To add or update a p
 - For `.local-plugins`, keep CSS in the same `dist/` folder and use the same stem (e.g. `dist/nyan-cat-rain.mjs` + `dist/nyan-cat-rain.css`).
 - If styles are missing after a loader/config change, restart the core dev server and hard-refresh.
 
-**Activating without the Marketplace:** You do **not** need the Admin Marketplace. The core (PluginInitializer) fetches `/local-plugins/manifest.json` in dev and loads plugins listed there. So: build the plugin in `.local-plugins/<name>/`, start the core in dev (`pnpm dev --filter=management-ui-core`), and refresh — the plugin is active if its namespace is enabled (see below). The Marketplace is optional (for browsing/installing other plugins).
+**Activating without the Marketplace:** You do **not** need the Admin Marketplace. The core (PluginInitializer) fetches `/local-plugins/manifest.json` in dev and loads plugins listed there. So: build the plugin in `.local-plugins/<name>/`, start the shell in dev (`pnpm dev --filter=shell`), and refresh — the plugin is active if its namespace is enabled (see below). The Marketplace is optional (for browsing/installing other plugins).
 
-**Selective loading (which .local-plugins load):** Loading is filtered by **`config.app.pluginNamespace`**. The folder name under `.local-plugins/` is treated as the plugin **namespace** (e.g. `.local-plugins/univie/` → namespace `univie`). Only manifest entries whose `namespace` is in the enabled list are loaded. So:
+**Selective loading (which .local-plugins load):** Loading is filtered by **`config.app.enabledPlugins`**. The folder name under `.local-plugins/` is treated as the plugin **namespace** (e.g. `.local-plugins/univie/` → namespace `univie`). Only manifest entries whose `namespace` is in the enabled list are loaded. So:
 
-- Add the namespace to `pluginNamespace` to load that folder (e.g. `["core", "episodes", "series", "upload", "univie"]`). This is usually done by a **config plugin** (e.g. `univie:config`) that merges its namespace into the app config.
-- If `pluginNamespace` is missing or empty, all discovered .local-plugins are loaded (backward compatible).
-- Same config drives built-in plugin filtering (e.g. `univie:sidebar` loads only when `univie` is in `pluginNamespace`).
+- Add the namespace to `app.enabledPlugins` to load that folder (e.g. `["core", "episodes", "series", "upload", "admin", "config", "univie"]`). This is usually done by a **config plugin** (e.g. `univie:config`) that merges its namespace into the app config.
+- If `enabledPlugins` is missing or empty, all discovered .local-plugins are loaded (backward compatible).
+- Same config drives built-in plugin filtering (e.g. `univie:sidebar` loads only when `univie` is in `enabledPlugins`).
+- Finer-grained deactivation (without removing the namespace) lives on each plugin's own slice: set `config.plugins.<id>.enabled = false`. Full model in [`architecture/CONFIGURATION.md`](./architecture/CONFIGURATION.md).
 
-**Config plugin first (two-phase load):** The default config includes **`"config"`** in `pluginNamespace`. Put a small plugin in **`.local-plugins/config/`** that only registers `app:config` (theme, logo, and **which other namespaces to load**, e.g. `pluginNamespace: [..., "univie", "tuwien"]`). The core loads .local-plugins in two phases: (1) load entries matching current config (so `.local-plugins/config/` loads); (2) re-merge config from the manager (your config plugin has now registered) and load remaining .local-plugins (e.g. univie, tuwien). That way the config plugin is not inside univie and doesn’t depend on univie being loaded first.
+**Config plugin first (two-phase load):** The default config includes **`"config"`** in `enabledPlugins`. Put a small plugin in **`.local-plugins/config/`** that only registers `app:config` (theme, logo, and **which other namespaces to load**, e.g. `enabledPlugins: [..., "univie", "tuwien"]`). The core loads .local-plugins in two phases: (1) load entries matching current config (so `.local-plugins/config/` loads); (2) re-merge config from the manager (your config plugin has now registered) and load remaining .local-plugins (e.g. univie, tuwien). That way the config plugin is not inside univie and doesn’t depend on univie being loaded first.
 
-**Split bundles (multiple .mjs per folder):** You can put **multiple** `.mjs` files in one folder’s `dist/` (e.g. `dist/plugin-univie.mjs`, `dist/plugin-univie-footer.mjs`). The manifest gets one entry per `.mjs`; each entry has the same `namespace` (the folder name). When that namespace is enabled, **all** of those bundles are loaded. Use names **`plugin-<namespace>-<type>.mjs`** so the manifest gets a **type** from the filename; only bundles whose type is in the config's types for that namespace are loaded (e.g. `univie: { types: ["sidebar", "footer"] }` loads only those .mjs files). This keeps initial load smaller.
+**Split bundles (multiple .mjs per folder):** You can put **multiple** `.mjs` files in one folder’s `dist/` (e.g. `dist/plugin-univie.mjs`, `dist/plugin-univie-footer.mjs`). The manifest gets one entry per `.mjs`; each entry has the same `namespace` (the folder name). When that namespace is enabled, **all** of those bundles are loaded. To drop a single bundle without touching the namespace, use its slice's `enabled: false`.
 
 **Note:** `.local-plugins/` is gitignored, so this is only for local development. For production, you'd still deploy via JAR (A3) or Registry (A4).
 
@@ -1003,7 +1004,7 @@ It also has `themes/univie.css`, `modules/*/locales/**/*`, and `assets/logo.png`
    - **maven-bundle-plugin:** `Management-Plugin: univie`, `Http-Classpath: /static/plugins/univie` (or equivalent so the JAR serves files under `/static/plugins/univie/`).
    - **exec-maven-plugin (optional):** Run `pnpm build` in `../` (frontend root) before copy-resources; use `workingDirectory` `${project.basedir}/..` and pnpm from the monorepo (or from plugin repo if self-contained).
 
-2. **One plugins.json entry per discovered `.mjs` (implemented)** – The backend scans the JAR's static plugin directory and emits one `plugins.json` entry per discovered `*.mjs` file. That means the four Univie bundles above are exposed individually in production as well. The frontend loads `config` entries first, re-merges runtime config, then loads the remaining JAR entries whose `namespace/type` match `app.pluginNamespace`.
+2. **One plugins.json entry per discovered `.mjs` (implemented)** – The backend scans the JAR's static plugin directory and emits one `plugins.json` entry per discovered `*.mjs` file. That means the four Univie bundles above are exposed individually in production as well. The frontend loads `config` entries first, re-merges runtime config, then loads the remaining JAR entries whose `namespace` matches `app.enabledPlugins` (and whose slice does not carry `enabled: false`).
 
 3. **Build order** – From repo root: build frontend first (`cd .local-plugins/univie && pnpm build`), then build the backend JAR (`mvn -f .local-plugins/univie/backend/pom.xml clean install`). Deploy the resulting JAR to Opencast `deploy/`.
 

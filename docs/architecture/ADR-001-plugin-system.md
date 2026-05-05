@@ -257,11 +257,11 @@ Convention: `category:specific-point`
 
 The plugin architecture was refined based on production experience:
 
-- **Multi-entry JARs:** One deployed JAR can now expose multiple frontend modules (e.g., sidebar + footer + app), each independently activatable via `pluginNamespace` type filtering.
+- **Multi-entry JARs:** One deployed JAR can now expose multiple frontend modules (e.g., sidebar + footer + app), each independently listed as its own `plugins.json` entry so the shell can pick the subset a deployment wants.
 - **Unified loading:** Dev (`.local-plugins` manifest) and prod (JAR `plugins.json`) now use the same two-phase loading flow: config plugins first, then remaining plugins filtered by merged config.
 - **Canonical manifest:** `plugin.json` (schema at `packages/plugin-system/src/schemas/plugin.schema.json`) is the source of truth for plugin metadata, replacing ad-hoc filename conventions.
 - **Styling contract:** Plugins must use semantic CSS tokens from the shared design system. Hardcoded colors are forbidden. See `docs/PLUGIN_STYLING_CONTRACT.md`.
-- **Activation granularity:** Changed from "one org = one artifact" to "namespace:type as the activatable unit." Config can enable `{ "univie": { "types": ["sidebar", "footer"] } }` to load only specific modules.
+- **Activation granularity:** Two orthogonal switches (Phase 2b, Commit 5). `config.app.enabledPlugins: string[]` is the flat ship filter — only those namespaces are allowed to load at all. `config.plugins[<id>].enabled?: boolean` is the per-slice runtime switch — set it to `false` to deactivate a single plugin without touching the namespace list. Full model in [`CONFIGURATION.md`](./CONFIGURATION.md).
 
 These changes maintain backward compatibility with existing plugins while enabling finer-grained control and a clearer contract for external plugin authors.
 

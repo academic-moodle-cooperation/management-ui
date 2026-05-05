@@ -12,8 +12,8 @@ import {
 } from "@tanstack/react-table";
 import React from "react";
 
-import { Table, TableHead, TableHeader, TableRow } from "@workspace/ui/components";
-import { useComponentTheme } from "@workspace/ui/theme/theme.context";
+import { useComponentTheme } from "../../theme/theme.context";
+import { Table, TableHead, TableHeader, TableRow } from "../ui";
 
 import { DataTableBody } from "./data-table-body";
 import { DataTablePagination } from "./data-table-pagination";

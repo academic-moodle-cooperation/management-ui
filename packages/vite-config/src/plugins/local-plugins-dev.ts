@@ -29,7 +29,7 @@ interface LocalPluginEntry {
   url: string;
   /** Optional URL to the plugin stylesheet. */
   cssUrl?: string;
-  /** Folder name under .local-plugins/; used for config-based filtering (pluginNamespace). */
+  /** Folder name under .local-plugins/; used for config-based filtering (app.enabledPlugins). */
   namespace: string;
   /** Type from filename (plugin-<namespace>-<type>.mjs); used to filter by config types for that namespace. */
   type?: string;

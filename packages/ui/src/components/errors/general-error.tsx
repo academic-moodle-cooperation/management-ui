@@ -1,8 +1,8 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
-import { cn } from "@workspace/ui/lib/utils";
 import { logger } from "@workspace/utils";
 
+import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 
 interface GeneralErrorProps extends React.HTMLAttributes<HTMLDivElement> {

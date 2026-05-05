@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 
-import { useSidebar } from "@workspace/ui/components";
+import { useSidebar } from "../../ui";
 
 export const MobileCloseButton = () => {
   const { openMobile, setOpenMobile } = useSidebar();

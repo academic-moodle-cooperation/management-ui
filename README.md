@@ -30,7 +30,7 @@ packages/       ← Shared infrastructure libraries
 plugins/        ← Built-in plugins shipped with the core repo
 ├─ core/        ← Core extension points and default implementations
 ├─ admin-*      ← Optional shared plugins shipped with core
-└─ example-university/  ← Example implementations
+└─ example/     ← Minimal reference plugin
 
 .local-plugins/ ← External org/plugin checkout for development
 └─ <org-or-plugin>/     ← Org-specific or privately shared plugins
@@ -58,9 +58,12 @@ plugins/        ← Built-in plugins shipped with the core repo
 
 ### Configuration & Assets
 
-- **[Config Generation](/docs/CONFIG_GENERATION.md)** - How configuration works in dev vs production
-- **[Config Order](/docs/CONFIG_ORDER.md)** - Plugin configuration precedence and merging
+- **[Configuration](/docs/architecture/CONFIGURATION.md)** - Canonical layer model, `definePluginConfig` reader API, `enabledPlugins` vs. per-slice `enabled`
 - **[Favicon Configuration](/docs/internal/FAVICON_CONFIGURATION.md)** - Customizing favicons and assets per university
+
+### Testing
+
+- **[Testing](/docs/TESTING.md)** - Test pyramid (unit / contract / E2E), `@workspace/plugin-testing` harness, Playwright setup, CI layout, deferred follow-ups
 
 ### Development Workflows
 
@@ -154,8 +157,7 @@ The Management UI features a plugin system that keeps the core small and lets in
 plugins/
 ├── core/                    # Core extension points and default implementations
 ├── admin-marketplace/       # Built-in optional shared plugin
-├── admin-dashboard/         # Built-in optional shared plugin
-└── example-university/      # Example implementations only
+└── example/                 # Minimal reference plugin
 
 .local-plugins/
 └── my-org/                  # Org-specific plugin checkout
@@ -333,7 +335,7 @@ pnpm dev    # Access at http://127.0.0.1:3000/episodes
 
 The system supports extensive customization through plugins:
 
-- **Example University** (`plugins/example-university/`): Reference implementations (in-repo)
+- **Example plugin** (`plugins/example/`): Minimal brand-neutral reference implementation (in-repo)
 - **Org plugins** (e.g. TU Wien, University of Vienna): Use `.local-plugins/<name>/` or separate repos; see [Community Plugin Development](docs/COMMUNITY_PLUGIN_DEVELOPMENT.md)
 
 ### Branding & Theming

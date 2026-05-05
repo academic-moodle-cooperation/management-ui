@@ -70,7 +70,13 @@ export const config = [
       ],
       "import/no-duplicates": "error",
       "import/no-unresolved": "off", // TypeScript handles this
-      // Prevent deep imports into UI internals - use stable exports only
+      // Prevent deep imports into UI internals - use stable exports only.
+      //
+      // Prevent direct imports of external libraries that we wrap on purpose.
+      // Everything routing/data/state/i18n related must go through the
+      // corresponding @workspace/* package so we can swap implementations
+      // later without breaking plugins. The wrapping package itself overrides
+      // this rule via its own eslint.config.js.
       "no-restricted-imports": [
         "error",
         {
@@ -83,6 +89,26 @@ export const config = [
               ],
               message:
                 "Import from stable entrypoints like '@workspace/ui/components' or '@workspace/ui/lib/utils' instead of deep paths.",
+            },
+            {
+              group: ["@tanstack/react-router", "@tanstack/react-router/*"],
+              message:
+                "Do not import @tanstack/react-router directly. Use @workspace/router instead. (Only packages/router/ itself may import @tanstack/react-router.)",
+            },
+            {
+              group: ["@tanstack/react-query", "@tanstack/react-query/*"],
+              message:
+                "Do not import @tanstack/react-query directly. Use @workspace/query instead. (Only packages/query/ itself may import @tanstack/react-query.)",
+            },
+            {
+              group: ["react-i18next", "react-i18next/*", "i18next", "i18next/*"],
+              message:
+                "Do not import i18next / react-i18next directly. Use @workspace/i18n instead. (Only packages/i18n/ itself may import them.)",
+            },
+            {
+              group: ["jotai", "jotai/*"],
+              message:
+                "Do not import jotai directly. Use @workspace/store instead. (Only packages/store/ itself may import jotai.)",
             },
           ],
         },

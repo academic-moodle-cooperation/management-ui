@@ -1,5 +1,5 @@
-import { buttonVariants, Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components";
-import { cn } from "@workspace/ui/lib/utils";
+import { cn } from "../../../lib/utils";
+import { buttonVariants, Tooltip, TooltipContent, TooltipTrigger } from "../../ui";
 
 import type { LucideIcon } from "lucide-react";
 

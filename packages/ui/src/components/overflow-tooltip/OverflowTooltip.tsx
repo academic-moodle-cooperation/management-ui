@@ -1,7 +1,7 @@
 import { useState, type FC } from "react";
 
-import { Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components";
-import { cn } from "@workspace/ui/lib";
+import { cn } from "../../lib";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui";
 
 interface OverflowTooltipProps {
   className?: string;

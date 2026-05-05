@@ -1,0 +1,16 @@
+/**
+ * Default Theme - Baseline styling for the Management UI shell.
+ *
+ * This file ships with the shell and is always loaded first, so that every
+ * themed plugin or organization overlay only needs to override the subset of
+ * CSS custom properties it cares about.
+ *
+ * See docs/PLUGIN_STYLING_CONTRACT.md for the full list of semantic tokens
+ * that plugins and themes are allowed to use and override.
+ */
+:root {
+  /* Keep all existing Tailwind variables as they are */
+
+  /* Theme identity marker - overridden by organization themes */
+  --theme-name: "Default";
+}

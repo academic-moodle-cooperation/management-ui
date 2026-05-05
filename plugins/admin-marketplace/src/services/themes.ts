@@ -22,21 +22,16 @@ export interface ThemeDefinition {
  * In a production environment, these could be fetched from a remote API or CDN.
  */
 export const AVAILABLE_THEMES: ThemeDefinition[] = [
+  // The Default Theme is baked into the shell (apps/shell/src/themes/default.css)
+  // and is always applied as the baseline. Installing another theme only overrides
+  // the subset of CSS custom properties that it customizes.
   {
-    id: "default-theme",
-    name: "Default Theme",
-    description: "Clean and minimal default theme with balanced colors and modern design",
-    previewUrl: "/management-ui/plugins/themes/default.css",
-    category: "Base",
-    author: "Management UI Team",
-  },
-  {
-    id: "example-university-theme",
-    name: "Example University",
-    description: "Red-themed university branding with custom sidebar and corporate colors",
-    previewUrl: "/management-ui/plugins/themes/example-university.css",
-    category: "University",
-    author: "Example University",
+    id: "example-theme",
+    name: "Example",
+    description: "Neutral reference theme shipped with @workspace/plugin-example",
+    previewUrl: "/management-ui/plugins/example/example.css",
+    category: "Example",
+    author: "Management UI",
   },
   {
     id: "tuwien-theme",

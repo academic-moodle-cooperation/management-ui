@@ -1,4 +1,5 @@
-import { Badge, Button, Icons, ArrowRight, LogIn } from "@workspace/ui/components";
+import { Icons, ArrowRight, LogIn } from "../icons";
+import { Badge, Button } from "../ui";
 
 import type { FC } from "react";
 

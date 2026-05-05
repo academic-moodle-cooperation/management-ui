@@ -2,6 +2,8 @@ import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from "lucide-react";
 import React from "react";
 
 import { useI18n } from "@workspace/i18n";
+
+import { cn } from "../../lib";
 import {
   Button,
   DropdownMenu,
@@ -9,8 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@workspace/ui/components";
-import { cn } from "@workspace/ui/lib";
+} from "../ui";
 
 import type { Column } from "@tanstack/react-table";
 
