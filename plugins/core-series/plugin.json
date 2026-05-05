@@ -1,0 +1,19 @@
+{
+  "$schema": "../../packages/plugin-system/src/schemas/plugin.schema.json",
+  "id": "series",
+  "name": "Series",
+  "version": "1.0.0",
+  "description": "Core plugin that registers the /series route, its sidebar entry, the Create-series toolbar action, and the series config defaults.",
+  "author": {
+    "name": "Management UI Core"
+  },
+  "namespace": "series",
+  "type": "app",
+  "category": "feature",
+  "extensionPoints": [
+    "apps:definitions",
+    "sidebar:nav-items",
+    "series:table:toolbar-end-actions",
+    "app:config:defaults"
+  ]
+}

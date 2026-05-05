@@ -1,0 +1,18 @@
+{
+  "$schema": "../../packages/plugin-system/src/schemas/plugin.schema.json",
+  "id": "upload",
+  "name": "Upload",
+  "version": "1.0.0",
+  "description": "Core plugin that registers the /upload route, its sidebar entry, and the upload config defaults.",
+  "author": {
+    "name": "Management UI Core"
+  },
+  "namespace": "upload",
+  "type": "app",
+  "category": "feature",
+  "extensionPoints": [
+    "apps:definitions",
+    "sidebar:nav-items",
+    "app:config:defaults"
+  ]
+}
