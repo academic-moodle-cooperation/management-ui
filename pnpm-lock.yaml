@@ -1606,6 +1606,9 @@ importers:
       '@workspace/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
+      '@workspace/plugin-testing':
+        specifier: workspace:*
+        version: link:../../packages/plugin-testing
       '@workspace/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -1615,6 +1618,9 @@ importers:
       typescript:
         specifier: ^5.3.3
         version: 5.5.4
+      vitest:
+        specifier: ^4.0.17
+        version: 4.0.17(@types/node@25.0.6)(@vitest/ui@4.0.17)(jiti@2.4.2)(jsdom@27.4.0)(lightningcss@1.30.1)(yaml@2.8.0)
 
   plugins/core:
     dependencies:
@@ -1753,6 +1759,9 @@ importers:
       '@workspace/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
+      '@workspace/plugin-testing':
+        specifier: workspace:*
+        version: link:../../packages/plugin-testing
       '@workspace/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -1817,6 +1826,9 @@ importers:
       '@workspace/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
+      '@workspace/plugin-testing':
+        specifier: workspace:*
+        version: link:../../packages/plugin-testing
       '@workspace/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -1826,6 +1838,9 @@ importers:
       typescript:
         specifier: ^5.3.3
         version: 5.5.4
+      vitest:
+        specifier: ^4.0.17
+        version: 4.0.17(@types/node@25.0.6)(@vitest/ui@4.0.17)(jiti@2.4.2)(jsdom@27.4.0)(lightningcss@1.30.1)(yaml@2.8.0)
 
   plugins/example:
     dependencies:
@@ -1842,6 +1857,9 @@ importers:
       '@workspace/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
+      '@workspace/plugin-testing':
+        specifier: workspace:*
+        version: link:../../packages/plugin-testing
       '@workspace/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -1851,6 +1869,9 @@ importers:
       typescript:
         specifier: ~5.5.4
         version: 5.5.4
+      vitest:
+        specifier: ^4.0.17
+        version: 4.0.17(@types/node@25.0.6)(@vitest/ui@4.0.17)(jiti@2.4.2)(jsdom@27.4.0)(lightningcss@1.30.1)(yaml@2.8.0)
 
 packages:
 

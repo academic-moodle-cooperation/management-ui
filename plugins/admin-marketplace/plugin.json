@@ -1,0 +1,17 @@
+{
+  "$schema": "../../packages/plugin-system/src/schemas/plugin.schema.json",
+  "id": "admin-marketplace",
+  "name": "Admin Marketplace",
+  "version": "1.0.0",
+  "description": "Marketplace UI for browsing, installing, and trying remote plugins and themes at runtime.",
+  "author": {
+    "name": "Management UI Core"
+  },
+  "namespace": "admin",
+  "type": "marketplace",
+  "category": "feature",
+  "extensionPoints": [
+    "apps:definitions",
+    "sidebar:nav-items"
+  ]
+}
