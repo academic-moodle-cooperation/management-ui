@@ -77,12 +77,58 @@ We have detailed step-by-step guides for common tasks in the `docs/workflows/` d
 - Add tests for any new logic or components.
 - Run tests with `pnpm test`.
 
+## 📦 Versioning, Changesets, and Deprecations
+
+Every workspace package under `packages/` and `plugins/` is **versioned independently** following [Semver 2.0](https://semver.org/). The ground rules below apply to every public package; the four contracts in [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) layer additional, contract-specific rules on top for the explicitly-frozen API surfaces (Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0).
+
+### What kind of bump?
+
+Decide based on what the change does to the **package's public surface** — i.e. the symbols listed in its `package.json`'s `exports` field, the public types those exports re-export, and any documented runtime contract:
+
+| Bump type | When to use |
+|---|---|
+| **Patch** | Internal-only refactors, performance work, doc/comment changes, bug fixes that keep the same public signature. No visible behaviour change for any consumer who treats the package as a black box. |
+| **Minor** | New exports, new optional parameters, a new method on a class, a new optional field on a public type. Existing consumers remain source- and binary-compatible. |
+| **Major** | A removed export, a renamed symbol, a changed signature (including a new required parameter), a behaviour change that an existing consumer would observe (e.g. an extension point's contract changes), or anything that breaks plugin-runtime API/manifest/theme/config compatibility. |
+
+Plugin runtime API contracts have a hard rule: **anything that changes the Plugin Runtime API observable to plugin authors → major bump of `@workspace/plugin-system`.** The host loader rejects plugins whose declared `apiVersion` major mismatches the host's `PLUGIN_API_VERSION`.
+
+### Adding a changeset
+
+We use [Changesets](https://github.com/changesets/changesets) to track every user-facing change and generate per-package changelogs. The workflow:
+
+```bash
+# After making your changes, in the repo root:
+pnpm changeset
+# Pick the affected package(s), pick the bump level, write a one-line summary
+# of the change as a release-note. The CLI writes a Markdown file to .changeset/.
+
+# Verify what your changeset will release:
+pnpm changeset:status
+
+# Commit the .changeset/<slug>.md file alongside the rest of your PR.
+```
+
+CI **rejects** any PR that touches a released package without an accompanying changeset. Changes scoped purely to `apps/shell` / `apps/playground`, root config, docs, or workflows do not need a changeset (those packages are listed under `ignore` in `.changeset/config.json`). For an intentionally release-noteless change to a versioned package — e.g. a typo fix in a JSDoc — use `pnpm changeset --empty` to record the deliberate decision.
+
+### Deprecation policy
+
+Removing a public symbol is a major bump and requires a deprecation warning in the previous major. Concretely:
+
+1.  **Mark it `@deprecated` in JSDoc** with a one-line reason and a pointer to the replacement.
+2.  **Keep the old symbol working for one full major cycle.** A symbol marked `@deprecated` in `1.x` may be removed only in `2.0.0`. Use a minor bump for the deprecation; the eventual removal is its own major changeset.
+3.  **Emit a runtime warning in dev** if the deprecated symbol is called. Use `logger.warn` (from `@workspace/utils`) so the message is captured by the same plumbing as other warnings; gate it behind `import.meta.env.DEV` so production callers don't pay the cost. This is encouraged, not mandatory — type-only deprecations (e.g. a renamed type) cannot warn.
+4.  **Document the deprecation** in the changeset body so it lands in the package's changelog.
+
+Plugin authors get a one-major-cycle grace window: when the host bumps `PLUGIN_API_VERSION` major, plugins compiled against the previous major will be cleanly rejected with a "Plugin requires API major X, host provides Y" error from the loader.
+
 ## 📥 Submitting a Pull Request
 
 1.  **Create a branch**: Use a descriptive name like `feat/new-upload-filter` or `fix/sidebar-overlap`.
 2.  **Commit your changes**: Follow the existing commit message style (e.g., `feat: add new metadata field`).
-3.  **Validate your code**: Run `pnpm check-types && pnpm lint && pnpm test` before pushing.
-4.  **Open a PR**: Use the provided template to describe your changes.
+3.  **Add a changeset** (see [Versioning](#-versioning-changesets-and-deprecations) above) for any change to a versioned package. Doc-only or shell-only changes can skip this; CI tells you which.
+4.  **Validate your code**: Run `pnpm verify` (lint + types + build + unit + contract + E2E) before pushing.
+5.  **Open a PR**: Use the provided template to describe your changes.
 
 ## 📄 Code of Conduct
 
