@@ -8,6 +8,11 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env["CI"],
   retries: process.env["CI"] ? 1 : 0,
+  // Cold-start CI runs report Vite ready in ~80–90s and the first
+  // page.goto then triggers full module compilation, so the default 30s
+  // per-test timeout intermittently expires on the boot path. Bump to 60s
+  // to absorb that without leaning on the retry.
+  timeout: 60_000,
   reporter: [
     ["list"],
     ["html", { outputFolder: "playwright-report", open: "never" }],
