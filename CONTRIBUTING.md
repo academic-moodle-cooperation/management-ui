@@ -137,7 +137,7 @@ git diff packages/*/etc/*.api.md
 
 CI runs `pnpm api-check:ci` (note the `:ci` suffix) which compares the generated reports against the committed snapshots and **fails the PR** if they differ. Authors who intentionally change the surface regenerate, commit the diff, and ship a matching changeset; authors who didn't intend to change the surface get an immediate signal that they did.
 
-Currently instrumented: `@workspace/plugin-system`, `@workspace/i18n`, `@workspace/ui-config`. Three other contract-stable packages (`@workspace/router`, `@workspace/query`, `@workspace/store`) need a small workspace-deps refactor before api-extractor can resolve their transitive `.ts` imports — tracked as a Phase 5 follow-up and intentionally out of scope for the initial drop.
+Instrumented packages: `@workspace/plugin-system`, `@workspace/router`, `@workspace/query`, `@workspace/i18n`, `@workspace/store`, `@workspace/ui-config` — the six contract-stable packages declared in [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md). The cross-package coupling visible in each report (e.g. `query`'s report imports types from `plugin-system` and `ui-config`) is intentional: when an upstream contract changes, every consumer's snapshot diff surfaces it.
 
 ## 📥 Submitting a Pull Request
 
