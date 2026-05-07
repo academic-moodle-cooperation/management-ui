@@ -96,6 +96,31 @@
         "CI",
         "PLAYWRIGHT_*"
       ]
+    },
+    "build:types": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist-types/**"
+      ]
+    },
+    "api-check": {
+      "dependsOn": [
+        "^build",
+        "build:types"
+      ],
+      "cache": false,
+      "outputs": [
+        "etc/**"
+      ]
+    },
+    "api-check:ci": {
+      "dependsOn": [
+        "^build",
+        "build:types"
+      ],
+      "cache": false
     }
   }
 }

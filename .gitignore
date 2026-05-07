@@ -21,6 +21,8 @@ out/
 build
 dist
 dist-types
+# API Extractor scratch dir (etc/ holds the committed .api.md snapshots)
+packages/*/temp/
 .vite/
 .parcel-cache/
 .rollup.cache/
