@@ -9,7 +9,11 @@
  * Loading: Delegated to @workspace/remote-plugin-loader (shared with core JAR loading).
  */
 
-import { type PluginManager, fragmentRegistry } from "@workspace/plugin-system";
+import {
+  type PluginManager,
+  checkApiVersionCompatibility,
+  fragmentRegistry,
+} from "@workspace/plugin-system";
 import { loadAndRegister as loadAndRegisterFromPackage } from "@workspace/remote-plugin-loader";
 import type { LoadResult } from "@workspace/remote-plugin-loader";
 import { logger } from "@workspace/utils";
@@ -77,6 +81,23 @@ export const RemoteLoader = {
         };
       }
       warnings.push(...versionResult.warnings);
+    }
+
+    // Plugin runtime API contract gate: refuse plugins whose declared
+    // `apiVersion` does not match this host's PLUGIN_API_VERSION semantics
+    // (see docs/architecture/CONTRACTS.md and `@workspace/plugin-system`'s
+    // `checkApiVersionCompatibility`). A missing `apiVersion` is treated as
+    // "1.0.0" by the checker, so older registry entries continue to load.
+    if (metadata?.apiVersion !== undefined) {
+      const apiResult = checkApiVersionCompatibility(metadata.apiVersion);
+      if (!apiResult.compatible) {
+        return {
+          success: false,
+          error:
+            `Plugin "${metadata.id}" rejected: ${apiResult.reason ?? "incompatible plugin runtime API version"}.`,
+          warnings,
+        };
+      }
     }
 
     const result = await loadAndRegisterFromPackage(url, manager, { forceReload });

@@ -66,6 +66,13 @@ export interface RegistryPlugin {
   tags?: string[];
   /** Version constraints for workspace packages */
   workspaceDependencies?: PluginVersionConstraints;
+  /**
+   * Minimum plugin runtime API version this plugin requires.
+   * The host loader refuses plugins whose major mismatches the host or whose
+   * minor exceeds the host's minor (see `@workspace/plugin-system`'s
+   * `checkApiVersionCompatibility`). If absent, "1.0.0" is assumed.
+   */
+  apiVersion?: string;
   /** Whether this plugin is verified by maintainers */
   verified?: boolean;
   /** Download count (optional, for display) */
