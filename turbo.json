@@ -49,7 +49,9 @@
     },
     "check-types": {
       "dependsOn": [
-        "^check-types"
+        "^check-types",
+        "^build",
+        "^build:types"
       ]
     },
     "dev": {

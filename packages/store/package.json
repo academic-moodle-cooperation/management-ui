@@ -4,15 +4,30 @@
   "type": "module",
   "private": true,
   "exports": {
-    ".": "./index.tsx",
-    "./atoms": "./atoms.ts",
-    "./useStore": "./useStore.ts",
-    "./useTableStore": "./useTableStore.ts"
+    ".": {
+      "types": "./dist-types/index.d.ts",
+      "default": "./index.tsx"
+    },
+    "./atoms": {
+      "types": "./dist-types/atoms.d.ts",
+      "default": "./atoms.ts"
+    },
+    "./useStore": {
+      "types": "./dist-types/useStore.d.ts",
+      "default": "./useStore.ts"
+    },
+    "./useTableStore": {
+      "types": "./dist-types/useTableStore.d.ts",
+      "default": "./useTableStore.ts"
+    }
   },
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "check-types": "tsc --noEmit -p tsconfig.json",
+    "build:types": "tsc -p tsconfig.build.json",
+    "api-check": "pnpm build:types && api-extractor run --local --verbose",
+    "api-check:ci": "pnpm build:types && api-extractor run --verbose",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
