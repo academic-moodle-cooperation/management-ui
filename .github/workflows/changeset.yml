@@ -1,0 +1,32 @@
+name: Changeset
+
+on:
+  pull_request:
+    branches: [main, develop, "release/**"]
+
+jobs:
+  changeset-present:
+    name: Changeset present
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Need full history so `changeset status` can diff against the PR's
+          # base branch.
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify changeset present (or no versioned-package changes)
+        run: pnpm changeset status --since=origin/${{ github.base_ref }}
