@@ -58,6 +58,8 @@ plugins/             ← Built-in core/shared plugins (shipped with the OSS repo
 ## Documentation Structure
 
 ```
+AGENTS.md (repo root)                ← Operational rules for AI coding agents on plugin work
+
 docs/
 ├── AI_DEVELOPMENT_GUIDE.md          ← YOU ARE HERE
 ├── PLUGIN_STYLING_CONTRACT.md       ← CSS/theming rules for plugins

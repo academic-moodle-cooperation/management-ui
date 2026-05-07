@@ -38,10 +38,11 @@ plugins/        ← Built-in plugins shipped with the core repo
 
 ## 📚 Documentation
 
-**🤖 For AI Models:** Start with [`llms.txt`](llms.txt) for a quick summary, then read the [AI Development Guide](docs/AI_DEVELOPMENT_GUIDE.md) for full context.
+**🤖 For AI Models:** Start with [`llms.txt`](llms.txt) for a quick summary, then read the [AI Development Guide](docs/AI_DEVELOPMENT_GUIDE.md) for full context. When you're ready to write or modify a plugin, read [`AGENTS.md`](AGENTS.md) for the operational rules.
 
 ### Core Documentation
 
+- **[AGENTS.md](AGENTS.md)** - Operational rules for AI coding agents working on plugins
 - **[AI Development Guide](docs/AI_DEVELOPMENT_GUIDE.md)** - Main entry point for AI models and new developers
 - **[`llms.txt`](llms.txt)** - Machine-readable project summary for LLMs
 - **[Package Ecosystem](/packages/README.md)** - Shared infrastructure packages and dependency management
