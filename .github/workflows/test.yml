@@ -127,6 +127,42 @@ jobs:
       - name: Run contract tests
         run: pnpm test:contract
 
+  api-check:
+    name: API surface drift
+    needs: unit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: |
+          pnpm turbo run build --force --filter=@workspace/vite-config
+          test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
+          pnpm turbo run build --force
+
+      - name: Ensure .local-plugins exists
+        run: mkdir -p .local-plugins
+
+      - name: Verify .api.md snapshots are up to date
+        # api-check:ci runs api-extractor without --local: it compares the
+        # generated report against the committed etc/<pkg>.api.md and exits
+        # non-zero if they differ. Authors regenerate locally with
+        # `pnpm api-check`.
+        run: pnpm api-check:ci
+
   e2e:
     name: E2E (Playwright)
     needs: unit
