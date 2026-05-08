@@ -1,9 +1,18 @@
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import js from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
+import boundaries from "eslint-plugin-boundaries";
 import importPlugin from "eslint-plugin-import";
 import onlyWarn from "eslint-plugin-only-warn";
 import turboPlugin from "eslint-plugin-turbo";
 import tseslint from "typescript-eslint";
+
+// Workspace root resolved from this config file's location, so the
+// boundaries patterns work regardless of which package's cwd eslint
+// happens to be running in (turbo invokes lint per-package).
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 /**
  * A shared ESLint configuration for the repository.
@@ -120,6 +129,101 @@ export const config = [
           alwaysTryTypes: true,
         },
       },
+    },
+  },
+  // ─────────────────────────────────────────────────────────────────────────
+  // Architectural import boundaries (file-path based, namespace-independent).
+  //
+  // Mechanises the cross-plugin / cross-app / app→plugin rules documented in
+  // AGENTS.md. Wrapper-library rules (use @workspace/router instead of
+  // @tanstack/react-router, etc.) live in the no-restricted-imports block
+  // above because they're namespace-coupled and will be updated together
+  // when Phase 6 finalises the workspace namespace.
+  //
+  // Elements are folder-based, so renaming the npm scope later won't
+  // affect these rules.
+  //
+  //   app      = anything under apps/<name>/
+  //   plugin   = anything under plugins/<name>/  (the plugins/ root barrel
+  //              file plugins/index.ts is intentionally unmatched and so
+  //              free to re-export from each individual plugin)
+  //   package  = anything under packages/<name>/
+  //
+  // Rule matrix:
+  //
+  //   app    → app, package, plugin   (the shell mounts plugins)
+  //   plugin → package + self         (no cross-plugin, no app deps)
+  //   package → package               (layered ordering inside packages
+  //                                    is not enforced yet — follow-up)
+  //
+  // External imports (node_modules) are not covered here; the
+  // no-restricted-imports rule above gates the wrapper exceptions.
+  {
+    plugins: { boundaries },
+    settings: {
+      // Pin the boundaries plugin to the workspace root so per-package
+      // eslint invocations (turbo runs lint inside each package's cwd)
+      // resolve element patterns the same way as a workspace-root run.
+      // Without this, `process.cwd()` is each package's directory and the
+      // plain `apps/*` / `plugins/*` / `packages/*` patterns fail to match.
+      "boundaries/root-path": repoRoot,
+      "boundaries/include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+      "boundaries/ignore": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts",
+        "**/*.spec.tsx",
+        "**/vite.config.ts",
+        "**/vitest.config.ts",
+        "**/playwright.config.ts",
+        "**/eslint.config.js",
+        "**/.changeset/**",
+      ],
+      // Patterns are anchored at the root and use mode "full" so that
+      // packages with internal subdirectories named the same as a top-level
+      // category (notably packages/plugin-system/src/plugins/) don't get
+      // mistakenly classified as a different element type.
+      "boundaries/elements": [
+        { type: "app", pattern: "apps/*/**/*", capture: ["app"], mode: "full" },
+        { type: "plugin", pattern: "plugins/*/**/*", capture: ["plugin"], mode: "full" },
+        { type: "package", pattern: "packages/*/**/*", capture: ["package"], mode: "full" },
+      ],
+    },
+    rules: {
+      "boundaries/no-unknown-files": "off",
+      "boundaries/no-unknown": "off",
+      // Using the v5 selector shape on the v6 plugin: it's the only form whose
+      // schema validator currently accepts our config. The plugin emits a
+      // [boundaries][warning] line on every run noting the legacy syntax and
+      // pointing at the v5→v6 migration guide; that's plugin stderr, not an
+      // eslint warning, so it doesn't trip --max-warnings. Migrating to the
+      // v6 object syntax tracked as a follow-up — the v6 API for `allow:`
+      // entries doesn't accept `{ type, captured }` directly today and the
+      // "self-only" shape needs a different idiom we haven't worked out.
+      "boundaries/dependencies": [
+        "error",
+        {
+          default: "disallow",
+          message:
+            "Disallowed import: ${file.type} (${file.source}) cannot import from ${dependency.type} (${dependency.source}). See AGENTS.md → Boundaries.",
+          rules: [
+            { from: ["app"], allow: ["app", "package", "plugin"] },
+            { from: ["package"], allow: ["package"] },
+            {
+              from: ["plugin"],
+              // Plugins may consume packages, themselves (relative imports),
+              // and the special `plugins/core` infrastructure plugin which
+              // owns the canonical extension-point constants used across
+              // every core/admin plugin.
+              allow: [
+                "package",
+                ["plugin", { plugin: "${from.plugin}" }],
+                ["plugin", { plugin: "core" }],
+              ],
+            },
+          ],
+        },
+      ],
     },
   },
   {
