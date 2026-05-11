@@ -264,20 +264,17 @@ Opencast config path.
 
 ### Follow-ups owned by this repo
 
-These three pieces still grep for the old `pluginNamespace` key and
-need to be flipped **once the `.local-plugins/` submodule renames its
-own `config` plugin**. They are listed here — not in a separate tracker
-— so the rename shows up in every future `rg pluginNamespace` audit:
+`llms.txt` keeps four references to the old `pluginNamespace` key
+deliberately, so agents still understand the legacy name when they
+encounter a pre-1.0 config. Flip once the ecosystem has caught up
+(e.g. when we cut 1.0).
 
-1. `scripts/export-plugin-to-local.js` — `wireNamespaceInLocalConfig()`
-   (around line 642) greps for the literal `"pluginNamespace"` when it
-   edits `.local-plugins/config/src/config.ts`. Rename the target
-   together with the submodule change.
-2. `scripts/extract-module-to-plugin.mjs` — the same grep logic plus
-   the help-text lines 311 and 587. Rename in lockstep with (1).
-3. `llms.txt` — four references left deliberately, so agents still
-   understand the old name when they encounter legacy configs. Flip
-   once the ecosystem has caught up (e.g. when we cut 1.0).
+The two scaffolding scripts that also grepped for `"pluginNamespace"`
+(`scripts/export-plugin-to-local.js` and
+`scripts/extract-module-to-plugin.mjs`) were retired in the same drop
+that introduced `pnpm create-plugin` (Phase 7 sub-task 3), so the
+legacy-grep concern there is moot — git history has the previous
+behaviour if anyone needs to consult it.
 
 The shell itself does **not** carry a back-compat shim. The new loader
 reads only `enabledPlugins`; the old field is silently ignored. That

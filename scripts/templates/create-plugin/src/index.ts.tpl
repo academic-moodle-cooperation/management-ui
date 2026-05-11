@@ -1,0 +1,36 @@
+import { createPlugin, type PluginManager } from "@workspace/plugin-system";
+import { logger } from "@workspace/utils";
+
+/**
+ * __PLUGIN_NAME__ plugin
+ *
+ * TODO: describe what this plugin does in one or two sentences.
+ * Reference the extension points it registers on, and link to
+ * AGENTS.md → "Plugin layout" if you're new to the structure.
+ */
+export const __PLUGIN_VAR_NAME__Plugin = createPlugin({
+  namespace: "__PLUGIN_NAME__",
+  type: "header",
+  version: "1.0.0",
+
+  initialize(manager: PluginManager) {
+    // Placeholder registration so the contract test passes on first run.
+    // Replace with your real extension-point registrations and update
+    // plugin.json's `extensionPoints` array accordingly.
+    manager.registerObject("app:header-logo", "__PLUGIN_NAME__-logo", {
+      src: "/assets/__PLUGIN_NAME__-logo.svg",
+      alt: "__PLUGIN_NAME__",
+      width: 120,
+      height: 40,
+      href: "/",
+    });
+  },
+
+  activate() {
+    logger.debug("[__PLUGIN_NAME__] activated");
+  },
+
+  deactivate() {
+    logger.debug("[__PLUGIN_NAME__] deactivated");
+  },
+});

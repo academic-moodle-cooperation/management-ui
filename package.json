@@ -4,8 +4,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "plugin:export-local": "node ./scripts/export-plugin-to-local.js",
-    "plugin:create-local": "node ./scripts/export-plugin-to-local.js --from-template",
+    "create-plugin": "node ./scripts/create-plugin.mjs",
     "clean": "turbo run clean && rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf target && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo && find . -name '.eslintcache' -delete",
     "clean:plugins": "turbo run clean --filter=./plugins/* --filter=./.local-plugins/*",
     "preview": "turbo run preview",
@@ -19,7 +18,6 @@
     "test:contract": "turbo run test:contract",
     "verify": "pnpm turbo run lint check-types build test test:contract api-check --filter='!./.local-plugins/*' && pnpm test:e2e",
     "validate:plugins": "node scripts/validate-plugins.mjs",
-    "plugin:extract": "node scripts/extract-module-to-plugin.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:install": "playwright install --with-deps chromium",

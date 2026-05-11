@@ -35,9 +35,8 @@ In production, they are deployed as OSGi JARs or loaded from a registry/CDN.
 
 ### Scaffold Commands
 
-- `pnpm plugin:create-local <name> --wire-config` — New plugin from template
-- `pnpm plugin:extract <org>/<module> --name <new-name>` — Extract module to standalone plugin
-- `pnpm plugin:export-local <name>` — Move built-in plugin to `.local-plugins/`
+- `pnpm create-plugin <name>` — Scaffold a new org/community plugin under `.local-plugins/<name>/` (gitignored). Includes package.json, plugin.json, tsconfig, vitest, contract test, README, and a placeholder `app:header-logo` registration so the contract test passes on first run.
+- `pnpm create-plugin <name> --in-tree` — Same, but under `plugins/<name>/` for core contributors adding a built-in plugin.
 - `pnpm validate:plugins` — Validate all `plugin.json` manifests
 
 ## Plugin System

@@ -91,7 +91,7 @@ llms.txt                             ← Machine-readable project summary
 
 ### I want to create a NEW PLUGIN
 
-1. **Start:** Copy `plugins/community-plugin-template/` or use `pnpm plugin:create-local <name> --wire-config`
+1. **Start:** `pnpm create-plugin <name>` scaffolds a fully wired plugin (package.json, plugin.json, tsconfig, vitest, contract test). Add `--in-tree` if you're contributing a built-in plugin under `plugins/<name>/` rather than scaffolding to `.local-plugins/<name>/`.
 2. **Manifest:** Create `plugin.json` following `packages/plugin-system/src/schemas/plugin.schema.json`
 3. **Styling:** Read [`docs/PLUGIN_STYLING_CONTRACT.md`](/docs/PLUGIN_STYLING_CONTRACT.md) — use semantic tokens only
 4. **Full guide:** [`docs/COMMUNITY_PLUGIN_DEVELOPMENT.md`](/docs/COMMUNITY_PLUGIN_DEVELOPMENT.md)
