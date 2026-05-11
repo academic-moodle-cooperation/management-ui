@@ -115,15 +115,16 @@ A plugin may import from:
 
 - `@workspace/*` packages
 - itself (relative paths within the plugin dir)
+- `plugins/core` (a.k.a. `plugin-core`) — the canonical infrastructure plugin that ships the shared extension-point identifiers; allowed for every plugin
 - third-party libraries already used by `@workspace/*` (e.g., `react`, `lucide-react`, `zod`)
 
 A plugin must **not** import from:
 
 - `apps/shell` or `apps/playground` — apps consume plugins, not the other way around
-- another plugin under `plugins/<other>/*` or `.local-plugins/<other>/*` — communicate via extension points instead
+- any other plugin under `plugins/<name>/*` or `.local-plugins/<name>/*` — communicate via extension points instead
 - A library that has been wrapped behind a `@workspace/*` facade (e.g., import `@workspace/router`, never `@tanstack/react-router` directly; same for `@tanstack/react-query` → `@workspace/query`, `i18next` → `@workspace/i18n`, `jotai` → `@workspace/store`)
 
-The wrapper rule is enforced by `no-restricted-imports` in `@workspace/eslint-config/base.js`. The cross-plugin and cross-app rules are enforced by convention today; an `eslint-plugin-boundaries` follow-up will mechanise them.
+The wrapper rule is enforced by `no-restricted-imports` in `@workspace/eslint-config/base.js`. The cross-plugin and cross-app rules are enforced by `eslint-plugin-boundaries` rules in the same config — see the comment block in `packages/eslint-config/base.js` for the full element/rule matrix. The boundaries rule today catches cross-plugin imports written as relative paths (`../../<other-plugin>/...`); workspace-package imports (`@workspace/plugin-<other>`) are not caught yet because of a resolver gap, tracked as a follow-up.
 
 ## Config — read your own slice, never anyone else's
 
