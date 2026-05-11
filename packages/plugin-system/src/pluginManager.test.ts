@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
+import { createObjectRegistryPlugin } from "./builtins/objectRegistry";
+import { createRendererPlugin } from "./builtins/renderer";
 import { createPluginManager } from "./pluginManager";
-import { createObjectRegistryPlugin } from "./plugins/objectRegistry";
-import { createRendererPlugin } from "./plugins/renderer";
 
 import type { Plugin } from "./IPlugin";
 

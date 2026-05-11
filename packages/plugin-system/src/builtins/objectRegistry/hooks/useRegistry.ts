@@ -1,4 +1,4 @@
-// packages/plugin-system/src/plugins/objectRegistry/hooks/useRegistry.ts
+// packages/plugin-system/src/builtins/objectRegistry/hooks/useRegistry.ts
 import { useState, useEffect, useMemo } from "react";
 
 import { usePluginManager } from "../../../PluginProvider";

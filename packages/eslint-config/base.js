@@ -151,21 +151,47 @@ export const config = [
   //
   // Rule matrix:
   //
-  //   app    → app, package, plugin   (the shell mounts plugins)
-  //   plugin → package + self         (no cross-plugin, no app deps)
-  //   package → package               (layered ordering inside packages
-  //                                    is not enforced yet — follow-up)
+  //   app    → app, package, plugin    (the shell mounts plugins)
+  //   plugin → package + self + core   (`plugins/core` is the canonical
+  //                                     infrastructure plugin owning the
+  //                                     shared extension-point identifiers)
+  //   package → package                (layered ordering inside packages
+  //                                     is not enforced yet — follow-up)
   //
   // External imports (node_modules) are not covered here; the
   // no-restricted-imports rule above gates the wrapper exceptions.
+  //
+  // ─── Known limitations (documented so a future reader doesn't lose time) ──
+  //
+  // (b) Per-package eslint via turbo. `boundaries/root-path` below pins
+  //     resolution to the workspace root so patterns work the same whether
+  //     lint runs from a package's cwd or the workspace root. Removing the
+  //     setting requires migrating to a single workspace-root eslint
+  //     invocation; tradeoff is slower CI (no per-package cache).
+  //
+  // (c) v5-shaped selector syntax (`from: ["app"]`, `allow: ["package", …]`,
+  //     `${from.plugin}` template). eslint-plugin-boundaries v6 introduced an
+  //     "object selectors" migration (`from: { type: "app" }`, `{{from.plugin}}`)
+  //     but its schema validator currently rejects `allow:` entries written
+  //     with the new `{ type, captured }` object form. The plugin logs a
+  //     `[boundaries][warning]` line on every run pointing at the migration
+  //     guide; that's plugin stderr, not an eslint warning, so it doesn't
+  //     trip --max-warnings. Migrating is a follow-up once upstream lands
+  //     the object-shape support for `allow:`.
+  //
+  // (d) Cross-plugin imports written as workspace specifiers
+  //     (`import "@workspace/plugin-<other>"`) are NOT caught today; only the
+  //     relative-path form is (`import "../../<other-plugin>/..."`). The
+  //     boundaries plugin follows the import resolver, but our pnpm symlinks
+  //     don't get traversed in a way the plugin can match against the
+  //     `plugins/<name>` element pattern. Likely fixable by configuring
+  //     `eslint-import-resolver-typescript` more explicitly, or as a
+  //     belt-and-suspenders `no-restricted-imports` rule against
+  //     `@workspace/plugin-*` from inside plugin sources.
   {
     plugins: { boundaries },
     settings: {
-      // Pin the boundaries plugin to the workspace root so per-package
-      // eslint invocations (turbo runs lint inside each package's cwd)
-      // resolve element patterns the same way as a workspace-root run.
-      // Without this, `process.cwd()` is each package's directory and the
-      // plain `apps/*` / `plugins/*` / `packages/*` patterns fail to match.
+      // See limitation (b) above.
       "boundaries/root-path": repoRoot,
       "boundaries/include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
       "boundaries/ignore": [
@@ -179,27 +205,22 @@ export const config = [
         "**/eslint.config.js",
         "**/.changeset/**",
       ],
-      // Patterns are anchored at the root and use mode "full" so that
-      // packages with internal subdirectories named the same as a top-level
-      // category (notably packages/plugin-system/src/plugins/) don't get
-      // mistakenly classified as a different element type.
+      // The plain folder-based pattern (`plugins/*` etc.) works cleanly now
+      // that packages/plugin-system/src/plugins/ has been renamed to
+      // src/builtins/ — there's no internal-directory collision to work
+      // around. Previously this had to use mode:"full" + `plugins/*/**/*`
+      // to avoid mistakenly classifying plugin-system's internal host
+      // plugins as top-level `plugin` elements.
       "boundaries/elements": [
-        { type: "app", pattern: "apps/*/**/*", capture: ["app"], mode: "full" },
-        { type: "plugin", pattern: "plugins/*/**/*", capture: ["plugin"], mode: "full" },
-        { type: "package", pattern: "packages/*/**/*", capture: ["package"], mode: "full" },
+        { type: "app", pattern: "apps/*", capture: ["app"], mode: "folder" },
+        { type: "plugin", pattern: "plugins/*", capture: ["plugin"], mode: "folder" },
+        { type: "package", pattern: "packages/*", capture: ["package"], mode: "folder" },
       ],
     },
     rules: {
       "boundaries/no-unknown-files": "off",
       "boundaries/no-unknown": "off",
-      // Using the v5 selector shape on the v6 plugin: it's the only form whose
-      // schema validator currently accepts our config. The plugin emits a
-      // [boundaries][warning] line on every run noting the legacy syntax and
-      // pointing at the v5→v6 migration guide; that's plugin stderr, not an
-      // eslint warning, so it doesn't trip --max-warnings. Migrating to the
-      // v6 object syntax tracked as a follow-up — the v6 API for `allow:`
-      // entries doesn't accept `{ type, captured }` directly today and the
-      // "self-only" shape needs a different idiom we haven't worked out.
+      // See limitation (c) above for why this uses v5-shaped selectors.
       "boundaries/dependencies": [
         "error",
         {
