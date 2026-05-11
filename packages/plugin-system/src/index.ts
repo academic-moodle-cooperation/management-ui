@@ -21,10 +21,10 @@ export * from "./component-resolver";
 export { PluginComponent } from "./PluginComponent";
 
 // Export plugin modules
-export * from "./plugins/renderer";
-export * from "./plugins/objectRegistry";
-export * from "./plugins/objectRegistry/hooks/useRegistry";
-export * from "./plugins/appRegistry";
+export * from "./builtins/renderer";
+export * from "./builtins/objectRegistry";
+export * from "./builtins/objectRegistry/hooks/useRegistry";
+export * from "./builtins/appRegistry";
 
 // Export services (Community Plugin System)
 export * from "./services";

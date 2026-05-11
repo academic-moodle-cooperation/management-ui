@@ -1,7 +1,7 @@
 import { logger } from "@workspace/utils";
 
+import type { RegistryObject } from "./builtins/objectRegistry/index";
 import type { Plugin } from "./IPlugin";
-import type { RegistryObject } from "./plugins/objectRegistry/index";
 import type { PluginFunction, EventCallback, PluginComponent, RegistryMetadata } from "./types";
 
 type PluginRegistry = Map<string, Plugin>;

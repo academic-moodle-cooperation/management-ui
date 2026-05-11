@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useMemo, type ReactNode } from "react";
 
+import { createAppRegistryPlugin } from "./builtins/appRegistry";
+import { createObjectRegistryPlugin } from "./builtins/objectRegistry";
+import { createRendererPlugin } from "./builtins/renderer";
 import { createPluginManager } from "./pluginManager";
-import { createAppRegistryPlugin } from "./plugins/appRegistry";
-import { createObjectRegistryPlugin } from "./plugins/objectRegistry";
-import { createRendererPlugin } from "./plugins/renderer";
 
 /**
  * Plugin-system React context holding the active {@link createPluginManager}
