@@ -1,6 +1,7 @@
 {
   "name": "management-ui",
   "private": true,
+  "license": "ECL-2.0",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
