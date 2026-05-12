@@ -1,6 +1,7 @@
 {
   "name": "@community/my-plugin",
   "version": "1.0.0",
+  "license": "ECL-2.0",
   "type": "module",
   "description": "A community plugin for Management UI",
   "author": {
@@ -8,7 +9,6 @@
     "email": "your.email@example.com",
     "url": "https://example.com"
   },
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/your-org/your-plugin"

@@ -1,6 +1,7 @@
 {
   "name": "@workspace/store",
   "version": "1.0.0",
+  "license": "ECL-2.0",
   "type": "module",
   "private": true,
   "exports": {
