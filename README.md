@@ -66,6 +66,10 @@ plugins/        ← Built-in plugins shipped with the core repo
 
 - **[Testing](/docs/TESTING.md)** - Test pyramid (unit / contract / E2E), `@workspace/plugin-testing` harness, Playwright setup, CI layout, deferred follow-ups
 
+### Project Status
+
+- **[Open Follow-ups](/docs/OPEN_FOLLOWUPS.md)** - Committed index of every "we know about this but we're not doing it now" item across the repo (architectural decisions deferred to a later phase, items waiting on upstream, items waiting on the 1.0 cut, etc.). Start here when you want to see what's pending.
+
 ### Development Workflows
 
 Step-by-step guides for common tasks:
