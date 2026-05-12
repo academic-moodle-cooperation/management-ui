@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/utils",
+  "name": "@oc-mui/utils",
   "version": "1.0.0",
   "license": "ECL-2.0",
   "private": true,
@@ -30,8 +30,8 @@
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",
-    "@workspace/eslint-config": "workspace:*",
-    "@workspace/typescript-config": "workspace:*",
+    "@oc-mui/eslint-config": "workspace:*",
+    "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.9.0",
     "typescript": "~5.5.4",
     "vitest": "^4.0.17"

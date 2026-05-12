@@ -29,8 +29,8 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@workspace/plugin-system": "*",
-    "@workspace/ui": "*",
+    "@oc-mui/plugin-system": "*",
+    "@oc-mui/ui": "*",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
   },
@@ -38,7 +38,7 @@
     "@types/react": "^18.0.0 || ^19.0.0",
     "@types/react-dom": "^18.0.0 || ^19.0.0",
     "@vitejs/plugin-react-swc": "^3.9.0",
-    "@workspace/tailwind-config": "workspace:*",
+    "@oc-mui/tailwind-config": "workspace:*",
     "eslint": "^9.20.0",
     "rollup": "^4.44.2",
     "tailwindcss": "^4.1.7",

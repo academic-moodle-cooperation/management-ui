@@ -458,7 +458,7 @@ mutation CreateQuiz($eventId: String!, $quiz: QuizInput!) {
 ### Frontend nutzen
 
 ```typescript
-import { useCreateQuizMutation } from "@workspace/query";
+import { useCreateQuizMutation } from "@oc-mui/query";
 
 const QuizCreator = () => {
   const createQuiz = useCreateQuizMutation();

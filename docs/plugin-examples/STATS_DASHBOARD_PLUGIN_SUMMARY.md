@@ -10,7 +10,7 @@ A complete, production-ready community plugin for displaying Opencast statistics
    - ID: `stats-dashboard`
    - Category: `feature`
    - Icon: `BarChart3`
-   - Dependencies: `@workspace/plugin-system`, `@workspace/ui`, `@workspace/query`
+   - Dependencies: `@oc-mui/plugin-system`, `@oc-mui/ui`, `@oc-mui/query`
 
 2. **`src/index.ts`** - Plugin entry point
    - Registers app route: `/stats-dashboard`

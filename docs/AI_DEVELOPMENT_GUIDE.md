@@ -194,10 +194,10 @@ admin:marketplace      ← marketplace plugin
 
 ### Plugin Definition
 
-Every plugin is created with `createPlugin()` from `@workspace/plugin-system`:
+Every plugin is created with `createPlugin()` from `@oc-mui/plugin-system`:
 
 ```typescript
-import { createPlugin } from "@workspace/plugin-system";
+import { createPlugin } from "@oc-mui/plugin-system";
 
 export default createPlugin({
   namespace: "my-org",    // WHO provides it (org or feature name)
@@ -235,8 +235,8 @@ Every plugin should have a `plugin.json` in its root directory. This is the sour
   "css": "dist/my-analytics.css",
   "license": "MIT",
   "workspaceDependencies": {
-    "@workspace/plugin-system": ">=1.0.0",
-    "@workspace/ui": ">=1.0.0"
+    "@oc-mui/plugin-system": ">=1.0.0",
+    "@oc-mui/ui": ">=1.0.0"
   }
 }
 ```
@@ -259,8 +259,8 @@ Every plugin should have a `plugin.json` in its root directory. This is the sour
     { "id": "landing-page", "type": "landing-page", "entry": "dist/plugin-univie-landing-page.mjs" }
   ],
   "workspaceDependencies": {
-    "@workspace/plugin-system": ">=1.0.0",
-    "@workspace/ui": ">=1.0.0"
+    "@oc-mui/plugin-system": ">=1.0.0",
+    "@oc-mui/ui": ">=1.0.0"
   }
 }
 ```
@@ -353,8 +353,8 @@ For large plugins, these can be separate `createPlugin` calls with different typ
 // WRONG — manual input for IDs
 <Input placeholder="Enter episode ID" />
 
-// CORRECT — use hooks from @workspace/query
-import { useGetMyEventsQuery } from "@workspace/query";
+// CORRECT — use hooks from @oc-mui/query
+import { useGetMyEventsQuery } from "@oc-mui/query";
 
 const { data, isLoading } = useGetMyEventsQuery({ limit: 20 });
 
@@ -388,7 +388,7 @@ Use `services/`, `lib/`, or `backend/` instead.
 
 ### 5. External Dependencies Must Not Be Bundled
 
-Plugin `vite.config.ts` must externalize React and all `@workspace/*` packages.
+Plugin `vite.config.ts` must externalize React and all `@oc-mui/*` packages.
 These are provided by the host at runtime. Bundling them causes duplicate React
 errors and bloated bundles.
 
@@ -430,8 +430,8 @@ Every package, app, and plugin has a README. Templates ensure consistency.
 ### Creating a Plugin Component
 
 ```tsx
-import { Card, CardHeader, CardTitle, CardContent } from "@workspace/ui/components";
-import { useGetMyEventsQuery } from "@workspace/query";
+import { Card, CardHeader, CardTitle, CardContent } from "@oc-mui/ui/components";
+import { useGetMyEventsQuery } from "@oc-mui/query";
 
 export const MyDashboard: React.FC = () => {
   const { data, isLoading } = useGetMyEventsQuery({ limit: 10 });
@@ -505,7 +505,7 @@ If `pnpm verify` is green, the four CI jobs will be too — assuming you also ha
 - [ ] Plugin has `plugin.json` matching the schema
 - [ ] Both `activate()` and `deactivate()` are implemented
 - [ ] App registrations include sidebar nav items
-- [ ] External deps (React, @workspace/*) are not bundled
+- [ ] External deps (React, @oc-mui/*) are not bundled
 - [ ] Documentation updated for any changed APIs
 - [ ] No circular dependencies introduced
 

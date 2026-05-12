@@ -24,7 +24,7 @@ We've implemented a **multi-layered approach** to prevent and handle this issue:
 
 **When to add more:**
 - If a package is used by multiple plugins
-- If it's a core dependency of `@workspace/ui` (like `lucide-react`)
+- If it's a core dependency of `@oc-mui/ui` (like `lucide-react`)
 - If it's essential for plugin development
 
 **How to add:**
@@ -37,7 +37,7 @@ We've implemented a **multi-layered approach** to prevent and handle this issue:
 ### 2. ✅ Better Error Messages
 
 **What we did:**
-- Enhanced error handling in `@workspace/remote-plugin-loader` (`loadAndRegister.ts`)
+- Enhanced error handling in `@oc-mui/remote-plugin-loader` (`loadAndRegister.ts`)
 - Detects module resolution errors
 - Provides helpful guidance with links to documentation
 - Suggests solutions (bundle it, or request addition)
@@ -45,7 +45,7 @@ We've implemented a **multi-layered approach** to prevent and handle this issue:
 **Error message example:**
 ```
 Module "package-name" is not available. 
-Available packages: react, react-dom, lucide-react, @workspace/plugin-system, @workspace/ui/components, @workspace/ui/components/icons, @workspace/ui/lib, @workspace/ui/lib/utils, @workspace/query, @workspace/router, @workspace/utils, @workspace/i18n. See docs/COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md for the full list.
+Available packages: react, react-dom, lucide-react, @oc-mui/plugin-system, @oc-mui/ui/components, @oc-mui/ui/components/icons, @oc-mui/ui/lib, @oc-mui/ui/lib/utils, @oc-mui/query, @oc-mui/router, @oc-mui/utils, @oc-mui/i18n. See docs/COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md for the full list.
 See https://github.com/.../COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md for details.
 If you need "package-name", add it to your plugin's dependencies to bundle it.
 ```
@@ -97,7 +97,7 @@ rollupOptions: {
     }
     
     // Workspace packages
-    if (id.startsWith("@workspace/") || id.includes("/packages/")) {
+    if (id.startsWith("@oc-mui/") || id.includes("/packages/")) {
       return true;
     }
     
@@ -138,12 +138,12 @@ If you need a package that's not available:
 - `react`, `react-dom`, `react/jsx-runtime`
 
 ### Workspace
-- `@workspace/plugin-system`
-- `@workspace/ui/components`
-- `@workspace/query`
-- `@workspace/router`
-- `@workspace/i18n`
-- `@workspace/utils`
+- `@oc-mui/plugin-system`
+- `@oc-mui/ui/components`
+- `@oc-mui/query`
+- `@oc-mui/router`
+- `@oc-mui/i18n`
+- `@oc-mui/utils`
 
 ### External
 - `lucide-react` (icons)

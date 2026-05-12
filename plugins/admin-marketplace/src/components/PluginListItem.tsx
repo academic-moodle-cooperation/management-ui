@@ -1,7 +1,7 @@
 import { Check, Circle, CirclePlus, Loader2, Package, PowerOff, ShieldCheck } from "lucide-react";
 import React from "react";
 
-import { Badge, Button } from "@workspace/ui/components";
+import { Badge, Button } from "@oc-mui/ui/components";
 
 // ---------------------------------------------------------------------------
 // Bundled / local plugin row

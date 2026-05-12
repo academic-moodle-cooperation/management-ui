@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 
-import type { PluginManager } from "@workspace/plugin-system";
+import type { PluginManager } from "@oc-mui/plugin-system";
 
 import { PluginExplorer, type DiscoveredPlugin, type PluginConflict } from "../services/plugin-explorer";
 import { registryFetcher, type RegistryPlugin } from "../services/registry-fetcher";

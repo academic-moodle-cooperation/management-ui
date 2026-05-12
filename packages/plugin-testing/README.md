@@ -1,6 +1,6 @@
-# @workspace/plugin-testing
+# @oc-mui/plugin-testing
 
-Contract-test harness for plugins that target the `@workspace/plugin-system`
+Contract-test harness for plugins that target the `@oc-mui/plugin-system`
 runtime. Boots a minimal manager with the three built-in plugins
 (`objectRegistry`, `renderer`, `appRegistry`), registers the plugin under
 test, and returns a small set of `expect*` assertion helpers tailored to the
@@ -10,7 +10,7 @@ Manifest 1.1 and Runtime API 1.0 contracts documented in
 ## Public API
 
 ```ts
-import { loadPluginInHarness, readPluginManifest } from "@workspace/plugin-testing";
+import { loadPluginInHarness, readPluginManifest } from "@oc-mui/plugin-testing";
 ```
 
 - `loadPluginInHarness(plugin, options?)` — returns a `TestHarness` handle.
@@ -27,7 +27,7 @@ import {
   loadPluginInHarness,
   readPluginManifest,
   type TestHarness,
-} from "@workspace/plugin-testing";
+} from "@oc-mui/plugin-testing";
 import { myPlugin } from "./index";
 
 describe("my-plugin contract", () => {

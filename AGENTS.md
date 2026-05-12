@@ -8,13 +8,13 @@ This file is **not** a project tour. For architecture, package layers, and the g
 
 Before you finish a plugin-touching change:
 
-1. Plugin entry uses `createPlugin({...})` from `@workspace/plugin-system`. ✓
+1. Plugin entry uses `createPlugin({...})` from `@oc-mui/plugin-system`. ✓
 2. `plugin.json` exists at the plugin root with the [required Manifest 1.1 fields](docs/architecture/CONTRACTS.md#1-plugin-manifest-contract) (`id`, `name`, `version`, `description`, `author`, `namespace`) and an `extensionPoints` array. ✓
 3. Every extension point your `initialize()` populates also appears in `plugin.json`'s `extensionPoints`. ✓
 4. A `src/plugin.contract.test.ts` exists, copy-pasted from a sibling plugin and only the import line changed. ✓
-5. Plugin imports nothing from `apps/*`, `plugins/<other>/*`, or any external library not already wrapped behind a `@workspace/*` facade. ✓
+5. Plugin imports nothing from `apps/*`, `plugins/<other>/*`, or any external library not already wrapped behind a `@oc-mui/*` facade. ✓
 6. `pnpm verify` passes locally. ✓
-7. If a public `@workspace/*` API surface changed, you ran `pnpm api-check` and committed the regenerated `etc/<pkg>.api.md` *and* added a changeset. ✓
+7. If a public `@oc-mui/*` API surface changed, you ran `pnpm api-check` and committed the regenerated `etc/<pkg>.api.md` *and* added a changeset. ✓
 
 If any of those is unchecked, do not declare the change finished.
 
@@ -53,7 +53,7 @@ you have a real plugin.
 ## The plugin entry
 
 ```ts
-import { createPlugin, type PluginManager } from "@workspace/plugin-system";
+import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
 
 export const myPlugin = createPlugin({
   namespace: "my-namespace",  // kebab-case, no colons, matches plugin.json's `namespace`
@@ -95,7 +95,7 @@ import {
   loadPluginInHarness,
   readPluginManifest,
   type TestHarness,
-} from "@workspace/plugin-testing";
+} from "@oc-mui/plugin-testing";
 
 import { myPlugin } from "./index";
 
@@ -129,18 +129,18 @@ Run with `pnpm test:contract`. The full harness API is documented in [`packages/
 
 A plugin may import from:
 
-- `@workspace/*` packages
+- `@oc-mui/*` packages
 - itself (relative paths within the plugin dir)
 - `plugins/core` (a.k.a. `plugin-core`) — the canonical infrastructure plugin that ships the shared extension-point identifiers; allowed for every plugin
-- third-party libraries already used by `@workspace/*` (e.g., `react`, `lucide-react`, `zod`)
+- third-party libraries already used by `@oc-mui/*` (e.g., `react`, `lucide-react`, `zod`)
 
 A plugin must **not** import from:
 
 - `apps/shell` or `apps/playground` — apps consume plugins, not the other way around
 - any other plugin under `plugins/<name>/*` or `.local-plugins/<name>/*` — communicate via extension points instead
-- A library that has been wrapped behind a `@workspace/*` facade (e.g., import `@workspace/router`, never `@tanstack/react-router` directly; same for `@tanstack/react-query` → `@workspace/query`, `i18next` → `@workspace/i18n`, `jotai` → `@workspace/store`)
+- A library that has been wrapped behind a `@oc-mui/*` facade (e.g., import `@oc-mui/router`, never `@tanstack/react-router` directly; same for `@tanstack/react-query` → `@oc-mui/query`, `i18next` → `@oc-mui/i18n`, `jotai` → `@oc-mui/store`)
 
-The wrapper rule is enforced by `no-restricted-imports` in `@workspace/eslint-config/base.js`. The cross-plugin and cross-app rules are enforced by `eslint-plugin-boundaries` rules in the same config — see the comment block in `packages/eslint-config/base.js` for the full element/rule matrix. The boundaries rule today catches cross-plugin imports written as relative paths (`../../<other-plugin>/...`); workspace-package imports (`@workspace/plugin-<other>`) are not caught yet because of a resolver gap, tracked as a follow-up.
+The wrapper rule is enforced by `no-restricted-imports` in `@oc-mui/eslint-config/base.js`. The cross-plugin and cross-app rules are enforced by `eslint-plugin-boundaries` rules in the same config — see the comment block in `packages/eslint-config/base.js` for the full element/rule matrix. The boundaries rule today catches cross-plugin imports written as relative paths (`../../<other-plugin>/...`); workspace-package imports (`@oc-mui/plugin-<other>`) are not caught yet because of a resolver gap, tracked as a follow-up.
 
 ## Config — read your own slice, never anyone else's
 
@@ -149,7 +149,7 @@ Plugins declare their config schema once and consume it through `useConfig`:
 ```ts
 // src/config.ts — declare schema + defaults + reader
 import { z } from "zod";
-import { definePluginConfig } from "@workspace/query";
+import { definePluginConfig } from "@oc-mui/query";
 
 const schema = z.object({
   enabled: z.boolean().optional(),
@@ -177,11 +177,11 @@ No hex colors, no hardcoded font names, no raw spacing values in plugin code. Us
 
 - Translation namespaces are declared in `plugin.json`'s `i18nNamespaces` array (optional).
 - Locale files at `<plugin>/locales/<namespace>/<locale>.json`. The contract test's `expectI18nKeyParity` fails when locale files have mismatched key sets.
-- Reference keys with `t("namespace:key")` via `useTranslation` from `@workspace/i18n`.
+- Reference keys with `t("namespace:key")` via `useTranslation` from `@oc-mui/i18n`.
 
 ## Versioning a public-API change
 
-If your change touches a `@workspace/*` package's public surface (anything reachable through its `exports` field):
+If your change touches a `@oc-mui/*` package's public surface (anything reachable through its `exports` field):
 
 1. Make the code change.
 2. `pnpm api-check` regenerates the affected `etc/<pkg>.api.md`. Inspect the diff; commit it if the change was intentional.
@@ -196,8 +196,8 @@ This is the canonical command. It runs lint + type-check + build + unit tests + 
 
 If you only want a fast inner loop while iterating on one plugin:
 
-- `pnpm --filter @workspace/plugin-<name> test` — that plugin's unit tests
-- `pnpm --filter @workspace/plugin-<name> test:contract` — that plugin's contract test
+- `pnpm --filter @oc-mui/plugin-<name> test` — that plugin's unit tests
+- `pnpm --filter @oc-mui/plugin-<name> test:contract` — that plugin's contract test
 - `pnpm test:e2e:ui` — Playwright in interactive mode
 
 ## Where to find things

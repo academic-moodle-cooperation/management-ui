@@ -3,8 +3,8 @@ import {
   createLogoutRoute,
   createRoute,
   type AnyRoute,
-} from "@workspace/router";
-import { AppLoader } from "@workspace/ui/components";
+} from "@oc-mui/router";
+import { AppLoader } from "@oc-mui/ui/components";
 
 import { DefaultLandingComponent } from "../components/DefaultLandingComponent";
 

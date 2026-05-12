@@ -10,15 +10,15 @@
 - `react/jsx-runtime`
 
 ### Workspace Packages
-- `@workspace/plugin-system`
-- `@workspace/ui/components`
-- `@workspace/ui/components/icons`
-- `@workspace/ui/lib`
-- `@workspace/ui/lib/utils`
-- `@workspace/query`
-- `@workspace/router`
-- `@workspace/utils`
-- `@workspace/i18n`
+- `@oc-mui/plugin-system`
+- `@oc-mui/ui/components`
+- `@oc-mui/ui/components/icons`
+- `@oc-mui/ui/lib`
+- `@oc-mui/ui/lib/utils`
+- `@oc-mui/query`
+- `@oc-mui/router`
+- `@oc-mui/utils`
+- `@oc-mui/i18n`
 
 ### External Libraries
 - `lucide-react` - Icon library

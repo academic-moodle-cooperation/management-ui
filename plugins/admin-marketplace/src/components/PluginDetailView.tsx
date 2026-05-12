@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import React from "react";
 
-import { Badge, Button } from "@workspace/ui/components";
+import { Badge, Button } from "@oc-mui/ui/components";
 
 import type { PluginSource } from "../services/plugin-explorer";
 

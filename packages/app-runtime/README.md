@@ -1,4 +1,4 @@
-# @workspace/app-runtime
+# @oc-mui/app-runtime
 
 **Version:** 0.0.0  
 **Type:** Application Layer  
@@ -19,8 +19,8 @@ The `app-runtime` package provides the runtime infrastructure for standalone app
 **Out of Scope:**
 
 - Business logic (belongs in apps)
-- UI components (belongs in `@workspace/ui`)
-- Data fetching (belongs in `@workspace/query`)
+- UI components (belongs in `@oc-mui/ui`)
+- Data fetching (belongs in `@oc-mui/query`)
 - Routing definitions (belongs in apps)
 
 ## Architecture & Design Decisions
@@ -40,7 +40,7 @@ The `app-runtime` package provides the runtime infrastructure for standalone app
 Applications can run independently with full system context:
 
 ```typescript
-import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import { bootstrapStandaloneApp } from "@oc-mui/app-runtime";
 import App from "./App";
 
 bootstrapStandaloneApp(App, "root", {
@@ -63,7 +63,7 @@ This single call provides:
 Components adapt to execution context:
 
 ```typescript
-import { AdaptiveAppWrapper } from '@workspace/app-runtime';
+import { AdaptiveAppWrapper } from '@oc-mui/app-runtime';
 
 function App() {
   return (
@@ -159,7 +159,7 @@ function bootstrapStandaloneApp(
 **Example:**
 
 ```typescript
-import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import { bootstrapStandaloneApp } from "@oc-mui/app-runtime";
 import App from "./App";
 
 bootstrapStandaloneApp(App, "root", {
@@ -236,16 +236,16 @@ export interface AppRuntimeProviderProps {
 ### Dependency Graph
 
 ```
-@workspace/app-runtime
+@oc-mui/app-runtime
 ├── External Dependencies
 │   ├── react (peer) - UI framework
 │   ├── react-dom (peer) - DOM rendering
 │   └── @tanstack/react-router - Routing
 └── Workspace Dependencies
-    ├── @workspace/query - Data fetching
-    ├── @workspace/ui - Component library
-    ├── @workspace/plugin-system - Plugin infrastructure
-    └── @workspace/router - Routing configuration
+    ├── @oc-mui/query - Data fetching
+    ├── @oc-mui/ui - Component library
+    ├── @oc-mui/plugin-system - Plugin infrastructure
+    └── @oc-mui/router - Routing configuration
 ```
 
 ### Dependency Layer
@@ -268,10 +268,10 @@ export interface AppRuntimeProviderProps {
 
 ### Why These Dependencies?
 
-- **@workspace/query:** Provides QueryProvider for data fetching context
-- **@workspace/ui:** Provides theme and UI context
-- **@workspace/plugin-system:** Provides PluginProvider for extension points
-- **@workspace/router:** Provides RouterProvider for navigation
+- **@oc-mui/query:** Provides QueryProvider for data fetching context
+- **@oc-mui/ui:** Provides theme and UI context
+- **@oc-mui/plugin-system:** Provides PluginProvider for extension points
+- **@oc-mui/router:** Provides RouterProvider for navigation
 - **@tanstack/react-router:** Direct dependency for router creation
 
 ### Replacement Strategy
@@ -292,7 +292,7 @@ To replace this package:
 
 ```typescript
 // apps/management-ui-series/src/main.tsx
-import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import { bootstrapStandaloneApp } from "@oc-mui/app-runtime";
 import App from "./App";
 
 const config = {
@@ -307,7 +307,7 @@ bootstrapStandaloneApp(App, "root", config);
 
 ```typescript
 // apps/management-ui-series/src/App.tsx
-import { AdaptiveAppWrapper } from '@workspace/app-runtime';
+import { AdaptiveAppWrapper } from '@oc-mui/app-runtime';
 import { SeriesList } from './components/SeriesList';
 
 function App() {
@@ -328,7 +328,7 @@ export default App;
 
 ```typescript
 // Inside app component - query context available
-import { useSeries } from '@workspace/query';
+import { useSeries } from '@oc-mui/query';
 
 function SeriesList() {
   const { data, isLoading } = useSeries();
@@ -351,7 +351,7 @@ function SeriesList() {
 
 ```typescript
 // Development entry point
-import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import { bootstrapStandaloneApp } from "@oc-mui/app-runtime";
 import App from "./App";
 
 // Run independently at dedicated port
@@ -386,7 +386,7 @@ Test provider composition and configuration:
 
 ```typescript
 import { render } from '@testing-library/react';
-import { AppRuntimeProvider } from '@workspace/app-runtime';
+import { AppRuntimeProvider } from '@oc-mui/app-runtime';
 
 describe('AppRuntimeProvider', () => {
   it('provides plugin context', () => {
@@ -501,10 +501,10 @@ pnpm clean        # Clean artifacts
 
 ## Related Packages
 
-- [`@workspace/providers`](/packages/providers/README.md) - Used by core shell for integrated mode
-- [`@workspace/query`](/packages/query/README.md) - Provides data fetching context
-- [`@workspace/router`](/packages/router/README.md) - Provides routing configuration
-- [`@workspace/plugin-system`](/packages/plugin-system/docs/README.md) - Provides plugin infrastructure
+- [`@oc-mui/providers`](/packages/providers/README.md) - Used by core shell for integrated mode
+- [`@oc-mui/query`](/packages/query/README.md) - Provides data fetching context
+- [`@oc-mui/router`](/packages/router/README.md) - Provides routing configuration
+- [`@oc-mui/plugin-system`](/packages/plugin-system/docs/README.md) - Provides plugin infrastructure
 
 ## Further Reading
 

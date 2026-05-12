@@ -1,6 +1,6 @@
-import { i18next } from "@workspace/i18n";
-import { ComponentResolver } from "@workspace/plugin-system";
-import { Link } from "@workspace/router";
+import { i18next } from "@oc-mui/i18n";
+import { ComponentResolver } from "@oc-mui/plugin-system";
+import { Link } from "@oc-mui/router";
 
 /**
  * Component to display when no rows match the filter criteria

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { usePluginTranslation } from "@workspace/i18n";
+import { usePluginTranslation } from "@oc-mui/i18n";
 
 /**
  * Default Footer Component

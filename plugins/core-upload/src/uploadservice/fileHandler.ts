@@ -1,4 +1,4 @@
-import type { UploadFileBlob, UploadListType } from "@workspace/store";
+import type { UploadFileBlob, UploadListType } from "@oc-mui/store";
 
 const useFileHandler = (
   files: FileList,

@@ -37,8 +37,8 @@ The `registry.json` file follows this structure:
       "homepageUrl": "https://plugin-website.com",
       "license": "MIT",
       "workspaceDependencies": {
-        "@workspace/plugin-system": ">=1.0.0",
-        "@workspace/ui": ">=1.0.0"
+        "@oc-mui/plugin-system": ">=1.0.0",
+        "@oc-mui/ui": ">=1.0.0"
       },
       "verified": false,
       "downloads": 0,
@@ -68,7 +68,7 @@ The `registry.json` file follows this structure:
 - `repositoryUrl` - GitHub/GitLab repository URL
 - `homepageUrl` - Plugin homepage
 - `license` - License identifier (MIT, Apache-2.0, etc.)
-- `workspaceDependencies` - Version constraints for `@workspace/*` packages
+- `workspaceDependencies` - Version constraints for `@oc-mui/*` packages
 - `verified` - Whether plugin is verified by maintainers (default: `false`)
 - `downloads` - Download count (for statistics)
 - `rating` - Rating (0-5)
@@ -85,7 +85,7 @@ The `registry.json` file follows this structure:
 
 2. **Your plugin must follow the format:**
    - Must export a default plugin object
-   - Must use external dependencies (react, @workspace/*)
+   - Must use external dependencies (react, @oc-mui/*)
    - Must be an ES module (.mjs)
 
 ### Steps to Add Your Plugin
@@ -106,7 +106,7 @@ The `registry.json` file follows this structure:
      "url": "https://cdn.jsdelivr.net/gh/your-org/your-plugin@v1.0.0/dist/plugin.mjs",
      "category": "feature",
      "workspaceDependencies": {
-       "@workspace/plugin-system": ">=1.0.0"
+       "@oc-mui/plugin-system": ">=1.0.0"
      }
    }
    ```
@@ -170,8 +170,8 @@ Plugins must specify `workspaceDependencies` to ensure compatibility:
 ```json
 {
   "workspaceDependencies": {
-    "@workspace/plugin-system": ">=1.0.0",
-    "@workspace/ui": ">=1.0.0"
+    "@oc-mui/plugin-system": ">=1.0.0",
+    "@oc-mui/ui": ">=1.0.0"
   }
 }
 ```
@@ -255,7 +255,7 @@ If you want to remove your plugin from the registry:
   "url": "https://cdn.jsdelivr.net/gh/johndoe/simple-plugin@v1.0.0/dist/plugin.mjs",
   "category": "feature",
   "workspaceDependencies": {
-    "@workspace/plugin-system": ">=1.0.0"
+    "@oc-mui/plugin-system": ">=1.0.0"
   }
 }
 ```
@@ -280,9 +280,9 @@ If you want to remove your plugin from the registry:
   "homepageUrl": "https://analytics.example.com",
   "license": "MIT",
   "workspaceDependencies": {
-    "@workspace/plugin-system": ">=1.0.0",
-    "@workspace/ui": ">=1.0.0",
-    "@workspace/query": ">=1.0.0"
+    "@oc-mui/plugin-system": ">=1.0.0",
+    "@oc-mui/ui": ">=1.0.0",
+    "@oc-mui/query": ">=1.0.0"
   },
   "verified": true,
   "downloads": 150,

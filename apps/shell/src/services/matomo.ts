@@ -1,4 +1,4 @@
-import type { MatomoConfig } from "@workspace/ui-config";
+import type { MatomoConfig } from "@oc-mui/ui-config";
 
 type MatomoCommand = [string, ...unknown[]] | [() => void];
 

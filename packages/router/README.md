@@ -1,4 +1,4 @@
-# @workspace/router
+# @oc-mui/router
 
 **Version:** 0.0.0  
 **Type:** Foundation / Integration Layer  
@@ -6,19 +6,19 @@
 
 ## Purpose & Scope
 
-The `@workspace/router` package provides the routing infrastructure for the Management UI. Built on **TanStack Router**, it handles navigation, route-based data loading, and robust authentication/authorization protection.
+The `@oc-mui/router` package provides the routing infrastructure for the Management UI. Built on **TanStack Router**, it handles navigation, route-based data loading, and robust authentication/authorization protection.
 
-It centralizes the routing logic and provides a bridge between the data layer (`@workspace/query`) and the UI navigation.
+It centralizes the routing logic and provides a bridge between the data layer (`@oc-mui/query`) and the UI navigation.
 
 ### Stability contract
 
-This package is the **only place in the monorepo that is allowed to import from `@tanstack/react-router`**. Apps, plugins and other packages must import routing primitives (`createRouter`, `Link`, `Outlet`, `AnyRouter`, ...) from `@workspace/router`.
+This package is the **only place in the monorepo that is allowed to import from `@tanstack/react-router`**. Apps, plugins and other packages must import routing primitives (`createRouter`, `Link`, `Outlet`, `AnyRouter`, ...) from `@oc-mui/router`.
 
 The rule is enforced by ESLint (`no-restricted-imports` in `packages/eslint-config/base.js`) with an explicit exception for this package.
 
-Why it matters: if we ever need to replace or upgrade the router implementation across a major version, we can do so by changing the internals of `@workspace/router` without breaking plugins or apps. Deep imports into the underlying router would make that impossible.
+Why it matters: if we ever need to replace or upgrade the router implementation across a major version, we can do so by changing the internals of `@oc-mui/router` without breaking plugins or apps. Deep imports into the underlying router would make that impossible.
 
-> Until we have a typed facade, the public types re-exported from here are structurally identical to TanStack Router's types. Treat the API surface as "owned by `@workspace/router`"; we may stabilize it further over time.
+> Until we have a typed facade, the public types re-exported from here are structurally identical to TanStack Router's types. Treat the API surface as "owned by `@oc-mui/router`"; we may stabilize it further over time.
 
 **In Scope:**
 
@@ -30,9 +30,9 @@ Why it matters: if we ever need to replace or upgrade the router implementation 
 
 **Out of Scope:**
 
-- UI navigation components like sidebars or breadcrumbs (belongs in `@workspace/ui`).
+- UI navigation components like sidebars or breadcrumbs (belongs in `@oc-mui/ui`).
 - Defining the actual application routes (belongs in the specific apps, e.g., `management-ui-core`).
-- Low-level data fetching logic (belongs in `@workspace/query`).
+- Low-level data fetching logic (belongs in `@oc-mui/query`).
 
 ## Architecture & Design Decisions
 
@@ -64,7 +64,7 @@ The `AuthProvider` maintains the `user` object and `isAuthenticated` flag. It is
 
 ```
 ┌─────────────────────────────────────────┐
-│ @workspace/router Architecture          │
+│ @oc-mui/router Architecture          │
 ├─────────────────────────────────────────┤
 │ [ RouterProvider (TanStack) ]           │
 │         ↓                               │
@@ -114,12 +114,12 @@ export { Link, useNavigate, useRouter, createRoute, createRouter } from "@tansta
 ### Dependency Graph
 
 ```
-@workspace/router
+@oc-mui/router
 ├── External Dependencies
 │   ├── @tanstack/react-router (^1.45.0)
 │   └── @tanstack/router-core (^1.120.10)
 └── Workspace Dependencies
-    └── @workspace/query - Used for auth state and type definitions (UserQuery)
+    └── @oc-mui/query - Used for auth state and type definitions (UserQuery)
 ```
 
 ### Dependency Layer
@@ -137,7 +137,7 @@ export { Link, useNavigate, useRouter, createRoute, createRouter } from "@tansta
 ### Defining a Protected Route
 
 ```typescript
-import { createRoute, authGuard } from "@workspace/router";
+import { createRoute, authGuard } from "@oc-mui/router";
 import { RootLayout } from "./layout";
 
 export const dashboardRoute = createRoute({
@@ -151,7 +151,7 @@ export const dashboardRoute = createRoute({
 ### Checking Auth in a Component
 
 ```typescript
-import { useAuth } from "@workspace/router";
+import { useAuth } from "@oc-mui/router";
 
 const UserProfile = () => {
   const { user, isAuthenticated } = useAuth();
@@ -189,13 +189,13 @@ packages/router/
 
 ## Related Packages
 
-- [`@workspace/query`](/packages/query/README.md) - Provides the user data for authentication.
-- [`@workspace/app-runtime`](/packages/app-runtime/README.md) - Integrates the router into the main application shell.
+- [`@oc-mui/query`](/packages/query/README.md) - Provides the user data for authentication.
+- [`@oc-mui/app-runtime`](/packages/app-runtime/README.md) - Integrates the router into the main application shell.
 
 ---
 
 ## Contributing
 
-1. When adding auth features, ensure they are compatible with the existing `UserQuery` type from `@workspace/query`.
+1. When adding auth features, ensure they are compatible with the existing `UserQuery` type from `@oc-mui/query`.
 2. Follow TanStack Router's best practices for type-safe routing.
 3. Update the `authGuard` logic if new authorization requirements (e.g., permissions instead of roles) are introduced.

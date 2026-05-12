@@ -60,7 +60,7 @@ implementations/[feature]/
 
 ```typescript
 // plugins/[university]/implementations/[feature]/index.ts
-import { PluginManager } from '@workspace/plugin-system';
+import { PluginManager } from '@oc-mui/plugin-system';
 import { [ComponentName] } from './components/[ComponentName]';
 
 export function register(manager: PluginManager) {
@@ -82,7 +82,7 @@ export function register(manager: PluginManager) {
 ```typescript
 // plugins/[university]/implementations/[feature]/components/[ComponentName].tsx
 import React from 'react';
-import { useTranslation } from '@workspace/i18n';
+import { useTranslation } from '@oc-mui/i18n';
 
 export interface [ComponentName]Props {
   // Props interface
@@ -198,9 +198,9 @@ const styles = {
 
 ### Workspace Dependencies
 
-- `@workspace/ui` - [Which components used]
-- `@workspace/i18n` - Translation support
-- `@workspace/[other]` - [Purpose]
+- `@oc-mui/ui` - [Which components used]
+- `@oc-mui/i18n` - Translation support
+- `@oc-mui/[other]` - [Purpose]
 
 ### External Dependencies
 

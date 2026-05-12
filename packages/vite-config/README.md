@@ -1,4 +1,4 @@
-# @workspace/vite-config
+# @oc-mui/vite-config
 
 **Version:** 0.0.0  
 **Type:** Core Infrastructure / Build Tooling  
@@ -6,7 +6,7 @@
 
 ## Purpose & Scope
 
-The `@workspace/vite-config` package provides centralized, reusable Vite configurations for all applications, packages, and plugins within the monorepo. It ensures a consistent build process, dev server behavior, and optimized production output across the entire platform.
+The `@oc-mui/vite-config` package provides centralized, reusable Vite configurations for all applications, packages, and plugins within the monorepo. It ensures a consistent build process, dev server behavior, and optimized production output across the entire platform.
 
 **In Scope:**
 
@@ -32,7 +32,7 @@ The `@workspace/vite-config` package provides centralized, reusable Vite configu
 ### Key Concepts
 
 #### Base Configuration
-Contains the foundation: React SWC plugin, Tailwind CSS integration, and path aliases (like `@workspace/*` and `@/*`).
+Contains the foundation: React SWC plugin, Tailwind CSS integration, and path aliases (like `@oc-mui/*` and `@/*`).
 
 #### Shell vs. Plugin Config
 - **Shell Config:** Optimized for building the main entry point application.
@@ -62,14 +62,14 @@ The foundational Vite configuration object.
 ### Dependency Graph
 
 ```
-@workspace/vite-config
+@oc-mui/vite-config
 ├── External Dependencies
 │   ├── vite (^6.3.5)
 │   ├── @vitejs/plugin-react-swc (^3.9.0)
 │   ├── @tailwindcss/vite (^4.1.7)
 │   └── vite-plugin-static-copy (^1.0.6)
 └── Workspace Dependencies
-    └── @workspace/utils - For logging and port logic
+    └── @oc-mui/utils - For logging and port logic
 ```
 
 ### Dependency Layer
@@ -82,7 +82,7 @@ The foundational Vite configuration object.
 
 ```typescript
 import { defineConfig } from "vite";
-import { createPluginConfig } from "@workspace/vite-config";
+import { createPluginConfig } from "@oc-mui/vite-config";
 
 export default defineConfig(
   createPluginConfig({
@@ -95,7 +95,7 @@ export default defineConfig(
 ### Customizing the Proxy
 
 ```typescript
-import { devProxy } from "@workspace/vite-config/proxy";
+import { devProxy } from "@oc-mui/vite-config/proxy";
 
 // Used within a vite.config.ts
 proxy: {

@@ -84,9 +84,9 @@ Plugins evolve through distinct stages. The tooling supports each transition:
 │                                                              │
 │  External Dependencies (NOT bundled):                        │
 │  - react, react-dom                                          │
-│  - @workspace/plugin-system                                  │
-│  - @workspace/ui                                             │
-│  - @workspace/query                                          │
+│  - @oc-mui/plugin-system                                  │
+│  - @oc-mui/ui                                             │
+│  - @oc-mui/query                                          │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -129,8 +129,8 @@ Update `plugin.json` (the canonical manifest — see [schema](../packages/plugin
   "icon": "Star",
   "tags": ["analytics", "dashboard"],
   "workspaceDependencies": {
-    "@workspace/plugin-system": ">=1.0.0",
-    "@workspace/ui": ">=1.0.0"
+    "@oc-mui/plugin-system": ">=1.0.0",
+    "@oc-mui/ui": ">=1.0.0"
   }
 }
 ```
@@ -140,7 +140,7 @@ Update `plugin.json` (the canonical manifest — see [schema](../packages/plugin
 Edit `src/index.ts`:
 
 ```typescript
-import { createPlugin } from "@workspace/plugin-system";
+import { createPlugin } from "@oc-mui/plugin-system";
 import { MyView } from "./views/MyView";
 
 export default createPlugin({
@@ -264,7 +264,7 @@ export * from "./my-org-plugin"; // local A1 plugin
 
 **Note:** The template includes a root `index.ts` that re-exports from `./src`, so you can import from the plugin directory directly. TypeScript will resolve types correctly through this forwarder.
 
-This makes the plugin visible as part of `@workspace/plugins`, so the existing loader (`loadPlugins.ts`) can pick it up.
+This makes the plugin visible as part of `@oc-mui/plugins`, so the existing loader (`loadPlugins.ts`) can pick it up.
 
 #### A1.3 Adjust namespace, route and sidebar entry
 
@@ -364,7 +364,7 @@ This creates:
 - `dist/my-plugin.css` - The compiled Tailwind CSS (if you use Tailwind)
 
 **Note:** The build uses the plugin's own `vite.config.ts`, which:
-- Externalizes React and `@workspace/*` packages (provided by host)
+- Externalizes React and `@oc-mui/*` packages (provided by host)
 - Bundles your plugin code and styles
 - Outputs a single `.mjs` file ready for remote loading
 
@@ -601,8 +601,8 @@ In the new repository, ensure your plugin is self-contained:
   "css": "dist/my-org-plugin.css",
   "repositoryUrl": "https://github.com/your-org/my-org-plugin",
   "workspaceDependencies": {
-    "@workspace/plugin-system": ">=1.0.0",
-    "@workspace/ui": ">=1.0.0"
+    "@oc-mui/plugin-system": ">=1.0.0",
+    "@oc-mui/ui": ">=1.0.0"
   }
 }
 ```
@@ -996,8 +996,8 @@ Every plugin must have a `plugin.json` in its root directory. This is the source
   "license": "MIT",
   "repositoryUrl": "https://github.com/your-org/your-plugin",
   "workspaceDependencies": {
-    "@workspace/plugin-system": ">=1.0.0",
-    "@workspace/ui": ">=1.0.0"
+    "@oc-mui/plugin-system": ">=1.0.0",
+    "@oc-mui/ui": ">=1.0.0"
   }
 }
 ```
@@ -1023,7 +1023,7 @@ See the [Plugin Manifest Schema](../packages/plugin-system/src/schemas/plugin.sc
 
 ## Using Workspace Packages
 
-Community plugins have access to all `@workspace/*` packages. These are provided by the host application at runtime and should NOT be bundled with your plugin.
+Community plugins have access to all `@oc-mui/*` packages. These are provided by the host application at runtime and should NOT be bundled with your plugin.
 
 **⚠️ Important:** See [Available Packages Guide](./COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md) for a complete list of packages you can import. Not all npm packages are available - only those explicitly exposed by the host application.
 
@@ -1038,13 +1038,13 @@ import {
   Input,
   Select,
   // ... all shadcn/ui components
-} from "@workspace/ui/components";
+} from "@oc-mui/ui/components";
 ```
 
 ### Data Fetching
 
 ```typescript
-import { useGetMyEventsQuery, useGetSeriesListQuery } from "@workspace/query";
+import { useGetMyEventsQuery, useGetSeriesListQuery } from "@oc-mui/query";
 
 function MyComponent() {
   const { data, isLoading, error } = useGetMyEventsQuery({ limit: 20 });
@@ -1059,7 +1059,7 @@ function MyComponent() {
 ### Routing
 
 ```typescript
-import { useNavigate, Link } from "@workspace/router";
+import { useNavigate, Link } from "@oc-mui/router";
 
 function MyComponent() {
   const navigate = useNavigate();
@@ -1075,7 +1075,7 @@ function MyComponent() {
 ### Translations
 
 ```typescript
-import { useI18n } from "@workspace/i18n";
+import { useI18n } from "@oc-mui/i18n";
 
 function MyComponent() {
   const { t } = useI18n();
@@ -1194,8 +1194,8 @@ Define compatible versions in your `plugin.json`:
 {
   "apiVersion": ">=1.0.0",
   "workspaceDependencies": {
-    "@workspace/plugin-system": ">=1.0.0",
-    "@workspace/ui": ">=1.0.0"
+    "@oc-mui/plugin-system": ">=1.0.0",
+    "@oc-mui/ui": ">=1.0.0"
   }
 }
 ```
@@ -1250,7 +1250,7 @@ Submit a PR to the [Management UI Registry](https://github.com/opencast/manageme
   "category": "feature",
   "tags": ["tag1", "tag2"],
   "workspaceDependencies": {
-    "@workspace/plugin-system": ">=1.0.0"
+    "@oc-mui/plugin-system": ">=1.0.0"
   }
 }
 ```
@@ -1285,7 +1285,7 @@ This will:
   "icon": "Puzzle",
   "tags": ["example"],
   "workspaceDependencies": {
-    "@workspace/plugin-system": ">=1.0.0"
+    "@oc-mui/plugin-system": ">=1.0.0"
   },
   "verified": false
 }
@@ -1402,7 +1402,7 @@ rollupOptions: {
 ### Analytics Dashboard Plugin
 
 ```typescript
-import { createPlugin } from "@workspace/plugin-system";
+import { createPlugin } from "@oc-mui/plugin-system";
 import { BarChart3 } from "lucide-react";
 import { AnalyticsDashboard } from "./views/AnalyticsDashboard";
 
@@ -1436,7 +1436,7 @@ export default createPlugin({
 ### Theme Plugin
 
 ```typescript
-import { createPlugin } from "@workspace/plugin-system";
+import { createPlugin } from "@oc-mui/plugin-system";
 
 export default createPlugin({
   namespace: "my-theme",

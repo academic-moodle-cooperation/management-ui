@@ -28,7 +28,7 @@ export const AVAILABLE_THEMES: ThemeDefinition[] = [
   {
     id: "example-theme",
     name: "Example",
-    description: "Neutral reference theme shipped with @workspace/plugin-example",
+    description: "Neutral reference theme shipped with @oc-mui/plugin-example",
     previewUrl: "/management-ui/plugins/example/example.css",
     category: "Example",
     author: "Management UI",

@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/eslint-config",
+  "name": "@oc-mui/eslint-config",
   "version": "1.0.0",
   "license": "ECL-2.0",
   "type": "module",

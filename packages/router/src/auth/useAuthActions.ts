@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { useAppConfig } from "@workspace/query";
+import { useAppConfig } from "@oc-mui/query";
 
 export interface AuthActions {
   login: (redirectTo?: string) => void;

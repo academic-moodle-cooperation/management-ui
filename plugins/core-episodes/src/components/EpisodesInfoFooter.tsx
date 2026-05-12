@@ -1,10 +1,10 @@
 import React from "react";
 
-import { useI18n } from "@workspace/i18n";
-import { useUpdateEventMutation } from "@workspace/query";
-import type { GetEventByIdInputFieldsQuery, EventsDataFragment } from "@workspace/query";
-import { Button, toast } from "@workspace/ui/components";
-import { normalizeMetadataObject, logger } from "@workspace/utils";
+import { useI18n } from "@oc-mui/i18n";
+import { useUpdateEventMutation } from "@oc-mui/query";
+import type { GetEventByIdInputFieldsQuery, EventsDataFragment } from "@oc-mui/query";
+import { Button, toast } from "@oc-mui/ui/components";
+import { normalizeMetadataObject, logger } from "@oc-mui/utils";
 
 type EpisodesUpdateData = {
   [T: string]: string | string[];

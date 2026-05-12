@@ -187,7 +187,7 @@ Dies generiert:
 
 ```typescript
 // plugins/feedback-plugin/src/views/FeedbackView.tsx
-import { useSubmitFeedbackMutation } from "@workspace/query";
+import { useSubmitFeedbackMutation } from "@oc-mui/query";
 
 const FeedbackView = () => {
   const submitFeedback = useSubmitFeedbackMutation();

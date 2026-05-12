@@ -521,7 +521,7 @@ The core plugin exports app-related implementations:
 ### Episodes Navigation
 
 ```typescript
-import { episodesNavImplementation } from "@workspace/plugins";
+import { episodesNavImplementation } from "@oc-mui/plugins";
 
 // Registers: sidebar:nav-items/episodes
 // Path: /episodes
@@ -531,7 +531,7 @@ import { episodesNavImplementation } from "@workspace/plugins";
 ### Series Navigation
 
 ```typescript
-import { seriesNavImplementation } from "@workspace/plugins";
+import { seriesNavImplementation } from "@oc-mui/plugins";
 
 // Registers: sidebar:nav-items/series
 // Path: /series
@@ -541,7 +541,7 @@ import { seriesNavImplementation } from "@workspace/plugins";
 ### Upload Navigation
 
 ```typescript
-import { uploadNavImplementation } from "@workspace/plugins";
+import { uploadNavImplementation } from "@oc-mui/plugins";
 
 // Registers: sidebar:nav-items/upload
 // Path: /upload
@@ -551,7 +551,7 @@ import { uploadNavImplementation } from "@workspace/plugins";
 ### Series Create Action
 
 ```typescript
-import { seriesCreateImplementation } from "@workspace/plugins";
+import { seriesCreateImplementation } from "@oc-mui/plugins";
 
 // Registers: series:table:toolbar-end-actions/create-series
 // Button position: right of reload in series toolbar
@@ -599,7 +599,7 @@ is `false`. To deactivate the whole series plugin instead, set
 The core plugin exports reusable components for university implementations:
 
 ```typescript
-import { LangSwitcher, LoginButton } from '@workspace/plugins';
+import { LangSwitcher, LoginButton } from '@oc-mui/plugins';
 
 // Use in custom headers
 const MyHeader = () => (
@@ -616,7 +616,7 @@ const MyHeader = () => (
 ### Basic Implementation Pattern
 
 ```typescript
-import { createPlugin, type PluginManager } from "@workspace/plugin-system";
+import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
 
 export const myUniversityPlugin = createPlugin({
   namespace: "my-university",
@@ -665,8 +665,8 @@ export const myUniversityConfig = createPlugin({
 
 ```json
 {
-  "@workspace/plugin-system": "workspace:*",
-  "@workspace/ui": "workspace:*",
+  "@oc-mui/plugin-system": "workspace:*",
+  "@oc-mui/ui": "workspace:*",
   "react": "^18.0.0 || ^19.0.0"
 }
 ```

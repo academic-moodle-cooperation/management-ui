@@ -83,13 +83,13 @@ Create `package.json`:
     "check-types": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@workspace/app-runtime": "workspace:*",
-    "@workspace/i18n": "workspace:*",
-    "@workspace/plugin-system": "workspace:*",
-    "@workspace/query": "workspace:*",
-    "@workspace/router": "workspace:*",
-    "@workspace/ui": "workspace:*",
-    "@workspace/vite-config": "workspace:*",
+    "@oc-mui/app-runtime": "workspace:*",
+    "@oc-mui/i18n": "workspace:*",
+    "@oc-mui/plugin-system": "workspace:*",
+    "@oc-mui/query": "workspace:*",
+    "@oc-mui/router": "workspace:*",
+    "@oc-mui/ui": "workspace:*",
+    "@oc-mui/vite-config": "workspace:*",
     "@tanstack/react-router": "^1.115.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
@@ -100,8 +100,8 @@ Create `package.json`:
     "@types/react": "^18.0.0 || ^19.0.0",
     "@types/react-dom": "^18.0.0 || ^19.0.0",
     "@vitejs/plugin-react-swc": "^3.9.0",
-    "@workspace/eslint-config": "workspace:*",
-    "@workspace/typescript-config": "workspace:*",
+    "@oc-mui/eslint-config": "workspace:*",
+    "@oc-mui/typescript-config": "workspace:*",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.20.0",
     "postcss": "^8.5.3",
@@ -118,7 +118,7 @@ Create `tsconfig.json`:
 
 ```json
 {
-  "extends": "@workspace/typescript-config/react-application.json",
+  "extends": "@oc-mui/typescript-config/react-application.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
@@ -136,7 +136,7 @@ Create `vite.config.ts`:
 
 ```typescript
 import { defineConfig } from 'vite';
-import { createAppConfig } from '@workspace/vite-config';
+import { createAppConfig } from '@oc-mui/vite-config';
 
 // https://vitejs.dev/config/
 export default defineConfig(
@@ -183,7 +183,7 @@ apps/management-ui-[app-name]/
 Create `src/main.tsx` - this enables standalone mode:
 
 ```typescript
-import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import { bootstrapStandaloneApp } from "@oc-mui/app-runtime";
 import App from "./App";
 
 const config = {
@@ -208,8 +208,8 @@ bootstrapStandaloneApp(App, "root", config);
 Create `src/App.tsx`:
 
 ```typescript
-import { AdaptiveAppWrapper } from '@workspace/app-runtime';
-import { Button } from '@workspace/ui';
+import { AdaptiveAppWrapper } from '@oc-mui/app-runtime';
+import { Button } from '@oc-mui/ui';
 
 function App() {
   return (
@@ -274,7 +274,7 @@ export default {
 Create `eslint.config.js`:
 
 ```javascript
-import reactInternal from "@workspace/eslint-config/react-internal";
+import reactInternal from "@oc-mui/eslint-config/react-internal";
 
 export default [...reactInternal];
 ```
@@ -309,8 +309,8 @@ Now implement your application features:
 
 ```typescript
 // src/components/ExampleList.tsx
-import { Button } from '@workspace/ui';
-import { useTranslation } from '@workspace/i18n';
+import { Button } from '@oc-mui/ui';
+import { useTranslation } from '@oc-mui/i18n';
 
 export function ExampleList() {
   const { t } = useTranslation('[app-name]');
@@ -361,8 +361,8 @@ Allow universities to customize your app:
 
 ```typescript
 // In your component
-import { ComponentResolver } from '@workspace/plugin-system';
-import { DefaultEmptyState } from '@workspace/ui';
+import { ComponentResolver } from '@oc-mui/plugin-system';
+import { DefaultEmptyState } from '@oc-mui/ui';
 
 function ListView() {
   const items = []; // Your data
@@ -419,7 +419,7 @@ Create translation files in plugin packages or in i18n package:
 Use in components:
 
 ```typescript
-import { useTranslation } from '@workspace/i18n';
+import { useTranslation } from '@oc-mui/i18n';
 
 function Component() {
   const { t } = useTranslation('[app-name]');
@@ -599,7 +599,7 @@ git commit -m "feat(apps): add [app-name] application
 ### Pattern: Data Table App
 
 ```typescript
-import { DataTable } from '@workspace/ui';
+import { DataTable } from '@oc-mui/ui';
 import { useMyItems } from './hooks/useMyItems';
 
 function App() {
@@ -627,7 +627,7 @@ function App() {
 ### Pattern: Form-Based App
 
 ```typescript
-import { Button, Input } from '@workspace/ui';
+import { Button, Input } from '@oc-mui/ui';
 import { useState } from 'react';
 
 function App() {
@@ -711,7 +711,7 @@ function App() {
 
 1. Verify PostCSS configuration
 2. Check Tailwind CSS is imported
-3. Verify `@workspace/ui` is installed
+3. Verify `@oc-mui/ui` is installed
 4. Check browser dev tools for CSS issues
 
 ### Plugin Customizations Don't Appear

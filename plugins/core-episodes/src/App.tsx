@@ -1,7 +1,7 @@
-import { useI18n } from "@workspace/i18n";
-import { useGetSeriesNameByIdQuery } from "@workspace/query";
-import { useParams } from "@workspace/router";
-import { AppHeading, Container, Separator } from "@workspace/ui/components";
+import { useI18n } from "@oc-mui/i18n";
+import { useGetSeriesNameByIdQuery } from "@oc-mui/query";
+import { useParams } from "@oc-mui/router";
+import { AppHeading, Container, Separator } from "@oc-mui/ui/components";
 
 import { EpisodesTable } from "./components/EpisodesTable";
 

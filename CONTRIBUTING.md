@@ -91,7 +91,7 @@ Decide based on what the change does to the **package's public surface** — i.e
 | **Minor** | New exports, new optional parameters, a new method on a class, a new optional field on a public type. Existing consumers remain source- and binary-compatible. |
 | **Major** | A removed export, a renamed symbol, a changed signature (including a new required parameter), a behaviour change that an existing consumer would observe (e.g. an extension point's contract changes), or anything that breaks plugin-runtime API/manifest/theme/config compatibility. |
 
-Plugin runtime API contracts have a hard rule: **anything that changes the Plugin Runtime API observable to plugin authors → major bump of `@workspace/plugin-system`.** The host loader rejects plugins whose declared `apiVersion` major mismatches the host's `PLUGIN_API_VERSION`.
+Plugin runtime API contracts have a hard rule: **anything that changes the Plugin Runtime API observable to plugin authors → major bump of `@oc-mui/plugin-system`.** The host loader rejects plugins whose declared `apiVersion` major mismatches the host's `PLUGIN_API_VERSION`.
 
 ### Adding a changeset
 
@@ -117,7 +117,7 @@ Removing a public symbol is a major bump and requires a deprecation warning in t
 
 1.  **Mark it `@deprecated` in JSDoc** with a one-line reason and a pointer to the replacement.
 2.  **Keep the old symbol working for one full major cycle.** A symbol marked `@deprecated` in `1.x` may be removed only in `2.0.0`. Use a minor bump for the deprecation; the eventual removal is its own major changeset.
-3.  **Emit a runtime warning in dev** if the deprecated symbol is called. Use `logger.warn` (from `@workspace/utils`) so the message is captured by the same plumbing as other warnings; gate it behind `import.meta.env.DEV` so production callers don't pay the cost. This is encouraged, not mandatory — type-only deprecations (e.g. a renamed type) cannot warn.
+3.  **Emit a runtime warning in dev** if the deprecated symbol is called. Use `logger.warn` (from `@oc-mui/utils`) so the message is captured by the same plumbing as other warnings; gate it behind `import.meta.env.DEV` so production callers don't pay the cost. This is encouraged, not mandatory — type-only deprecations (e.g. a renamed type) cannot warn.
 4.  **Document the deprecation** in the changeset body so it lands in the package's changelog.
 
 Plugin authors get a one-major-cycle grace window: when the host bumps `PLUGIN_API_VERSION` major, plugins compiled against the previous major will be cleanly rejected with a "Plugin requires API major X, host provides Y" error from the loader.
@@ -137,7 +137,7 @@ git diff packages/*/etc/*.api.md
 
 CI runs `pnpm api-check:ci` (note the `:ci` suffix) which compares the generated reports against the committed snapshots and **fails the PR** if they differ. Authors who intentionally change the surface regenerate, commit the diff, and ship a matching changeset; authors who didn't intend to change the surface get an immediate signal that they did.
 
-Instrumented packages: `@workspace/plugin-system`, `@workspace/router`, `@workspace/query`, `@workspace/i18n`, `@workspace/store`, `@workspace/ui-config` — the six contract-stable packages declared in [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md). The cross-package coupling visible in each report (e.g. `query`'s report imports types from `plugin-system` and `ui-config`) is intentional: when an upstream contract changes, every consumer's snapshot diff surfaces it.
+Instrumented packages: `@oc-mui/plugin-system`, `@oc-mui/router`, `@oc-mui/query`, `@oc-mui/i18n`, `@oc-mui/store`, `@oc-mui/ui-config` — the six contract-stable packages declared in [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md). The cross-package coupling visible in each report (e.g. `query`'s report imports types from `plugin-system` and `ui-config`) is intentional: when an upstream contract changes, every consumer's snapshot diff surfaces it.
 
 ## 📥 Submitting a Pull Request
 

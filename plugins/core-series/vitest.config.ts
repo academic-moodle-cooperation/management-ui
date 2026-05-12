@@ -1,8 +1,8 @@
 import { defineConfig } from "vitest/config";
 
-// The legacy `@workspace/*` alias rewrote bare specifiers to a flat directory
-// path, which silently broke subpath imports like `@workspace/ui/lib` and
-// stops `@workspace/plugin-testing` from resolving via its `exports` map.
+// The legacy `@oc-mui/*` alias rewrote bare specifiers to a flat directory
+// path, which silently broke subpath imports like `@oc-mui/ui/lib` and
+// stops `@oc-mui/plugin-testing` from resolving via its `exports` map.
 // Drop it so vitest follows pnpm's workspace symlinks and each package's
 // `exports` field — same resolution path used in production builds.
 export default defineConfig({

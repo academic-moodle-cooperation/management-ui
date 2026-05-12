@@ -1,8 +1,8 @@
 import { useReducer, useMemo, useCallback, useEffect } from "react";
 
-import { atomWithStorage, useAtomValue, useSetAtom } from "@workspace/store";
-import type { OnChangeFn, SortingState, VisibilityState } from "@workspace/ui/components";
-import { logger } from "@workspace/utils";
+import { atomWithStorage, useAtomValue, useSetAtom } from "@oc-mui/store";
+import type { OnChangeFn, SortingState, VisibilityState } from "@oc-mui/ui/components";
+import { logger } from "@oc-mui/utils";
 
 export interface TableBaseState {
   pageIndex: number;

@@ -1,4 +1,4 @@
-import { create } from "@workspace/store";
+import { create } from "@oc-mui/store";
 
 export type SeriesUpdateData = {
   [key: string]: string | string[];

@@ -34,18 +34,18 @@ export const createPluginAppViteConfig = (
     resolveAliases: {
       "@": path.resolve(invokerDir, "src"),
       // Minimal generic roots for workspace packages used in plugin code
-      "@workspace/ui/globals.css": path.resolve(
+      "@oc-mui/ui/globals.css": path.resolve(
         monorepoRootPath,
         "packages/ui/src/styles/globals.css",
       ),
-      "@workspace/i18n": path.resolve(monorepoRootPath, "packages/i18n/src"),
-      "@workspace/router": path.resolve(monorepoRootPath, "packages/router/src"),
-      "@workspace/plugin-system": path.resolve(monorepoRootPath, "packages/plugin-system/src"),
-      "@workspace/ui": path.resolve(monorepoRootPath, "packages/ui/src"),
-      "@workspace/query": path.resolve(monorepoRootPath, "packages/query/src"),
-      "@workspace/providers": path.resolve(monorepoRootPath, "packages/providers/src"),
-      "@workspace/utils": path.resolve(monorepoRootPath, "packages/utils/src"),
-      "@workspace/plugins": path.resolve(monorepoRootPath, "plugins"),
+      "@oc-mui/i18n": path.resolve(monorepoRootPath, "packages/i18n/src"),
+      "@oc-mui/router": path.resolve(monorepoRootPath, "packages/router/src"),
+      "@oc-mui/plugin-system": path.resolve(monorepoRootPath, "packages/plugin-system/src"),
+      "@oc-mui/ui": path.resolve(monorepoRootPath, "packages/ui/src"),
+      "@oc-mui/query": path.resolve(monorepoRootPath, "packages/query/src"),
+      "@oc-mui/providers": path.resolve(monorepoRootPath, "packages/providers/src"),
+      "@oc-mui/utils": path.resolve(monorepoRootPath, "packages/utils/src"),
+      "@oc-mui/plugins": path.resolve(monorepoRootPath, "plugins"),
     },
     serverOptions: {
       fs: {

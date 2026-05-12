@@ -1,8 +1,8 @@
 import { defineConfig } from "vitest/config";
 
-// Match the resolution behaviour used in production builds: no `@workspace/*`
+// Match the resolution behaviour used in production builds: no `@oc-mui/*`
 // alias rewriting, so vitest follows pnpm symlinks and each package's
-// `exports` map (which is what `@workspace/plugin-testing` relies on).
+// `exports` map (which is what `@oc-mui/plugin-testing` relies on).
 export default defineConfig({
   test: {
     globals: true,

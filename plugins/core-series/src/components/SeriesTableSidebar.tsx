@@ -1,9 +1,9 @@
 import React, { useRef, useState } from "react";
 
-import { useTranslation } from "@workspace/i18n";
-import { usePluginManager } from "@workspace/plugin-system";
-import { useUpdateSeriesMutation } from "@workspace/query";
-import type { GetSeriesByIdInputFieldsQuery, SeriesDataFragment } from "@workspace/query";
+import { useTranslation } from "@oc-mui/i18n";
+import { usePluginManager } from "@oc-mui/plugin-system";
+import { useUpdateSeriesMutation } from "@oc-mui/query";
+import type { GetSeriesByIdInputFieldsQuery, SeriesDataFragment } from "@oc-mui/query";
 import {
   Sheet,
   SheetContent,
@@ -15,9 +15,9 @@ import {
   TabsList,
   TabsTrigger,
   TabsContent,
-} from "@workspace/ui/components";
-import { useClickOutside } from "@workspace/ui/hooks";
-import { logger } from "@workspace/utils";
+} from "@oc-mui/ui/components";
+import { useClickOutside } from "@oc-mui/ui/hooks";
+import { logger } from "@oc-mui/utils";
 
 import { SeriesInfoContent } from "./SeriesInfoContent";
 import { SeriesInfoFooter } from "./SeriesInfoFooter";

@@ -8,7 +8,7 @@ import {
   createRendererPlugin,
   type Plugin,
   type PluginManager,
-} from "@workspace/plugin-system";
+} from "@oc-mui/plugin-system";
 
 import { HarnessPluginProvider } from "./harnessContext";
 

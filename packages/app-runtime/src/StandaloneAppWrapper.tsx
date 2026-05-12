@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import { PluginProvider, RendererProvider } from "@workspace/plugin-system";
-import { QueryProvider } from "@workspace/query";
+import { PluginProvider, RendererProvider } from "@oc-mui/plugin-system";
+import { QueryProvider } from "@oc-mui/query";
 import {
   AuthProvider,
   AuthInitializer,
@@ -14,15 +14,15 @@ import {
   type RouteComponent,
   type AnyRoute,
   type AnyRouter,
-} from "@workspace/router";
-import { ErrorBoundary } from "@workspace/ui/components/errors/general-error";
+} from "@oc-mui/router";
+import { ErrorBoundary } from "@oc-mui/ui/components/errors/general-error";
 
 import { AppRuntimeProvider, AppRuntimeContextProvider } from "./AppRuntimeProvider";
 
 import type { AppRuntimeConfig } from "./types";
 import type { ReactNode } from "react";
 
-import "@workspace/ui/globals.css";
+import "@oc-mui/ui/globals.css";
 
 interface StandaloneAppWrapperProps {
   children?: ReactNode;

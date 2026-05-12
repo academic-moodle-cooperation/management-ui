@@ -1,6 +1,6 @@
-import { useI18n } from "@workspace/i18n";
-import type { MetadataFieldType } from "@workspace/query";
-import { parseDuration } from "@workspace/utils";
+import { useI18n } from "@oc-mui/i18n";
+import type { MetadataFieldType } from "@oc-mui/query";
+import { parseDuration } from "@oc-mui/utils";
 
 export const MetadataField = ({ type, listProvider, collection, value }: MetadataFieldType) => {
   const { t } = useI18n();

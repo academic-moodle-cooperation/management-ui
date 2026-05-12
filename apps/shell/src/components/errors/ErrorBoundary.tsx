@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { logger } from "@workspace/utils";
+import { logger } from "@oc-mui/utils";
 
 import type { ReactNode } from "react";
 

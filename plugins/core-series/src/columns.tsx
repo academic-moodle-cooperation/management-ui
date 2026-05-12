@@ -1,8 +1,8 @@
 import { Film, Info } from "lucide-react";
 
-import { i18next } from "@workspace/i18n";
-import type { SeriesDataFragment } from "@workspace/query";
-import { Link } from "@workspace/router";
+import { i18next } from "@oc-mui/i18n";
+import type { SeriesDataFragment } from "@oc-mui/query";
+import { Link } from "@oc-mui/router";
 import {
   createColumnHelper,
   Tooltip,
@@ -11,8 +11,8 @@ import {
   Button,
   DataTableColumnHeader,
   OverflowTooltip,
-} from "@workspace/ui/components";
-import { cn } from "@workspace/ui/lib";
+} from "@oc-mui/ui/components";
+import { cn } from "@oc-mui/ui/lib";
 
 import SeriesActionsCell from "./components/SeriesActionsCell";
 

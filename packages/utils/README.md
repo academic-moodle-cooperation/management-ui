@@ -1,4 +1,4 @@
-# @workspace/utils
+# @oc-mui/utils
 
 **Version:** 0.0.0  
 **Type:** Core Infrastructure  
@@ -6,7 +6,7 @@
 
 ## Purpose & Scope
 
-The `@workspace/utils` package is a pure utility library that provides shared helper functions, constants, and logic used across the entire Management UI monorepo. It is designed to have **zero workspace dependencies**, making it the most fundamental building block in the system.
+The `@oc-mui/utils` package is a pure utility library that provides shared helper functions, constants, and logic used across the entire Management UI monorepo. It is designed to have **zero workspace dependencies**, making it the most fundamental building block in the system.
 
 **In Scope:**
 
@@ -62,7 +62,7 @@ A recursive merge utility specifically designed to handle complex configuration 
 ### Dependency Graph
 
 ```
-@workspace/utils
+@oc-mui/utils
 └── External Dependencies
     ├── crypto-js (^4.2.0)
     └── tinyduration (^3.3.0)
@@ -79,7 +79,7 @@ A recursive merge utility specifically designed to handle complex configuration 
 ### Using the Logger
 
 ```typescript
-import { logger } from "@workspace/utils";
+import { logger } from "@oc-mui/utils";
 
 logger.info("Application started", { version: "1.0.0" });
 ```
@@ -87,7 +87,7 @@ logger.info("Application started", { version: "1.0.0" });
 ### Using DeepMerge
 
 ```typescript
-import { deepMerge } from "@workspace/utils";
+import { deepMerge } from "@oc-mui/utils";
 
 const config = deepMerge(defaults, overrides);
 ```
@@ -119,6 +119,6 @@ packages/utils/
 
 ## Contributing
 
-1. **NO Workspace Dependencies:** Never add an import from `@workspace/*` to this package.
+1. **NO Workspace Dependencies:** Never add an import from `@oc-mui/*` to this package.
 2. **Pure Logic:** Ensure functions are testable and have no side effects where possible.
 3. **Tests:** Every new utility function **must** have a corresponding `.test.ts` file with high coverage.

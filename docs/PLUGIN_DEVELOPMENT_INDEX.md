@@ -5,7 +5,7 @@ This index points plugin developers to the right docs for building, testing, and
 ## Start here
 
 - **[Community Plugin Development](COMMUNITY_PLUGIN_DEVELOPMENT.md)** — Main guide: architecture, template, build, local testing, JAR deployment, registry, and Marketplace usage. Read this first.
-- **[Community Plugin Available Packages](COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md)** — Which packages you can import in your plugin (react, @workspace/*). Required before coding.
+- **[Community Plugin Available Packages](COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md)** — Which packages you can import in your plugin (react, @oc-mui/*). Required before coding.
 - **[Plugin Styling Contract](PLUGIN_STYLING_CONTRACT.md)** — CSS ownership, load order, theme tokens, and the supported way to override host styling from plugins.
 
 ## Build and deploy

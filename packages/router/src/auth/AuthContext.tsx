@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 
-import type { UserQuery } from "@workspace/query";
+import type { UserQuery } from "@oc-mui/query";
 
 export interface AuthContextType {
   isAuthenticated: boolean;

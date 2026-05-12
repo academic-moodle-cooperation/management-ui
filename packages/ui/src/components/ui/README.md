@@ -28,7 +28,7 @@ The shadcn configuration is in `packages/ui/components.json`.
 
 **Important:** `components.json` is **NOT auto-generated** - it's a manual configuration file that defines:
 
-- Where components should be generated (`ui` alias → `@workspace/ui/components/ui`)
+- Where components should be generated (`ui` alias → `@oc-mui/ui/components/ui`)
 - Which style to use (`new-york` or `default`)
 - Tailwind CSS settings
 - Import aliases
@@ -41,11 +41,11 @@ The aliases in `components.json` reference these paths:
 
 | Alias        | Path                          | Auto-Generated? | Notes                                                                    |
 | ------------ | ----------------------------- | --------------- | ------------------------------------------------------------------------ |
-| `ui`         | `@workspace/ui/components/ui` | ✅ **YES**      | Component files in this folder are auto-generated                        |
-| `utils`      | `@workspace/ui/lib/utils`     | ❌ **NO**       | Must exist manually - contains `cn()` function                           |
-| `hooks`      | `@workspace/ui/hooks`         | ❌ **NO**       | Manual hooks (not shadcn-generated)                                      |
-| `lib`        | `@workspace/ui/lib`           | ❌ **NO**       | Manual utility library                                                   |
-| `components` | `@workspace/ui/components`    | ❌ **NO**       | Parent folder (contains both auto-generated `ui/` and manual components) |
+| `ui`         | `@oc-mui/ui/components/ui` | ✅ **YES**      | Component files in this folder are auto-generated                        |
+| `utils`      | `@oc-mui/ui/lib/utils`     | ❌ **NO**       | Must exist manually - contains `cn()` function                           |
+| `hooks`      | `@oc-mui/ui/hooks`         | ❌ **NO**       | Manual hooks (not shadcn-generated)                                      |
+| `lib`        | `@oc-mui/ui/lib`           | ❌ **NO**       | Manual utility library                                                   |
+| `components` | `@oc-mui/ui/components`    | ❌ **NO**       | Parent folder (contains both auto-generated `ui/` and manual components) |
 
 **Key Point:** Only the `ui` alias points to auto-generated files. All other aliases reference manually maintained code that shadcn components will import from.
 

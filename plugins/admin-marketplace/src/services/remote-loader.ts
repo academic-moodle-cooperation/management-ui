@@ -3,20 +3,20 @@
  *
  * Handles dynamic loading and registration of remote ES module plugins for the
  * marketplace: URL validation, version checks, persistence, and delegation
- * to @workspace/remote-plugin-loader for fetch/transform/register.
+ * to @oc-mui/remote-plugin-loader for fetch/transform/register.
  *
  * Security: URL allowlist, HTTPS in production, version compatibility (here).
- * Loading: Delegated to @workspace/remote-plugin-loader (shared with core JAR loading).
+ * Loading: Delegated to @oc-mui/remote-plugin-loader (shared with core JAR loading).
  */
 
 import {
   type PluginManager,
   checkApiVersionCompatibility,
   fragmentRegistry,
-} from "@workspace/plugin-system";
-import { loadAndRegister as loadAndRegisterFromPackage } from "@workspace/remote-plugin-loader";
-import type { LoadResult } from "@workspace/remote-plugin-loader";
-import { logger } from "@workspace/utils";
+} from "@oc-mui/plugin-system";
+import { loadAndRegister as loadAndRegisterFromPackage } from "@oc-mui/remote-plugin-loader";
+import type { LoadResult } from "@oc-mui/remote-plugin-loader";
+import { logger } from "@oc-mui/utils";
 
 import { type RegistryPlugin } from "./registry-fetcher";
 import {
@@ -39,7 +39,7 @@ interface InstalledPluginInfo {
   installedAt: string;
 }
 
-export type { LoadResult } from "@workspace/remote-plugin-loader";
+export type { LoadResult } from "@oc-mui/remote-plugin-loader";
 
 export const RemoteLoader = {
   /**
@@ -85,7 +85,7 @@ export const RemoteLoader = {
 
     // Plugin runtime API contract gate: refuse plugins whose declared
     // `apiVersion` does not match this host's PLUGIN_API_VERSION semantics
-    // (see docs/architecture/CONTRACTS.md and `@workspace/plugin-system`'s
+    // (see docs/architecture/CONTRACTS.md and `@oc-mui/plugin-system`'s
     // `checkApiVersionCompatibility`). A missing `apiVersion` is treated as
     // "1.0.0" by the checker, so older registry entries continue to load.
     if (metadata?.apiVersion !== undefined) {

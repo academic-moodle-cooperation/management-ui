@@ -43,13 +43,13 @@ First, determine which type of plugin you need:
 - Can be developed and tested independently at their own port
 - Use `createPluginAppViteConfig` for vite configuration
 
-**Library plugins** (like `@workspace/plugin-playlists`):
+**Library plugins** (like `@oc-mui/plugin-playlists`):
 
 - Only have `index.ts` exporting plugin code
 - No vite build - source files exported directly
 - Consumed by other apps that handle bundling
 
-**This guide focuses on Standalone/App plugins.** For library plugins, follow the `@workspace/plugin-system` pattern with direct source exports.
+**This guide focuses on Standalone/App plugins.** For library plugins, follow the `@oc-mui/plugin-system` pattern with direct source exports.
 
 ### 1. Understand Plugin Capabilities
 
@@ -157,7 +157,7 @@ Edit `package.json`:
 
 ```json
 {
-  "name": "@workspace/plugin-[university-name]",
+  "name": "@oc-mui/plugin-[university-name]",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -169,17 +169,17 @@ Edit `package.json`:
     "check-types": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@workspace/plugin-system": "workspace:*",
-    "@workspace/ui": "workspace:*",
-    "@workspace/i18n": "workspace:*",
+    "@oc-mui/plugin-system": "workspace:*",
+    "@oc-mui/ui": "workspace:*",
+    "@oc-mui/i18n": "workspace:*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.0 || ^19.0.0",
     "@types/react-dom": "^18.0.0 || ^19.0.0",
-    "@workspace/eslint-config": "workspace:*",
-    "@workspace/typescript-config": "workspace:*",
+    "@oc-mui/eslint-config": "workspace:*",
+    "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.20.0",
     "typescript": "^5.3.3",
     "vite": "^6.1.4"
@@ -193,7 +193,7 @@ Create `tsconfig.json`:
 
 ```json
 {
-  "extends": "@workspace/typescript-config/react-library.json",
+  "extends": "@oc-mui/typescript-config/react-library.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "."
@@ -208,7 +208,7 @@ Create `tsconfig.json`:
 Create `index.ts`:
 
 ```typescript
-import { createPlugin } from '@workspace/plugin-system';
+import { createPlugin } from '@oc-mui/plugin-system';
 
 // Import all implementations
 import * as implementations from './modules';
@@ -258,7 +258,7 @@ export * from './modules';
 Create `modules/config/config.ts`:
 
 ```typescript
-import { AppConfig } from '@workspace/ui-config';
+import { AppConfig } from '@oc-mui/ui-config';
 
 /**
  * [University Name] Configuration
@@ -309,7 +309,7 @@ export const [universityName]Config: Partial<AppConfig> = {
 Create `modules/config/index.ts`:
 
 ```typescript
-import { PluginManager } from '@workspace/plugin-system';
+import { PluginManager } from '@oc-mui/plugin-system';
 import { [universityName]Config } from './config';
 
 export function register(manager: PluginManager) {
@@ -328,7 +328,7 @@ Create `modules/header/components/UniversityHeader.tsx`:
 
 ```typescript
 import React from 'react';
-import { useTranslation } from '@workspace/i18n';
+import { useTranslation } from '@oc-mui/i18n';
 
 export interface UniversityHeaderProps {
   user?: {
@@ -383,7 +383,7 @@ export const UniversityHeader: React.FC<UniversityHeaderProps> = ({ user }) => {
 Create `modules/header/index.ts`:
 
 ```typescript
-import { PluginManager } from "@workspace/plugin-system";
+import { PluginManager } from "@oc-mui/plugin-system";
 import { UniversityHeader } from "./components/UniversityHeader";
 
 export function register(manager: PluginManager) {
@@ -467,7 +467,7 @@ Create `vite.config.ts`:
 
 ```typescript
 import { defineConfig, loadEnv } from "vite";
-import { createPluginAppViteConfig } from "@workspace/vite-config";
+import { createPluginAppViteConfig } from "@oc-mui/vite-config";
 
 const packageName = "plugin-[university-name]";
 
@@ -604,7 +604,7 @@ Follow [Adding Apps Guide](/docs/workflows/ADDING_APPS.md) to create the app, th
 
 ```typescript
 // apps/[app-name]-plugin.ts
-import { createPlugin } from "@workspace/plugin-system";
+import { createPlugin } from "@oc-mui/plugin-system";
 import { MyCustomApp } from "./src/App";
 
 export const MyAppPlugin = createPlugin({

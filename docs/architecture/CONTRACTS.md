@@ -14,7 +14,7 @@ There are **four contracts**:
 
 Each contract has its own version. Breaking changes to any of them require a major version bump of `@<scope>/plugin-system`.
 
-The Manifest 1.1 and Runtime API 1.0 contracts are **mechanically verified** by the contract-test harness in [`@workspace/plugin-testing`](../../packages/plugin-testing/README.md); see [`docs/TESTING.md`](../TESTING.md) for the test pyramid and harness usage.
+The Manifest 1.1 and Runtime API 1.0 contracts are **mechanically verified** by the contract-test harness in [`@oc-mui/plugin-testing`](../../packages/plugin-testing/README.md); see [`docs/TESTING.md`](../TESTING.md) for the test pyramid and harness usage.
 
 ## 1. Plugin Manifest Contract
 
@@ -126,7 +126,7 @@ What the core promises plugin authors and downstream apps:
   - `config.plugins[pluginId]` — opaque per-plugin section; plugins own the sub-shape.
 - **Stable runtime switch:** a plugin slice may carry `enabled?: boolean`. The shell loader reads this from the raw slice (before Zod validation) and skips a plugin when it is `=== false`.
 - **Stable layered merge order:** `app:config:defaults` ⊕ (`defaultConfig` ⊕ `config.json`) ⊕ `app:config`. Both the React hook and the sync snapshot apply the same order in dev and prod.
-- **Stable reader surface:** `definePluginConfig({ id, schema, defaults })` from `@workspace/query` returns a reader with `{ id, schema, defaults, register, use, read }`. The reader signature is frozen for 1.x.
+- **Stable reader surface:** `definePluginConfig({ id, schema, defaults })` from `@oc-mui/query` returns a reader with `{ id, schema, defaults, register, use, read }`. The reader signature is frozen for 1.x.
 
 Breaking changes to any of these are **major**. Adding new optional top-level keys to `AppConfig.app` is **minor**. Adding new methods to the reader is **minor**. Removing or renaming anything is **major** and requires an ADR.
 
@@ -151,4 +151,4 @@ No contract change is allowed without the changeset - plugins cannot cope with s
 
 - **2026-04-16:** Initial freeze. Manifest 1.0, Runtime API 1.0, Theme 2.0, Config 0.9 (pre-stable).
 - **2026-04-17:** Config Contract promoted to 1.0. Stable keys: `app.theme`, `app.locale`, `app.enabledPlugins`, `config.plugins[pluginId]`, `config.plugins[pluginId].enabled`. Layered merge order (`app:config:defaults` ⊕ base ⊕ `app:config`) and the `definePluginConfig` reader API are now frozen for 1.x. See [`CONFIGURATION.md`](./CONFIGURATION.md).
-- **2026-04-17:** Manifest Contract bumped to 1.1 (minor). New optional field `extensionPoints: string[]` on the top-level manifest, consumed by the contract-test harness in `@workspace/plugin-testing` and reserved for marketplace tooling. Runtime loader behaviour is unchanged, so existing 1.0 manifests remain valid. Host `PLUGIN_API_VERSION` bumped from `1.0.0` to `1.1.0` accordingly. Plugin-system now also exports `validatePluginMetadata` and the `PluginContext` React context so that tooling can validate manifests and inject a pre-configured `PluginManager` without reaching into `src/`.
+- **2026-04-17:** Manifest Contract bumped to 1.1 (minor). New optional field `extensionPoints: string[]` on the top-level manifest, consumed by the contract-test harness in `@oc-mui/plugin-testing` and reserved for marketplace tooling. Runtime loader behaviour is unchanged, so existing 1.0 manifests remain valid. Host `PLUGIN_API_VERSION` bumped from `1.0.0` to `1.1.0` accordingly. Plugin-system now also exports `validatePluginMetadata` and the `PluginContext` React context so that tooling can validate manifests and inject a pre-configured `PluginManager` without reaching into `src/`.

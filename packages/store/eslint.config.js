@@ -1,4 +1,4 @@
-import { config } from "@workspace/eslint-config/react-internal";
+import { config } from "@oc-mui/eslint-config/react-internal";
 
 /**
  * This package is the wrapper around jotai (and internally uses zustand +

@@ -1,24 +1,24 @@
 import { LayoutGrid, List } from "lucide-react";
 import { useMemo, useEffect, useCallback, useRef } from "react";
 
-import { useI18n } from "@workspace/i18n";
+import { useI18n } from "@oc-mui/i18n";
 import {
   useUpdateEventMutation,
   useAppConfig,
   type EventsFromSeriesQuery,
   type EventsDataFragment,
   type GetMyEventsQuery,
-} from "@workspace/query";
+} from "@oc-mui/query";
 import {
   type Row,
   type ColumnDef,
   MUITable,
   createMetadataHelpers,
   Button,
-} from "@workspace/ui/components";
-import { AppLoader } from "@workspace/ui/components";
-import type { MetadataItem } from "@workspace/ui/config-primitives";
-import { logger } from "@workspace/utils";
+} from "@oc-mui/ui/components";
+import { AppLoader } from "@oc-mui/ui/components";
+import type { MetadataItem } from "@oc-mui/ui/config-primitives";
+import { logger } from "@oc-mui/utils";
 
 import { createColumns } from "../columns";
 import { episodesConfig } from "../config";

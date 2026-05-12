@@ -12,15 +12,15 @@ These packages are provided by the host application and should **NOT** be bundle
 - `react/jsx-runtime` - JSX runtime
 
 ### Workspace Packages
-- `@workspace/plugin-system` - Plugin system API
-- `@workspace/ui/components` - UI component library (shadcn/ui)
-- `@workspace/ui/components/icons` - UI icons (e.g. Home, Video, ExternalLink)
-- `@workspace/ui/lib` - UI lib (e.g. resolveFirstAssetUrl)
-- `@workspace/ui/lib/utils` - UI utilities (e.g. cn)
-- `@workspace/query` - GraphQL query hooks and client
-- `@workspace/router` - Routing utilities
-- `@workspace/utils` - Utility functions (e.g. logger, sha256)
-- `@workspace/i18n` - Internationalization
+- `@oc-mui/plugin-system` - Plugin system API
+- `@oc-mui/ui/components` - UI component library (shadcn/ui)
+- `@oc-mui/ui/components/icons` - UI icons (e.g. Home, Video, ExternalLink)
+- `@oc-mui/ui/lib` - UI lib (e.g. resolveFirstAssetUrl)
+- `@oc-mui/ui/lib/utils` - UI utilities (e.g. cn)
+- `@oc-mui/query` - GraphQL query hooks and client
+- `@oc-mui/router` - Routing utilities
+- `@oc-mui/utils` - Utility functions (e.g. logger, sha256)
+- `@oc-mui/i18n` - Internationalization
 
 ### External Libraries
 - `lucide-react` - Icon library (used by UI components)
@@ -31,15 +31,15 @@ These packages are provided by the host application and should **NOT** be bundle
 
 ```typescript
 // These imports work - packages are provided by host
-import { Button, Card } from "@workspace/ui/components";
-import { Home, Video } from "@workspace/ui/components/icons";
-import { cn } from "@workspace/ui/lib/utils";
-import { resolveFirstAssetUrl } from "@workspace/ui/lib";
-import { useGetMyEventsQuery } from "@workspace/query";
-import { logger } from "@workspace/utils";
-import { usePluginTranslation } from "@workspace/i18n";
+import { Button, Card } from "@oc-mui/ui/components";
+import { Home, Video } from "@oc-mui/ui/components/icons";
+import { cn } from "@oc-mui/ui/lib/utils";
+import { resolveFirstAssetUrl } from "@oc-mui/ui/lib";
+import { useGetMyEventsQuery } from "@oc-mui/query";
+import { logger } from "@oc-mui/utils";
+import { usePluginTranslation } from "@oc-mui/i18n";
 import { BarChart3 } from "lucide-react";
-import { createPlugin } from "@workspace/plugin-system";
+import { createPlugin } from "@oc-mui/plugin-system";
 ```
 
 ### ❌ Incorrect Usage
@@ -57,7 +57,7 @@ import { format } from "date-fns";  // ❌ Not available
 
 If you need a package that's not listed:
 
-1. **Check if it's used in `@workspace/ui`:**
+1. **Check if it's used in `@oc-mui/ui`:**
    - Many packages used by UI components are available
    - Check `packages/ui/package.json` for dependencies
 
@@ -94,8 +94,8 @@ import { format } from "date-fns";  // Must be in dependencies, not peerDependen
 // ❌ axios is not available
 // import axios from "axios";
 
-// ✅ Use @workspace/query hooks for GraphQL
-import { useGetMyEventsQuery } from "@workspace/query";
+// ✅ Use @oc-mui/query hooks for GraphQL
+import { useGetMyEventsQuery } from "@oc-mui/query";
 
 // ✅ Or use native fetch for REST APIs
 const response = await fetch("/api/endpoint");
@@ -128,7 +128,7 @@ rollupOptions: {
     }
     
     // Workspace packages
-    if (id.startsWith("@workspace/") || id.includes("/packages/")) {
+    if (id.startsWith("@oc-mui/") || id.includes("/packages/")) {
       return true;
     }
     

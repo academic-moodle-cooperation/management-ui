@@ -1,11 +1,11 @@
 import { describe, it, expect, vi } from "vitest";
 
-import type { PluginManager } from "@workspace/plugin-system";
-import type { AppConfig } from "@workspace/ui-config";
+import type { PluginManager } from "@oc-mui/plugin-system";
+import type { AppConfig } from "@oc-mui/ui-config";
 
 import { getAppConfigSync } from "./useAppConfig";
 
-vi.mock("@workspace/ui-config", () => ({
+vi.mock("@oc-mui/ui-config", () => ({
   defaultConfig: {
     productionConfigUrl: "/ui/config/config.json",
     app: {

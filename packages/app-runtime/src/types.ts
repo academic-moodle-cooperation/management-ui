@@ -1,7 +1,7 @@
-import type { AnyRouter } from "@workspace/router";
+import type { AnyRouter } from "@oc-mui/router";
 
 // Re-export AppDefinition from plugin-system to avoid circular dependencies
-export type { AppDefinition } from "@workspace/plugin-system";
+export type { AppDefinition } from "@oc-mui/plugin-system";
 
 /**
  * Runtime configuration for apps
@@ -25,7 +25,7 @@ export interface AppRuntimeConfig {
 export interface AppRuntimeContext {
   config: AppRuntimeConfig;
   /** Function to register an app (only available when running in core) */
-  registerApp?: (app: import("@workspace/plugin-system").AppDefinition) => void;
+  registerApp?: (app: import("@oc-mui/plugin-system").AppDefinition) => void;
   /** Function to get all registered apps */
-  getApps?: () => import("@workspace/plugin-system").AppDefinition[];
+  getApps?: () => import("@oc-mui/plugin-system").AppDefinition[];
 }

@@ -1,8 +1,8 @@
 import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { useI18n } from "@workspace/i18n";
-import { ComponentResolver } from "@workspace/plugin-system";
+import { useI18n } from "@oc-mui/i18n";
+import { ComponentResolver } from "@oc-mui/plugin-system";
 import {
   useCreateSeriesMutation,
   useGetAllManagedAclsQuery,
@@ -11,7 +11,7 @@ import {
   type AccessControlListInput,
   type CommonSeriesMetadataInput,
   type GetAllManagedAclsQuery,
-} from "@workspace/query";
+} from "@oc-mui/query";
 import {
   Button,
   Dialog,
@@ -30,7 +30,7 @@ import {
   SelectValue,
   Textarea,
   toast,
-} from "@workspace/ui/components";
+} from "@oc-mui/ui/components";
 
 interface CreateSeriesToolbarActionProps {
   refetch?: () => void;

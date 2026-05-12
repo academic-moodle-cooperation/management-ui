@@ -1,5 +1,5 @@
 /**
- * @workspace/remote-plugin-loader
+ * @oc-mui/remote-plugin-loader
  *
  * Loads remote ES module plugins by URL: fetch, transform bare imports to
  * window.__SHARED_MODULES__, import via blob, inject CSS, register GraphQL

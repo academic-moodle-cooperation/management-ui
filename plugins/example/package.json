@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/plugin-example",
+  "name": "@oc-mui/plugin-example",
   "version": "1.0.0",
   "license": "ECL-2.0",
   "type": "module",
@@ -12,14 +12,14 @@
     "test:contract": "vitest run plugin.contract"
   },
   "dependencies": {
-    "@workspace/plugin-system": "workspace:*",
-    "@workspace/utils": "workspace:*"
+    "@oc-mui/plugin-system": "workspace:*",
+    "@oc-mui/utils": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.0.6",
-    "@workspace/eslint-config": "workspace:*",
-    "@workspace/plugin-testing": "workspace:*",
-    "@workspace/typescript-config": "workspace:*",
+    "@oc-mui/eslint-config": "workspace:*",
+    "@oc-mui/plugin-testing": "workspace:*",
+    "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.9.0",
     "typescript": "~5.5.4",
     "vitest": "^4.0.17"

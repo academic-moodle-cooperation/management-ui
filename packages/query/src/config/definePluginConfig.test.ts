@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { z } from "zod";
 
-import type { PluginManager } from "@workspace/plugin-system";
-import type { AppConfig } from "@workspace/ui-config";
+import type { PluginManager } from "@oc-mui/plugin-system";
+import type { AppConfig } from "@oc-mui/ui-config";
 
 import { definePluginConfig } from "./definePluginConfig";
 

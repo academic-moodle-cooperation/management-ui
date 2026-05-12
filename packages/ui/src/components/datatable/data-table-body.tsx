@@ -1,7 +1,7 @@
 import { flexRender } from "@tanstack/react-table";
 import { useMemo } from "react";
 
-import { useRouter } from "@workspace/router";
+import { useRouter } from "@oc-mui/router";
 
 import { TableBody, TableCell, TableRow } from "../ui";
 

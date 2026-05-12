@@ -1,7 +1,7 @@
 // import { useReducer } from "react";
-// import { VisibilityState, SortingState, OnChangeFn } from "@workspace/ui";
-// import { atomWithStorage, useAtomValue, useSetAtom } from "@workspace/store";
-// import { useMatch } from "@workspace/router";
+// import { VisibilityState, SortingState, OnChangeFn } from "@oc-mui/ui";
+// import { atomWithStorage, useAtomValue, useSetAtom } from "@oc-mui/store";
+// import { useMatch } from "@oc-mui/router";
 // import { useMemo } from "react";
 
 // export interface TableBaseState {

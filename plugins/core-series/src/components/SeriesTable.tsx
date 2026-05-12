@@ -1,12 +1,12 @@
 import { useMemo, useEffect, useCallback, useRef } from "react";
 
-import { useI18n } from "@workspace/i18n";
-import { useRegistry } from "@workspace/plugin-system";
-import { useUpdateSeriesMutation } from "@workspace/query";
-import type { SeriesDataFragment } from "@workspace/query";
-import { MUITable, createMetadataHelpers, AppLoader, type Row } from "@workspace/ui/components";
-import type { ColumnsField, MetadataItem } from "@workspace/ui/config-primitives";
-import { logger } from "@workspace/utils";
+import { useI18n } from "@oc-mui/i18n";
+import { useRegistry } from "@oc-mui/plugin-system";
+import { useUpdateSeriesMutation } from "@oc-mui/query";
+import type { SeriesDataFragment } from "@oc-mui/query";
+import { MUITable, createMetadataHelpers, AppLoader, type Row } from "@oc-mui/ui/components";
+import type { ColumnsField, MetadataItem } from "@oc-mui/ui/config-primitives";
+import { logger } from "@oc-mui/utils";
 
 import { createColumns } from "../columns";
 import { seriesConfig } from "../config";

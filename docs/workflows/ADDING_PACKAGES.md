@@ -79,7 +79,7 @@ Edit `package.json` with these essentials:
 
 ```json
 {
-  "name": "@workspace/[package-name]",
+  "name": "@oc-mui/[package-name]",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -96,8 +96,8 @@ Edit `package.json` with these essentials:
     "react": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@workspace/eslint-config": "workspace:*",
-    "@workspace/typescript-config": "workspace:*",
+    "@oc-mui/eslint-config": "workspace:*",
+    "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.9.0",
     "typescript": "~5.5.4"
   }
@@ -106,7 +106,7 @@ Edit `package.json` with these essentials:
 
 **Important:**
 
-- Use `@workspace/` scope
+- Use `@oc-mui/` scope
 - Set `"private": true`
 - Set `"type": "module"`
 - Define explicit `exports`
@@ -119,7 +119,7 @@ Create `tsconfig.json`:
 
 ```json
 {
-  "extends": "@workspace/typescript-config/react-library.json",
+  "extends": "@oc-mui/typescript-config/react-library.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src"
@@ -147,7 +147,7 @@ Create `src/index.ts` as the main export file:
 // packages/[package-name]/src/index.ts
 
 /**
- * @package @workspace/[package-name]
+ * @package @oc-mui/[package-name]
  * @description Brief description of what this package provides
  */
 
@@ -194,7 +194,7 @@ pnpm add -D [package-name]
 
 ```bash
 # Add workspace dependencies
-pnpm add @workspace/[other-package] --filter @workspace/[your-package]
+pnpm add @oc-mui/[other-package] --filter @oc-mui/[your-package]
 ```
 
 **Before adding workspace dependencies:**
@@ -404,7 +404,7 @@ Create a test usage in an app or plugin:
 
 ```typescript
 // In apps/management-ui-core/src/test.tsx
-import { myFunction } from "@workspace/[package-name]";
+import { myFunction } from "@oc-mui/[package-name]";
 
 console.log(myFunction("test"));
 ```
@@ -427,13 +427,13 @@ Verify:
 If you've added dependencies, update [`/docs/internal/COUPLING_ANALYSIS.md`](/docs/internal/COUPLING_ANALYSIS.md):
 
 ```markdown
-### @workspace/[package-name]
+### @oc-mui/[package-name]
 
 **Coupling Score:** ⭐⭐⭐⭐ (4/5)
 
 **Dependencies:**
 
-- @workspace/[dependency] - [Why needed]
+- @oc-mui/[dependency] - [Why needed]
 
 **Analysis:** [Coupling analysis]
 ```
@@ -528,7 +528,7 @@ export const defaultConfig: MyConfig = {
 
 ### Package Not Found
 
-**Error:** `Cannot find package '@workspace/[package-name]'`
+**Error:** `Cannot find package '@oc-mui/[package-name]'`
 
 **Solutions:**
 
@@ -602,14 +602,14 @@ Before considering a package complete:
 
 **Excellent Examples:**
 
-- `@workspace/plugin-system` - Foundation layer, well-documented
-- `@workspace/utils` - Core infrastructure, zero workspace deps
-- `@workspace/i18n` - Foundation layer, single responsibility
+- `@oc-mui/plugin-system` - Foundation layer, well-documented
+- `@oc-mui/utils` - Core infrastructure, zero workspace deps
+- `@oc-mui/i18n` - Foundation layer, single responsibility
 
 **Complex Examples:**
 
-- `@workspace/ui` - Integration layer, many components
-- `@workspace/app-runtime` - Application layer, orchestration
+- `@oc-mui/ui` - Integration layer, many components
+- `@oc-mui/app-runtime` - Application layer, orchestration
 
 ## Best Practices
 

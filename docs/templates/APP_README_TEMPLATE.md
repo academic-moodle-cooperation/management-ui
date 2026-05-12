@@ -76,12 +76,12 @@ This application handles [primary responsibility] within the Management UI ecosy
 
 ```
 management-ui-[app-name]
-├── @workspace/app-runtime      - [Why needed]
-├── @workspace/ui               - [Why needed]
-├── @workspace/query            - [Why needed]
-├── @workspace/router           - [Why needed]
-├── @workspace/plugin-system    - [Why needed]
-└── @workspace/i18n             - [Why needed]
+├── @oc-mui/app-runtime      - [Why needed]
+├── @oc-mui/ui               - [Why needed]
+├── @oc-mui/query            - [Why needed]
+├── @oc-mui/router           - [Why needed]
+├── @oc-mui/plugin-system    - [Why needed]
+└── @oc-mui/i18n             - [Why needed]
 ```
 
 ### External Dependencies
@@ -265,7 +265,7 @@ query QueryName {
 
 ```typescript
 // Example of data fetching in this app
-import { use[DataHook] } from '@workspace/query';
+import { use[DataHook] } from '@oc-mui/query';
 
 function Component() {
   const { data, isLoading, error } = use[DataHook]();

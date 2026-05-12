@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Button } from "@workspace/ui/components";
+import { Button } from "@oc-mui/ui/components";
 
 /**
  * Minimal standalone harness. In the long run this will render a single

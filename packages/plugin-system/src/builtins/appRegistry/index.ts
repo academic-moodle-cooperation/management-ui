@@ -1,4 +1,4 @@
-import { logger } from "@workspace/utils";
+import { logger } from "@oc-mui/utils";
 
 import type { AppDefinition } from "../../appTypes";
 import type { Plugin } from "../../IPlugin";

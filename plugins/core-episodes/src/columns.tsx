@@ -14,8 +14,8 @@ import {
 } from "lucide-react";
 import React from "react";
 
-import { i18next } from "@workspace/i18n";
-import type { EventsDataFragment } from "@workspace/query";
+import { i18next } from "@oc-mui/i18n";
+import type { EventsDataFragment } from "@oc-mui/query";
 import {
   createColumnHelper,
   Tooltip,
@@ -27,9 +27,9 @@ import {
   type ColumnDef,
   type Row,
   type Column,
-} from "@workspace/ui/components";
-import { cn } from "@workspace/ui/lib";
-import { parseDuration } from "@workspace/utils";
+} from "@oc-mui/ui/components";
+import { cn } from "@oc-mui/ui/lib";
+import { parseDuration } from "@oc-mui/utils";
 
 import ActionsCell from "./components/ActionsCell";
 import {

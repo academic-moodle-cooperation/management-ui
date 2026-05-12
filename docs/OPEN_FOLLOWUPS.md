@@ -62,10 +62,10 @@ v6 introduced object-shaped selectors (`from: { type: "app" }`, `{{from.plugin}}
 
 ### 3.3 (d) Workspace-specifier cross-plugin import detection
 
-`import "../../<other-plugin>/..."` is caught today. `import "@workspace/plugin-<other>"` is not — the boundaries plugin follows the resolver but our pnpm symlinks aren't traversed in a way the rule can match against the `plugins/<name>` element pattern.
+`import "../../<other-plugin>/..."` is caught today. `import "@oc-mui/plugin-<other>"` is not — the boundaries plugin follows the resolver but our pnpm symlinks aren't traversed in a way the rule can match against the `plugins/<name>` element pattern.
 
 - **When to revisit**: when a real cross-plugin workspace-specifier slip happens, or as a planned hardening pass.
-- **Suggested fix**: experiment with `eslint-import-resolver-typescript` config; fall back to a belt-and-suspenders `no-restricted-imports` rule against `@workspace/plugin-*` from inside plugin sources.
+- **Suggested fix**: experiment with `eslint-import-resolver-typescript` config; fall back to a belt-and-suspenders `no-restricted-imports` rule against `@oc-mui/plugin-*` from inside plugin sources.
 - **Detail**: inline in [`packages/eslint-config/base.js`](../packages/eslint-config/base.js).
 
 ### 3.4 Layer ordering inside `package → package`
@@ -79,7 +79,7 @@ Today the boundaries rule allows any `package` to import from any other `package
 
 ## 4. API Extractor
 
-### 4.1 TSDoc warnings in `@workspace/plugin-system` (and elsewhere)
+### 4.1 TSDoc warnings in `@oc-mui/plugin-system` (and elsewhere)
 
 `api-extractor run` emits non-blocking warnings for TSDoc tags like `@default`, `@param`, and `}` characters that aren't escaped (`tsdoc-malformed-inline-tag`). They're not errors and don't fail CI, but they clutter the output.
 
@@ -94,10 +94,10 @@ Three items added to the master plan after Phase 7. None has been started; all n
 
 ### 5.1 GraphQL namespace convention
 
-Plugins should namespace their GraphQL operations (`mui:` for core, `<org>:` for org plugins). Today `@workspace/query` wraps GraphQL but doesn't policy-check operation names.
+Plugins should namespace their GraphQL operations (`mui:` for core, `<org>:` for org plugins). Today `@oc-mui/query` wraps GraphQL but doesn't policy-check operation names.
 
 - **When to revisit**: Phase 8.
-- **Suggested form**: a new section in [`CONTRACTS.md`](architecture/CONTRACTS.md) plus an ESLint rule (custom AST walker or regex-based `no-restricted-syntax`) in `@workspace/eslint-config/base.js`.
+- **Suggested form**: a new section in [`CONTRACTS.md`](architecture/CONTRACTS.md) plus an ESLint rule (custom AST walker or regex-based `no-restricted-syntax`) in `@oc-mui/eslint-config/base.js`.
 
 ### 5.2 External plugin POM template + Maven parent
 

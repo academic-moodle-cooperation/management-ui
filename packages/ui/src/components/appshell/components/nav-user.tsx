@@ -3,8 +3,8 @@
 import { ChevronsUpDown, LogOut } from "lucide-react";
 import React from "react";
 
-import { useGetCurrentUser } from "@workspace/query";
-import { sha256 } from "@workspace/utils";
+import { useGetCurrentUser } from "@oc-mui/query";
+import { sha256 } from "@oc-mui/utils";
 
 import {
   Avatar,

@@ -6,13 +6,13 @@
  *
  * Key features:
  * - Library mode (ES module output)
- * - External dependencies (@workspace/*, react, react-dom)
+ * - External dependencies (@oc-mui/*, react, react-dom)
  * - GraphQL fragment extraction
  * - Source maps for debugging
  *
  * Usage in a community plugin's vite.config.ts:
  * ```typescript
- * import { createCommunityPluginConfig } from "@workspace/vite-config";
+ * import { createCommunityPluginConfig } from "@oc-mui/vite-config";
  *
  * export default createCommunityPluginConfig({
  *   pluginName: "my-community-plugin",

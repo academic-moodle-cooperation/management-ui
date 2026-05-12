@@ -1,5 +1,5 @@
 {
-  "extends": "@workspace/typescript-config/react-library.json",
+  "extends": "@oc-mui/typescript-config/react-library.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "rootDir": "src",
@@ -7,7 +7,7 @@
     "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@workspace/ui/*": ["./src/*"]
+      "@oc-mui/ui/*": ["./src/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "vite-env.d.ts"],

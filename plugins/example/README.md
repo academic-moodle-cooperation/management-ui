@@ -1,4 +1,4 @@
-# @workspace/plugin-example
+# @oc-mui/plugin-example
 
 A **minimal, brand-neutral reference plugin**. Copy this folder as the
 starting point for a new plugin and edit the fields that matter to you.
@@ -35,7 +35,7 @@ plugins/example/
 
 1. Copy the folder: `cp -r plugins/example .local-plugins/my-plugin`
 2. Rename the package in `package.json`
-   (`@workspace/plugin-example` → `@your-scope/my-plugin`).
+   (`@oc-mui/plugin-example` → `@your-scope/my-plugin`).
 3. Rewrite `modules/header-logo-example.ts` to register on the extension
    points you actually need. See `plugins/core/README.md` for the list of
    extension points core exposes.

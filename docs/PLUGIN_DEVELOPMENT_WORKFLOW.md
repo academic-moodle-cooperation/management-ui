@@ -194,9 +194,9 @@ You should see:
          "tags": ["dashboard", "statistics", "analytics", "events"],
          "repositoryUrl": "https://github.com/your-org/stats-dashboard-plugin",
          "workspaceDependencies": {
-           "@workspace/plugin-system": ">=1.0.0",
-           "@workspace/ui": ">=1.0.0",
-           "@workspace/query": ">=1.0.0"
+           "@oc-mui/plugin-system": ">=1.0.0",
+           "@oc-mui/ui": ">=1.0.0",
+           "@oc-mui/query": ">=1.0.0"
          },
          "verified": false
        }

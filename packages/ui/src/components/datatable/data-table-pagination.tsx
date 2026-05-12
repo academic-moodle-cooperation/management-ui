@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
-import { useI18n } from "@workspace/i18n";
+import { useI18n } from "@oc-mui/i18n";
 
 import {
   Button,

@@ -1,12 +1,12 @@
 import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react";
 
-import { useI18n } from "@workspace/i18n";
+import { useI18n } from "@oc-mui/i18n";
 import type {
   FetchNextPageOptions,
   InfiniteData,
   InfiniteQueryObserverResult,
-} from "@workspace/query";
+} from "@oc-mui/query";
 
 import { cn } from "../../lib";
 import { InfiniteScroll } from "../infinite-scroll";

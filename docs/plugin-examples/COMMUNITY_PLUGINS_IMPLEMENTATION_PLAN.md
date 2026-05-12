@@ -88,7 +88,7 @@ feature/community-plugin-system
 
 **Funktionalität:**
 - Vite Library Mode für ES Module
-- External Dependencies: Alle `@workspace/*` Packages
+- External Dependencies: Alle `@oc-mui/*` Packages
 - Source Maps für Debugging
 - Optimierte Bundle-Größe
 
@@ -151,8 +151,8 @@ interface CommunityPluginMetadata {
   
   // Version Constraints
   workspaceDependencies: {
-    "@workspace/plugin-system": string; // SemVer range
-    "@workspace/ui": string;
+    "@oc-mui/plugin-system": string; // SemVer range
+    "@oc-mui/ui": string;
     // ...
   };
   
@@ -330,7 +330,7 @@ interface CommunityPluginMetadata {
 // plugins/community-plugin-template/vite.config.ts
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
-import { createCommunityPluginConfig } from "@workspace/vite-config/community-plugin";
+import { createCommunityPluginConfig } from "@oc-mui/vite-config/community-plugin";
 
 export default createCommunityPluginConfig({
   entry: "./src/index.ts",
@@ -343,7 +343,7 @@ export default createCommunityPluginConfig({
 
 ```typescript
 // plugins/community-plugin-template/src/index.ts
-import { createPlugin } from "@workspace/plugin-system";
+import { createPlugin } from "@oc-mui/plugin-system";
 
 export default createPlugin({
   namespace: "community",
@@ -369,8 +369,8 @@ export default createPlugin({
     ".": "./dist/my-community-plugin.mjs"
   },
   "peerDependencies": {
-    "@workspace/plugin-system": "*",
-    "@workspace/ui": "*",
+    "@oc-mui/plugin-system": "*",
+    "@oc-mui/ui": "*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

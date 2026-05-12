@@ -1,7 +1,7 @@
 import eslintPluginReactRefresh from "eslint-plugin-react-refresh";
 
-import { config as baseConfig } from "@workspace/eslint-config/base";
-import { config as reactConfig } from "@workspace/eslint-config/react-internal";
+import { config as baseConfig } from "@oc-mui/eslint-config/base";
+import { config as reactConfig } from "@oc-mui/eslint-config/react-internal";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [

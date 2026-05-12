@@ -1,4 +1,4 @@
-# @workspace/query
+# @oc-mui/query
 
 **Version:** 0.0.0  
 **Type:** Integration Layer  
@@ -6,17 +6,17 @@
 
 ## Purpose & Scope
 
-The `@workspace/query` package serves as the centralized data fetching and state synchronization layer for the Management UI. It integrates **TanStack Query (React Query)** with **GraphQL** (via `graphql-request`) to provide a robust, type-safe, and cached data layer.
+The `@oc-mui/query` package serves as the centralized data fetching and state synchronization layer for the Management UI. It integrates **TanStack Query (React Query)** with **GraphQL** (via `graphql-request`) to provide a robust, type-safe, and cached data layer.
 
 This package is responsible for all server communication, handling GraphQL operations, managing the query cache, and providing hooks for data access throughout the monorepo.
 
 ### Stability contract
 
-This package is the **only place in the monorepo that is allowed to import from `@tanstack/react-query`**. Apps, plugins and other packages must import query primitives (`useQuery`, `useMutation`, `QueryClient`, …) from `@workspace/query`.
+This package is the **only place in the monorepo that is allowed to import from `@tanstack/react-query`**. Apps, plugins and other packages must import query primitives (`useQuery`, `useMutation`, `QueryClient`, …) from `@oc-mui/query`.
 
 The rule is enforced by ESLint (`no-restricted-imports` in `packages/eslint-config/base.js`) with an explicit exception for this package.
 
-Why it matters: if we ever need to replace or upgrade the query implementation across a major version, we can do so by changing the internals of `@workspace/query` without breaking plugins or apps. Deep imports into the underlying query library would make that impossible.
+Why it matters: if we ever need to replace or upgrade the query implementation across a major version, we can do so by changing the internals of `@oc-mui/query` without breaking plugins or apps. Deep imports into the underlying query library would make that impossible.
 
 **In Scope:**
 
@@ -28,9 +28,9 @@ Why it matters: if we ever need to replace or upgrade the query implementation a
 
 **Out of Scope:**
 
-- UI components for data display (belongs in `@workspace/ui` or apps).
-- Complex client-side state management not related to server data (belongs in `@workspace/store`).
-- Route-specific logic (belongs in `@workspace/router` or apps).
+- UI components for data display (belongs in `@oc-mui/ui` or apps).
+- Complex client-side state management not related to server data (belongs in `@oc-mui/store`).
+- Route-specific logic (belongs in `@oc-mui/router` or apps).
 
 ## Architecture & Design Decisions
 
@@ -52,7 +52,7 @@ The `useAppConfig` hook provides access to the global application configuration 
 
 ```
 ┌─────────────────────────────────────────┐
-│ @workspace/query Architecture           │
+│ @oc-mui/query Architecture           │
 ├─────────────────────────────────────────┤
 │ [ React Query Provider ]                │
 │         ↓                               │
@@ -99,15 +99,15 @@ export { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 ### Dependency Graph
 
 ```
-@workspace/query
+@oc-mui/query
 ├── External Dependencies
 │   ├── @tanstack/react-query (^5.51.15)
 │   ├── graphql (^16.9.0)
 │   └── graphql-request (^7.1.0)
 └── Workspace Dependencies
-    ├── @workspace/plugin-system - For merging plugin configurations
-    ├── @workspace/ui-config - For default application settings
-    └── @workspace/utils - For deep merging and logging
+    ├── @oc-mui/plugin-system - For merging plugin configurations
+    ├── @oc-mui/ui-config - For default application settings
+    └── @oc-mui/utils - For deep merging and logging
 ```
 
 ### Dependency Layer
@@ -130,7 +130,7 @@ export { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 ### Basic Query (using generated hooks)
 
 ```typescript
-import { useGetEventByIdQuery } from "@workspace/query";
+import { useGetEventByIdQuery } from "@oc-mui/query";
 
 const MyComponent = ({ id }) => {
   const { data, isLoading } = useGetEventByIdQuery({ id });
@@ -143,7 +143,7 @@ const MyComponent = ({ id }) => {
 ### Mutation Example
 
 ```typescript
-import { useMutation, gql, getGraphQLClient } from "@workspace/query";
+import { useMutation, gql, getGraphQLClient } from "@oc-mui/query";
 
 const UPDATE_TITLE = gql`
   mutation UpdateTitle($id: ID!, $title: String!) {
@@ -216,8 +216,8 @@ pnpm codegen  # Generates types from GraphQL schema
 
 ## Related Packages
 
-- [`@workspace/plugin-system`](/packages/plugin-system/README.md) - Provides the plugin registry for config merging.
-- [`@workspace/app-runtime`](/packages/app-runtime/README.md) - Uses query hooks for application initialization.
+- [`@oc-mui/plugin-system`](/packages/plugin-system/README.md) - Provides the plugin registry for config merging.
+- [`@oc-mui/app-runtime`](/packages/app-runtime/README.md) - Uses query hooks for application initialization.
 
 ---
 

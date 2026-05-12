@@ -1,5 +1,5 @@
 {
-  "extends": "@workspace/typescript-config/react-application.json",
+  "extends": "@oc-mui/typescript-config/react-application.json",
   "compilerOptions": {
     "baseUrl": ".",
     "skipLibCheck": true,

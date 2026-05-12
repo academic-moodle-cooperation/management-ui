@@ -1,4 +1,4 @@
-# @workspace/remote-plugin-loader
+# @oc-mui/remote-plugin-loader
 
 Loads remote ES module plugins by URL: fetch, transform bare imports to `window.__SHARED_MODULES__`, import via blob URL, inject CSS, register GraphQL fragments, and register with the PluginManager.
 
@@ -16,7 +16,7 @@ Plugin CSS is injected before the host shell stylesheets so generic plugin utili
 Loads the plugin at `url`, transforms it, and registers it with `manager`.
 
 - **url** – URL to the plugin `.mjs` file.
-- **manager** – `PluginManager` from `@workspace/plugin-system`.
+- **manager** – `PluginManager` from `@oc-mui/plugin-system`.
 - **options** – Optional:
   - `forceReload` – Bypass HTTP and module cache.
   - `skipUrlValidation` – Caller has already validated the URL (e.g. core for JAR URLs). This package does not validate URLs; the flag is for API clarity.
@@ -31,7 +31,7 @@ Returns whether `url` is same-origin. Can be used by the core when trusting back
 
 ### `transformModuleSource(source)` / `SHARED_MODULE_NAMES`
 
-Exported for tests. Transform replaces bare imports of shared modules (react, @workspace/*) with references to the shim; `SHARED_MODULE_NAMES` in `src/transform.ts` is the list of those modules. For the full list of packages community plugins can import, see [docs/COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md](../../docs/COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md).
+Exported for tests. Transform replaces bare imports of shared modules (react, @oc-mui/*) with references to the shim; `SHARED_MODULE_NAMES` in `src/transform.ts` is the list of those modules. For the full list of packages community plugins can import, see [docs/COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md](../../docs/COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md).
 
 ## Security
 

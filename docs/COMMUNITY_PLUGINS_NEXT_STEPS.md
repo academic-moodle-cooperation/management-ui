@@ -172,7 +172,7 @@ https://raw.githubusercontent.com/opencast/management-ui-registry/main/registry.
          "url": "https://cdn.jsdelivr.net/gh/org/repo@v1.0.0/dist/plugin.mjs",
          "category": "feature",
          "workspaceDependencies": {
-           "@workspace/plugin-system": ">=1.0.0"
+           "@oc-mui/plugin-system": ">=1.0.0"
          },
          "tags": ["example", "demo"],
          "verified": false
@@ -200,7 +200,7 @@ https://raw.githubusercontent.com/opencast/management-ui-registry/main/registry.
     "author": { "name": "You" },
     "url": "http://127.0.0.1:3000/management-ui/local-plugins/my-org-plugin/my-plugin.mjs",
     "category": "feature",
-    "workspaceDependencies": { "@workspace/plugin-system": ">=1.0.0" }
+    "workspaceDependencies": { "@oc-mui/plugin-system": ">=1.0.0" }
   }
   ```
   (Use a URL that serves your plugin bundle — e.g. local-plugins dev server or a CDN.)
@@ -299,7 +299,7 @@ The `RegistryFetcher` service:
        "author": { "name": "You" },
        "url": "http://127.0.0.1:5173/my-plugin.mjs",
        "category": "feature",
-       "workspaceDependencies": { "@workspace/plugin-system": ">=1.0.0" }
+       "workspaceDependencies": { "@oc-mui/plugin-system": ">=1.0.0" }
      }]
    }' > apps/management-ui-core/public/registry.json
    ```

@@ -64,7 +64,7 @@ plugins/        ← Built-in plugins shipped with the core repo
 
 ### Testing
 
-- **[Testing](/docs/TESTING.md)** - Test pyramid (unit / contract / E2E), `@workspace/plugin-testing` harness, Playwright setup, CI layout, deferred follow-ups
+- **[Testing](/docs/TESTING.md)** - Test pyramid (unit / contract / E2E), `@oc-mui/plugin-testing` harness, Playwright setup, CI layout, deferred follow-ups
 
 ### Project Status
 
@@ -191,7 +191,7 @@ pnpm build && pnpm dev   # Build then run standalone, or use core in dev to load
 Plugins can register complete applications that appear in the main navigation:
 
 ```typescript
-import { createPlugin } from "@workspace/plugin-system";
+import { createPlugin } from "@oc-mui/plugin-system";
 import { MyCustomApp } from "./MyCustomApp";
 
 export const MyUniversityAppPlugin = createPlugin({
@@ -223,7 +223,7 @@ Plugin apps can run both within the core shell and as standalone applications:
 
 ```typescript
 // .local-plugins/my-university/main.tsx
-import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import { bootstrapStandaloneApp } from "@oc-mui/app-runtime";
 import { MyUniversityApp } from "./apps/MyUniversityApp";
 
 const config = {
@@ -236,7 +236,7 @@ bootstrapStandaloneApp(MyUniversityApp, "root", config);
 
 ```typescript
 // .local-plugins/my-university/apps/MyUniversityApp.tsx
-import { AdaptiveAppWrapper } from '@workspace/app-runtime';
+import { AdaptiveAppWrapper } from '@oc-mui/app-runtime';
 
 export const MyUniversityApp: React.FC = () => (
   <AdaptiveAppWrapper>
@@ -257,7 +257,7 @@ Use the app runtime system to bootstrap standalone applications:
 
 ```typescript
 // apps/my-app/src/main.tsx
-import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import { bootstrapStandaloneApp } from "@oc-mui/app-runtime";
 import App from "./App";
 
 // Configure the app for standalone execution
@@ -282,7 +282,7 @@ Apps can automatically adapt to their execution context:
 
 ```typescript
 // apps/my-app/src/App.tsx
-import { AdaptiveAppWrapper } from '@workspace/app-runtime';
+import { AdaptiveAppWrapper } from '@oc-mui/app-runtime';
 
 const App = () => (
   <AdaptiveAppWrapper>
@@ -400,7 +400,7 @@ cd apps/my-new-app
 
 # Initialize with standalone support
 pnpm init
-# Add @workspace/app-runtime dependency
+# Add @oc-mui/app-runtime dependency
 # Use bootstrapStandaloneApp in main.tsx
 ```
 
@@ -410,7 +410,7 @@ pnpm init
 
 ```typescript
 // main.tsx - supports both standalone and core shell execution
-import { bootstrapStandaloneApp } from "@workspace/app-runtime";
+import { bootstrapStandaloneApp } from "@oc-mui/app-runtime";
 import App from "./App";
 
 const config = {
@@ -425,7 +425,7 @@ bootstrapStandaloneApp(App, "root", config);
 
 ```typescript
 // App.tsx - automatically adapts to execution context
-import { AdaptiveAppWrapper } from '@workspace/app-runtime';
+import { AdaptiveAppWrapper } from '@oc-mui/app-runtime';
 
 const App = () => (
   <AdaptiveAppWrapper>

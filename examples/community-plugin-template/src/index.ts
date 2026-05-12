@@ -12,7 +12,7 @@
 // This ensures your plugin's CSS is bundled and loaded with the plugin
 import "./styles/index.css";
 
-import { createPlugin } from "@workspace/plugin-system";
+import { createPlugin } from "@oc-mui/plugin-system";
 
 import { MyPluginView } from "./views/MyPluginView";
 

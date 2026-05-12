@@ -7,7 +7,7 @@
  *
  * Usage:
  * 1. Call `exposeSharedModules()` early in the app initialization
- * 2. Community plugins can then import from "@workspace/*" packages
+ * 2. Community plugins can then import from "@oc-mui/*" packages
  */
 
 import * as LucideReact from "lucide-react";
@@ -15,16 +15,16 @@ import * as React from "react";
 import * as ReactJSXRuntime from "react/jsx-runtime";
 import * as ReactDOM from "react-dom";
 
-import * as I18n from "@workspace/i18n";
-import * as PluginSystem from "@workspace/plugin-system";
-import * as Query from "@workspace/query";
-import * as Router from "@workspace/router";
-import * as UIComponents from "@workspace/ui/components";
-import * as UIComponentsIcons from "@workspace/ui/components/icons";
-import * as UILib from "@workspace/ui/lib";
-import * as UILibUtils from "@workspace/ui/lib/utils";
-import * as Utils from "@workspace/utils";
-import { logger } from "@workspace/utils";
+import * as I18n from "@oc-mui/i18n";
+import * as PluginSystem from "@oc-mui/plugin-system";
+import * as Query from "@oc-mui/query";
+import * as Router from "@oc-mui/router";
+import * as UIComponents from "@oc-mui/ui/components";
+import * as UIComponentsIcons from "@oc-mui/ui/components/icons";
+import * as UILib from "@oc-mui/ui/lib";
+import * as UILibUtils from "@oc-mui/ui/lib/utils";
+import * as Utils from "@oc-mui/utils";
+import { logger } from "@oc-mui/utils";
 
 // Re-export UI component types for consumers
 export type { UIComponents };
@@ -37,15 +37,15 @@ export interface SharedModuleRegistry {
   "react-dom": typeof ReactDOM;
   "react/jsx-runtime": typeof ReactJSXRuntime;
   "lucide-react": typeof LucideReact;
-  "@workspace/plugin-system": typeof PluginSystem;
-  "@workspace/ui/components": typeof UIComponents;
-  "@workspace/ui/components/icons": typeof UIComponentsIcons;
-  "@workspace/ui/lib": typeof UILib;
-  "@workspace/ui/lib/utils": typeof UILibUtils;
-  "@workspace/query": typeof Query;
-  "@workspace/router": typeof Router;
-  "@workspace/utils": typeof Utils;
-  "@workspace/i18n": typeof I18n;
+  "@oc-mui/plugin-system": typeof PluginSystem;
+  "@oc-mui/ui/components": typeof UIComponents;
+  "@oc-mui/ui/components/icons": typeof UIComponentsIcons;
+  "@oc-mui/ui/lib": typeof UILib;
+  "@oc-mui/ui/lib/utils": typeof UILibUtils;
+  "@oc-mui/query": typeof Query;
+  "@oc-mui/router": typeof Router;
+  "@oc-mui/utils": typeof Utils;
+  "@oc-mui/i18n": typeof I18n;
 }
 
 declare global {
@@ -72,15 +72,15 @@ export function exposeSharedModules(): void {
     "react-dom": ReactDOM,
     "react/jsx-runtime": ReactJSXRuntime,
     "lucide-react": LucideReact,
-    "@workspace/plugin-system": PluginSystem,
-    "@workspace/ui/components": UIComponents,
-    "@workspace/ui/components/icons": UIComponentsIcons,
-    "@workspace/ui/lib": UILib,
-    "@workspace/ui/lib/utils": UILibUtils,
-    "@workspace/query": Query,
-    "@workspace/router": Router,
-    "@workspace/utils": Utils,
-    "@workspace/i18n": I18n,
+    "@oc-mui/plugin-system": PluginSystem,
+    "@oc-mui/ui/components": UIComponents,
+    "@oc-mui/ui/components/icons": UIComponentsIcons,
+    "@oc-mui/ui/lib": UILib,
+    "@oc-mui/ui/lib/utils": UILibUtils,
+    "@oc-mui/query": Query,
+    "@oc-mui/router": Router,
+    "@oc-mui/utils": Utils,
+    "@oc-mui/i18n": I18n,
   };
 
   sharedLogger.debug("Exposed modules for community plugins", { modules: Object.keys(window.__SHARED_MODULES__) });
@@ -89,7 +89,7 @@ export function exposeSharedModules(): void {
 /**
  * Get an exposed module by name
  *
- * @param name - Module name (e.g., "react", "@workspace/plugin-system")
+ * @param name - Module name (e.g., "react", "@oc-mui/plugin-system")
  * @returns The module or undefined
  */
 export function getSharedModule(name: string): unknown {
@@ -107,7 +107,7 @@ export function areSharedModulesAvailable(): boolean {
  * Transform ES module source to use shared modules
  *
  * Replaces bare import specifiers with references to the shared module registry.
- * This allows community plugins to import from "@workspace/*" and "react" without
+ * This allows community plugins to import from "@oc-mui/*" and "react" without
  * the browser needing to resolve those specifiers.
  *
  * @param source - ES module source code

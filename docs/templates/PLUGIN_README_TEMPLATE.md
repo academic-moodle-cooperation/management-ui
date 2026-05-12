@@ -247,7 +247,7 @@ implementations/[feature]/locales/
 2. Use translation hook:
 
    ```typescript
-   import { useTranslation } from '@workspace/i18n';
+   import { useTranslation } from '@oc-mui/i18n';
 
    function Component() {
      const { t } = useTranslation('[namespace]');
@@ -291,7 +291,7 @@ describe('HeaderComponent', () => {
 
 ```typescript
 // plugins/[university-name]/index.ts
-import { createPlugin } from '@workspace/plugin-system';
+import { createPlugin } from '@oc-mui/plugin-system';
 import { implementations } from './implementations';
 
 export const [UniversityName]Plugin = createPlugin({
@@ -343,9 +343,9 @@ export function register(manager: PluginManager) {
 
 ### Workspace Dependencies
 
-- `@workspace/plugin-system` - Plugin infrastructure
-- `@workspace/ui` - Shared UI components
-- `@workspace/i18n` - Internationalization
+- `@oc-mui/plugin-system` - Plugin infrastructure
+- `@oc-mui/ui` - Shared UI components
+- `@oc-mui/i18n` - Internationalization
 - [Other workspace deps]
 
 ### External Dependencies
