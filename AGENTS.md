@@ -211,6 +211,7 @@ If you only want a fast inner loop while iterating on one plugin:
 | Config layer model + reader API | [`docs/architecture/CONFIGURATION.md`](docs/architecture/CONFIGURATION.md) |
 | Theme tokens + CSS rules | [`docs/PLUGIN_STYLING_CONTRACT.md`](docs/PLUGIN_STYLING_CONTRACT.md) |
 | Why the architecture is the way it is | [`docs/architecture/ADR-*.md`](docs/architecture/) |
+| What's deferred / waiting on upstream / open decisions | [`docs/OPEN_FOLLOWUPS.md`](docs/OPEN_FOLLOWUPS.md) |
 
 ## When in doubt
 
