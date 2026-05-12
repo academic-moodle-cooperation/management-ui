@@ -109,21 +109,15 @@ This allows for both university-specific customizations and fallback to default 
 
 For developing new plugins:
 
-1. **Core plugins:** Add to this directory and export from `plugins/index.ts`
-2. **Community plugins:** Use the [Community Plugin Template](../examples/community-plugin-template) or create a separate repository
-3. **Export to organization plugin (official):** `pnpm plugin:export-local <plugin-name> --move`
-4. **Export + convert + wire config (recommended):** `pnpm plugin:export-local <plugin-name> --move --convert-community --wire-config`
-5. **Create directly from template:** `pnpm plugin:create-local <plugin-name> --wire-config`
-6. **Local development:** Build plugin in `.local-plugins/` and run core in dev
+1. **`pnpm create-plugin <name>`** — scaffolds an org/community plugin under `.local-plugins/<name>/` with all the wiring (package.json, plugin.json, tsconfig, vitest, contract test, README). This is the default and what most authors should use.
+2. **`pnpm create-plugin <name> --in-tree`** — scaffolds a built-in plugin under `plugins/<name>/` instead, for core contributors adding something that ships with the OSS repo. After scaffolding, also add it to the [`plugins/index.ts`](./index.ts) barrel.
+3. **Local development:** the local-plugin loader discovers anything under `.local-plugins/` automatically when the core runs in dev.
 
 Example:
 
 ```bash
-pnpm plugin:export-local my-org-plugin --move
-pnpm plugin:export-local my-org-plugin --move --convert-community --wire-config
-pnpm plugin:create-local demo-plugin --wire-config
+pnpm create-plugin audience-poll                # → .local-plugins/audience-poll/
+pnpm create-plugin admin-dashboard --in-tree    # → plugins/admin-dashboard/
 ```
 
-This removes the plugin from `plugins/index.ts`, migrates it to `.local-plugins/`, and can optionally convert it to runtime community format (`dist/*.mjs`) with namespace wiring.
-
-See [Community Plugin Development Guide](../../docs/COMMUNITY_PLUGIN_DEVELOPMENT.md) for more information.
+See [AGENTS.md](../AGENTS.md) (repo root) for the full plugin authoring rules, and [Community Plugin Development Guide](../docs/COMMUNITY_PLUGIN_DEVELOPMENT.md) for the longer-form lifecycle walkthrough.

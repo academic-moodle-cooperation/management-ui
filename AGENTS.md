@@ -34,6 +34,22 @@ plugins/<name>/
 
 Org-specific plugins live under `.local-plugins/<name>/` instead and follow the same shape. They are not part of the OSS release; never add them to `plugins/index.ts`.
 
+## Scaffolding a new plugin
+
+```bash
+# Default — scaffolds under .local-plugins/<name>/ (gitignored, for org/community plugins)
+pnpm create-plugin my-plugin
+
+# Add --in-tree to scaffold under plugins/<name>/ instead — for core
+# contributors adding a built-in plugin shipped with the OSS repo.
+pnpm create-plugin my-plugin --in-tree
+```
+
+The CLI writes the full layout above plus a working `app:header-logo`
+placeholder registration so `pnpm test:contract` passes on first run.
+Replace the placeholder, update `plugin.json`'s `extensionPoints`, and
+you have a real plugin.
+
 ## The plugin entry
 
 ```ts

@@ -18,10 +18,10 @@ Plugins evolve through distinct stages. The tooling supports each transition:
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ 1. CREATE                                                            │
-│    Start from the community template or create a new local plugin    │
 │                                                                      │
-│    pnpm plugin:create-local my-plugin --wire-config                  │
-│    → Creates .local-plugins/my-plugin/ with full scaffolding         │
+│    pnpm create-plugin my-plugin                                      │
+│    → Scaffolds .local-plugins/my-plugin/ with package.json,          │
+│      plugin.json, tsconfig, vitest, contract test, README.           │
 ├─────────────────────────────────────────────────────────────────────┤
 │ 2. DEVELOP                                                           │
 │    Build inside .local-plugins/ with hot reload                      │
@@ -29,27 +29,14 @@ Plugins evolve through distinct stages. The tooling supports each transition:
 │    pnpm dev  (watches and rebuilds your plugin)                      │
 │    → Plugin loads automatically via /local-plugins/manifest.json     │
 ├─────────────────────────────────────────────────────────────────────┤
-│ 3. INTEGRATE (optional)                                              │
-│    If part of an org (multi-module) plugin, develop as a module      │
-│                                                                      │
-│    .local-plugins/my-org/modules/my-feature/                         │
-│    → Module is one entry in the org's plugin.json "modules" array    │
-├─────────────────────────────────────────────────────────────────────┤
-│ 4. EXTRACT (optional — promote module to standalone)                 │
-│    If an org module proves useful to others, extract it              │
-│                                                                      │
-│    pnpm plugin:extract my-org/my-feature --name my-feature-plugin   │
-│    → Creates .local-plugins/my-feature-plugin/ as standalone plugin  │
-│    → Generalize: remove org-specific code, add configuration         │
-├─────────────────────────────────────────────────────────────────────┤
-│ 5. PUBLISH                                                           │
+│ 3. PUBLISH                                                           │
 │    Share with the community via registry or CDN                      │
 │                                                                      │
 │    - Host dist/*.mjs on a CDN                                        │
 │    - Register in a plugin registry                                   │
 │    - Or deploy as an OSGi JAR (see JAR Deployment docs)              │
 ├─────────────────────────────────────────────────────────────────────┤
-│ 6. INSTALL                                                           │
+│ 4. INSTALL                                                           │
 │    Other instances discover and install via Admin Marketplace         │
 │                                                                      │
 │    → Marketplace UI shows community plugins from the registry        │
@@ -57,37 +44,12 @@ Plugins evolve through distinct stages. The tooling supports each transition:
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-### Extracting a Module to a Standalone Plugin
-
-When a module inside an org plugin (e.g., `tuwien/modules/table-sidebar`) is useful beyond that org:
-
-```bash
-# Extract the module into a new standalone plugin
-pnpm plugin:extract tuwien/table-sidebar --name acl-table-sidebar --wire-config
-
-# This creates:
-# .local-plugins/acl-table-sidebar/
-# ├── plugin.json          ← New manifest (neutral namespace)
-# ├── package.json         ← Standalone package
-# ├── vite.config.ts       ← Own build config
-# ├── src/
-# │   ├── index.ts         ← Rewritten entry (new namespace)
-# │   └── components/      ← Copied from the module
-# ├── locales/             ← Copied if present
-# └── README.md            ← Extraction checklist
-```
-
-After extraction, review the TODO checklist in the README to generalize the plugin.
-
 ### Available Scaffold Commands
 
 | Command | Purpose |
 |---------|---------|
-| `pnpm plugin:create-local <name>` | Create a new plugin from the community template |
-| `pnpm plugin:create-local <name> --wire-config` | Same, plus auto-add to config |
-| `pnpm plugin:extract <org>/<module>` | Extract a module into a standalone plugin |
-| `pnpm plugin:extract <org>/<module> --name <new-name>` | Extract with a custom name |
-| `pnpm plugin:export-local <name>` | Move a built-in plugin to `.local-plugins/` |
+| `pnpm create-plugin <name>` | Scaffold a new community/org plugin under `.local-plugins/<name>/` |
+| `pnpm create-plugin <name> --in-tree` | Same, but under `plugins/<name>/` (for core contributors adding a built-in plugin) |
 | `pnpm validate:plugins` | Validate all `plugin.json` manifests |
 
 ## Architecture
@@ -535,50 +497,18 @@ git push -u origin main
 
 **Option B: Move to `.local-plugins/` (for private university repos)**
 
-If you want to keep it in the monorepo but separate it from core plugins:
-
-**Recommended (official helper scripts):**
+If you want to keep it in the monorepo but separate it from core plugins, scaffold a fresh plugin and copy the relevant code in:
 
 ```bash
-# Export built-in plugin to .local-plugins
-pnpm plugin:export-local my-org-plugin --move
+# Scaffold a new plugin under .local-plugins/ (gitignored)
+pnpm create-plugin my-org-plugin
 
-# Export and fully convert to community-style + namespace wiring
-pnpm plugin:export-local my-org-plugin --move --convert-community --wire-config
-
-# Or create a new local community-style plugin directly from template
-pnpm plugin:create-local my-org-plugin --wire-config
+# Then manually copy the relevant source files from your prototype in
+# plugins/<old-name>/ into .local-plugins/my-org-plugin/, and remove
+# the old export from plugins/index.ts.
 ```
 
-What these do:
-- Copies/moves `plugins/my-org-plugin` to `.local-plugins/my-org-plugin`
-- Removes `export * from "./my-org-plugin";` from `plugins/index.ts` (unless `--keep-barrel` is used)
-- Skips heavy/generated folders (`node_modules`, `dist`, `.turbo`, etc.)
-- Can convert a library-style plugin to community-style runtime bundle setup (`dist/*.mjs`)
-- Can add plugin namespace to `.local-plugins/config/src/config.ts` automatically
-- Prints post-export steps
-
-Useful flags:
-- `--dry-run` (preview only)
-- `--force` (overwrite target if it exists)
-- `--target-dir <dir>` (future-proof for renaming `.local-plugins`)
-- `--keep-barrel` (do not modify `plugins/index.ts`)
-- `--convert-community` (add missing template files + rewrite package/metadata for runtime plugin loading)
-- `--wire-config` (auto-add namespace to `.local-plugins/config/src/config.ts`)
-- `--namespace <name>` (override namespace used by `--wire-config`, default is plugin folder name)
-
-Manual equivalent:
-
-```bash
-# Create .local-plugins directory (gitignored)
-mkdir -p .local-plugins
-
-# Move plugin there
-mv plugins/my-org-plugin .local-plugins/my-org-plugin
-
-# Update .gitignore to ensure .local-plugins is ignored
-echo ".local-plugins/" >> .gitignore
-```
+The legacy `pnpm plugin:export-local --move --convert-community --wire-config` and `pnpm plugin:extract` scripts were retired alongside the introduction of the new `pnpm create-plugin` CLI. The previous "automatic move with config wiring" flow turned out to be more fragile than valuable: scaffolding a clean plugin and copying source by hand is shorter and avoids the half-converted state the old `--convert-community` flag often left behind. If you need the old flow back, the scripts live in git history under `scripts/export-plugin-to-local.js` and `scripts/extract-module-to-plugin.mjs`.
 
 **Automatic discovery (dev only):** When you run the Management UI Core in **development** (`pnpm dev --filter=management-ui-core`), the Vite dev server:
 

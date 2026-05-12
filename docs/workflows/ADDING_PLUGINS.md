@@ -23,8 +23,8 @@ Use **`/plugins`** for fast prototyping or core/org plugins in the repo. Use **`
 | **`/plugins`** | Prototyping, core/org plugins in repo | No (library) or yes (standalone) | Barrel export + config; core Vite bundles it |
 | **`.local-plugins`** | Complete org plugin, preparing for community/JAR | Yes (`pnpm build`) | Add namespace to config; core loads from manifest |
 
-- **For prototyping:** Copy `example-university` to `plugins/my-plugin`, export from barrel, add namespace to config.
-- **For org/community:** Run `pnpm plugin:create-local my-plugin --wire-config`, then build and run the core.
+- **For prototyping or built-in core plugins:** `pnpm create-plugin my-plugin --in-tree` scaffolds under `plugins/my-plugin/`, then add it to the `plugins/index.ts` barrel and `app.enabledPlugins` in your config.
+- **For org/community plugins:** `pnpm create-plugin my-plugin` scaffolds under `.local-plugins/my-plugin/`. Build and run the core; the local-plugin loader discovers it via the gitignored `.local-plugins/` directory.
 
 ## Before You Start
 
