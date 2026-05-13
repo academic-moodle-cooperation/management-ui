@@ -128,7 +128,17 @@ Self-contained in [`docs/TESTING.md` → Follow-ups](TESTING.md#follow-ups). Ite
 
 ## 7. Out-of-scope-by-design
 
-These showed up during phase work and are explicitly **not** going to be fixed in this codebase:
+These showed up during phase work and are explicitly **not** going to be fixed in this codebase. They live somewhere else's lifecycle.
 
-- **`.local-plugins/*` content drift**: the gitignored submodule has its own lifecycle; references to the old `pluginNamespace` key in those plugins are tracked separately by whoever owns the `.local-plugins/` repo.
-- **The `[boundaries][warning]` stderr lines**: not eslint warnings, don't trip `--max-warnings 0`. Will disappear naturally when [3.2](#32-migrate-eslint-plugin-boundaries-v5--v6-selector-syntax) is resolved upstream.
+### 7.1 `.local-plugins/*` repos must update their own dependency identifiers
+
+Each `.local-plugins/<org>/` is its own git repository (gitignored from this monorepo). Two repo-internal updates land on those repos as a consequence of work that's already merged here:
+
+- **Phase 6b namespace rename — urgent.** Every `package.json` `dependencies` / `devDependencies` entry that references `@workspace/<name>` must be rewritten to `@oc-mui/<name>`, plus every import statement. Once an org pulls Management UI past PR #130, `pnpm install` from inside their `.local-plugins/<org>/` repo will fail until they rename — the main repo no longer publishes `@workspace/*` workspace identifiers. The same rewrite the main repo took works there too: `rg --hidden -l "@workspace/" | xargs perl -pi -e 's|\@workspace/|\@oc-mui/|g'`.
+- **Phase 2b `pluginNamespace` cutover — graceful.** Older configs that still use the `pluginNamespace` key keep working only because the shell silently ignores the field; they're not surfacing as an error, but they're also not effective. Migrate at leisure to the `app.enabledPlugins` + `config.plugins[id].enabled` split documented in [`docs/architecture/CONFIGURATION.md`](architecture/CONFIGURATION.md).
+
+Both updates are explicitly out of scope for the main repo — each org owns the rename in its own repo and on its own timeline.
+
+### 7.2 `[boundaries][warning]` stderr lines
+
+Not eslint warnings, don't trip `--max-warnings 0`. Will disappear naturally when [3.2](#32-migrate-eslint-plugin-boundaries-v5--v6-selector-syntax) is resolved upstream.
