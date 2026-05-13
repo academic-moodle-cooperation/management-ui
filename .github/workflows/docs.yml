@@ -8,9 +8,13 @@ name: Deploy docs
 #                        Does NOT deploy.
 # - push to release/oss-1.0 — currently disabled. Uncomment when you're ready
 #                        for the published site to update on every merge to
-#                        release/oss-1.0. (Tracked in Phase 3 alongside the
-#                        npm `access: "public"` flip — flip both together
-#                        once everything has been verified on the test server.)
+#                        release/oss-1.0.
+#
+# Pre-1.0 the site is also blocked from search indexing through two
+# belt-and-suspenders guards: docs/public/robots.txt + a noindex meta tag in
+# docs/.vitepress/config.mts. All three guards (this workflow, robots.txt,
+# meta tag) flip together when going public — see
+# docs/operations/open-followups.md §8.3 for the checklist.
 
 on:
   workflow_dispatch:

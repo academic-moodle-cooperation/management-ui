@@ -1,0 +1,15 @@
+# Pre-1.0 — the doc site is built but not publicly announced yet. Discourage
+# all crawlers from indexing it until the project is ready for public traffic.
+#
+# When the OSS readiness phases finish and you want the site to be indexed:
+# 1. Edit this file:
+#       User-agent: *
+#       Disallow:
+# 2. Remove the `noindex` meta tag set in docs/.vitepress/config.mts.
+# 3. Uncomment the `push:` trigger in .github/workflows/docs.yml so merges
+#    to release/oss-1.0 keep the site fresh.
+#
+# All three steps are tracked together in docs/operations/open-followups.md §8.3.
+
+User-agent: *
+Disallow: /

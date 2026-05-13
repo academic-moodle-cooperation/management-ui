@@ -29,6 +29,12 @@ export default defineConfig({
   lastUpdated: true,
   srcExclude,
 
+  // Pre-1.0 — the site is built but not publicly announced. Tell search
+  // engines not to index any page. Belt-and-suspenders with
+  // docs/public/robots.txt; remove both when going public (tracked in
+  // docs/operations/open-followups.md §8.3).
+  head: [["meta", { name: "robots", content: "noindex, nofollow" }]],
+
   // We link to source files (../packages/..., ../apps/..., etc.) from inside
   // docs/. Those targets aren't built into the site, so the link checker would
   // false-positive on every one. We rewrite them to GitHub permalinks in the
