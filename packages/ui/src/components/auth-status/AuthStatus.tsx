@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useAuth, useAuthActions } from "@workspace/router";
+import { useAuth, useAuthActions } from "@oc-mui/router";
 
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";

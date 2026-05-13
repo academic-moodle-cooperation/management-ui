@@ -16,7 +16,7 @@ A plugin built correctly looks native in every org's deployment without any code
 
 | Layer | Owns | Examples |
 |-------|------|----------|
-| **Host shell CSS** | Shared UI from `@workspace/ui`, app shell structure | Sidebar, header, footer, buttons, menus, responsive layout |
+| **Host shell CSS** | Shared UI from `@oc-mui/ui`, app shell structure | Sidebar, header, footer, buttons, menus, responsive layout |
 | **Theme CSS** | Design tokens and branding variables | `--primary`, `--sidebar-primary`, `--color-footer`, fonts, radius |
 | **Plugin CSS** | Markup rendered by the plugin itself | Plugin pages, cards, layouts, custom views, scoped wrappers |
 
@@ -104,7 +104,7 @@ Org themes override these values via CSS custom properties.
 ### DO
 
 - Use `bg-background`, `text-foreground`, `bg-card`, `bg-muted`, `text-muted-foreground`, etc.
-- Use shared UI components from `@workspace/ui/components` (Button, Card, Input, Table, etc.)
+- Use shared UI components from `@oc-mui/ui/components` (Button, Card, Input, Table, etc.)
 - Use `lucide-react` for icons (provided by host)
 - Scope plugin CSS to plugin-owned markup
 - Use explicit Tailwind layers in plugin CSS entry
@@ -210,7 +210,7 @@ Any plugin using semantic tokens automatically picks up these theme values.
 When reviewing a plugin's styling:
 
 - [ ] Plugin uses only semantic token classes (no hardcoded colors)
-- [ ] Plugin uses shared UI components from `@workspace/ui`
+- [ ] Plugin uses shared UI components from `@oc-mui/ui`
 - [ ] Plugin CSS entry declares explicit Tailwind layers
 - [ ] Generic utilities apply only to plugin-owned markup
 - [ ] Host/shell overrides (if any) are scoped with a plugin root selector

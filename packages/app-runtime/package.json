@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/app-runtime",
+  "name": "@oc-mui/app-runtime",
   "version": "1.0.0",
   "license": "ECL-2.0",
   "private": true,
@@ -13,11 +13,11 @@
     "check-types": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@workspace/plugin-system": "workspace:*",
-    "@workspace/query": "workspace:*",
-    "@workspace/router": "workspace:*",
-    "@workspace/ui": "workspace:*",
-    "@workspace/utils": "workspace:*",
+    "@oc-mui/plugin-system": "workspace:*",
+    "@oc-mui/query": "workspace:*",
+    "@oc-mui/router": "workspace:*",
+    "@oc-mui/ui": "workspace:*",
+    "@oc-mui/utils": "workspace:*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
@@ -25,8 +25,8 @@
     "@types/node": "^25.0.6",
     "@types/react": "^18.0.0 || ^19.0.0",
     "@types/react-dom": "^18.0.0 || ^19.0.0",
-    "@workspace/eslint-config": "workspace:*",
-    "@workspace/typescript-config": "workspace:*",
+    "@oc-mui/eslint-config": "workspace:*",
+    "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.20.0",
     "typescript": "^5.3.3"
   }

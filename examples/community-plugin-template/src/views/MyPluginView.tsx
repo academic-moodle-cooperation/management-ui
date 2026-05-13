@@ -4,7 +4,7 @@
  * This is the main view/page component for your plugin.
  * It will be rendered when users navigate to your plugin's route.
  *
- * You can use components from @workspace/ui for consistent styling.
+ * You can use components from @oc-mui/ui for consistent styling.
  */
 
 import React from "react";
@@ -17,7 +17,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-} from "@workspace/ui/components";
+} from "@oc-mui/ui/components";
 
 export const MyPluginView: React.FC = () => {
   return (
@@ -98,13 +98,13 @@ export const MyPluginView: React.FC = () => {
         <CardHeader>
           <CardTitle>Data Fetching Example</CardTitle>
           <CardDescription>
-            Use hooks from @workspace/query to fetch data.
+            Use hooks from @oc-mui/query to fetch data.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <pre className="bg-muted p-4 rounded-md text-sm overflow-x-auto">
-            {`// Import hooks from @workspace/query
-import { useGetMyEventsQuery } from "@workspace/query";
+            {`// Import hooks from @oc-mui/query
+import { useGetMyEventsQuery } from "@oc-mui/query";
 
 // Use in your component
 const { data, isLoading, error } = useGetMyEventsQuery({

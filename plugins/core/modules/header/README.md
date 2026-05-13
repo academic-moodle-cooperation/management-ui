@@ -53,8 +53,8 @@ Universities can create their own complete header components and register them w
 
 ```typescript
 import React from 'react';
-import { SidebarTrigger } from '@workspace/ui/components';
-import { LangSwitcher, LoginButton } from '@workspace/plugins';
+import { SidebarTrigger } from '@oc-mui/ui/components';
+import { LangSwitcher, LoginButton } from '@oc-mui/plugins';
 
 const UniversityHeader = () => {
   return (
@@ -96,15 +96,15 @@ The core implementation exports reusable components that universities can use in
 - `LoginButton` - Authentication button with proper state
 
 ```typescript
-import { LangSwitcher, LoginButton } from "@workspace/plugins";
+import { LangSwitcher, LoginButton } from "@oc-mui/plugins";
 ```
 
 ## Usage
 
-The header implementation is automatically loaded when you import from `@workspace/plugins`:
+The header implementation is automatically loaded when you import from `@oc-mui/plugins`:
 
 ```typescript
-import { coreHeaderImplementation } from "@workspace/plugins";
+import { coreHeaderImplementation } from "@oc-mui/plugins";
 
 // Automatically provides:
 // ✅ Complete header component (replaces minimal default)
@@ -152,6 +152,6 @@ manager.registerComponent('appshell:header', MyHeader);
 
 - **Extension Point**: `appshell:header` (direct registration)
 - **Priority**: 100 (allows university overrides)
-- **Dependencies**: `@workspace/ui/components`, `@workspace/router`
+- **Dependencies**: `@oc-mui/ui/components`, `@oc-mui/router`
 - **Plugin Type**: `header`
 - **Namespace**: `core`

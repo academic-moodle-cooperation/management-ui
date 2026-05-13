@@ -1,7 +1,7 @@
-import type { Plugin } from "@workspace/plugin-system";
-import * as AllPlugins from "@workspace/plugins";
-import type { AppConfig } from "@workspace/query";
-import { logger } from "@workspace/utils";
+import type { Plugin } from "@oc-mui/plugin-system";
+import * as AllPlugins from "@oc-mui/plugins";
+import type { AppConfig } from "@oc-mui/query";
+import { logger } from "@oc-mui/utils";
 
 const isPlugin = (module: unknown): module is Plugin =>
   module !== null &&

@@ -1,10 +1,10 @@
 import React from "react";
 
-import { useI18n } from "@workspace/i18n";
+import { useI18n } from "@oc-mui/i18n";
 import type {
   GetEventByIdInputFieldsQuery,
   GetInputFieldsMetaDataFragment,
-} from "@workspace/query";
+} from "@oc-mui/query";
 import {
   Button,
   Container,
@@ -13,10 +13,10 @@ import {
   createMetadataHelpers,
   CopyIcon,
   PencilIcon,
-} from "@workspace/ui/components";
-import type { MetadataItem } from "@workspace/ui/config-primitives";
-import { cn } from "@workspace/ui/lib/utils";
-import { copyText } from "@workspace/utils";
+} from "@oc-mui/ui/components";
+import type { MetadataItem } from "@oc-mui/ui/config-primitives";
+import { cn } from "@oc-mui/ui/lib/utils";
+import { copyText } from "@oc-mui/utils";
 
 import { episodesConfig } from "../config";
 

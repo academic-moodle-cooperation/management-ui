@@ -1,4 +1,4 @@
-import { logger } from "@workspace/utils";
+import { logger } from "@oc-mui/utils";
 
 export const DEFAULT_SHELL_APP_PORT = 3000;
 const PLUGIN_DEV_PORT_START = 3001;
@@ -12,7 +12,7 @@ const CORE_APP_NAMES = ["playground"];
 
 // Known plugin packages - simplified to avoid dynamic discovery issues
 const discoverPluginPackages = (): string[] => {
-  return ["plugin-tuwien", "plugin-univie", "@workspace/plugin-example"];
+  return ["plugin-tuwien", "plugin-univie", "@oc-mui/plugin-example"];
 };
 
 interface PluginPorts {

@@ -7,8 +7,8 @@ import tseslint from "typescript-eslint";
  *
  * Usage:
  * ```javascript
- * import { config as baseConfig } from "@workspace/eslint-config/base";
- * import { config as typeAwareConfig } from "@workspace/eslint-config/type-aware";
+ * import { config as baseConfig } from "@oc-mui/eslint-config/base";
+ * import { config as typeAwareConfig } from "@oc-mui/eslint-config/type-aware";
  *
  * export default [
  *   ...baseConfig,

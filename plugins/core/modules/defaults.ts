@@ -1,5 +1,5 @@
-import { createPlugin, type PluginManager } from "@workspace/plugin-system";
-import { Home } from "@workspace/ui/components";
+import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
+import { Home } from "@oc-mui/ui/components";
 
 /**
  * Core Default Implementations

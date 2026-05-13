@@ -3,8 +3,8 @@
 import { ChevronRight, type LucideIcon } from "lucide-react";
 import * as React from "react";
 
-import { useTranslation } from "@workspace/i18n";
-import { Link, useRouterState } from "@workspace/router";
+import { useTranslation } from "@oc-mui/i18n";
+import { Link, useRouterState } from "@oc-mui/router";
 
 import { cn } from "../../../lib/utils";
 import {

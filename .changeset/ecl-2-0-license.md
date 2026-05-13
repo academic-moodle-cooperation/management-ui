@@ -1,26 +1,26 @@
 ---
-"@workspace/app-runtime": patch
-"@workspace/eslint-config": patch
-"@workspace/i18n": patch
-"@workspace/plugin-admin-marketplace": patch
-"@workspace/plugin-core-episodes": patch
-"@workspace/plugin-core-series": patch
-"@workspace/plugin-core-upload": patch
-"@workspace/plugin-example": patch
-"@workspace/plugin-system": patch
-"@workspace/plugin-testing": patch
-"@workspace/plugins": patch
-"@workspace/providers": patch
-"@workspace/query": patch
-"@workspace/remote-plugin-loader": patch
-"@workspace/router": patch
-"@workspace/store": patch
-"@workspace/tailwind-config": patch
-"@workspace/typescript-config": patch
-"@workspace/ui": patch
-"@workspace/ui-config": patch
-"@workspace/utils": patch
-"@workspace/vite-config": patch
+"@oc-mui/app-runtime": patch
+"@oc-mui/eslint-config": patch
+"@oc-mui/i18n": patch
+"@oc-mui/plugin-admin-marketplace": patch
+"@oc-mui/plugin-core-episodes": patch
+"@oc-mui/plugin-core-series": patch
+"@oc-mui/plugin-core-upload": patch
+"@oc-mui/plugin-example": patch
+"@oc-mui/plugin-system": patch
+"@oc-mui/plugin-testing": patch
+"@oc-mui/plugins": patch
+"@oc-mui/providers": patch
+"@oc-mui/query": patch
+"@oc-mui/remote-plugin-loader": patch
+"@oc-mui/router": patch
+"@oc-mui/store": patch
+"@oc-mui/tailwind-config": patch
+"@oc-mui/typescript-config": patch
+"@oc-mui/ui": patch
+"@oc-mui/ui-config": patch
+"@oc-mui/utils": patch
+"@oc-mui/vite-config": patch
 ---
 
 Re-license every workspace package from MIT to the **Educational Community

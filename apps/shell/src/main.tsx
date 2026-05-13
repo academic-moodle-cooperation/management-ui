@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 
-import "@workspace/ui/globals.css";
+import "@oc-mui/ui/globals.css";
 import "./themes/default.css";
-import { loadNamespace, useTranslation } from "@workspace/i18n";
-import { PluginProvider } from "@workspace/plugin-system";
-import { AppProviders } from "@workspace/providers";
-import { useAppConfig, QueryProvider } from "@workspace/query";
-import { type AnyRouter } from "@workspace/router";
-import { AppLoader } from "@workspace/ui/components";
+import { loadNamespace, useTranslation } from "@oc-mui/i18n";
+import { PluginProvider } from "@oc-mui/plugin-system";
+import { AppProviders } from "@oc-mui/providers";
+import { useAppConfig, QueryProvider } from "@oc-mui/query";
+import { type AnyRouter } from "@oc-mui/router";
+import { AppLoader } from "@oc-mui/ui/components";
 
 import { DynamicRouterProvider } from "./components/DynamicRouterProvider";
 import { PluginInitializer } from "./components/PluginInitializer";

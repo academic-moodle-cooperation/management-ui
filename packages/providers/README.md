@@ -1,4 +1,4 @@
-# @workspace/providers
+# @oc-mui/providers
 
 **Version:** 0.0.0  
 **Type:** Application Layer / Orchestration  
@@ -6,7 +6,7 @@
 
 ## Purpose & Scope
 
-The `@workspace/providers` package is the orchestration layer that composes all foundational React context providers into a single, unified `AppProviders` component. It ensures that the application's infrastructure (runtime, plugins, auth, and routing) is initialized in the correct order.
+The `@oc-mui/providers` package is the orchestration layer that composes all foundational React context providers into a single, unified `AppProviders` component. It ensures that the application's infrastructure (runtime, plugins, auth, and routing) is initialized in the correct order.
 
 **In Scope:**
 
@@ -17,7 +17,7 @@ The `@workspace/providers` package is the orchestration layer that composes all 
 
 **Out of Scope:**
 
-- Implementing the logic of individual providers (this belongs in their respective packages like `@workspace/router` or `@workspace/plugin-system`).
+- Implementing the logic of individual providers (this belongs in their respective packages like `@oc-mui/router` or `@oc-mui/plugin-system`).
 - Providing the `QueryProvider` (typically provided at the root before this package).
 
 ## Architecture & Design Decisions
@@ -43,7 +43,7 @@ The stack is organized from "most fundamental" to "most specific":
 
 ```
 ┌─────────────────────────────────────────┐
-│ @workspace/providers Stack              │
+│ @oc-mui/providers Stack              │
 ├─────────────────────────────────────────┤
 │ [ ErrorBoundary ]                       │
 │    ↓                                    │
@@ -73,12 +73,12 @@ The stack is organized from "most fundamental" to "most specific":
 ### Dependency Graph
 
 ```
-@workspace/providers
+@oc-mui/providers
 └── Workspace Dependencies
-    ├── @workspace/app-runtime - Orchestration
-    ├── @workspace/plugin-system - Extensibility
-    ├── @workspace/router - Navigation & Auth
-    └── @workspace/ui - Error components
+    ├── @oc-mui/app-runtime - Orchestration
+    ├── @oc-mui/plugin-system - Extensibility
+    ├── @oc-mui/router - Navigation & Auth
+    └── @oc-mui/ui - Error components
 ```
 
 ### Dependency Layer
@@ -92,9 +92,9 @@ The stack is organized from "most fundamental" to "most specific":
 ### Integration in an App
 
 ```typescript
-import { createRouter } from "@workspace/router";
-import { AppProviders } from "@workspace/providers";
-import { QueryProvider } from "@workspace/query";
+import { createRouter } from "@oc-mui/router";
+import { AppProviders } from "@oc-mui/providers";
+import { QueryProvider } from "@oc-mui/query";
 
 const router = createRouter({ ... });
 

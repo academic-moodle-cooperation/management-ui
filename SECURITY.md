@@ -41,7 +41,7 @@ What happens next:
 Security issues we consider in scope:
 
 - Code-execution or sandbox-escape paths in the plugin loader (`apps/shell/src/services/jarPluginLoader.ts`, the marketplace `RemoteLoader`).
-- Authorization bypass in `@workspace/router`'s route-protection layer.
+- Authorization bypass in `@oc-mui/router`'s route-protection layer.
 - Cross-site scripting or injection in any shipped component.
 - Supply-chain compromise of any package under `@oc-mui/*` once published.
 - Configuration paths that allow a plugin to read or modify other plugins' state.

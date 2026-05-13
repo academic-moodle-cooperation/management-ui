@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-import { validatePluginMetadata } from "@workspace/plugin-system";
+import { validatePluginMetadata } from "@oc-mui/plugin-system";
 
 import type { PluginManifest } from "./types";
 

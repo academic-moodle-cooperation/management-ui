@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import type { PluginManager } from "@workspace/plugin-system";
+import type { PluginManager } from "@oc-mui/plugin-system";
 
 import { RemoteLoader } from "./remote-loader";
 
 import type { RegistryPlugin } from "./registry-fetcher";
 
 // We never reach the network call: `loadAndRegister` rejects on the
-// apiVersion gate before delegating to `@workspace/remote-plugin-loader`,
+// apiVersion gate before delegating to `@oc-mui/remote-plugin-loader`,
 // so a no-op manager stub is enough.
 const fakeManager = {} as unknown as PluginManager;
 

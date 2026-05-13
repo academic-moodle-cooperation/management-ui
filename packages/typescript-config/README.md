@@ -1,10 +1,10 @@
-# `@workspace/typescript-config`
+# `@oc-mui/typescript-config`
 
 A collection of TypeScript configurations for the management-ui monorepo.
 
 ## Available Configurations
 
-### Base Configuration (`@workspace/typescript-config/base.json`)
+### Base Configuration (`@oc-mui/typescript-config/base.json`)
 
 The foundational TypeScript configuration that includes:
 
@@ -14,7 +14,7 @@ The foundational TypeScript configuration that includes:
 - Isolated modules for faster compilation
 - Source maps disabled for production builds
 
-### Node ESM Library Configuration (`@workspace/typescript-config/node-esm-library.json`)
+### Node ESM Library Configuration (`@oc-mui/typescript-config/node-esm-library.json`)
 
 Extends the base configuration for Node.js ESM libraries:
 
@@ -23,7 +23,7 @@ Extends the base configuration for Node.js ESM libraries:
 - Output directory set to `./dist`
 - Consistent file casing enforcement
 
-### React Library Configuration (`@workspace/typescript-config/react-library.json`)
+### React Library Configuration (`@oc-mui/typescript-config/react-library.json`)
 
 Extends the base configuration for React libraries:
 
@@ -33,7 +33,7 @@ Extends the base configuration for React libraries:
 - Incremental compilation for faster rebuilds
 - Output directory set to `./dist`
 
-### React Application Configuration (`@workspace/typescript-config/react-application.json`)
+### React Application Configuration (`@oc-mui/typescript-config/react-application.json`)
 
 Extends the React library configuration for applications:
 
@@ -47,7 +47,7 @@ Extend the appropriate configuration in your `tsconfig.json`:
 
 ```json
 {
-  "extends": "@workspace/typescript-config/base.json",
+  "extends": "@oc-mui/typescript-config/base.json",
   "compilerOptions": {
     // Your project-specific overrides
   },
@@ -60,7 +60,7 @@ Extend the appropriate configuration in your `tsconfig.json`:
 
 ```json
 {
-  "extends": "@workspace/typescript-config/react-library.json",
+  "extends": "@oc-mui/typescript-config/react-library.json",
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
@@ -70,7 +70,7 @@ Extend the appropriate configuration in your `tsconfig.json`:
 
 ```json
 {
-  "extends": "@workspace/typescript-config/react-application.json",
+  "extends": "@oc-mui/typescript-config/react-application.json",
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

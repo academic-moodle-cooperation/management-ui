@@ -5,8 +5,8 @@ import {
   getAllApps,
   type PluginManager,
   type AppDefinition,
-} from "@workspace/plugin-system";
-import { getCachedAppConfig } from "@workspace/query";
+} from "@oc-mui/plugin-system";
+import { getCachedAppConfig } from "@oc-mui/query";
 import {
   AppProtection,
   createRouter,
@@ -14,9 +14,9 @@ import {
   createRootRoute,
   type AnyRoute,
   type AnyRouter,
-} from "@workspace/router";
-import { AppLoader } from "@workspace/ui/components";
-import { logger } from "@workspace/utils";
+} from "@oc-mui/router";
+import { AppLoader } from "@oc-mui/ui/components";
+import { logger } from "@oc-mui/utils";
 
 import { createCommonRoutes } from "../shared/commonRoutes";
 

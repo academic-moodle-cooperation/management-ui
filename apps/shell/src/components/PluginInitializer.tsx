@@ -1,18 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { registerPluginI18nNamespaces } from "@workspace/i18n";
+import { registerPluginI18nNamespaces } from "@oc-mui/i18n";
 import {
   createAppRegistryPlugin,
   createObjectRegistryPlugin,
   createRendererPlugin,
   usePluginManager,
   type Plugin,
-} from "@workspace/plugin-system";
-import type { AppConfig } from "@workspace/query";
-import { getAppConfigSync } from "@workspace/query";
-import { loadAndRegister } from "@workspace/remote-plugin-loader";
-import { AppLoader } from "@workspace/ui/components";
-import { deepMerge, logger } from "@workspace/utils";
+} from "@oc-mui/plugin-system";
+import type { AppConfig } from "@oc-mui/query";
+import { getAppConfigSync } from "@oc-mui/query";
+import { loadAndRegister } from "@oc-mui/remote-plugin-loader";
+import { AppLoader } from "@oc-mui/ui/components";
+import { deepMerge, logger } from "@oc-mui/utils";
 
 import {
   loadAllAvailablePlugins,

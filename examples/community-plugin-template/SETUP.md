@@ -35,7 +35,7 @@ Falls `rollup` fehlt:
 - **Lösung:** `pnpm install` ausführen (siehe oben)
 - **Ursache:** Dependencies wurden nicht installiert
 
-**Problem: "Cannot find module '@workspace/...'"**
+**Problem: "Cannot find module '@oc-mui/...'"**
 - **Lösung:** Plugin muss im Management UI Workspace-Kontext geladen werden
 - **Ursache:** Workspace-Packages sind nur im Host verfügbar
 

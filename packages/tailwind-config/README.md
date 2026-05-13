@@ -1,10 +1,10 @@
-# `@workspace/tailwind-config`
+# `@oc-mui/tailwind-config`
 
 A tailored Tailwind CSS configuration for the management-ui project, built on the shadcn/ui design system.
 
 ## Available Configurations
 
-### Main Configuration (`@workspace/tailwind-config`)
+### Main Configuration (`@oc-mui/tailwind-config`)
 
 The default Tailwind configuration that includes:
 
@@ -13,7 +13,7 @@ The default Tailwind configuration that includes:
 - Custom animations and keyframes
 - Container utilities with responsive breakpoints
 
-### Shadcn Preset (`@workspace/tailwind-config/preset`)
+### Shadcn Preset (`@oc-mui/tailwind-config/preset`)
 
 Direct access to the shadcn preset configuration:
 
@@ -22,7 +22,7 @@ Direct access to the shadcn preset configuration:
 - Component-specific utilities (badges, buttons, etc.)
 - Animation utilities including bouncing loader
 
-### Shadcn Plugin (`@workspace/tailwind-config/plugin`)
+### Shadcn Plugin (`@oc-mui/tailwind-config/plugin`)
 
 The underlying Tailwind plugin that powers the preset:
 
@@ -38,7 +38,7 @@ The underlying Tailwind plugin that powers the preset:
 ```typescript
 import { defineConfig } from "vite";
 import tailwindcss from "@tailwindcss/vite";
-import tailwindConfig from "@workspace/tailwind-config";
+import tailwindConfig from "@oc-mui/tailwind-config";
 
 export default defineConfig({
   plugins: [tailwindcss(tailwindConfig)],
@@ -49,7 +49,7 @@ export default defineConfig({
 
 ```javascript
 // tailwind.config.js
-import config from "@workspace/tailwind-config";
+import config from "@oc-mui/tailwind-config";
 
 export default {
   ...config,
@@ -64,7 +64,7 @@ export default {
 
 ```javascript
 // tailwind.config.js
-import { shadcnPreset } from "@workspace/tailwind-config/preset";
+import { shadcnPreset } from "@oc-mui/tailwind-config/preset";
 
 export default {
   presets: [shadcnPreset],

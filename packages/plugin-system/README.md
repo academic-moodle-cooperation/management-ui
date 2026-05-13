@@ -1,4 +1,4 @@
-# @workspace/plugin-system
+# @oc-mui/plugin-system
 
 **Version:** 0.0.0  
 **Type:** Foundation / Core Infrastructure  
@@ -6,7 +6,7 @@
 
 ## Purpose & Scope
 
-The `@workspace/plugin-system` is the heart of the Management UI's extensibility architecture. it allows the application to be composed of independent modules (plugins) that can add new features, override UI components, and extend the core functionality without modifying the base codebase.
+The `@oc-mui/plugin-system` is the heart of the Management UI's extensibility architecture. it allows the application to be composed of independent modules (plugins) that can add new features, override UI components, and extend the core functionality without modifying the base codebase.
 
 It manages the lifecycle of plugins, provides a centralized registry for components and objects, and enables decoupled communication between modules.
 
@@ -50,7 +50,7 @@ Plugins can "export" functionality by adding functions to the `pluginManager`. O
 
 ```
 ┌─────────────────────────────────────────┐
-│ @workspace/plugin-system Architecture   │
+│ @oc-mui/plugin-system Architecture   │
 ├─────────────────────────────────────────┤
 │ [ Plugin Manager (Central Service) ]    │
 │    /           |            \           │
@@ -86,11 +86,11 @@ Plugins can "export" functionality by adding functions to the `pluginManager`. O
 ### Dependency Graph
 
 ```
-@workspace/plugin-system
+@oc-mui/plugin-system
 ├── External Dependencies
 │   └── react (^19.1.0)
 └── Workspace Dependencies
-    └── @workspace/utils - For logging and common utilities
+    └── @oc-mui/utils - For logging and common utilities
 ```
 
 ### Dependency Layer
@@ -107,7 +107,7 @@ Plugins can "export" functionality by adding functions to the `pluginManager`. O
 ### Creating a Plugin
 
 ```typescript
-import { Plugin, PluginManager } from "@workspace/plugin-system";
+import { Plugin, PluginManager } from "@oc-mui/plugin-system";
 
 export const MyPlugin: Plugin = {
   name: "my-namespace:my-feature",
@@ -130,7 +130,7 @@ export const MyPlugin: Plugin = {
 ### Using the Component Resolver
 
 ```typescript
-import { ComponentResolver } from "@workspace/plugin-system";
+import { ComponentResolver } from "@oc-mui/plugin-system";
 
 const Header = () => (
   <header>

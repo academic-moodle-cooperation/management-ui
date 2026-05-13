@@ -3,25 +3,25 @@ import { cva } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
 import * as React from "react";
 
-import { Button } from "@workspace/ui/components/ui/button";
-import { Input } from "@workspace/ui/components/ui/input";
-import { Separator } from "@workspace/ui/components/ui/separator";
+import { Button } from "@oc-mui/ui/components/ui/button";
+import { Input } from "@oc-mui/ui/components/ui/input";
+import { Separator } from "@oc-mui/ui/components/ui/separator";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@workspace/ui/components/ui/sheet";
-import { Skeleton } from "@workspace/ui/components/ui/skeleton";
+} from "@oc-mui/ui/components/ui/sheet";
+import { Skeleton } from "@oc-mui/ui/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@workspace/ui/components/ui/tooltip";
-import { useIsMobile } from "@workspace/ui/hooks/use-mobile";
-import { cn } from "@workspace/ui/lib/utils";
+} from "@oc-mui/ui/components/ui/tooltip";
+import { useIsMobile } from "@oc-mui/ui/hooks/use-mobile";
+import { cn } from "@oc-mui/ui/lib/utils";
 
 import type { VariantProps } from "class-variance-authority";
 

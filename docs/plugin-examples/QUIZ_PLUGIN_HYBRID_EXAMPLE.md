@@ -286,7 +286,7 @@ export const convexClient = new ConvexReactClient(getConvexUrl());
 
 ```typescript
 // src/index.ts
-import { createPlugin } from "@workspace/plugin-system";
+import { createPlugin } from "@oc-mui/plugin-system";
 import { ConvexProvider } from "convex/react";
 import { convexClient } from "./convex/client";
 import { QuizView } from "./views/QuizView";
@@ -329,13 +329,13 @@ export default quizPlugin;
 
 ```typescript
 // src/views/QuizView.tsx
-import { useParams } from "@workspace/router";
-import { useGetEventByIdQuery, useGetCurrentUser } from "@workspace/query";
+import { useParams } from "@oc-mui/router";
+import { useGetEventByIdQuery, useGetCurrentUser } from "@oc-mui/query";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { QuizForm } from "../components/QuizForm";
 import { QuizResults } from "../components/QuizResults";
-import { Card, CardHeader, CardTitle, CardDescription } from "@workspace/ui/components";
+import { Card, CardHeader, CardTitle, CardDescription } from "@oc-mui/ui/components";
 
 export const QuizView = () => {
   const { eventId } = useParams("/quiz/:eventId");
@@ -422,7 +422,7 @@ export const QuizView = () => {
 ```typescript
 // src/components/QuizForm.tsx
 import { useState } from "react";
-import { Button, Card, CardHeader, CardTitle, CardContent } from "@workspace/ui/components";
+import { Button, Card, CardHeader, CardTitle, CardContent } from "@oc-mui/ui/components";
 import { Send } from "lucide-react";
 
 interface QuizFormProps {
@@ -556,7 +556,7 @@ export const QuizForm = ({ quiz, onSubmit }: QuizFormProps) => {
 
 ```typescript
 // src/components/QuizResults.tsx
-import { Card, CardHeader, CardTitle, CardContent } from "@workspace/ui/components";
+import { Card, CardHeader, CardTitle, CardContent } from "@oc-mui/ui/components";
 import { CheckCircle2, XCircle, Trophy } from "lucide-react";
 
 interface QuizResultsProps {

@@ -1,4 +1,4 @@
-import { createPlugin, type PluginManager } from "@workspace/plugin-system";
+import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
 
 /**
  * Sidebar Extension Points Plugin

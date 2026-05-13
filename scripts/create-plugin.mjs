@@ -8,7 +8,7 @@
  *                             built-in plugin)
  *
  * The scaffolded plugin includes a placeholder `app:header-logo`
- * registration so `pnpm --filter @workspace/plugin-<name> test:contract`
+ * registration so `pnpm --filter @oc-mui/plugin-<name> test:contract`
  * passes on first run. Edit src/index.ts + plugin.json's extensionPoints
  * to replace the placeholder with real logic.
  *
@@ -131,6 +131,6 @@ console.log(`  1. pnpm install`);
 console.log(`  2. pnpm build                  # one-time, populates dist-types/ for upstream packages`);
 console.log(`  3. edit ${relativeTarget}/plugin.json   # fill in description, author, real extensionPoints`);
 console.log(`  4. edit ${relativeTarget}/src/index.ts  # replace the placeholder registration`);
-console.log(`  5. pnpm --filter @workspace/plugin-${pluginName} test:contract`);
+console.log(`  5. pnpm --filter @oc-mui/plugin-${pluginName} test:contract`);
 console.log("");
 console.log("Read AGENTS.md (repo root) for the full plugin authoring rules.");

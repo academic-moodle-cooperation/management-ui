@@ -18,7 +18,7 @@ Third-party packages from npm:
 
 ### 2. Workspace Dependencies
 
-Internal packages (`@workspace/*`):
+Internal packages (`@oc-mui/*`):
 
 - Managed by pnpm workspace
 - Version controlled in monorepo
@@ -125,7 +125,7 @@ pnpm update [dependency]
 pnpm update -r [dependency]
 
 # Update specific workspace package everywhere
-pnpm update -r @workspace/[package-name]
+pnpm update -r @oc-mui/[package-name]
 ```
 
 #### Updating Dev Dependencies

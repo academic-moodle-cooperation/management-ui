@@ -1,14 +1,14 @@
 import React from "react";
 
-import { AppRuntimeProvider, type AppRuntimeConfig } from "@workspace/app-runtime";
-import { RendererProvider } from "@workspace/plugin-system";
+import { AppRuntimeProvider, type AppRuntimeConfig } from "@oc-mui/app-runtime";
+import { RendererProvider } from "@oc-mui/plugin-system";
 import {
   AuthProvider,
   AuthInitializer,
   RouterProvider,
   type AnyRouter,
-} from "@workspace/router";
-import { ErrorBoundary } from "@workspace/ui/components/errors/general-error";
+} from "@oc-mui/router";
+import { ErrorBoundary } from "@oc-mui/ui/components/errors/general-error";
 
 interface AppProvidersProps {
   router: AnyRouter;

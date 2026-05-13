@@ -1,5 +1,5 @@
-import { createPlugin } from "@workspace/plugin-system";
-import type { PluginManager } from "@workspace/plugin-system";
+import { createPlugin } from "@oc-mui/plugin-system";
+import type { PluginManager } from "@oc-mui/plugin-system";
 
 import DefaultFooter from "./components/default-footer";
 

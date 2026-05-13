@@ -127,7 +127,7 @@ query GetEventWithQuiz($eventId: String!) {
 ### Frontend Plugin Usage
 
 ```typescript
-import { useGetEventWithQuizQuery } from "@workspace/query";
+import { useGetEventWithQuizQuery } from "@oc-mui/query";
 
 const QuizView = ({ eventId }: { eventId: string }) => {
   const { data } = useGetEventWithQuizQuery({ eventId });
@@ -310,10 +310,10 @@ export const getResults = query({
 
 ```typescript
 // .local-plugins/quiz-plugin/src/views/QuizView.tsx
-import { useGetEventByIdQuery } from "@workspace/query";
+import { useGetEventByIdQuery } from "@oc-mui/query";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
-import { useGetCurrentUser } from "@workspace/query";
+import { useGetCurrentUser } from "@oc-mui/query";
 
 export const QuizView = ({ eventId }: { eventId: string }) => {
   // Get Event data from Opencast GraphQL

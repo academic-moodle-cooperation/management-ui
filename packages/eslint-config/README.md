@@ -1,10 +1,10 @@
-# `@workspace/eslint-config`
+# `@oc-mui/eslint-config`
 
 A collection of ESLint configurations for the management-ui monorepo.
 
 ## Available Configurations
 
-### Base Configuration (`@workspace/eslint-config/base`)
+### Base Configuration (`@oc-mui/eslint-config/base`)
 
 The base ESLint configuration that includes:
 
@@ -14,7 +14,7 @@ The base ESLint configuration that includes:
 - Turbo monorepo rules
 - Only-warn plugin (converts errors to warnings for better developer experience)
 
-### React Configuration (`@workspace/eslint-config/react-internal`)
+### React Configuration (`@oc-mui/eslint-config/react-internal`)
 
 Extends the base configuration with React-specific rules:
 
@@ -23,7 +23,7 @@ Extends the base configuration with React-specific rules:
 - Browser and service worker globals
 - Automatic React version detection
 
-### Type-Aware Configuration (`@workspace/eslint-config/type-aware`)
+### Type-Aware Configuration (`@oc-mui/eslint-config/type-aware`)
 
 Optional configuration that enables type-aware linting rules:
 
@@ -38,15 +38,15 @@ Import the appropriate configuration in your `eslint.config.js`:
 
 ```javascript
 // For non-React packages
-import { config } from "@workspace/eslint-config/base";
+import { config } from "@oc-mui/eslint-config/base";
 
 export default config;
 ```
 
 ```javascript
 // For React applications
-import { config as baseConfig } from "@workspace/eslint-config/base";
-import { config as reactConfig } from "@workspace/eslint-config/react-internal";
+import { config as baseConfig } from "@oc-mui/eslint-config/base";
+import { config as reactConfig } from "@oc-mui/eslint-config/react-internal";
 
 export default [
   ...baseConfig,

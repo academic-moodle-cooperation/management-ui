@@ -1,4 +1,4 @@
-# @workspace/[package-name]
+# @oc-mui/[package-name]
 
 **Version:** 0.0.0  
 **Type:** [Core Infrastructure | Foundation | Integration | Application]  
@@ -96,7 +96,7 @@ function functionName(param: Type): ReturnType;
 **Example:**
 
 ```typescript
-import { functionName } from "@workspace/[package-name]";
+import { functionName } from "@oc-mui/[package-name]";
 
 const result = functionName(input);
 ```
@@ -124,13 +124,13 @@ export type MainType = {
 ### Dependency Graph
 
 ```
-@workspace/[package-name]
+@oc-mui/[package-name]
 ├── External Dependencies
 │   ├── [external-package] (version) - [why needed]
 │   └── [external-package] (version) - [why needed]
 └── Workspace Dependencies
-    ├── @workspace/[other-package] - [why needed]
-    └── @workspace/[other-package] - [why needed]
+    ├── @oc-mui/[other-package] - [why needed]
+    └── @oc-mui/[other-package] - [why needed]
 ```
 
 ### Dependency Layer
@@ -170,7 +170,7 @@ If you need to replace this package:
 ### Basic Usage
 
 ```typescript
-import { Something } from "@workspace/[package-name]";
+import { Something } from "@oc-mui/[package-name]";
 
 // Most common use case
 const example = Something();
@@ -186,8 +186,8 @@ const example = Something();
 
 ```typescript
 // How this package works with others
-import { Something } from "@workspace/[package-name]";
-import { OtherThing } from "@workspace/other-package";
+import { Something } from "@oc-mui/[package-name]";
+import { OtherThing } from "@oc-mui/other-package";
 
 // Integration example
 ```
@@ -232,7 +232,7 @@ pnpm test
 
 ```typescript
 // Example test structure
-import { something } from "@workspace/[package-name]";
+import { something } from "@oc-mui/[package-name]";
 
 describe("something", () => {
   it("should do expected behavior", () => {
@@ -354,8 +354,8 @@ pnpm clean        # Clean build artifacts
 
 ## Related Packages
 
-- [`@workspace/[related-package]`](/packages/[related-package]/README.md) - [Relationship description]
-- [`@workspace/[related-package]`](/packages/[related-package]/README.md) - [Relationship description]
+- [`@oc-mui/[related-package]`](/packages/[related-package]/README.md) - [Relationship description]
+- [`@oc-mui/[related-package]`](/packages/[related-package]/README.md) - [Relationship description]
 
 ## Further Reading
 

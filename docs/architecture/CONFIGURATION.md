@@ -75,7 +75,7 @@ same layers the same way, in dev and in prod:
   register their slice defaults here inside `initialize()` (usually via
   `xxxConfig.register(manager)` — see below). Multiple plugins can
   contribute; entries are deep-merged in registration order.
-- **`base`** is `defaultConfig` from `@workspace/ui-config` merged with
+- **`base`** is `defaultConfig` from `@oc-mui/ui-config` merged with
   the fetched `config.json` (deployments' customization file). When no
   `config.json` is configured the base is just `defaultConfig`.
 - **`app:config`** is a second registry extension point used for
@@ -103,7 +103,7 @@ defaults, a `register(manager)` helper, a `use()` hook, and a
 ```ts
 // plugins/core-episodes/src/config.ts
 import { z } from "zod";
-import { definePluginConfig } from "@workspace/query";
+import { definePluginConfig } from "@oc-mui/query";
 
 export const EPISODES_PLUGIN_ID = "episodes";
 
@@ -208,7 +208,7 @@ runs this sequence:
 
 1. Register the three built-in plugins (`objectRegistry`, `renderer`,
    `appRegistry`).
-2. Load every static plugin bundled via `@workspace/plugins`.
+2. Load every static plugin bundled via `@oc-mui/plugins`.
 3. Register the config plugins (`<ns>:config`) first so they can
    contribute both defaults and overlays before anything else runs.
 4. Compute the merged config snapshot.
@@ -257,7 +257,7 @@ Opencast config path.
   the key is shorter.
 - **The build-time `generateConfigPlugin` is gone.** If your build
   pipeline imported
-  `@workspace/vite-config/src/generate-config-plugin` or referenced
+  `@oc-mui/vite-config/src/generate-config-plugin` or referenced
   `PLUGIN_CONFIGS` in a `vite.config.ts`, delete those lines. Produce a
   `config.json` by hand or via CI and drop it on the Opencast config
   path.

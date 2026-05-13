@@ -27,12 +27,12 @@
         "dist/**"
       ]
     },
-    "@workspace/utils#build": {
+    "@oc-mui/utils#build": {
       "outputs": [
         "dist/**"
       ]
     },
-    "@workspace/plugin-admin-marketplace#build": {
+    "@oc-mui/plugin-admin-marketplace#build": {
       "outputs": []
     },
     "preview": {

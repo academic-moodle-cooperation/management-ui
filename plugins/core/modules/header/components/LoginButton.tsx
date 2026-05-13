@@ -1,7 +1,7 @@
 import React from "react";
 
-import { useAuth, useAuthActions } from "@workspace/router";
-import { Button } from "@workspace/ui/components";
+import { useAuth, useAuthActions } from "@oc-mui/router";
+import { Button } from "@oc-mui/ui/components";
 
 export const LoginButton = () => {
   const { isAuthenticated } = useAuth();

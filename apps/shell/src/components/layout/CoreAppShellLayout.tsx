@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 
-import { Outlet } from "@workspace/router";
-import { Appshell } from "@workspace/ui/components";
+import { Outlet } from "@oc-mui/router";
+import { Appshell } from "@oc-mui/ui/components";
 
 import { MatomoTracker } from "../analytics/MatomoTracker";
 

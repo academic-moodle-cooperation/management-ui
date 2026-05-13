@@ -1,4 +1,4 @@
-# @workspace/i18n
+# @oc-mui/i18n
 
 **Version:** 0.0.0  
 **Type:** Foundation / Internationalization  
@@ -6,15 +6,15 @@
 
 ## Purpose & Scope
 
-The `@workspace/i18n` package provides a unified internationalization system for the Management UI. Built on **i18next** and **react-i18next**, it supports multiple languages, namespaced translation files, and dynamic loading of translations—essential for the platform's plugin architecture.
+The `@oc-mui/i18n` package provides a unified internationalization system for the Management UI. Built on **i18next** and **react-i18next**, it supports multiple languages, namespaced translation files, and dynamic loading of translations—essential for the platform's plugin architecture.
 
 ### Stability contract
 
-This package is the **only place in the monorepo that is allowed to import from `i18next` / `react-i18next`**. Apps, plugins and other packages must import translation primitives (`useTranslation`, `Trans`, `I18nextProvider`, …) from `@workspace/i18n`.
+This package is the **only place in the monorepo that is allowed to import from `i18next` / `react-i18next`**. Apps, plugins and other packages must import translation primitives (`useTranslation`, `Trans`, `I18nextProvider`, …) from `@oc-mui/i18n`.
 
 The rule is enforced by ESLint (`no-restricted-imports` in `packages/eslint-config/base.js`) with an explicit exception for this package.
 
-Why it matters: if we ever need to replace or upgrade the i18n implementation (e.g. move to a different framework), we can do so by changing the internals of `@workspace/i18n` without breaking plugins or apps.
+Why it matters: if we ever need to replace or upgrade the i18n implementation (e.g. move to a different framework), we can do so by changing the internals of `@oc-mui/i18n` without breaking plugins or apps.
 
 **In Scope:**
 
@@ -28,7 +28,7 @@ Why it matters: if we ever need to replace or upgrade the i18n implementation (e
 
 - Management of the actual translation files (these are stored in `src/locales` or within plugins).
 - Server-side translation storage.
-- UI components for language switching (belongs in `@workspace/ui`).
+- UI components for language switching (belongs in `@oc-mui/ui`).
 
 ## Architecture & Design Decisions
 
@@ -50,7 +50,7 @@ An enhanced version of the standard `useTranslation` hook that automatically ens
 
 ```
 ┌─────────────────────────────────────────┐
-│ @workspace/i18n Architecture            │
+│ @oc-mui/i18n Architecture            │
 ├─────────────────────────────────────────┤
 │ [ I18nextProvider ]                     │
 │         ↓                               │
@@ -83,7 +83,7 @@ An enhanced version of the standard `useTranslation` hook that automatically ens
 ### Dependency Graph
 
 ```
-@workspace/i18n
+@oc-mui/i18n
 └── External Dependencies
     ├── i18next (^23.10.0)
     ├── i18next-browser-languagedetector (^7.2.0)
@@ -102,7 +102,7 @@ An enhanced version of the standard `useTranslation` hook that automatically ens
 ### Basic Usage
 
 ```typescript
-import { useTranslation } from "@workspace/i18n";
+import { useTranslation } from "@oc-mui/i18n";
 
 const MyComponent = () => {
   const { t } = useTranslation("common");
@@ -113,7 +113,7 @@ const MyComponent = () => {
 ### Plugin Usage (Auto-loading)
 
 ```typescript
-import { usePluginTranslation } from "@workspace/i18n";
+import { usePluginTranslation } from "@oc-mui/i18n";
 
 const PluginComponent = () => {
   const { t } = usePluginTranslation(["my-plugin-namespace"]);

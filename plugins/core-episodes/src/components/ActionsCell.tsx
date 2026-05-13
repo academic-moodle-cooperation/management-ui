@@ -1,11 +1,11 @@
 import { Pencil, PlayCircle, Scissors, Trash2, ArrowDownToLine, MoreVertical } from "lucide-react";
 import React, { useState } from "react";
 
-import { i18next } from "@workspace/i18n";
-import { PluginComponent } from "@workspace/plugin-system";
-import { useAppConfig, useDeleteEventMutation } from "@workspace/query";
-import type { EventsDataFragment } from "@workspace/query";
-import { Link } from "@workspace/router";
+import { i18next } from "@oc-mui/i18n";
+import { PluginComponent } from "@oc-mui/plugin-system";
+import { useAppConfig, useDeleteEventMutation } from "@oc-mui/query";
+import type { EventsDataFragment } from "@oc-mui/query";
+import { Link } from "@oc-mui/router";
 import {
   Button,
   Tooltip,
@@ -28,8 +28,8 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   toast,
-} from "@workspace/ui/components";
-import { resolveDownloadUrl } from "@workspace/utils";
+} from "@oc-mui/ui/components";
+import { resolveDownloadUrl } from "@oc-mui/utils";
 
 import { useSidebarStore } from "../stores/sidebarStore";
 

@@ -34,9 +34,9 @@ Before attempting to swap a technology, assess difficulty:
 
 These are well-isolated with clear boundaries:
 
-- `@workspace/utils` - Pure utility functions
-- `@workspace/store` - State management (Jotai/Zustand)
-- `@workspace/i18n` - Internationalization (i18next)
+- `@oc-mui/utils` - Pure utility functions
+- `@oc-mui/store` - State management (Jotai/Zustand)
+- `@oc-mui/i18n` - Internationalization (i18next)
 - Build tools - Vite, TypeScript, ESLint
 
 **Why easy:** No workspace dependencies, clear interfaces
@@ -45,8 +45,8 @@ These are well-isolated with clear boundaries:
 
 These require more work but are feasible:
 
-- `@workspace/query` - Data fetching (TanStack Query)
-- `@workspace/router` - Routing (TanStack Router)
+- `@oc-mui/query` - Data fetching (TanStack Query)
+- `@oc-mui/router` - Routing (TanStack Router)
 - UI library components - Radix UI
 
 **Why medium:** Some coupling, but abstracted in packages
@@ -55,8 +55,8 @@ These require more work but are feasible:
 
 These are tightly integrated:
 
-- `@workspace/ui` - Currently has high coupling
-- `@workspace/plugin-system` - Core architecture
+- `@oc-mui/ui` - Currently has high coupling
+- `@oc-mui/plugin-system` - Core architecture
 - React - Entire system built on it
 
 **Why hard:** Extensive usage, tight coupling
@@ -276,7 +276,7 @@ Before swapping, reduce coupling:
 
 ```typescript
 // BEFORE (in ui package - problematic)
-import { useSeries } from '@workspace/query';
+import { useSeries } from '@oc-mui/query';
 
 export function SeriesCard() {
   const { data } = useSeries();
@@ -299,8 +299,8 @@ export function SeriesCard({ title, description }: SeriesCardProps) {
 }
 
 // Usage in app (not in ui)
-import { SeriesCard } from '@workspace/ui';
-import { useSeries } from '@workspace/query';
+import { SeriesCard } from '@oc-mui/ui';
+import { useSeries } from '@oc-mui/query';
 
 function Container() {
   const { data } = useSeries();
@@ -334,7 +334,7 @@ Replace components one at a time, keeping same props interface.
 
 #### Step 1: Isolate Build Config
 
-Keep build config in `@workspace/vite-config`:
+Keep build config in `@oc-mui/vite-config`:
 
 ```typescript
 // packages/vite-config/src/index.ts
@@ -371,7 +371,7 @@ export function createAppConfig(options) {
 ```typescript
 // apps/management-ui-series/webpack.config.js
 // Previously: vite.config.ts
-import { createAppConfig } from "@workspace/webpack-config";
+import { createAppConfig } from "@oc-mui/webpack-config";
 
 export default createAppConfig({
   appName: "management-ui-series",

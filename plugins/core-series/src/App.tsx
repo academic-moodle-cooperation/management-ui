@@ -1,5 +1,5 @@
-import { useI18n } from "@workspace/i18n";
-import { AppHeading, Separator, Container } from "@workspace/ui/components";
+import { useI18n } from "@oc-mui/i18n";
+import { AppHeading, Separator, Container } from "@oc-mui/ui/components";
 
 import { SeriesTable } from "./components/SeriesTable";
 

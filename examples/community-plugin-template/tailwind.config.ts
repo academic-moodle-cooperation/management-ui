@@ -1,11 +1,11 @@
-import { shadcnPreset } from "@workspace/tailwind-config/preset";
+import { shadcnPreset } from "@oc-mui/tailwind-config/preset";
 
 import type { Config } from "tailwindcss";
 
 /**
  * Tailwind Configuration for Community Plugin
  *
- * This configuration uses the shared shadcn preset from @workspace/tailwind-config
+ * This configuration uses the shared shadcn preset from @oc-mui/tailwind-config
  * to ensure consistency with the Management UI design system.
  *
  * The content array only includes files from THIS plugin, ensuring that:

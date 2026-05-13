@@ -1,4 +1,4 @@
-import { useI18n } from "@workspace/i18n";
+import { useI18n } from "@oc-mui/i18n";
 
 const EmptyState = () => {
   const { t } = useI18n();

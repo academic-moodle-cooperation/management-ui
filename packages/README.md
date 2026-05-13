@@ -194,8 +194,8 @@ See detailed guide: [/docs/workflows/ADDING_PACKAGES.md](/docs/workflows/ADDING_
 
 ### Package Naming Convention
 
-- **Scope:** `@workspace/` for all workspace packages
-- **Name:** Descriptive, kebab-case (e.g., `@workspace/plugin-system`)
+- **Scope:** `@oc-mui/` for all workspace packages
+- **Name:** Descriptive, kebab-case (e.g., `@oc-mui/plugin-system`)
 - **Type:** Clearly indicates purpose (e.g., `-config`, `-runtime`)
 
 ## Technology Swapping
@@ -214,7 +214,7 @@ One of our goals is to make it **easy to swap technologies**. Here's how:
 4. Test all applications
 5. Deploy
 
-**Why this works:** The `query` package abstracts the query library. Apps depend on `@workspace/query`, not directly on TanStack Query.
+**Why this works:** The `query` package abstracts the query library. Apps depend on `@oc-mui/query`, not directly on TanStack Query.
 
 ### Swapping Example: UI Library
 
@@ -228,7 +228,7 @@ One of our goals is to make it **easy to swap technologies**. Here's how:
 4. Test visual consistency
 5. Deploy
 
-**Why this works:** Apps use `@workspace/ui` components, not Radix UI directly.
+**Why this works:** Apps use `@oc-mui/ui` components, not Radix UI directly.
 
 ### Guidelines for Swappability
 
@@ -255,7 +255,7 @@ export function useMyData() {
 export { useMyData } from "./hooks/useMyData";
 
 // 3. Use in applications
-import { useMyData } from "@workspace/query";
+import { useMyData } from "@oc-mui/query";
 ```
 
 ### Pattern: Creating a Shared Component
@@ -272,7 +272,7 @@ export const MyComponent = () => {
 export { MyComponent } from "./components/MyComponent";
 
 // 3. Use in applications
-import { MyComponent } from "@workspace/ui";
+import { MyComponent } from "@oc-mui/ui";
 ```
 
 ### Pattern: Creating a Utility Function
@@ -289,7 +289,7 @@ export function myUtil() {
 export { myUtil } from "./myUtil";
 
 // 3. Use anywhere
-import { myUtil } from "@workspace/utils";
+import { myUtil } from "@oc-mui/utils";
 ```
 
 ## Package Development
@@ -350,7 +350,7 @@ Every package must have:
 
 ```json
 {
-  "name": "@workspace/package-name",
+  "name": "@oc-mui/package-name",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -395,7 +395,7 @@ Before considering a package production-ready:
 
 ### Issue: Package Not Found
 
-**Symptoms:** Import from `@workspace/package` fails
+**Symptoms:** Import from `@oc-mui/package` fails
 
 **Solution:**
 

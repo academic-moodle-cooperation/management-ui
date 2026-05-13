@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { definePluginConfig } from "@workspace/query";
+import { definePluginConfig } from "@oc-mui/query";
 
 /**
  * Episodes plugin config.

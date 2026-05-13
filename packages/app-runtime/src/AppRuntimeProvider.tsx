@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 
-import type { AppDefinition } from "@workspace/plugin-system";
-import { logger } from "@workspace/utils";
+import type { AppDefinition } from "@oc-mui/plugin-system";
+import { logger } from "@oc-mui/utils";
 
 import type { AppRuntimeContext, AppRuntimeConfig } from "./types";
 import type { ReactNode } from "react";

@@ -1,4 +1,4 @@
-# @workspace/ui
+# @oc-mui/ui
 
 **Version:** 0.0.0  
 **Type:** Foundation / Component Library  
@@ -6,7 +6,7 @@
 
 ## Purpose & Scope
 
-The `@workspace/ui` package is the centralized component library for the Management UI. It provides a consistent design system based on **Tailwind CSS (v4)** and **Radix UI**. It ranges from low-level atomic components to complex, data-integrated systems like the application shell and advanced data tables.
+The `@oc-mui/ui` package is the centralized component library for the Management UI. It provides a consistent design system based on **Tailwind CSS (v4)** and **Radix UI**. It ranges from low-level atomic components to complex, data-integrated systems like the application shell and advanced data tables.
 
 **In Scope:**
 
@@ -19,8 +19,8 @@ The `@workspace/ui` package is the centralized component library for the Managem
 **Out of Scope:**
 
 - Application-specific business logic (belongs in apps).
-- Direct API calls (uses `@workspace/query` hooks instead).
-- Global state management (belongs in `@workspace/store`).
+- Direct API calls (uses `@oc-mui/query` hooks instead).
+- Global state management (belongs in `@oc-mui/store`).
 
 ## Architecture & Design Decisions
 
@@ -46,7 +46,7 @@ A set of components designed to handle various metadata types (String, List, Dur
 
 ```
 ┌─────────────────────────────────────────┐
-│ @workspace/ui Architecture              │
+│ @oc-mui/ui Architecture              │
 ├─────────────────────────────────────────┤
 │ [ Appshell / Layout Components ]        │
 │         ↓                               │
@@ -86,18 +86,18 @@ export * from "./metadata-fields";
 ### Dependency Graph
 
 ```
-@workspace/ui
+@oc-mui/ui
 ├── External Dependencies
 │   ├── @radix-ui/* (Primitives)
 │   ├── lucide-react (Icons)
 │   ├── tailwindcss (v4)
 │   └── class-variance-authority (Styling)
 └── Workspace Dependencies
-    ├── @workspace/i18n - For component translations
-    ├── @workspace/plugin-system - For component extensibility
-    ├── @workspace/query - For data-integrated components (e.g., SelectSeries)
-    ├── @workspace/router - For navigation-aware components
-    └── @workspace/ui-config - For theming and configuration
+    ├── @oc-mui/i18n - For component translations
+    ├── @oc-mui/plugin-system - For component extensibility
+    ├── @oc-mui/query - For data-integrated components (e.g., SelectSeries)
+    ├── @oc-mui/router - For navigation-aware components
+    └── @oc-mui/ui-config - For theming and configuration
 ```
 
 ### Dependency Layer
@@ -111,7 +111,7 @@ export * from "./metadata-fields";
 ### Using Atomic Components
 
 ```typescript
-import { Button, Card, CardHeader, CardTitle } from "@workspace/ui/components";
+import { Button, Card, CardHeader, CardTitle } from "@oc-mui/ui/components";
 
 const MyComponent = () => (
   <Card>
@@ -126,7 +126,7 @@ const MyComponent = () => (
 ### Using the App Shell
 
 ```typescript
-import { Appshell } from "@workspace/ui/components";
+import { Appshell } from "@oc-mui/ui/components";
 
 const App = () => (
   <Appshell>
@@ -163,14 +163,14 @@ packages/ui/
 
 ## Related Packages
 
-- [`@workspace/tailwind-config`](/packages/tailwind-config/README.md) - Provides the styling foundation.
-- [`@workspace/plugin-system`](/packages/plugin-system/README.md) - Enables UI extensibility.
+- [`@oc-mui/tailwind-config`](/packages/tailwind-config/README.md) - Provides the styling foundation.
+- [`@oc-mui/plugin-system`](/packages/plugin-system/README.md) - Enables UI extensibility.
 
 ---
 
 ## Contributing
 
 1. **Atomic Components:** Follow the shadcn/ui pattern. Keep them presentational and generic.
-2. **Specialized Components:** If a component needs data from `@workspace/query`, try to pass it via props first. Only use hooks if the component is designed as a "Connected Component".
+2. **Specialized Components:** If a component needs data from `@oc-mui/query`, try to pass it via props first. Only use hooks if the component is designed as a "Connected Component".
 3. **Styling:** Use the `cn()` utility for class merging and follow the Tailwind v4 conventions.
 4. **Icons:** Use `lucide-react` for all standard icons.

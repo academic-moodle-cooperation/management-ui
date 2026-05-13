@@ -1,4 +1,4 @@
-import { ComponentResolver } from "@workspace/plugin-system";
+import { ComponentResolver } from "@oc-mui/plugin-system";
 
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "../ui";
 

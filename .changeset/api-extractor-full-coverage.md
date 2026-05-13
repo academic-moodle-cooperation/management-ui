@@ -8,11 +8,11 @@ workspace imports as `.d.ts` instead of raw `.ts`.
 
 Newly instrumented:
 
-- `@workspace/router`
-- `@workspace/query`
-- `@workspace/store`
+- `@oc-mui/router`
+- `@oc-mui/query`
+- `@oc-mui/store`
 
-Together with `@workspace/plugin-system`, `@workspace/i18n`, and `@workspace/ui-config`
+Together with `@oc-mui/plugin-system`, `@oc-mui/i18n`, and `@oc-mui/ui-config`
 (already instrumented in the Phase 5 PR-B drop), every package listed under
 `docs/architecture/CONTRACTS.md` now has a committed `etc/<pkg>.api.md` snapshot and
 is gated by the existing `api-check` CI job.

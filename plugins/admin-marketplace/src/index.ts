@@ -1,6 +1,6 @@
 import { ShoppingBag } from "lucide-react";
 
-import { createPlugin } from "@workspace/plugin-system";
+import { createPlugin } from "@oc-mui/plugin-system";
 
 import { RemoteLoader } from "./services/remote-loader";
 import { ThemeLoader } from "./services/theme-loader";

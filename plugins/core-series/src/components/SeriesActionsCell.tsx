@@ -1,11 +1,11 @@
 import { Pencil, UploadCloud } from "lucide-react";
 import React from "react";
 
-import { i18next } from "@workspace/i18n";
-import { PluginComponent } from "@workspace/plugin-system";
-import type { SeriesDataFragment } from "@workspace/query";
-import { Link } from "@workspace/router";
-import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components";
+import { i18next } from "@oc-mui/i18n";
+import { PluginComponent } from "@oc-mui/plugin-system";
+import type { SeriesDataFragment } from "@oc-mui/query";
+import { Link } from "@oc-mui/router";
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@oc-mui/ui/components";
 
 import { useSidebarStore } from "../stores/sidebarStore";
 

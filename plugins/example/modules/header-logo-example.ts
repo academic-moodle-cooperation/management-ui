@@ -1,5 +1,5 @@
-import { createPlugin, type PluginManager } from "@workspace/plugin-system";
-import { logger } from "@workspace/utils";
+import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
+import { logger } from "@oc-mui/utils";
 
 /**
  * Minimal reference plugin: register a logo on the app header.

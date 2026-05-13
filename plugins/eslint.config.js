@@ -1,4 +1,4 @@
-import { config as reactInternal } from "@workspace/eslint-config/react-internal";
+import { config as reactInternal } from "@oc-mui/eslint-config/react-internal";
 
 export default [
   ...reactInternal,

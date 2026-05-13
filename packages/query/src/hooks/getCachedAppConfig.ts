@@ -1,4 +1,4 @@
-import { defaultConfig, getAppConfig, type AppConfig } from "@workspace/ui-config";
+import { defaultConfig, getAppConfig, type AppConfig } from "@oc-mui/ui-config";
 
 let configPromise: Promise<AppConfig> | null = null;
 

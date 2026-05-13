@@ -15,12 +15,12 @@
  * Plugin metadata for version compatibility checking
  */
 export interface PluginVersionConstraints {
-  /** Minimum required version of @workspace/plugin-system */
-  "@workspace/plugin-system"?: string;
-  /** Minimum required version of @workspace/ui */
-  "@workspace/ui"?: string;
-  /** Minimum required version of @workspace/query */
-  "@workspace/query"?: string;
+  /** Minimum required version of @oc-mui/plugin-system */
+  "@oc-mui/plugin-system"?: string;
+  /** Minimum required version of @oc-mui/ui */
+  "@oc-mui/ui"?: string;
+  /** Minimum required version of @oc-mui/query */
+  "@oc-mui/query"?: string;
   /** Other workspace packages */
   [key: string]: string | undefined;
 }
@@ -307,7 +307,7 @@ class SecurityService {
 
     // Use core version if no installed versions provided
     const versions: Record<string, string> = {
-      "@workspace/plugin-system": this.config.coreVersion,
+      "@oc-mui/plugin-system": this.config.coreVersion,
       ...installedVersions,
     };
 

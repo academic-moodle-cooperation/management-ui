@@ -1,13 +1,13 @@
 import { createRoute, useRouterState, type AnyRoute } from "@tanstack/react-router";
 import React from "react";
 
-import { useAppConfig } from "@workspace/query";
+import { useAppConfig } from "@oc-mui/query";
 
 /**
  * Configuration options for creating auth routes
  */
 export interface AuthRouteOptions {
-  /** Custom loading component to use (e.g., AppLoader from @workspace/ui) */
+  /** Custom loading component to use (e.g., AppLoader from @oc-mui/ui) */
   loadingComponent?: React.ComponentType;
 }
 

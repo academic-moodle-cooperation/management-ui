@@ -7,7 +7,7 @@ import {
   loadPluginInHarness,
   readPluginManifest,
   type TestHarness,
-} from "@workspace/plugin-testing";
+} from "@oc-mui/plugin-testing";
 
 import { adminMarketplacePlugin } from "./index";
 

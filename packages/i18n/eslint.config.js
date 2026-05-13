@@ -1,4 +1,4 @@
-import { config } from "@workspace/eslint-config/react-internal";
+import { config } from "@oc-mui/eslint-config/react-internal";
 
 /**
  * This package is the wrapper around i18next / react-i18next, so it is the

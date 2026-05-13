@@ -1,4 +1,4 @@
-# @workspace/ui-config
+# @oc-mui/ui-config
 
 **Version:** 0.0.0  
 **Type:** Foundation / Configuration  
@@ -6,7 +6,7 @@
 
 ## Purpose & Scope
 
-The `@workspace/ui-config` package is the centralized source of truth for application configuration defaults and types. It defines the structure of the `AppConfig` and provides the baseline settings for authentication, API endpoints, and plugin behaviors.
+The `@oc-mui/ui-config` package is the centralized source of truth for application configuration defaults and types. It defines the structure of the `AppConfig` and provides the baseline settings for authentication, API endpoints, and plugin behaviors.
 
 This package is designed to be **pure and static**, allowing it to be used early in the application lifecycle without side effects.
 
@@ -19,8 +19,8 @@ This package is designed to be **pure and static**, allowing it to be used early
 
 **Out of Scope:**
 
-- Fetching configuration from a server (handled by `@workspace/query`).
-- Reactive configuration state (handled by `@workspace/query`'s `useAppConfig` hook).
+- Fetching configuration from a server (handled by `@oc-mui/query`).
+- Reactive configuration state (handled by `@oc-mui/query`'s `useAppConfig` hook).
 - Environment-specific logic (should be injected into `getAppConfig`).
 
 ## Architecture & Design Decisions
@@ -99,7 +99,7 @@ The main interface representing the entire configuration tree. It is extensible 
 ### Dependency Graph
 
 ```
-@workspace/ui-config
+@oc-mui/ui-config
 └── Workspace Dependencies
     └── None (Core Foundation)
 ```
@@ -115,7 +115,7 @@ The main interface representing the entire configuration tree. It is extensible 
 ### Accessing Default Config
 
 ```typescript
-import { defaultConfig } from "@workspace/ui-config";
+import { defaultConfig } from "@oc-mui/ui-config";
 
 console.log(defaultConfig.api.graphqlEndpoint); // "/graphql"
 ```
@@ -123,7 +123,7 @@ console.log(defaultConfig.api.graphqlEndpoint); // "/graphql"
 ### Merging Configs
 
 ```typescript
-import { getAppConfig } from "@workspace/ui-config";
+import { getAppConfig } from "@oc-mui/ui-config";
 
 const myConfig = getAppConfig({
   app: { title: "Custom Title" },

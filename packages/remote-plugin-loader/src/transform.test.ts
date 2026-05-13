@@ -7,7 +7,7 @@ describe("transformModuleSource", () => {
   const sharedModules: Record<string, unknown> = {
     react: { default: {}, createElement: vi.fn() },
     "react-dom": { render: vi.fn() },
-    "@workspace/plugin-system": { createPlugin: vi.fn() },
+    "@oc-mui/plugin-system": { createPlugin: vi.fn() },
   };
 
   beforeEach(() => {
@@ -22,7 +22,7 @@ describe("transformModuleSource", () => {
   it("exports SHARED_MODULE_NAMES with expected modules", () => {
     expect(SHARED_MODULE_NAMES).toContain("react");
     expect(SHARED_MODULE_NAMES).toContain("react-dom");
-    expect(SHARED_MODULE_NAMES).toContain("@workspace/plugin-system");
+    expect(SHARED_MODULE_NAMES).toContain("@oc-mui/plugin-system");
   });
 
   it("returns source unchanged when __SHARED_MODULES__ is missing", () => {
@@ -59,7 +59,7 @@ describe("transformModuleSource", () => {
   });
 
   it("includes preamble with all shared module vars", () => {
-    const source = 'import { createPlugin } from "@workspace/plugin-system";';
+    const source = 'import { createPlugin } from "@oc-mui/plugin-system";';
     const result = transformModuleSource(source);
     for (const name of SHARED_MODULE_NAMES) {
       const varName = `__mod_${name.replace(/[^a-zA-Z0-9]/g, "_")}__`;

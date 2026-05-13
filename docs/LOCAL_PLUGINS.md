@@ -14,7 +14,7 @@ The `.local-plugins/` directory at the **monorepo root** holds organization plug
    pnpm install
    ```
 
-   Workspace entries in `pnpm-workspace.yaml` include `.local-plugins/*`, so `@workspace/*` dependencies in those plugins resolve like any other package.
+   Workspace entries in `pnpm-workspace.yaml` include `.local-plugins/*`, so `@oc-mui/*` dependencies in those plugins resolve like any other package.
 
 4. **Rebuild a plugin’s `dist/` when you change its source** (the dev shell loads the built `.mjs` files). The smallest step is to build only that plugin:
 

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useAppConfig } from "@workspace/query";
+import { useAppConfig } from "@oc-mui/query";
 
 import { useAuth } from "../auth/AuthContext";
 

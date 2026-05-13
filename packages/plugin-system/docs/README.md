@@ -38,7 +38,7 @@ The plugin system enables **controlled extensibility** where:
 ### Creating a Plugin
 
 ```typescript
-import { createPlugin } from "@workspace/plugin-system";
+import { createPlugin } from "@oc-mui/plugin-system";
 import { MyCustomComponent } from "./MyCustomComponent";
 
 export const MyUniversityPlugin = createPlugin({
@@ -70,7 +70,7 @@ export const MyUniversityPlugin = createPlugin({
 ### Using Components from Plugins
 
 ```tsx
-import { ComponentResolver } from "@workspace/plugin-system";
+import { ComponentResolver } from "@oc-mui/plugin-system";
 
 function AppLayout() {
   return (
@@ -208,7 +208,7 @@ manager.registerComponent("app:header", GenericHeader, { priority: 50 });
 ### Unit Testing
 
 ```typescript
-import { PluginManager } from "@workspace/plugin-system";
+import { PluginManager } from "@oc-mui/plugin-system";
 import { MyUniversityPlugin } from "./MyUniversityPlugin";
 
 describe("MyUniversityPlugin", () => {
@@ -235,7 +235,7 @@ describe("MyUniversityPlugin", () => {
 
 ```typescript
 import { render } from '@testing-library/react';
-import { ComponentResolver } from '@workspace/plugin-system';
+import { ComponentResolver } from '@oc-mui/plugin-system';
 
 it('should render university header', () => {
   const { getByText } = render(
@@ -310,7 +310,7 @@ The archived documentation contains detailed migration information:
 ### University Header Plugin
 
 ```typescript
-import { createPlugin } from '@workspace/plugin-system';
+import { createPlugin } from '@oc-mui/plugin-system';
 
 export const UniversityHeaderPlugin = createPlugin({
   namespace: 'university',

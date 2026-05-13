@@ -47,7 +47,7 @@ This is a template for creating plugins for the Management UI.
    # Load in Management UI Developer Mode: http://127.0.0.1:5173/my-plugin.mjs
    ```
 
-`@workspace/*` packages are **peerDependencies** — provided by the host at runtime, not installed during build.
+`@oc-mui/*` packages are **peerDependencies** — provided by the host at runtime, not installed during build.
 
 ## Project Structure
 
@@ -85,8 +85,8 @@ The manifest is the source of truth for the runtime, marketplace, and registry:
   "entry": "dist/my-plugin.mjs",
   "css": "dist/my-plugin.css",
   "workspaceDependencies": {
-    "@workspace/plugin-system": ">=1.0.0",
-    "@workspace/ui": ">=1.0.0"
+    "@oc-mui/plugin-system": ">=1.0.0",
+    "@oc-mui/ui": ">=1.0.0"
   }
 }
 ```
@@ -112,10 +112,10 @@ The manifest is the source of truth for the runtime, marketplace, and registry:
 ### Using Workspace Packages
 
 ```typescript
-import { Button, Card } from "@workspace/ui/components";
-import { useGetMyEventsQuery } from "@workspace/query";
-import { useNavigate } from "@workspace/router";
-import { useI18n } from "@workspace/i18n";
+import { Button, Card } from "@oc-mui/ui/components";
+import { useGetMyEventsQuery } from "@oc-mui/query";
+import { useNavigate } from "@oc-mui/router";
+import { useI18n } from "@oc-mui/i18n";
 import { BarChart3 } from "lucide-react";
 ```
 
@@ -127,7 +127,7 @@ See [Available Packages Guide](../../docs/COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md
 
 Follow the [Plugin Styling Contract](../../docs/PLUGIN_STYLING_CONTRACT.md):
 - Use semantic tokens (`bg-background`, `text-foreground`, `bg-primary`, etc.)
-- Use shared UI components from `@workspace/ui`
+- Use shared UI components from `@oc-mui/ui`
 - Never hardcode colors
 
 ## JAR Deployment

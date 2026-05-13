@@ -6,11 +6,11 @@ This document lists all possible ways plugins can be loaded in the Management UI
 
 ## 1. Built-in Plugins (Static Bundled)
 
-**Location:** `plugins/index.ts` → `@workspace/plugins`
+**Location:** `plugins/index.ts` → `@oc-mui/plugins`
 
 **How it works:**
 - Plugins are statically imported from `plugins/` directory
-- Exported via `plugins/index.ts` as `@workspace/plugins`
+- Exported via `plugins/index.ts` as `@oc-mui/plugins`
 - Loaded during app startup in `loadPlugins.ts`
 - Filtered by `app.enabledPlugins` (ship filter) and per-slice `config.plugins[<id>].enabled` (runtime switch). Full model in [`architecture/CONFIGURATION.md`](./architecture/CONFIGURATION.md).
 - Backend note: this mode is frontend-bundled. Plugin-specific backend logic is not packaged as part of this loading mechanism.
@@ -45,7 +45,7 @@ This document lists all possible ways plugins can be loaded in the Management UI
 **Marketplace wrapper:** `plugins/admin-marketplace/src/services/remote-loader.ts`
 
 **How it works:**
-- **Core loading logic** lives in `@workspace/remote-plugin-loader`: fetch module, transform bare imports to `window.__SHARED_MODULES__`, import via blob URL, inject CSS, register GraphQL fragments, register with PluginManager.
+- **Core loading logic** lives in `@oc-mui/remote-plugin-loader`: fetch module, transform bare imports to `window.__SHARED_MODULES__`, import via blob URL, inject CSS, register GraphQL fragments, register with PluginManager.
 - **Marketplace** uses this package for registry and local plugins: validates URL (allowed domains, HTTPS), checks version compatibility, persists to localStorage, then calls the shared `loadAndRegister`.
 - JAR plugins are **not** loaded by the marketplace; they are loaded by the core (see §4). The marketplace is optional for JAR deployment.
 
@@ -95,7 +95,7 @@ Mode (mechanism 2) for ad-hoc URLs.
 
 **Code:**
 - `apps/shell/src/services/jarPluginLoader.ts` - `loadJarPlugins()`
-- `apps/shell/src/components/PluginInitializer.tsx` - calls `loadJarPlugins()` then `loadAndRegister()` from `@workspace/remote-plugin-loader`
+- `apps/shell/src/components/PluginInitializer.tsx` - calls `loadJarPlugins()` then `loadAndRegister()` from `@oc-mui/remote-plugin-loader`
 - `packages/remote-plugin-loader` - shared fetch/transform/register logic
 - `backend/management-config/.../PluginEndpoint.java` - Backend endpoint
 
@@ -134,7 +134,7 @@ Mode (mechanism 2) for ad-hoc URLs.
 
 **How it works:**
 - In **development**, the Vite dev server scans `.local-plugins/<name>/dist/` for `*.mjs` files and serves them at `/local-plugins/<name>/<file>.mjs`. It exposes a manifest at `/local-plugins/manifest.json` with one entry per `.mjs` (so one folder can have multiple bundles).
-- The **core** (PluginInitializer) fetches this manifest and loads each listed plugin via `loadAndRegister` from `@workspace/remote-plugin-loader`.
+- The **core** (PluginInitializer) fetches this manifest and loads each listed plugin via `loadAndRegister` from `@oc-mui/remote-plugin-loader`.
 - Loading is **filtered by `config.app.enabledPlugins`**: only manifest entries whose `namespace` (folder name) is in the enabled list are loaded. If `enabledPlugins` is missing or empty, all discovered .local-plugins are loaded. Same config drives built-in plugin filtering.
 - CSS behavior: `loadAndRegister` auto-requests `<module>.css` (same stem as `.mjs`). The local-plugins dev middleware resolves single-file requests from `dist/`, so `dist/<name>.css` is served when present.
 

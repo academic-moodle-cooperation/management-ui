@@ -39,7 +39,7 @@ We will use a **monorepo structure with strict dependency layers** organized as:
 **Key Principles:**
 
 1. **Layer Separation** - Lower layers never depend on higher layers
-2. **Workspace Packages** - Shared code lives in `packages/` with `@workspace/*` scope
+2. **Workspace Packages** - Shared code lives in `packages/` with `@oc-mui/*` scope
 3. **Application Independence** - Apps in `apps/` depend on packages but not other apps
 4. **Plugin Isolation** - `plugins/` contains built-in core/shared plugins, while org-specific plugins stay outside the core repo boundary (for example in `.local-plugins/` or separate repos)
 5. **Build Orchestration** - Turborepo coordinates builds across the monorepo

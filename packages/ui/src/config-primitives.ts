@@ -3,9 +3,9 @@
  *
  * These shapes describe UI-visible contracts that multiple plugins share
  * (metadata field visibility, table column definitions, table view toggles).
- * They live here — alongside `@workspace/ui/hooks/createMetadataHelpers` and
+ * They live here — alongside `@oc-mui/ui/hooks/createMetadataHelpers` and
  * the generic table/metadata components that consume them — so that neither
- * the core `@workspace/ui-config` package nor individual plugins own the type
+ * the core `@oc-mui/ui-config` package nor individual plugins own the type
  * that they all have to agree on.
  *
  * Plugins compose these primitives into their own config types (see

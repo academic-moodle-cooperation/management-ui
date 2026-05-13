@@ -1,7 +1,7 @@
 import { Trash2 } from "lucide-react";
 import React, { useState, useEffect, useCallback } from "react";
 
-import { useI18n, loadNamespace } from "@workspace/i18n";
+import { useI18n, loadNamespace } from "@oc-mui/i18n";
 import {
   useGetAllManagedAclsQuery,
   useUpdateEventAclMutation,
@@ -10,9 +10,9 @@ import {
   useGetManagedAclsWithSeriesIdQuery,
   useSearchUserQuery,
   useQueryClient,
-} from "@workspace/query";
-import type { SearchUserQuery } from "@workspace/query";
-import { logger } from "@workspace/utils";
+} from "@oc-mui/query";
+import type { SearchUserQuery } from "@oc-mui/query";
+import { logger } from "@oc-mui/utils";
 
 import { OverflowTooltip } from "../overflow-tooltip";
 import {

@@ -7,7 +7,7 @@ import { createPluginManager } from "./pluginManager";
 
 /**
  * Plugin-system React context holding the active {@link createPluginManager}
- * instance. Exported so testing harnesses (e.g. `@workspace/plugin-testing`)
+ * instance. Exported so testing harnesses (e.g. `@oc-mui/plugin-testing`)
  * can wrap rendered plugin components with a pre-configured manager.
  * Production code should prefer {@link PluginProvider} / {@link usePluginManager}.
  */

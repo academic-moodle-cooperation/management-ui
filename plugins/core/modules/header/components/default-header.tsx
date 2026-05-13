@@ -1,6 +1,6 @@
 import React from "react";
 
-import { SidebarTrigger } from "@workspace/ui/components";
+import { SidebarTrigger } from "@oc-mui/ui/components";
 
 import { LangSwitcher } from "./LangSwitcher";
 import { LoginButton } from "./LoginButton";

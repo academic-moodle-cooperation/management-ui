@@ -205,7 +205,7 @@ Remote plugins must follow the standard Plugin interface:
 
 ```typescript
 // my-remote-plugin.js (ES module served over HTTP)
-import { createPlugin } from "@workspace/plugin-system";
+import { createPlugin } from "@oc-mui/plugin-system";
 
 export default createPlugin({
   namespace: "my-remote-plugin",
@@ -319,7 +319,7 @@ export * from "./admin-marketplace";
 The plugin is automatically registered when imported from `plugins/index.ts`:
 
 ```typescript
-import { adminMarketplacePlugin } from "@workspace/plugins";
+import { adminMarketplacePlugin } from "@oc-mui/plugins";
 
 // Plugin will be initialized by the PluginManager
 ```
@@ -328,10 +328,10 @@ import { adminMarketplacePlugin } from "@workspace/plugins";
 
 ### Workspace Dependencies
 
-- `@workspace/plugin-system` - Plugin infrastructure
-- `@workspace/remote-plugin-loader` - Shared load/transform/register for remote ES modules
-- `@workspace/ui` - UI components (Button, Card, Input, etc.)
-- `@workspace/utils` - Logger and utilities
+- `@oc-mui/plugin-system` - Plugin infrastructure
+- `@oc-mui/remote-plugin-loader` - Shared load/transform/register for remote ES modules
+- `@oc-mui/ui` - UI components (Button, Card, Input, etc.)
+- `@oc-mui/utils` - Logger and utilities
 - `lucide-react` - Icons (ShoppingBag, etc.)
 - `react` - UI library
 

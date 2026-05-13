@@ -7,7 +7,7 @@ import {
   loadPluginInHarness,
   readPluginManifest,
   type TestHarness,
-} from "@workspace/plugin-testing";
+} from "@oc-mui/plugin-testing";
 
 import { __PLUGIN_VAR_NAME__Plugin } from "./index";
 

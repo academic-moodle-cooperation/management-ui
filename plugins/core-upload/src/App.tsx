@@ -1,8 +1,8 @@
-import { uploadExtensionPoints } from "plugin-core";
 import { createRef, useCallback, useEffect, useMemo, useState } from "react";
 
-import { useI18n } from "@workspace/i18n";
-import { usePluginManager, ComponentResolver } from "@workspace/plugin-system";
+import { useI18n } from "@oc-mui/i18n";
+import { uploadExtensionPoints } from "@oc-mui/plugin-core";
+import { usePluginManager, ComponentResolver } from "@oc-mui/plugin-system";
 import {
   gql,
   createGraphQLClient,
@@ -11,11 +11,11 @@ import {
   useGetUserInfo,
   useInfiniteQuery,
   useAppConfig,
-} from "@workspace/query";
-import type { GetMySeriesNameAndIdQuery } from "@workspace/query";
-import { useNavigate, useParams } from "@workspace/router";
-import { useStore } from "@workspace/store";
-import type { UploadFileBlob } from "@workspace/store";
+} from "@oc-mui/query";
+import type { GetMySeriesNameAndIdQuery } from "@oc-mui/query";
+import { useNavigate, useParams } from "@oc-mui/router";
+import { useStore } from "@oc-mui/store";
+import type { UploadFileBlob } from "@oc-mui/store";
 import {
   Accordion,
   AccordionContent,
@@ -29,9 +29,9 @@ import {
   Separator,
   Toaster,
   toast,
-} from "@workspace/ui/components";
-import type { AclData, SelectedElement } from "@workspace/ui/components";
-import { logger } from "@workspace/utils";
+} from "@oc-mui/ui/components";
+import type { AclData, SelectedElement } from "@oc-mui/ui/components";
+import { logger } from "@oc-mui/utils";
 
 import Dropzone from "./components/Dropzone";
 import { EmptyState } from "./components/EmptyState";

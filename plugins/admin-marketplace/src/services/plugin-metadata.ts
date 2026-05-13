@@ -399,7 +399,7 @@ export const PLUGIN_METADATA: Record<string, PluginMetadata> = {
   },
 
   // ─────────────────────────────────────────────────────────────────────────
-  // @workspace/plugin-example (reference implementation)
+  // @oc-mui/plugin-example (reference implementation)
   // ─────────────────────────────────────────────────────────────────────────
   "example:header": {
     name: "Example Header Logo",

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
-import { useAppConfig } from "@workspace/query";
-import { useRouterState } from "@workspace/router";
+import { useAppConfig } from "@oc-mui/query";
+import { useRouterState } from "@oc-mui/router";
 
 import { initializeMatomo, trackMatomoPageView } from "../../services/matomo";
 

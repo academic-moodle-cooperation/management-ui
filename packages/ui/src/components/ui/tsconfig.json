@@ -1,5 +1,5 @@
 {
-  "extends": "@workspace/typescript-config/react-library.json",
+  "extends": "@oc-mui/typescript-config/react-library.json",
   "compilerOptions": {
     "skipLibCheck": true,
     "noEmit": true,

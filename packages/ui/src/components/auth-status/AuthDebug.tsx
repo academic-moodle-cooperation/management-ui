@@ -1,7 +1,7 @@
 import React from "react";
 
-import { useGetCurrentUser, useAppConfig } from "@workspace/query";
-import { useAuth } from "@workspace/router";
+import { useGetCurrentUser, useAppConfig } from "@oc-mui/query";
+import { useAuth } from "@oc-mui/router";
 
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
