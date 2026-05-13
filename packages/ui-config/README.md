@@ -1,151 +1,39 @@
 # @oc-mui/ui-config
 
-**Version:** 0.0.0  
-**Type:** Foundation / Configuration  
-**Last Updated:** 2025-01-15
+Static, side-effect-free baseline for `AppConfig`. Defines the type shape and the default values; the reactive layer lives in `@oc-mui/query`'s `useAppConfig` and `definePluginConfig` reader.
 
-## Purpose & Scope
+**Contract**: 1.x. Public API surface tracked in [`etc/ui-config.api.md`](./etc/ui-config.api.md).
 
-The `@oc-mui/ui-config` package is the centralized source of truth for application configuration defaults and types. It defines the structure of the `AppConfig` and provides the baseline settings for authentication, API endpoints, and plugin behaviors.
+## Usage
 
-This package is designed to be **pure and static**, allowing it to be used early in the application lifecycle without side effects.
+```ts
+import { defaultConfig, getAppConfig, type AppConfig } from "@oc-mui/ui-config";
 
-**In Scope:**
-
-- Default configuration values (`defaultConfig`).
-- Type definitions for the entire application configuration (`AppConfig`).
-- Utility function for merging instance-specific configs (`getAppConfig`).
-- Plugin-specific configuration schemas (e.g., table columns, metadata visibility).
-
-**Out of Scope:**
-
-- Fetching configuration from a server (handled by `@oc-mui/query`).
-- Reactive configuration state (handled by `@oc-mui/query`'s `useAppConfig` hook).
-- Environment-specific logic (should be injected into `getAppConfig`).
-
-## Architecture & Design Decisions
-
-### Design Principles
-
-- **Static Baseline:** Provides a complete "working" configuration out of the box.
-- **Hierarchical Merging:** Configs are merged layer by layer (Default → Global Server Config → Plugin Config).
-- **Type Safety:** Uses TypeScript interfaces to ensure that configuration overrides match the expected schema.
-
-### Key Concepts
-
-#### `defaultConfig`
-
-A large object containing all default values for the platform. This includes:
-
-- **`app`**: Visual identity (title, logos, theme).
-- **`auth`**: Redirect URLs for login/logout (supporting both production and dev).
-- **`api`**: Base URLs and timeouts.
-- **`matomo`**: Optional Matomo analytics integration.
-- **`plugins`**: Specific settings for the Series, Episodes, and Upload apps.
-
-#### `getAppConfig(overrides)`
-
-A pure function that takes optional overrides and merges them deeply with the `defaultConfig`.
-
-### Matomo Analytics
-
-Matomo tracking is configured through the top-level `matomo` block. It is disabled by default and only starts when `enabled`, `url`, and `siteId` are configured.
-
-```json
-{
-  "matomo": {
-    "enabled": true,
-    "url": "https://matomo.example.org/",
-    "siteId": 1,
-    "disableCookies": true,
-    "enableHeartBeatTimer": 30
-  }
-}
-```
-
-Available settings:
-
-| Setting | Type | Default | Description |
-| --- | --- | --- | --- |
-| `enabled` | `boolean` | `false` | Enables or disables Matomo tracking. |
-| `url` | `string` | - | Base URL of the Matomo instance, for example `https://matomo.example.org/`. Required when tracking is enabled. |
-| `siteId` | `string \| number` | - | Matomo site ID. Required when tracking is enabled. |
-| `scriptUrl` | `string` | `${url}matomo.js` | Optional override for the Matomo JavaScript tracker URL. |
-| `trackerUrl` | `string` | `${url}matomo.php` | Optional override for the Matomo tracking endpoint. |
-| `trackPageViews` | `boolean` | `true` | Tracks the initial page view and client-side route changes. |
-| `enableLinkTracking` | `boolean` | `true` | Enables Matomo link tracking. |
-| `enableHeartBeatTimer` | `boolean \| number` | - | Enables heartbeat tracking. A number sets the heartbeat interval in seconds. |
-| `disableCookies` | `boolean` | `false` | Disables Matomo cookies. |
-| `requireConsent` | `boolean` | `false` | Requires tracking consent before Matomo records data. |
-| `requireCookieConsent` | `boolean` | `false` | Requires cookie consent before Matomo stores cookies. |
-| `includeSearch` | `boolean` | `true` | Includes query strings in tracked URLs. Set to `false` to omit query parameters. |
-
-## API Surface (Public Exports)
-
-### Exports Structure
-
-```typescript
-export { defaultConfig, getAppConfig } from "./index";
-export * from "./types";
-```
-
-### Types & Interfaces
-
-#### `AppConfig`
-The main interface representing the entire configuration tree. It is extensible via `[key: string]: unknown` to allow plugins to add their own top-level keys.
-
-## Dependencies & Coupling
-
-### Dependency Graph
-
-```
-@oc-mui/ui-config
-└── Workspace Dependencies
-    └── None (Core Foundation)
-```
-
-### Dependency Layer
-
-**Layer:** Foundation
-
-**Allowed to depend on:** External dependencies only.
-
-## Usage Examples
-
-### Accessing Default Config
-
-```typescript
-import { defaultConfig } from "@oc-mui/ui-config";
-
-console.log(defaultConfig.api.graphqlEndpoint); // "/graphql"
-```
-
-### Merging Configs
-
-```typescript
-import { getAppConfig } from "@oc-mui/ui-config";
-
-const myConfig = getAppConfig({
-  app: { title: "Custom Title" },
+// Override a few keys; the rest fall back to defaults.
+const config = getAppConfig({
+  app: { theme: "dark", locale: "en" },
 });
 ```
 
-## File Structure
+The runtime reads `config.json` (or the org-shipped equivalent), merges it on top of `defaultConfig`, and exposes the result through `useAppConfig()` from `@oc-mui/query`. Plugins read **their own slice** through `definePluginConfig({ id, schema, defaults })`.
 
-```
-packages/ui-config/
-├── src/
-│   ├── index.ts                # Default config and merge function
-│   ├── types.ts                # AppConfig interfaces
-│   └── index.ts                # Public API exports
-├── package.json
-└── README.md                   # This file
-```
+## Surface
 
----
+| Symbol | Purpose |
+|--------|---------|
+| `AppConfig` (type) | The shape of the merged app config. Plugin slices live under `config.plugins[id]`. |
+| `defaultConfig` | The baseline value — what callers get with no overrides. |
+| `getAppConfig(overrides?)` | Pure merge of `defaultConfig` with caller-supplied overrides. |
 
-## Contributing
+Plugin slice shapes live in each plugin's `src/config.ts`, not here. This package only owns the top-level keys (`app`, `auth`, `plugins`, etc.) that the shell guarantees stable.
 
-1. **Changing Defaults:** Be careful when changing `defaultConfig` as it affects all applications in the monorepo.
-2. **New Plugins:** When adding a new app or plugin that needs configuration, add its type definition to `PluginsConfig` in `types.ts`.
-3. **Immutability:** Always use `getAppConfig` to create a new configuration object instead of mutating the existing one.
+## Layer
+
+Foundation. Depends on nothing in the workspace — by design, so it can be imported before any provider is mounted.
+
+## See also
+
+- [`docs/architecture/CONFIGURATION.md`](../../docs/architecture/CONFIGURATION.md) — full layer model and merge order.
+- [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md#4-config-contract) — what's frozen.
+- [`packages/query/README.md`](../query/README.md) — the reactive layer (`useAppConfig`, `definePluginConfig`).
+- [`etc/ui-config.api.md`](./etc/ui-config.api.md) — committed API surface.

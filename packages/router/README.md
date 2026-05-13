@@ -1,201 +1,59 @@
 # @oc-mui/router
 
-**Version:** 0.0.0  
-**Type:** Foundation / Integration Layer  
-**Last Updated:** 2025-01-15
+Routing layer. Wraps TanStack Router behind a single workspace import, plus auth context, route guards, and the shell's dynamic-router glue for plugin-registered apps.
 
-## Purpose & Scope
+**Contract**: 1.x. Public API surface tracked in [`etc/router.api.md`](./etc/router.api.md).
 
-The `@oc-mui/router` package provides the routing infrastructure for the Management UI. Built on **TanStack Router**, it handles navigation, route-based data loading, and robust authentication/authorization protection.
+## The wrapper rule
 
-It centralizes the routing logic and provides a bridge between the data layer (`@oc-mui/query`) and the UI navigation.
+This package is the **only place in the workspace allowed to import from `@tanstack/react-router`**. Apps, plugins, and other packages must import routing primitives (`createRouter`, `Link`, `Outlet`, `useNavigate`, `AnyRouter`, …) from here. The rule is enforced by `no-restricted-imports` in `@oc-mui/eslint-config` with an explicit exception for this directory.
 
-### Stability contract
+Until we ship a hand-crafted facade type layer, the re-exported types are structurally identical to TanStack Router's. Treat the surface as "owned by `@oc-mui/router`" — we may tighten it over time.
 
-This package is the **only place in the monorepo that is allowed to import from `@tanstack/react-router`**. Apps, plugins and other packages must import routing primitives (`createRouter`, `Link`, `Outlet`, `AnyRouter`, ...) from `@oc-mui/router`.
+## Usage
 
-The rule is enforced by ESLint (`no-restricted-imports` in `packages/eslint-config/base.js`) with an explicit exception for this package.
+```tsx
+import { RouterProvider, Link } from "@oc-mui/router";
 
-Why it matters: if we ever need to replace or upgrade the router implementation across a major version, we can do so by changing the internals of `@oc-mui/router` without breaking plugins or apps. Deep imports into the underlying router would make that impossible.
+<RouterProvider router={router} />;
 
-> Until we have a typed facade, the public types re-exported from here are structurally identical to TanStack Router's types. Treat the API surface as "owned by `@oc-mui/router`"; we may stabilize it further over time.
-
-**In Scope:**
-
-- Routing configuration and provider.
-- Authentication context and state management.
-- Route-based authorization (Role-Based Access Control).
-- Route guards (`authGuard`) for protecting sensitive pages.
-- Integration utilities for TanStack Router.
-
-**Out of Scope:**
-
-- UI navigation components like sidebars or breadcrumbs (belongs in `@oc-mui/ui`).
-- Defining the actual application routes (belongs in the specific apps, e.g., `management-ui-core`).
-- Low-level data fetching logic (belongs in `@oc-mui/query`).
-
-## Architecture & Design Decisions
-
-### Design Principles
-
-- **Declarative Protection:** Route protection is defined at the route configuration level using `beforeLoad` and `staticData`.
-- **Centralized Auth State:** Authentication state is managed via `AuthProvider` and accessible globally through `useAuth`.
-- **Type-Safe Navigation:** Leverages TanStack Router's type-safety for links and parameters.
-
-### Key Concepts
-
-#### Route Guards (`authGuard`)
-The `authGuard` function is designed to be used in the `beforeLoad` hook of a route. It checks the current authentication state and roles before allowing access to the route.
-
-```typescript
-const adminRoute = createRoute({
-  path: '/admin',
-  beforeLoad: authGuard({ 
-    requireAuth: true, 
-    requiredRoles: ['ROLE_ADMIN'] 
-  }),
-});
+<Link to="/episodes">Episodes</Link>;
 ```
 
-#### Authentication Provider
-The `AuthProvider` maintains the `user` object and `isAuthenticated` flag. It is typically initialized by the `AuthInitializer` using data from the query layer.
+### Authentication
 
-### Architecture Diagram
+```tsx
+import { AuthProvider, useAuth, ProtectedRoute } from "@oc-mui/router";
 
-```
-┌─────────────────────────────────────────┐
-│ @oc-mui/router Architecture          │
-├─────────────────────────────────────────┤
-│ [ RouterProvider (TanStack) ]           │
-│         ↓                               │
-│ [ AuthProvider (AuthContext) ]          │
-│         ↓                               │
-│ [ Route Guards (authGuard) ]            │
-│         ↓                               │
-│ [ ProtectedRoute / Outlet ]             │
-└─────────────────────────────────────────┘
+<AuthProvider>
+  <ProtectedRoute>
+    <DashboardPage />
+  </ProtectedRoute>
+</AuthProvider>;
 ```
 
-### Technology Choices
+`AuthInitializer` runs once at boot to populate the auth context from the host (typically Opencast). `useAuthActions()` returns `signIn` / `signOut` helpers. `createLoginRoute()` and `createLogoutRoute()` build the route definitions the shell mounts.
 
-- **TanStack Router:** A powerful, type-safe router that excels in large-scale applications with complex data dependencies.
-- **React Context:** Used for the Auth state as it is required across the entire application tree.
+## Surface
 
-## API Surface (Public Exports)
+| Symbol | Purpose |
+|--------|---------|
+| `RouterProvider` | The root provider. Mounted once by the shell. |
+| `Link`, `Outlet`, `useNavigate`, `createRouter`, … | Re-exports of the underlying TanStack Router API, scoped to this package. |
+| `AuthProvider`, `useAuth`, `AuthContextType` | Auth context exposed to the rest of the app. |
+| `AuthInitializer` | Boot-time auth wiring; runs before the router renders. |
+| `useAuthActions()` | `signIn` / `signOut` mutations. |
+| `ProtectedRoute` | Component-level guard. Redirects unauthenticated users. |
+| `createLoginRoute()`, `createLogoutRoute()` | Route-builder helpers for the auth pages. |
+| Route-protection utilities | Programmatic checks for plugin code that needs to gate at the loader level. |
 
-### Exports Structure
+Full surface: [`etc/router.api.md`](./etc/router.api.md).
 
-```typescript
-export { RouterProvider, baseRootRoute } from "./RouterProvider";
-export { AuthProvider, useAuth } from "./auth/AuthContext";
-export { authGuard, protectionMetadata } from "./route-protection";
-export { ProtectedRoute } from "./components/ProtectedRoute";
-// Re-exports from @tanstack/react-router
-export { Link, useNavigate, useRouter, createRoute, createRouter } from "@tanstack/react-router";
-```
+## Layer
 
-### Core API
+Integration. Depends on `@oc-mui/plugin-system`, `@oc-mui/query` (for user/auth state), `@oc-mui/utils`.
 
-#### `AuthProvider` / `useAuth`
-**Purpose:** Provides and consumes the authentication state.
+## See also
 
-#### `authGuard(options)`
-**Purpose:** Functional guard for route `beforeLoad`.
-**Parameters:**
-- `requireAuth` (boolean): Default `true`.
-- `requiredRoles` (string[]): List of roles that can access the route.
-- `redirectTo` (string): Where to redirect if check fails.
-
-#### `protectionMetadata(options)`
-**Purpose:** Adds static metadata to a route for UI-level checks (e.g., showing a lock icon in the sidebar).
-
-## Dependencies & Coupling
-
-### Dependency Graph
-
-```
-@oc-mui/router
-├── External Dependencies
-│   ├── @tanstack/react-router (^1.45.0)
-│   └── @tanstack/router-core (^1.120.10)
-└── Workspace Dependencies
-    └── @oc-mui/query - Used for auth state and type definitions (UserQuery)
-```
-
-### Dependency Layer
-
-**Layer:** Foundation / Integration Layer
-
-**Allowed to depend on:** Core Infrastructure, Integration (Query).
-
-**Rules:**
-- Must not depend on UI components.
-- Should remain agnostic of specific application layouts.
-
-## Usage Examples
-
-### Defining a Protected Route
-
-```typescript
-import { createRoute, authGuard } from "@oc-mui/router";
-import { RootLayout } from "./layout";
-
-export const dashboardRoute = createRoute({
-  getParentRoute: () => baseRootRoute,
-  path: "/dashboard",
-  component: DashboardPage,
-  beforeLoad: authGuard({ requireAuth: true }),
-});
-```
-
-### Checking Auth in a Component
-
-```typescript
-import { useAuth } from "@oc-mui/router";
-
-const UserProfile = () => {
-  const { user, isAuthenticated } = useAuth();
-  
-  if (!isAuthenticated) return <LoginButton />;
-  return <div>Welcome, {user.currentUser.username}</div>;
-};
-```
-
-## Testing Strategy
-
-### Unit Tests
-Located in `src/**/*.test.ts`. Focuses on route guard logic.
-
-```bash
-pnpm test
-```
-
-### Integration Tests
-Auth state integration is tested by mocking the query layer responses.
-
-## File Structure
-
-```
-packages/router/
-├── src/
-│   ├── auth/                   # Authentication logic & context
-│   ├── route-protection/       # Guards and protection utilities
-│   ├── components/             # Router-specific UI components
-│   ├── RouterProvider.tsx      # Main provider wrapper
-│   └── index.ts                # Public API exports
-├── package.json
-└── README.md                   # This file
-```
-
-## Related Packages
-
-- [`@oc-mui/query`](/packages/query/README.md) - Provides the user data for authentication.
-- [`@oc-mui/app-runtime`](/packages/app-runtime/README.md) - Integrates the router into the main application shell.
-
----
-
-## Contributing
-
-1. When adding auth features, ensure they are compatible with the existing `UserQuery` type from `@oc-mui/query`.
-2. Follow TanStack Router's best practices for type-safe routing.
-3. Update the `authGuard` logic if new authorization requirements (e.g., permissions instead of roles) are introduced.
+- [`etc/router.api.md`](./etc/router.api.md) — committed API surface.
+- [`docs/architecture/decisions/003-shell-plus-core-plugins.md`](../../docs/architecture/decisions/003-shell-plus-core-plugins.md) — why the shell mounts every route through plugin registrations.

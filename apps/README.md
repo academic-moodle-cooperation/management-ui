@@ -37,4 +37,10 @@ If you are looking for the old app directories, they moved like this:
 
 ## Adding a new app vs. adding a feature
 
-Almost everything new should be a **plugin**, not an app. Only create a new directory under `apps/` if you are adding a second deployable entry point (for example, a standalone reporting UI shipped as its own bundle). For any in-shell feature, see [`plugins/README.md`](../plugins/README.md) and the "Create a core plugin" flow.
+Almost everything new should be a **plugin**, not an app. Only create a new directory under `apps/` if you are adding a second deployable entry point (for example, a standalone reporting UI shipped as its own bundle). For any in-shell feature, see [`plugins/README.md`](../plugins/README.md).
+
+## See also
+
+- [`docs/architecture/overview.md`](../docs/architecture/overview.md) — three-pillar architecture.
+- [`docs/architecture/decisions/003-shell-plus-core-plugins.md`](../docs/architecture/decisions/003-shell-plus-core-plugins.md) — the ADR that collapsed `apps/` to two entries.
+- [`plugins/README.md`](../plugins/README.md) — where feature code lives now.

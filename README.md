@@ -1,487 +1,111 @@
 # Management UI
 
-A modular, plugin-based video content management system built for educational institutions. This system provides a flexible architecture for managing video series, episodes, and content workflows with extensive customization capabilities.
+A modular, plugin-first admin interface for [Opencast](https://opencast.org). A thin shell hosts routing, auth, and layout; every visible feature ships as a plugin.
 
-## 🏗️ Architecture Overview
+[![License: ECL 2.0](https://img.shields.io/badge/License-ECL_2.0-blue.svg)](LICENSE)
 
-Management UI is built as a **monorepo** using **Turborepo**, structured around three core concepts:
+## What it is
 
-- **Apps**: Domain-specific applications for content management
-- **Packages**: Shared infrastructure and framework libraries
-- **Plugins**: Extension points, built-in shared plugins, and externally deployable org customizations
+- **For Opencast operators** — a modern admin UI you can deploy and configure per org without forking core.
+- **For plugin authors** — a stable extension-point contract for adding routes, sidebar items, themes, and config without touching the shell.
+- **For contributors** — a pnpm + Turborepo monorepo with strict architectural boundaries and a frozen plugin contract.
 
-```
-apps/           ← Content management applications
-├─ core/        ← Main application shell and orchestration
-├─ series/      ← Video series management
-├─ episodes/    ← Individual episode management
-├─ upload/      ← Content upload and processing
-└─ test/        ← Testing and QA tools
+The four contracts (Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0) are frozen for the 1.x line — see [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md).
 
-packages/       ← Shared infrastructure libraries
-├─ plugin-system/  ← Plugin architecture and runtime
-├─ app-runtime/    ← Standalone app execution and runtime abstraction
-├─ ui/             ← Shared component library
-├─ query/          ← Data fetching and state management
-├─ router/         ← Application routing
-├─ i18n/           ← Internationalization
-└─ ...
+## Quick start
 
-plugins/        ← Built-in plugins shipped with the core repo
-├─ core/        ← Core extension points and default implementations
-├─ admin-*      ← Optional shared plugins shipped with core
-└─ example/     ← Minimal reference plugin
-
-.local-plugins/ ← External org/plugin checkout for development
-└─ <org-or-plugin>/     ← Org-specific or privately shared plugins
+```bash
+git clone https://github.com/academic-moodle-cooperation/management-tool.git
+cd management-tool
+pnpm install
+pnpm build         # one-time — builds dist-types/ for upstream packages
+pnpm dev           # http://127.0.0.1:3000/management-ui/
 ```
 
-## 📚 Documentation
+Full setup, including backend wiring: [`docs/getting-started/installation.md`](docs/getting-started/installation.md).
 
-The full documentation lives under [`docs/`](docs/README.md), routed by audience.
+## Repo layout
 
-| If you want to… | Read |
-|-----------------|------|
-| **Understand the codebase** | [`docs/architecture/overview.md`](docs/architecture/overview.md) |
-| **Write a plugin** | [`docs/plugins/`](docs/plugins/README.md) — walkthrough, distribution, styling, i18n, testing |
-| **Contribute to core** | [`CONTRIBUTING.md`](CONTRIBUTING.md) + [`docs/operations/`](docs/operations/) |
-| **Use Management UI as an AI agent** | [`llms.txt`](llms.txt) (machine-readable summary), then [`AGENTS.md`](AGENTS.md) (operational rules) |
+```
+apps/shell/          The deployable Vite app. Routing, auth, layout, plugin loader.
+apps/playground/     Dev-only single-plugin sandbox.
+packages/            Shared infrastructure (plugin-system, ui, query, router, i18n, …).
+plugins/             Built-in plugins (episodes, series, upload, marketplace, …).
+.local-plugins/      Org plugins (gitignored — each is its own git repo).
+docs/                Full documentation, audience-routed at docs/README.md.
+```
+
+Architectural tour: [`docs/architecture/overview.md`](docs/architecture/overview.md).
+
+## Documentation
+
+| If you want to… | Start at |
+|-----------------|----------|
+| **Use Management UI** | [`docs/getting-started/`](docs/getting-started/) |
+| **Write a plugin** | [`docs/plugins/creating-a-plugin.md`](docs/plugins/creating-a-plugin.md) |
+| **Contribute to the core** | [`CONTRIBUTING.md`](CONTRIBUTING.md) |
+| **Understand the architecture** | [`docs/architecture/overview.md`](docs/architecture/overview.md) |
 | **See what's deferred** | [`docs/operations/open-followups.md`](docs/operations/open-followups.md) |
+| **Browse the full doc tree** | [`docs/README.md`](docs/README.md) |
 
-### Canonical references
+For AI agents and tooling: [`llms.txt`](llms.txt) (machine-readable summary), [`AGENTS.md`](AGENTS.md) (operational rules).
 
-- **[Architecture overview](docs/architecture/overview.md)** — three pillars, package layers, plugin boundaries.
-- **[Contracts](docs/architecture/CONTRACTS.md)** — Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0.
-- **[Configuration](docs/architecture/CONFIGURATION.md)** — layer model, `definePluginConfig` reader, `enabledPlugins` filtering.
-- **[Architecture decisions](docs/architecture/decisions/)** — ADRs.
-- **[Plugin manifest schema](packages/plugin-system/src/schemas/plugin.schema.json)** — the `plugin.json` JSON schema.
+## Per-package READMEs
 
-### Per-package READMEs
-
-Every package, app, and plugin ships its own README. Start at:
+Every package, app, and plugin ships its own README:
 
 - [`apps/README.md`](apps/README.md) — applications (shell, playground).
-- [`packages/README.md`](packages/README.md) — shared infrastructure.
+- [`packages/README.md`](packages/README.md) — shared infrastructure catalogued by layer.
 - [`plugins/README.md`](plugins/README.md) — built-in plugins.
 
-## 🚀 Quick Start
+## Customization
 
-### Prerequisites
+Plugins register on **extension points** declared by [`@oc-mui/plugin-core`](plugins/core/). To customize the UI without forking:
 
-- **Node.js** >= 20
-- **pnpm** >= 10.4.1
+- **Routes and sidebar entries** — register on `apps:definitions` and `sidebar:nav-items`.
+- **Header, footer, branding** — register on `app:header-logo`, `app:footer`, `app:branding`.
+- **Theme** — ship a CSS file with token overrides; see [`docs/plugins/styling.md`](docs/plugins/styling.md).
+- **Config** — declare a Zod-typed slice with `definePluginConfig`; see [`docs/getting-started/configuration.md`](docs/getting-started/configuration.md).
 
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/eduardklinger/management-ui.git
-cd management-ui
-
-# Install dependencies
-pnpm install
-
-# Build applications and packages
-pnpm build
-
-# Start development servers
-pnpm dev
-```
-
-### Standalone App Development
-
-Applications can now run independently for focused development:
+Scaffold a new plugin in one command:
 
 ```bash
-# Run individual apps standalone
-cd apps/management-ui-episodes
-pnpm dev    # http://127.0.0.1:3002
-
-cd apps/management-ui-series
-pnpm dev    # http://127.0.0.1:3001
-
-cd apps/management-ui-upload
-pnpm dev    # http://127.0.0.1:3003
+pnpm create-plugin my-plugin             # → .local-plugins/my-plugin/
+pnpm create-plugin my-plugin --in-tree   # → plugins/my-plugin/
 ```
 
-Standalone apps have full provider context including router, authentication, and plugin system support.
-
-### Development Commands
+## Development
 
 ```bash
-# Development
-pnpm dev          # Start all applications in development mode
-pnpm build        # Build all applications and packages
-pnpm lint         # Run linting across all packages
-pnpm check-types  # Type check all TypeScript code
-pnpm clean        # Clean build artifacts and dependencies
+pnpm dev                    # run the shell
+pnpm verify                 # the local pre-push gate (lint, types, build, unit, contract, api-check, e2e)
+pnpm test                   # unit tests
+pnpm test:contract          # plugin contract tests
+pnpm test:e2e               # Playwright smoke against the shell
+pnpm api-check              # regenerate API surface snapshots
+pnpm changeset              # add a release-note entry
 ```
 
-## 🧩 Plugin System
+`pnpm verify` mirrors CI exactly — if it's green locally, it's green in CI. See [`docs/operations/ci.md`](docs/operations/ci.md) for the CI graph.
 
-The Management UI features a plugin system that keeps the core small and lets institutions ship their own customizations independently.
+## Contributing
 
-- `plugins/core` contains mandatory extension points and default implementations.
-- Built-in shared plugins live in `plugins/` when they ship with the core repo but remain optional.
-- Org-specific plugins live in `.local-plugins/` or separate repositories and are loaded dynamically in dev or via JAR/registry in production.
+Read [`CONTRIBUTING.md`](CONTRIBUTING.md). New contributors should also read [`AGENTS.md`](AGENTS.md) (the operational pre-flight checklist — written for AI agents but useful as a human checklist too) and [`docs/architecture/overview.md`](docs/architecture/overview.md).
 
-### Plugin Structure
+Issue templates: [bug report](https://github.com/academic-moodle-cooperation/management-tool/issues/new?template=bug_report.yml), [feature request](https://github.com/academic-moodle-cooperation/management-tool/issues/new?template=feature_request.yml). Plugin-authoring questions go in [Discussions](https://github.com/academic-moodle-cooperation/management-tool/discussions).
 
-```
-plugins/
-├── core/                    # Core extension points and default implementations
-├── admin-marketplace/       # Built-in optional shared plugin
-└── example/                 # Minimal reference plugin
+## Status
 
-.local-plugins/
-└── my-org/                  # Org-specific plugin checkout
-```
+Pre-1.0 — currently in OSS readiness phases. The four contracts are frozen, but the publishing target (`@oc-mui/*` on npm) flips from `restricted` to `public` only after every phase ships and the build is verified against a real Opencast test server. Track the work at [`docs/operations/open-followups.md`](docs/operations/open-followups.md).
 
-### Standalone Plugin Apps
+## License
 
-Each university can create standalone applications that run independently:
+Educational Community License v2.0 (ECL 2.0). See [`LICENSE`](LICENSE).
 
-```bash
-# Org plugins live in .local-plugins/ (e.g. univie, tuwien)
-cd .local-plugins/my-org
-pnpm build && pnpm dev   # Build then run standalone, or use core in dev to load from /local-plugins/
-```
+## Security
 
-### Extension Points
+Vulnerabilities go through [`SECURITY.md`](SECURITY.md), not public issues.
 
-- **Layout & Navigation**: Customize headers, sidebars, footers, and branding
-- **Content Management**: Add custom metadata fields, validation rules, and workflows
-- **User Interface**: Override components with institution-specific implementations
-- **Data Processing**: Extend content transformation and processing pipelines
-- **App Registration**: Register new applications that integrate with the core shell
+## Code of conduct
 
-### App Registration
-
-Plugins can register complete applications that appear in the main navigation:
-
-```typescript
-import { createPlugin } from "@oc-mui/plugin-system";
-import { MyCustomApp } from "./MyCustomApp";
-
-export const MyUniversityAppPlugin = createPlugin({
-  namespace: "myuni",
-  type: "app",
-  version: "1.0.0",
-
-  initialize(manager) {
-    // Register a new application
-    manager.registerObject("apps:definitions", "my-custom-app", {
-      id: "my-custom-app",
-      name: "My Custom App",
-      routePath: "/my-custom",
-      component: MyCustomApp,
-      navigation: {
-        title: "Custom App",
-        icon: "star",
-        order: 100,
-        permissions: ["access.custom.app"],
-      },
-    });
-  },
-});
-```
-
-### Standalone Plugin Development
-
-Plugin apps can run both within the core shell and as standalone applications:
-
-```typescript
-// .local-plugins/my-university/main.tsx
-import { bootstrapStandaloneApp } from "@oc-mui/app-runtime";
-import { MyUniversityApp } from "./apps/MyUniversityApp";
-
-const config = {
-  baseUrl: "/my-university",
-  appName: "plugin-my-university",
-};
-
-bootstrapStandaloneApp(MyUniversityApp, "root", config);
-```
-
-```typescript
-// .local-plugins/my-university/apps/MyUniversityApp.tsx
-import { AdaptiveAppWrapper } from '@oc-mui/app-runtime';
-
-export const MyUniversityApp: React.FC = () => (
-  <AdaptiveAppWrapper>
-    <MyAppContent />
-  </AdaptiveAppWrapper>
-);
-```
-
-For detailed plugin development, see [`plugins/README.md`](./plugins/README.md).
-
-## 🚀 Standalone App Development
-
-Applications in Management UI can run both within the core shell and as standalone development servers. This dual-mode capability accelerates development and testing.
-
-### Creating Standalone Apps
-
-Use the app runtime system to bootstrap standalone applications:
-
-```typescript
-// apps/my-app/src/main.tsx
-import { bootstrapStandaloneApp } from "@oc-mui/app-runtime";
-import App from "./App";
-
-// Configure the app for standalone execution
-const config = {
-  baseUrl: "/my-app",
-  appName: "management-ui-my-app",
-};
-
-// Provides full context: router, auth, plugins, query client
-bootstrapStandaloneApp(App, "root", config);
-```
-
-The `bootstrapStandaloneApp` function now requires a configuration object that specifies:
-
-- `baseUrl`: The base URL path for the app (e.g., "/episodes", "/series")
-- `appName`: The application name for identification and routing
-- Additional runtime configuration options as needed
-
-### Adaptive App Components
-
-Apps can automatically adapt to their execution context:
-
-```typescript
-// apps/my-app/src/App.tsx
-import { AdaptiveAppWrapper } from '@oc-mui/app-runtime';
-
-const App = () => (
-  <AdaptiveAppWrapper>
-    <MyAppContent />
-  </AdaptiveAppWrapper>
-);
-```
-
-### Standalone Development Workflow
-
-```bash
-# Develop app in isolation
-cd apps/management-ui-episodes
-pnpm dev    # Runs on http://127.0.0.1:3002
-
-# Test in core shell context
-cd apps/management-ui-core
-pnpm dev    # Access at http://127.0.0.1:3000/episodes
-```
-
-### Benefits
-
-- **Faster Development**: Focus on single app without loading entire shell
-- **Full Context**: Router, authentication, and plugin system available
-- **Hot Reload**: Fast refresh for individual app changes
-- **Easy Testing**: Test app behavior in isolation
-- **Plugin Development**: Test app registration and integration
-
-## 📦 Applications
-
-### Core Applications
-
-| Application                | Purpose            | Description                                                 |
-| -------------------------- | ------------------ | ----------------------------------------------------------- |
-| **management-ui-core**     | Application Shell  | Main orchestration layer, plugin loading, and shared layout |
-| **management-ui-series**   | Series Management  | Video series creation, editing, and organization            |
-| **management-ui-episodes** | Episode Management | Individual episode metadata, upload status, and workflows   |
-| **management-ui-upload**   | Content Upload     | File upload, processing, and content ingestion              |
-| **management-ui-test**     | Testing & QA       | Quality assurance tools and testing utilities               |
-
-### Shared Packages
-
-| Package           | Purpose                         | Description                                                                    |
-| ----------------- | ------------------------------- | ------------------------------------------------------------------------------ |
-| **plugin-system** | Plugin Architecture             | Core plugin loading, management, and extension point system                    |
-| **app-runtime**   | Standalone Apps                 | Runtime abstraction for standalone app execution and provider hierarchy        |
-| **ui**            | Component Library               | Shared React components, design system, and UI patterns                        |
-| **query**         | Data Management & Configuration | GraphQL client, state management, data fetching, and application configuration |
-| **router**        | Navigation                      | Application routing with plugin-aware route management                         |
-| **i18n**          | Internationalization            | Multi-language support and localization                                        |
-
-## 🎨 Customization
-
-### University-Specific Implementations
-
-The system supports extensive customization through plugins:
-
-- **Example plugin** (`plugins/example/`): Minimal brand-neutral reference implementation (in-repo)
-- **Org plugins** (e.g. TU Wien, University of Vienna): Use `.local-plugins/<name>/` or separate repos; see [Creating a plugin](docs/plugins/creating-a-plugin.md) and [Distribution](docs/plugins/distribution.md)
-
-### Branding & Theming
-
-Customize the interface appearance:
-
-```typescript
-// University branding plugin
-manager.registerObject("app:branding", "university-theme", {
-  primaryColor: "#your-color",
-  secondaryColor: "#your-secondary",
-  logoUrl: "/path/to/logo.png",
-  favicon: "/path/to/favicon.ico",
-});
-```
-
-### Custom Workflows
-
-Add institution-specific content workflows:
-
-```typescript
-// Custom approval workflow
-manager.registerObject("workflows:definitions", "university-approval", {
-  name: "University Content Approval",
-  steps: ["submission", "review", "approval", "publication"],
-  permissions: ["content.submit", "content.review", "content.approve"],
-});
-```
-
-## 🔧 Development
-
-### Monorepo Structure
-
-This project uses **Turborepo** for efficient monorepo management:
-
-- **Incremental builds**: Only rebuild changed packages
-- **Task pipelines**: Coordinated build and test execution
-- **Remote caching**: Shared build artifacts across team members
-
-### Adding New Packages
-
-```bash
-# Create new package
-mkdir packages/my-new-package
-cd packages/my-new-package
-
-# Initialize package
-pnpm init
-```
-
-### Adding New Apps
-
-```bash
-# Create new app
-mkdir apps/my-new-app
-cd apps/my-new-app
-
-# Initialize with standalone support
-pnpm init
-# Add @oc-mui/app-runtime dependency
-# Use bootstrapStandaloneApp in main.tsx
-```
-
-### App Development Patterns
-
-**Standalone Bootstrap Pattern**:
-
-```typescript
-// main.tsx - supports both standalone and core shell execution
-import { bootstrapStandaloneApp } from "@oc-mui/app-runtime";
-import App from "./App";
-
-const config = {
-  baseUrl: "/my-app",
-  appName: "management-ui-my-app",
-};
-
-bootstrapStandaloneApp(App, "root", config);
-```
-
-**Adaptive Component Pattern**:
-
-```typescript
-// App.tsx - automatically adapts to execution context
-import { AdaptiveAppWrapper } from '@oc-mui/app-runtime';
-
-const App = () => (
-  <AdaptiveAppWrapper>
-    <MyAppContent />
-  </AdaptiveAppWrapper>
-);
-```
-
-### Plugin Development
-
-1. **Define Extension Points**: Create plugin definitions in `plugins/`
-2. **Implement Extensions**: Add university-specific implementations
-3. **Register Components**: Use the plugin manager to register functionality
-4. **Register Apps**: Add complete applications via the plugin system
-5. **Test Integration**: Verify plugins work with core applications
-
-**App Registration Pattern**:
-
-```typescript
-// plugins/myuni/apps/my-app-plugin.ts
-export const myAppPlugin = createPlugin({
-  namespace: "myuni",
-  type: "app",
-  version: "1.0.0",
-
-  initialize(manager) {
-    manager.registerObject("apps:definitions", "my-app", {
-      id: "my-app",
-      name: "My Custom App",
-      routePath: "/my-app",
-      component: MyAppComponent,
-      navigation: {
-        title: "My App",
-        icon: "app-window",
-        order: 200,
-      },
-    });
-  },
-});
-```
-
-## 🚦 Deployment
-
-### Build for Production
-
-```bash
-# Build all packages and applications
-pnpm build
-
-# Preview production build
-pnpm preview
-
-# Test standalone apps
-cd apps/management-ui-episodes && pnpm dev
-cd apps/management-ui-series && pnpm dev
-```
-
-### Configuration
-
-The system supports environment-specific configuration:
-
-- `.env.development` - Development settings
-- `.env.production` - Production settings
-- `turbo.json` - Build pipeline configuration
-
-## 📚 Further reading
-
-- **[docs/](./docs/README.md)** — full documentation index (architecture, plugins, operations).
-- **[Plugin system](./packages/plugin-system/README.md)** — the runtime your plugins run on.
-- **[Built-in plugins](./plugins/README.md)** — the bundled plugins shipped with this repo.
-
-## 🤝 Contributing
-
-1. **Fork** the repository
-2. **Create** a feature branch: `git checkout -b feature/my-feature`
-3. **Develop** following the plugin architecture patterns
-4. **Test** across multiple university configurations
-5. **Submit** a pull request with clear documentation
-
-## 📄 License
-
-This project is maintained by educational institutions and follows open source principles. See individual package licenses for specific terms.
-
-## 🔗 Related Projects
-
-- **Backend**: Content processing and API services
-- **Assemblies**: Deployment and infrastructure configuration
-- **Extensions**: University-specific plugin implementations
-
----
+We follow the [Contributor Covenant](CODE_OF_CONDUCT.md).

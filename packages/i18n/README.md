@@ -1,147 +1,62 @@
 # @oc-mui/i18n
 
-**Version:** 0.0.0  
-**Type:** Foundation / Internationalization  
-**Last Updated:** 2025-01-15
+Translation layer. Wraps `i18next` and `react-i18next` behind a single workspace import, plus the plugin-aware `usePluginTranslation` hook that auto-loads namespaces.
 
-## Purpose & Scope
+**Contract**: 1.x. Public API surface tracked in [`etc/i18n.api.md`](./etc/i18n.api.md).
 
-The `@oc-mui/i18n` package provides a unified internationalization system for the Management UI. Built on **i18next** and **react-i18next**, it supports multiple languages, namespaced translation files, and dynamic loading of translations—essential for the platform's plugin architecture.
+## The wrapper rule
 
-### Stability contract
+This package is the **only place in the workspace allowed to import from `i18next` and `react-i18next`**. Plugins and other packages import translation primitives from here. The rule is enforced by `no-restricted-imports` in `@oc-mui/eslint-config` with an explicit exception for this directory.
 
-This package is the **only place in the monorepo that is allowed to import from `i18next` / `react-i18next`**. Apps, plugins and other packages must import translation primitives (`useTranslation`, `Trans`, `I18nextProvider`, …) from `@oc-mui/i18n`.
+## Usage
 
-The rule is enforced by ESLint (`no-restricted-imports` in `packages/eslint-config/base.js`) with an explicit exception for this package.
+### In a plugin component
 
-Why it matters: if we ever need to replace or upgrade the i18n implementation (e.g. move to a different framework), we can do so by changing the internals of `@oc-mui/i18n` without breaking plugins or apps.
-
-**In Scope:**
-
-- Centralized i18next instance and React context provider.
-- Dynamic loading of translation namespaces (`loadNamespace`).
-- Enhanced hooks for plugin-specific translations (`usePluginTranslation`).
-- Standardized translation file structure (JSON).
-- Helpers for organization-based namespacing.
-
-**Out of Scope:**
-
-- Management of the actual translation files (these are stored in `src/locales` or within plugins).
-- Server-side translation storage.
-- UI components for language switching (belongs in `@oc-mui/ui`).
-
-## Architecture & Design Decisions
-
-### Design Principles
-
-- **On-Demand Loading:** Translations for specific features or plugins are only loaded when needed.
-- **Namespace Isolation:** Each app or plugin should use its own namespace to prevent translation key collisions.
-- **Organization Support:** Built-in helpers for organization-specific overrides (e.g., `univie:footer.text`).
-
-### Key Concepts
-
-#### Namespaces
-Translation files are organized into namespaces (e.g., `common`, `series`, `episodes`). This allows for smaller initial bundles and better organization of keys.
-
-#### `usePluginTranslation`
-An enhanced version of the standard `useTranslation` hook that automatically ensures the requested namespaces are loaded from the backend before trying to use them.
-
-### Architecture Diagram
-
-```
-┌─────────────────────────────────────────┐
-│ @oc-mui/i18n Architecture            │
-├─────────────────────────────────────────┤
-│ [ I18nextProvider ]                     │
-│         ↓                               │
-│ [ usePluginTranslation Hook ]           │
-│         ↓                               │
-│ [ Dynamic Namespace Loader ]            │
-│         ↓                               │
-│ [ Locale JSON Files (src/locales/*) ]   │
-└─────────────────────────────────────────┘
-```
-
-## API Surface (Public Exports)
-
-### Core API
-
-#### `I18nextProvider`
-**Purpose:** Wraps the app to provide i18next context.
-
-#### `usePluginTranslation(namespaces, autoLoad)`
-**Purpose:** Hook for using translations with automatic namespace loading.
-**Parameters:**
-- `namespaces` (string[]): Array of namespaces to use.
-- `autoLoad` (boolean): Whether to automatically fetch missing namespaces.
-
-#### `loadNamespace(namespace, language)`
-**Purpose:** Programmatically loads a translation bundle.
-
-## Dependencies & Coupling
-
-### Dependency Graph
-
-```
-@oc-mui/i18n
-└── External Dependencies
-    ├── i18next (^23.10.0)
-    ├── i18next-browser-languagedetector (^7.2.0)
-    ├── i18next-http-backend (^2.5.0)
-    └── react-i18next (^14.0.5)
-```
-
-### Dependency Layer
-
-**Layer:** Foundation
-
-**Allowed to depend on:** External dependencies only.
-
-## Usage Examples
-
-### Basic Usage
-
-```typescript
-import { useTranslation } from "@oc-mui/i18n";
-
-const MyComponent = () => {
-  const { t } = useTranslation("common");
-  return <button>{t("actions.save")}</button>;
-};
-```
-
-### Plugin Usage (Auto-loading)
-
-```typescript
+```tsx
 import { usePluginTranslation } from "@oc-mui/i18n";
 
-const PluginComponent = () => {
-  const { t } = usePluginTranslation(["my-plugin-namespace"]);
-  return <h1>{t("welcome_message")}</h1>;
-};
+export function MyView() {
+  const { t } = usePluginTranslation(["my-plugin"]);
+  return <h1>{t("my-plugin:welcome")}</h1>;
+}
 ```
 
-## File Structure
+`usePluginTranslation` auto-loads the listed namespaces on first render and re-loads them when the language changes. Plain `useTranslation` works too, but the namespace must already be loaded.
+
+### Locale layout
 
 ```
-packages/i18n/
-├── src/
-│   ├── locales/                # Core translation JSON files
-│   │   ├── common/             # Shared keys
-│   │   ├── series/             # Series-app specific
-│   │   └── ...
-│   ├── translationLoader.ts    # Logic for dynamic loading
-│   ├── useTranslation.tsx      # Custom React hooks
-│   └── index.ts                # Public API exports
-├── package.json
-└── README.md                   # This file
+my-plugin/
+├── plugin.json           # i18nNamespaces: ["my-plugin"]
+└── locales/
+    └── my-plugin/
+        ├── en.json
+        └── de.json
 ```
 
----
+Files are flat JSON, one key per phrase. The contract test's `expectI18nKeyParity()` fails when locale files for the same namespace drift apart.
 
-## Contributing
+## Surface
 
-1. **New Keys:** Add shared keys to `src/locales/common/`. Add app-specific keys to their respective folders.
-2. **Naming:** Use lowercase snake_case for keys (e.g., `button_label`).
-3. **Hierarchy:** Keep JSON files shallow where possible for better readability.
-4. **Plugins:** Plugins should define their own namespaces and use `usePluginTranslation` to ensure they are available at runtime.
+| Symbol | Purpose |
+|--------|---------|
+| `usePluginTranslation(namespaces, autoLoad?)` | The hook plugins should use. Auto-loads namespaces; respects host locale switching. |
+| `useTranslation`, `useI18n` (alias) | Plain `react-i18next` hook, re-exported. Caller must load the namespace. |
+| `loadNamespace(namespace, language?)` | Imperative namespace loader. Idempotent. |
+| `i18next` | The configured singleton, for advanced callers. |
+| `I18nextProvider`, `Trans` | Re-exports of the underlying React provider/component. |
+| `createNamespacedKey`, `createOrganizationNamespace` | Helpers for building consistent namespace strings. |
+
+For the exhaustive surface, see [`etc/i18n.api.md`](./etc/i18n.api.md).
+
+The shell ships a base set of locales (`packages/i18n/src/locales/`) for `common`, `episodes`, `series`, `upload`, etc. Plugins ship their own under `<plugin>/locales/<namespace>/<lng>.json`.
+
+## Layer
+
+Foundation. Depends on nothing in the workspace.
+
+## See also
+
+- [`docs/plugins/i18n.md`](../../docs/plugins/i18n.md) — plugin-author guide.
+- [`packages/plugin-testing/README.md`](../plugin-testing/README.md) — `expectI18nKeyParity` test assertion.
+- [`etc/i18n.api.md`](./etc/i18n.api.md) — committed API surface.

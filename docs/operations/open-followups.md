@@ -159,14 +159,6 @@ The two surviving workflow docs (~1.4k lines combined) are written for a contrib
 
 The leftover template directory (`AVAILABLE_PACKAGES.md`, `README.md`, etc.) still references `COMMUNITY_PLUGIN_DEVELOPMENT.md` etc. Already tracked in [1.1](#11-retire-vs-extract-examplescommunity-plugin-template) — when that decision is executed (retire or extract), the references go with it.
 
-### 8.3 Package READMEs need a refresh pass
-
-Most package READMEs still carry `Version: 0.0.0` + `Last Updated: 2025-…` headers and read like AI-generated boilerplate. PR-3b is committed to refreshing every package README to a consistent shape; that work lives in its own PR.
-
-### 8.4 `getting-started/` docs
-
-PR-3a focused on existing docs. The audience-router landing at `docs/README.md` calls out "I want to use Management UI" but the section is thin (one link to `architecture/overview.md`). PR-3b will add `getting-started/` with `installation.md`, `configuration.md`, `upgrading.md`.
-
-### 8.5 VitePress wiring
+### 8.3 VitePress wiring
 
 A real OSS-grade online doc site (PR-3c). Pre-work — config, theme, GH Pages workflow — is gated on 3a+3b shipping.
