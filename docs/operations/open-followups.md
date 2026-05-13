@@ -159,12 +159,19 @@ The two surviving workflow docs (~1.4k lines combined) are written for a contrib
 
 The leftover template directory (`AVAILABLE_PACKAGES.md`, `README.md`, etc.) still references `COMMUNITY_PLUGIN_DEVELOPMENT.md` etc. Already tracked in [1.1](#11-retire-vs-extract-examplescommunity-plugin-template) — when that decision is executed (retire or extract), the references go with it.
 
-### 8.3 Flip docs deploy from manual to on-push
+### 8.3 Going public with the docs site
 
-[`/.github/workflows/docs.yml`](../../.github/workflows/docs.yml) currently runs the build on every PR (so reviewers see the build pass) and deploys only via `workflow_dispatch`. The `push` trigger to `release/oss-1.0` is in place but commented out, so the live site doesn't auto-update yet.
+The doc site is built and deployable but **discouraged from indexing** until the project is ready for public traffic. Three guards are in place; all three flip together when you announce the site.
 
-- **When to revisit**: alongside Phase 6d (the `access: "restricted" → "public"` npm-publish flip). Once everything has been verified on the test server and the plan is finished, uncomment the `push:` block in `docs.yml` so merges to `release/oss-1.0` keep the live site fresh.
-- **First-time enablement on GitHub**: when you're ready, enable GitHub Pages in the repo settings under **Settings → Pages**, source: **GitHub Actions** (not "Deploy from a branch"). The workflow's `actions/deploy-pages` step needs that to be set, otherwise it errors out.
+| File | Current state | Change when going public |
+|------|---------------|--------------------------|
+| [`docs/public/robots.txt`](../../docs/public/robots.txt) | `Disallow: /` | Change to `Disallow:` (empty — allows everything). |
+| [`docs/.vitepress/config.mts`](../../docs/.vitepress/config.mts) | `<meta name="robots" content="noindex, nofollow">` in the `head` array | Remove that entry. |
+| [`.github/workflows/docs.yml`](../../.github/workflows/docs.yml) | `push:` trigger is commented out; deploys only via `workflow_dispatch` | Uncomment the `push: branches: [release/oss-1.0]` block so merges keep the site fresh. |
+
+**When to revisit**: alongside Phase 6d (the `access: "restricted" → "public"` npm-publish flip). Once everything has been verified on the test server and the plan is finished, do all three together — the `robots.txt` + meta-tag combo is belt-and-suspenders (robots.txt is advisory; the meta tag is what most search engines actually obey, so flipping only one leaves the other gating).
+
+**First-time enablement on GitHub**: when you're ready to ship even a manual deploy, enable GitHub Pages in the repo settings under **Settings → Pages**, source: **GitHub Actions** (not "Deploy from a branch"). The workflow's `actions/deploy-pages` step needs that to be set, otherwise it errors out. While the guards are in place, you can do a manual `workflow_dispatch` deploy any time — the URL exists, but search engines stay away.
 
 ### 8.4 Source-link rewriting is heuristic-based
 
