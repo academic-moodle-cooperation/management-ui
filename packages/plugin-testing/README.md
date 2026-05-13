@@ -78,8 +78,14 @@ from `./src/index.ts`.
 
 ## Scope
 
-MVP ships only the plugin-system provider in `HarnessPluginProvider`. Query
-/ i18n / router wrappers are added per test when needed; if a common stack
-emerges, it will be promoted here. See
-[`docs/operations/testing.md`](../../docs/operations/testing.md) for the broader
-testing strategy and the follow-up list.
+MVP ships only the plugin-system provider in `HarnessPluginProvider`. Query / i18n / router wrappers are added per test when needed; if a common stack emerges, it will be promoted here.
+
+## Layer
+
+Integration. Depends on `@oc-mui/plugin-system` (the runtime under test) and `@oc-mui/utils`. Not shipped to consumers — it's a workspace dev-only package.
+
+## See also
+
+- [`docs/plugins/testing.md`](../../docs/plugins/testing.md) — plugin-author entry point.
+- [`docs/operations/testing.md`](../../docs/operations/testing.md) — full test strategy + follow-up list.
+- [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md) — the contracts this harness verifies.

@@ -1,159 +1,45 @@
 # @oc-mui/store
 
-**Version:** 0.0.0  
-**Type:** Foundation / State Management  
-**Last Updated:** 2025-01-15
+Thin facade over Zustand and Jotai for application state. Plugins and apps import from here; the underlying library is an implementation detail.
 
-## Purpose & Scope
+**Contract**: 1.x. The public API surface is mechanically tracked in [`etc/store.api.md`](./etc/store.api.md).
 
-The `@oc-mui/store` package provides a unified state management layer for the Management UI. It leverages two complementary libraries—**Zustand** and **Jotai**—to handle different types of state needs, ranging from complex persistent stores to lightweight atomic updates.
+## The wrapper rule
 
-### Stability contract
+This package is the **only place in the workspace allowed to import from `jotai`** — enforced by `no-restricted-imports` in `@oc-mui/eslint-config` with an explicit exception for this directory. `zustand` and `immer` are internal-only; they are re-exported only as needed by callers.
 
-This package is the **only place in the monorepo that is allowed to import from `jotai`** (and is also where `zustand` + `immer` are used). Apps, plugins and other packages must import store primitives from `@oc-mui/store`.
+If we ever need to swap the state stack, we change the internals here without touching plugins or apps.
 
-The rule for `jotai` is enforced by ESLint (`no-restricted-imports` in `packages/eslint-config/base.js`) with an explicit exception for this package. `zustand` and `immer` are used only internally today; they are not re-exported.
+## Usage
 
-Why it matters: if we ever need to replace or upgrade the state management stack, we can do so by changing the internals of `@oc-mui/store` without breaking plugins or apps.
-
-**In Scope:**
-
-- Global, persistent application state (e.g., File Uploads).
-- Atomic, localized state (e.g., Table UI state).
-- State persistence using `sessionStorage`.
-- Immutable state updates using **Immer**.
-
-**Out of Scope:**
-
-- Server-side state and caching (belongs in `@oc-mui/query`).
-- Navigation state (belongs in `@oc-mui/router`).
-- Local component-level state (should use standard `useState`).
-
-## Architecture & Design Decisions
-
-### Design Principles
-
-- **Pragmatic Tooling:** We use **Zustand** for complex, structured state and **Jotai** for atomic, decoupled state.
-- **Immutability:** All state updates in Zustand are performed using **Immer** to ensure safety and readability.
-- **Persistence by Default:** Critical state like file uploads is automatically persisted to `sessionStorage` to survive page refreshes.
-
-### Key Concepts
-
-#### Zustand (Global Structured State)
-Used for state that behaves like a traditional "Store" (actions, complex objects, persistence). The primary example is the `useStore` (Upload Store).
-
-#### Jotai (Atomic State)
-Used for lightweight, independent pieces of state. It is the preferred choice for UI-specific state like table filters or view options that might need to be shared across a few components.
-
-### Architecture Diagram
-
-```
-┌─────────────────────────────────────────┐
-│ @oc-mui/store Architecture           │
-├─────────────────────────────────────────┤
-│ [ Zustand Store ] <──> [ Persistence ]  │
-│      (Uploads)            (Storage)     │
-│                                         │
-│ [ Jotai Atoms ]   <──> [ Table State ]  │
-│      (UI Bits)            (Filters)     │
-└─────────────────────────────────────────┘
-```
-
-## API Surface (Public Exports)
-
-### Exports Structure
-
-```typescript
-export { useStore } from "./useStore";           // Zustand Upload Store
-export { useAtom, atom, ... } from "./useTableStore"; // Jotai utilities
-export { create } from "zustand";                // Re-export for custom stores
-```
-
-### Core API
-
-#### `useStore` (Upload Store)
-**Purpose:** Manages the entire lifecycle of file uploads.
-**Key Actions:** `submitUpload`, `nextUpload`, `updateFile`, `resetUpload`.
-
-#### Jotai Utilities
-**Purpose:** Standard Jotai exports (`atom`, `useAtom`, `useAtomValue`) for creating and consuming atomic state.
-
-## Dependencies & Coupling
-
-### Dependency Graph
-
-```
-@oc-mui/store
-├── External Dependencies
-│   ├── zustand (^4.5.4)
-│   ├── jotai (^2.6.4)
-│   └── immer (^10.0.3)
-└── Workspace Dependencies
-    └── None (Core Foundation)
-```
-
-### Dependency Layer
-
-**Layer:** Foundation
-
-**Allowed to depend on:** Core Infrastructure (utils, configs).
-
-**Rules:**
-- Must not depend on UI, Query, or Router layers.
-- Should remain a pure state layer.
-
-## Usage Examples
-
-### Using the Upload Store (Zustand)
-
-```typescript
+```ts
 import { useStore } from "@oc-mui/store";
 
-const UploadStatus = () => {
-  const { zustandupload, submitUpload } = useStore();
-  
-  return (
-    <div>
-      <p>Files in queue: {zustandupload.files.length}</p>
-      <button onClick={submitUpload}>Start Upload</button>
-    </div>
-  );
-};
+const uploads = useStore((s) => s.uploads);
 ```
 
-### Using Atomic State (Jotai)
+Atomic state from `@oc-mui/store/atoms`:
 
-```typescript
-import { atom, useAtom } from "@oc-mui/store";
-
-const filterAtom = atom("");
-
-const FilterComponent = () => {
-  const [filter, setFilter] = useAtom(filterAtom);
-  return <input value={filter} onChange={(e) => setFilter(e.target.value)} />;
-};
+```ts
+import { useAtomValue } from "@oc-mui/store/atoms";
 ```
 
-## File Structure
+## Surface
 
-```
-packages/store/
-├── index.tsx                   # Main entry point
-├── useStore.ts                 # Zustand Upload Store
-├── useTableStore.ts            # Jotai utility exports
-├── atoms.ts                    # Shared atom definitions
-├── package.json
-└── README.md                   # This file
-```
+| Subpath | What it exports |
+|---------|-----------------|
+| `@oc-mui/store` | `useStore` (global Zustand store with persistence), `useTableStore`, types (`Store`, `UploadFileBlob`, `UploadListType`), and `create` from Zustand for advanced callers. |
+| `@oc-mui/store/atoms` | Jotai primitives (`atom`, `useAtom`, …) used for lightweight decoupled state. |
+| `@oc-mui/store/useStore` | The Zustand hook on its own. |
+| `@oc-mui/store/useTableStore` | Table-UI state (sorting, pagination) for shared table components. |
 
-## Related Packages
+The global `useStore` persists to `sessionStorage`; updates flow through Immer for safe immutable writes.
 
-- [`@oc-mui/ui`](/packages/ui/README.md) - Consumes store state for displaying progress and table filters.
+## Layer
 
----
+Foundation. Depends on nothing in the workspace. Higher-layer packages and plugins consume it.
 
-## Contributing
+## See also
 
-1. **New Store?** Use Zustand if you need persistence or have a complex set of related actions. Use Jotai if you just need to share a few primitive values.
-2. **Persistence:** When using Zustand's `persist` middleware, always specify the storage (e.g., `sessionStorage`).
-3. **Immutability:** Use the `immer` middleware for Zustand to keep update logic clean.
+- [`etc/store.api.md`](./etc/store.api.md) — exhaustive type-level surface.
+- [`docs/architecture/overview.md`](../../docs/architecture/overview.md#package-layers) — where this fits in the dependency layers.

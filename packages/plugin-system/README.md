@@ -1,179 +1,71 @@
 # @oc-mui/plugin-system
 
-**Version:** 0.0.0  
-**Type:** Foundation / Core Infrastructure  
-**Last Updated:** 2025-01-15
+The runtime every plugin runs on. Provides `createPlugin()`, the `PluginManager`, extension-point resolution, and the React context that exposes them to components.
 
-## Purpose & Scope
+**Contract**: Manifest 1.1 and Runtime API 1.0 are frozen for the 1.x line. See [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md). API surface is mechanically tracked in [`etc/plugin-system.api.md`](./etc/plugin-system.api.md).
 
-The `@oc-mui/plugin-system` is the heart of the Management UI's extensibility architecture. it allows the application to be composed of independent modules (plugins) that can add new features, override UI components, and extend the core functionality without modifying the base codebase.
+## Usage
 
-It manages the lifecycle of plugins, provides a centralized registry for components and objects, and enables decoupled communication between modules.
+```ts
+import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
 
-**In Scope:**
-
-- Plugin registration, initialization, and lifecycle management.
-- Dynamic component resolution through **Extension Points**.
-- Centralized function registry for cross-plugin communication.
-- Event system for decoupled notifications.
-- Generic object registry for shared data.
-
-**Out of Scope:**
-
-- Specific UI components (these are registered *into* the system by plugins).
-- Application-level routing logic (though it provides the registry to store routes).
-- State management for specific features.
-
-## Architecture & Design Decisions
-
-### Design Principles
-
-- **Loose Coupling:** Plugins do not import each other directly; they communicate via the `pluginManager`'s function and event systems.
-- **Inversion of Control:** The core application defines "Extension Points", and plugins provide the implementations.
-- **Namespacing:** All registered components and objects are namespaced (`namespace:plugin-type`) to prevent collisions.
-
-### Key Concepts
-
-#### Plugin Lifecycle
-Every plugin implements the `Plugin` interface:
-1.  **`initialize`**: Setup dependencies and register functions.
-2.  **`activate`**: Register components and objects.
-3.  **`deactivate`**: Clean up resources.
-
-#### Extension Points & `ComponentResolver`
-The `ComponentResolver` is a React component that looks up registered components for a specific `componentType` (the extension point). If no plugin provides a component, it falls back to a `defaultComponent`.
-
-#### Function Registry
-Plugins can "export" functionality by adding functions to the `pluginManager`. Other plugins or the core app can then execute these functions by name.
-
-### Architecture Diagram
-
-```
-┌─────────────────────────────────────────┐
-│ @oc-mui/plugin-system Architecture   │
-├─────────────────────────────────────────┤
-│ [ Plugin Manager (Central Service) ]    │
-│    /           |            \           │
-│ [Functions] [Events] [Registries]       │
-│    |           |            |           │
-│ [ Plugins ] <──┼──────────> [ UI ]      │
-│  (Modules)     |      (ComponentResolver)│
-└─────────────────────────────────────────┘
-```
-
-## API Surface (Public Exports)
-
-### Core API
-
-#### `createPluginManager()`
-**Purpose:** Factory function to create a new instance of the plugin manager.
-
-#### `PluginProvider`
-**Purpose:** React context provider that makes the `pluginManager` available via `usePluginManager()`.
-
-#### `ComponentResolver`
-**Purpose:** React component for rendering plugin-provided components.
-**Props:**
-- `componentType` (string): The extension point name.
-- `defaultComponent`: Fallback component.
-- `componentProps`: Props passed to the resolved component.
-
-#### `Plugin` (Interface)
-**Purpose:** The contract that every plugin must satisfy.
-
-## Dependencies & Coupling
-
-### Dependency Graph
-
-```
-@oc-mui/plugin-system
-├── External Dependencies
-│   └── react (^19.1.0)
-└── Workspace Dependencies
-    └── @oc-mui/utils - For logging and common utilities
-```
-
-### Dependency Layer
-
-**Layer:** Foundation
-
-**Allowed to depend on:** Core Infrastructure (utils).
-
-**Rules:**
-- **CRITICAL:** This package must not depend on any higher-layer packages (query, router, ui, etc.) to avoid circular dependencies.
-
-## Usage Examples
-
-### Creating a Plugin
-
-```typescript
-import { Plugin, PluginManager } from "@oc-mui/plugin-system";
-
-export const MyPlugin: Plugin = {
-  name: "my-namespace:my-feature",
+export const myPlugin = createPlugin({
+  namespace: "my-namespace",
+  type: "app",
   version: "1.0.0",
-  
+
   initialize(manager: PluginManager) {
-    // Add shared functions
-    manager.addFunction("my-feature.doSomething", () => console.log("Done"));
+    manager.registerObject("apps:definitions", "my-app", {
+      id: "my-app",
+      name: "My App",
+      routePath: "/my-app",
+      component: MyAppComponent,
+    });
   },
-  
-  activate() {
-    // Register components to extension points
-    this.manager.registerComponent("appshell:header:top", MyHeaderIcon);
-  },
-  
-  deactivate() {}
-};
+
+  activate() {},
+  deactivate() {},
+});
 ```
 
-### Using the Component Resolver
+The full plugin-authoring walkthrough lives at [`docs/plugins/creating-a-plugin.md`](../../docs/plugins/creating-a-plugin.md).
 
-```typescript
-import { ComponentResolver } from "@oc-mui/plugin-system";
+## API
 
-const Header = () => (
-  <header>
-    <h1>My App</h1>
-    <ComponentResolver 
-      componentType="appshell:header:top"
-      defaultComponent={() => null}
-      componentProps={{}}
-    />
-  </header>
-);
-```
+| Symbol | Purpose |
+|--------|---------|
+| `createPlugin(options)` | The entry point. Builds a plugin from `{ namespace, type, version, initialize, activate, deactivate }`. |
+| `createPluginManager()` | Factory for a fresh `PluginManager`. Used by the shell at boot and by the test harness. |
+| `PluginProvider`, `usePluginManager()` | React context for accessing the manager from components. |
+| `ComponentResolver<P>` | Looks up a component registered on an extension point and renders it with `componentProps`. Falls back to `defaultComponent` if none registered. |
+| `getAllApps(manager)`, `getAppById(manager, id)` | Read helpers over the `apps:definitions` registry. |
+| `createAppRegistryPlugin()`, `createObjectRegistryPlugin()`, `createRendererPlugin()` | The three built-in plugins the shell wires up before any user plugins. |
+| `fragmentRegistry`, `FragmentRegistryService` | GraphQL fragment registry used by `@oc-mui/query`. |
+| `checkApiVersionCompatibility(required, host?)`, `parseSemver(input)` | Runtime checks for the host-vs-plugin API version handshake. |
+| `validatePluginMetadata(json)` | Zod-backed runtime validation against the manifest schema. |
 
-## Extension Points
+For the exhaustive type-level signature, read [`etc/plugin-system.api.md`](./etc/plugin-system.api.md) — it's committed and CI-checked.
 
-Common extension points used in the core application:
-- `appshell:header`: Customize the main header.
-- `appshell:footer`: Customize the main footer.
-- `appshell:sidebar:top`: Add items to the top of the sidebar.
-- `datatable:row-actions`: Add actions to table rows.
-
-## File Structure
+## Architecture
 
 ```
-packages/plugin-system/
-├── src/
-│   ├── pluginManager.ts        # Central logic
-│   ├── component-resolver.tsx  # React component for lookup
-│   ├── IPlugin.ts              # Interface definition
-│   ├── PluginProvider.tsx      # React context provider
-│   ├── plugins/                # Internal plugin implementations
-│   │   ├── appRegistry/        # App management
-│   │   └── objectRegistry/     # Data management
-│   └── index.ts                # Public API exports
-├── package.json
-└── README.md                   # This file
+PluginManager
+├── Object registry      (registerObject, getObjects, removeObject)
+├── Component registry   (registerComponent — resolved by ComponentResolver)
+├── Function registry    (addFunction, executeFunction)
+├── Event bus            (emit, on, off)
+└── App registry         (built-in; populated via apps:definitions)
 ```
 
----
+Built-in plugins live in [`src/builtins/`](./src/builtins/) — the renderer, app registry, and object registry are registered by the shell before any user plugin runs. They're public exports so the test harness can wire them up too.
 
-## Contributing
+## Layer
 
-1. **Keep it lean:** This is a core package. Avoid adding external dependencies.
-2. **Communication:** Use the function registry instead of direct imports for cross-plugin logic.
-3. **Naming:** Always use the `namespace:plugin-type:target` format for registration keys.
-4. **Events:** Prefer the event system for "fire and forget" notifications.
+Foundation. Depends only on `@oc-mui/utils` and React. Higher-layer packages (`@oc-mui/query`, `@oc-mui/router`, `@oc-mui/ui`, etc.) depend on this one — never the other way around.
+
+## See also
+
+- [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md) — Manifest and Runtime API contract guarantees.
+- [`docs/plugins/creating-a-plugin.md`](../../docs/plugins/creating-a-plugin.md) — plugin-author walkthrough.
+- [`AGENTS.md`](../../AGENTS.md) — operational rules for plugin work.
+- [`packages/plugin-testing/README.md`](../plugin-testing/README.md) — test harness built on top of this runtime.

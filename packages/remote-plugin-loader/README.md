@@ -36,4 +36,15 @@ Exported for tests. Transform replaces bare imports of shared modules (react, @o
 ## Security
 
 - This package does **not** enforce URL allowlists or HTTPS. Callers (e.g. marketplace) must validate URLs and versions before calling `loadAndRegister` for user-supplied or registry URLs.
-- For JAR plugins, the core calls `loadAndRegister` with `skipUrlValidation: true` because URLs come from the backend (`plugins.json`).
+- For JAR plugins, the shell calls `loadAndRegister` with `skipUrlValidation: true` because URLs come from the backend (`plugins.json`).
+
+## Layer
+
+Integration. Depends on `@oc-mui/plugin-system`, `@oc-mui/utils`.
+
+## See also
+
+- [`docs/plugins/distribution.md`](../../docs/plugins/distribution.md) — the four distribution paths and how each uses this loader.
+- [`docs/plugins/styling.md`](../../docs/plugins/styling.md) — Theme Contract; explains the CSS load-order rule this loader enforces.
+- [`apps/shell/src/services/jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts) — the shell's JAR-loading caller.
+- [`plugins/admin-marketplace/src/services/remote-loader.ts`](../../plugins/admin-marketplace/src/services/remote-loader.ts) — the marketplace's validating wrapper.

@@ -4,7 +4,10 @@ Routing by audience. Pick the path that matches what you're doing.
 
 ## I want to use Management UI
 
-- [`../README.md`](../README.md) — what the project is and how to install it.
+- [`getting-started/what-is-management-ui.md`](./getting-started/what-is-management-ui.md) — the elevator pitch.
+- [`getting-started/installation.md`](./getting-started/installation.md) — clone, install, run.
+- [`getting-started/configuration.md`](./getting-started/configuration.md) — the config model in practice.
+- [`getting-started/upgrading.md`](./getting-started/upgrading.md) — moving between versions safely.
 - [`architecture/overview.md`](./architecture/overview.md) — the shape of the codebase in one screen.
 
 ## I'm writing a plugin

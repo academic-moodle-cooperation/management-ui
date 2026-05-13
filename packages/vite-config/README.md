@@ -1,127 +1,50 @@
 # @oc-mui/vite-config
 
-**Version:** 0.0.0  
-**Type:** Core Infrastructure / Build Tooling  
-**Last Updated:** 2025-01-15
+Shared Vite configurations and custom Vite plugins. Every app, package, and plugin in the workspace builds through a preset from here so build behaviour stays consistent.
 
-## Purpose & Scope
+## Usage
 
-The `@oc-mui/vite-config` package provides centralized, reusable Vite configurations for all applications, packages, and plugins within the monorepo. It ensures a consistent build process, dev server behavior, and optimized production output across the entire platform.
+In an app or package `vite.config.ts`:
 
-**In Scope:**
-
-- Shared base Vite configuration (`baseConfig`).
-- Specialized configurations for the **Core Shell** and **Plugins**.
-- Centralized dev server port management.
-- Standardized proxy settings for backend communication.
-- Custom Vite plugins for the Management UI ecosystem (e.g., config generation).
-
-**Out of Scope:**
-
-- Defining package-specific build scripts (these belong in each package's `package.json`).
-- Managing the build output (handled by the `dist` folders of individual packages).
-
-## Architecture & Design Decisions
-
-### Design Principles
-
-- **Don't Repeat Yourself (DRY):** Common plugins (React, Tailwind) and resolve aliases are defined once in the base config.
-- **Specialization:** Different module types (Apps vs. Plugins) have distinct requirements (e.g., plugins build as library modules).
-- **Collision Prevention:** Dev server ports are centrally managed to allow multiple apps to run simultaneously without conflict.
-
-### Key Concepts
-
-#### Base Configuration
-Contains the foundation: React SWC plugin, Tailwind CSS integration, and path aliases (like `@oc-mui/*` and `@/*`).
-
-#### Shell vs. Plugin Config
-- **Shell Config:** Optimized for building the main entry point application.
-- **Plugin Config:** Configured for "Library Mode" to ensure plugins can be dynamically loaded by the shell.
-
-#### Port Management (`ports.ts`)
-Defines a predictable port mapping for every application in the workspace (e.g., Core on 3000, Series on 3001, etc.).
-
-## API Surface (Public Exports)
-
-### Core API
-
-#### `baseConfig`
-The foundational Vite configuration object.
-
-#### `createShellConfig(options)`
-**Purpose:** Factory for creating the Core Shell's Vite configuration.
-
-#### `createPluginConfig(options)`
-**Purpose:** Factory for creating a plugin's Vite configuration.
-
-#### `getAppPort(appName)`
-**Purpose:** Returns the assigned dev server port for a given application.
-
-## Dependencies & Coupling
-
-### Dependency Graph
-
-```
-@oc-mui/vite-config
-├── External Dependencies
-│   ├── vite (^6.3.5)
-│   ├── @vitejs/plugin-react-swc (^3.9.0)
-│   ├── @tailwindcss/vite (^4.1.7)
-│   └── vite-plugin-static-copy (^1.0.6)
-└── Workspace Dependencies
-    └── @oc-mui/utils - For logging and port logic
-```
-
-### Dependency Layer
-
-**Layer:** Core Infrastructure
-
-## Usage Examples
-
-### Using in a Plugin (`vite.config.ts`)
-
-```typescript
+```ts
 import { defineConfig } from "vite";
-import { createPluginConfig } from "@oc-mui/vite-config";
+import { shellConfig } from "@oc-mui/vite-config";
 
-export default defineConfig(
-  createPluginConfig({
-    name: "my-plugin",
-    port: 3005
-  })
-);
+export default defineConfig(shellConfig({ /* overrides */ }));
 ```
 
-### Customizing the Proxy
+In an external community plugin:
 
-```typescript
-import { devProxy } from "@oc-mui/vite-config/proxy";
+```ts
+import { defineConfig } from "vite";
+import { communityPluginConfig } from "@oc-mui/vite-config/community-plugin";
 
-// Used within a vite.config.ts
-proxy: {
-  "/graphql": devProxy.graphql,
-}
+export default defineConfig(communityPluginConfig({
+  entry: "src/index.ts",
+  name: "my-plugin",
+}));
 ```
 
-## File Structure
+## Subpath exports
 
-```
-packages/vite-config/
-├── src/
-│   ├── base.config.ts          # Shared foundation
-│   ├── shell.config.ts         # Main app configuration
-│   ├── plugin.config.ts        # Library mode for plugins
-│   ├── ports.ts                # Port assignments
-│   ├── proxy.ts                # Dev server proxy settings
-│   └── index.ts                # Public API exports
-├── package.json
-└── README.md                   # This file
-```
+| Subpath | What it provides |
+|---------|------------------|
+| `@oc-mui/vite-config/base` | `baseConfig` — React, Tailwind, common aliases, sourcemaps. |
+| `@oc-mui/vite-config` (or `./index`) | The shell config plus re-exports of the helpers. |
+| `@oc-mui/vite-config/community-plugin` | `communityPluginConfig` — library-mode build for plugins published outside the workspace (CDN/JAR). Externalizes shared modules listed in `@oc-mui/remote-plugin-loader`'s `SHARED_MODULE_NAMES`. |
+| `@oc-mui/vite-config/proxy` | Dev-server proxy table for backend endpoints (`/admin-ng`, `/info`, `/graphql`, …). |
+| `@oc-mui/vite-config/ports` | Centralised port assignments — `shell` on 3000, `playground` on 3001, etc. Prevents collisions when several dev servers run together. |
+| `@oc-mui/vite-config/plugins/fragment-extractor` | Custom Vite plugin: harvests GraphQL fragments from sources so the runtime can register them with the host's fragment registry. |
 
----
+## Internal Vite plugins
 
-## Contributing
+[`src/plugins/local-plugins-dev.ts`](./src/plugins/local-plugins-dev.ts) is the dev-server piece that discovers `.local-plugins/<name>/dist/*.mjs`, serves them at `/local-plugins/<name>/<file>.mjs`, and exposes `/local-plugins/manifest.json` for the shell to load. Detailed write-up in [`docs/plugins/distribution.md`](../../docs/plugins/distribution.md#path-2--local-plugins-dev-only).
 
-1. **New Apps:** When adding a new application, assign it a unique port in `src/ports.ts`.
-2. **Aliases:** Keep path aliases in sync with `packages/typescript-config`.
-3. **Build Stability:** Avoid adding experimental Vite plugins here as they impact the stability of the entire monorepo.
+## Layer
+
+Core infrastructure. Depends on `@oc-mui/utils` only.
+
+## See also
+
+- [`docs/plugins/distribution.md`](../../docs/plugins/distribution.md) — how the four loading paths use these configs.
+- [`packages/tailwind-config/README.md`](../tailwind-config/README.md) — the Tailwind preset wired in here.

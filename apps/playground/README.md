@@ -21,3 +21,9 @@ later phase (see [ADR-003](../../docs/architecture/decisions/003-shell-plus-core
 ```bash
 pnpm --filter=playground dev
 ```
+
+## See also
+
+- [`apps/shell/`](../shell/) — the production app.
+- [`packages/app-runtime/`](../../packages/app-runtime/) — the standalone/integrated dual-mode runtime the playground builds on.
+- [`docs/operations/open-followups.md`](../../docs/operations/open-followups.md) §6.4 — the planned "playground as plugin runner" enhancement.

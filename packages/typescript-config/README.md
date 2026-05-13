@@ -1,64 +1,20 @@
-# `@oc-mui/typescript-config`
+# @oc-mui/typescript-config
 
-A collection of TypeScript configurations for the management-ui monorepo.
+Shared TypeScript configurations. Every workspace package extends one of these so the compiler flags stay consistent.
 
-## Available Configurations
+## Configurations
 
-### Base Configuration (`@oc-mui/typescript-config/base.json`)
-
-The foundational TypeScript configuration that includes:
-
-- ES2022 target with DOM libraries
-- ESNext module system with bundler resolution
-- Strict type checking enabled
-- Isolated modules for faster compilation
-- Source maps disabled for production builds
-
-### Node ESM Library Configuration (`@oc-mui/typescript-config/node-esm-library.json`)
-
-Extends the base configuration for Node.js ESM libraries:
-
-- Node16 module system and resolution
-- Declaration file generation enabled
-- Output directory set to `./dist`
-- Consistent file casing enforcement
-
-### React Library Configuration (`@oc-mui/typescript-config/react-library.json`)
-
-Extends the base configuration for React libraries:
-
-- React JSX transform support (`react-jsx`)
-- Composite project setup for monorepo builds
-- Declaration files and source maps enabled
-- Incremental compilation for faster rebuilds
-- Output directory set to `./dist`
-
-### React Application Configuration (`@oc-mui/typescript-config/react-application.json`)
-
-Extends the React library configuration for applications:
-
-- Optimized for applications (no emit, no incremental)
-- Declaration generation disabled for faster builds
-- Composite disabled for application bundles
+| File | Extends | Use it for |
+|------|---------|------------|
+| `base.json` | — | ES2022 target, DOM libs, strict mode, `module: ESNext`, bundler resolution. The foundation everything else builds on. |
+| `node-esm-library.json` | `base.json` | Node ESM packages (build tooling, scripts). Emits `.d.ts` to `./dist`. |
+| `react-library.json` | `base.json` | React libraries (`packages/ui`, plugins under `plugins/`). `react-jsx` transform, composite project, incremental compile, `.d.ts` + sourcemaps to `./dist`. |
+| `react-application.json` | `react-library.json` | The shell and the playground. `noEmit`, composite off — bundler emits, tsc only type-checks. |
 
 ## Usage
 
-Extend the appropriate configuration in your `tsconfig.json`:
-
-```json
-{
-  "extends": "@oc-mui/typescript-config/base.json",
-  "compilerOptions": {
-    // Your project-specific overrides
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
-}
-```
-
-### For React Libraries:
-
-```json
+```jsonc
+// tsconfig.json
 {
   "extends": "@oc-mui/typescript-config/react-library.json",
   "include": ["src/**/*"],
@@ -66,16 +22,13 @@ Extend the appropriate configuration in your `tsconfig.json`:
 }
 ```
 
-### For React Applications:
+Pick the variant that matches what you're building. Project-specific overrides go in the local `compilerOptions`.
 
-```json
-{
-  "extends": "@oc-mui/typescript-config/react-application.json",
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
-}
-```
+## Layer
 
-## Dependencies
+Core infrastructure. Zero runtime dependencies — only ships JSON files.
 
-This package has no runtime dependencies and only provides TypeScript configuration files.
+## See also
+
+- [`base.json`](./base.json) — the strict flags every package inherits.
+- [`docs/architecture/overview.md`](../../docs/architecture/overview.md) — where this fits in the package layers.
