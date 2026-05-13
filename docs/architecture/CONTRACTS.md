@@ -14,7 +14,7 @@ There are **four contracts**:
 
 Each contract has its own version. Breaking changes to any of them require a major version bump of `@<scope>/plugin-system`.
 
-The Manifest 1.1 and Runtime API 1.0 contracts are **mechanically verified** by the contract-test harness in [`@oc-mui/plugin-testing`](../../packages/plugin-testing/README.md); see [`docs/TESTING.md`](../TESTING.md) for the test pyramid and harness usage.
+The Manifest 1.1 and Runtime API 1.0 contracts are **mechanically verified** by the contract-test harness in [`@oc-mui/plugin-testing`](../../packages/plugin-testing/README.md); see [`docs/operations/testing.md`](../operations/testing.md) for the test pyramid and harness usage.
 
 ## 1. Plugin Manifest Contract
 
@@ -101,7 +101,7 @@ Any other module path (subpath imports, deep imports into `src/`) is **not** pub
 
 ## 3. Theme Contract
 
-**Authoritative document:** [`docs/PLUGIN_STYLING_CONTRACT.md`](../PLUGIN_STYLING_CONTRACT.md) version 2.0.0 (this document will move to `docs/THEME_CONTRACT.md` during Phase 3 doc consolidation without content changes).
+**Authoritative document:** [`plugins/styling.md`](../plugins/styling.md).
 **Contract version:** 2.0
 
 ### Summary of guarantees

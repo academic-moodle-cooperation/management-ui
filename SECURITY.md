@@ -29,7 +29,7 @@ What happens next:
 ## Our security process
 
 - **Dependency audits**: `pnpm audit` runs on every CI job; the CI fails on high-severity advisories.
-- **Plugin contract boundaries**: Plugins run inside the host's React tree and share its capability set. The plugin API contract (see [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md)) treats every plugin's exposed surface as security-relevant; the contract-test harness ([`docs/TESTING.md`](docs/TESTING.md)) verifies that public surfaces don't drift silently.
+- **Plugin contract boundaries**: Plugins run inside the host's React tree and share its capability set. The plugin API contract (see [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md)) treats every plugin's exposed surface as security-relevant; the contract-test harness ([`docs/operations/testing.md`](docs/operations/testing.md)) verifies that public surfaces don't drift silently.
 - **Coordinated disclosure**: We follow the responsible-disclosure timeline above and prefer to credit reporters in the published advisory.
 - **Secrets**:
   - Never commit secrets, API keys, or credentials.

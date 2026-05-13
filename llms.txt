@@ -154,7 +154,7 @@ Button, Card, Input, Select, Dialog, Table, Tabs, Badge, etc.
 - Scope overrides with plugin-specific selectors, not load-order tricks
 - For theming changes, override CSS custom properties, not component classes
 
-Full contract: `docs/PLUGIN_STYLING_CONTRACT.md`
+Full contract: `docs/plugins/styling.md`
 Token reference: `packages/ui/src/styles/globals.css`
 
 ## Data Fetching
@@ -184,16 +184,23 @@ Use `useI18n()` from `@oc-mui/i18n` with namespaced keys: `t("my-plugin:title")`
 
 ## Key Documentation
 
-- `docs/AI_DEVELOPMENT_GUIDE.md` — Primary guide for AI models and developers
-- `docs/COMMUNITY_PLUGIN_DEVELOPMENT.md` — Full plugin development lifecycle
-- `docs/LOCAL_PLUGINS.md` — Using `.local-plugins/` with this monorepo (clone, pnpm, JARs)
-- `docs/PLUGIN_STYLING_CONTRACT.md` — CSS/theming rules for plugins
-- `docs/PLUGIN_LOADING_MECHANISMS.md` — All plugin loading paths explained
-- `docs/architecture/ADR-001-plugin-system.md` — Plugin architecture rationale
-- `docs/architecture/ADR-002-monorepo-structure.md` — Monorepo design decisions
-- `packages/plugin-system/src/schemas/plugin.schema.json` — Plugin manifest schema
-- `examples/community-plugin-template/` — Working plugin template (start here; will move into a dedicated repo)
-- `packages/ui/src/styles/globals.css` — All semantic CSS tokens
+- `docs/README.md` — Audience-routed entry point (use Management UI / write a plugin / contribute to core).
+- `docs/architecture/overview.md` — Architectural tour: three pillars, package layers, plugin boundaries.
+- `docs/architecture/CONTRACTS.md` — Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0.
+- `docs/architecture/CONFIGURATION.md` — Full config layer model and the `definePluginConfig` reader API.
+- `docs/architecture/decisions/` — ADRs (001 plugin system, 002 monorepo, 003 shell-plus-core-plugins).
+- `docs/plugins/creating-a-plugin.md` — Plugin authoring walkthrough.
+- `docs/plugins/distribution.md` — In-tree, `.local-plugins/`, JAR, and CDN distribution paths.
+- `docs/plugins/styling.md` — CSS/theming rules for plugins.
+- `docs/plugins/testing.md` — Required contract test plus what else to cover.
+- `docs/plugins/i18n.md` — Translation namespaces and key parity.
+- `docs/operations/testing.md` — Canonical test pyramid + harness API.
+- `docs/operations/release.md` — Versioning, changesets, API surface drift, deprecation policy.
+- `docs/operations/ci.md` — CI graph and how to reproduce failures locally.
+- `docs/operations/open-followups.md` — Single committed index of every deferred / waiting item.
+- `packages/plugin-system/src/schemas/plugin.schema.json` — Plugin manifest schema.
+- `packages/ui/src/styles/globals.css` — All semantic CSS tokens.
+- `AGENTS.md` — Operational pre-flight checklist for plugin authoring (the rules in long form).
 
 ## Tech Stack
 

@@ -2,11 +2,11 @@
 
 Loads remote ES module plugins by URL: fetch, transform bare imports to `window.__SHARED_MODULES__`, import via blob URL, inject CSS, register GraphQL fragments, and register with the PluginManager.
 
-Plugin CSS is injected before the host shell stylesheets so generic plugin utilities do not accidentally override shared UI. If a plugin needs to intentionally restyle host components, follow the [Plugin Styling Contract](../../docs/PLUGIN_STYLING_CONTRACT.md).
+Plugin CSS is injected before the host shell stylesheets so generic plugin utilities do not accidentally override shared UI. If a plugin needs to intentionally restyle host components, follow the [Theme & styling contract](../../docs/plugins/styling.md).
 
 ## Who uses it
 
-- **management-ui-core** – Loads JAR plugins (backend-derived URLs) after built-in plugins. Uses `loadJarPlugins()` from the core’s `jarPluginLoader` and `loadAndRegister(url, manager, { skipUrlValidation: true })` from this package.
+- **`@oc-mui/shell`** – Loads JAR plugins (backend-derived URLs) after built-in plugins. Uses `loadJarPlugins()` from the shell's `jarPluginLoader` and `loadAndRegister(url, manager, { skipUrlValidation: true })` from this package.
 - **admin-marketplace** – Loads registry and local plugins. Validates URL and version first, then calls this package’s `loadAndRegister`. Persistence and security stay in the marketplace plugin.
 
 ## API
@@ -31,7 +31,7 @@ Returns whether `url` is same-origin. Can be used by the core when trusting back
 
 ### `transformModuleSource(source)` / `SHARED_MODULE_NAMES`
 
-Exported for tests. Transform replaces bare imports of shared modules (react, @oc-mui/*) with references to the shim; `SHARED_MODULE_NAMES` in `src/transform.ts` is the list of those modules. For the full list of packages community plugins can import, see [docs/COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md](../../docs/COMMUNITY_PLUGIN_AVAILABLE_PACKAGES.md).
+Exported for tests. Transform replaces bare imports of shared modules (react, @oc-mui/*) with references to the shim; `SHARED_MODULE_NAMES` in `src/transform.ts` is the list of those modules. For the full list of packages community plugins can import, see [docs/plugins/distribution.md](../../docs/plugins/distribution.md#available-packages-the-import-contract).
 
 ## Security
 

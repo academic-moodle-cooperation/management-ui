@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-04-16
 
-This directory contains the **deployable Vite applications** of the project. Since Phase 3 of the open-source cleanup (see [ADR-003](../docs/architecture/ADR-003-shell-plus-core-plugins.md)) there are only two, and both have a single, clearly scoped job:
+This directory contains the **deployable Vite applications** of the project. Since Phase 3 of the open-source cleanup (see [ADR-003](../docs/architecture/decisions/003-shell-plus-core-plugins.md)) there are only two, and both have a single, clearly scoped job:
 
 | Directory          | Purpose                                                        | Port | Ships in prod? |
 | ------------------ | -------------------------------------------------------------- | ---- | -------------- |

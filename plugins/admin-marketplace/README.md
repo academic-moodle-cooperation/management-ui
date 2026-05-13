@@ -431,7 +431,7 @@ None
 ## Related Documentation
 
 - [Plugin System Overview](/plugins/README.md)
-- [Creating Plugins Guide](/docs/workflows/ADDING_PLUGINS.md)
+- [Creating a plugin](/docs/plugins/creating-a-plugin.md)
 - [Extension Points Catalog](/plugins/core/README.md)
 - [UI Components](/packages/ui/README.md)
 

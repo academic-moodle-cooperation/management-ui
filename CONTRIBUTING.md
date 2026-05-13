@@ -29,7 +29,7 @@ pnpm build              # one-time: populates dist-types/ for upstream packages
 pnpm dev                # http://127.0.0.1:3000/management-ui/
 ```
 
-If you're new to the codebase, read [`AGENTS.md`](AGENTS.md) (operational rules for plugin work) and [`docs/AI_DEVELOPMENT_GUIDE.md`](docs/AI_DEVELOPMENT_GUIDE.md) (architecture + package layers) before opening your first PR.
+If you're new to the codebase, read [`AGENTS.md`](AGENTS.md) (operational rules for plugin work) and [`docs/architecture/overview.md`](docs/architecture/overview.md) (architecture + package layers) before opening your first PR.
 
 ---
 
@@ -56,7 +56,7 @@ If you're building something that's specific to your university or organisation 
    - A **JAR** dropped into the Karaf deploy folder (the same shape Management UI itself ships as), or
    - A **remote ES module** loaded by the Admin Marketplace from a registry / CDN.
 
-[`AGENTS.md`](AGENTS.md) → "Boundaries" lists the contracts your plugin must obey (no cross-plugin imports, no `apps/*` imports, no direct use of wrapped libraries like `@tanstack/react-router`). [`docs/COMMUNITY_PLUGIN_DEVELOPMENT.md`](docs/COMMUNITY_PLUGIN_DEVELOPMENT.md) walks through the full plugin lifecycle.
+[`AGENTS.md`](AGENTS.md) → "Boundaries" lists the contracts your plugin must obey (no cross-plugin imports, no `apps/*` imports, no direct use of wrapped libraries like `@tanstack/react-router`). [`docs/plugins/creating-a-plugin.md`](docs/plugins/creating-a-plugin.md) walks through the full plugin lifecycle; [`docs/plugins/distribution.md`](docs/plugins/distribution.md) covers in-tree, `.local-plugins/`, JAR, and CDN distribution paths.
 
 You generally don't open PRs against *this* repo for plugin work — but you're welcome to open issues for missing extension points, unclear contracts, or scaffolding bugs.
 
@@ -87,11 +87,11 @@ Cross-plugin imports, app-imports-plugin, and plugin-imports-app are **not allow
 
 Deeper material:
 
-- [`docs/AI_DEVELOPMENT_GUIDE.md`](docs/AI_DEVELOPMENT_GUIDE.md) — package layers, plugin model, common pitfalls
+- [`docs/architecture/overview.md`](docs/architecture/overview.md) — package layers, plugin model, common pitfalls
 - [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) — the four frozen contracts (Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0)
-- [`docs/architecture/ADR-*.md`](docs/architecture/) — why the architecture is the way it is
-- [`docs/TESTING.md`](docs/TESTING.md) — the test pyramid (unit / contract / E2E) and the harness API
-- [`docs/OPEN_FOLLOWUPS.md`](docs/OPEN_FOLLOWUPS.md) — committed index of every "we know about this but haven't done it yet" item
+- [`docs/architecture/decisions/`](docs/architecture/decisions/) — ADRs explaining why the architecture is the way it is
+- [`docs/operations/testing.md`](docs/operations/testing.md) — the test pyramid (unit / contract / E2E) and the harness API
+- [`docs/operations/open-followups.md`](docs/operations/open-followups.md) — committed index of every "we know about this but haven't done it yet" item
 
 ---
 
@@ -122,7 +122,7 @@ Strict mode. Avoid `any`; if you genuinely need an escape hatch, document it in 
 
 ### Testing
 
-Three layers, fully documented in [`docs/TESTING.md`](docs/TESTING.md):
+Three layers, fully documented in [`docs/operations/testing.md`](docs/operations/testing.md):
 
 - **Unit** (Vitest) — every package
 - **Contract** (`@oc-mui/plugin-testing` harness) — every plugin under `plugins/` ships one `plugin.contract.test.ts`

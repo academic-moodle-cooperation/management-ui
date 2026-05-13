@@ -81,5 +81,5 @@ from `./src/index.ts`.
 MVP ships only the plugin-system provider in `HarnessPluginProvider`. Query
 / i18n / router wrappers are added per test when needed; if a common stack
 emerges, it will be promoted here. See
-[`docs/TESTING.md`](../../docs/TESTING.md) for the broader testing strategy
-and the follow-up list.
+[`docs/operations/testing.md`](../../docs/operations/testing.md) for the broader
+testing strategy and the follow-up list.
