@@ -211,8 +211,9 @@ Blank issues are disabled. If your topic doesn't fit the bug or feature template
 3. **`pnpm verify`** passes locally — this is the canonical pre-push gate.
 4. **Changeset added** if your change touches a versioned package (see [Versioning](#versioning-changesets-and-deprecations) above). CI's `Changeset` job tells you which.
 5. **API reports regenerated** if you intentionally changed a public surface — `pnpm api-check`, commit the updated `etc/*.api.md`. CI's `api-check` job tells you which.
-6. **Open the PR** using the [provided template](.github/pull_request_template.md). It maps to the checklist above and helps reviewers focus.
-7. **Stack on top of other open PRs** if your change depends on them; GitHub auto-rebases stacked PRs when the parent merges.
+6. **Docs updated in the same PR.** Any doc your change makes stale is fixed alongside the code. Renamed a public symbol? Grep `docs/` for it. Changed an extension point's contract? Fix `docs/plugins/` and `docs/architecture/CONTRACTS.md`. Changed how something is built or released? Fix `docs/operations/`. Docs that ship with the project are part of the project — leaving them stale is a regression.
+7. **Open the PR** using the [provided template](.github/pull_request_template.md). It maps to the checklist above and helps reviewers focus.
+8. **Stack on top of other open PRs** if your change depends on them; GitHub auto-rebases stacked PRs when the parent merges.
 
 If you're in doubt about the bump level, the changeset wording, or whether a contract changed: open the PR as a draft and ask. The contracts in `docs/architecture/CONTRACTS.md` are deliberately strict because they're public commitments — better to over-discuss than to ship a silent break.
 

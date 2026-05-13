@@ -15,6 +15,7 @@ Before you finish a plugin-touching change:
 5. Plugin imports nothing from `apps/*`, `plugins/<other>/*`, or any external library not already wrapped behind a `@oc-mui/*` facade. ✓
 6. `pnpm verify` passes locally. ✓
 7. If a public `@oc-mui/*` API surface changed, you ran `pnpm api-check` and committed the regenerated `etc/<pkg>.api.md` *and* added a changeset. ✓
+8. **Docs stay in sync.** Any doc your change makes stale is updated in the same PR. If you renamed a public symbol, fix every doc that names it; if you changed an extension point's contract, fix [`docs/plugins/`](docs/plugins/) and [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md); if you changed how something is built or released, fix [`docs/operations/`](docs/operations/). Use the "Where to find things" table at the bottom of this file to find every doc that mentions what you touched. ✓
 
 If any of those is unchecked, do not declare the change finished.
 
