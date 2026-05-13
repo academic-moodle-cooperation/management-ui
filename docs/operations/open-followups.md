@@ -151,14 +151,24 @@ PR-3a restructured `docs/` from 40 files to 20, rewrote the plugin-author and op
 
 ### 8.1 `docs/workflows/ADDING_APPS.md` + `ADDING_PACKAGES.md`
 
-The two surviving workflow docs (~1.4k lines combined) are written for a contributor adding a new top-level app or package. They still link to deleted docs (`COUPLING_ANALYSIS.md`, `templates/PACKAGE_README_TEMPLATE.md`, `AI_DEVELOPMENT_GUIDE.md`). They're not broken — adding a top-level app or package is rare and the existing prose still describes the operation — but the references are dangling.
+The two surviving workflow docs (~1.4k lines combined) are written for a contributor adding a new top-level app or package. They still link to deleted docs (`COUPLING_ANALYSIS.md`, `templates/PACKAGE_README_TEMPLATE.md`, `AI_DEVELOPMENT_GUIDE.md`). They're not broken — adding a top-level app or package is rare and the existing prose still describes the operation — but the references are dangling. They're also excluded from the VitePress site (PR-3c) for the same reason — they shouldn't be public-facing until rewritten.
 
-- **When to revisit**: PR-3b alongside the per-package README refresh, or as a small standalone PR. Consolidate both into a single `docs/operations/extending-the-workspace.md` (~150 lines, two sections) or shrink in place.
+- **When to revisit**: small standalone PR. Consolidate both into a single `docs/operations/extending-the-workspace.md` (~150 lines, two sections) or shrink in place. Once they're in shape, drop them from `docs/.vitepress/config.mts`'s `srcExclude` list and add them to the Operations sidebar.
 
 ### 8.2 `examples/community-plugin-template/`
 
 The leftover template directory (`AVAILABLE_PACKAGES.md`, `README.md`, etc.) still references `COMMUNITY_PLUGIN_DEVELOPMENT.md` etc. Already tracked in [1.1](#11-retire-vs-extract-examplescommunity-plugin-template) — when that decision is executed (retire or extract), the references go with it.
 
-### 8.3 VitePress wiring
+### 8.3 Flip docs deploy from manual to on-push
 
-A real OSS-grade online doc site (PR-3c). Pre-work — config, theme, GH Pages workflow — is gated on 3a+3b shipping.
+[`/.github/workflows/docs.yml`](../../.github/workflows/docs.yml) currently runs the build on every PR (so reviewers see the build pass) and deploys only via `workflow_dispatch`. The `push` trigger to `release/oss-1.0` is in place but commented out, so the live site doesn't auto-update yet.
+
+- **When to revisit**: alongside Phase 6d (the `access: "restricted" → "public"` npm-publish flip). Once everything has been verified on the test server and the plan is finished, uncomment the `push:` block in `docs.yml` so merges to `release/oss-1.0` keep the live site fresh.
+- **First-time enablement on GitHub**: when you're ready, enable GitHub Pages in the repo settings under **Settings → Pages**, source: **GitHub Actions** (not "Deploy from a branch"). The workflow's `actions/deploy-pages` step needs that to be set, otherwise it errors out.
+
+### 8.4 Source-link rewriting is heuristic-based
+
+[`docs/.vitepress/config.mts`](../../docs/.vitepress/config.mts)'s `rewriteRepoLink` rewrites `../foo/bar` links to GitHub permalinks unless the first path segment is one of a hardcoded list of docs subdirectories (`architecture`, `getting-started`, `operations`, `plugins`, `reference`, `workflows`). If a new top-level docs directory is added without updating that list, links into it from sibling docs will incorrectly point at GitHub.
+
+- **When to revisit**: if/when a new top-level docs section is added. Update `DOCS_SUBDIRS` in the same PR.
+- **Suggested alternative**: replace the whitelist with a build-time check of the actual filesystem (list immediate `docs/*` subdirs). Low priority — the current list is short and easy to keep in sync.

@@ -106,6 +106,8 @@ pnpm --filter @oc-mui/plugin-core-episodes test:contract # contract test for one
 pnpm api-check                                          # regenerate API surface snapshots
 pnpm test:e2e:ui                                        # Playwright in interactive mode
 pnpm dev                                                # vite dev server
+pnpm docs:dev                                           # VitePress docs site (http://localhost:5173)
+pnpm docs:build                                         # static build of the docs site
 ```
 
 `pnpm verify` runs `lint → check-types → build → test → test:contract → api-check → test:e2e` in dependency order. If it's green locally it's green in CI; the only flakes you'll see in CI that you don't see locally are cold-start E2E timeouts, which Playwright retries automatically.

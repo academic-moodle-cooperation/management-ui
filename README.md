@@ -84,6 +84,8 @@ pnpm test:contract          # plugin contract tests
 pnpm test:e2e               # Playwright smoke against the shell
 pnpm api-check              # regenerate API surface snapshots
 pnpm changeset              # add a release-note entry
+pnpm docs:dev               # serve the VitePress docs site at http://localhost:5173
+pnpm docs:build             # build the static docs site to docs/.vitepress/dist
 ```
 
 `pnpm verify` mirrors CI exactly — if it's green locally, it's green in CI. See [`docs/operations/ci.md`](docs/operations/ci.md) for the CI graph.

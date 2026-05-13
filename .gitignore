@@ -86,6 +86,10 @@ node/
 # Archived docs are kept out of the repo
 docs/archive
 
+# VitePress build output and dev cache (the rendered site)
+docs/.vitepress/cache
+docs/.vitepress/dist
+
 # Personal workflow tools (owner-specific, not part of the product)
 git-workflow.sh
 GIT_WORKFLOW.md
