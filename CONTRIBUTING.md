@@ -1,83 +1,136 @@
 # Contributing to Management UI
 
-First off, thank you for considering contributing to the Management UI! It's people like you that make this a great platform for the video management community.
+Management UI is the plugin-based React/TypeScript management front-end for [Opencast](https://opencast.org/). It ships as a single Karaf-deployable JAR (frontend assets + a small backend bundle) and supports both built-in features and university- or organisation-specific extensions written as plugins.
 
-This project is a modular, plugin-based platform designed for extensibility. Before you start, please take a moment to read through this guide.
+Two kinds of changes land in this repo:
 
-## 🚀 Getting Started
+1. **Core changes** — work on the shell, the shared packages, or one of the built-in plugins under `plugins/`. These ship with every Management UI release.
+2. **Tooling and docs** — improvements to the developer experience (`AGENTS.md`, `docs/`, CI, scaffolding scripts, etc.).
+
+If your contribution is a **plugin that's specific to your organisation**, it should *not* live in this repo. See [Path B](#path-b-write-an-organisation-or-community-plugin) below.
+
+---
+
+## Getting started
 
 ### Prerequisites
 
-- **Node.js**: v20 or higher
-- **pnpm**: v10.4.1 or higher
-- **Java**: Required for backend development (Maven)
+- **Node.js** ≥ 20 (Node 22 LTS recommended)
+- **pnpm** ≥ 10.4.1 (run `corepack enable` to install via Corepack)
+- **Java** + **Maven** — only if you want to build the deployable JAR; pure frontend work doesn't need them
 
-### Initial Setup
+### Initial setup
 
-1.  **Clone the repository**:
-    ```bash
-    git clone https://github.com/your-org/management-ui.git
-    cd management-ui
-    ```
+```bash
+git clone https://github.com/academic-moodle-cooperation/management-tool.git
+cd management-tool
+pnpm install
+pnpm build              # one-time: populates dist-types/ for upstream packages
+pnpm dev                # http://127.0.0.1:3000/management-ui/
+```
 
-2.  **Install dependencies**:
-    ```bash
-    pnpm install
-    ```
+If you're new to the codebase, read [`AGENTS.md`](AGENTS.md) (operational rules for plugin work) and [`docs/AI_DEVELOPMENT_GUIDE.md`](docs/AI_DEVELOPMENT_GUIDE.md) (architecture + package layers) before opening your first PR.
 
-3.  **Run the development server**:
-    ```bash
-    # Starts all applications and packages in dev mode
-    pnpm dev
-    ```
+---
 
-## 🏗️ Architecture Overview
+## Picking your contribution path
 
-The project is a monorepo managed with **Turborepo** and **pnpm workspaces**.
+### Path A: Fix a bug or add a feature to the core
 
-- **`/apps`**: Main entry point applications (e.g., `management-ui-core`).
-- **`/packages`**: Shared infrastructure, UI components, and logic.
-- **`/plugins`**: Domain-specific extensions (e.g., `series`, `episodes`).
-- **`/backend`**: Java/Maven based backend services.
+You'll be working in `apps/shell`, `apps/playground`, `packages/*`, or one of the in-repo plugins under `plugins/core-*`, `plugins/admin-marketplace`, or `plugins/example`.
 
-### Plugin-First Philosophy
+1. Read [`AGENTS.md`](AGENTS.md) for the operational rules (boundaries, extension points, contract tests).
+2. Make your change.
+3. Run `pnpm verify` locally — it runs the same gates CI runs, in order: lint → check-types → build → unit → contract → api-check → Playwright smoke. If `pnpm verify` is green locally, CI will be too (modulo cold-start E2E flakes that retry).
+4. Add a changeset if you touched a versioned package — see [Versioning, changesets, and deprecations](#versioning-changesets-and-deprecations).
+5. Regenerate API reports if you changed a public surface — `pnpm api-check`, then commit the updated `packages/*/etc/*.api.md`.
+6. Open a PR using the [template](.github/pull_request_template.md). CI tells you what's missing.
 
-Everything in this UI is built to be extensible. We use a **Plugin System** that allows you to override UI components, add new routes, and inject custom logic without touching the core packages.
+### Path B: Write an organisation or community plugin
 
-For more details, see:
-- [Plugin System Documentation](packages/plugin-system/README.md)
-- [Architecture Decision Records](docs/architecture/)
+If you're building something that's specific to your university or organisation (a custom upload flow, an institution-branded theme, an LMS integration), your plugin does **not** belong in this repo. Instead:
 
-## 🛠️ Development Workflows
+1. Scaffold a fresh plugin: `pnpm create-plugin my-plugin` writes a fully-wired starter under `.local-plugins/my-plugin/` (gitignored from this repo, lives in your own git repo).
+2. Move it into your own organisation repo when ready.
+3. Distribute it as one of:
+   - A **JAR** dropped into the Karaf deploy folder (the same shape Management UI itself ships as), or
+   - A **remote ES module** loaded by the Admin Marketplace from a registry / CDN.
 
-We have detailed step-by-step guides for common tasks in the `docs/workflows/` directory:
+[`AGENTS.md`](AGENTS.md) → "Boundaries" lists the contracts your plugin must obey (no cross-plugin imports, no `apps/*` imports, no direct use of wrapped libraries like `@tanstack/react-router`). [`docs/COMMUNITY_PLUGIN_DEVELOPMENT.md`](docs/COMMUNITY_PLUGIN_DEVELOPMENT.md) walks through the full plugin lifecycle.
 
-- [Adding a New App](docs/workflows/ADDING_APPS.md)
-- [Adding a New Package](docs/workflows/ADDING_PACKAGES.md)
-- [Adding a New Plugin](docs/workflows/ADDING_PLUGINS.md)
-- [Updating Dependencies](docs/workflows/UPDATING_DEPENDENCIES.md)
-- [Swapping Technologies](docs/workflows/SWAPPING_TECHNOLOGIES.md)
+You generally don't open PRs against *this* repo for plugin work — but you're welcome to open issues for missing extension points, unclear contracts, or scaffolding bugs.
 
-## 🎨 Coding Standards
+---
+
+## Architecture, in one screen
+
+```
+apps/
+├── shell/         Main Vite-built app: layout, routing, plugin loader, theme runtime
+└── playground/    Dev-only sandbox
+
+packages/          Shared infrastructure, layered (lower layer never depends on higher):
+├── plugin-system, store, i18n          Foundation
+├── query, router, ui, …                Integration
+└── app-runtime, providers, vite-config, ui-config    Application
+
+plugins/           Built-in plugins shipped with the repo
+├── core/                  Mandatory extension points + defaults
+├── core-{episodes,series,upload}/    Feature plugins per /<route>
+├── admin-marketplace/     Plugin + theme browser
+└── example/               Minimal reference plugin
+
+.local-plugins/    Org-specific plugin checkouts (gitignored, dev-only)
+```
+
+Cross-plugin imports, app-imports-plugin, and plugin-imports-app are **not allowed** and are enforced mechanically by `eslint-plugin-boundaries`. The single exception is `plugins/core` — every plugin may consume it because it owns the canonical extension-point identifiers (`uploadExtensionPoints`, `episodesExtensionPoints`, etc.).
+
+Deeper material:
+
+- [`docs/AI_DEVELOPMENT_GUIDE.md`](docs/AI_DEVELOPMENT_GUIDE.md) — package layers, plugin model, common pitfalls
+- [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) — the four frozen contracts (Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0)
+- [`docs/architecture/ADR-*.md`](docs/architecture/) — why the architecture is the way it is
+- [`docs/TESTING.md`](docs/TESTING.md) — the test pyramid (unit / contract / E2E) and the harness API
+- [`docs/OPEN_FOLLOWUPS.md`](docs/OPEN_FOLLOWUPS.md) — committed index of every "we know about this but haven't done it yet" item
+
+---
+
+## The development loop
+
+```bash
+pnpm verify                                              # the pre-push gate (mirrors CI exactly)
+
+# Iterating on a single package or plugin
+pnpm --filter @oc-mui/plugin-system test                # unit tests for one package
+pnpm --filter @oc-mui/plugin-core-episodes test:contract # contract test for one plugin
+pnpm api-check                                          # regenerate API surface snapshots
+pnpm test:e2e:ui                                        # Playwright in interactive mode
+pnpm dev                                                # vite dev server
+```
+
+`pnpm verify` runs `lint → check-types → build → test → test:contract → api-check → test:e2e` in dependency order. If it's green locally it's green in CI; the only flakes you'll see in CI that you don't see locally are cold-start E2E timeouts, which Playwright retries automatically.
 
 ### TypeScript
 
-- We use **Strict Mode** TypeScript. Avoid `any` whenever possible.
-- If you must use a workaround, document it with a comment explaining why.
+Strict mode. Avoid `any`; if you genuinely need an escape hatch, document it in a comment at the call site.
 
-### Linting & Formatting
+### Linting and formatting
 
-- **ESLint**: Run `pnpm lint` to check for code quality issues.
-- **Prettier**: Run `pnpm format` to ensure consistent code style.
-- **CI Enforcement**: Our GitHub Actions will fail if there are any linter errors or formatting issues.
+- `pnpm lint` — ESLint with the wrapper-library rules (`@oc-mui/router` not `@tanstack/react-router` directly, etc.) and the architectural boundaries plugin
+- `pnpm format` — Prettier write
+- `pnpm format:check` — Prettier check (CI)
 
 ### Testing
 
-- We use **Vitest** for unit and integration tests.
-- Add tests for any new logic or components.
-- Run tests with `pnpm test`.
+Three layers, fully documented in [`docs/TESTING.md`](docs/TESTING.md):
 
-## 📦 Versioning, Changesets, and Deprecations
+- **Unit** (Vitest) — every package
+- **Contract** (`@oc-mui/plugin-testing` harness) — every plugin under `plugins/` ships one `plugin.contract.test.ts`
+- **E2E** (Playwright) — a smoke spec against `apps/shell` with stubbed backend endpoints
+
+---
+
+## Versioning, changesets, and deprecations
 
 Every workspace package under `packages/` and `plugins/` is **versioned independently** following [Semver 2.0](https://semver.org/). The ground rules below apply to every public package; the four contracts in [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) layer additional, contract-specific rules on top for the explicitly-frozen API surfaces (Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0).
 
@@ -139,23 +192,40 @@ CI runs `pnpm api-check:ci` (note the `:ci` suffix) which compares the generated
 
 Instrumented packages: `@oc-mui/plugin-system`, `@oc-mui/router`, `@oc-mui/query`, `@oc-mui/i18n`, `@oc-mui/store`, `@oc-mui/ui-config` — the six contract-stable packages declared in [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md). The cross-package coupling visible in each report (e.g. `query`'s report imports types from `plugin-system` and `ui-config`) is intentional: when an upstream contract changes, every consumer's snapshot diff surfaces it.
 
-## 📥 Submitting a Pull Request
+---
 
-1.  **Create a branch**: Use a descriptive name like `feat/new-upload-filter` or `fix/sidebar-overlap`.
-2.  **Commit your changes**: Follow the existing commit message style (e.g., `feat: add new metadata field`).
-3.  **Add a changeset** (see [Versioning](#-versioning-changesets-and-deprecations) above) for any change to a versioned package. Doc-only or shell-only changes can skip this; CI tells you which.
-4.  **Regenerate API reports** with `pnpm api-check` if you intentionally changed a public surface, and commit the updated `packages/*/etc/*.api.md` files.
-5.  **Validate your code**: Run `pnpm verify` (lint + types + build + unit + contract + api-check + E2E) before pushing.
-6.  **Open a PR**: Use the provided template to describe your changes.
+## Filing a bug or feature request
 
-## 📄 Code of Conduct
+Use the templates: [**File a bug**](https://github.com/academic-moodle-cooperation/management-tool/issues/new?template=bug_report.yml) or [**Request a feature**](https://github.com/academic-moodle-cooperation/management-tool/issues/new?template=feature_request.yml). Both templates ask for the structured information that lets us triage quickly (version/commit, repro steps, affected scope dropdown).
 
-Please be respectful and professional in all interactions. We follow the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
+Blank issues are disabled. If your topic doesn't fit the bug or feature template — for example, a plugin-authoring question or a design discussion — open a thread in [Discussions](https://github.com/academic-moodle-cooperation/management-tool/discussions) instead.
 
-## 🛡️ Security
-
-If you find a security vulnerability, please do NOT open a public issue. See our [Security Policy](SECURITY.md) for reporting instructions.
+**Security vulnerabilities go through a separate channel.** Do **not** file a public issue; see [`SECURITY.md`](SECURITY.md) for private vulnerability reporting.
 
 ---
 
-Thank you for your contribution!
+## Submitting a pull request
+
+1. **Branch name**: descriptive — `feat/upload-resume`, `fix/sidebar-overlap`, `docs/configuration-clarify`.
+2. **Commits**: short imperative summary in the first line. Conventional-commit prefixes (`feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `ci`) are encouraged but not enforced.
+3. **`pnpm verify`** passes locally — this is the canonical pre-push gate.
+4. **Changeset added** if your change touches a versioned package (see [Versioning](#versioning-changesets-and-deprecations) above). CI's `Changeset` job tells you which.
+5. **API reports regenerated** if you intentionally changed a public surface — `pnpm api-check`, commit the updated `etc/*.api.md`. CI's `api-check` job tells you which.
+6. **Open the PR** using the [provided template](.github/pull_request_template.md). It maps to the checklist above and helps reviewers focus.
+7. **Stack on top of other open PRs** if your change depends on them; GitHub auto-rebases stacked PRs when the parent merges.
+
+If you're in doubt about the bump level, the changeset wording, or whether a contract changed: open the PR as a draft and ask. The contracts in `docs/architecture/CONTRACTS.md` are deliberately strict because they're public commitments — better to over-discuss than to ship a silent break.
+
+---
+
+## Code of Conduct
+
+Be respectful. We follow the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Security
+
+Vulnerabilities go through [`SECURITY.md`](SECURITY.md), not public issues.
+
+---
+
+Thank you for contributing to Management UI.
