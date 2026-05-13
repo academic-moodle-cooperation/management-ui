@@ -1,6 +1,6 @@
 # What is Management UI?
 
-Management UI is a modular admin interface for [Opencast](https://opencast.org), the open-source academic video platform. It replaces the legacy admin UI with a plugin-first architecture: a thin shell hosts routing, auth, and layout, and every visible feature ships as a plugin.
+Management UI is a modular admin interface for [Opencast](https://opencast.org), the open-source academic video platform. It is built around a plugin-first architecture: a thin shell hosts routing, auth, and layout, and every visible feature ships as a plugin — so orgs can customize the UI without forking core code.
 
 ## Who it's for
 
