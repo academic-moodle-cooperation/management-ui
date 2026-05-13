@@ -7,7 +7,7 @@ standalone shell, with no other plugins loaded and with services mocked.
 
 Skeleton only. The harness currently renders a placeholder; the mechanism to
 pick a plugin and run contract/smoke tests against it in CI will land in a
-later phase (see [ADR-003](../../docs/architecture/ADR-003-shell-plus-core-plugins.md)).
+later phase (see [ADR-003](../../docs/architecture/decisions/003-shell-plus-core-plugins.md)).
 
 ## Non-goals
 

@@ -2,7 +2,7 @@
 
 Operational rules for AI coding agents (Claude, Copilot, Cursor, etc.) working in this repository. Human contributors should read [`CONTRIBUTING.md`](CONTRIBUTING.md) instead — it has the same rules in long form, plus the wider workflow context.
 
-This file is **not** a project tour. For architecture, package layers, and the general "what is this codebase" briefing, start at [`docs/AI_DEVELOPMENT_GUIDE.md`](docs/AI_DEVELOPMENT_GUIDE.md). The rules below assume you have that context.
+This file is **not** a project tour. For architecture, package layers, and the general "what is this codebase" briefing, start at [`docs/architecture/overview.md`](docs/architecture/overview.md). The rules below assume you have that context.
 
 ## TL;DR — Pre-flight checklist
 
@@ -15,6 +15,7 @@ Before you finish a plugin-touching change:
 5. Plugin imports nothing from `apps/*`, `plugins/<other>/*`, or any external library not already wrapped behind a `@oc-mui/*` facade. ✓
 6. `pnpm verify` passes locally. ✓
 7. If a public `@oc-mui/*` API surface changed, you ran `pnpm api-check` and committed the regenerated `etc/<pkg>.api.md` *and* added a changeset. ✓
+8. **Docs stay in sync.** Any doc your change makes stale is updated in the same PR. If you renamed a public symbol, fix every doc that names it; if you changed an extension point's contract, fix [`docs/plugins/`](docs/plugins/) and [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md); if you changed how something is built or released, fix [`docs/operations/`](docs/operations/). Use the "Where to find things" table at the bottom of this file to find every doc that mentions what you touched. ✓
 
 If any of those is unchecked, do not declare the change finished.
 
@@ -123,7 +124,7 @@ describe("my-plugin contract", () => {
 });
 ```
 
-Run with `pnpm test:contract`. The full harness API is documented in [`packages/plugin-testing/README.md`](packages/plugin-testing/README.md); the test pyramid + follow-up backlog live in [`docs/TESTING.md`](docs/TESTING.md).
+Run with `pnpm test:contract`. The full harness API is documented in [`packages/plugin-testing/README.md`](packages/plugin-testing/README.md); the test pyramid + follow-up backlog live in [`docs/operations/testing.md`](docs/operations/testing.md).
 
 ## Boundaries — what plugins **must not** import
 
@@ -171,7 +172,7 @@ Reading another plugin's slice (e.g. `useAppConfig().config.plugins["other-plugi
 
 ## Theme — CSS variables only
 
-No hex colors, no hardcoded font names, no raw spacing values in plugin code. Use the semantic tokens listed in [`docs/PLUGIN_STYLING_CONTRACT.md`](docs/PLUGIN_STYLING_CONTRACT.md). Org-specific theming lives in a theme plugin (`.local-plugins/<org>-theme/`), not inline in feature plugins.
+No hex colors, no hardcoded font names, no raw spacing values in plugin code. Use the semantic tokens listed in [`docs/plugins/styling.md`](docs/plugins/styling.md). Org-specific theming lives in a theme plugin (`.local-plugins/<org>-theme/`), not inline in feature plugins.
 
 ## i18n
 
@@ -204,14 +205,14 @@ If you only want a fast inner loop while iterating on one plugin:
 
 | Looking for | Read |
 |---|---|
-| Project tour, package layers, plugin model | [`docs/AI_DEVELOPMENT_GUIDE.md`](docs/AI_DEVELOPMENT_GUIDE.md) |
+| Project tour, package layers, plugin model | [`docs/architecture/overview.md`](docs/architecture/overview.md) |
 | The four contracts (manifest, runtime API, theme, config) | [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) |
-| Test pyramid + harness API reference | [`docs/TESTING.md`](docs/TESTING.md), [`packages/plugin-testing/README.md`](packages/plugin-testing/README.md) |
-| Versioning rules + changeset workflow | [`CONTRIBUTING.md`](CONTRIBUTING.md#-versioning-changesets-and-deprecations) |
+| Test pyramid + harness API reference | [`docs/operations/testing.md`](docs/operations/testing.md), [`packages/plugin-testing/README.md`](packages/plugin-testing/README.md) |
+| Versioning rules + changeset workflow | [`CONTRIBUTING.md`](CONTRIBUTING.md#versioning-changesets-and-deprecations), [`docs/operations/release.md`](docs/operations/release.md) |
 | Config layer model + reader API | [`docs/architecture/CONFIGURATION.md`](docs/architecture/CONFIGURATION.md) |
-| Theme tokens + CSS rules | [`docs/PLUGIN_STYLING_CONTRACT.md`](docs/PLUGIN_STYLING_CONTRACT.md) |
-| Why the architecture is the way it is | [`docs/architecture/ADR-*.md`](docs/architecture/) |
-| What's deferred / waiting on upstream / open decisions | [`docs/OPEN_FOLLOWUPS.md`](docs/OPEN_FOLLOWUPS.md) |
+| Theme tokens + CSS rules | [`docs/plugins/styling.md`](docs/plugins/styling.md) |
+| Why the architecture is the way it is | [`docs/architecture/decisions/`](docs/architecture/decisions/) |
+| What's deferred / waiting on upstream / open decisions | [`docs/operations/open-followups.md`](docs/operations/open-followups.md) |
 
 ## When in doubt
 

@@ -1,0 +1,125 @@
+# Architecture overview
+
+A pnpm + Turborepo monorepo with a plugin-first design. The shell is a thin runtime; everything users see comes from plugins.
+
+## Three pillars
+
+```
+apps/                ← Shell + playground (deployed but not published)
+packages/            ← Shared infrastructure (layered, lower never depends on higher)
+plugins/             ← Built-in plugins (ship with the OSS repo)
+.local-plugins/      ← Org or community plugins (gitignored, own repos, mounted at dev time)
+```
+
+The shell at `apps/shell/` is the only entry point. It boots `@oc-mui/plugin-system`, registers every built-in plugin from `plugins/index.ts`, optionally fetches a JAR `plugins.json` from the backend, and then runs the plugins. Routes, sidebar items, theme — all of it comes from plugin registrations.
+
+## Package layers
+
+```
+┌─────────────────────────────────────────┐
+│ Layer 3 — Application                   │
+│   app-runtime, providers, vite-config,  │
+│   ui-config                             │
+├─────────────────────────────────────────┤
+│ Layer 2 — Integration                   │
+│   query, router, ui,                    │
+│   remote-plugin-loader                  │
+├─────────────────────────────────────────┤
+│ Layer 1 — Foundation                    │
+│   plugin-system, store, i18n            │
+├─────────────────────────────────────────┤
+│ Layer 0 — Core infrastructure           │
+│   utils, typescript-config,             │
+│   eslint-config, tailwind-config        │
+└─────────────────────────────────────────┘
+```
+
+**The rule:** lower layers never depend on higher layers. Cross-layer breaks are caught by `eslint-plugin-boundaries` configured in [`@oc-mui/eslint-config`](../../packages/eslint-config/base.js). The layer ordering inside `package → package` is enforced by convention today — see [`operations/open-followups.md`](../operations/open-followups.md#34-layer-ordering-inside-package--package).
+
+## Plugin boundaries
+
+| Location | What goes there | Ships with core? |
+|----------|-----------------|------------------|
+| `plugins/core*/` | Mandatory extension points and defaults | Yes |
+| `plugins/admin-*/` | Optional shared plugins (marketplace, dashboard) | Yes |
+| `plugins/example/` | Reference implementation for learning | Yes |
+| `.local-plugins/<org>/` | Org-specific or private plugins (dev checkout) | No |
+| External repos / JARs / CDN | Production org plugins and community plugins | No |
+
+`plugins/index.ts` exports **only** core-shipped plugins. Org plugins are never added to it.
+
+## The four contracts
+
+The plugin runtime is split into four orthogonal contracts, all versioned independently. Frozen surfaces are listed in [`CONTRACTS.md`](./CONTRACTS.md):
+
+| Contract | Frozen at | What it specifies |
+|----------|-----------|-------------------|
+| Manifest | 1.1 | The fields in `plugin.json` |
+| Runtime API | 1.0 | The `createPlugin`/`PluginManager` surface |
+| Theme | 2.0 | Semantic CSS tokens, layer order |
+| Config | 1.0 | The `AppConfig` layer model + `definePluginConfig` reader |
+
+Any change observable to a plugin author through one of these contracts is **always major** for the affected package, even if Semver alone would say otherwise.
+
+## Plugin loading — two phases
+
+The shell loads plugins in two phases to handle the chicken-and-egg of config-driven enablement:
+
+1. **Phase 1: load `*:config` plugins.** They register `app:config` slices that include `app.enabledPlugins`.
+2. **Phase 2: merge config and load the rest.** Merge order: `app:config:defaults` ⊕ base config ⊕ `app:config`. The merged `app.enabledPlugins` (ship filter) plus per-slice `config.plugins[id].enabled` (runtime switch) decide which remaining plugins activate.
+
+Full model: [`CONFIGURATION.md`](./CONFIGURATION.md).
+
+This is why a `.local-plugins/config/` plugin can declare `enabledPlugins: ["core", "admin", "univie", ...]` and have univie load even though core has never heard of it.
+
+## Naming: `namespace:type`
+
+Plugins are identified by a `namespace:type` pair.
+
+- **`namespace`** — who provides the plugin. Lowercase kebab-case. Examples: `core`, `admin`, `episodes`, `univie`, `tuwien`, `my-org`.
+- **`type`** — the role the plugin fills. Lowercase kebab-case. Standard types: `app`, `config`, `navigation`, `sidebar`, `header`, `footer`, `landing-page`, `empty-state`, `layout`, `marketplace`, `dashboard`. Custom types are allowed for domain-specific plugins (`episodes-actions`, etc.).
+
+Both must match between `plugin.json` and the `createPlugin({ namespace, type, ... })` call. Examples:
+
+```
+core:layout            # core extension-point slots
+core:footer            # default footer implementation
+univie:footer          # univie's footer override
+univie:landing-page    # univie's landing page
+admin:marketplace      # the marketplace plugin
+```
+
+The pair uniquely identifies the plugin in the runtime, the config, and the marketplace.
+
+## Auto-generated files
+
+| Path | Generated by | Hand-edit? |
+|------|--------------|------------|
+| `packages/ui/src/components/ui/` | `npx shadcn@latest add <name>` | Prettier-only |
+| `packages/query/src/gql-generated.ts` | GraphQL Codegen | No |
+| `packages/*/etc/*.api.md` | `pnpm api-check` | No — commit the regenerated file |
+| `packages/*/dist-types/` | `tsc --emitDeclarationOnly` | No |
+| `packages/*/dist/` | `pnpm build` (per-package) | No |
+
+To customize an auto-generated shadcn component, copy it to `src/components/custom/` and use the override extension points instead of editing the original.
+
+## What lives where — quick map
+
+| Source | Path |
+|--------|------|
+| The shell that hosts everything | [`apps/shell/`](../../apps/shell/) |
+| The shared playground for plugin previews | [`apps/playground/`](../../apps/playground/) |
+| The plugin runtime | [`packages/plugin-system/`](../../packages/plugin-system/) |
+| Theme tokens | [`packages/ui/src/styles/globals.css`](../../packages/ui/src/styles/globals.css) |
+| Plugin manifest schema | [`packages/plugin-system/src/schemas/plugin.schema.json`](../../packages/plugin-system/src/schemas/plugin.schema.json) |
+| Test harness | [`packages/plugin-testing/`](../../packages/plugin-testing/) |
+| Built-in plugins | [`plugins/`](../../plugins/) |
+| Remote plugin loader (CDN, JAR) | [`packages/remote-plugin-loader/`](../../packages/remote-plugin-loader/) |
+
+## See also
+
+- [`CONTRACTS.md`](./CONTRACTS.md) — the four frozen contracts.
+- [`CONFIGURATION.md`](./CONFIGURATION.md) — the full config layer model.
+- [`decisions/`](./decisions/) — architecture decision records (ADRs).
+- [`../plugins/README.md`](../plugins/README.md) — the plugin-author entry point.
+- [`../../AGENTS.md`](../../AGENTS.md) — operational rules for plugin work (the author-facing pre-flight checklist).

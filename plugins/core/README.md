@@ -674,9 +674,8 @@ export const myUniversityConfig = createPlugin({
 ## Related Documentation
 
 - [Plugin System Overview](/plugins/README.md) - Complete plugin architecture
-- [Adding Plugins Guide](/docs/workflows/ADDING_PLUGINS.md) - Step-by-step plugin creation
-- [Example University](/plugins/example-university/README.md) - Reference implementation
-- [Example University](/plugins/example-university/README.md) - Reference implementation; org plugins (univie, tuwien) use `.local-plugins/` or separate repos
+- [Creating a plugin](/docs/plugins/creating-a-plugin.md) - Step-by-step plugin creation
+- [Example plugin](/plugins/example/README.md) - Reference implementation; org plugins (univie, tuwien) use `.local-plugins/` or separate repos
 
 ## Extension Point Discovery
 

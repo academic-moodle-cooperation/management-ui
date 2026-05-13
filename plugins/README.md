@@ -15,9 +15,9 @@ plugins/
 └── example/                   # Minimal reference plugin for new contributors
 ```
 
-See [ADR-003](../docs/architecture/ADR-003-shell-plus-core-plugins.md) for why feature code lives here instead of under `apps/`.
+See [ADR-003](../docs/architecture/decisions/003-shell-plus-core-plugins.md) for why feature code lives here instead of under `apps/`.
 
-**Note:** University-specific plugins (e.g. univie, tuwien) have been moved out of this repository. Use `.local-plugins/<name>/` for local development (with `themes/<name>.css` for org themes) or deploy via Registry/JAR. See [Community Plugin Development](../../docs/COMMUNITY_PLUGIN_DEVELOPMENT.md).
+**Note:** University-specific plugins (e.g. univie, tuwien) have been moved out of this repository. Use `.local-plugins/<name>/` for local development (with `themes/<name>.css` for org themes) or deploy via Registry/JAR. See [Creating a plugin](../docs/plugins/creating-a-plugin.md) and [Distribution](../docs/plugins/distribution.md).
 
 ## Where to Develop: /plugins vs .local-plugins
 
@@ -26,7 +26,7 @@ See [ADR-003](../docs/architecture/ADR-003-shell-plus-core-plugins.md) for why f
 | **`/plugins`** | Prototyping, core/org plugins in repo | No (library) or yes (standalone) | Barrel export + config; core Vite bundles it |
 | **`.local-plugins`** | Complete org plugin, preparing for community/JAR | Yes (`pnpm build`) | Add namespace to config; core loads from manifest |
 
-See [Adding New Plugins](../../docs/workflows/ADDING_PLUGINS.md) for the full step-by-step guide and quick start.
+See [Creating a plugin](../docs/plugins/creating-a-plugin.md) for the full step-by-step guide and quick start.
 
 ## Plugin Types
 
@@ -39,7 +39,7 @@ See [Adding New Plugins](../../docs/workflows/ADDING_PLUGINS.md) for the full st
 - **Location:** Separate repositories or `.local-plugins/` for development
 - **Status:** Developed independently
 - **Distribution:** Via Community Registry, CDN, or JAR deployment
-- **See:** [Community Plugin Development Guide](../../docs/COMMUNITY_PLUGIN_DEVELOPMENT.md)
+- **See:** [Creating a plugin](../docs/plugins/creating-a-plugin.md) and [Distribution](../docs/plugins/distribution.md)
 
 ## Assets Customization
 
@@ -120,4 +120,4 @@ pnpm create-plugin audience-poll                # → .local-plugins/audience-po
 pnpm create-plugin admin-dashboard --in-tree    # → plugins/admin-dashboard/
 ```
 
-See [AGENTS.md](../AGENTS.md) (repo root) for the full plugin authoring rules, and [Community Plugin Development Guide](../docs/COMMUNITY_PLUGIN_DEVELOPMENT.md) for the longer-form lifecycle walkthrough.
+See [AGENTS.md](../AGENTS.md) (repo root) for the full plugin authoring rules, and [Creating a plugin](../docs/plugins/creating-a-plugin.md) for the longer-form lifecycle walkthrough.

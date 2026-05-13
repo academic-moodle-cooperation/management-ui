@@ -510,7 +510,7 @@ pnpm clean        # Clean artifacts
 
 - [Application Architecture](/apps/README.md) - How apps use app-runtime
 - [Adding Apps Guide](/docs/workflows/ADDING_APPS.md) - Creating new apps
-- [ADR-003: Standalone Apps](/docs/architecture/ADR-003-standalone-apps.md) - Architecture decision
+- [ADR-003: Shell + core plugins](/docs/architecture/decisions/003-shell-plus-core-plugins.md) - Architecture decision
 
 ## Contributing
 

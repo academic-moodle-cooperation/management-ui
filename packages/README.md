@@ -146,10 +146,6 @@ utils
 └── (No workspace dependencies)
 ```
 
-### Coupling Analysis
-
-For detailed coupling analysis, see: [COUPLING_ANALYSIS.md](/docs/internal/COUPLING_ANALYSIS.md)
-
 ## Package Update Guidelines
 
 ### Safe Update Order
@@ -183,10 +179,10 @@ See detailed guide: [/docs/workflows/ADDING_PACKAGES.md](/docs/workflows/ADDING_
 
 ### Quick Start
 
-1. **Determine layer** - Which layer should this package be in?
+1. **Determine layer** - Which layer should this package be in? See [architecture/overview.md](/docs/architecture/overview.md#package-layers).
 2. **Create directory** - `packages/new-package/`
 3. **Initialize** - Create `package.json`, `tsconfig.json`
-4. **Follow template** - Use [PACKAGE_README_TEMPLATE.md](/docs/templates/PACKAGE_README_TEMPLATE.md)
+4. **Match the style of a sibling README** - Look at the closest existing package and follow the same shape.
 5. **Define exports** - Clear public API in `package.json`
 6. **Add to workspace** - Update `pnpm-workspace.yaml` if needed
 7. **Document** - Comprehensive README.md
@@ -237,7 +233,6 @@ One of our goals is to make it **easy to swap technologies**. Here's how:
 3. **Hide implementation** - Use explicit `exports` to hide internals
 4. **Document assumptions** - What behaviors must a replacement maintain?
 
-See full guide: [/docs/workflows/SWAPPING_TECHNOLOGIES.md](/docs/workflows/SWAPPING_TECHNOLOGIES.md)
 
 ## Common Patterns
 
@@ -417,12 +412,11 @@ Before considering a package production-ready:
 
 ## Related Documentation
 
-- [AI Development Guide](/docs/AI_DEVELOPMENT_GUIDE.md) - Main AI navigation
-- [Application Documentation](/apps/README.md) - How apps use these packages
-- [Plugin Documentation](/plugins/README.md) - How plugins use these packages
-- [Coupling Analysis](/docs/internal/COUPLING_ANALYSIS.md) - Detailed dependency analysis
-- [Adding Packages](/docs/workflows/ADDING_PACKAGES.md) - Step-by-step guide
-- [Swapping Technologies](/docs/workflows/SWAPPING_TECHNOLOGIES.md) - Technology replacement
+- [Architecture overview](/docs/architecture/overview.md) — package layers and plugin boundaries
+- [Documentation index](/docs/README.md) — audience-routed entry point
+- [Application Documentation](/apps/README.md) — how apps use these packages
+- [Plugin Documentation](/plugins/README.md) — how plugins use these packages
+- [Adding Packages](/docs/workflows/ADDING_PACKAGES.md) — step-by-step guide for adding a new package
 
 ## Package Statistics
 

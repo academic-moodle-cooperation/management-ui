@@ -150,9 +150,9 @@ manager.registerObject("auth:provider", "university-sso", {
 
 Plugins are automatically discovered and loaded from:
 
-- `plugins/core/` - Core system plugins
-- Org plugins (e.g. tuwien, univie) live in `.local-plugins/` or separate repos; see [Community Plugin Development](/docs/COMMUNITY_PLUGIN_DEVELOPMENT.md)
-- `plugins/example-university/` - Example reference implementations
+- `plugins/core/` — Core system plugins
+- Org plugins (e.g. tuwien, univie) live in `.local-plugins/` or separate repos; see [Creating a plugin](/docs/plugins/creating-a-plugin.md) and [Distribution](/docs/plugins/distribution.md)
+- `plugins/example/` — Example reference plugin
 
 ## 🎨 Customization
 

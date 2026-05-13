@@ -38,62 +38,31 @@ plugins/        ← Built-in plugins shipped with the core repo
 
 ## 📚 Documentation
 
-**🤖 For AI Models:** Start with [`llms.txt`](llms.txt) for a quick summary, then read the [AI Development Guide](docs/AI_DEVELOPMENT_GUIDE.md) for full context. When you're ready to write or modify a plugin, read [`AGENTS.md`](AGENTS.md) for the operational rules.
+The full documentation lives under [`docs/`](docs/README.md), routed by audience.
 
-### Core Documentation
+| If you want to… | Read |
+|-----------------|------|
+| **Understand the codebase** | [`docs/architecture/overview.md`](docs/architecture/overview.md) |
+| **Write a plugin** | [`docs/plugins/`](docs/plugins/README.md) — walkthrough, distribution, styling, i18n, testing |
+| **Contribute to core** | [`CONTRIBUTING.md`](CONTRIBUTING.md) + [`docs/operations/`](docs/operations/) |
+| **Use Management UI as an AI agent** | [`llms.txt`](llms.txt) (machine-readable summary), then [`AGENTS.md`](AGENTS.md) (operational rules) |
+| **See what's deferred** | [`docs/operations/open-followups.md`](docs/operations/open-followups.md) |
 
-- **[AGENTS.md](AGENTS.md)** - Operational rules for AI coding agents working on plugins
-- **[AI Development Guide](docs/AI_DEVELOPMENT_GUIDE.md)** - Main entry point for AI models and new developers
-- **[`llms.txt`](llms.txt)** - Machine-readable project summary for LLMs
-- **[Package Ecosystem](/packages/README.md)** - Shared infrastructure packages and dependency management
-- **[Application Architecture](/apps/README.md)** - Domain applications and dual-mode execution
-- **[Plugin System](/plugins/README.md)** - Extension points and university customizations
-- **[Coupling Analysis](/docs/internal/COUPLING_ANALYSIS.md)** - Package dependencies and refactoring priorities
+### Canonical references
 
-### Plugin Development
+- **[Architecture overview](docs/architecture/overview.md)** — three pillars, package layers, plugin boundaries.
+- **[Contracts](docs/architecture/CONTRACTS.md)** — Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0.
+- **[Configuration](docs/architecture/CONFIGURATION.md)** — layer model, `definePluginConfig` reader, `enabledPlugins` filtering.
+- **[Architecture decisions](docs/architecture/decisions/)** — ADRs.
+- **[Plugin manifest schema](packages/plugin-system/src/schemas/plugin.schema.json)** — the `plugin.json` JSON schema.
 
-- **[Community Plugin Development](docs/COMMUNITY_PLUGIN_DEVELOPMENT.md)** - Full plugin lifecycle guide
-- **[Plugin Styling Contract](docs/PLUGIN_STYLING_CONTRACT.md)** - CSS/theming rules for plugins
-- **[Plugin Loading Mechanisms](docs/PLUGIN_LOADING_MECHANISMS.md)** - All loading paths explained
-- **[Plugin Manifest Schema](packages/plugin-system/src/schemas/plugin.schema.json)** - Canonical `plugin.json` schema
+### Per-package READMEs
 
-### Configuration & Assets
+Every package, app, and plugin ships its own README. Start at:
 
-- **[Configuration](/docs/architecture/CONFIGURATION.md)** - Canonical layer model, `definePluginConfig` reader API, `enabledPlugins` vs. per-slice `enabled`
-- **[Favicon Configuration](/docs/internal/FAVICON_CONFIGURATION.md)** - Customizing favicons and assets per university
-
-### Testing
-
-- **[Testing](/docs/TESTING.md)** - Test pyramid (unit / contract / E2E), `@oc-mui/plugin-testing` harness, Playwright setup, CI layout, deferred follow-ups
-
-### Project Status
-
-- **[Open Follow-ups](/docs/OPEN_FOLLOWUPS.md)** - Committed index of every "we know about this but we're not doing it now" item across the repo (architectural decisions deferred to a later phase, items waiting on upstream, items waiting on the 1.0 cut, etc.). Start here when you want to see what's pending.
-
-### Development Workflows
-
-Step-by-step guides for common tasks:
-
-- **[Adding Packages](/docs/workflows/ADDING_PACKAGES.md)** - Create new workspace packages
-- **[Adding Apps](/docs/workflows/ADDING_APPS.md)** - Create new applications
-- **[Adding Plugins](/docs/workflows/ADDING_PLUGINS.md)** - Create university-specific plugins
-- **[Updating Dependencies](/docs/workflows/UPDATING_DEPENDENCIES.md)** - Safe dependency updates
-- **[Swapping Technologies](/docs/workflows/SWAPPING_TECHNOLOGIES.md)** - Replace underlying technologies
-
-### Documentation Templates
-
-Ensure consistency when creating documentation:
-
-- **[Package README Template](/docs/templates/PACKAGE_README_TEMPLATE.md)** - For workspace packages
-- **[App README Template](/docs/templates/APP_README_TEMPLATE.md)** - For applications
-- **[Plugin README Template](/docs/templates/PLUGIN_README_TEMPLATE.md)** - For plugins
-- **[Implementation README Template](/docs/templates/IMPLEMENTATION_README_TEMPLATE.md)** - For plugin implementations
-
-### Architecture Decisions
-
-Understanding why the system is designed this way:
-
-- **[Architecture Decision Records](/docs/architecture/)** - Key architectural decisions and rationale
+- [`apps/README.md`](apps/README.md) — applications (shell, playground).
+- [`packages/README.md`](packages/README.md) — shared infrastructure.
+- [`plugins/README.md`](plugins/README.md) — built-in plugins.
 
 ## 🚀 Quick Start
 
@@ -341,7 +310,7 @@ pnpm dev    # Access at http://127.0.0.1:3000/episodes
 The system supports extensive customization through plugins:
 
 - **Example plugin** (`plugins/example/`): Minimal brand-neutral reference implementation (in-repo)
-- **Org plugins** (e.g. TU Wien, University of Vienna): Use `.local-plugins/<name>/` or separate repos; see [Community Plugin Development](docs/COMMUNITY_PLUGIN_DEVELOPMENT.md)
+- **Org plugins** (e.g. TU Wien, University of Vienna): Use `.local-plugins/<name>/` or separate repos; see [Creating a plugin](docs/plugins/creating-a-plugin.md) and [Distribution](docs/plugins/distribution.md)
 
 ### Branding & Theming
 
@@ -491,12 +460,11 @@ The system supports environment-specific configuration:
 - `.env.production` - Production settings
 - `turbo.json` - Build pipeline configuration
 
-## 📚 Documentation
+## 📚 Further reading
 
-- **Plugin System**: [`packages/plugin-system/docs/README.md`](./packages/plugin-system/docs/README.md)
-- **Plugin Development**: [`plugins/README.md`](./plugins/README.md)
-- **Core Application**: [`apps/management-ui-core/README.md`](./apps/management-ui-core/README.md)
-- **Archived Documentation**: [`docs/internal/`](./docs/internal/) - Historical technical documentation
+- **[docs/](./docs/README.md)** — full documentation index (architecture, plugins, operations).
+- **[Plugin system](./packages/plugin-system/README.md)** — the runtime your plugins run on.
+- **[Built-in plugins](./plugins/README.md)** — the bundled plugins shipped with this repo.
 
 ## 🤝 Contributing
 

@@ -297,7 +297,7 @@ Out of scope for this repository but tracked here for visibility:
 
 - [`CONTRACTS.md §4 Config Contract`](./CONTRACTS.md#4-config-contract)
   — what the core promises to keep stable.
-- [`ADR-003 Shell + Core Plugins`](./ADR-003-shell-plus-core-plugins.md)
+- [`ADR-003 Shell + Core Plugins`](./decisions/003-shell-plus-core-plugins.md)
   — why the shell stays plugin-agnostic at the type level.
 - [`packages/query/src/config/definePluginConfig.ts`](../../packages/query/src/config/definePluginConfig.ts)
   — the reference implementation of the reader.

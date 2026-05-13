@@ -43,7 +43,7 @@ jobs:
       - name: Run type check
         run: |
           # Filter out shadcn/ui errors (auto-generated files).
-          # See docs/internal/SHADCN_TYPESCRIPT_ERRORS.md for details.
+          # See docs/operations/shadcn-typescript-errors.md for details.
           pnpm check-types 2>&1 | grep -v "packages/ui/src/components/ui" | grep -v "src/components/ui" || true
           if pnpm check-types 2>&1 | grep -v "packages/ui/src/components/ui" | grep -v "src/components/ui" | grep -q "error TS"; then
             echo "❌ Real TypeScript errors found (not shadcn-related)"
