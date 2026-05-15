@@ -4,15 +4,15 @@ import { useI18n } from "@oc-mui/i18n";
 import { uploadExtensionPoints } from "@oc-mui/plugin-core";
 import { usePluginManager, ComponentResolver } from "@oc-mui/plugin-system";
 import {
-  gql,
   createGraphQLClient,
+  MuiGetMySeriesNameAndIdDocument,
   OrderDirection,
-  useGetMySeriesNameAndIdQuery,
+  useMuiGetMySeriesNameAndIdQuery,
   useGetUserInfo,
   useInfiniteQuery,
   useAppConfig,
 } from "@oc-mui/query";
-import type { GetMySeriesNameAndIdQuery } from "@oc-mui/query";
+import type { MuiGetMySeriesNameAndIdQuery } from "@oc-mui/query";
 import { useNavigate, useParams } from "@oc-mui/router";
 import { useStore } from "@oc-mui/store";
 import type { UploadFileBlob } from "@oc-mui/store";
@@ -104,7 +104,7 @@ export const App = () => {
     };
   }, [manager]);
 
-  const { data: seriesData } = useGetMySeriesNameAndIdQuery({
+  const { data: seriesData } = useMuiGetMySeriesNameAndIdQuery({
     query: routeSubPath,
     orderBy: {
       title: OrderDirection.Asc,
@@ -119,25 +119,8 @@ export const App = () => {
     [seriesData],
   );
 
-  const FETCH_MY_SERIES = gql`
-    # eslint-disable-next-line local/graphql-operation-naming
-    query GetMySeriesNameAndId(
-      $limit: Int
-      $offset: Int
-      $orderBy: SeriesOrderByInput
-      $query: String
-    ) {
-      currentUser {
-        mySeries(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
-          nodes {
-            id
-            title
-          }
-        }
-      }
-    }
-  `;
-
+  // Consumes the central `MuiGetMySeriesNameAndId` query document from
+  // @oc-mui/query rather than declaring an inline duplicate (PR-5.1c).
   const fetchMySeries = async ({
     pageParam = 0,
     query,
@@ -146,14 +129,14 @@ export const App = () => {
     query?: string;
   }) => {
     const graphQLClient = createGraphQLClient(config.api.graphqlEndpoint);
-    const data = (await graphQLClient.request(FETCH_MY_SERIES, {
+    const data = (await graphQLClient.request(MuiGetMySeriesNameAndIdDocument, {
       limit: 100,
       offset: pageParam,
       query,
       orderBy: {
         title: OrderDirection.Asc,
       },
-    })) as GetMySeriesNameAndIdQuery;
+    })) as MuiGetMySeriesNameAndIdQuery;
     return data?.currentUser?.mySeries?.nodes || [];
   };
 

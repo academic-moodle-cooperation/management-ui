@@ -1,7 +1,7 @@
 import { useI18n } from "@oc-mui/i18n";
 import type {
-  GetSeriesByIdInputFieldsQuery,
-  GetInputFieldsMetaDataFragment,
+  MuiGetSeriesByIdInputFieldsQuery,
+  MuiGetInputFieldsMetaDataFragment,
 } from "@oc-mui/query";
 import {
   Button,
@@ -25,7 +25,7 @@ type SeriesUpdateData = {
 interface SeriesInfoContentProps {
   editSeries: boolean;
   seriesUpdateData: SeriesUpdateData | undefined;
-  seriesInputFields: GetSeriesByIdInputFieldsQuery | undefined;
+  seriesInputFields: MuiGetSeriesByIdInputFieldsQuery | undefined;
   setSeriesUpdateData: (value: SeriesUpdateData) => void;
   setUpdateField: (value: string) => void;
   updateField: string;
@@ -60,7 +60,7 @@ const SeriesInfoContent = ({
       {seriesInputFields &&
         Object.values(seriesInputFields.seriesById?.commonMetadataV2 || {})
           .sort((a, b) => ((a?.order ?? 0) > (b?.order ?? 0) ? 1 : -1))
-          .map((field: GetInputFieldsMetaDataFragment | null) => {
+          .map((field: MuiGetInputFieldsMetaDataFragment | null) => {
             if (!field?.id || !isVisible(field.id)) {
               return null;
             }

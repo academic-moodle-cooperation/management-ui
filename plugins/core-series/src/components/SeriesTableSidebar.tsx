@@ -2,8 +2,8 @@ import React, { useRef, useState } from "react";
 
 import { useTranslation } from "@oc-mui/i18n";
 import { usePluginManager } from "@oc-mui/plugin-system";
-import { useUpdateSeriesMutation } from "@oc-mui/query";
-import type { GetSeriesByIdInputFieldsQuery, SeriesDataFragment } from "@oc-mui/query";
+import { useMuiUpdateSeriesMutation } from "@oc-mui/query";
+import type { MuiGetSeriesByIdInputFieldsQuery, MuiSeriesDataFragment } from "@oc-mui/query";
 import {
   Sheet,
   SheetContent,
@@ -30,7 +30,7 @@ interface SeriesTableSidebarProps {
   onEditClose: () => void;
   heading: string;
   description?: string | undefined;
-  seriesInputFields: GetSeriesByIdInputFieldsQuery | undefined;
+  seriesInputFields: MuiGetSeriesByIdInputFieldsQuery | undefined;
   isLoadingMetadata: boolean;
   seriesUpdateData: SeriesUpdateData | undefined;
   updateField: string;
@@ -39,14 +39,14 @@ interface SeriesTableSidebarProps {
   setUpdateField: (value: string) => void;
   textCopied: boolean;
   setTextCopied: () => void;
-  saveSeriesUpdate: ReturnType<typeof useUpdateSeriesMutation>;
+  saveSeriesUpdate: ReturnType<typeof useMuiUpdateSeriesMutation>;
   selectedSeriesId: string;
   refetch: () => void;
   refetchMetadata: () => void;
   setIsEditing: (value: boolean) => void;
   sidebarInfo?: string | undefined;
   tableRef: RefObject<HTMLDivElement | null>;
-  currentSeries?: SeriesDataFragment | null | undefined;
+  currentSeries?: MuiSeriesDataFragment | null | undefined;
 }
 
 /**

@@ -12,6 +12,7 @@ import { createRoute } from '@tanstack/react-router';
 import { createRouter } from '@tanstack/react-router';
 import { JSX } from 'react/jsx-runtime';
 import { Link } from '@tanstack/react-router';
+import type { MuiUserQuery } from '@oc-mui/query';
 import { Navigate } from '@tanstack/react-router';
 import { Outlet } from '@tanstack/react-router';
 import { default as React_2 } from 'react';
@@ -26,7 +27,6 @@ import { useNavigate } from '@tanstack/react-router';
 import { useParams } from '@tanstack/react-router';
 import { useRouter } from '@tanstack/react-router';
 import { useRouterState } from '@tanstack/react-router';
-import type { UserQuery } from '@oc-mui/query';
 
 export { AnyRoute }
 
@@ -47,9 +47,9 @@ export interface AuthContextType {
     // (undocumented)
     isAuthenticated: boolean;
     // (undocumented)
-    setUser: (user: UserQuery | undefined) => void;
+    setUser: (user: MuiUserQuery | undefined) => void;
     // (undocumented)
-    user: UserQuery | undefined;
+    user: MuiUserQuery | undefined;
 }
 
 // @public

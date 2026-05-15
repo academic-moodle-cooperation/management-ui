@@ -8,7 +8,7 @@ import {
   gql,
   type MetadataFieldType,
   OrderDirection,
-  type GetMySeriesNameAndIdQuery,
+  type MuiGetMySeriesNameAndIdQuery,
   type Series,
 } from "@oc-mui/query";
 import { useAppConfig } from "@oc-mui/query";
@@ -60,7 +60,7 @@ export const MetadataUpdateField = ({
   const { config } = useAppConfig();
 
   // const { isLoading: isLoadingSeriesData, data: seriesData } =
-  //   useGetMySeriesNameAndIdQuery({
+  //   useMuiGetMySeriesNameAndIdQuery({
   //     query,
   //   });
 
@@ -98,7 +98,7 @@ export const MetadataUpdateField = ({
     query: string | undefined;
   }) => {
     const graphQLClient = createGraphQLClient(config.api.graphqlEndpoint);
-    const data: GetMySeriesNameAndIdQuery | undefined = await graphQLClient.request(
+    const data: MuiGetMySeriesNameAndIdQuery | undefined = await graphQLClient.request(
       FETCH_MY_SERIES,
       {
         limit: 10,

@@ -3,8 +3,8 @@ import React, { useState } from "react";
 
 import { i18next } from "@oc-mui/i18n";
 import { PluginComponent } from "@oc-mui/plugin-system";
-import { useAppConfig, useDeleteEventMutation } from "@oc-mui/query";
-import type { EventsDataFragment } from "@oc-mui/query";
+import { useAppConfig, useMuiDeleteEventMutation } from "@oc-mui/query";
+import type { MuiEventsDataFragment } from "@oc-mui/query";
 import { Link } from "@oc-mui/router";
 import {
   Button,
@@ -38,17 +38,17 @@ export interface ActionItem {
   icon: React.ReactNode;
   label: string;
   tooltip: string;
-  onClick?: (event: EventsDataFragment) => void;
+  onClick?: (event: MuiEventsDataFragment) => void;
   href?: string;
   target?: string;
-  component?: React.ComponentType<{ event: EventsDataFragment }>;
-  menuItem?: React.ComponentType<{ event: EventsDataFragment }>;
-  condition?: (event: EventsDataFragment) => boolean;
+  component?: React.ComponentType<{ event: MuiEventsDataFragment }>;
+  menuItem?: React.ComponentType<{ event: MuiEventsDataFragment }>;
+  condition?: (event: MuiEventsDataFragment) => boolean;
   priority?: number; // Higher priority = shown first
 }
 
 interface ActionsCellProps {
-  event: EventsDataFragment;
+  event: MuiEventsDataFragment;
   refetch: () => void;
   maxVisibleActions?: number;
 }
@@ -68,7 +68,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
   };
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const deleteEvent = useDeleteEventMutation();
+  const deleteEvent = useMuiDeleteEventMutation();
   const { config } = useAppConfig();
   const { openSidebarWithData } = useSidebarStore();
   const downloadBaseUrl =
@@ -320,7 +320,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
 };
 
 const DeleteDialog: React.FC<{
-  event: EventsDataFragment;
+  event: MuiEventsDataFragment;
   onDelete: (id: string) => void;
   dialogOpen: boolean;
   setDialogOpen: (open: boolean) => void;
@@ -331,7 +331,7 @@ const DeleteDialog: React.FC<{
 );
 
 const DeleteDialogContent: React.FC<{
-  event: EventsDataFragment;
+  event: MuiEventsDataFragment;
   onDelete: (id: string) => void;
   setDialogOpen: (open: boolean) => void;
 }> = ({ event, onDelete, setDialogOpen }) => (
@@ -381,7 +381,7 @@ const DeleteDialogContent: React.FC<{
 // Separate components for complex actions
 const DeleteAction: React.FC<{
   onOpen: () => void;
-  event?: EventsDataFragment;
+  event?: MuiEventsDataFragment;
 }> = ({ onOpen }) => (
   <Tooltip delayDuration={300}>
     <TooltipTrigger asChild>
@@ -403,7 +403,7 @@ const DeleteAction: React.FC<{
 
 const DeleteMenuItem: React.FC<{
   onOpen: () => void;
-  event?: EventsDataFragment;
+  event?: MuiEventsDataFragment;
 }> = ({ onOpen }) => (
   <DropdownMenuItem
     onSelect={(e) => {
@@ -428,7 +428,7 @@ const addDownloadParam = (uri: string): string => {
   }
 };
 
-const renderDownloadMenuItems = (event: EventsDataFragment, downloadBaseUrl?: string) =>
+const renderDownloadMenuItems = (event: MuiEventsDataFragment, downloadBaseUrl?: string) =>
   event.publications?.[0]?.tracks
     ?.sort((t1, t2) => {
       const height1 = t1?.height ?? 0;
@@ -483,7 +483,7 @@ const renderDownloadMenuItems = (event: EventsDataFragment, downloadBaseUrl?: st
     .filter((item): item is React.ReactElement => item !== null);
 
 const DownloadMenuItem: React.FC<{
-  event: EventsDataFragment;
+  event: MuiEventsDataFragment;
   downloadBaseUrl: string | undefined;
 }> = ({ event, downloadBaseUrl }) => {
   const downloadItems = renderDownloadMenuItems(event, downloadBaseUrl);
@@ -514,7 +514,7 @@ const DownloadMenuItem: React.FC<{
 };
 
 const DownloadDropdown: React.FC<{
-  event: EventsDataFragment;
+  event: MuiEventsDataFragment;
   downloadBaseUrl: string | undefined;
 }> = ({ event, downloadBaseUrl }) => (
   <Tooltip delayDuration={300}>

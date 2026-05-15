@@ -44,13 +44,13 @@ export * from "./gql-generated";
 // Explicitly re-export commonly used types for Vite/Rollup compatibility
 // when using 'import type' syntax
 export type {
-  EventsDataFragment,
-  GetEventByIdInputFieldsQuery,
-  GetInputFieldsMetaDataFragment,
+  MuiEventsDataFragment,
+  MuiGetEventByIdInputFieldsQuery,
+  MuiGetInputFieldsMetaDataFragment,
   CommonEventMetadataV2,
-  GetSeriesByIdInputFieldsQuery,
-  SeriesDataFragment,
-  GetMySeriesNameAndIdQuery,
+  MuiGetSeriesByIdInputFieldsQuery,
+  MuiSeriesDataFragment,
+  MuiGetMySeriesNameAndIdQuery,
 } from "./gql-generated";
 
 export type MetadataFieldType =

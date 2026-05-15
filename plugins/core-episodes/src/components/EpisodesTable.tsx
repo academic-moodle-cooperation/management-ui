@@ -3,11 +3,11 @@ import { useMemo, useEffect, useCallback, useRef } from "react";
 
 import { useI18n } from "@oc-mui/i18n";
 import {
-  useUpdateEventMutation,
+  useMuiUpdateEventMutation,
   useAppConfig,
-  type EventsFromSeriesQuery,
-  type EventsDataFragment,
-  type GetMyEventsQuery,
+  type MuiEventsFromSeriesQuery,
+  type MuiEventsDataFragment,
+  type MuiGetMyEventsQuery,
 } from "@oc-mui/query";
 import {
   type Row,
@@ -97,7 +97,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   );
 
   // Create columns with the current layout and refetch function
-  const columns: ColumnDef<EventsDataFragment>[] = useMemo(
+  const columns: ColumnDef<MuiEventsDataFragment>[] = useMemo(
     () => createColumns(refetch, effectiveLayout, columnLabelOverrides),
     [refetch, effectiveLayout, columnLabelOverrides],
   );
@@ -159,11 +159,11 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   ]);
 
   // Mutation hook for updating episodes
-  const saveEpisodeUpdate = useUpdateEventMutation();
+  const saveEpisodeUpdate = useMuiUpdateEventMutation();
 
   // Modified row click handler to pass inputFields directly
   const handleRowClick = useCallback(
-    (event: MouseEvent, row: Row<EventsDataFragment>) => {
+    (event: MouseEvent, row: Row<MuiEventsDataFragment>) => {
       logger.debug("EpisodesTable - Row clicked", { rowId: row.original.id, seriesId });
 
       // Reset edit state when clicking on a different row
@@ -188,22 +188,22 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
   const episodesData = useMemo(() => {
     if (seriesId) {
       // When filtering by series, data comes from seriesById.events
-      const seriesData = data as EventsFromSeriesQuery | undefined;
-      return seriesData?.seriesById?.events.nodes.filter(Boolean) as EventsDataFragment[];
+      const seriesData = data as MuiEventsFromSeriesQuery | undefined;
+      return seriesData?.seriesById?.events.nodes.filter(Boolean) as MuiEventsDataFragment[];
     } else {
       // When showing all events, data comes from currentUser.myEvents
-      const eventsData = data as GetMyEventsQuery | undefined;
-      return eventsData?.currentUser?.myEvents.nodes.filter(Boolean) as EventsDataFragment[];
+      const eventsData = data as MuiGetMyEventsQuery | undefined;
+      return eventsData?.currentUser?.myEvents.nodes.filter(Boolean) as MuiEventsDataFragment[];
     }
   }, [data, seriesId]);
 
   // Get total count based on query type
   const totalCount = useMemo(() => {
     if (seriesId) {
-      const seriesData = data as EventsFromSeriesQuery | undefined;
+      const seriesData = data as MuiEventsFromSeriesQuery | undefined;
       return seriesData?.seriesById?.events.totalCount || 0;
     } else {
-      const eventsData = data as GetMyEventsQuery | undefined;
+      const eventsData = data as MuiGetMyEventsQuery | undefined;
       return eventsData?.currentUser?.myEvents.totalCount || 0;
     }
   }, [data, seriesId]);
@@ -263,7 +263,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
       {/* Main table with ref */}
       <div ref={tableRef}>
         <MUITable
-          columns={sortedColumns as ColumnDef<EventsDataFragment>[]}
+          columns={sortedColumns as ColumnDef<MuiEventsDataFragment>[]}
           data={episodesData?.filter(Boolean) || []}
           selectedId={selectedId}
           refetch={refetch}

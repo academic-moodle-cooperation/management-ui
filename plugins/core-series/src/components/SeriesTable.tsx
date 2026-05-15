@@ -2,8 +2,8 @@ import { useMemo, useEffect, useCallback, useRef } from "react";
 
 import { useI18n } from "@oc-mui/i18n";
 import { useRegistry } from "@oc-mui/plugin-system";
-import { useUpdateSeriesMutation } from "@oc-mui/query";
-import type { SeriesDataFragment } from "@oc-mui/query";
+import { useMuiUpdateSeriesMutation } from "@oc-mui/query";
+import type { MuiSeriesDataFragment } from "@oc-mui/query";
 import { MUITable, createMetadataHelpers, AppLoader, type Row } from "@oc-mui/ui/components";
 import type { ColumnsField, MetadataItem } from "@oc-mui/ui/config-primitives";
 import { logger } from "@oc-mui/utils";
@@ -142,14 +142,14 @@ const SeriesTable = () => {
   ]);
 
   // Mutation hook for updating series
-  const saveSeriesUpdate = useUpdateSeriesMutation();
+  const saveSeriesUpdate = useMuiUpdateSeriesMutation();
   const { items: seriesToolbarEndActions } = useRegistry<SeriesToolbarEndAction>(
     "series:table:toolbar-end-actions",
   );
 
   // Modified row click handler to pass inputFields directly
   const handleRowClick = useCallback(
-    (_event: MouseEvent, row: Row<SeriesDataFragment>) => {
+    (_event: MouseEvent, row: Row<MuiSeriesDataFragment>) => {
       logger.debug("SeriesTable - Row clicked", { rowId: row.original.id });
 
       // Reset edit state when clicking on a different row
@@ -253,7 +253,7 @@ const SeriesTable = () => {
               : // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (columns as any)
           }
-          data={(seriesData?.filter(Boolean) as SeriesDataFragment[]) || []}
+          data={(seriesData?.filter(Boolean) as MuiSeriesDataFragment[]) || []}
           selectedId={selectedId}
           refetch={refetch}
           onClickRowAction={handleRowClick}

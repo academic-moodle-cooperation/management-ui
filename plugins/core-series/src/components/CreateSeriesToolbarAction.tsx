@@ -4,13 +4,13 @@ import { useMemo, useState } from "react";
 import { useI18n } from "@oc-mui/i18n";
 import { ComponentResolver } from "@oc-mui/plugin-system";
 import {
-  useCreateSeriesMutation,
-  useGetAllManagedAclsQuery,
+  useMuiCreateSeriesMutation,
+  useMuiGetAllManagedAclsQuery,
   useQueryClient,
-  useUserQuery,
+  useMuiUserQuery,
   type AccessControlListInput,
   type CommonSeriesMetadataInput,
-  type GetAllManagedAclsQuery,
+  type MuiGetAllManagedAclsQuery,
 } from "@oc-mui/query";
 import {
   Button,
@@ -192,18 +192,18 @@ const buildMetadataInput = (formState: CreateSeriesFormState): CommonSeriesMetad
   return metadata;
 };
 
-type ManagedAclItem = NonNullable<GetAllManagedAclsQuery["managedAcls"]["nodes"][number]>;
+type ManagedAclItem = NonNullable<MuiGetAllManagedAclsQuery["managedAcls"]["nodes"][number]>;
 
 export const CreateSeriesToolbarAction = ({ refetch }: CreateSeriesToolbarActionProps) => {
   const { t } = useI18n();
   const queryClient = useQueryClient();
-  const createSeries = useCreateSeriesMutation();
-  const { data: userData } = useUserQuery();
+  const createSeries = useMuiCreateSeriesMutation();
+  const { data: userData } = useMuiUserQuery();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formState, setFormState] = useState<CreateSeriesFormState>(DEFAULT_FORM_STATE);
   const [pluginAclData, setPluginAclData] = useState<AclData | null>(null);
 
-  const { data: managedAclsData } = useGetAllManagedAclsQuery();
+  const { data: managedAclsData } = useMuiGetAllManagedAclsQuery();
 
   const managedAcls = useMemo(() => {
     return (managedAclsData?.managedAcls.nodes || []).filter(
