@@ -2,12 +2,15 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import js from "@eslint/js";
+import * as graphqlEslint from "@graphql-eslint/eslint-plugin";
 import eslintConfigPrettier from "eslint-config-prettier";
 import boundaries from "eslint-plugin-boundaries";
 import importPlugin from "eslint-plugin-import";
 import onlyWarn from "eslint-plugin-only-warn";
 import turboPlugin from "eslint-plugin-turbo";
 import tseslint from "typescript-eslint";
+
+import { localPlugin } from "./rules/index.js";
 
 // Workspace root resolved from this config file's location, so the
 // boundaries patterns work regardless of which package's cwd eslint
@@ -266,6 +269,32 @@ export const config = [
       "@typescript-eslint/no-explicit-any": "warn", // Start with warn, can escalate to error later
       // Note: no-floating-promises and no-misused-promises require type information
       // They should be enabled via @oc-mui/eslint-config/type-aware
+    },
+  },
+  // --------------------------------------------------------------------
+  // GraphQL operation/fragment naming (CONTRACTS.md §6)
+  //
+  // The processor extracts gql`...` template literals from TS/TSX files so
+  // they get linted as if they were .graphql files; the rule block below
+  // applies to both real .graphql files and the virtual ones the processor
+  // emits. The processor is intentionally scoped to files that actually
+  // host GraphQL (only a handful today) so the extra parse cost stays
+  // negligible.
+  // --------------------------------------------------------------------
+  {
+    files: ["**/*.{ts,tsx}"],
+    processor: graphqlEslint.processors.graphql,
+  },
+  {
+    files: ["**/*.graphql"],
+    languageOptions: {
+      parser: graphqlEslint.parser,
+    },
+    plugins: {
+      local: localPlugin,
+    },
+    rules: {
+      "local/graphql-operation-naming": "error",
     },
   },
   {

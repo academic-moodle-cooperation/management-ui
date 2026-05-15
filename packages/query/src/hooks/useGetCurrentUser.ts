@@ -23,6 +23,7 @@ export function useGetCurrentUser(): UseQueryResult<UserQuery, Error> {
       // Use the createGraphQLClient function that properly handles relative URLs
       const graphQLClient = createGraphQLClient(config.api.graphqlEndpoint);
       return graphQLClient.request<UserQuery>(gql`
+        # eslint-disable-next-line local/graphql-operation-naming
         query GetCurrentUser {
           currentUser {
             __typename

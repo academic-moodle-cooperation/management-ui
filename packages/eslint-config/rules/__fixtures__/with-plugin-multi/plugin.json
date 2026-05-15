@@ -1,0 +1,9 @@
+{
+  "id": "core-episodes",
+  "name": "Core Episodes (test fixture)",
+  "namespace": "core-episodes",
+  "type": "app",
+  "version": "1.0.0",
+  "description": "Fixture for multi-segment-namespace PascalCase test.",
+  "author": { "name": "Test" }
+}
