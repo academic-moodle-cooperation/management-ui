@@ -204,6 +204,19 @@ The doc site is built and deployable but **discouraged from indexing** until the
 
 **First-time enablement on GitHub**: when you're ready to ship even a manual deploy, enable GitHub Pages in the repo settings under **Settings → Pages**, source: **GitHub Actions** (not "Deploy from a branch"). The workflow's `actions/deploy-pages` step needs that to be set, otherwise it errors out. While the guards are in place, you can do a manual `workflow_dispatch` deploy any time — the URL exists, but search engines stay away.
 
+### 8.3a Interim deploy: personal-repo publication mirror
+
+Until the AMC org repo can host the docs site (currently blocked: private + Free plan), the docs are published to a personal-repo mirror on a Pro plan, which supports GitHub Pages on private repos. The personal repo is treated as a **publication endpoint, not a code mirror** — its history is force-overwritten from `amc/release/oss-1.0` whenever a fresh deploy is wanted. The pre-OSS history is preserved on an `archive/pre-oss-1.0` tag.
+
+| Aspect | AMC repo (long-term home) | Personal repo (interim mirror) |
+|--------|---------------------------|--------------------------------|
+| URL | `academic-moodle-cooperation.github.io/management-tool/` | `<user>.github.io/management-ui/` |
+| `DOCS_BASE` | Default `/management-tool/` | Override to `/management-ui/` via **Settings → Actions → Variables**. |
+| Trigger | `workflow_dispatch` only (until Phase 6d) | `workflow_dispatch`; deploys whenever the user manually triggers it. |
+| Update path | Merges to `release/oss-1.0` | `git push --force eduardklinger amc/release/oss-1.0:release/oss-1.0` from the AMC checkout, then Run workflow on the personal repo. |
+
+Decommission: when AMC ships its own Pages deploy (after Phase 6d, or earlier if AMC admins enable Pages on the private repo), drop the personal mirror or keep it as a private staging environment.
+
 ### 8.4 Source-link rewriting is heuristic-based
 
 [`docs/.vitepress/config.mts`](../../docs/.vitepress/config.mts)'s `rewriteRepoLink` rewrites `../foo/bar` links to GitHub permalinks unless the first path segment is one of a hardcoded list of docs subdirectories (`architecture`, `getting-started`, `operations`, `plugins`, `reference`, `workflows`). If a new top-level docs directory is added without updating that list, links into it from sibling docs will incorrectly point at GitHub.

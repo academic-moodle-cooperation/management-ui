@@ -20,11 +20,18 @@ const srcExclude = [
   "workflows/ADDING_PACKAGES.md",
 ];
 
+// Base path defaults to the eventual AMC public URL
+// (https://academic-moodle-cooperation.github.io/management-tool/). Override
+// via `DOCS_BASE=/<repo-name>/` in the build environment for deploys to other
+// GitHub Pages targets — e.g. a personal-repo publication mirror at
+// https://<user>.github.io/management-ui/ sets `DOCS_BASE=/management-ui/`.
+// See docs/operations/open-followups.md §8.3 for the deploy strategy.
+const DOCS_BASE = process.env.DOCS_BASE ?? "/management-tool/";
+
 export default defineConfig({
   title: "Management UI",
   description: "A modular, plugin-first admin interface for Opencast.",
-  // Project Pages URL: https://academic-moodle-cooperation.github.io/management-tool/
-  base: "/management-tool/",
+  base: DOCS_BASE,
   cleanUrls: true,
   lastUpdated: true,
   srcExclude,
