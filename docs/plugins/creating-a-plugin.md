@@ -129,6 +129,30 @@ Use semantic tokens — see [`plugins/styling.md`](./styling.md). No hardcoded c
 
 The contract test's `expectI18nKeyParity` fails when locale files drift apart.
 
+## GraphQL operations
+
+Every `query`/`mutation`/`subscription`/`fragment` your plugin declares must be **prefixed with your plugin's namespace in PascalCase**:
+
+```graphql
+# plugins/my-plugin/src/queries.graphql
+# namespace in plugin.json: "my-plugin"
+
+fragment MyPluginThingFields on Thing {
+  id
+  name
+}
+
+query MyPluginGetThings($limit: Int!) {
+  things(limit: $limit) {
+    ...MyPluginThingFields
+  }
+}
+```
+
+This avoids collisions with other plugins' operations and fragments at the GraphQL Codegen step and the server logs. Full rules + examples: [`architecture/CONTRACTS.md` § 6](../architecture/CONTRACTS.md#6-graphql-operation-naming).
+
+A custom ESLint rule that flags violations is planned — until it ships, reviewers spot-check operation names manually.
+
 ## Development loop
 
 For an in-tree plugin (`plugins/<name>/`), the shell's Vite build picks it up automatically:

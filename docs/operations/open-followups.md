@@ -92,12 +92,36 @@ Today the boundaries rule allows any `package` to import from any other `package
 
 Three items added to the master plan after Phase 7. None has been started; all need the Phase 6 publishing model in place first.
 
-### 5.1 GraphQL namespace convention
+### 5.1 GraphQL operation naming — enforcement
 
-Plugins should namespace their GraphQL operations (`mui:` for core, `<org>:` for org plugins). Today `@oc-mui/query` wraps GraphQL but doesn't policy-check operation names.
+**Status:** contract shipped; enforcement (the ESLint rule + the migration of existing operations) still to do.
 
-- **When to revisit**: Phase 8.
-- **Suggested form**: a new section in [`CONTRACTS.md`](../architecture/CONTRACTS.md) plus an ESLint rule (custom AST walker or regex-based `no-restricted-syntax`) in `@oc-mui/eslint-config/base.js`.
+The GraphQL Operation Naming Contract 1.0 is now in [`architecture/CONTRACTS.md` § 6](../architecture/CONTRACTS.md#6-graphql-operation-naming). Every new `query`/`mutation`/`subscription`/`fragment` must be prefixed with the plugin's namespace in PascalCase (`MuiGetMyEvents`, `EpisodesEpisodeFields`, …). Reviewers spot-check this manually during PR.
+
+Two follow-ups, in order:
+
+#### 5.1b — Custom ESLint rule
+
+Wire an AST-aware rule into [`@oc-mui/eslint-config`](../../packages/eslint-config/base.js) that:
+
+1. Parses `gql\`\`` template literals and (optionally) `.graphql` files.
+2. Reads the owning plugin's `plugin.json` (walking up from the file path).
+3. Computes the expected PascalCase prefix from the manifest's `namespace`.
+4. **Errors** (not warns — warnings get ignored) on any `query`/`mutation`/`subscription`/`fragment` whose name doesn't start with that prefix.
+5. Existing legacy operations get `// eslint-disable-next-line` comments which double as the migration tracker — grep the codebase for the comment to see what's left.
+
+The rule needs to handle the `Mui` prefix for code in `packages/query/` (which doesn't have a `plugin.json`) — treat that path specifically.
+
+#### 5.1c — Migrate legacy operations
+
+[`packages/query/src/queries.graphql`](../../packages/query/src/queries.graphql) today contains ~33 operations and fragments using a mix of bare names (`GetMyEvents`, `CreateSeries`) and a partial `PluginXxxFields` pattern. Once 5.1b is in place, do a mechanical rename batch:
+
+- Operations: `GetMyEvents` → `MuiGetMyEvents` (and so on across the file).
+- Fragments: `PluginUserFields` → `MuiUserFields` (drop the `Plugin` prefix, add `Mui`).
+- Regenerate `gql-generated.ts` (`pnpm --filter @oc-mui/query codegen`).
+- Update every call site: `useGetMyEventsQuery` → `useMuiGetMyEventsQuery`.
+
+Keep the diff to one PR if possible — it's all mechanical. Drop the corresponding `eslint-disable` comments as the rename clears each operation.
 
 ### 5.2 External plugin POM template + Maven parent
 
