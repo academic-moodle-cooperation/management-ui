@@ -105,10 +105,17 @@ See [1.2](#12-external-plugin-pom-template--maven-parent) above.
 
 ### 5.3 Shared-npm-deps version-locking
 
-`peerDependencies` declares ranges (`"react": "^18.0.0 || ^19.0.0"`) but doesn't enforce that JAR plugins bundle the *same* React major as the host. Two Reacts in one bundle = React context breaks, hooks become inconsistent.
+**Status:** contract and check function shipped; loader-side enforcement still to do.
 
-- **When to revisit**: Phase 8.
-- **Suggested form**: a "Shared Runtime Dependencies" section in `CONTRACTS.md`; optionally a load-time check in [`apps/shell/src/services/jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts) (mirrors `checkApiVersionCompatibility`).
+The Shared Runtime Dependencies contract (`@oc-mui/plugin-system`'s `SHARED_RUNTIME_MAJORS`, documented in [`architecture/CONTRACTS.md` §5](../architecture/CONTRACTS.md#5-shared-runtime-dependencies)) defines which packages the host provides and what major a plugin must declare in `workspaceDependencies`. The check function `checkSharedDependencyCompatibility` is exported and tested, mirroring `checkApiVersionCompatibility`.
+
+What's still missing — **the actual call sites that gate plugin loading on the check**:
+
+- **JAR loader** ([`apps/shell/src/services/jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts)) doesn't fetch each plugin's `plugin.json` today; the backend's aggregated `plugins.json` doesn't carry the manifest. Wiring the check in requires either (a) the backend to embed the manifest per plugin in `plugins.json`, or (b) the loader to fetch `<pluginDir>/plugin.json` alongside the `.mjs`.
+- **`.local-plugins/` discovery** ([`packages/vite-config/src/plugins/local-plugins-dev.ts`](../../packages/vite-config/src/plugins/local-plugins-dev.ts)) similarly doesn't surface the per-plugin manifest in `/local-plugins/manifest.json`. Same two options.
+- **Marketplace** ([`plugins/admin-marketplace/src/services/security.ts`](../../plugins/admin-marketplace/src/services/security.ts)) has its own older check (`securityService.checkVersionCompatibility`) that reads from `RegistryPlugin` metadata. Refactor to call `checkSharedDependencyCompatibility` from `@oc-mui/plugin-system` so all three paths use the same logic.
+
+- **When to revisit**: small follow-up PR (or three small ones, one per call site). Probably worth doing 'b' for both manifest paths — the loader fetches the manifest itself — because that mirrors how `apiVersion` enforcement works today and avoids a backend API change.
 
 ---
 

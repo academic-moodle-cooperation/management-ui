@@ -71,7 +71,7 @@
     "workspaceDependencies": {
       "type": "object",
       "additionalProperties": { "type": "string" },
-      "description": "Version constraints for @oc-mui/* packages the plugin imports at runtime (e.g., { \"@oc-mui/plugin-system\": \">=1.0.0\", \"@oc-mui/ui\": \">=1.0.0\" })."
+      "description": "Version constraints for shared runtime dependencies the plugin consumes from the host (react, react-dom, lucide-react, @oc-mui/*). Each entry's lower-bound major must match the host's major for that dependency, otherwise the host refuses to load the plugin. Example: { \"react\": \"^19.0.0\", \"@oc-mui/plugin-system\": \"^1.0.0\", \"@oc-mui/ui\": \"^1.0.0\" }. See docs/architecture/CONTRACTS.md → \"Shared Runtime Dependencies\" for the full list and rules."
     },
     "pluginDependencies": {
       "type": "array",

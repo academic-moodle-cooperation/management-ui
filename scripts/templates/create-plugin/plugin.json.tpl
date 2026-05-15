@@ -10,6 +10,13 @@
   "namespace": "__PLUGIN_NAME__",
   "type": "header",
   "category": "experimental",
+  "apiVersion": "1.0.0",
+  "workspaceDependencies": {
+    "react": "^19.0.0",
+    "@oc-mui/plugin-system": "^1.0.0",
+    "@oc-mui/ui": "^1.0.0",
+    "@oc-mui/utils": "^1.0.0"
+  },
   "extensionPoints": [
     "app:header-logo"
   ]
