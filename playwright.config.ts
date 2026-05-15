@@ -28,9 +28,15 @@ export default defineConfig({
     },
   ],
   webServer: {
+    // Cold-start CI was budgeted at 120s when the comment near `timeout`
+    // above was written. The lockfile has grown since, and runs against
+    // GitHub-hosted runners have started exhausting the 120s ceiling
+    // (see #140's two consecutive failures with `pnpm --filter shell dev`
+    // never reaching "ready"). Bump to 180s to restore margin without
+    // leaning on a retry.
     command: "pnpm --filter shell dev",
     url: BASE_URL,
-    timeout: 120_000,
+    timeout: 180_000,
     reuseExistingServer: !process.env["CI"],
     stdout: "pipe",
     stderr: "pipe",
