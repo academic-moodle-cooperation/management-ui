@@ -14,6 +14,18 @@ export {
 } from "./apiVersion";
 export type { ParsedSemver, ApiVersionCheckResult } from "./apiVersion";
 
+// Shared Runtime Dependencies contract (see docs/architecture/CONTRACTS.md #5)
+export {
+  SHARED_RUNTIME_MAJORS,
+  checkSharedDependencyCompatibility,
+  parseRangeMajor,
+} from "./sharedRuntime";
+export type {
+  SharedRuntimeDependencyName,
+  SharedDependencyCheckResult,
+  SharedDependencyIncompatibility,
+} from "./sharedRuntime";
+
 // Export plugin system components
 export * from "./PluginProvider";
 export * from "./RendererContext";

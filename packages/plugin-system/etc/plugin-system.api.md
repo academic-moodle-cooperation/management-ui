@@ -56,6 +56,9 @@ export interface BasePluginComponentProps {
 export function checkApiVersionCompatibility(requiredApiVersion: string | undefined | null, hostApiVersion?: string): ApiVersionCheckResult;
 
 // @public
+export function checkSharedDependencyCompatibility(requiredDependencies: Record<string, string> | undefined | null, hostMajors?: Readonly<Record<string, number>>): SharedDependencyCheckResult;
+
+// @public
 export const ComponentLoader: React_2.FC<{
     label?: string;
     variant?: "minimal" | "spinner" | "dots";
@@ -125,6 +128,9 @@ export interface ParsedSemver {
     // (undocumented)
     prerelease?: string;
 }
+
+// @public
+export function parseRangeMajor(range: string): number | null;
 
 // @public
 export function parseSemver(input: string | undefined | null): ParsedSemver | null;
@@ -299,6 +305,27 @@ export type RegistryObject = {
 export const RendererProvider: React_2.FC<{
     children: React_2.ReactNode;
 }>;
+
+// @public
+export const SHARED_RUNTIME_MAJORS: Readonly<Record<string, number>>;
+
+// @public (undocumented)
+export interface SharedDependencyCheckResult {
+    compatible: boolean;
+    incompatibilities?: SharedDependencyIncompatibility[];
+    unknown?: string[];
+}
+
+// @public (undocumented)
+export interface SharedDependencyIncompatibility {
+    hostMajor: number;
+    name: string;
+    reason: string;
+    required: string;
+}
+
+// @public (undocumented)
+export type SharedRuntimeDependencyName = keyof typeof SHARED_RUNTIME_MAJORS;
 
 // @public (undocumented)
 export const usePluginManager: () => PluginManager;

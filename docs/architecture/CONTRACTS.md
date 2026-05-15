@@ -5,12 +5,13 @@
 
 This document lists everything a third-party plugin author or downstream app may rely on. Anything not listed here is internal and may change without notice.
 
-There are **four contracts**:
+There are **five contracts**:
 
 1. [Plugin Manifest Contract](#1-plugin-manifest-contract) - the shape of `plugin.json`.
 2. [Plugin Runtime API Contract](#2-plugin-runtime-api-contract) - what a plugin receives from the host at runtime and the API version semantics.
 3. [Theme Contract](#3-theme-contract) - CSS tokens and rules for styling.
 4. [Config Contract](#4-config-contract) - how plugins declare and consume configuration (full model: [`CONFIGURATION.md`](./CONFIGURATION.md)).
+5. [Shared Runtime Dependencies](#5-shared-runtime-dependencies) - which packages the host provides to every plugin, and which majors are in force.
 
 Each contract has its own version. Breaking changes to any of them require a major version bump of `@<scope>/plugin-system`.
 
@@ -136,6 +137,66 @@ Breaking changes to any of these are **major**. Adding new optional top-level ke
 - The specific default namespaces in `enabledPlugins` — those ship as a sensible OSS default and may change.
 - The internal representation of the `plugins` registry extension points (`app:config`, `app:config:defaults`).
 
+## 5. Shared Runtime Dependencies
+
+**Authoritative source:** [`packages/plugin-system/src/sharedRuntime.ts`](../../packages/plugin-system/src/sharedRuntime.ts) (`SHARED_RUNTIME_MAJORS`).
+**Contract version:** 1.0.
+
+The host loads exactly one copy of certain packages into the page and shares them with every plugin via `window.__SHARED_MODULES__`. Plugins must consume the host's copy — bundling a different major into the plugin's own `.mjs` causes two React contexts in the same tree, broken hooks, and mismatched `@oc-mui/*` types.
+
+### What the host promises
+
+Each name below is shared at the specified major. Patches and minors of a shared dep may roll forward within the same major without breaking the contract.
+
+| Dependency | Major |
+|------------|-------|
+| `react` | 19 |
+| `react-dom` | 19 |
+| `react/jsx-runtime` | 19 |
+| `lucide-react` | 0 |
+| `@oc-mui/plugin-system` | 1 |
+| `@oc-mui/ui` | 1 |
+| `@oc-mui/query` | 1 |
+| `@oc-mui/router` | 1 |
+| `@oc-mui/i18n` | 1 |
+| `@oc-mui/utils` | 1 |
+| `@oc-mui/store` | 1 |
+| `@oc-mui/ui-config` | 1 |
+
+The runtime list is exported as `SHARED_RUNTIME_MAJORS` from `@oc-mui/plugin-system`, kept in sync with `SHARED_MODULE_NAMES` in [`@oc-mui/remote-plugin-loader`](../../packages/remote-plugin-loader/src/transform.ts).
+
+### What plugins must do
+
+Declare every shared dep the plugin actually imports in `workspaceDependencies` in `plugin.json`. The lower-bound major of each range must match the host's major for that dep.
+
+```jsonc
+{
+  "workspaceDependencies": {
+    "react": "^19.0.0",
+    "@oc-mui/plugin-system": "^1.0.0",
+    "@oc-mui/ui": "^1.0.0"
+  }
+}
+```
+
+Compatibility is checked at load time by `checkSharedDependencyCompatibility` (exported from `@oc-mui/plugin-system`). A plugin whose declared major doesn't match the host's is rejected by the loader with a clear `"Plugin requires <name> major X, host provides Y"` error.
+
+### Versioning rules
+
+- **Minor** of `@oc-mui/plugin-system`: adding a new name to `SHARED_RUNTIME_MAJORS`. Existing plugins keep working — they just opted out of the new shared dep and continue to bundle it themselves.
+- **Major** of `@oc-mui/plugin-system`: bumping any entry's major (e.g. host adopts React 20), or removing a name. Plugins compiled against the old major are cleanly rejected by the loader.
+
+Removing a name has the same effect as bumping its major from the plugin's perspective — the dep stops being host-provided.
+
+### Not part of the contract
+
+- The exact patch/minor of any shared dep beyond the major. Hosts may roll forward within a major and plugins must not pin to a specific patch.
+- Other packages the host happens to use internally. The contract list is exhaustive — `lodash`, `date-fns`, `axios`, etc. are *not* shared and a plugin that needs them must bundle them.
+
+### Note on the existing marketplace check
+
+The marketplace's `securityService.checkVersionCompatibility` (in `plugins/admin-marketplace/`) implements an older, marketplace-scoped version of this check that reads from a `RegistryPlugin` shape rather than from `plugin.json`. The two will converge over time; `checkSharedDependencyCompatibility` is the new canonical implementation, and the JAR loader and `.local-plugins/` discovery path don't currently enforce shared-deps compatibility at all (tracked as a follow-up in [`operations/open-followups.md`](../operations/open-followups.md#53-shared-npm-deps-version-locking)).
+
 ## Contract Change Process
 
 Changing any contract requires:
@@ -152,3 +213,4 @@ No contract change is allowed without the changeset - plugins cannot cope with s
 - **2026-04-16:** Initial freeze. Manifest 1.0, Runtime API 1.0, Theme 2.0, Config 0.9 (pre-stable).
 - **2026-04-17:** Config Contract promoted to 1.0. Stable keys: `app.theme`, `app.locale`, `app.enabledPlugins`, `config.plugins[pluginId]`, `config.plugins[pluginId].enabled`. Layered merge order (`app:config:defaults` ⊕ base ⊕ `app:config`) and the `definePluginConfig` reader API are now frozen for 1.x. See [`CONFIGURATION.md`](./CONFIGURATION.md).
 - **2026-04-17:** Manifest Contract bumped to 1.1 (minor). New optional field `extensionPoints: string[]` on the top-level manifest, consumed by the contract-test harness in `@oc-mui/plugin-testing` and reserved for marketplace tooling. Runtime loader behaviour is unchanged, so existing 1.0 manifests remain valid. Host `PLUGIN_API_VERSION` bumped from `1.0.0` to `1.1.0` accordingly. Plugin-system now also exports `validatePluginMetadata` and the `PluginContext` React context so that tooling can validate manifests and inject a pre-configured `PluginManager` without reaching into `src/`.
+- **2026-05-13:** Shared Runtime Dependencies Contract 1.0 added. New section [§5](#5-shared-runtime-dependencies) formalises the list of host-provided packages (`SHARED_RUNTIME_MAJORS` in `@oc-mui/plugin-system`) and the rule that a plugin's `workspaceDependencies` lower-bound major must match the host's. New helpers `checkSharedDependencyCompatibility` and `parseRangeMajor` are exported from `@oc-mui/plugin-system`. The runtime check is **not yet wired** into the JAR loader or `.local-plugins/` discovery path — those follow-ups are tracked in [`operations/open-followups.md`](../operations/open-followups.md#53-shared-npm-deps-version-locking). Existing plugins are unaffected; the contract is additive.
