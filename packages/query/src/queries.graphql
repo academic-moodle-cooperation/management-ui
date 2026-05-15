@@ -7,14 +7,17 @@
 # -----------------------------------------------------------------------------------------------
 # Plugin stubs merged at runtime (convention: fragment Plugin<Type>Fields on <Type>).
 
+# eslint-disable-next-line local/graphql-operation-naming
 fragment PluginCurrentUserFields on CurrentUser {
   __typename
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 fragment PluginUserFields on User {
   __typename
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 query User {
   currentUser {
     email
@@ -25,6 +28,7 @@ query User {
   }
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 query SearchUser($limit: Int, $offset: Int, $query: String!) {
   searchUser(limit: $limit, offset: $offset, query: $query) {
     totalCount
@@ -50,10 +54,12 @@ query SearchUser($limit: Int, $offset: Int, $query: String!) {
 # -----------------------------------------------------------------------------------------------
 # PluginSeriesFields: stub merged at runtime (same convention as PluginEventFields).
 
+# eslint-disable-next-line local/graphql-operation-naming
 fragment PluginSeriesFields on Series {
   __typename
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 fragment SeriesData on Series {
   __typename
   id
@@ -77,6 +83,7 @@ fragment SeriesData on Series {
   ...PluginSeriesFields
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 query GetMySeries($limit: Int, $offset: Int, $orderBy: SeriesOrderByInput, $query: String) {
   currentUser {
     mySeries(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
@@ -88,6 +95,7 @@ query GetMySeries($limit: Int, $offset: Int, $orderBy: SeriesOrderByInput, $quer
   }
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 query GetSeriesInfo($seriesId: String!) {
   seriesById(id: $seriesId) {
     contributors
@@ -109,6 +117,7 @@ query GetSeriesInfo($seriesId: String!) {
   }
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 fragment GetInputFieldsMetaData on JsonMetadataField {
   collectionId
   collection
@@ -122,6 +131,7 @@ fragment GetInputFieldsMetaData on JsonMetadataField {
   value
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 fragment GetListInputFieldsMetaData on ListMetadataField {
   collectionId
   collection
@@ -135,6 +145,7 @@ fragment GetListInputFieldsMetaData on ListMetadataField {
   value
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 fragment GetStringInputFieldsMetaData on StringMetadataField {
   collectionId
   collection
@@ -148,6 +159,7 @@ fragment GetStringInputFieldsMetaData on StringMetadataField {
   value
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 fragment GetDurationInputFieldsMetaData on DurationMetadataField {
   collectionId
   collection
@@ -161,6 +173,7 @@ fragment GetDurationInputFieldsMetaData on DurationMetadataField {
   value
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 fragment GetDateTimeInputFieldsMetaData on DateTimeMetadataField {
   collectionId
   collection
@@ -174,6 +187,7 @@ fragment GetDateTimeInputFieldsMetaData on DateTimeMetadataField {
   value
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 query GetSeriesByIdInputFields($seriesId: String!) {
   seriesById(id: $seriesId) {
     commonMetadataV2 {
@@ -211,6 +225,7 @@ query GetSeriesByIdInputFields($seriesId: String!) {
   }
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 query GetMySeriesNameAndId(
   $limit: Int
   $offset: Int
@@ -227,6 +242,7 @@ query GetMySeriesNameAndId(
   }
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 query GetSeriesNameById($seriesId: String!) {
   seriesById(id: $seriesId) {
     title
@@ -238,10 +254,12 @@ query GetSeriesNameById($seriesId: String!) {
 # -----------------------------------------------------------------------------------------------
 # PluginEventFields: stub merged at runtime (convention: fragment Plugin<Type>Fields on <Type>).
 
+# eslint-disable-next-line local/graphql-operation-naming
 fragment PluginEventFields on Event {
   __typename
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 fragment EventsData on Event {
   __typename
   contributors
@@ -283,6 +301,7 @@ fragment EventsData on Event {
   ...PluginEventFields
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 query EventsFromSeries(
   $seriesId: String!
   $limit: Int
@@ -302,6 +321,7 @@ query EventsFromSeries(
   }
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 query GetMyEvents($limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String) {
   currentUser {
     myEvents(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
@@ -313,6 +333,7 @@ query GetMyEvents($limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query
   }
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 query GetEventById($eventId: String!) {
   eventById(id: $eventId) {
     id
@@ -320,6 +341,7 @@ query GetEventById($eventId: String!) {
   }
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 query GetEventByIdInputFields($eventId: String!) {
   eventById(id: $eventId) {
     commonMetadataV2 {
@@ -379,6 +401,7 @@ query GetEventByIdInputFields($eventId: String!) {
 ## ACLs
 # -----------------------------------------------------------------------------------------------
 
+# eslint-disable-next-line local/graphql-operation-naming
 query GetAllManagedAcls {
   managedAcls {
     nodes {
@@ -394,6 +417,7 @@ query GetAllManagedAcls {
   }
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 query GetManagedAclsWithEventId($id: String!) {
   managedAcls {
     nodes {
@@ -410,6 +434,7 @@ query GetManagedAclsWithEventId($id: String!) {
   ...EventsAclData
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 query GetManagedAclsWithSeriesId($id: String!) {
   managedAcls {
     nodes {
@@ -426,6 +451,7 @@ query GetManagedAclsWithSeriesId($id: String!) {
   ...SeriesAclData
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 fragment EventsAclData on Query {
   eventById(id: $id) {
     acl {
@@ -438,6 +464,7 @@ fragment EventsAclData on Query {
   }
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 fragment SeriesAclData on Query {
   seriesById(id: $id) {
     acl {
@@ -454,18 +481,21 @@ fragment SeriesAclData on Query {
 ## MUTATIONS
 ### ---------------------------------------------------------------------------------------------
 
+# eslint-disable-next-line local/graphql-operation-naming
 mutation CreateSeries($acl: AccessControlListInput!, $metadata: CommonSeriesMetadataInput!) {
   createSeries(acl: $acl, metadata: $metadata) {
     ...SeriesData
   }
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 mutation UpdateSeries($seriesId: String!, $metadata: CommonSeriesMetadataInput!) {
   updateSeries(id: $seriesId, metadata: $metadata) {
     ...SeriesData
   }
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 mutation UpdateEvent($eventId: String!, $metadata: CommonEventMetadataInput!) {
   mui {
     updateEvent(id: $eventId, metadata: $metadata) {
@@ -474,6 +504,7 @@ mutation UpdateEvent($eventId: String!, $metadata: CommonEventMetadataInput!) {
   }
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 mutation DeleteEvent($eventId: String!) {
   mui {
     deleteEvent(id: $eventId) {
@@ -482,6 +513,7 @@ mutation DeleteEvent($eventId: String!) {
   }
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 mutation UpdateEventAcl($eventId: String!, $acl: AccessControlListInput!) {
   mui {
     updateEventAcl(id: $eventId, acl: $acl) {
@@ -492,6 +524,7 @@ mutation UpdateEventAcl($eventId: String!, $acl: AccessControlListInput!) {
   }
 }
 
+# eslint-disable-next-line local/graphql-operation-naming
 mutation UpdateSeriesAcl($seriesId: String!, $acl: AccessControlListInput!) {
   updateSeriesAcl(id: $seriesId, acl: $acl) {
     muiSeriesInfo {

@@ -120,6 +120,7 @@ export const App = () => {
   );
 
   const FETCH_MY_SERIES = gql`
+    # eslint-disable-next-line local/graphql-operation-naming
     query GetMySeriesNameAndId(
       $limit: Int
       $offset: Int
