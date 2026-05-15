@@ -92,28 +92,9 @@ Today the boundaries rule allows any `package` to import from any other `package
 
 Three items added to the master plan after Phase 7. None has been started; all need the Phase 6 publishing model in place first.
 
-### 5.1 GraphQL operation naming — final migration of legacy operations
+### 5.1 GraphQL operation naming
 
-**Status:** contract shipped, enforcement shipped, **legacy migration still to do**.
-
-The GraphQL Operation Naming Contract 1.0 is in [`architecture/CONTRACTS.md` § 6](../architecture/CONTRACTS.md#6-graphql-operation-naming) and mechanically enforced by [`local/graphql-operation-naming`](../../packages/eslint-config/rules/graphql-operation-naming.js) in `@oc-mui/eslint-config`. Every new `query`/`mutation`/`subscription`/`fragment` must be prefixed with the plugin's namespace in PascalCase (`MuiGetMyEvents`, `EpisodesEpisodeFields`, …); the rule errors on violations at lint time.
-
-What's left: rename the **35 legacy operations** that are currently grandfathered through `# eslint-disable-next-line local/graphql-operation-naming` comments. 33 sit in [`packages/query/src/queries.graphql`](../../packages/query/src/queries.graphql); two more are inline `gql\`\`` templates in [`packages/query/src/hooks/useGetCurrentUser.ts`](../../packages/query/src/hooks/useGetCurrentUser.ts) and [`plugins/core-upload/src/App.tsx`](../../plugins/core-upload/src/App.tsx).
-
-#### 5.1c — Rename batch
-
-Do this as one mechanical PR — it's tedious but linear:
-
-1. Rename each operation/fragment in `packages/query/src/queries.graphql`:
-   - Operations: `GetMyEvents` → `MuiGetMyEvents`, `CreateSeries` → `MuiCreateSeries`, …
-   - Fragments: `PluginUserFields` → `MuiUserFields` (drop the redundant `Plugin` prefix, add `Mui`); `EventsData` → `MuiEventsData`; etc.
-2. Rename the inline operation in `useGetCurrentUser.ts` (`GetCurrentUser` → `MuiGetCurrentUser`).
-3. Decide on the `plugins/core-upload/src/App.tsx` inline `GetMySeriesNameAndId`: either rename to `UploadGetMySeriesNameAndId` (keeps a plugin-local duplicate) or delete the inline copy and consume `MuiGetMySeriesNameAndIdQuery` from `@oc-mui/query` (probably the right call — the operation is already in the central file).
-4. Regenerate `gql-generated.ts`: `pnpm --filter @oc-mui/query codegen`.
-5. Update every call site that uses the generated hooks: `useGetMyEventsQuery` → `useMuiGetMyEventsQuery`, etc. There are ~50 such call sites across `plugins/core-*`.
-6. **Drop each `# eslint-disable-next-line local/graphql-operation-naming` comment** as the corresponding operation is renamed. The `--report-unused-disable-directives` flag in `pnpm lint` catches stragglers, so any disable comment we forget will surface as a lint error.
-
-Tracking the progress: `git grep -c "eslint-disable-next-line local/graphql-operation-naming"` should decrease monotonically to zero. When it hits zero the legacy migration is complete and `5.1` can be removed from this file.
+✅ **Done.** Contract shipped in PR-5.1a, ESLint enforcement shipped in PR-5.1b, all 35 legacy operations renamed in PR-5.1c. Every `query`/`mutation`/`subscription`/`fragment` declared anywhere in the workspace now carries the right PascalCase prefix; `git grep "eslint-disable-next-line local/graphql-operation-naming"` returns zero hits in source. The full contract lives at [`architecture/CONTRACTS.md` § 6](../architecture/CONTRACTS.md#6-graphql-operation-naming).
 
 ### 5.2 External plugin POM template + Maven parent
 

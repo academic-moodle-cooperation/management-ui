@@ -3,14 +3,14 @@ import React from "react";
 
 import { i18next } from "@oc-mui/i18n";
 import { PluginComponent } from "@oc-mui/plugin-system";
-import type { SeriesDataFragment } from "@oc-mui/query";
+import type { MuiSeriesDataFragment } from "@oc-mui/query";
 import { Link } from "@oc-mui/router";
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@oc-mui/ui/components";
 
 import { useSidebarStore } from "../stores/sidebarStore";
 
 interface SeriesActionsCellProps {
-  series: SeriesDataFragment;
+  series: MuiSeriesDataFragment;
 }
 
 const DefaultSeriesActionsCell: React.FC<SeriesActionsCellProps> = ({ series }) => {

@@ -1,8 +1,8 @@
 import React from "react";
 
 import { useI18n } from "@oc-mui/i18n";
-import { useUpdateEventMutation } from "@oc-mui/query";
-import type { GetEventByIdInputFieldsQuery, EventsDataFragment } from "@oc-mui/query";
+import { useMuiUpdateEventMutation } from "@oc-mui/query";
+import type { MuiGetEventByIdInputFieldsQuery, MuiEventsDataFragment } from "@oc-mui/query";
 import { Button, toast } from "@oc-mui/ui/components";
 import { normalizeMetadataObject, logger } from "@oc-mui/utils";
 
@@ -11,16 +11,16 @@ type EpisodesUpdateData = {
 };
 
 interface EpisodesInfoFooterProps {
-  saveEpisodeUpdate: ReturnType<typeof useUpdateEventMutation>;
+  saveEpisodeUpdate: ReturnType<typeof useMuiUpdateEventMutation>;
   editEpisode: boolean;
   episodesUpdateData: EpisodesUpdateData | undefined;
-  episodesInputFields: GetEventByIdInputFieldsQuery | undefined;
+  episodesInputFields: MuiGetEventByIdInputFieldsQuery | undefined;
   onEditClose: () => void;
   selectedEpisodeId: string;
   refetch: () => void;
   refetchMetadata: () => void;
   setEditEpisode: (value: boolean) => void;
-  currentEpisode?: EventsDataFragment | undefined;
+  currentEpisode?: MuiEventsDataFragment | undefined;
 }
 
 /**

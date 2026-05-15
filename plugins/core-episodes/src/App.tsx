@@ -1,5 +1,5 @@
 import { useI18n } from "@oc-mui/i18n";
-import { useGetSeriesNameByIdQuery } from "@oc-mui/query";
+import { useMuiGetSeriesNameByIdQuery } from "@oc-mui/query";
 import { useParams } from "@oc-mui/router";
 import { AppHeading, Container, Separator } from "@oc-mui/ui/components";
 
@@ -10,7 +10,7 @@ import "./index.css";
 export const App = () => {
   const { t } = useI18n();
   const { routeSubPath: seriesId } = useParams({ strict: false });
-  const { data } = useGetSeriesNameByIdQuery({ seriesId: seriesId || "" });
+  const { data } = useMuiGetSeriesNameByIdQuery({ seriesId: seriesId || "" });
   const seriesTitle = data?.seriesById?.title;
 
   const getHeading = () => {

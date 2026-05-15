@@ -5,12 +5,12 @@ import { useAppConfig } from "@oc-mui/query";
 
 import { createGraphQLClient } from "../client";
 
-import type { UserQuery } from "../gql-generated";
+import type { MuiUserQuery } from "../gql-generated";
 
-export function useGetCurrentUser(): UseQueryResult<UserQuery, Error> {
+export function useGetCurrentUser(): UseQueryResult<MuiUserQuery, Error> {
   const { config, isLoading: isConfigLoading, isError: isConfigError } = useAppConfig();
 
-  return useQuery<UserQuery, Error, UserQuery, [string, string | undefined]>({
+  return useQuery<MuiUserQuery, Error, MuiUserQuery, [string, string | undefined]>({
     queryKey: ["currentUser", config?.api.graphqlEndpoint], // Include endpoint in queryKey
     queryFn: async () => {
       if (isConfigError) {
@@ -22,9 +22,8 @@ export function useGetCurrentUser(): UseQueryResult<UserQuery, Error> {
 
       // Use the createGraphQLClient function that properly handles relative URLs
       const graphQLClient = createGraphQLClient(config.api.graphqlEndpoint);
-      return graphQLClient.request<UserQuery>(gql`
-        # eslint-disable-next-line local/graphql-operation-naming
-        query GetCurrentUser {
+      return graphQLClient.request<MuiUserQuery>(gql`
+        query MuiGetCurrentUser {
           currentUser {
             __typename
             email

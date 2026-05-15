@@ -1,7 +1,7 @@
 import { useQueries } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-import { useGetEventByIdQuery } from "../gql-generated";
+import { useMuiGetEventByIdQuery } from "../gql-generated";
 
 /**
  * Hook to fetch event titles for a list of event IDs
@@ -27,9 +27,9 @@ export function useEventTitlesMap(eventIds: string[]): Map<string, string> {
   // This scales because we only fetch events that are actually needed
   const eventQueries = useQueries({
     queries: eventIds.map((eventId) => ({
-      queryKey: useGetEventByIdQuery.getKey({ eventId }),
+      queryKey: useMuiGetEventByIdQuery.getKey({ eventId }),
       queryFn: async () => {
-        const fetcher = useGetEventByIdQuery.fetcher({ eventId });
+        const fetcher = useMuiGetEventByIdQuery.fetcher({ eventId });
         return await fetcher();
       },
       enabled: eventIds.length > 0,

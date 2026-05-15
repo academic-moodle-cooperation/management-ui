@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from "react";
 
 import {
-  useGetMySeriesQuery,
+  useMuiGetMySeriesQuery,
   OrderDirection,
-  useGetSeriesByIdInputFieldsQuery,
+  useMuiGetSeriesByIdInputFieldsQuery,
 } from "@oc-mui/query";
 import { useNavigate } from "@oc-mui/router";
 import { useSidebarContent } from "@oc-mui/ui/components";
@@ -125,7 +125,7 @@ export function useSeriesTable() {
       : undefined;
 
   // API query - Automatically refetch table data every 20 seconds when episodes are processing
-  const seriesQuery = useGetMySeriesQuery(
+  const seriesQuery = useMuiGetMySeriesQuery(
     {
       limit: pageSize,
       offset,
@@ -167,7 +167,7 @@ export function useSeriesTable() {
     data: seriesInputFields,
     isLoading: isLoadingMetadata,
     refetch: refetchMetadata,
-  } = useGetSeriesByIdInputFieldsQuery(
+  } = useMuiGetSeriesByIdInputFieldsQuery(
     { seriesId: selectedId },
     {
       enabled: Boolean(selectedId),

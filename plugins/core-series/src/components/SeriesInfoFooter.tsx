@@ -1,8 +1,8 @@
 import React from "react";
 
 import { useI18n } from "@oc-mui/i18n";
-import { useUpdateSeriesMutation } from "@oc-mui/query";
-import type { GetSeriesByIdInputFieldsQuery } from "@oc-mui/query";
+import { useMuiUpdateSeriesMutation } from "@oc-mui/query";
+import type { MuiGetSeriesByIdInputFieldsQuery } from "@oc-mui/query";
 import { Button, toast } from "@oc-mui/ui/components";
 import { normalizeMetadataObject } from "@oc-mui/utils";
 
@@ -11,10 +11,10 @@ type SeriesUpdateData = {
 };
 
 interface SeriesInfoFooterProps {
-  saveSeriesUpdate: ReturnType<typeof useUpdateSeriesMutation>;
+  saveSeriesUpdate: ReturnType<typeof useMuiUpdateSeriesMutation>;
   editSeries: boolean;
   seriesUpdateData: SeriesUpdateData | undefined;
-  seriesInputFields: GetSeriesByIdInputFieldsQuery | undefined;
+  seriesInputFields: MuiGetSeriesByIdInputFieldsQuery | undefined;
   onEditClose: () => void;
   selectedSeriesId: string;
   refetch: () => void;

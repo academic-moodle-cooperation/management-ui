@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from "react";
 
 import {
-  useGetMyEventsQuery,
-  useEventsFromSeriesQuery,
+  useMuiGetMyEventsQuery,
+  useMuiEventsFromSeriesQuery,
   OrderDirection,
-  useGetEventByIdInputFieldsQuery,
+  useMuiGetEventByIdInputFieldsQuery,
 } from "@oc-mui/query";
 import { useNavigate } from "@oc-mui/router";
 import { useSidebarContent } from "@oc-mui/ui/components";
@@ -129,7 +129,7 @@ export function useEpisodesTable(seriesId?: string) {
 
   // API queries - conditionally use different queries based on seriesId
   // Automatically refetch table data every 20 seconds when episodes are processing
-  const allEventsQuery = useGetMyEventsQuery(
+  const allEventsQuery = useMuiGetMyEventsQuery(
     {
       limit: pageSize,
       offset,
@@ -146,7 +146,7 @@ export function useEpisodesTable(seriesId?: string) {
     },
   );
 
-  const seriesEventsQuery = useEventsFromSeriesQuery(
+  const seriesEventsQuery = useMuiEventsFromSeriesQuery(
     {
       seriesId: seriesId || "",
       limit: pageSize,
@@ -187,7 +187,7 @@ export function useEpisodesTable(seriesId?: string) {
     data: episodesInputFields,
     isLoading: isLoadingMetadata,
     refetch: refetchMetadata,
-  } = useGetEventByIdInputFieldsQuery(
+  } = useMuiGetEventByIdInputFieldsQuery(
     { eventId: selectedId },
     {
       enabled: Boolean(selectedId),

@@ -15,7 +15,7 @@ import {
 import React from "react";
 
 import { i18next } from "@oc-mui/i18n";
-import type { EventsDataFragment } from "@oc-mui/query";
+import type { MuiEventsDataFragment } from "@oc-mui/query";
 import {
   createColumnHelper,
   Tooltip,
@@ -38,7 +38,7 @@ import {
   type EpisodesColumnLabelOverrides,
 } from "./episodesTableConfig";
 
-const columnHelper = createColumnHelper<EventsDataFragment>();
+const columnHelper = createColumnHelper<MuiEventsDataFragment>();
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -70,7 +70,7 @@ export const createColumns = (
   refetch: () => void,
   layout: "list" | "gallery" = "list",
   columnLabelOverrides: EpisodesColumnLabelOverrides = {},
-): ColumnDef<EventsDataFragment, unknown>[] => {
+): ColumnDef<MuiEventsDataFragment, unknown>[] => {
   const getTitle = (columnKey: string, fallbackLabelKey: string) =>
     resolveColumnLabel(columnLabelOverrides, columnKey, fallbackLabelKey, i18next.t.bind(i18next));
 
@@ -78,15 +78,15 @@ export const createColumns = (
     resolveColumnMeta(columnLabelOverrides, columnKey, fallbackLabelKey);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const listColumns: ColumnDef<EventsDataFragment, any>[] = [
+  const listColumns: ColumnDef<MuiEventsDataFragment, any>[] = [
     columnHelper.accessor("title", {
-      header: ({ column }: { column: Column<EventsDataFragment> }) => (
+      header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
           title={getTitle("title", "episodes:episodesTable.heading.title")}
         />
       ),
-      cell: ({ row }: { row: Row<EventsDataFragment> }) => {
+      cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => {
         return (
           <div className="flex space-x-2">
             <OverflowTooltip className="max-w-[500px] truncate font-medium">
@@ -98,7 +98,7 @@ export const createColumns = (
       meta: getMeta("title", "episodes:episodesTable.heading.title"),
     }),
     columnHelper.accessor("seriesName", {
-      header: ({ column }: { column: Column<EventsDataFragment> }) => (
+      header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
           title={getTitle("seriesName", "episodes:episodesTable.heading.series")}
@@ -116,7 +116,7 @@ export const createColumns = (
       meta: getMeta("seriesName", "episodes:episodesTable.heading.series"),
     }),
     columnHelper.accessor("description", {
-      header: ({ column }: { column: Column<EventsDataFragment> }) => (
+      header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
           title={getTitle("description", "episodes:episodesTable.heading.description")}
@@ -134,14 +134,14 @@ export const createColumns = (
       meta: getMeta("description", "episodes:episodesTable.heading.description"),
     }),
     columnHelper.accessor("eventStatus", {
-      header: ({ column }: { column: Column<EventsDataFragment> }) => (
+      header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
           title={getTitle("eventStatus", "episodes:episodesTable.heading.status")}
           className="flex justify-center"
         />
       ),
-      cell: ({ row }: { row: Row<EventsDataFragment> }) => {
+      cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => {
         const status = row.original.eventStatus?.split(".").pop() || "";
         const statusIcon = getStatusIcon(status);
 
@@ -161,7 +161,7 @@ export const createColumns = (
       meta: getMeta("eventStatus", "episodes:episodesTable.heading.status"),
     }),
     columnHelper.accessor("contributors", {
-      header: ({ column }: { column: Column<EventsDataFragment> }) => (
+      header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
           title={getTitle("contributors", "episodes:episodesTable.heading.contributors")}
@@ -183,7 +183,7 @@ export const createColumns = (
       meta: getMeta("contributors", "episodes:episodesTable.heading.contributors"),
     }),
     columnHelper.accessor("presenters", {
-      header: ({ column }: { column: Column<EventsDataFragment> }) => (
+      header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
           title={getTitle("presenters", "episodes:episodesTable.heading.presenters")}
@@ -209,7 +209,7 @@ export const createColumns = (
       meta: getMeta("presenters", "episodes:episodesTable.heading.presenters"),
     }),
     columnHelper.accessor("location", {
-      header: ({ column }: { column: Column<EventsDataFragment> }) => (
+      header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
           title={getTitle("location", "episodes:episodesTable.heading.location")}
@@ -256,14 +256,14 @@ export const createColumns = (
       meta: getMeta("isPublic", "episodes:episodesTable.heading.access"),
     }),
     columnHelper.accessor("duration", {
-      header: ({ column }: { column: Column<EventsDataFragment> }) => (
+      header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
           title={getTitle("duration", "episodes:episodesTable.heading.duration")}
           className="flex justify-center"
         />
       ),
-      cell: ({ row }: { row: Row<EventsDataFragment> }) => {
+      cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => {
         const parsedDuration = parseDuration(row.getValue("duration") as string);
         return (
           <div className="flex justify-center space-x-2">
@@ -276,14 +276,14 @@ export const createColumns = (
       meta: getMeta("duration", "episodes:episodesTable.heading.duration"),
     }),
     columnHelper.accessor("startDate", {
-      header: ({ column }: { column: Column<EventsDataFragment> }) => (
+      header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
           title={getTitle("startDate", "episodes:episodesTable.heading.startDate")}
           className="flex justify-center ml-3"
         />
       ),
-      cell: ({ row }: { row: Row<EventsDataFragment> }) => {
+      cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => {
         const value = new Intl.DateTimeFormat("de-DE", {
           dateStyle: "medium",
           timeStyle: "short",
@@ -316,7 +316,7 @@ export const createColumns = (
           </Tooltip>
         </span>
       ),
-      cell: ({ row }: { row: Row<EventsDataFragment> }) => (
+      cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => (
         <ActionsCell event={row.original} refetch={refetch} maxVisibleActions={4} />
       ),
       meta: getMeta("actions", "episodes:episodesTable.heading.actions.title"),
@@ -324,15 +324,15 @@ export const createColumns = (
   ];
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const galleryColumns: ColumnDef<EventsDataFragment, any>[] = [
+  const galleryColumns: ColumnDef<MuiEventsDataFragment, any>[] = [
     columnHelper.accessor("title", {
-      header: ({ column }: { column: Column<EventsDataFragment> }) => (
+      header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
           title={getTitle("title", "episodes:episodesTable.heading.video")}
         />
       ),
-      cell: ({ row }: { row: Row<EventsDataFragment> }) => {
+      cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => {
         const thumbnail = row.original.muiEventInfo?.thumbnailUrl;
         const parsedDuration = parseDuration(row.original.duration);
         const duration = !parsedDuration || parsedDuration === "00:00:00" ? "∞" : parsedDuration;
@@ -429,13 +429,13 @@ export const createColumns = (
       meta: getMeta("title", "episodes:episodesTable.heading.video"),
     }),
     columnHelper.accessor("seriesName", {
-      header: ({ column }: { column: Column<EventsDataFragment> }) => (
+      header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
           title={getTitle("seriesName", "episodes:episodesTable.heading.series")}
         />
       ),
-      cell: ({ row }: { row: Row<EventsDataFragment> }) => {
+      cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => {
         return (
           <div className="flex space-x-2">
             <OverflowTooltip className="max-w-[200px] truncate">
@@ -447,14 +447,14 @@ export const createColumns = (
       meta: getMeta("seriesName", "episodes:episodesTable.heading.series"),
     }),
     columnHelper.accessor("startDate", {
-      header: ({ column }: { column: Column<EventsDataFragment> }) => (
+      header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
           title={getTitle("startDate", "episodes:episodesTable.heading.dateAndLocation")}
           className="grid justify-start space-x-2"
         />
       ),
-      cell: ({ row }: { row: Row<EventsDataFragment> }) => {
+      cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => {
         const value = new Intl.DateTimeFormat("de-DE", {
           dateStyle: "medium",
           timeStyle: "short",
@@ -469,7 +469,7 @@ export const createColumns = (
       meta: getMeta("startDate", "episodes:episodesTable.heading.dateAndLocation"),
     }),
     columnHelper.accessor("presenters", {
-      header: ({ column }: { column: Column<EventsDataFragment> }) => (
+      header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
           title={getTitle("presenters", "episodes:episodesTable.heading.presenters")}
@@ -496,7 +496,7 @@ export const createColumns = (
           {getTitle("actions", "episodes:episodesTable.heading.actions.title")}
         </span>
       ),
-      cell: ({ row }: { row: Row<EventsDataFragment> }) => (
+      cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => (
         <ActionsCell event={row.original} refetch={refetch} maxVisibleActions={3} />
       ),
       meta: getMeta("actions", "episodes:episodesTable.heading.actions.title"),

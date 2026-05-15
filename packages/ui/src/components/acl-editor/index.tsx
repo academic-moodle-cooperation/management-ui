@@ -3,15 +3,15 @@ import React, { useState, useEffect, useCallback } from "react";
 
 import { useI18n, loadNamespace } from "@oc-mui/i18n";
 import {
-  useGetAllManagedAclsQuery,
-  useUpdateEventAclMutation,
-  useUpdateSeriesAclMutation,
-  useGetManagedAclsWithEventIdQuery,
-  useGetManagedAclsWithSeriesIdQuery,
-  useSearchUserQuery,
+  useMuiGetAllManagedAclsQuery,
+  useMuiUpdateEventAclMutation,
+  useMuiUpdateSeriesAclMutation,
+  useMuiGetManagedAclsWithEventIdQuery,
+  useMuiGetManagedAclsWithSeriesIdQuery,
+  useMuiSearchUserQuery,
   useQueryClient,
 } from "@oc-mui/query";
-import type { SearchUserQuery } from "@oc-mui/query";
+import type { MuiSearchUserQuery } from "@oc-mui/query";
 import { logger } from "@oc-mui/utils";
 
 import { OverflowTooltip } from "../overflow-tooltip";
@@ -43,7 +43,7 @@ import {
 
 import type { AclData, ACLEntry, ACLEntryInput, SelectedElement } from "./types";
 
-type UserSearchResult = NonNullable<NonNullable<SearchUserQuery["searchUser"]>["nodes"]>[number];
+type UserSearchResult = NonNullable<NonNullable<MuiSearchUserQuery["searchUser"]>["nodes"]>[number];
 
 interface AclEditorProps {
   selectedElement?: SelectedElement | null | undefined;
@@ -74,8 +74,8 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   // Only UI state is local
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const updateEventAcl = useUpdateEventAclMutation();
-  const updateSeriesAcl = useUpdateSeriesAclMutation();
+  const updateEventAcl = useMuiUpdateEventAclMutation();
+  const updateSeriesAcl = useMuiUpdateSeriesAclMutation();
   const { t, i18n } = useI18n();
   const queryClient = useQueryClient();
 
@@ -86,7 +86,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
     loadTranslations();
   }, [i18n.language]);
 
-  const { data, isLoading, isError } = useSearchUserQuery({
+  const { data, isLoading, isError } = useMuiSearchUserQuery({
     query: searchQuery,
     limit: 10,
     offset: 0,
@@ -102,15 +102,15 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   const isEventEditable =
     !disabled && (!isEvent || selectedElement?.eventStatus?.split(".")?.pop() === "PROCESSED");
 
-  const { data: managedAclsWithEvent } = useGetManagedAclsWithEventIdQuery(
+  const { data: managedAclsWithEvent } = useMuiGetManagedAclsWithEventIdQuery(
     { id },
     { enabled: isEvent && !!id },
   );
-  const { data: managedAclsWithSeries } = useGetManagedAclsWithSeriesIdQuery(
+  const { data: managedAclsWithSeries } = useMuiGetManagedAclsWithSeriesIdQuery(
     { id },
     { enabled: isSeries && !!id },
   );
-  const { data: managedAclsWithoutUsers } = useGetAllManagedAclsQuery(undefined, {
+  const { data: managedAclsWithoutUsers } = useMuiGetAllManagedAclsQuery(undefined, {
     enabled: isUpload,
   });
 

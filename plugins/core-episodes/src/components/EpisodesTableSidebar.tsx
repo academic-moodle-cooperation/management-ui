@@ -2,8 +2,8 @@ import React, { useRef, useState } from "react";
 
 import { useTranslation } from "@oc-mui/i18n";
 import { usePluginManager } from "@oc-mui/plugin-system";
-import { useUpdateEventMutation } from "@oc-mui/query";
-import type { GetEventByIdInputFieldsQuery, EventsDataFragment } from "@oc-mui/query";
+import { useMuiUpdateEventMutation } from "@oc-mui/query";
+import type { MuiGetEventByIdInputFieldsQuery, MuiEventsDataFragment } from "@oc-mui/query";
 import {
   Sheet,
   SheetContent,
@@ -30,7 +30,7 @@ interface EpisodesTableSidebarProps {
   onEditClose: () => void;
   heading: string;
   description?: string | undefined;
-  episodesInputFields: GetEventByIdInputFieldsQuery | undefined;
+  episodesInputFields: MuiGetEventByIdInputFieldsQuery | undefined;
   isLoadingMetadata: boolean;
   episodesUpdateData: EpisodesUpdateData | undefined;
   updateField: string;
@@ -39,14 +39,14 @@ interface EpisodesTableSidebarProps {
   setUpdateField: (value: string) => void;
   textCopied: boolean;
   setTextCopied: () => void;
-  saveEpisodeUpdate: ReturnType<typeof useUpdateEventMutation>;
+  saveEpisodeUpdate: ReturnType<typeof useMuiUpdateEventMutation>;
   selectedEpisodeId: string;
   refetch: () => void;
   refetchMetadata: () => void;
   setIsEditing: (value: boolean) => void;
   sidebarInfo?: string | undefined;
   tableRef: RefObject<HTMLDivElement | null>;
-  currentEpisode?: EventsDataFragment | undefined;
+  currentEpisode?: MuiEventsDataFragment | undefined;
 }
 
 /**

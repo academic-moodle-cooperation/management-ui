@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState } from "react";
 
-import type { UserQuery } from "@oc-mui/query";
+import type { MuiUserQuery } from "@oc-mui/query";
 
 export interface AuthContextType {
   isAuthenticated: boolean;
-  setUser: (user: UserQuery | undefined) => void;
-  user: UserQuery | undefined;
+  setUser: (user: MuiUserQuery | undefined) => void;
+  user: MuiUserQuery | undefined;
 
   // login: () => void;
   // logout: () => void;
@@ -28,7 +28,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<UserQuery | undefined>(undefined);
+  const [user, setUser] = useState<MuiUserQuery | undefined>(undefined);
   // Derive authentication directly from user data to avoid one-render lag
   // (setState/useEffect timing can briefly report false after user becomes authenticated).
   const isAuthenticated = Boolean(user && user.currentUser.userRole !== "ROLE_USER_ANONYMOUS");

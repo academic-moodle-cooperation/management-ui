@@ -168,40 +168,6 @@ export const createGraphQLClient: (url: string) => GraphQLClient;
 // @public (undocumented)
 export const createQueryClient: () => QueryClient;
 
-// @public (undocumented)
-export const CreateSeriesDocument = "\n    mutation CreateSeries($acl: AccessControlListInput!, $metadata: CommonSeriesMetadataInput!) {\n  createSeries(acl: $acl, metadata: $metadata) {\n    ...SeriesData\n  }\n}\n    \n    fragment SeriesData on Series {\n  __typename\n  id\n  contributors\n  created\n  creator\n  description\n  title\n  events {\n    nodes {\n      id\n      title\n      eventStatus\n    }\n    totalCount\n  }\n  muiSeriesInfo {\n    isPublic\n    managedAclId\n  }\n  ...PluginSeriesFields\n}\n    \n    fragment PluginSeriesFields on Series {\n  __typename\n}\n    ";
-
-// @public (undocumented)
-export type CreateSeriesMutation = {
-    createSeries: {
-        __typename: 'Series';
-        id: string;
-        contributors?: Array<string | null> | null;
-        created?: string | null;
-        creator?: string | null;
-        description?: string | null;
-        title: string;
-        events: {
-            totalCount: any;
-            nodes: Array<{
-                id: string;
-                title: string;
-                eventStatus: string;
-            } | null>;
-        };
-        muiSeriesInfo?: {
-            isPublic?: boolean | null;
-            managedAclId?: any | null;
-        } | null;
-    };
-};
-
-// @public (undocumented)
-export type CreateSeriesMutationVariables = Exact<{
-    acl: AccessControlListInput;
-    metadata: CommonSeriesMetadataInput;
-}>;
-
 // @public
 export type CurrentUser = {
     email?: Maybe<Scalars['String']['output']>;
@@ -255,23 +221,6 @@ export interface DefinePluginConfigInput<T extends z.ZodTypeAny> {
     // (undocumented)
     schema: T;
 }
-
-// @public (undocumented)
-export const DeleteEventDocument = "\n    mutation DeleteEvent($eventId: String!) {\n  mui {\n    deleteEvent(id: $eventId) {\n      id\n    }\n  }\n}\n    ";
-
-// @public (undocumented)
-export type DeleteEventMutation = {
-    mui?: {
-        deleteEvent?: {
-            id?: string | null;
-        } | null;
-    } | null;
-};
-
-// @public (undocumented)
-export type DeleteEventMutationVariables = Exact<{
-    eventId: Scalars['String']['input'];
-}>;
 
 // @public
 export type DeleteEventPayload = {
@@ -382,7 +331,241 @@ export enum EventRemovalResult {
 }
 
 // @public (undocumented)
-export type EventsAclDataFragment = {
+export type Exact<T extends {
+    [key: string]: unknown;
+}> = {
+    [K in keyof T]: T[K];
+};
+
+export { FetchNextPageOptions }
+
+// @public
+export function getAppConfigSync(pluginManager?: PluginManager, baseConfig?: AppConfig): AppConfig;
+
+// @public
+export const getCachedAppConfig: () => Promise<AppConfig>;
+
+// @public (undocumented)
+export const getGraphQLClient: () => GraphQLClient;
+
+export { gql }
+
+// @public (undocumented)
+export type Incremental<T> = T | {
+    [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never;
+};
+
+export { InfiniteData }
+
+export { InfiniteQueryObserverResult }
+
+// @public (undocumented)
+export const initializeGraphQLClient: (url: string) => GraphQLClient;
+
+// @public (undocumented)
+export type InputMaybe<T> = Maybe<T>;
+
+// @public (undocumented)
+export type IntMetadataField = MetadataFieldInterface & {
+    collection?: Maybe<Scalars['JSON']['output']>;
+    collectionId?: Maybe<Scalars['String']['output']>;
+    id?: Maybe<Scalars['String']['output']>;
+    label?: Maybe<Scalars['String']['output']>;
+    listProvider?: Maybe<Scalars['String']['output']>;
+    order?: Maybe<Scalars['Int']['output']>;
+    readOnly?: Maybe<Scalars['Boolean']['output']>;
+    required?: Maybe<Scalars['Boolean']['output']>;
+    type?: Maybe<Type>;
+    value?: Maybe<Scalars['String']['output']>;
+};
+
+// @public (undocumented)
+export type JsonMetadataField = MetadataFieldInterface & {
+    collection?: Maybe<Scalars['JSON']['output']>;
+    collectionId?: Maybe<Scalars['String']['output']>;
+    id?: Maybe<Scalars['String']['output']>;
+    label?: Maybe<Scalars['String']['output']>;
+    listProvider?: Maybe<Scalars['String']['output']>;
+    order?: Maybe<Scalars['Int']['output']>;
+    readOnly?: Maybe<Scalars['Boolean']['output']>;
+    required?: Maybe<Scalars['Boolean']['output']>;
+    type?: Maybe<Type>;
+    value?: Maybe<Scalars['JSON']['output']>;
+};
+
+// @public (undocumented)
+export type ListMetadataField = MetadataFieldInterface & {
+    collection?: Maybe<Scalars['JSON']['output']>;
+    collectionId?: Maybe<Scalars['String']['output']>;
+    id?: Maybe<Scalars['String']['output']>;
+    label?: Maybe<Scalars['String']['output']>;
+    listProvider?: Maybe<Scalars['String']['output']>;
+    order?: Maybe<Scalars['Int']['output']>;
+    readOnly?: Maybe<Scalars['Boolean']['output']>;
+    required?: Maybe<Scalars['Boolean']['output']>;
+    type?: Maybe<Type>;
+    value?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+};
+
+// @public
+export type ListProvider = {
+    nodes?: Maybe<Array<Maybe<ListProviderEntry>>>;
+    translatable?: Maybe<Scalars['Boolean']['output']>;
+};
+
+// @public (undocumented)
+export type ListProviderEntry = {
+    key?: Maybe<Scalars['String']['output']>;
+    value?: Maybe<Scalars['String']['output']>;
+};
+
+// @public (undocumented)
+export type LongMetadataField = MetadataFieldInterface & {
+    collection?: Maybe<Scalars['JSON']['output']>;
+    collectionId?: Maybe<Scalars['String']['output']>;
+    id?: Maybe<Scalars['String']['output']>;
+    label?: Maybe<Scalars['String']['output']>;
+    listProvider?: Maybe<Scalars['String']['output']>;
+    order?: Maybe<Scalars['Int']['output']>;
+    readOnly?: Maybe<Scalars['Boolean']['output']>;
+    required?: Maybe<Scalars['Boolean']['output']>;
+    type?: Maybe<Type>;
+    value?: Maybe<Scalars['Long']['output']>;
+};
+
+// @public (undocumented)
+export type MakeEmpty<T extends {
+    [key: string]: unknown;
+}, K extends keyof T> = {
+    [_ in K]?: never;
+};
+
+// @public (undocumented)
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+    [SubKey in K]: Maybe<T[SubKey]>;
+};
+
+// @public (undocumented)
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+    [SubKey in K]?: Maybe<T[SubKey]>;
+};
+
+// @public
+export type ManagedAccessControlListCatalogue = {
+    nodes: Array<Maybe<ManagedAcl>>;
+    pageInfo: OffsetPageInfo;
+    totalCount: Scalars['Long']['output'];
+};
+
+// @public (undocumented)
+export type ManagedAcl = {
+    acl: AccessControlList;
+    id: Scalars['ID']['output'];
+    name: Scalars['String']['output'];
+    organizationId: Scalars['String']['output'];
+};
+
+// @public
+export type ManagedAclOrderByInput = {
+    name?: InputMaybe<OrderDirection>;
+};
+
+// @public (undocumented)
+export type Maybe<T> = T | null;
+
+// @public
+export type MetadataFieldInterface = {
+    collection?: Maybe<Scalars['JSON']['output']>;
+    collectionId?: Maybe<Scalars['String']['output']>;
+    id?: Maybe<Scalars['String']['output']>;
+    label?: Maybe<Scalars['String']['output']>;
+    listProvider?: Maybe<Scalars['String']['output']>;
+    order?: Maybe<Scalars['Int']['output']>;
+    readOnly?: Maybe<Scalars['Boolean']['output']>;
+    required?: Maybe<Scalars['Boolean']['output']>;
+    type?: Maybe<Type>;
+};
+
+// @public (undocumented)
+export type MetadataFieldType = StringMetadataField | IntMetadataField | DateTimeMetadataField | DurationMetadataField | JsonMetadataField | ListMetadataField | LongMetadataField;
+
+// @public (undocumented)
+export const MuiCreateSeriesDocument = "\n    mutation MuiCreateSeries($acl: AccessControlListInput!, $metadata: CommonSeriesMetadataInput!) {\n  createSeries(acl: $acl, metadata: $metadata) {\n    ...MuiSeriesData\n  }\n}\n    \n    fragment MuiSeriesData on Series {\n  __typename\n  id\n  contributors\n  created\n  creator\n  description\n  title\n  events {\n    nodes {\n      id\n      title\n      eventStatus\n    }\n    totalCount\n  }\n  muiSeriesInfo {\n    isPublic\n    managedAclId\n  }\n  ...MuiSeriesFields\n}\n    \n    fragment MuiSeriesFields on Series {\n  __typename\n}\n    ";
+
+// @public (undocumented)
+export type MuiCreateSeriesMutation = {
+    createSeries: {
+        __typename: 'Series';
+        id: string;
+        contributors?: Array<string | null> | null;
+        created?: string | null;
+        creator?: string | null;
+        description?: string | null;
+        title: string;
+        events: {
+            totalCount: any;
+            nodes: Array<{
+                id: string;
+                title: string;
+                eventStatus: string;
+            } | null>;
+        };
+        muiSeriesInfo?: {
+            isPublic?: boolean | null;
+            managedAclId?: any | null;
+        } | null;
+    };
+};
+
+// @public (undocumented)
+export type MuiCreateSeriesMutationVariables = Exact<{
+    acl: AccessControlListInput;
+    metadata: CommonSeriesMetadataInput;
+}>;
+
+// @public (undocumented)
+export type MuiCurrentUserFieldsFragment = {
+    __typename: 'CurrentUser';
+};
+
+// @public (undocumented)
+export const MuiCurrentUserFieldsFragmentDoc = "\n    fragment MuiCurrentUserFields on CurrentUser {\n  __typename\n}\n    ";
+
+// @public (undocumented)
+export const MuiDeleteEventDocument = "\n    mutation MuiDeleteEvent($eventId: String!) {\n  mui {\n    deleteEvent(id: $eventId) {\n      id\n    }\n  }\n}\n    ";
+
+// @public (undocumented)
+export type MuiDeleteEventMutation = {
+    mui?: {
+        deleteEvent?: {
+            id?: string | null;
+        } | null;
+    } | null;
+};
+
+// @public (undocumented)
+export type MuiDeleteEventMutationVariables = Exact<{
+    eventId: Scalars['String']['input'];
+}>;
+
+// @public (undocumented)
+export type MuiEventFieldsFragment = {
+    __typename: 'Event';
+};
+
+// @public (undocumented)
+export const MuiEventFieldsFragmentDoc = "\n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
+
+// @public (undocumented)
+export type MuiEventInfo = {
+    isPublic?: Maybe<Scalars['Boolean']['output']>;
+    managedAclId?: Maybe<Scalars['Long']['output']>;
+    publishUrl?: Maybe<Scalars['String']['output']>;
+    thumbnailUrl?: Maybe<Scalars['String']['output']>;
+};
+
+// @public (undocumented)
+export type MuiEventsAclDataFragment = {
     eventById?: {
         acl: {
             users?: Array<{
@@ -395,10 +578,10 @@ export type EventsAclDataFragment = {
 };
 
 // @public (undocumented)
-export const EventsAclDataFragmentDoc = "\n    fragment EventsAclData on Query {\n  eventById(id: $id) {\n    acl {\n      users {\n        role\n        label\n        action\n      }\n    }\n  }\n}\n    ";
+export const MuiEventsAclDataFragmentDoc = "\n    fragment MuiEventsAclData on Query {\n  eventById(id: $id) {\n    acl {\n      users {\n        role\n        label\n        action\n      }\n    }\n  }\n}\n    ";
 
 // @public (undocumented)
-export type EventsDataFragment = {
+export type MuiEventsDataFragment = {
     __typename: 'Event';
     contributors?: Array<string | null> | null;
     seriesName?: string | null;
@@ -438,13 +621,13 @@ export type EventsDataFragment = {
 };
 
 // @public (undocumented)
-export const EventsDataFragmentDoc = "\n    fragment EventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: \"engage-player\") {\n    uri\n    tracks(tags: \"engage-download\") {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...PluginEventFields\n}\n    \n    fragment PluginEventFields on Event {\n  __typename\n}\n    ";
+export const MuiEventsDataFragmentDoc = "\n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: \"engage-player\") {\n    uri\n    tracks(tags: \"engage-download\") {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    \n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
 
 // @public (undocumented)
-export const EventsFromSeriesDocument = "\n    query EventsFromSeries($seriesId: String!, $limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String) {\n  seriesById(id: $seriesId) {\n    id\n    title\n    events(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...EventsData\n      }\n    }\n  }\n}\n    \n    fragment EventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: \"engage-player\") {\n    uri\n    tracks(tags: \"engage-download\") {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...PluginEventFields\n}\n    \n    fragment PluginEventFields on Event {\n  __typename\n}\n    ";
+export const MuiEventsFromSeriesDocument = "\n    query MuiEventsFromSeries($seriesId: String!, $limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String) {\n  seriesById(id: $seriesId) {\n    id\n    title\n    events(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...MuiEventsData\n      }\n    }\n  }\n}\n    \n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: \"engage-player\") {\n    uri\n    tracks(tags: \"engage-download\") {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    \n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
 
 // @public (undocumented)
-export type EventsFromSeriesQuery = {
+export type MuiEventsFromSeriesQuery = {
     seriesById?: {
         id: string;
         title: string;
@@ -493,7 +676,7 @@ export type EventsFromSeriesQuery = {
 };
 
 // @public (undocumented)
-export type EventsFromSeriesQueryVariables = Exact<{
+export type MuiEventsFromSeriesQueryVariables = Exact<{
     seriesId: Scalars['String']['input'];
     limit?: InputMaybe<Scalars['Int']['input']>;
     offset?: InputMaybe<Scalars['Int']['input']>;
@@ -502,19 +685,10 @@ export type EventsFromSeriesQueryVariables = Exact<{
 }>;
 
 // @public (undocumented)
-export type Exact<T extends {
-    [key: string]: unknown;
-}> = {
-    [K in keyof T]: T[K];
-};
-
-export { FetchNextPageOptions }
+export const MuiGetAllManagedAclsDocument = "\n    query MuiGetAllManagedAcls {\n  managedAcls {\n    nodes {\n      name\n      id\n      acl {\n        entries {\n          role\n          action\n        }\n      }\n    }\n  }\n}\n    ";
 
 // @public (undocumented)
-export const GetAllManagedAclsDocument = "\n    query GetAllManagedAcls {\n  managedAcls {\n    nodes {\n      name\n      id\n      acl {\n        entries {\n          role\n          action\n        }\n      }\n    }\n  }\n}\n    ";
-
-// @public (undocumented)
-export type GetAllManagedAclsQuery = {
+export type MuiGetAllManagedAclsQuery = {
     managedAcls: {
         nodes: Array<{
             name: string;
@@ -536,18 +710,12 @@ export type GetAllManagedAclsQuery = {
 };
 
 // @public (undocumented)
-export type GetAllManagedAclsQueryVariables = Exact<{
+export type MuiGetAllManagedAclsQueryVariables = Exact<{
     [key: string]: never;
 }>;
 
-// @public
-export function getAppConfigSync(pluginManager?: PluginManager, baseConfig?: AppConfig): AppConfig;
-
-// @public
-export const getCachedAppConfig: () => Promise<AppConfig>;
-
 // @public (undocumented)
-export type GetDateTimeInputFieldsMetaDataFragment = {
+export type MuiGetDateTimeInputFieldsMetaDataFragment = {
     collectionId?: string | null;
     collection?: any | null;
     id?: string | null;
@@ -561,10 +729,10 @@ export type GetDateTimeInputFieldsMetaDataFragment = {
 };
 
 // @public (undocumented)
-export const GetDateTimeInputFieldsMetaDataFragmentDoc = "\n    fragment GetDateTimeInputFieldsMetaData on DateTimeMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
+export const MuiGetDateTimeInputFieldsMetaDataFragmentDoc = "\n    fragment MuiGetDateTimeInputFieldsMetaData on DateTimeMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
 
 // @public (undocumented)
-export type GetDurationInputFieldsMetaDataFragment = {
+export type MuiGetDurationInputFieldsMetaDataFragment = {
     collectionId?: string | null;
     collection?: any | null;
     id?: string | null;
@@ -578,16 +746,16 @@ export type GetDurationInputFieldsMetaDataFragment = {
 };
 
 // @public (undocumented)
-export const GetDurationInputFieldsMetaDataFragmentDoc = "\n    fragment GetDurationInputFieldsMetaData on DurationMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
+export const MuiGetDurationInputFieldsMetaDataFragmentDoc = "\n    fragment MuiGetDurationInputFieldsMetaData on DurationMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
 
 // @public (undocumented)
-export const GetEventByIdDocument = "\n    query GetEventById($eventId: String!) {\n  eventById(id: $eventId) {\n    id\n    title\n  }\n}\n    ";
+export const MuiGetEventByIdDocument = "\n    query MuiGetEventById($eventId: String!) {\n  eventById(id: $eventId) {\n    id\n    title\n  }\n}\n    ";
 
 // @public (undocumented)
-export const GetEventByIdInputFieldsDocument = "\n    query GetEventByIdInputFields($eventId: String!) {\n  eventById(id: $eventId) {\n    commonMetadataV2 {\n      contributor {\n        ...GetListInputFieldsMetaData\n      }\n      created {\n        ...GetDateTimeInputFieldsMetaData\n      }\n      creator {\n        ...GetListInputFieldsMetaData\n      }\n      description {\n        ...GetStringInputFieldsMetaData\n      }\n      duration {\n        ...GetDurationInputFieldsMetaData\n      }\n      identifier {\n        ...GetStringInputFieldsMetaData\n      }\n      isPartOf {\n        ...GetStringInputFieldsMetaData\n      }\n      language {\n        ...GetStringInputFieldsMetaData\n      }\n      license {\n        ...GetStringInputFieldsMetaData\n      }\n      location {\n        ...GetStringInputFieldsMetaData\n      }\n      publisher {\n        ...GetStringInputFieldsMetaData\n      }\n      rightsHolder {\n        ...GetStringInputFieldsMetaData\n      }\n      source {\n        ...GetStringInputFieldsMetaData\n      }\n      startDate {\n        ...GetDateTimeInputFieldsMetaData\n      }\n      subject {\n        ...GetStringInputFieldsMetaData\n      }\n      title {\n        ...GetStringInputFieldsMetaData\n      }\n    }\n  }\n}\n    \n    fragment GetListInputFieldsMetaData on ListMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    \n\n    fragment GetDateTimeInputFieldsMetaData on DateTimeMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    \n\n    fragment GetStringInputFieldsMetaData on StringMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    \n\n    fragment GetDurationInputFieldsMetaData on DurationMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
+export const MuiGetEventByIdInputFieldsDocument = "\n    query MuiGetEventByIdInputFields($eventId: String!) {\n  eventById(id: $eventId) {\n    commonMetadataV2 {\n      contributor {\n        ...MuiGetListInputFieldsMetaData\n      }\n      created {\n        ...MuiGetDateTimeInputFieldsMetaData\n      }\n      creator {\n        ...MuiGetListInputFieldsMetaData\n      }\n      description {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      duration {\n        ...MuiGetDurationInputFieldsMetaData\n      }\n      identifier {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      isPartOf {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      language {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      license {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      location {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      publisher {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      rightsHolder {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      source {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      startDate {\n        ...MuiGetDateTimeInputFieldsMetaData\n      }\n      subject {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      title {\n        ...MuiGetStringInputFieldsMetaData\n      }\n    }\n  }\n}\n    \n    fragment MuiGetListInputFieldsMetaData on ListMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    \n\n    fragment MuiGetDateTimeInputFieldsMetaData on DateTimeMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    \n\n    fragment MuiGetStringInputFieldsMetaData on StringMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    \n\n    fragment MuiGetDurationInputFieldsMetaData on DurationMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
 
 // @public (undocumented)
-export type GetEventByIdInputFieldsQuery = {
+export type MuiGetEventByIdInputFieldsQuery = {
     eventById?: {
         commonMetadataV2: {
             contributor?: {
@@ -787,12 +955,12 @@ export type GetEventByIdInputFieldsQuery = {
 };
 
 // @public (undocumented)
-export type GetEventByIdInputFieldsQueryVariables = Exact<{
+export type MuiGetEventByIdInputFieldsQueryVariables = Exact<{
     eventId: Scalars['String']['input'];
 }>;
 
 // @public (undocumented)
-export type GetEventByIdQuery = {
+export type MuiGetEventByIdQuery = {
     eventById?: {
         id: string;
         title: string;
@@ -800,15 +968,12 @@ export type GetEventByIdQuery = {
 };
 
 // @public (undocumented)
-export type GetEventByIdQueryVariables = Exact<{
+export type MuiGetEventByIdQueryVariables = Exact<{
     eventId: Scalars['String']['input'];
 }>;
 
 // @public (undocumented)
-export const getGraphQLClient: () => GraphQLClient;
-
-// @public (undocumented)
-export type GetInputFieldsMetaDataFragment = {
+export type MuiGetInputFieldsMetaDataFragment = {
     collectionId?: string | null;
     collection?: any | null;
     id?: string | null;
@@ -822,10 +987,10 @@ export type GetInputFieldsMetaDataFragment = {
 };
 
 // @public (undocumented)
-export const GetInputFieldsMetaDataFragmentDoc = "\n    fragment GetInputFieldsMetaData on JsonMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
+export const MuiGetInputFieldsMetaDataFragmentDoc = "\n    fragment MuiGetInputFieldsMetaData on JsonMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
 
 // @public (undocumented)
-export type GetListInputFieldsMetaDataFragment = {
+export type MuiGetListInputFieldsMetaDataFragment = {
     collectionId?: string | null;
     collection?: any | null;
     id?: string | null;
@@ -839,13 +1004,13 @@ export type GetListInputFieldsMetaDataFragment = {
 };
 
 // @public (undocumented)
-export const GetListInputFieldsMetaDataFragmentDoc = "\n    fragment GetListInputFieldsMetaData on ListMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
+export const MuiGetListInputFieldsMetaDataFragmentDoc = "\n    fragment MuiGetListInputFieldsMetaData on ListMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
 
 // @public (undocumented)
-export const GetManagedAclsWithEventIdDocument = "\n    query GetManagedAclsWithEventId($id: String!) {\n  managedAcls {\n    nodes {\n      name\n      id\n      acl {\n        entries {\n          role\n          action\n        }\n      }\n    }\n  }\n  ...EventsAclData\n}\n    \n    fragment EventsAclData on Query {\n  eventById(id: $id) {\n    acl {\n      users {\n        role\n        label\n        action\n      }\n    }\n  }\n}\n    ";
+export const MuiGetManagedAclsWithEventIdDocument = "\n    query MuiGetManagedAclsWithEventId($id: String!) {\n  managedAcls {\n    nodes {\n      name\n      id\n      acl {\n        entries {\n          role\n          action\n        }\n      }\n    }\n  }\n  ...MuiEventsAclData\n}\n    \n    fragment MuiEventsAclData on Query {\n  eventById(id: $id) {\n    acl {\n      users {\n        role\n        label\n        action\n      }\n    }\n  }\n}\n    ";
 
 // @public (undocumented)
-export type GetManagedAclsWithEventIdQuery = {
+export type MuiGetManagedAclsWithEventIdQuery = {
     managedAcls: {
         nodes: Array<{
             name: string;
@@ -876,15 +1041,15 @@ export type GetManagedAclsWithEventIdQuery = {
 };
 
 // @public (undocumented)
-export type GetManagedAclsWithEventIdQueryVariables = Exact<{
+export type MuiGetManagedAclsWithEventIdQueryVariables = Exact<{
     id: Scalars['String']['input'];
 }>;
 
 // @public (undocumented)
-export const GetManagedAclsWithSeriesIdDocument = "\n    query GetManagedAclsWithSeriesId($id: String!) {\n  managedAcls {\n    nodes {\n      name\n      id\n      acl {\n        entries {\n          role\n          action\n        }\n      }\n    }\n  }\n  ...SeriesAclData\n}\n    \n    fragment SeriesAclData on Query {\n  seriesById(id: $id) {\n    acl {\n      users {\n        role\n        label\n        action\n      }\n    }\n  }\n}\n    ";
+export const MuiGetManagedAclsWithSeriesIdDocument = "\n    query MuiGetManagedAclsWithSeriesId($id: String!) {\n  managedAcls {\n    nodes {\n      name\n      id\n      acl {\n        entries {\n          role\n          action\n        }\n      }\n    }\n  }\n  ...MuiSeriesAclData\n}\n    \n    fragment MuiSeriesAclData on Query {\n  seriesById(id: $id) {\n    acl {\n      users {\n        role\n        label\n        action\n      }\n    }\n  }\n}\n    ";
 
 // @public (undocumented)
-export type GetManagedAclsWithSeriesIdQuery = {
+export type MuiGetManagedAclsWithSeriesIdQuery = {
     managedAcls: {
         nodes: Array<{
             name: string;
@@ -915,15 +1080,15 @@ export type GetManagedAclsWithSeriesIdQuery = {
 };
 
 // @public (undocumented)
-export type GetManagedAclsWithSeriesIdQueryVariables = Exact<{
+export type MuiGetManagedAclsWithSeriesIdQueryVariables = Exact<{
     id: Scalars['String']['input'];
 }>;
 
 // @public (undocumented)
-export const GetMyEventsDocument = "\n    query GetMyEvents($limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String) {\n  currentUser {\n    myEvents(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...EventsData\n      }\n    }\n  }\n}\n    \n    fragment EventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: \"engage-player\") {\n    uri\n    tracks(tags: \"engage-download\") {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...PluginEventFields\n}\n    \n    fragment PluginEventFields on Event {\n  __typename\n}\n    ";
+export const MuiGetMyEventsDocument = "\n    query MuiGetMyEvents($limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String) {\n  currentUser {\n    myEvents(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...MuiEventsData\n      }\n    }\n  }\n}\n    \n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: \"engage-player\") {\n    uri\n    tracks(tags: \"engage-download\") {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    \n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
 
 // @public (undocumented)
-export type GetMyEventsQuery = {
+export type MuiGetMyEventsQuery = {
     currentUser: {
         myEvents: {
             totalCount: any;
@@ -970,7 +1135,7 @@ export type GetMyEventsQuery = {
 };
 
 // @public (undocumented)
-export type GetMyEventsQueryVariables = Exact<{
+export type MuiGetMyEventsQueryVariables = Exact<{
     limit?: InputMaybe<Scalars['Int']['input']>;
     offset?: InputMaybe<Scalars['Int']['input']>;
     orderBy?: InputMaybe<EventOrderByInput>;
@@ -978,13 +1143,13 @@ export type GetMyEventsQueryVariables = Exact<{
 }>;
 
 // @public (undocumented)
-export const GetMySeriesDocument = "\n    query GetMySeries($limit: Int, $offset: Int, $orderBy: SeriesOrderByInput, $query: String) {\n  currentUser {\n    mySeries(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...SeriesData\n      }\n    }\n  }\n}\n    \n    fragment SeriesData on Series {\n  __typename\n  id\n  contributors\n  created\n  creator\n  description\n  title\n  events {\n    nodes {\n      id\n      title\n      eventStatus\n    }\n    totalCount\n  }\n  muiSeriesInfo {\n    isPublic\n    managedAclId\n  }\n  ...PluginSeriesFields\n}\n    \n    fragment PluginSeriesFields on Series {\n  __typename\n}\n    ";
+export const MuiGetMySeriesDocument = "\n    query MuiGetMySeries($limit: Int, $offset: Int, $orderBy: SeriesOrderByInput, $query: String) {\n  currentUser {\n    mySeries(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...MuiSeriesData\n      }\n    }\n  }\n}\n    \n    fragment MuiSeriesData on Series {\n  __typename\n  id\n  contributors\n  created\n  creator\n  description\n  title\n  events {\n    nodes {\n      id\n      title\n      eventStatus\n    }\n    totalCount\n  }\n  muiSeriesInfo {\n    isPublic\n    managedAclId\n  }\n  ...MuiSeriesFields\n}\n    \n    fragment MuiSeriesFields on Series {\n  __typename\n}\n    ";
 
 // @public (undocumented)
-export const GetMySeriesNameAndIdDocument = "\n    query GetMySeriesNameAndId($limit: Int, $offset: Int, $orderBy: SeriesOrderByInput, $query: String) {\n  currentUser {\n    mySeries(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      nodes {\n        id\n        title\n      }\n    }\n  }\n}\n    ";
+export const MuiGetMySeriesNameAndIdDocument = "\n    query MuiGetMySeriesNameAndId($limit: Int, $offset: Int, $orderBy: SeriesOrderByInput, $query: String) {\n  currentUser {\n    mySeries(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      nodes {\n        id\n        title\n      }\n    }\n  }\n}\n    ";
 
 // @public (undocumented)
-export type GetMySeriesNameAndIdQuery = {
+export type MuiGetMySeriesNameAndIdQuery = {
     currentUser: {
         mySeries: {
             nodes: Array<{
@@ -996,7 +1161,7 @@ export type GetMySeriesNameAndIdQuery = {
 };
 
 // @public (undocumented)
-export type GetMySeriesNameAndIdQueryVariables = Exact<{
+export type MuiGetMySeriesNameAndIdQueryVariables = Exact<{
     limit?: InputMaybe<Scalars['Int']['input']>;
     offset?: InputMaybe<Scalars['Int']['input']>;
     orderBy?: InputMaybe<SeriesOrderByInput>;
@@ -1004,7 +1169,7 @@ export type GetMySeriesNameAndIdQueryVariables = Exact<{
 }>;
 
 // @public (undocumented)
-export type GetMySeriesQuery = {
+export type MuiGetMySeriesQuery = {
     currentUser: {
         mySeries: {
             totalCount: any;
@@ -1034,7 +1199,7 @@ export type GetMySeriesQuery = {
 };
 
 // @public (undocumented)
-export type GetMySeriesQueryVariables = Exact<{
+export type MuiGetMySeriesQueryVariables = Exact<{
     limit?: InputMaybe<Scalars['Int']['input']>;
     offset?: InputMaybe<Scalars['Int']['input']>;
     orderBy?: InputMaybe<SeriesOrderByInput>;
@@ -1042,10 +1207,10 @@ export type GetMySeriesQueryVariables = Exact<{
 }>;
 
 // @public (undocumented)
-export const GetSeriesByIdInputFieldsDocument = "\n    query GetSeriesByIdInputFields($seriesId: String!) {\n  seriesById(id: $seriesId) {\n    commonMetadataV2 {\n      contributor {\n        ...GetListInputFieldsMetaData\n      }\n      title {\n        ...GetStringInputFieldsMetaData\n      }\n      subject {\n        ...GetStringInputFieldsMetaData\n      }\n      rightsHolder {\n        ...GetStringInputFieldsMetaData\n      }\n      publisher {\n        ...GetListInputFieldsMetaData\n      }\n      license {\n        ...GetStringInputFieldsMetaData\n      }\n      language {\n        ...GetStringInputFieldsMetaData\n      }\n      identifier {\n        ...GetStringInputFieldsMetaData\n      }\n      description {\n        ...GetStringInputFieldsMetaData\n      }\n      creator {\n        ...GetListInputFieldsMetaData\n      }\n    }\n  }\n}\n    \n    fragment GetListInputFieldsMetaData on ListMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    \n\n    fragment GetStringInputFieldsMetaData on StringMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
+export const MuiGetSeriesByIdInputFieldsDocument = "\n    query MuiGetSeriesByIdInputFields($seriesId: String!) {\n  seriesById(id: $seriesId) {\n    commonMetadataV2 {\n      contributor {\n        ...MuiGetListInputFieldsMetaData\n      }\n      title {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      subject {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      rightsHolder {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      publisher {\n        ...MuiGetListInputFieldsMetaData\n      }\n      license {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      language {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      identifier {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      description {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      creator {\n        ...MuiGetListInputFieldsMetaData\n      }\n    }\n  }\n}\n    \n    fragment MuiGetListInputFieldsMetaData on ListMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    \n\n    fragment MuiGetStringInputFieldsMetaData on StringMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
 
 // @public (undocumented)
-export type GetSeriesByIdInputFieldsQuery = {
+export type MuiGetSeriesByIdInputFieldsQuery = {
     seriesById?: {
         commonMetadataV2: {
             contributor?: {
@@ -1173,15 +1338,15 @@ export type GetSeriesByIdInputFieldsQuery = {
 };
 
 // @public (undocumented)
-export type GetSeriesByIdInputFieldsQueryVariables = Exact<{
+export type MuiGetSeriesByIdInputFieldsQueryVariables = Exact<{
     seriesId: Scalars['String']['input'];
 }>;
 
 // @public (undocumented)
-export const GetSeriesInfoDocument = "\n    query GetSeriesInfo($seriesId: String!) {\n  seriesById(id: $seriesId) {\n    contributors\n    created\n    creator\n    description\n    events {\n      nodes {\n        id\n      }\n      totalCount\n    }\n    id\n    license\n    organizers\n    publishers\n    rightsHolder\n    title\n  }\n}\n    ";
+export const MuiGetSeriesInfoDocument = "\n    query MuiGetSeriesInfo($seriesId: String!) {\n  seriesById(id: $seriesId) {\n    contributors\n    created\n    creator\n    description\n    events {\n      nodes {\n        id\n      }\n      totalCount\n    }\n    id\n    license\n    organizers\n    publishers\n    rightsHolder\n    title\n  }\n}\n    ";
 
 // @public (undocumented)
-export type GetSeriesInfoQuery = {
+export type MuiGetSeriesInfoQuery = {
     seriesById?: {
         contributors?: Array<string | null> | null;
         created?: string | null;
@@ -1203,27 +1368,27 @@ export type GetSeriesInfoQuery = {
 };
 
 // @public (undocumented)
-export type GetSeriesInfoQueryVariables = Exact<{
+export type MuiGetSeriesInfoQueryVariables = Exact<{
     seriesId: Scalars['String']['input'];
 }>;
 
 // @public (undocumented)
-export const GetSeriesNameByIdDocument = "\n    query GetSeriesNameById($seriesId: String!) {\n  seriesById(id: $seriesId) {\n    title\n  }\n}\n    ";
+export const MuiGetSeriesNameByIdDocument = "\n    query MuiGetSeriesNameById($seriesId: String!) {\n  seriesById(id: $seriesId) {\n    title\n  }\n}\n    ";
 
 // @public (undocumented)
-export type GetSeriesNameByIdQuery = {
+export type MuiGetSeriesNameByIdQuery = {
     seriesById?: {
         title: string;
     } | null;
 };
 
 // @public (undocumented)
-export type GetSeriesNameByIdQueryVariables = Exact<{
+export type MuiGetSeriesNameByIdQueryVariables = Exact<{
     seriesId: Scalars['String']['input'];
 }>;
 
 // @public (undocumented)
-export type GetStringInputFieldsMetaDataFragment = {
+export type MuiGetStringInputFieldsMetaDataFragment = {
     collectionId?: string | null;
     collection?: any | null;
     id?: string | null;
@@ -1237,156 +1402,7 @@ export type GetStringInputFieldsMetaDataFragment = {
 };
 
 // @public (undocumented)
-export const GetStringInputFieldsMetaDataFragmentDoc = "\n    fragment GetStringInputFieldsMetaData on StringMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
-
-export { gql }
-
-// @public (undocumented)
-export type Incremental<T> = T | {
-    [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never;
-};
-
-export { InfiniteData }
-
-export { InfiniteQueryObserverResult }
-
-// @public (undocumented)
-export const initializeGraphQLClient: (url: string) => GraphQLClient;
-
-// @public (undocumented)
-export type InputMaybe<T> = Maybe<T>;
-
-// @public (undocumented)
-export type IntMetadataField = MetadataFieldInterface & {
-    collection?: Maybe<Scalars['JSON']['output']>;
-    collectionId?: Maybe<Scalars['String']['output']>;
-    id?: Maybe<Scalars['String']['output']>;
-    label?: Maybe<Scalars['String']['output']>;
-    listProvider?: Maybe<Scalars['String']['output']>;
-    order?: Maybe<Scalars['Int']['output']>;
-    readOnly?: Maybe<Scalars['Boolean']['output']>;
-    required?: Maybe<Scalars['Boolean']['output']>;
-    type?: Maybe<Type>;
-    value?: Maybe<Scalars['String']['output']>;
-};
-
-// @public (undocumented)
-export type JsonMetadataField = MetadataFieldInterface & {
-    collection?: Maybe<Scalars['JSON']['output']>;
-    collectionId?: Maybe<Scalars['String']['output']>;
-    id?: Maybe<Scalars['String']['output']>;
-    label?: Maybe<Scalars['String']['output']>;
-    listProvider?: Maybe<Scalars['String']['output']>;
-    order?: Maybe<Scalars['Int']['output']>;
-    readOnly?: Maybe<Scalars['Boolean']['output']>;
-    required?: Maybe<Scalars['Boolean']['output']>;
-    type?: Maybe<Type>;
-    value?: Maybe<Scalars['JSON']['output']>;
-};
-
-// @public (undocumented)
-export type ListMetadataField = MetadataFieldInterface & {
-    collection?: Maybe<Scalars['JSON']['output']>;
-    collectionId?: Maybe<Scalars['String']['output']>;
-    id?: Maybe<Scalars['String']['output']>;
-    label?: Maybe<Scalars['String']['output']>;
-    listProvider?: Maybe<Scalars['String']['output']>;
-    order?: Maybe<Scalars['Int']['output']>;
-    readOnly?: Maybe<Scalars['Boolean']['output']>;
-    required?: Maybe<Scalars['Boolean']['output']>;
-    type?: Maybe<Type>;
-    value?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-};
-
-// @public
-export type ListProvider = {
-    nodes?: Maybe<Array<Maybe<ListProviderEntry>>>;
-    translatable?: Maybe<Scalars['Boolean']['output']>;
-};
-
-// @public (undocumented)
-export type ListProviderEntry = {
-    key?: Maybe<Scalars['String']['output']>;
-    value?: Maybe<Scalars['String']['output']>;
-};
-
-// @public (undocumented)
-export type LongMetadataField = MetadataFieldInterface & {
-    collection?: Maybe<Scalars['JSON']['output']>;
-    collectionId?: Maybe<Scalars['String']['output']>;
-    id?: Maybe<Scalars['String']['output']>;
-    label?: Maybe<Scalars['String']['output']>;
-    listProvider?: Maybe<Scalars['String']['output']>;
-    order?: Maybe<Scalars['Int']['output']>;
-    readOnly?: Maybe<Scalars['Boolean']['output']>;
-    required?: Maybe<Scalars['Boolean']['output']>;
-    type?: Maybe<Type>;
-    value?: Maybe<Scalars['Long']['output']>;
-};
-
-// @public (undocumented)
-export type MakeEmpty<T extends {
-    [key: string]: unknown;
-}, K extends keyof T> = {
-    [_ in K]?: never;
-};
-
-// @public (undocumented)
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
-    [SubKey in K]: Maybe<T[SubKey]>;
-};
-
-// @public (undocumented)
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
-    [SubKey in K]?: Maybe<T[SubKey]>;
-};
-
-// @public
-export type ManagedAccessControlListCatalogue = {
-    nodes: Array<Maybe<ManagedAcl>>;
-    pageInfo: OffsetPageInfo;
-    totalCount: Scalars['Long']['output'];
-};
-
-// @public (undocumented)
-export type ManagedAcl = {
-    acl: AccessControlList;
-    id: Scalars['ID']['output'];
-    name: Scalars['String']['output'];
-    organizationId: Scalars['String']['output'];
-};
-
-// @public
-export type ManagedAclOrderByInput = {
-    name?: InputMaybe<OrderDirection>;
-};
-
-// @public (undocumented)
-export type Maybe<T> = T | null;
-
-// @public
-export type MetadataFieldInterface = {
-    collection?: Maybe<Scalars['JSON']['output']>;
-    collectionId?: Maybe<Scalars['String']['output']>;
-    id?: Maybe<Scalars['String']['output']>;
-    label?: Maybe<Scalars['String']['output']>;
-    listProvider?: Maybe<Scalars['String']['output']>;
-    order?: Maybe<Scalars['Int']['output']>;
-    readOnly?: Maybe<Scalars['Boolean']['output']>;
-    required?: Maybe<Scalars['Boolean']['output']>;
-    type?: Maybe<Type>;
-};
-
-// @public (undocumented)
-export type MetadataFieldType = StringMetadataField | IntMetadataField | DateTimeMetadataField | DurationMetadataField | JsonMetadataField | ListMetadataField | LongMetadataField;
-
-// @public (undocumented)
-export type MuiEventInfo = {
-    isPublic?: Maybe<Scalars['Boolean']['output']>;
-    managedAclId?: Maybe<Scalars['Long']['output']>;
-    publishUrl?: Maybe<Scalars['String']['output']>;
-    thumbnailUrl?: Maybe<Scalars['String']['output']>;
-};
+export const MuiGetStringInputFieldsMetaDataFragmentDoc = "\n    fragment MuiGetStringInputFieldsMetaData on StringMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
 
 // @public (undocumented)
 export type MuiMutation = {
@@ -1424,10 +1440,243 @@ export type MuiMutationUpdateSeriesArgs = {
 };
 
 // @public (undocumented)
+export const MuiSearchUserDocument = "\n    query MuiSearchUser($limit: Int, $offset: Int, $query: String!) {\n  searchUser(limit: $limit, offset: $offset, query: $query) {\n    totalCount\n    nodes {\n      email\n      name\n      provider\n      roles\n      userRole\n      username\n      ...MuiUserFields\n    }\n    pageInfo {\n      limit\n      offset\n      pageCount\n    }\n  }\n}\n    \n    fragment MuiUserFields on User {\n  __typename\n}\n    ";
+
+// @public (undocumented)
+export type MuiSearchUserQuery = {
+    searchUser: {
+        totalCount: any;
+        nodes: Array<{
+            __typename: 'MuiUser';
+            email?: string | null;
+            name?: string | null;
+            provider?: string | null;
+            roles: Array<string | null>;
+            userRole: string;
+            username?: string | null;
+        } | null>;
+        pageInfo: {
+            limit: any;
+            offset: any;
+            pageCount: any;
+        };
+    };
+};
+
+// @public (undocumented)
+export type MuiSearchUserQueryVariables = Exact<{
+    limit?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    query: Scalars['String']['input'];
+}>;
+
+// @public (undocumented)
+export type MuiSeriesAclDataFragment = {
+    seriesById?: {
+        acl: {
+            users?: Array<{
+                role?: string | null;
+                label?: string | null;
+                action?: Array<string | null> | null;
+            } | null> | null;
+        };
+    } | null;
+};
+
+// @public (undocumented)
+export const MuiSeriesAclDataFragmentDoc = "\n    fragment MuiSeriesAclData on Query {\n  seriesById(id: $id) {\n    acl {\n      users {\n        role\n        label\n        action\n      }\n    }\n  }\n}\n    ";
+
+// @public (undocumented)
+export type MuiSeriesDataFragment = {
+    __typename: 'Series';
+    id: string;
+    contributors?: Array<string | null> | null;
+    created?: string | null;
+    creator?: string | null;
+    description?: string | null;
+    title: string;
+    events: {
+        totalCount: any;
+        nodes: Array<{
+            id: string;
+            title: string;
+            eventStatus: string;
+        } | null>;
+    };
+    muiSeriesInfo?: {
+        isPublic?: boolean | null;
+        managedAclId?: any | null;
+    } | null;
+};
+
+// @public (undocumented)
+export const MuiSeriesDataFragmentDoc = "\n    fragment MuiSeriesData on Series {\n  __typename\n  id\n  contributors\n  created\n  creator\n  description\n  title\n  events {\n    nodes {\n      id\n      title\n      eventStatus\n    }\n    totalCount\n  }\n  muiSeriesInfo {\n    isPublic\n    managedAclId\n  }\n  ...MuiSeriesFields\n}\n    \n    fragment MuiSeriesFields on Series {\n  __typename\n}\n    ";
+
+// @public (undocumented)
+export type MuiSeriesFieldsFragment = {
+    __typename: 'Series';
+};
+
+// @public (undocumented)
+export const MuiSeriesFieldsFragmentDoc = "\n    fragment MuiSeriesFields on Series {\n  __typename\n}\n    ";
+
+// @public (undocumented)
 export type MuiSeriesInfo = {
     isPublic?: Maybe<Scalars['Boolean']['output']>;
     managedAclId?: Maybe<Scalars['Long']['output']>;
 };
+
+// @public (undocumented)
+export const MuiUpdateEventAclDocument = "\n    mutation MuiUpdateEventAcl($eventId: String!, $acl: AccessControlListInput!) {\n  mui {\n    updateEventAcl(id: $eventId, acl: $acl) {\n      muiEventInfo {\n        managedAclId\n      }\n    }\n  }\n}\n    ";
+
+// @public (undocumented)
+export type MuiUpdateEventAclMutation = {
+    mui?: {
+        updateEventAcl: {
+            muiEventInfo?: {
+                managedAclId?: any | null;
+            } | null;
+        };
+    } | null;
+};
+
+// @public (undocumented)
+export type MuiUpdateEventAclMutationVariables = Exact<{
+    eventId: Scalars['String']['input'];
+    acl: AccessControlListInput;
+}>;
+
+// @public (undocumented)
+export const MuiUpdateEventDocument = "\n    mutation MuiUpdateEvent($eventId: String!, $metadata: CommonEventMetadataInput!) {\n  mui {\n    updateEvent(id: $eventId, metadata: $metadata) {\n      ...MuiEventsData\n    }\n  }\n}\n    \n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: \"engage-player\") {\n    uri\n    tracks(tags: \"engage-download\") {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    \n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
+
+// @public (undocumented)
+export type MuiUpdateEventMutation = {
+    mui?: {
+        updateEvent: {
+            __typename: 'Event';
+            contributors?: Array<string | null> | null;
+            seriesName?: string | null;
+            seriesId?: string | null;
+            title: string;
+            creator?: string | null;
+            created?: any | null;
+            description?: string | null;
+            displayableStatus?: string | null;
+            eventStatus: string;
+            duration?: any | null;
+            hasPreview: boolean;
+            id: string;
+            location?: string | null;
+            presenters?: Array<string | null> | null;
+            startDate?: any | null;
+            publications?: Array<{
+                uri?: string | null;
+                tracks?: Array<{
+                    width?: number | null;
+                    uri?: string | null;
+                    tags?: Array<string | null> | null;
+                    mimeType?: string | null;
+                    logicalName?: string | null;
+                    isLive?: boolean | null;
+                    height?: number | null;
+                    frameRate?: number | null;
+                    flavor?: string | null;
+                } | null> | null;
+            } | null> | null;
+            muiEventInfo?: {
+                isPublic?: boolean | null;
+                managedAclId?: any | null;
+                publishUrl?: string | null;
+                thumbnailUrl?: string | null;
+            } | null;
+        };
+    } | null;
+};
+
+// @public (undocumented)
+export type MuiUpdateEventMutationVariables = Exact<{
+    eventId: Scalars['String']['input'];
+    metadata: CommonEventMetadataInput;
+}>;
+
+// @public (undocumented)
+export const MuiUpdateSeriesAclDocument = "\n    mutation MuiUpdateSeriesAcl($seriesId: String!, $acl: AccessControlListInput!) {\n  updateSeriesAcl(id: $seriesId, acl: $acl) {\n    muiSeriesInfo {\n      managedAclId\n    }\n  }\n}\n    ";
+
+// @public (undocumented)
+export type MuiUpdateSeriesAclMutation = {
+    updateSeriesAcl: {
+        muiSeriesInfo?: {
+            managedAclId?: any | null;
+        } | null;
+    };
+};
+
+// @public (undocumented)
+export type MuiUpdateSeriesAclMutationVariables = Exact<{
+    seriesId: Scalars['String']['input'];
+    acl: AccessControlListInput;
+}>;
+
+// @public (undocumented)
+export const MuiUpdateSeriesDocument = "\n    mutation MuiUpdateSeries($seriesId: String!, $metadata: CommonSeriesMetadataInput!) {\n  updateSeries(id: $seriesId, metadata: $metadata) {\n    ...MuiSeriesData\n  }\n}\n    \n    fragment MuiSeriesData on Series {\n  __typename\n  id\n  contributors\n  created\n  creator\n  description\n  title\n  events {\n    nodes {\n      id\n      title\n      eventStatus\n    }\n    totalCount\n  }\n  muiSeriesInfo {\n    isPublic\n    managedAclId\n  }\n  ...MuiSeriesFields\n}\n    \n    fragment MuiSeriesFields on Series {\n  __typename\n}\n    ";
+
+// @public (undocumented)
+export type MuiUpdateSeriesMutation = {
+    updateSeries: {
+        __typename: 'Series';
+        id: string;
+        contributors?: Array<string | null> | null;
+        created?: string | null;
+        creator?: string | null;
+        description?: string | null;
+        title: string;
+        events: {
+            totalCount: any;
+            nodes: Array<{
+                id: string;
+                title: string;
+                eventStatus: string;
+            } | null>;
+        };
+        muiSeriesInfo?: {
+            isPublic?: boolean | null;
+            managedAclId?: any | null;
+        } | null;
+    };
+};
+
+// @public (undocumented)
+export type MuiUpdateSeriesMutationVariables = Exact<{
+    seriesId: Scalars['String']['input'];
+    metadata: CommonSeriesMetadataInput;
+}>;
+
+// @public (undocumented)
+export const MuiUserDocument = "\n    query MuiUser {\n  currentUser {\n    email\n    name\n    username\n    userRole\n    ...MuiCurrentUserFields\n  }\n}\n    \n    fragment MuiCurrentUserFields on CurrentUser {\n  __typename\n}\n    ";
+
+// @public (undocumented)
+export type MuiUserFieldsFragment = {
+    __typename: 'MuiUser';
+};
+
+// @public (undocumented)
+export const MuiUserFieldsFragmentDoc = "\n    fragment MuiUserFields on User {\n  __typename\n}\n    ";
+
+// @public (undocumented)
+export type MuiUserQuery = {
+    currentUser: {
+        __typename: 'CurrentUser';
+        email?: string | null;
+        name?: string | null;
+        username?: string | null;
+        userRole: string;
+    };
+};
+
+// @public (undocumented)
+export type MuiUserQueryVariables = Exact<{
+    [key: string]: never;
+}>;
 
 // @public (undocumented)
 export type Mutation = {
@@ -1514,38 +1763,6 @@ export interface PluginConfigReader<T extends z.ZodTypeAny> {
     // (undocumented)
     use(): z.infer<T>;
 }
-
-// @public (undocumented)
-export type PluginCurrentUserFieldsFragment = {
-    __typename: 'CurrentUser';
-};
-
-// @public (undocumented)
-export const PluginCurrentUserFieldsFragmentDoc = "\n    fragment PluginCurrentUserFields on CurrentUser {\n  __typename\n}\n    ";
-
-// @public (undocumented)
-export type PluginEventFieldsFragment = {
-    __typename: 'Event';
-};
-
-// @public (undocumented)
-export const PluginEventFieldsFragmentDoc = "\n    fragment PluginEventFields on Event {\n  __typename\n}\n    ";
-
-// @public (undocumented)
-export type PluginSeriesFieldsFragment = {
-    __typename: 'Series';
-};
-
-// @public (undocumented)
-export const PluginSeriesFieldsFragmentDoc = "\n    fragment PluginSeriesFields on Series {\n  __typename\n}\n    ";
-
-// @public (undocumented)
-export type PluginUserFieldsFragment = {
-    __typename: 'User';
-};
-
-// @public (undocumented)
-export const PluginUserFieldsFragmentDoc = "\n    fragment PluginUserFields on User {\n  __typename\n}\n    ";
 
 // @public (undocumented)
 export type Publication = {
@@ -1677,37 +1894,6 @@ export type Scalars = {
     };
 };
 
-// @public (undocumented)
-export const SearchUserDocument = "\n    query SearchUser($limit: Int, $offset: Int, $query: String!) {\n  searchUser(limit: $limit, offset: $offset, query: $query) {\n    totalCount\n    nodes {\n      email\n      name\n      provider\n      roles\n      userRole\n      username\n      ...PluginUserFields\n    }\n    pageInfo {\n      limit\n      offset\n      pageCount\n    }\n  }\n}\n    \n    fragment PluginUserFields on User {\n  __typename\n}\n    ";
-
-// @public (undocumented)
-export type SearchUserQuery = {
-    searchUser: {
-        totalCount: any;
-        nodes: Array<{
-            __typename: 'User';
-            email?: string | null;
-            name?: string | null;
-            provider?: string | null;
-            roles: Array<string | null>;
-            userRole: string;
-            username?: string | null;
-        } | null>;
-        pageInfo: {
-            limit: any;
-            offset: any;
-            pageCount: any;
-        };
-    };
-};
-
-// @public (undocumented)
-export type SearchUserQueryVariables = Exact<{
-    limit?: InputMaybe<Scalars['Int']['input']>;
-    offset?: InputMaybe<Scalars['Int']['input']>;
-    query: Scalars['String']['input'];
-}>;
-
 // @public
 export type Series = {
     acl: AccessControlList;
@@ -1725,48 +1911,6 @@ export type Series = {
     rightsHolder?: Maybe<Scalars['String']['output']>;
     title: Scalars['String']['output'];
 };
-
-// @public (undocumented)
-export type SeriesAclDataFragment = {
-    seriesById?: {
-        acl: {
-            users?: Array<{
-                role?: string | null;
-                label?: string | null;
-                action?: Array<string | null> | null;
-            } | null> | null;
-        };
-    } | null;
-};
-
-// @public (undocumented)
-export const SeriesAclDataFragmentDoc = "\n    fragment SeriesAclData on Query {\n  seriesById(id: $id) {\n    acl {\n      users {\n        role\n        label\n        action\n      }\n    }\n  }\n}\n    ";
-
-// @public (undocumented)
-export type SeriesDataFragment = {
-    __typename: 'Series';
-    id: string;
-    contributors?: Array<string | null> | null;
-    created?: string | null;
-    creator?: string | null;
-    description?: string | null;
-    title: string;
-    events: {
-        totalCount: any;
-        nodes: Array<{
-            id: string;
-            title: string;
-            eventStatus: string;
-        } | null>;
-    };
-    muiSeriesInfo?: {
-        isPublic?: boolean | null;
-        managedAclId?: any | null;
-    } | null;
-};
-
-// @public (undocumented)
-export const SeriesDataFragmentDoc = "\n    fragment SeriesData on Series {\n  __typename\n  id\n  contributors\n  created\n  creator\n  description\n  title\n  events {\n    nodes {\n      id\n      title\n      eventStatus\n    }\n    totalCount\n  }\n  muiSeriesInfo {\n    isPublic\n    managedAclId\n  }\n  ...PluginSeriesFields\n}\n    \n    fragment PluginSeriesFields on Series {\n  __typename\n}\n    ";
 
 // @public
 export type SeriesEventsArgs = {
@@ -1840,131 +1984,6 @@ export enum Type {
 }
 
 // @public (undocumented)
-export const UpdateEventAclDocument = "\n    mutation UpdateEventAcl($eventId: String!, $acl: AccessControlListInput!) {\n  mui {\n    updateEventAcl(id: $eventId, acl: $acl) {\n      muiEventInfo {\n        managedAclId\n      }\n    }\n  }\n}\n    ";
-
-// @public (undocumented)
-export type UpdateEventAclMutation = {
-    mui?: {
-        updateEventAcl: {
-            muiEventInfo?: {
-                managedAclId?: any | null;
-            } | null;
-        };
-    } | null;
-};
-
-// @public (undocumented)
-export type UpdateEventAclMutationVariables = Exact<{
-    eventId: Scalars['String']['input'];
-    acl: AccessControlListInput;
-}>;
-
-// @public (undocumented)
-export const UpdateEventDocument = "\n    mutation UpdateEvent($eventId: String!, $metadata: CommonEventMetadataInput!) {\n  mui {\n    updateEvent(id: $eventId, metadata: $metadata) {\n      ...EventsData\n    }\n  }\n}\n    \n    fragment EventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: \"engage-player\") {\n    uri\n    tracks(tags: \"engage-download\") {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...PluginEventFields\n}\n    \n    fragment PluginEventFields on Event {\n  __typename\n}\n    ";
-
-// @public (undocumented)
-export type UpdateEventMutation = {
-    mui?: {
-        updateEvent: {
-            __typename: 'Event';
-            contributors?: Array<string | null> | null;
-            seriesName?: string | null;
-            seriesId?: string | null;
-            title: string;
-            creator?: string | null;
-            created?: any | null;
-            description?: string | null;
-            displayableStatus?: string | null;
-            eventStatus: string;
-            duration?: any | null;
-            hasPreview: boolean;
-            id: string;
-            location?: string | null;
-            presenters?: Array<string | null> | null;
-            startDate?: any | null;
-            publications?: Array<{
-                uri?: string | null;
-                tracks?: Array<{
-                    width?: number | null;
-                    uri?: string | null;
-                    tags?: Array<string | null> | null;
-                    mimeType?: string | null;
-                    logicalName?: string | null;
-                    isLive?: boolean | null;
-                    height?: number | null;
-                    frameRate?: number | null;
-                    flavor?: string | null;
-                } | null> | null;
-            } | null> | null;
-            muiEventInfo?: {
-                isPublic?: boolean | null;
-                managedAclId?: any | null;
-                publishUrl?: string | null;
-                thumbnailUrl?: string | null;
-            } | null;
-        };
-    } | null;
-};
-
-// @public (undocumented)
-export type UpdateEventMutationVariables = Exact<{
-    eventId: Scalars['String']['input'];
-    metadata: CommonEventMetadataInput;
-}>;
-
-// @public (undocumented)
-export const UpdateSeriesAclDocument = "\n    mutation UpdateSeriesAcl($seriesId: String!, $acl: AccessControlListInput!) {\n  updateSeriesAcl(id: $seriesId, acl: $acl) {\n    muiSeriesInfo {\n      managedAclId\n    }\n  }\n}\n    ";
-
-// @public (undocumented)
-export type UpdateSeriesAclMutation = {
-    updateSeriesAcl: {
-        muiSeriesInfo?: {
-            managedAclId?: any | null;
-        } | null;
-    };
-};
-
-// @public (undocumented)
-export type UpdateSeriesAclMutationVariables = Exact<{
-    seriesId: Scalars['String']['input'];
-    acl: AccessControlListInput;
-}>;
-
-// @public (undocumented)
-export const UpdateSeriesDocument = "\n    mutation UpdateSeries($seriesId: String!, $metadata: CommonSeriesMetadataInput!) {\n  updateSeries(id: $seriesId, metadata: $metadata) {\n    ...SeriesData\n  }\n}\n    \n    fragment SeriesData on Series {\n  __typename\n  id\n  contributors\n  created\n  creator\n  description\n  title\n  events {\n    nodes {\n      id\n      title\n      eventStatus\n    }\n    totalCount\n  }\n  muiSeriesInfo {\n    isPublic\n    managedAclId\n  }\n  ...PluginSeriesFields\n}\n    \n    fragment PluginSeriesFields on Series {\n  __typename\n}\n    ";
-
-// @public (undocumented)
-export type UpdateSeriesMutation = {
-    updateSeries: {
-        __typename: 'Series';
-        id: string;
-        contributors?: Array<string | null> | null;
-        created?: string | null;
-        creator?: string | null;
-        description?: string | null;
-        title: string;
-        events: {
-            totalCount: any;
-            nodes: Array<{
-                id: string;
-                title: string;
-                eventStatus: string;
-            } | null>;
-        };
-        muiSeriesInfo?: {
-            isPublic?: boolean | null;
-            managedAclId?: any | null;
-        } | null;
-    };
-};
-
-// @public (undocumented)
-export type UpdateSeriesMutationVariables = Exact<{
-    seriesId: Scalars['String']['input'];
-    metadata: CommonSeriesMetadataInput;
-}>;
-
-// @public (undocumented)
 export function useAppConfig(): {
     config: AppConfig;
     isLoading: boolean;
@@ -1976,38 +1995,6 @@ export function useAppConfig(): {
 // @public
 export function useConfig<T extends z.ZodTypeAny>(reader: PluginConfigReader<T>): z.infer<T>;
 
-// @public (undocumented)
-export const useCreateSeriesMutation: {
-    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<CreateSeriesMutation, TError, CreateSeriesMutationVariables, TContext>): UseMutationResult<CreateSeriesMutation, TError, Exact<{
-    acl: AccessControlListInput;
-    metadata: CommonSeriesMetadataInput;
-    }>, TContext>;
-    fetcher(variables: CreateSeriesMutationVariables, options?: RequestInit["headers"]): () => Promise<CreateSeriesMutation>;
-};
-
-// @public (undocumented)
-export const useDeleteEventMutation: {
-    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<DeleteEventMutation, TError, DeleteEventMutationVariables, TContext>): UseMutationResult<DeleteEventMutation, TError, Exact<{
-    eventId: Scalars["String"]["input"];
-    }>, TContext>;
-    fetcher(variables: DeleteEventMutationVariables, options?: RequestInit["headers"]): () => Promise<DeleteEventMutation>;
-};
-
-// @public (undocumented)
-export const useEventsFromSeriesQuery: {
-    <TData = EventsFromSeriesQuery, TError = unknown>(variables: EventsFromSeriesQueryVariables, options?: Omit<UseQueryOptions<EventsFromSeriesQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseQueryOptions<EventsFromSeriesQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
-    getKey(variables: EventsFromSeriesQueryVariables): (string | Exact<{
-        seriesId: Scalars["String"]["input"];
-        limit?: InputMaybe<Scalars["Int"]["input"]>;
-        offset?: InputMaybe<Scalars["Int"]["input"]>;
-        orderBy?: InputMaybe<EventOrderByInput>;
-        query?: InputMaybe<Scalars["String"]["input"]>;
-    }>)[];
-    fetcher(variables: EventsFromSeriesQueryVariables, options?: RequestInit["headers"]): () => Promise<EventsFromSeriesQuery>;
-};
-
 // @public
 export function useEventTitlesMap(eventIds: string[]): Map<string, string>;
 
@@ -2015,142 +2002,234 @@ export function useEventTitlesMap(eventIds: string[]): Map<string, string>;
 export function useGenericQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>): UseQueryResult<TData, TError>;
 
 // @public (undocumented)
-export const useGetAllManagedAclsQuery: {
-    <TData = GetAllManagedAclsQuery, TError = unknown>(variables?: GetAllManagedAclsQueryVariables, options?: Omit<UseQueryOptions<GetAllManagedAclsQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseQueryOptions<GetAllManagedAclsQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
-    getKey(variables?: GetAllManagedAclsQueryVariables): (string | Exact<{
-        [key: string]: never;
-    }>)[];
-    fetcher(variables?: GetAllManagedAclsQueryVariables, options?: RequestInit["headers"]): () => Promise<GetAllManagedAclsQuery>;
-};
-
-// @public (undocumented)
-export function useGetCurrentUser(): UseQueryResult<UserQuery, Error>;
-
-// @public (undocumented)
-export const useGetEventByIdInputFieldsQuery: {
-    <TData = GetEventByIdInputFieldsQuery, TError = unknown>(variables: GetEventByIdInputFieldsQueryVariables, options?: Omit<UseQueryOptions<GetEventByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseQueryOptions<GetEventByIdInputFieldsQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
-    getKey(variables: GetEventByIdInputFieldsQueryVariables): (string | Exact<{
-        eventId: Scalars["String"]["input"];
-    }>)[];
-    fetcher(variables: GetEventByIdInputFieldsQueryVariables, options?: RequestInit["headers"]): () => Promise<GetEventByIdInputFieldsQuery>;
-};
-
-// @public (undocumented)
-export const useGetEventByIdQuery: {
-    <TData = GetEventByIdQuery, TError = unknown>(variables: GetEventByIdQueryVariables, options?: Omit<UseQueryOptions<GetEventByIdQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseQueryOptions<GetEventByIdQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
-    getKey(variables: GetEventByIdQueryVariables): (string | Exact<{
-        eventId: Scalars["String"]["input"];
-    }>)[];
-    fetcher(variables: GetEventByIdQueryVariables, options?: RequestInit["headers"]): () => Promise<GetEventByIdQuery>;
-};
-
-// @public (undocumented)
-export const useGetManagedAclsWithEventIdQuery: {
-    <TData = GetManagedAclsWithEventIdQuery, TError = unknown>(variables: GetManagedAclsWithEventIdQueryVariables, options?: Omit<UseQueryOptions<GetManagedAclsWithEventIdQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseQueryOptions<GetManagedAclsWithEventIdQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
-    getKey(variables: GetManagedAclsWithEventIdQueryVariables): (string | Exact<{
-        id: Scalars["String"]["input"];
-    }>)[];
-    fetcher(variables: GetManagedAclsWithEventIdQueryVariables, options?: RequestInit["headers"]): () => Promise<GetManagedAclsWithEventIdQuery>;
-};
-
-// @public (undocumented)
-export const useGetManagedAclsWithSeriesIdQuery: {
-    <TData = GetManagedAclsWithSeriesIdQuery, TError = unknown>(variables: GetManagedAclsWithSeriesIdQueryVariables, options?: Omit<UseQueryOptions<GetManagedAclsWithSeriesIdQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseQueryOptions<GetManagedAclsWithSeriesIdQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
-    getKey(variables: GetManagedAclsWithSeriesIdQueryVariables): (string | Exact<{
-        id: Scalars["String"]["input"];
-    }>)[];
-    fetcher(variables: GetManagedAclsWithSeriesIdQueryVariables, options?: RequestInit["headers"]): () => Promise<GetManagedAclsWithSeriesIdQuery>;
-};
-
-// @public (undocumented)
-export const useGetMyEventsQuery: {
-    <TData = GetMyEventsQuery, TError = unknown>(variables?: GetMyEventsQueryVariables, options?: Omit<UseQueryOptions<GetMyEventsQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseQueryOptions<GetMyEventsQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
-    getKey(variables?: GetMyEventsQueryVariables): (string | Exact<{
-        limit?: InputMaybe<Scalars["Int"]["input"]>;
-        offset?: InputMaybe<Scalars["Int"]["input"]>;
-        orderBy?: InputMaybe<EventOrderByInput>;
-        query?: InputMaybe<Scalars["String"]["input"]>;
-    }>)[];
-    fetcher(variables?: GetMyEventsQueryVariables, options?: RequestInit["headers"]): () => Promise<GetMyEventsQuery>;
-};
-
-// @public (undocumented)
-export const useGetMySeriesNameAndIdQuery: {
-    <TData = GetMySeriesNameAndIdQuery, TError = unknown>(variables?: GetMySeriesNameAndIdQueryVariables, options?: Omit<UseQueryOptions<GetMySeriesNameAndIdQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseQueryOptions<GetMySeriesNameAndIdQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
-    getKey(variables?: GetMySeriesNameAndIdQueryVariables): (string | Exact<{
-        limit?: InputMaybe<Scalars["Int"]["input"]>;
-        offset?: InputMaybe<Scalars["Int"]["input"]>;
-        orderBy?: InputMaybe<SeriesOrderByInput>;
-        query?: InputMaybe<Scalars["String"]["input"]>;
-    }>)[];
-    fetcher(variables?: GetMySeriesNameAndIdQueryVariables, options?: RequestInit["headers"]): () => Promise<GetMySeriesNameAndIdQuery>;
-};
-
-// @public (undocumented)
-export const useGetMySeriesQuery: {
-    <TData = GetMySeriesQuery, TError = unknown>(variables?: GetMySeriesQueryVariables, options?: Omit<UseQueryOptions<GetMySeriesQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseQueryOptions<GetMySeriesQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
-    getKey(variables?: GetMySeriesQueryVariables): (string | Exact<{
-        limit?: InputMaybe<Scalars["Int"]["input"]>;
-        offset?: InputMaybe<Scalars["Int"]["input"]>;
-        orderBy?: InputMaybe<SeriesOrderByInput>;
-        query?: InputMaybe<Scalars["String"]["input"]>;
-    }>)[];
-    fetcher(variables?: GetMySeriesQueryVariables, options?: RequestInit["headers"]): () => Promise<GetMySeriesQuery>;
-};
-
-// @public (undocumented)
-export const useGetSeriesByIdInputFieldsQuery: {
-    <TData = GetSeriesByIdInputFieldsQuery, TError = unknown>(variables: GetSeriesByIdInputFieldsQueryVariables, options?: Omit<UseQueryOptions<GetSeriesByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseQueryOptions<GetSeriesByIdInputFieldsQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
-    getKey(variables: GetSeriesByIdInputFieldsQueryVariables): (string | Exact<{
-        seriesId: Scalars["String"]["input"];
-    }>)[];
-    fetcher(variables: GetSeriesByIdInputFieldsQueryVariables, options?: RequestInit["headers"]): () => Promise<GetSeriesByIdInputFieldsQuery>;
-};
-
-// @public (undocumented)
-export const useGetSeriesInfoQuery: {
-    <TData = GetSeriesInfoQuery, TError = unknown>(variables: GetSeriesInfoQueryVariables, options?: Omit<UseQueryOptions<GetSeriesInfoQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseQueryOptions<GetSeriesInfoQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
-    getKey(variables: GetSeriesInfoQueryVariables): (string | Exact<{
-        seriesId: Scalars["String"]["input"];
-    }>)[];
-    fetcher(variables: GetSeriesInfoQueryVariables, options?: RequestInit["headers"]): () => Promise<GetSeriesInfoQuery>;
-};
-
-// @public (undocumented)
-export const useGetSeriesNameByIdQuery: {
-    <TData = GetSeriesNameByIdQuery, TError = unknown>(variables: GetSeriesNameByIdQueryVariables, options?: Omit<UseQueryOptions<GetSeriesNameByIdQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseQueryOptions<GetSeriesNameByIdQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
-    getKey(variables: GetSeriesNameByIdQueryVariables): (string | Exact<{
-        seriesId: Scalars["String"]["input"];
-    }>)[];
-    fetcher(variables: GetSeriesNameByIdQueryVariables, options?: RequestInit["headers"]): () => Promise<GetSeriesNameByIdQuery>;
-};
+export function useGetCurrentUser(): UseQueryResult<MuiUserQuery, Error>;
 
 // @public (undocumented)
 export function useGetUserInfo(): UseQueryResult<UserInfo>;
 
 export { useInfiniteQuery }
+
+// @public (undocumented)
+export const useMuiCreateSeriesMutation: {
+    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiCreateSeriesMutation, TError, MuiCreateSeriesMutationVariables, TContext>): UseMutationResult<MuiCreateSeriesMutation, TError, Exact<{
+    acl: AccessControlListInput;
+    metadata: CommonSeriesMetadataInput;
+    }>, TContext>;
+    fetcher(variables: MuiCreateSeriesMutationVariables, options?: RequestInit["headers"]): () => Promise<MuiCreateSeriesMutation>;
+};
+
+// @public (undocumented)
+export const useMuiDeleteEventMutation: {
+    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiDeleteEventMutation, TError, MuiDeleteEventMutationVariables, TContext>): UseMutationResult<MuiDeleteEventMutation, TError, Exact<{
+    eventId: Scalars["String"]["input"];
+    }>, TContext>;
+    fetcher(variables: MuiDeleteEventMutationVariables, options?: RequestInit["headers"]): () => Promise<MuiDeleteEventMutation>;
+};
+
+// @public (undocumented)
+export const useMuiEventsFromSeriesQuery: {
+    <TData = MuiEventsFromSeriesQuery, TError = unknown>(variables: MuiEventsFromSeriesQueryVariables, options?: Omit<UseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>["queryKey"];
+    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    getKey(variables: MuiEventsFromSeriesQueryVariables): (string | Exact<{
+        seriesId: Scalars["String"]["input"];
+        limit?: InputMaybe<Scalars["Int"]["input"]>;
+        offset?: InputMaybe<Scalars["Int"]["input"]>;
+        orderBy?: InputMaybe<EventOrderByInput>;
+        query?: InputMaybe<Scalars["String"]["input"]>;
+    }>)[];
+    fetcher(variables: MuiEventsFromSeriesQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiEventsFromSeriesQuery>;
+};
+
+// @public (undocumented)
+export const useMuiGetAllManagedAclsQuery: {
+    <TData = MuiGetAllManagedAclsQuery, TError = unknown>(variables?: MuiGetAllManagedAclsQueryVariables, options?: Omit<UseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>["queryKey"];
+    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    getKey(variables?: MuiGetAllManagedAclsQueryVariables): (string | Exact<{
+        [key: string]: never;
+    }>)[];
+    fetcher(variables?: MuiGetAllManagedAclsQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetAllManagedAclsQuery>;
+};
+
+// @public (undocumented)
+export const useMuiGetEventByIdInputFieldsQuery: {
+    <TData = MuiGetEventByIdInputFieldsQuery, TError = unknown>(variables: MuiGetEventByIdInputFieldsQueryVariables, options?: Omit<UseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>["queryKey"];
+    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    getKey(variables: MuiGetEventByIdInputFieldsQueryVariables): (string | Exact<{
+        eventId: Scalars["String"]["input"];
+    }>)[];
+    fetcher(variables: MuiGetEventByIdInputFieldsQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetEventByIdInputFieldsQuery>;
+};
+
+// @public (undocumented)
+export const useMuiGetEventByIdQuery: {
+    <TData = MuiGetEventByIdQuery, TError = unknown>(variables: MuiGetEventByIdQueryVariables, options?: Omit<UseQueryOptions<MuiGetEventByIdQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseQueryOptions<MuiGetEventByIdQuery, TError, TData>["queryKey"];
+    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    getKey(variables: MuiGetEventByIdQueryVariables): (string | Exact<{
+        eventId: Scalars["String"]["input"];
+    }>)[];
+    fetcher(variables: MuiGetEventByIdQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetEventByIdQuery>;
+};
+
+// @public (undocumented)
+export const useMuiGetManagedAclsWithEventIdQuery: {
+    <TData = MuiGetManagedAclsWithEventIdQuery, TError = unknown>(variables: MuiGetManagedAclsWithEventIdQueryVariables, options?: Omit<UseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>["queryKey"];
+    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    getKey(variables: MuiGetManagedAclsWithEventIdQueryVariables): (string | Exact<{
+        id: Scalars["String"]["input"];
+    }>)[];
+    fetcher(variables: MuiGetManagedAclsWithEventIdQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetManagedAclsWithEventIdQuery>;
+};
+
+// @public (undocumented)
+export const useMuiGetManagedAclsWithSeriesIdQuery: {
+    <TData = MuiGetManagedAclsWithSeriesIdQuery, TError = unknown>(variables: MuiGetManagedAclsWithSeriesIdQueryVariables, options?: Omit<UseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>["queryKey"];
+    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    getKey(variables: MuiGetManagedAclsWithSeriesIdQueryVariables): (string | Exact<{
+        id: Scalars["String"]["input"];
+    }>)[];
+    fetcher(variables: MuiGetManagedAclsWithSeriesIdQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetManagedAclsWithSeriesIdQuery>;
+};
+
+// @public (undocumented)
+export const useMuiGetMyEventsQuery: {
+    <TData = MuiGetMyEventsQuery, TError = unknown>(variables?: MuiGetMyEventsQueryVariables, options?: Omit<UseQueryOptions<MuiGetMyEventsQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseQueryOptions<MuiGetMyEventsQuery, TError, TData>["queryKey"];
+    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    getKey(variables?: MuiGetMyEventsQueryVariables): (string | Exact<{
+        limit?: InputMaybe<Scalars["Int"]["input"]>;
+        offset?: InputMaybe<Scalars["Int"]["input"]>;
+        orderBy?: InputMaybe<EventOrderByInput>;
+        query?: InputMaybe<Scalars["String"]["input"]>;
+    }>)[];
+    fetcher(variables?: MuiGetMyEventsQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetMyEventsQuery>;
+};
+
+// @public (undocumented)
+export const useMuiGetMySeriesNameAndIdQuery: {
+    <TData = MuiGetMySeriesNameAndIdQuery, TError = unknown>(variables?: MuiGetMySeriesNameAndIdQueryVariables, options?: Omit<UseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>["queryKey"];
+    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    getKey(variables?: MuiGetMySeriesNameAndIdQueryVariables): (string | Exact<{
+        limit?: InputMaybe<Scalars["Int"]["input"]>;
+        offset?: InputMaybe<Scalars["Int"]["input"]>;
+        orderBy?: InputMaybe<SeriesOrderByInput>;
+        query?: InputMaybe<Scalars["String"]["input"]>;
+    }>)[];
+    fetcher(variables?: MuiGetMySeriesNameAndIdQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetMySeriesNameAndIdQuery>;
+};
+
+// @public (undocumented)
+export const useMuiGetMySeriesQuery: {
+    <TData = MuiGetMySeriesQuery, TError = unknown>(variables?: MuiGetMySeriesQueryVariables, options?: Omit<UseQueryOptions<MuiGetMySeriesQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseQueryOptions<MuiGetMySeriesQuery, TError, TData>["queryKey"];
+    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    getKey(variables?: MuiGetMySeriesQueryVariables): (string | Exact<{
+        limit?: InputMaybe<Scalars["Int"]["input"]>;
+        offset?: InputMaybe<Scalars["Int"]["input"]>;
+        orderBy?: InputMaybe<SeriesOrderByInput>;
+        query?: InputMaybe<Scalars["String"]["input"]>;
+    }>)[];
+    fetcher(variables?: MuiGetMySeriesQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetMySeriesQuery>;
+};
+
+// @public (undocumented)
+export const useMuiGetSeriesByIdInputFieldsQuery: {
+    <TData = MuiGetSeriesByIdInputFieldsQuery, TError = unknown>(variables: MuiGetSeriesByIdInputFieldsQueryVariables, options?: Omit<UseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>["queryKey"];
+    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    getKey(variables: MuiGetSeriesByIdInputFieldsQueryVariables): (string | Exact<{
+        seriesId: Scalars["String"]["input"];
+    }>)[];
+    fetcher(variables: MuiGetSeriesByIdInputFieldsQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetSeriesByIdInputFieldsQuery>;
+};
+
+// @public (undocumented)
+export const useMuiGetSeriesInfoQuery: {
+    <TData = MuiGetSeriesInfoQuery, TError = unknown>(variables: MuiGetSeriesInfoQueryVariables, options?: Omit<UseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>["queryKey"];
+    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    getKey(variables: MuiGetSeriesInfoQueryVariables): (string | Exact<{
+        seriesId: Scalars["String"]["input"];
+    }>)[];
+    fetcher(variables: MuiGetSeriesInfoQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetSeriesInfoQuery>;
+};
+
+// @public (undocumented)
+export const useMuiGetSeriesNameByIdQuery: {
+    <TData = MuiGetSeriesNameByIdQuery, TError = unknown>(variables: MuiGetSeriesNameByIdQueryVariables, options?: Omit<UseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>["queryKey"];
+    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    getKey(variables: MuiGetSeriesNameByIdQueryVariables): (string | Exact<{
+        seriesId: Scalars["String"]["input"];
+    }>)[];
+    fetcher(variables: MuiGetSeriesNameByIdQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetSeriesNameByIdQuery>;
+};
+
+// @public (undocumented)
+export const useMuiSearchUserQuery: {
+    <TData = MuiSearchUserQuery, TError = unknown>(variables: MuiSearchUserQueryVariables, options?: Omit<UseQueryOptions<MuiSearchUserQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseQueryOptions<MuiSearchUserQuery, TError, TData>["queryKey"];
+    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    getKey(variables: MuiSearchUserQueryVariables): (string | Exact<{
+        limit?: InputMaybe<Scalars["Int"]["input"]>;
+        offset?: InputMaybe<Scalars["Int"]["input"]>;
+        query: Scalars["String"]["input"];
+    }>)[];
+    fetcher(variables: MuiSearchUserQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiSearchUserQuery>;
+};
+
+// @public (undocumented)
+export const useMuiUpdateEventAclMutation: {
+    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiUpdateEventAclMutation, TError, MuiUpdateEventAclMutationVariables, TContext>): UseMutationResult<MuiUpdateEventAclMutation, TError, Exact<{
+    eventId: Scalars["String"]["input"];
+    acl: AccessControlListInput;
+    }>, TContext>;
+    fetcher(variables: MuiUpdateEventAclMutationVariables, options?: RequestInit["headers"]): () => Promise<MuiUpdateEventAclMutation>;
+};
+
+// @public (undocumented)
+export const useMuiUpdateEventMutation: {
+    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiUpdateEventMutation, TError, MuiUpdateEventMutationVariables, TContext>): UseMutationResult<MuiUpdateEventMutation, TError, Exact<{
+    eventId: Scalars["String"]["input"];
+    metadata: CommonEventMetadataInput;
+    }>, TContext>;
+    fetcher(variables: MuiUpdateEventMutationVariables, options?: RequestInit["headers"]): () => Promise<MuiUpdateEventMutation>;
+};
+
+// @public (undocumented)
+export const useMuiUpdateSeriesAclMutation: {
+    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiUpdateSeriesAclMutation, TError, MuiUpdateSeriesAclMutationVariables, TContext>): UseMutationResult<MuiUpdateSeriesAclMutation, TError, Exact<{
+    seriesId: Scalars["String"]["input"];
+    acl: AccessControlListInput;
+    }>, TContext>;
+    fetcher(variables: MuiUpdateSeriesAclMutationVariables, options?: RequestInit["headers"]): () => Promise<MuiUpdateSeriesAclMutation>;
+};
+
+// @public (undocumented)
+export const useMuiUpdateSeriesMutation: {
+    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiUpdateSeriesMutation, TError, MuiUpdateSeriesMutationVariables, TContext>): UseMutationResult<MuiUpdateSeriesMutation, TError, Exact<{
+    seriesId: Scalars["String"]["input"];
+    metadata: CommonSeriesMetadataInput;
+    }>, TContext>;
+    fetcher(variables: MuiUpdateSeriesMutationVariables, options?: RequestInit["headers"]): () => Promise<MuiUpdateSeriesMutation>;
+};
+
+// @public (undocumented)
+export const useMuiUserQuery: {
+    <TData = MuiUserQuery, TError = unknown>(variables?: MuiUserQueryVariables, options?: Omit<UseQueryOptions<MuiUserQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseQueryOptions<MuiUserQuery, TError, TData>["queryKey"];
+    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    getKey(variables?: MuiUserQueryVariables): (string | Exact<{
+        [key: string]: never;
+    }>)[];
+    fetcher(variables?: MuiUserQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiUserQuery>;
+};
 
 export { useMutation }
 
@@ -2179,9 +2258,6 @@ export type User = {
 };
 
 // @public (undocumented)
-export const UserDocument = "\n    query User {\n  currentUser {\n    email\n    name\n    username\n    userRole\n    ...PluginCurrentUserFields\n  }\n}\n    \n    fragment PluginCurrentUserFields on CurrentUser {\n  __typename\n}\n    ";
-
-// @public (undocumented)
 export type UserInfo = {
     org: {
         anonymousRole: string;
@@ -2207,40 +2283,11 @@ export type UserList = {
 };
 
 // @public (undocumented)
-export type UserQuery = {
-    currentUser: {
-        __typename: 'CurrentUser';
-        email?: string | null;
-        name?: string | null;
-        username?: string | null;
-        userRole: string;
-    };
-};
-
-// @public (undocumented)
-export type UserQueryVariables = Exact<{
-    [key: string]: never;
-}>;
-
-// @public (undocumented)
-export const useSearchUserQuery: {
-    <TData = SearchUserQuery, TError = unknown>(variables: SearchUserQueryVariables, options?: Omit<UseQueryOptions<SearchUserQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseQueryOptions<SearchUserQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
-    getKey(variables: SearchUserQueryVariables): (string | Exact<{
-        limit?: InputMaybe<Scalars["Int"]["input"]>;
-        offset?: InputMaybe<Scalars["Int"]["input"]>;
-        query: Scalars["String"]["input"];
-    }>)[];
-    fetcher(variables: SearchUserQueryVariables, options?: RequestInit["headers"]): () => Promise<SearchUserQuery>;
-};
-
-// @public (undocumented)
 export const useSuspenseEventsFromSeriesQuery: {
-    <TData = EventsFromSeriesQuery, TError = unknown>(variables: EventsFromSeriesQueryVariables, options?: Omit<UseSuspenseQueryOptions<EventsFromSeriesQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseSuspenseQueryOptions<EventsFromSeriesQuery, TError, TData>["queryKey"];
+    <TData = MuiEventsFromSeriesQuery, TError = unknown>(variables: MuiEventsFromSeriesQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseSuspenseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: EventsFromSeriesQueryVariables): (string | Exact<{
+    getKey(variables: MuiEventsFromSeriesQueryVariables): (string | Exact<{
         seriesId: Scalars["String"]["input"];
         limit?: InputMaybe<Scalars["Int"]["input"]>;
         offset?: InputMaybe<Scalars["Int"]["input"]>;
@@ -2251,60 +2298,60 @@ export const useSuspenseEventsFromSeriesQuery: {
 
 // @public (undocumented)
 export const useSuspenseGetAllManagedAclsQuery: {
-    <TData = GetAllManagedAclsQuery, TError = unknown>(variables?: GetAllManagedAclsQueryVariables, options?: Omit<UseSuspenseQueryOptions<GetAllManagedAclsQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseSuspenseQueryOptions<GetAllManagedAclsQuery, TError, TData>["queryKey"];
+    <TData = MuiGetAllManagedAclsQuery, TError = unknown>(variables?: MuiGetAllManagedAclsQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseSuspenseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables?: GetAllManagedAclsQueryVariables): (string | Exact<{
+    getKey(variables?: MuiGetAllManagedAclsQueryVariables): (string | Exact<{
         [key: string]: never;
     }>)[];
 };
 
 // @public (undocumented)
 export const useSuspenseGetEventByIdInputFieldsQuery: {
-    <TData = GetEventByIdInputFieldsQuery, TError = unknown>(variables: GetEventByIdInputFieldsQueryVariables, options?: Omit<UseSuspenseQueryOptions<GetEventByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseSuspenseQueryOptions<GetEventByIdInputFieldsQuery, TError, TData>["queryKey"];
+    <TData = MuiGetEventByIdInputFieldsQuery, TError = unknown>(variables: MuiGetEventByIdInputFieldsQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseSuspenseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: GetEventByIdInputFieldsQueryVariables): (string | Exact<{
+    getKey(variables: MuiGetEventByIdInputFieldsQueryVariables): (string | Exact<{
         eventId: Scalars["String"]["input"];
     }>)[];
 };
 
 // @public (undocumented)
 export const useSuspenseGetEventByIdQuery: {
-    <TData = GetEventByIdQuery, TError = unknown>(variables: GetEventByIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<GetEventByIdQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseSuspenseQueryOptions<GetEventByIdQuery, TError, TData>["queryKey"];
+    <TData = MuiGetEventByIdQuery, TError = unknown>(variables: MuiGetEventByIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetEventByIdQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseSuspenseQueryOptions<MuiGetEventByIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: GetEventByIdQueryVariables): (string | Exact<{
+    getKey(variables: MuiGetEventByIdQueryVariables): (string | Exact<{
         eventId: Scalars["String"]["input"];
     }>)[];
 };
 
 // @public (undocumented)
 export const useSuspenseGetManagedAclsWithEventIdQuery: {
-    <TData = GetManagedAclsWithEventIdQuery, TError = unknown>(variables: GetManagedAclsWithEventIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<GetManagedAclsWithEventIdQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseSuspenseQueryOptions<GetManagedAclsWithEventIdQuery, TError, TData>["queryKey"];
+    <TData = MuiGetManagedAclsWithEventIdQuery, TError = unknown>(variables: MuiGetManagedAclsWithEventIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseSuspenseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: GetManagedAclsWithEventIdQueryVariables): (string | Exact<{
+    getKey(variables: MuiGetManagedAclsWithEventIdQueryVariables): (string | Exact<{
         id: Scalars["String"]["input"];
     }>)[];
 };
 
 // @public (undocumented)
 export const useSuspenseGetManagedAclsWithSeriesIdQuery: {
-    <TData = GetManagedAclsWithSeriesIdQuery, TError = unknown>(variables: GetManagedAclsWithSeriesIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<GetManagedAclsWithSeriesIdQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseSuspenseQueryOptions<GetManagedAclsWithSeriesIdQuery, TError, TData>["queryKey"];
+    <TData = MuiGetManagedAclsWithSeriesIdQuery, TError = unknown>(variables: MuiGetManagedAclsWithSeriesIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseSuspenseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: GetManagedAclsWithSeriesIdQueryVariables): (string | Exact<{
+    getKey(variables: MuiGetManagedAclsWithSeriesIdQueryVariables): (string | Exact<{
         id: Scalars["String"]["input"];
     }>)[];
 };
 
 // @public (undocumented)
 export const useSuspenseGetMyEventsQuery: {
-    <TData = GetMyEventsQuery, TError = unknown>(variables?: GetMyEventsQueryVariables, options?: Omit<UseSuspenseQueryOptions<GetMyEventsQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseSuspenseQueryOptions<GetMyEventsQuery, TError, TData>["queryKey"];
+    <TData = MuiGetMyEventsQuery, TError = unknown>(variables?: MuiGetMyEventsQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetMyEventsQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseSuspenseQueryOptions<MuiGetMyEventsQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables?: GetMyEventsQueryVariables): (string | Exact<{
+    getKey(variables?: MuiGetMyEventsQueryVariables): (string | Exact<{
         limit?: InputMaybe<Scalars["Int"]["input"]>;
         offset?: InputMaybe<Scalars["Int"]["input"]>;
         orderBy?: InputMaybe<EventOrderByInput>;
@@ -2314,10 +2361,10 @@ export const useSuspenseGetMyEventsQuery: {
 
 // @public (undocumented)
 export const useSuspenseGetMySeriesNameAndIdQuery: {
-    <TData = GetMySeriesNameAndIdQuery, TError = unknown>(variables?: GetMySeriesNameAndIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<GetMySeriesNameAndIdQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseSuspenseQueryOptions<GetMySeriesNameAndIdQuery, TError, TData>["queryKey"];
+    <TData = MuiGetMySeriesNameAndIdQuery, TError = unknown>(variables?: MuiGetMySeriesNameAndIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseSuspenseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables?: GetMySeriesNameAndIdQueryVariables): (string | Exact<{
+    getKey(variables?: MuiGetMySeriesNameAndIdQueryVariables): (string | Exact<{
         limit?: InputMaybe<Scalars["Int"]["input"]>;
         offset?: InputMaybe<Scalars["Int"]["input"]>;
         orderBy?: InputMaybe<SeriesOrderByInput>;
@@ -2327,10 +2374,10 @@ export const useSuspenseGetMySeriesNameAndIdQuery: {
 
 // @public (undocumented)
 export const useSuspenseGetMySeriesQuery: {
-    <TData = GetMySeriesQuery, TError = unknown>(variables?: GetMySeriesQueryVariables, options?: Omit<UseSuspenseQueryOptions<GetMySeriesQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseSuspenseQueryOptions<GetMySeriesQuery, TError, TData>["queryKey"];
+    <TData = MuiGetMySeriesQuery, TError = unknown>(variables?: MuiGetMySeriesQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetMySeriesQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseSuspenseQueryOptions<MuiGetMySeriesQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables?: GetMySeriesQueryVariables): (string | Exact<{
+    getKey(variables?: MuiGetMySeriesQueryVariables): (string | Exact<{
         limit?: InputMaybe<Scalars["Int"]["input"]>;
         offset?: InputMaybe<Scalars["Int"]["input"]>;
         orderBy?: InputMaybe<SeriesOrderByInput>;
@@ -2340,30 +2387,30 @@ export const useSuspenseGetMySeriesQuery: {
 
 // @public (undocumented)
 export const useSuspenseGetSeriesByIdInputFieldsQuery: {
-    <TData = GetSeriesByIdInputFieldsQuery, TError = unknown>(variables: GetSeriesByIdInputFieldsQueryVariables, options?: Omit<UseSuspenseQueryOptions<GetSeriesByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseSuspenseQueryOptions<GetSeriesByIdInputFieldsQuery, TError, TData>["queryKey"];
+    <TData = MuiGetSeriesByIdInputFieldsQuery, TError = unknown>(variables: MuiGetSeriesByIdInputFieldsQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseSuspenseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: GetSeriesByIdInputFieldsQueryVariables): (string | Exact<{
+    getKey(variables: MuiGetSeriesByIdInputFieldsQueryVariables): (string | Exact<{
         seriesId: Scalars["String"]["input"];
     }>)[];
 };
 
 // @public (undocumented)
 export const useSuspenseGetSeriesInfoQuery: {
-    <TData = GetSeriesInfoQuery, TError = unknown>(variables: GetSeriesInfoQueryVariables, options?: Omit<UseSuspenseQueryOptions<GetSeriesInfoQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseSuspenseQueryOptions<GetSeriesInfoQuery, TError, TData>["queryKey"];
+    <TData = MuiGetSeriesInfoQuery, TError = unknown>(variables: MuiGetSeriesInfoQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseSuspenseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: GetSeriesInfoQueryVariables): (string | Exact<{
+    getKey(variables: MuiGetSeriesInfoQueryVariables): (string | Exact<{
         seriesId: Scalars["String"]["input"];
     }>)[];
 };
 
 // @public (undocumented)
 export const useSuspenseGetSeriesNameByIdQuery: {
-    <TData = GetSeriesNameByIdQuery, TError = unknown>(variables: GetSeriesNameByIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<GetSeriesNameByIdQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseSuspenseQueryOptions<GetSeriesNameByIdQuery, TError, TData>["queryKey"];
+    <TData = MuiGetSeriesNameByIdQuery, TError = unknown>(variables: MuiGetSeriesNameByIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseSuspenseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: GetSeriesNameByIdQueryVariables): (string | Exact<{
+    getKey(variables: MuiGetSeriesNameByIdQueryVariables): (string | Exact<{
         seriesId: Scalars["String"]["input"];
     }>)[];
 };
@@ -2376,10 +2423,10 @@ export { UseSuspenseQueryResult }
 
 // @public (undocumented)
 export const useSuspenseSearchUserQuery: {
-    <TData = SearchUserQuery, TError = unknown>(variables: SearchUserQueryVariables, options?: Omit<UseSuspenseQueryOptions<SearchUserQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseSuspenseQueryOptions<SearchUserQuery, TError, TData>["queryKey"];
+    <TData = MuiSearchUserQuery, TError = unknown>(variables: MuiSearchUserQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiSearchUserQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseSuspenseQueryOptions<MuiSearchUserQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: SearchUserQueryVariables): (string | Exact<{
+    getKey(variables: MuiSearchUserQueryVariables): (string | Exact<{
         limit?: InputMaybe<Scalars["Int"]["input"]>;
         offset?: InputMaybe<Scalars["Int"]["input"]>;
         query: Scalars["String"]["input"];
@@ -2388,59 +2435,12 @@ export const useSuspenseSearchUserQuery: {
 
 // @public (undocumented)
 export const useSuspenseUserQuery: {
-    <TData = UserQuery, TError = unknown>(variables?: UserQueryVariables, options?: Omit<UseSuspenseQueryOptions<UserQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseSuspenseQueryOptions<UserQuery, TError, TData>["queryKey"];
+    <TData = MuiUserQuery, TError = unknown>(variables?: MuiUserQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiUserQuery, TError, TData>, "queryKey"> & {
+        queryKey?: UseSuspenseQueryOptions<MuiUserQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables?: UserQueryVariables): (string | Exact<{
+    getKey(variables?: MuiUserQueryVariables): (string | Exact<{
         [key: string]: never;
     }>)[];
-};
-
-// @public (undocumented)
-export const useUpdateEventAclMutation: {
-    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<UpdateEventAclMutation, TError, UpdateEventAclMutationVariables, TContext>): UseMutationResult<UpdateEventAclMutation, TError, Exact<{
-    eventId: Scalars["String"]["input"];
-    acl: AccessControlListInput;
-    }>, TContext>;
-    fetcher(variables: UpdateEventAclMutationVariables, options?: RequestInit["headers"]): () => Promise<UpdateEventAclMutation>;
-};
-
-// @public (undocumented)
-export const useUpdateEventMutation: {
-    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<UpdateEventMutation, TError, UpdateEventMutationVariables, TContext>): UseMutationResult<UpdateEventMutation, TError, Exact<{
-    eventId: Scalars["String"]["input"];
-    metadata: CommonEventMetadataInput;
-    }>, TContext>;
-    fetcher(variables: UpdateEventMutationVariables, options?: RequestInit["headers"]): () => Promise<UpdateEventMutation>;
-};
-
-// @public (undocumented)
-export const useUpdateSeriesAclMutation: {
-    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<UpdateSeriesAclMutation, TError, UpdateSeriesAclMutationVariables, TContext>): UseMutationResult<UpdateSeriesAclMutation, TError, Exact<{
-    seriesId: Scalars["String"]["input"];
-    acl: AccessControlListInput;
-    }>, TContext>;
-    fetcher(variables: UpdateSeriesAclMutationVariables, options?: RequestInit["headers"]): () => Promise<UpdateSeriesAclMutation>;
-};
-
-// @public (undocumented)
-export const useUpdateSeriesMutation: {
-    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<UpdateSeriesMutation, TError, UpdateSeriesMutationVariables, TContext>): UseMutationResult<UpdateSeriesMutation, TError, Exact<{
-    seriesId: Scalars["String"]["input"];
-    metadata: CommonSeriesMetadataInput;
-    }>, TContext>;
-    fetcher(variables: UpdateSeriesMutationVariables, options?: RequestInit["headers"]): () => Promise<UpdateSeriesMutation>;
-};
-
-// @public (undocumented)
-export const useUserQuery: {
-    <TData = UserQuery, TError = unknown>(variables?: UserQueryVariables, options?: Omit<UseQueryOptions<UserQuery, TError, TData>, "queryKey"> & {
-        queryKey?: UseQueryOptions<UserQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
-    getKey(variables?: UserQueryVariables): (string | Exact<{
-        [key: string]: never;
-    }>)[];
-    fetcher(variables?: UserQueryVariables, options?: RequestInit["headers"]): () => Promise<UserQuery>;
 };
 
 // (No @packageDocumentation comment for this package)

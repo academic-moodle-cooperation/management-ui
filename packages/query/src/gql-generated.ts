@@ -805,29 +805,29 @@ export type UserList = {
   totalCount: Scalars['Long']['output'];
 };
 
-export type PluginCurrentUserFieldsFragment = { __typename: 'CurrentUser' };
+export type MuiCurrentUserFieldsFragment = { __typename: 'CurrentUser' };
 
-export type PluginUserFieldsFragment = { __typename: 'User' };
+export type MuiUserFieldsFragment = { __typename: 'MuiUser' };
 
-export type UserQueryVariables = Exact<{ [key: string]: never; }>;
+export type MuiUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserQuery = { currentUser: { __typename: 'CurrentUser', email?: string | null, name?: string | null, username?: string | null, userRole: string } };
+export type MuiUserQuery = { currentUser: { __typename: 'CurrentUser', email?: string | null, name?: string | null, username?: string | null, userRole: string } };
 
-export type SearchUserQueryVariables = Exact<{
+export type MuiSearchUserQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   query: Scalars['String']['input'];
 }>;
 
 
-export type SearchUserQuery = { searchUser: { totalCount: any, nodes: Array<{ __typename: 'User', email?: string | null, name?: string | null, provider?: string | null, roles: Array<string | null>, userRole: string, username?: string | null } | null>, pageInfo: { limit: any, offset: any, pageCount: any } } };
+export type MuiSearchUserQuery = { searchUser: { totalCount: any, nodes: Array<{ __typename: 'MuiUser', email?: string | null, name?: string | null, provider?: string | null, roles: Array<string | null>, userRole: string, username?: string | null } | null>, pageInfo: { limit: any, offset: any, pageCount: any } } };
 
-export type PluginSeriesFieldsFragment = { __typename: 'Series' };
+export type MuiSeriesFieldsFragment = { __typename: 'Series' };
 
-export type SeriesDataFragment = { __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string, eventStatus: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null };
+export type MuiSeriesDataFragment = { __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string, eventStatus: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null };
 
-export type GetMySeriesQueryVariables = Exact<{
+export type MuiGetMySeriesQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<SeriesOrderByInput>;
@@ -835,33 +835,33 @@ export type GetMySeriesQueryVariables = Exact<{
 }>;
 
 
-export type GetMySeriesQuery = { currentUser: { mySeries: { totalCount: any, nodes: Array<{ __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string, eventStatus: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null } | null> } } };
+export type MuiGetMySeriesQuery = { currentUser: { mySeries: { totalCount: any, nodes: Array<{ __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string, eventStatus: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null } | null> } } };
 
-export type GetSeriesInfoQueryVariables = Exact<{
+export type MuiGetSeriesInfoQueryVariables = Exact<{
   seriesId: Scalars['String']['input'];
 }>;
 
 
-export type GetSeriesInfoQuery = { seriesById?: { contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, id: string, license?: string | null, organizers?: Array<string | null> | null, publishers?: Array<string | null> | null, rightsHolder?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string } | null> } } | null };
+export type MuiGetSeriesInfoQuery = { seriesById?: { contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, id: string, license?: string | null, organizers?: Array<string | null> | null, publishers?: Array<string | null> | null, rightsHolder?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string } | null> } } | null };
 
-export type GetInputFieldsMetaDataFragment = { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: any | null };
+export type MuiGetInputFieldsMetaDataFragment = { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: any | null };
 
-export type GetListInputFieldsMetaDataFragment = { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: Array<string | null> | null };
+export type MuiGetListInputFieldsMetaDataFragment = { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: Array<string | null> | null };
 
-export type GetStringInputFieldsMetaDataFragment = { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null };
+export type MuiGetStringInputFieldsMetaDataFragment = { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null };
 
-export type GetDurationInputFieldsMetaDataFragment = { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: any | null };
+export type MuiGetDurationInputFieldsMetaDataFragment = { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: any | null };
 
-export type GetDateTimeInputFieldsMetaDataFragment = { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: any | null };
+export type MuiGetDateTimeInputFieldsMetaDataFragment = { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: any | null };
 
-export type GetSeriesByIdInputFieldsQueryVariables = Exact<{
+export type MuiGetSeriesByIdInputFieldsQueryVariables = Exact<{
   seriesId: Scalars['String']['input'];
 }>;
 
 
-export type GetSeriesByIdInputFieldsQuery = { seriesById?: { commonMetadataV2: { contributor?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: Array<string | null> | null } | null, title?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, subject?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, rightsHolder?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, publisher?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: Array<string | null> | null } | null, license?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, language?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, identifier?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, description?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, creator?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: Array<string | null> | null } | null } } | null };
+export type MuiGetSeriesByIdInputFieldsQuery = { seriesById?: { commonMetadataV2: { contributor?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: Array<string | null> | null } | null, title?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, subject?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, rightsHolder?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, publisher?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: Array<string | null> | null } | null, license?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, language?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, identifier?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, description?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, creator?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: Array<string | null> | null } | null } } | null };
 
-export type GetMySeriesNameAndIdQueryVariables = Exact<{
+export type MuiGetMySeriesNameAndIdQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<SeriesOrderByInput>;
@@ -869,20 +869,20 @@ export type GetMySeriesNameAndIdQueryVariables = Exact<{
 }>;
 
 
-export type GetMySeriesNameAndIdQuery = { currentUser: { mySeries: { nodes: Array<{ id: string, title: string } | null> } } };
+export type MuiGetMySeriesNameAndIdQuery = { currentUser: { mySeries: { nodes: Array<{ id: string, title: string } | null> } } };
 
-export type GetSeriesNameByIdQueryVariables = Exact<{
+export type MuiGetSeriesNameByIdQueryVariables = Exact<{
   seriesId: Scalars['String']['input'];
 }>;
 
 
-export type GetSeriesNameByIdQuery = { seriesById?: { title: string } | null };
+export type MuiGetSeriesNameByIdQuery = { seriesById?: { title: string } | null };
 
-export type PluginEventFieldsFragment = { __typename: 'Event' };
+export type MuiEventFieldsFragment = { __typename: 'Event' };
 
-export type EventsDataFragment = { __typename: 'Event', contributors?: Array<string | null> | null, seriesName?: string | null, seriesId?: string | null, title: string, creator?: string | null, created?: any | null, description?: string | null, displayableStatus?: string | null, eventStatus: string, duration?: any | null, hasPreview: boolean, id: string, location?: string | null, presenters?: Array<string | null> | null, startDate?: any | null, publications?: Array<{ uri?: string | null, tracks?: Array<{ width?: number | null, uri?: string | null, tags?: Array<string | null> | null, mimeType?: string | null, logicalName?: string | null, isLive?: boolean | null, height?: number | null, frameRate?: number | null, flavor?: string | null } | null> | null } | null> | null, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null };
+export type MuiEventsDataFragment = { __typename: 'Event', contributors?: Array<string | null> | null, seriesName?: string | null, seriesId?: string | null, title: string, creator?: string | null, created?: any | null, description?: string | null, displayableStatus?: string | null, eventStatus: string, duration?: any | null, hasPreview: boolean, id: string, location?: string | null, presenters?: Array<string | null> | null, startDate?: any | null, publications?: Array<{ uri?: string | null, tracks?: Array<{ width?: number | null, uri?: string | null, tags?: Array<string | null> | null, mimeType?: string | null, logicalName?: string | null, isLive?: boolean | null, height?: number | null, frameRate?: number | null, flavor?: string | null } | null> | null } | null> | null, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null };
 
-export type EventsFromSeriesQueryVariables = Exact<{
+export type MuiEventsFromSeriesQueryVariables = Exact<{
   seriesId: Scalars['String']['input'];
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
@@ -891,9 +891,9 @@ export type EventsFromSeriesQueryVariables = Exact<{
 }>;
 
 
-export type EventsFromSeriesQuery = { seriesById?: { id: string, title: string, events: { totalCount: any, nodes: Array<{ __typename: 'Event', contributors?: Array<string | null> | null, seriesName?: string | null, seriesId?: string | null, title: string, creator?: string | null, created?: any | null, description?: string | null, displayableStatus?: string | null, eventStatus: string, duration?: any | null, hasPreview: boolean, id: string, location?: string | null, presenters?: Array<string | null> | null, startDate?: any | null, publications?: Array<{ uri?: string | null, tracks?: Array<{ width?: number | null, uri?: string | null, tags?: Array<string | null> | null, mimeType?: string | null, logicalName?: string | null, isLive?: boolean | null, height?: number | null, frameRate?: number | null, flavor?: string | null } | null> | null } | null> | null, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } | null> } } | null };
+export type MuiEventsFromSeriesQuery = { seriesById?: { id: string, title: string, events: { totalCount: any, nodes: Array<{ __typename: 'Event', contributors?: Array<string | null> | null, seriesName?: string | null, seriesId?: string | null, title: string, creator?: string | null, created?: any | null, description?: string | null, displayableStatus?: string | null, eventStatus: string, duration?: any | null, hasPreview: boolean, id: string, location?: string | null, presenters?: Array<string | null> | null, startDate?: any | null, publications?: Array<{ uri?: string | null, tracks?: Array<{ width?: number | null, uri?: string | null, tags?: Array<string | null> | null, mimeType?: string | null, logicalName?: string | null, isLive?: boolean | null, height?: number | null, frameRate?: number | null, flavor?: string | null } | null> | null } | null> | null, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } | null> } } | null };
 
-export type GetMyEventsQueryVariables = Exact<{
+export type MuiGetMyEventsQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<EventOrderByInput>;
@@ -901,110 +901,110 @@ export type GetMyEventsQueryVariables = Exact<{
 }>;
 
 
-export type GetMyEventsQuery = { currentUser: { myEvents: { totalCount: any, nodes: Array<{ __typename: 'Event', contributors?: Array<string | null> | null, seriesName?: string | null, seriesId?: string | null, title: string, creator?: string | null, created?: any | null, description?: string | null, displayableStatus?: string | null, eventStatus: string, duration?: any | null, hasPreview: boolean, id: string, location?: string | null, presenters?: Array<string | null> | null, startDate?: any | null, publications?: Array<{ uri?: string | null, tracks?: Array<{ width?: number | null, uri?: string | null, tags?: Array<string | null> | null, mimeType?: string | null, logicalName?: string | null, isLive?: boolean | null, height?: number | null, frameRate?: number | null, flavor?: string | null } | null> | null } | null> | null, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } | null> } } };
+export type MuiGetMyEventsQuery = { currentUser: { myEvents: { totalCount: any, nodes: Array<{ __typename: 'Event', contributors?: Array<string | null> | null, seriesName?: string | null, seriesId?: string | null, title: string, creator?: string | null, created?: any | null, description?: string | null, displayableStatus?: string | null, eventStatus: string, duration?: any | null, hasPreview: boolean, id: string, location?: string | null, presenters?: Array<string | null> | null, startDate?: any | null, publications?: Array<{ uri?: string | null, tracks?: Array<{ width?: number | null, uri?: string | null, tags?: Array<string | null> | null, mimeType?: string | null, logicalName?: string | null, isLive?: boolean | null, height?: number | null, frameRate?: number | null, flavor?: string | null } | null> | null } | null> | null, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } | null> } } };
 
-export type GetEventByIdQueryVariables = Exact<{
+export type MuiGetEventByIdQueryVariables = Exact<{
   eventId: Scalars['String']['input'];
 }>;
 
 
-export type GetEventByIdQuery = { eventById?: { id: string, title: string } | null };
+export type MuiGetEventByIdQuery = { eventById?: { id: string, title: string } | null };
 
-export type GetEventByIdInputFieldsQueryVariables = Exact<{
+export type MuiGetEventByIdInputFieldsQueryVariables = Exact<{
   eventId: Scalars['String']['input'];
 }>;
 
 
-export type GetEventByIdInputFieldsQuery = { eventById?: { commonMetadataV2: { contributor?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: Array<string | null> | null } | null, created?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: any | null } | null, creator?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: Array<string | null> | null } | null, description?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, duration?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: any | null } | null, identifier?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, isPartOf?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, language?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, license?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, location?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, publisher?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, rightsHolder?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, source?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, startDate?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: any | null } | null, subject?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, title?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null } } | null };
+export type MuiGetEventByIdInputFieldsQuery = { eventById?: { commonMetadataV2: { contributor?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: Array<string | null> | null } | null, created?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: any | null } | null, creator?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: Array<string | null> | null } | null, description?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, duration?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: any | null } | null, identifier?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, isPartOf?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, language?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, license?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, location?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, publisher?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, rightsHolder?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, source?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, startDate?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: any | null } | null, subject?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null, title?: { collectionId?: string | null, collection?: any | null, id?: string | null, label?: string | null, listProvider?: string | null, order?: number | null, readOnly?: boolean | null, required?: boolean | null, type?: Type | null, value?: string | null } | null } } | null };
 
-export type GetAllManagedAclsQueryVariables = Exact<{ [key: string]: never; }>;
+export type MuiGetAllManagedAclsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllManagedAclsQuery = { managedAcls: { nodes: Array<{ name: string, id: string, acl: { entries?: Array<{ role?: string | null, action?: Array<string | null> | null } | { role?: string | null, action?: Array<string | null> | null } | { role?: string | null, action?: Array<string | null> | null } | null> | null } } | null> } };
+export type MuiGetAllManagedAclsQuery = { managedAcls: { nodes: Array<{ name: string, id: string, acl: { entries?: Array<{ role?: string | null, action?: Array<string | null> | null } | { role?: string | null, action?: Array<string | null> | null } | { role?: string | null, action?: Array<string | null> | null } | null> | null } } | null> } };
 
-export type GetManagedAclsWithEventIdQueryVariables = Exact<{
+export type MuiGetManagedAclsWithEventIdQueryVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
 
 
-export type GetManagedAclsWithEventIdQuery = { managedAcls: { nodes: Array<{ name: string, id: string, acl: { entries?: Array<{ role?: string | null, action?: Array<string | null> | null } | { role?: string | null, action?: Array<string | null> | null } | { role?: string | null, action?: Array<string | null> | null } | null> | null } } | null> }, eventById?: { acl: { users?: Array<{ role?: string | null, label?: string | null, action?: Array<string | null> | null } | null> | null } } | null };
+export type MuiGetManagedAclsWithEventIdQuery = { managedAcls: { nodes: Array<{ name: string, id: string, acl: { entries?: Array<{ role?: string | null, action?: Array<string | null> | null } | { role?: string | null, action?: Array<string | null> | null } | { role?: string | null, action?: Array<string | null> | null } | null> | null } } | null> }, eventById?: { acl: { users?: Array<{ role?: string | null, label?: string | null, action?: Array<string | null> | null } | null> | null } } | null };
 
-export type GetManagedAclsWithSeriesIdQueryVariables = Exact<{
+export type MuiGetManagedAclsWithSeriesIdQueryVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
 
 
-export type GetManagedAclsWithSeriesIdQuery = { managedAcls: { nodes: Array<{ name: string, id: string, acl: { entries?: Array<{ role?: string | null, action?: Array<string | null> | null } | { role?: string | null, action?: Array<string | null> | null } | { role?: string | null, action?: Array<string | null> | null } | null> | null } } | null> }, seriesById?: { acl: { users?: Array<{ role?: string | null, label?: string | null, action?: Array<string | null> | null } | null> | null } } | null };
+export type MuiGetManagedAclsWithSeriesIdQuery = { managedAcls: { nodes: Array<{ name: string, id: string, acl: { entries?: Array<{ role?: string | null, action?: Array<string | null> | null } | { role?: string | null, action?: Array<string | null> | null } | { role?: string | null, action?: Array<string | null> | null } | null> | null } } | null> }, seriesById?: { acl: { users?: Array<{ role?: string | null, label?: string | null, action?: Array<string | null> | null } | null> | null } } | null };
 
-export type EventsAclDataFragment = { eventById?: { acl: { users?: Array<{ role?: string | null, label?: string | null, action?: Array<string | null> | null } | null> | null } } | null };
+export type MuiEventsAclDataFragment = { eventById?: { acl: { users?: Array<{ role?: string | null, label?: string | null, action?: Array<string | null> | null } | null> | null } } | null };
 
-export type SeriesAclDataFragment = { seriesById?: { acl: { users?: Array<{ role?: string | null, label?: string | null, action?: Array<string | null> | null } | null> | null } } | null };
+export type MuiSeriesAclDataFragment = { seriesById?: { acl: { users?: Array<{ role?: string | null, label?: string | null, action?: Array<string | null> | null } | null> | null } } | null };
 
-export type CreateSeriesMutationVariables = Exact<{
+export type MuiCreateSeriesMutationVariables = Exact<{
   acl: AccessControlListInput;
   metadata: CommonSeriesMetadataInput;
 }>;
 
 
-export type CreateSeriesMutation = { createSeries: { __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string, eventStatus: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null } };
+export type MuiCreateSeriesMutation = { createSeries: { __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string, eventStatus: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null } };
 
-export type UpdateSeriesMutationVariables = Exact<{
+export type MuiUpdateSeriesMutationVariables = Exact<{
   seriesId: Scalars['String']['input'];
   metadata: CommonSeriesMetadataInput;
 }>;
 
 
-export type UpdateSeriesMutation = { updateSeries: { __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string, eventStatus: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null } };
+export type MuiUpdateSeriesMutation = { updateSeries: { __typename: 'Series', id: string, contributors?: Array<string | null> | null, created?: string | null, creator?: string | null, description?: string | null, title: string, events: { totalCount: any, nodes: Array<{ id: string, title: string, eventStatus: string } | null> }, muiSeriesInfo?: { isPublic?: boolean | null, managedAclId?: any | null } | null } };
 
-export type UpdateEventMutationVariables = Exact<{
+export type MuiUpdateEventMutationVariables = Exact<{
   eventId: Scalars['String']['input'];
   metadata: CommonEventMetadataInput;
 }>;
 
 
-export type UpdateEventMutation = { mui?: { updateEvent: { __typename: 'Event', contributors?: Array<string | null> | null, seriesName?: string | null, seriesId?: string | null, title: string, creator?: string | null, created?: any | null, description?: string | null, displayableStatus?: string | null, eventStatus: string, duration?: any | null, hasPreview: boolean, id: string, location?: string | null, presenters?: Array<string | null> | null, startDate?: any | null, publications?: Array<{ uri?: string | null, tracks?: Array<{ width?: number | null, uri?: string | null, tags?: Array<string | null> | null, mimeType?: string | null, logicalName?: string | null, isLive?: boolean | null, height?: number | null, frameRate?: number | null, flavor?: string | null } | null> | null } | null> | null, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } } | null };
+export type MuiUpdateEventMutation = { mui?: { updateEvent: { __typename: 'Event', contributors?: Array<string | null> | null, seriesName?: string | null, seriesId?: string | null, title: string, creator?: string | null, created?: any | null, description?: string | null, displayableStatus?: string | null, eventStatus: string, duration?: any | null, hasPreview: boolean, id: string, location?: string | null, presenters?: Array<string | null> | null, startDate?: any | null, publications?: Array<{ uri?: string | null, tracks?: Array<{ width?: number | null, uri?: string | null, tags?: Array<string | null> | null, mimeType?: string | null, logicalName?: string | null, isLive?: boolean | null, height?: number | null, frameRate?: number | null, flavor?: string | null } | null> | null } | null> | null, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } } | null };
 
-export type DeleteEventMutationVariables = Exact<{
+export type MuiDeleteEventMutationVariables = Exact<{
   eventId: Scalars['String']['input'];
 }>;
 
 
-export type DeleteEventMutation = { mui?: { deleteEvent?: { id?: string | null } | null } | null };
+export type MuiDeleteEventMutation = { mui?: { deleteEvent?: { id?: string | null } | null } | null };
 
-export type UpdateEventAclMutationVariables = Exact<{
+export type MuiUpdateEventAclMutationVariables = Exact<{
   eventId: Scalars['String']['input'];
   acl: AccessControlListInput;
 }>;
 
 
-export type UpdateEventAclMutation = { mui?: { updateEventAcl: { muiEventInfo?: { managedAclId?: any | null } | null } } | null };
+export type MuiUpdateEventAclMutation = { mui?: { updateEventAcl: { muiEventInfo?: { managedAclId?: any | null } | null } } | null };
 
-export type UpdateSeriesAclMutationVariables = Exact<{
+export type MuiUpdateSeriesAclMutationVariables = Exact<{
   seriesId: Scalars['String']['input'];
   acl: AccessControlListInput;
 }>;
 
 
-export type UpdateSeriesAclMutation = { updateSeriesAcl: { muiSeriesInfo?: { managedAclId?: any | null } | null } };
+export type MuiUpdateSeriesAclMutation = { updateSeriesAcl: { muiSeriesInfo?: { managedAclId?: any | null } | null } };
 
 
-export const PluginCurrentUserFieldsFragmentDoc = `
-    fragment PluginCurrentUserFields on CurrentUser {
+export const MuiCurrentUserFieldsFragmentDoc = `
+    fragment MuiCurrentUserFields on CurrentUser {
   __typename
 }
     `;
-export const PluginUserFieldsFragmentDoc = `
-    fragment PluginUserFields on User {
+export const MuiUserFieldsFragmentDoc = `
+    fragment MuiUserFields on User {
   __typename
 }
     `;
-export const PluginSeriesFieldsFragmentDoc = `
-    fragment PluginSeriesFields on Series {
+export const MuiSeriesFieldsFragmentDoc = `
+    fragment MuiSeriesFields on Series {
   __typename
 }
     `;
-export const SeriesDataFragmentDoc = `
-    fragment SeriesData on Series {
+export const MuiSeriesDataFragmentDoc = `
+    fragment MuiSeriesData on Series {
   __typename
   id
   contributors
@@ -1024,11 +1024,11 @@ export const SeriesDataFragmentDoc = `
     isPublic
     managedAclId
   }
-  ...PluginSeriesFields
+  ...MuiSeriesFields
 }
-    ${PluginSeriesFieldsFragmentDoc}`;
-export const GetInputFieldsMetaDataFragmentDoc = `
-    fragment GetInputFieldsMetaData on JsonMetadataField {
+    ${MuiSeriesFieldsFragmentDoc}`;
+export const MuiGetInputFieldsMetaDataFragmentDoc = `
+    fragment MuiGetInputFieldsMetaData on JsonMetadataField {
   collectionId
   collection
   id
@@ -1041,8 +1041,8 @@ export const GetInputFieldsMetaDataFragmentDoc = `
   value
 }
     `;
-export const GetListInputFieldsMetaDataFragmentDoc = `
-    fragment GetListInputFieldsMetaData on ListMetadataField {
+export const MuiGetListInputFieldsMetaDataFragmentDoc = `
+    fragment MuiGetListInputFieldsMetaData on ListMetadataField {
   collectionId
   collection
   id
@@ -1055,8 +1055,8 @@ export const GetListInputFieldsMetaDataFragmentDoc = `
   value
 }
     `;
-export const GetStringInputFieldsMetaDataFragmentDoc = `
-    fragment GetStringInputFieldsMetaData on StringMetadataField {
+export const MuiGetStringInputFieldsMetaDataFragmentDoc = `
+    fragment MuiGetStringInputFieldsMetaData on StringMetadataField {
   collectionId
   collection
   id
@@ -1069,8 +1069,8 @@ export const GetStringInputFieldsMetaDataFragmentDoc = `
   value
 }
     `;
-export const GetDurationInputFieldsMetaDataFragmentDoc = `
-    fragment GetDurationInputFieldsMetaData on DurationMetadataField {
+export const MuiGetDurationInputFieldsMetaDataFragmentDoc = `
+    fragment MuiGetDurationInputFieldsMetaData on DurationMetadataField {
   collectionId
   collection
   id
@@ -1083,8 +1083,8 @@ export const GetDurationInputFieldsMetaDataFragmentDoc = `
   value
 }
     `;
-export const GetDateTimeInputFieldsMetaDataFragmentDoc = `
-    fragment GetDateTimeInputFieldsMetaData on DateTimeMetadataField {
+export const MuiGetDateTimeInputFieldsMetaDataFragmentDoc = `
+    fragment MuiGetDateTimeInputFieldsMetaData on DateTimeMetadataField {
   collectionId
   collection
   id
@@ -1097,13 +1097,13 @@ export const GetDateTimeInputFieldsMetaDataFragmentDoc = `
   value
 }
     `;
-export const PluginEventFieldsFragmentDoc = `
-    fragment PluginEventFields on Event {
+export const MuiEventFieldsFragmentDoc = `
+    fragment MuiEventFields on Event {
   __typename
 }
     `;
-export const EventsDataFragmentDoc = `
-    fragment EventsData on Event {
+export const MuiEventsDataFragmentDoc = `
+    fragment MuiEventsData on Event {
   __typename
   contributors
   seriesName
@@ -1141,11 +1141,11 @@ export const EventsDataFragmentDoc = `
     publishUrl
     thumbnailUrl
   }
-  ...PluginEventFields
+  ...MuiEventFields
 }
-    ${PluginEventFieldsFragmentDoc}`;
-export const EventsAclDataFragmentDoc = `
-    fragment EventsAclData on Query {
+    ${MuiEventFieldsFragmentDoc}`;
+export const MuiEventsAclDataFragmentDoc = `
+    fragment MuiEventsAclData on Query {
   eventById(id: $id) {
     acl {
       users {
@@ -1157,8 +1157,8 @@ export const EventsAclDataFragmentDoc = `
   }
 }
     `;
-export const SeriesAclDataFragmentDoc = `
-    fragment SeriesAclData on Query {
+export const MuiSeriesAclDataFragmentDoc = `
+    fragment MuiSeriesAclData on Query {
   seriesById(id: $id) {
     acl {
       users {
@@ -1170,59 +1170,59 @@ export const SeriesAclDataFragmentDoc = `
   }
 }
     `;
-export const UserDocument = `
-    query User {
+export const MuiUserDocument = `
+    query MuiUser {
   currentUser {
     email
     name
     username
     userRole
-    ...PluginCurrentUserFields
+    ...MuiCurrentUserFields
   }
 }
-    ${PluginCurrentUserFieldsFragmentDoc}`;
+    ${MuiCurrentUserFieldsFragmentDoc}`;
 
-export const useUserQuery = <
-      TData = UserQuery,
+export const useMuiUserQuery = <
+      TData = MuiUserQuery,
       TError = unknown
     >(
-      variables?: UserQueryVariables,
-      options?: Omit<UseQueryOptions<UserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<UserQuery, TError, TData>['queryKey'] }
+      variables?: MuiUserQueryVariables,
+      options?: Omit<UseQueryOptions<MuiUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiUserQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<UserQuery, TError, TData>(
+    return useQuery<MuiUserQuery, TError, TData>(
       {
-    queryKey: variables === undefined ? ['User'] : ['User', variables],
-    queryFn: fetchData<UserQuery, UserQueryVariables>(UserDocument, variables),
+    queryKey: variables === undefined ? ['MuiUser'] : ['MuiUser', variables],
+    queryFn: fetchData<MuiUserQuery, MuiUserQueryVariables>(MuiUserDocument, variables),
     ...options
   }
     )};
 
-useUserQuery.getKey = (variables?: UserQueryVariables) => variables === undefined ? ['User'] : ['User', variables];
+useMuiUserQuery.getKey = (variables?: MuiUserQueryVariables) => variables === undefined ? ['MuiUser'] : ['MuiUser', variables];
 
 export const useSuspenseUserQuery = <
-      TData = UserQuery,
+      TData = MuiUserQuery,
       TError = unknown
     >(
-      variables?: UserQueryVariables,
-      options?: Omit<UseSuspenseQueryOptions<UserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<UserQuery, TError, TData>['queryKey'] }
+      variables?: MuiUserQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<MuiUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiUserQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useSuspenseQuery<UserQuery, TError, TData>(
+    return useSuspenseQuery<MuiUserQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['UserSuspense'] : ['UserSuspense', variables],
-    queryFn: fetchData<UserQuery, UserQueryVariables>(UserDocument, variables),
+    queryFn: fetchData<MuiUserQuery, MuiUserQueryVariables>(MuiUserDocument, variables),
     ...options
   }
     )};
 
-useSuspenseUserQuery.getKey = (variables?: UserQueryVariables) => variables === undefined ? ['UserSuspense'] : ['UserSuspense', variables];
+useSuspenseUserQuery.getKey = (variables?: MuiUserQueryVariables) => variables === undefined ? ['UserSuspense'] : ['UserSuspense', variables];
 
 
-useUserQuery.fetcher = (variables?: UserQueryVariables, options?: RequestInit['headers']) => fetchData<UserQuery, UserQueryVariables>(UserDocument, variables, options);
+useMuiUserQuery.fetcher = (variables?: MuiUserQueryVariables, options?: RequestInit['headers']) => fetchData<MuiUserQuery, MuiUserQueryVariables>(MuiUserDocument, variables, options);
 
-export const SearchUserDocument = `
-    query SearchUser($limit: Int, $offset: Int, $query: String!) {
+export const MuiSearchUserDocument = `
+    query MuiSearchUser($limit: Int, $offset: Int, $query: String!) {
   searchUser(limit: $limit, offset: $offset, query: $query) {
     totalCount
     nodes {
@@ -1232,7 +1232,7 @@ export const SearchUserDocument = `
       roles
       userRole
       username
-      ...PluginUserFields
+      ...MuiUserFields
     }
     pageInfo {
       limit
@@ -1241,101 +1241,101 @@ export const SearchUserDocument = `
     }
   }
 }
-    ${PluginUserFieldsFragmentDoc}`;
+    ${MuiUserFieldsFragmentDoc}`;
 
-export const useSearchUserQuery = <
-      TData = SearchUserQuery,
+export const useMuiSearchUserQuery = <
+      TData = MuiSearchUserQuery,
       TError = unknown
     >(
-      variables: SearchUserQueryVariables,
-      options?: Omit<UseQueryOptions<SearchUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<SearchUserQuery, TError, TData>['queryKey'] }
+      variables: MuiSearchUserQueryVariables,
+      options?: Omit<UseQueryOptions<MuiSearchUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiSearchUserQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<SearchUserQuery, TError, TData>(
+    return useQuery<MuiSearchUserQuery, TError, TData>(
       {
-    queryKey: ['SearchUser', variables],
-    queryFn: fetchData<SearchUserQuery, SearchUserQueryVariables>(SearchUserDocument, variables),
+    queryKey: ['MuiSearchUser', variables],
+    queryFn: fetchData<MuiSearchUserQuery, MuiSearchUserQueryVariables>(MuiSearchUserDocument, variables),
     ...options
   }
     )};
 
-useSearchUserQuery.getKey = (variables: SearchUserQueryVariables) => ['SearchUser', variables];
+useMuiSearchUserQuery.getKey = (variables: MuiSearchUserQueryVariables) => ['MuiSearchUser', variables];
 
 export const useSuspenseSearchUserQuery = <
-      TData = SearchUserQuery,
+      TData = MuiSearchUserQuery,
       TError = unknown
     >(
-      variables: SearchUserQueryVariables,
-      options?: Omit<UseSuspenseQueryOptions<SearchUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<SearchUserQuery, TError, TData>['queryKey'] }
+      variables: MuiSearchUserQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<MuiSearchUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiSearchUserQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useSuspenseQuery<SearchUserQuery, TError, TData>(
+    return useSuspenseQuery<MuiSearchUserQuery, TError, TData>(
       {
     queryKey: ['SearchUserSuspense', variables],
-    queryFn: fetchData<SearchUserQuery, SearchUserQueryVariables>(SearchUserDocument, variables),
+    queryFn: fetchData<MuiSearchUserQuery, MuiSearchUserQueryVariables>(MuiSearchUserDocument, variables),
     ...options
   }
     )};
 
-useSuspenseSearchUserQuery.getKey = (variables: SearchUserQueryVariables) => ['SearchUserSuspense', variables];
+useSuspenseSearchUserQuery.getKey = (variables: MuiSearchUserQueryVariables) => ['SearchUserSuspense', variables];
 
 
-useSearchUserQuery.fetcher = (variables: SearchUserQueryVariables, options?: RequestInit['headers']) => fetchData<SearchUserQuery, SearchUserQueryVariables>(SearchUserDocument, variables, options);
+useMuiSearchUserQuery.fetcher = (variables: MuiSearchUserQueryVariables, options?: RequestInit['headers']) => fetchData<MuiSearchUserQuery, MuiSearchUserQueryVariables>(MuiSearchUserDocument, variables, options);
 
-export const GetMySeriesDocument = `
-    query GetMySeries($limit: Int, $offset: Int, $orderBy: SeriesOrderByInput, $query: String) {
+export const MuiGetMySeriesDocument = `
+    query MuiGetMySeries($limit: Int, $offset: Int, $orderBy: SeriesOrderByInput, $query: String) {
   currentUser {
     mySeries(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
       totalCount
       nodes {
-        ...SeriesData
+        ...MuiSeriesData
       }
     }
   }
 }
-    ${SeriesDataFragmentDoc}`;
+    ${MuiSeriesDataFragmentDoc}`;
 
-export const useGetMySeriesQuery = <
-      TData = GetMySeriesQuery,
+export const useMuiGetMySeriesQuery = <
+      TData = MuiGetMySeriesQuery,
       TError = unknown
     >(
-      variables?: GetMySeriesQueryVariables,
-      options?: Omit<UseQueryOptions<GetMySeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMySeriesQuery, TError, TData>['queryKey'] }
+      variables?: MuiGetMySeriesQueryVariables,
+      options?: Omit<UseQueryOptions<MuiGetMySeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetMySeriesQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<GetMySeriesQuery, TError, TData>(
+    return useQuery<MuiGetMySeriesQuery, TError, TData>(
       {
-    queryKey: variables === undefined ? ['GetMySeries'] : ['GetMySeries', variables],
-    queryFn: fetchData<GetMySeriesQuery, GetMySeriesQueryVariables>(GetMySeriesDocument, variables),
+    queryKey: variables === undefined ? ['MuiGetMySeries'] : ['MuiGetMySeries', variables],
+    queryFn: fetchData<MuiGetMySeriesQuery, MuiGetMySeriesQueryVariables>(MuiGetMySeriesDocument, variables),
     ...options
   }
     )};
 
-useGetMySeriesQuery.getKey = (variables?: GetMySeriesQueryVariables) => variables === undefined ? ['GetMySeries'] : ['GetMySeries', variables];
+useMuiGetMySeriesQuery.getKey = (variables?: MuiGetMySeriesQueryVariables) => variables === undefined ? ['MuiGetMySeries'] : ['MuiGetMySeries', variables];
 
 export const useSuspenseGetMySeriesQuery = <
-      TData = GetMySeriesQuery,
+      TData = MuiGetMySeriesQuery,
       TError = unknown
     >(
-      variables?: GetMySeriesQueryVariables,
-      options?: Omit<UseSuspenseQueryOptions<GetMySeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetMySeriesQuery, TError, TData>['queryKey'] }
+      variables?: MuiGetMySeriesQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<MuiGetMySeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetMySeriesQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useSuspenseQuery<GetMySeriesQuery, TError, TData>(
+    return useSuspenseQuery<MuiGetMySeriesQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['GetMySeriesSuspense'] : ['GetMySeriesSuspense', variables],
-    queryFn: fetchData<GetMySeriesQuery, GetMySeriesQueryVariables>(GetMySeriesDocument, variables),
+    queryFn: fetchData<MuiGetMySeriesQuery, MuiGetMySeriesQueryVariables>(MuiGetMySeriesDocument, variables),
     ...options
   }
     )};
 
-useSuspenseGetMySeriesQuery.getKey = (variables?: GetMySeriesQueryVariables) => variables === undefined ? ['GetMySeriesSuspense'] : ['GetMySeriesSuspense', variables];
+useSuspenseGetMySeriesQuery.getKey = (variables?: MuiGetMySeriesQueryVariables) => variables === undefined ? ['GetMySeriesSuspense'] : ['GetMySeriesSuspense', variables];
 
 
-useGetMySeriesQuery.fetcher = (variables?: GetMySeriesQueryVariables, options?: RequestInit['headers']) => fetchData<GetMySeriesQuery, GetMySeriesQueryVariables>(GetMySeriesDocument, variables, options);
+useMuiGetMySeriesQuery.fetcher = (variables?: MuiGetMySeriesQueryVariables, options?: RequestInit['headers']) => fetchData<MuiGetMySeriesQuery, MuiGetMySeriesQueryVariables>(MuiGetMySeriesDocument, variables, options);
 
-export const GetSeriesInfoDocument = `
-    query GetSeriesInfo($seriesId: String!) {
+export const MuiGetSeriesInfoDocument = `
+    query MuiGetSeriesInfo($seriesId: String!) {
   seriesById(id: $seriesId) {
     contributors
     created
@@ -1357,126 +1357,126 @@ export const GetSeriesInfoDocument = `
 }
     `;
 
-export const useGetSeriesInfoQuery = <
-      TData = GetSeriesInfoQuery,
+export const useMuiGetSeriesInfoQuery = <
+      TData = MuiGetSeriesInfoQuery,
       TError = unknown
     >(
-      variables: GetSeriesInfoQueryVariables,
-      options?: Omit<UseQueryOptions<GetSeriesInfoQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetSeriesInfoQuery, TError, TData>['queryKey'] }
+      variables: MuiGetSeriesInfoQueryVariables,
+      options?: Omit<UseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<GetSeriesInfoQuery, TError, TData>(
+    return useQuery<MuiGetSeriesInfoQuery, TError, TData>(
       {
-    queryKey: ['GetSeriesInfo', variables],
-    queryFn: fetchData<GetSeriesInfoQuery, GetSeriesInfoQueryVariables>(GetSeriesInfoDocument, variables),
+    queryKey: ['MuiGetSeriesInfo', variables],
+    queryFn: fetchData<MuiGetSeriesInfoQuery, MuiGetSeriesInfoQueryVariables>(MuiGetSeriesInfoDocument, variables),
     ...options
   }
     )};
 
-useGetSeriesInfoQuery.getKey = (variables: GetSeriesInfoQueryVariables) => ['GetSeriesInfo', variables];
+useMuiGetSeriesInfoQuery.getKey = (variables: MuiGetSeriesInfoQueryVariables) => ['MuiGetSeriesInfo', variables];
 
 export const useSuspenseGetSeriesInfoQuery = <
-      TData = GetSeriesInfoQuery,
+      TData = MuiGetSeriesInfoQuery,
       TError = unknown
     >(
-      variables: GetSeriesInfoQueryVariables,
-      options?: Omit<UseSuspenseQueryOptions<GetSeriesInfoQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetSeriesInfoQuery, TError, TData>['queryKey'] }
+      variables: MuiGetSeriesInfoQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useSuspenseQuery<GetSeriesInfoQuery, TError, TData>(
+    return useSuspenseQuery<MuiGetSeriesInfoQuery, TError, TData>(
       {
     queryKey: ['GetSeriesInfoSuspense', variables],
-    queryFn: fetchData<GetSeriesInfoQuery, GetSeriesInfoQueryVariables>(GetSeriesInfoDocument, variables),
+    queryFn: fetchData<MuiGetSeriesInfoQuery, MuiGetSeriesInfoQueryVariables>(MuiGetSeriesInfoDocument, variables),
     ...options
   }
     )};
 
-useSuspenseGetSeriesInfoQuery.getKey = (variables: GetSeriesInfoQueryVariables) => ['GetSeriesInfoSuspense', variables];
+useSuspenseGetSeriesInfoQuery.getKey = (variables: MuiGetSeriesInfoQueryVariables) => ['GetSeriesInfoSuspense', variables];
 
 
-useGetSeriesInfoQuery.fetcher = (variables: GetSeriesInfoQueryVariables, options?: RequestInit['headers']) => fetchData<GetSeriesInfoQuery, GetSeriesInfoQueryVariables>(GetSeriesInfoDocument, variables, options);
+useMuiGetSeriesInfoQuery.fetcher = (variables: MuiGetSeriesInfoQueryVariables, options?: RequestInit['headers']) => fetchData<MuiGetSeriesInfoQuery, MuiGetSeriesInfoQueryVariables>(MuiGetSeriesInfoDocument, variables, options);
 
-export const GetSeriesByIdInputFieldsDocument = `
-    query GetSeriesByIdInputFields($seriesId: String!) {
+export const MuiGetSeriesByIdInputFieldsDocument = `
+    query MuiGetSeriesByIdInputFields($seriesId: String!) {
   seriesById(id: $seriesId) {
     commonMetadataV2 {
       contributor {
-        ...GetListInputFieldsMetaData
+        ...MuiGetListInputFieldsMetaData
       }
       title {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       subject {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       rightsHolder {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       publisher {
-        ...GetListInputFieldsMetaData
+        ...MuiGetListInputFieldsMetaData
       }
       license {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       language {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       identifier {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       description {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       creator {
-        ...GetListInputFieldsMetaData
+        ...MuiGetListInputFieldsMetaData
       }
     }
   }
 }
-    ${GetListInputFieldsMetaDataFragmentDoc}
-${GetStringInputFieldsMetaDataFragmentDoc}`;
+    ${MuiGetListInputFieldsMetaDataFragmentDoc}
+${MuiGetStringInputFieldsMetaDataFragmentDoc}`;
 
-export const useGetSeriesByIdInputFieldsQuery = <
-      TData = GetSeriesByIdInputFieldsQuery,
+export const useMuiGetSeriesByIdInputFieldsQuery = <
+      TData = MuiGetSeriesByIdInputFieldsQuery,
       TError = unknown
     >(
-      variables: GetSeriesByIdInputFieldsQueryVariables,
-      options?: Omit<UseQueryOptions<GetSeriesByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetSeriesByIdInputFieldsQuery, TError, TData>['queryKey'] }
+      variables: MuiGetSeriesByIdInputFieldsQueryVariables,
+      options?: Omit<UseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<GetSeriesByIdInputFieldsQuery, TError, TData>(
+    return useQuery<MuiGetSeriesByIdInputFieldsQuery, TError, TData>(
       {
-    queryKey: ['GetSeriesByIdInputFields', variables],
-    queryFn: fetchData<GetSeriesByIdInputFieldsQuery, GetSeriesByIdInputFieldsQueryVariables>(GetSeriesByIdInputFieldsDocument, variables),
+    queryKey: ['MuiGetSeriesByIdInputFields', variables],
+    queryFn: fetchData<MuiGetSeriesByIdInputFieldsQuery, MuiGetSeriesByIdInputFieldsQueryVariables>(MuiGetSeriesByIdInputFieldsDocument, variables),
     ...options
   }
     )};
 
-useGetSeriesByIdInputFieldsQuery.getKey = (variables: GetSeriesByIdInputFieldsQueryVariables) => ['GetSeriesByIdInputFields', variables];
+useMuiGetSeriesByIdInputFieldsQuery.getKey = (variables: MuiGetSeriesByIdInputFieldsQueryVariables) => ['MuiGetSeriesByIdInputFields', variables];
 
 export const useSuspenseGetSeriesByIdInputFieldsQuery = <
-      TData = GetSeriesByIdInputFieldsQuery,
+      TData = MuiGetSeriesByIdInputFieldsQuery,
       TError = unknown
     >(
-      variables: GetSeriesByIdInputFieldsQueryVariables,
-      options?: Omit<UseSuspenseQueryOptions<GetSeriesByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetSeriesByIdInputFieldsQuery, TError, TData>['queryKey'] }
+      variables: MuiGetSeriesByIdInputFieldsQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useSuspenseQuery<GetSeriesByIdInputFieldsQuery, TError, TData>(
+    return useSuspenseQuery<MuiGetSeriesByIdInputFieldsQuery, TError, TData>(
       {
     queryKey: ['GetSeriesByIdInputFieldsSuspense', variables],
-    queryFn: fetchData<GetSeriesByIdInputFieldsQuery, GetSeriesByIdInputFieldsQueryVariables>(GetSeriesByIdInputFieldsDocument, variables),
+    queryFn: fetchData<MuiGetSeriesByIdInputFieldsQuery, MuiGetSeriesByIdInputFieldsQueryVariables>(MuiGetSeriesByIdInputFieldsDocument, variables),
     ...options
   }
     )};
 
-useSuspenseGetSeriesByIdInputFieldsQuery.getKey = (variables: GetSeriesByIdInputFieldsQueryVariables) => ['GetSeriesByIdInputFieldsSuspense', variables];
+useSuspenseGetSeriesByIdInputFieldsQuery.getKey = (variables: MuiGetSeriesByIdInputFieldsQueryVariables) => ['GetSeriesByIdInputFieldsSuspense', variables];
 
 
-useGetSeriesByIdInputFieldsQuery.fetcher = (variables: GetSeriesByIdInputFieldsQueryVariables, options?: RequestInit['headers']) => fetchData<GetSeriesByIdInputFieldsQuery, GetSeriesByIdInputFieldsQueryVariables>(GetSeriesByIdInputFieldsDocument, variables, options);
+useMuiGetSeriesByIdInputFieldsQuery.fetcher = (variables: MuiGetSeriesByIdInputFieldsQueryVariables, options?: RequestInit['headers']) => fetchData<MuiGetSeriesByIdInputFieldsQuery, MuiGetSeriesByIdInputFieldsQueryVariables>(MuiGetSeriesByIdInputFieldsDocument, variables, options);
 
-export const GetMySeriesNameAndIdDocument = `
-    query GetMySeriesNameAndId($limit: Int, $offset: Int, $orderBy: SeriesOrderByInput, $query: String) {
+export const MuiGetMySeriesNameAndIdDocument = `
+    query MuiGetMySeriesNameAndId($limit: Int, $offset: Int, $orderBy: SeriesOrderByInput, $query: String) {
   currentUser {
     mySeries(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
       nodes {
@@ -1488,200 +1488,200 @@ export const GetMySeriesNameAndIdDocument = `
 }
     `;
 
-export const useGetMySeriesNameAndIdQuery = <
-      TData = GetMySeriesNameAndIdQuery,
+export const useMuiGetMySeriesNameAndIdQuery = <
+      TData = MuiGetMySeriesNameAndIdQuery,
       TError = unknown
     >(
-      variables?: GetMySeriesNameAndIdQueryVariables,
-      options?: Omit<UseQueryOptions<GetMySeriesNameAndIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMySeriesNameAndIdQuery, TError, TData>['queryKey'] }
+      variables?: MuiGetMySeriesNameAndIdQueryVariables,
+      options?: Omit<UseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<GetMySeriesNameAndIdQuery, TError, TData>(
+    return useQuery<MuiGetMySeriesNameAndIdQuery, TError, TData>(
       {
-    queryKey: variables === undefined ? ['GetMySeriesNameAndId'] : ['GetMySeriesNameAndId', variables],
-    queryFn: fetchData<GetMySeriesNameAndIdQuery, GetMySeriesNameAndIdQueryVariables>(GetMySeriesNameAndIdDocument, variables),
+    queryKey: variables === undefined ? ['MuiGetMySeriesNameAndId'] : ['MuiGetMySeriesNameAndId', variables],
+    queryFn: fetchData<MuiGetMySeriesNameAndIdQuery, MuiGetMySeriesNameAndIdQueryVariables>(MuiGetMySeriesNameAndIdDocument, variables),
     ...options
   }
     )};
 
-useGetMySeriesNameAndIdQuery.getKey = (variables?: GetMySeriesNameAndIdQueryVariables) => variables === undefined ? ['GetMySeriesNameAndId'] : ['GetMySeriesNameAndId', variables];
+useMuiGetMySeriesNameAndIdQuery.getKey = (variables?: MuiGetMySeriesNameAndIdQueryVariables) => variables === undefined ? ['MuiGetMySeriesNameAndId'] : ['MuiGetMySeriesNameAndId', variables];
 
 export const useSuspenseGetMySeriesNameAndIdQuery = <
-      TData = GetMySeriesNameAndIdQuery,
+      TData = MuiGetMySeriesNameAndIdQuery,
       TError = unknown
     >(
-      variables?: GetMySeriesNameAndIdQueryVariables,
-      options?: Omit<UseSuspenseQueryOptions<GetMySeriesNameAndIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetMySeriesNameAndIdQuery, TError, TData>['queryKey'] }
+      variables?: MuiGetMySeriesNameAndIdQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useSuspenseQuery<GetMySeriesNameAndIdQuery, TError, TData>(
+    return useSuspenseQuery<MuiGetMySeriesNameAndIdQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['GetMySeriesNameAndIdSuspense'] : ['GetMySeriesNameAndIdSuspense', variables],
-    queryFn: fetchData<GetMySeriesNameAndIdQuery, GetMySeriesNameAndIdQueryVariables>(GetMySeriesNameAndIdDocument, variables),
+    queryFn: fetchData<MuiGetMySeriesNameAndIdQuery, MuiGetMySeriesNameAndIdQueryVariables>(MuiGetMySeriesNameAndIdDocument, variables),
     ...options
   }
     )};
 
-useSuspenseGetMySeriesNameAndIdQuery.getKey = (variables?: GetMySeriesNameAndIdQueryVariables) => variables === undefined ? ['GetMySeriesNameAndIdSuspense'] : ['GetMySeriesNameAndIdSuspense', variables];
+useSuspenseGetMySeriesNameAndIdQuery.getKey = (variables?: MuiGetMySeriesNameAndIdQueryVariables) => variables === undefined ? ['GetMySeriesNameAndIdSuspense'] : ['GetMySeriesNameAndIdSuspense', variables];
 
 
-useGetMySeriesNameAndIdQuery.fetcher = (variables?: GetMySeriesNameAndIdQueryVariables, options?: RequestInit['headers']) => fetchData<GetMySeriesNameAndIdQuery, GetMySeriesNameAndIdQueryVariables>(GetMySeriesNameAndIdDocument, variables, options);
+useMuiGetMySeriesNameAndIdQuery.fetcher = (variables?: MuiGetMySeriesNameAndIdQueryVariables, options?: RequestInit['headers']) => fetchData<MuiGetMySeriesNameAndIdQuery, MuiGetMySeriesNameAndIdQueryVariables>(MuiGetMySeriesNameAndIdDocument, variables, options);
 
-export const GetSeriesNameByIdDocument = `
-    query GetSeriesNameById($seriesId: String!) {
+export const MuiGetSeriesNameByIdDocument = `
+    query MuiGetSeriesNameById($seriesId: String!) {
   seriesById(id: $seriesId) {
     title
   }
 }
     `;
 
-export const useGetSeriesNameByIdQuery = <
-      TData = GetSeriesNameByIdQuery,
+export const useMuiGetSeriesNameByIdQuery = <
+      TData = MuiGetSeriesNameByIdQuery,
       TError = unknown
     >(
-      variables: GetSeriesNameByIdQueryVariables,
-      options?: Omit<UseQueryOptions<GetSeriesNameByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetSeriesNameByIdQuery, TError, TData>['queryKey'] }
+      variables: MuiGetSeriesNameByIdQueryVariables,
+      options?: Omit<UseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<GetSeriesNameByIdQuery, TError, TData>(
+    return useQuery<MuiGetSeriesNameByIdQuery, TError, TData>(
       {
-    queryKey: ['GetSeriesNameById', variables],
-    queryFn: fetchData<GetSeriesNameByIdQuery, GetSeriesNameByIdQueryVariables>(GetSeriesNameByIdDocument, variables),
+    queryKey: ['MuiGetSeriesNameById', variables],
+    queryFn: fetchData<MuiGetSeriesNameByIdQuery, MuiGetSeriesNameByIdQueryVariables>(MuiGetSeriesNameByIdDocument, variables),
     ...options
   }
     )};
 
-useGetSeriesNameByIdQuery.getKey = (variables: GetSeriesNameByIdQueryVariables) => ['GetSeriesNameById', variables];
+useMuiGetSeriesNameByIdQuery.getKey = (variables: MuiGetSeriesNameByIdQueryVariables) => ['MuiGetSeriesNameById', variables];
 
 export const useSuspenseGetSeriesNameByIdQuery = <
-      TData = GetSeriesNameByIdQuery,
+      TData = MuiGetSeriesNameByIdQuery,
       TError = unknown
     >(
-      variables: GetSeriesNameByIdQueryVariables,
-      options?: Omit<UseSuspenseQueryOptions<GetSeriesNameByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetSeriesNameByIdQuery, TError, TData>['queryKey'] }
+      variables: MuiGetSeriesNameByIdQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useSuspenseQuery<GetSeriesNameByIdQuery, TError, TData>(
+    return useSuspenseQuery<MuiGetSeriesNameByIdQuery, TError, TData>(
       {
     queryKey: ['GetSeriesNameByIdSuspense', variables],
-    queryFn: fetchData<GetSeriesNameByIdQuery, GetSeriesNameByIdQueryVariables>(GetSeriesNameByIdDocument, variables),
+    queryFn: fetchData<MuiGetSeriesNameByIdQuery, MuiGetSeriesNameByIdQueryVariables>(MuiGetSeriesNameByIdDocument, variables),
     ...options
   }
     )};
 
-useSuspenseGetSeriesNameByIdQuery.getKey = (variables: GetSeriesNameByIdQueryVariables) => ['GetSeriesNameByIdSuspense', variables];
+useSuspenseGetSeriesNameByIdQuery.getKey = (variables: MuiGetSeriesNameByIdQueryVariables) => ['GetSeriesNameByIdSuspense', variables];
 
 
-useGetSeriesNameByIdQuery.fetcher = (variables: GetSeriesNameByIdQueryVariables, options?: RequestInit['headers']) => fetchData<GetSeriesNameByIdQuery, GetSeriesNameByIdQueryVariables>(GetSeriesNameByIdDocument, variables, options);
+useMuiGetSeriesNameByIdQuery.fetcher = (variables: MuiGetSeriesNameByIdQueryVariables, options?: RequestInit['headers']) => fetchData<MuiGetSeriesNameByIdQuery, MuiGetSeriesNameByIdQueryVariables>(MuiGetSeriesNameByIdDocument, variables, options);
 
-export const EventsFromSeriesDocument = `
-    query EventsFromSeries($seriesId: String!, $limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String) {
+export const MuiEventsFromSeriesDocument = `
+    query MuiEventsFromSeries($seriesId: String!, $limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String) {
   seriesById(id: $seriesId) {
     id
     title
     events(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
       totalCount
       nodes {
-        ...EventsData
+        ...MuiEventsData
       }
     }
   }
 }
-    ${EventsDataFragmentDoc}`;
+    ${MuiEventsDataFragmentDoc}`;
 
-export const useEventsFromSeriesQuery = <
-      TData = EventsFromSeriesQuery,
+export const useMuiEventsFromSeriesQuery = <
+      TData = MuiEventsFromSeriesQuery,
       TError = unknown
     >(
-      variables: EventsFromSeriesQueryVariables,
-      options?: Omit<UseQueryOptions<EventsFromSeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<EventsFromSeriesQuery, TError, TData>['queryKey'] }
+      variables: MuiEventsFromSeriesQueryVariables,
+      options?: Omit<UseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<EventsFromSeriesQuery, TError, TData>(
+    return useQuery<MuiEventsFromSeriesQuery, TError, TData>(
       {
-    queryKey: ['EventsFromSeries', variables],
-    queryFn: fetchData<EventsFromSeriesQuery, EventsFromSeriesQueryVariables>(EventsFromSeriesDocument, variables),
+    queryKey: ['MuiEventsFromSeries', variables],
+    queryFn: fetchData<MuiEventsFromSeriesQuery, MuiEventsFromSeriesQueryVariables>(MuiEventsFromSeriesDocument, variables),
     ...options
   }
     )};
 
-useEventsFromSeriesQuery.getKey = (variables: EventsFromSeriesQueryVariables) => ['EventsFromSeries', variables];
+useMuiEventsFromSeriesQuery.getKey = (variables: MuiEventsFromSeriesQueryVariables) => ['MuiEventsFromSeries', variables];
 
 export const useSuspenseEventsFromSeriesQuery = <
-      TData = EventsFromSeriesQuery,
+      TData = MuiEventsFromSeriesQuery,
       TError = unknown
     >(
-      variables: EventsFromSeriesQueryVariables,
-      options?: Omit<UseSuspenseQueryOptions<EventsFromSeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<EventsFromSeriesQuery, TError, TData>['queryKey'] }
+      variables: MuiEventsFromSeriesQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useSuspenseQuery<EventsFromSeriesQuery, TError, TData>(
+    return useSuspenseQuery<MuiEventsFromSeriesQuery, TError, TData>(
       {
     queryKey: ['EventsFromSeriesSuspense', variables],
-    queryFn: fetchData<EventsFromSeriesQuery, EventsFromSeriesQueryVariables>(EventsFromSeriesDocument, variables),
+    queryFn: fetchData<MuiEventsFromSeriesQuery, MuiEventsFromSeriesQueryVariables>(MuiEventsFromSeriesDocument, variables),
     ...options
   }
     )};
 
-useSuspenseEventsFromSeriesQuery.getKey = (variables: EventsFromSeriesQueryVariables) => ['EventsFromSeriesSuspense', variables];
+useSuspenseEventsFromSeriesQuery.getKey = (variables: MuiEventsFromSeriesQueryVariables) => ['EventsFromSeriesSuspense', variables];
 
 
-useEventsFromSeriesQuery.fetcher = (variables: EventsFromSeriesQueryVariables, options?: RequestInit['headers']) => fetchData<EventsFromSeriesQuery, EventsFromSeriesQueryVariables>(EventsFromSeriesDocument, variables, options);
+useMuiEventsFromSeriesQuery.fetcher = (variables: MuiEventsFromSeriesQueryVariables, options?: RequestInit['headers']) => fetchData<MuiEventsFromSeriesQuery, MuiEventsFromSeriesQueryVariables>(MuiEventsFromSeriesDocument, variables, options);
 
-export const GetMyEventsDocument = `
-    query GetMyEvents($limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String) {
+export const MuiGetMyEventsDocument = `
+    query MuiGetMyEvents($limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String) {
   currentUser {
     myEvents(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
       totalCount
       nodes {
-        ...EventsData
+        ...MuiEventsData
       }
     }
   }
 }
-    ${EventsDataFragmentDoc}`;
+    ${MuiEventsDataFragmentDoc}`;
 
-export const useGetMyEventsQuery = <
-      TData = GetMyEventsQuery,
+export const useMuiGetMyEventsQuery = <
+      TData = MuiGetMyEventsQuery,
       TError = unknown
     >(
-      variables?: GetMyEventsQueryVariables,
-      options?: Omit<UseQueryOptions<GetMyEventsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMyEventsQuery, TError, TData>['queryKey'] }
+      variables?: MuiGetMyEventsQueryVariables,
+      options?: Omit<UseQueryOptions<MuiGetMyEventsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetMyEventsQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<GetMyEventsQuery, TError, TData>(
+    return useQuery<MuiGetMyEventsQuery, TError, TData>(
       {
-    queryKey: variables === undefined ? ['GetMyEvents'] : ['GetMyEvents', variables],
-    queryFn: fetchData<GetMyEventsQuery, GetMyEventsQueryVariables>(GetMyEventsDocument, variables),
+    queryKey: variables === undefined ? ['MuiGetMyEvents'] : ['MuiGetMyEvents', variables],
+    queryFn: fetchData<MuiGetMyEventsQuery, MuiGetMyEventsQueryVariables>(MuiGetMyEventsDocument, variables),
     ...options
   }
     )};
 
-useGetMyEventsQuery.getKey = (variables?: GetMyEventsQueryVariables) => variables === undefined ? ['GetMyEvents'] : ['GetMyEvents', variables];
+useMuiGetMyEventsQuery.getKey = (variables?: MuiGetMyEventsQueryVariables) => variables === undefined ? ['MuiGetMyEvents'] : ['MuiGetMyEvents', variables];
 
 export const useSuspenseGetMyEventsQuery = <
-      TData = GetMyEventsQuery,
+      TData = MuiGetMyEventsQuery,
       TError = unknown
     >(
-      variables?: GetMyEventsQueryVariables,
-      options?: Omit<UseSuspenseQueryOptions<GetMyEventsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetMyEventsQuery, TError, TData>['queryKey'] }
+      variables?: MuiGetMyEventsQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<MuiGetMyEventsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetMyEventsQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useSuspenseQuery<GetMyEventsQuery, TError, TData>(
+    return useSuspenseQuery<MuiGetMyEventsQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['GetMyEventsSuspense'] : ['GetMyEventsSuspense', variables],
-    queryFn: fetchData<GetMyEventsQuery, GetMyEventsQueryVariables>(GetMyEventsDocument, variables),
+    queryFn: fetchData<MuiGetMyEventsQuery, MuiGetMyEventsQueryVariables>(MuiGetMyEventsDocument, variables),
     ...options
   }
     )};
 
-useSuspenseGetMyEventsQuery.getKey = (variables?: GetMyEventsQueryVariables) => variables === undefined ? ['GetMyEventsSuspense'] : ['GetMyEventsSuspense', variables];
+useSuspenseGetMyEventsQuery.getKey = (variables?: MuiGetMyEventsQueryVariables) => variables === undefined ? ['GetMyEventsSuspense'] : ['GetMyEventsSuspense', variables];
 
 
-useGetMyEventsQuery.fetcher = (variables?: GetMyEventsQueryVariables, options?: RequestInit['headers']) => fetchData<GetMyEventsQuery, GetMyEventsQueryVariables>(GetMyEventsDocument, variables, options);
+useMuiGetMyEventsQuery.fetcher = (variables?: MuiGetMyEventsQueryVariables, options?: RequestInit['headers']) => fetchData<MuiGetMyEventsQuery, MuiGetMyEventsQueryVariables>(MuiGetMyEventsDocument, variables, options);
 
-export const GetEventByIdDocument = `
-    query GetEventById($eventId: String!) {
+export const MuiGetEventByIdDocument = `
+    query MuiGetEventById($eventId: String!) {
   eventById(id: $eventId) {
     id
     title
@@ -1689,146 +1689,146 @@ export const GetEventByIdDocument = `
 }
     `;
 
-export const useGetEventByIdQuery = <
-      TData = GetEventByIdQuery,
+export const useMuiGetEventByIdQuery = <
+      TData = MuiGetEventByIdQuery,
       TError = unknown
     >(
-      variables: GetEventByIdQueryVariables,
-      options?: Omit<UseQueryOptions<GetEventByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetEventByIdQuery, TError, TData>['queryKey'] }
+      variables: MuiGetEventByIdQueryVariables,
+      options?: Omit<UseQueryOptions<MuiGetEventByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetEventByIdQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<GetEventByIdQuery, TError, TData>(
+    return useQuery<MuiGetEventByIdQuery, TError, TData>(
       {
-    queryKey: ['GetEventById', variables],
-    queryFn: fetchData<GetEventByIdQuery, GetEventByIdQueryVariables>(GetEventByIdDocument, variables),
+    queryKey: ['MuiGetEventById', variables],
+    queryFn: fetchData<MuiGetEventByIdQuery, MuiGetEventByIdQueryVariables>(MuiGetEventByIdDocument, variables),
     ...options
   }
     )};
 
-useGetEventByIdQuery.getKey = (variables: GetEventByIdQueryVariables) => ['GetEventById', variables];
+useMuiGetEventByIdQuery.getKey = (variables: MuiGetEventByIdQueryVariables) => ['MuiGetEventById', variables];
 
 export const useSuspenseGetEventByIdQuery = <
-      TData = GetEventByIdQuery,
+      TData = MuiGetEventByIdQuery,
       TError = unknown
     >(
-      variables: GetEventByIdQueryVariables,
-      options?: Omit<UseSuspenseQueryOptions<GetEventByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetEventByIdQuery, TError, TData>['queryKey'] }
+      variables: MuiGetEventByIdQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<MuiGetEventByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetEventByIdQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useSuspenseQuery<GetEventByIdQuery, TError, TData>(
+    return useSuspenseQuery<MuiGetEventByIdQuery, TError, TData>(
       {
     queryKey: ['GetEventByIdSuspense', variables],
-    queryFn: fetchData<GetEventByIdQuery, GetEventByIdQueryVariables>(GetEventByIdDocument, variables),
+    queryFn: fetchData<MuiGetEventByIdQuery, MuiGetEventByIdQueryVariables>(MuiGetEventByIdDocument, variables),
     ...options
   }
     )};
 
-useSuspenseGetEventByIdQuery.getKey = (variables: GetEventByIdQueryVariables) => ['GetEventByIdSuspense', variables];
+useSuspenseGetEventByIdQuery.getKey = (variables: MuiGetEventByIdQueryVariables) => ['GetEventByIdSuspense', variables];
 
 
-useGetEventByIdQuery.fetcher = (variables: GetEventByIdQueryVariables, options?: RequestInit['headers']) => fetchData<GetEventByIdQuery, GetEventByIdQueryVariables>(GetEventByIdDocument, variables, options);
+useMuiGetEventByIdQuery.fetcher = (variables: MuiGetEventByIdQueryVariables, options?: RequestInit['headers']) => fetchData<MuiGetEventByIdQuery, MuiGetEventByIdQueryVariables>(MuiGetEventByIdDocument, variables, options);
 
-export const GetEventByIdInputFieldsDocument = `
-    query GetEventByIdInputFields($eventId: String!) {
+export const MuiGetEventByIdInputFieldsDocument = `
+    query MuiGetEventByIdInputFields($eventId: String!) {
   eventById(id: $eventId) {
     commonMetadataV2 {
       contributor {
-        ...GetListInputFieldsMetaData
+        ...MuiGetListInputFieldsMetaData
       }
       created {
-        ...GetDateTimeInputFieldsMetaData
+        ...MuiGetDateTimeInputFieldsMetaData
       }
       creator {
-        ...GetListInputFieldsMetaData
+        ...MuiGetListInputFieldsMetaData
       }
       description {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       duration {
-        ...GetDurationInputFieldsMetaData
+        ...MuiGetDurationInputFieldsMetaData
       }
       identifier {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       isPartOf {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       language {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       license {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       location {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       publisher {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       rightsHolder {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       source {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       startDate {
-        ...GetDateTimeInputFieldsMetaData
+        ...MuiGetDateTimeInputFieldsMetaData
       }
       subject {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
       title {
-        ...GetStringInputFieldsMetaData
+        ...MuiGetStringInputFieldsMetaData
       }
     }
   }
 }
-    ${GetListInputFieldsMetaDataFragmentDoc}
-${GetDateTimeInputFieldsMetaDataFragmentDoc}
-${GetStringInputFieldsMetaDataFragmentDoc}
-${GetDurationInputFieldsMetaDataFragmentDoc}`;
+    ${MuiGetListInputFieldsMetaDataFragmentDoc}
+${MuiGetDateTimeInputFieldsMetaDataFragmentDoc}
+${MuiGetStringInputFieldsMetaDataFragmentDoc}
+${MuiGetDurationInputFieldsMetaDataFragmentDoc}`;
 
-export const useGetEventByIdInputFieldsQuery = <
-      TData = GetEventByIdInputFieldsQuery,
+export const useMuiGetEventByIdInputFieldsQuery = <
+      TData = MuiGetEventByIdInputFieldsQuery,
       TError = unknown
     >(
-      variables: GetEventByIdInputFieldsQueryVariables,
-      options?: Omit<UseQueryOptions<GetEventByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetEventByIdInputFieldsQuery, TError, TData>['queryKey'] }
+      variables: MuiGetEventByIdInputFieldsQueryVariables,
+      options?: Omit<UseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<GetEventByIdInputFieldsQuery, TError, TData>(
+    return useQuery<MuiGetEventByIdInputFieldsQuery, TError, TData>(
       {
-    queryKey: ['GetEventByIdInputFields', variables],
-    queryFn: fetchData<GetEventByIdInputFieldsQuery, GetEventByIdInputFieldsQueryVariables>(GetEventByIdInputFieldsDocument, variables),
+    queryKey: ['MuiGetEventByIdInputFields', variables],
+    queryFn: fetchData<MuiGetEventByIdInputFieldsQuery, MuiGetEventByIdInputFieldsQueryVariables>(MuiGetEventByIdInputFieldsDocument, variables),
     ...options
   }
     )};
 
-useGetEventByIdInputFieldsQuery.getKey = (variables: GetEventByIdInputFieldsQueryVariables) => ['GetEventByIdInputFields', variables];
+useMuiGetEventByIdInputFieldsQuery.getKey = (variables: MuiGetEventByIdInputFieldsQueryVariables) => ['MuiGetEventByIdInputFields', variables];
 
 export const useSuspenseGetEventByIdInputFieldsQuery = <
-      TData = GetEventByIdInputFieldsQuery,
+      TData = MuiGetEventByIdInputFieldsQuery,
       TError = unknown
     >(
-      variables: GetEventByIdInputFieldsQueryVariables,
-      options?: Omit<UseSuspenseQueryOptions<GetEventByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetEventByIdInputFieldsQuery, TError, TData>['queryKey'] }
+      variables: MuiGetEventByIdInputFieldsQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useSuspenseQuery<GetEventByIdInputFieldsQuery, TError, TData>(
+    return useSuspenseQuery<MuiGetEventByIdInputFieldsQuery, TError, TData>(
       {
     queryKey: ['GetEventByIdInputFieldsSuspense', variables],
-    queryFn: fetchData<GetEventByIdInputFieldsQuery, GetEventByIdInputFieldsQueryVariables>(GetEventByIdInputFieldsDocument, variables),
+    queryFn: fetchData<MuiGetEventByIdInputFieldsQuery, MuiGetEventByIdInputFieldsQueryVariables>(MuiGetEventByIdInputFieldsDocument, variables),
     ...options
   }
     )};
 
-useSuspenseGetEventByIdInputFieldsQuery.getKey = (variables: GetEventByIdInputFieldsQueryVariables) => ['GetEventByIdInputFieldsSuspense', variables];
+useSuspenseGetEventByIdInputFieldsQuery.getKey = (variables: MuiGetEventByIdInputFieldsQueryVariables) => ['GetEventByIdInputFieldsSuspense', variables];
 
 
-useGetEventByIdInputFieldsQuery.fetcher = (variables: GetEventByIdInputFieldsQueryVariables, options?: RequestInit['headers']) => fetchData<GetEventByIdInputFieldsQuery, GetEventByIdInputFieldsQueryVariables>(GetEventByIdInputFieldsDocument, variables, options);
+useMuiGetEventByIdInputFieldsQuery.fetcher = (variables: MuiGetEventByIdInputFieldsQueryVariables, options?: RequestInit['headers']) => fetchData<MuiGetEventByIdInputFieldsQuery, MuiGetEventByIdInputFieldsQueryVariables>(MuiGetEventByIdInputFieldsDocument, variables, options);
 
-export const GetAllManagedAclsDocument = `
-    query GetAllManagedAcls {
+export const MuiGetAllManagedAclsDocument = `
+    query MuiGetAllManagedAcls {
   managedAcls {
     nodes {
       name
@@ -1844,47 +1844,47 @@ export const GetAllManagedAclsDocument = `
 }
     `;
 
-export const useGetAllManagedAclsQuery = <
-      TData = GetAllManagedAclsQuery,
+export const useMuiGetAllManagedAclsQuery = <
+      TData = MuiGetAllManagedAclsQuery,
       TError = unknown
     >(
-      variables?: GetAllManagedAclsQueryVariables,
-      options?: Omit<UseQueryOptions<GetAllManagedAclsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetAllManagedAclsQuery, TError, TData>['queryKey'] }
+      variables?: MuiGetAllManagedAclsQueryVariables,
+      options?: Omit<UseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<GetAllManagedAclsQuery, TError, TData>(
+    return useQuery<MuiGetAllManagedAclsQuery, TError, TData>(
       {
-    queryKey: variables === undefined ? ['GetAllManagedAcls'] : ['GetAllManagedAcls', variables],
-    queryFn: fetchData<GetAllManagedAclsQuery, GetAllManagedAclsQueryVariables>(GetAllManagedAclsDocument, variables),
+    queryKey: variables === undefined ? ['MuiGetAllManagedAcls'] : ['MuiGetAllManagedAcls', variables],
+    queryFn: fetchData<MuiGetAllManagedAclsQuery, MuiGetAllManagedAclsQueryVariables>(MuiGetAllManagedAclsDocument, variables),
     ...options
   }
     )};
 
-useGetAllManagedAclsQuery.getKey = (variables?: GetAllManagedAclsQueryVariables) => variables === undefined ? ['GetAllManagedAcls'] : ['GetAllManagedAcls', variables];
+useMuiGetAllManagedAclsQuery.getKey = (variables?: MuiGetAllManagedAclsQueryVariables) => variables === undefined ? ['MuiGetAllManagedAcls'] : ['MuiGetAllManagedAcls', variables];
 
 export const useSuspenseGetAllManagedAclsQuery = <
-      TData = GetAllManagedAclsQuery,
+      TData = MuiGetAllManagedAclsQuery,
       TError = unknown
     >(
-      variables?: GetAllManagedAclsQueryVariables,
-      options?: Omit<UseSuspenseQueryOptions<GetAllManagedAclsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetAllManagedAclsQuery, TError, TData>['queryKey'] }
+      variables?: MuiGetAllManagedAclsQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useSuspenseQuery<GetAllManagedAclsQuery, TError, TData>(
+    return useSuspenseQuery<MuiGetAllManagedAclsQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['GetAllManagedAclsSuspense'] : ['GetAllManagedAclsSuspense', variables],
-    queryFn: fetchData<GetAllManagedAclsQuery, GetAllManagedAclsQueryVariables>(GetAllManagedAclsDocument, variables),
+    queryFn: fetchData<MuiGetAllManagedAclsQuery, MuiGetAllManagedAclsQueryVariables>(MuiGetAllManagedAclsDocument, variables),
     ...options
   }
     )};
 
-useSuspenseGetAllManagedAclsQuery.getKey = (variables?: GetAllManagedAclsQueryVariables) => variables === undefined ? ['GetAllManagedAclsSuspense'] : ['GetAllManagedAclsSuspense', variables];
+useSuspenseGetAllManagedAclsQuery.getKey = (variables?: MuiGetAllManagedAclsQueryVariables) => variables === undefined ? ['GetAllManagedAclsSuspense'] : ['GetAllManagedAclsSuspense', variables];
 
 
-useGetAllManagedAclsQuery.fetcher = (variables?: GetAllManagedAclsQueryVariables, options?: RequestInit['headers']) => fetchData<GetAllManagedAclsQuery, GetAllManagedAclsQueryVariables>(GetAllManagedAclsDocument, variables, options);
+useMuiGetAllManagedAclsQuery.fetcher = (variables?: MuiGetAllManagedAclsQueryVariables, options?: RequestInit['headers']) => fetchData<MuiGetAllManagedAclsQuery, MuiGetAllManagedAclsQueryVariables>(MuiGetAllManagedAclsDocument, variables, options);
 
-export const GetManagedAclsWithEventIdDocument = `
-    query GetManagedAclsWithEventId($id: String!) {
+export const MuiGetManagedAclsWithEventIdDocument = `
+    query MuiGetManagedAclsWithEventId($id: String!) {
   managedAcls {
     nodes {
       name
@@ -1897,51 +1897,51 @@ export const GetManagedAclsWithEventIdDocument = `
       }
     }
   }
-  ...EventsAclData
+  ...MuiEventsAclData
 }
-    ${EventsAclDataFragmentDoc}`;
+    ${MuiEventsAclDataFragmentDoc}`;
 
-export const useGetManagedAclsWithEventIdQuery = <
-      TData = GetManagedAclsWithEventIdQuery,
+export const useMuiGetManagedAclsWithEventIdQuery = <
+      TData = MuiGetManagedAclsWithEventIdQuery,
       TError = unknown
     >(
-      variables: GetManagedAclsWithEventIdQueryVariables,
-      options?: Omit<UseQueryOptions<GetManagedAclsWithEventIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetManagedAclsWithEventIdQuery, TError, TData>['queryKey'] }
+      variables: MuiGetManagedAclsWithEventIdQueryVariables,
+      options?: Omit<UseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<GetManagedAclsWithEventIdQuery, TError, TData>(
+    return useQuery<MuiGetManagedAclsWithEventIdQuery, TError, TData>(
       {
-    queryKey: ['GetManagedAclsWithEventId', variables],
-    queryFn: fetchData<GetManagedAclsWithEventIdQuery, GetManagedAclsWithEventIdQueryVariables>(GetManagedAclsWithEventIdDocument, variables),
+    queryKey: ['MuiGetManagedAclsWithEventId', variables],
+    queryFn: fetchData<MuiGetManagedAclsWithEventIdQuery, MuiGetManagedAclsWithEventIdQueryVariables>(MuiGetManagedAclsWithEventIdDocument, variables),
     ...options
   }
     )};
 
-useGetManagedAclsWithEventIdQuery.getKey = (variables: GetManagedAclsWithEventIdQueryVariables) => ['GetManagedAclsWithEventId', variables];
+useMuiGetManagedAclsWithEventIdQuery.getKey = (variables: MuiGetManagedAclsWithEventIdQueryVariables) => ['MuiGetManagedAclsWithEventId', variables];
 
 export const useSuspenseGetManagedAclsWithEventIdQuery = <
-      TData = GetManagedAclsWithEventIdQuery,
+      TData = MuiGetManagedAclsWithEventIdQuery,
       TError = unknown
     >(
-      variables: GetManagedAclsWithEventIdQueryVariables,
-      options?: Omit<UseSuspenseQueryOptions<GetManagedAclsWithEventIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetManagedAclsWithEventIdQuery, TError, TData>['queryKey'] }
+      variables: MuiGetManagedAclsWithEventIdQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useSuspenseQuery<GetManagedAclsWithEventIdQuery, TError, TData>(
+    return useSuspenseQuery<MuiGetManagedAclsWithEventIdQuery, TError, TData>(
       {
     queryKey: ['GetManagedAclsWithEventIdSuspense', variables],
-    queryFn: fetchData<GetManagedAclsWithEventIdQuery, GetManagedAclsWithEventIdQueryVariables>(GetManagedAclsWithEventIdDocument, variables),
+    queryFn: fetchData<MuiGetManagedAclsWithEventIdQuery, MuiGetManagedAclsWithEventIdQueryVariables>(MuiGetManagedAclsWithEventIdDocument, variables),
     ...options
   }
     )};
 
-useSuspenseGetManagedAclsWithEventIdQuery.getKey = (variables: GetManagedAclsWithEventIdQueryVariables) => ['GetManagedAclsWithEventIdSuspense', variables];
+useSuspenseGetManagedAclsWithEventIdQuery.getKey = (variables: MuiGetManagedAclsWithEventIdQueryVariables) => ['GetManagedAclsWithEventIdSuspense', variables];
 
 
-useGetManagedAclsWithEventIdQuery.fetcher = (variables: GetManagedAclsWithEventIdQueryVariables, options?: RequestInit['headers']) => fetchData<GetManagedAclsWithEventIdQuery, GetManagedAclsWithEventIdQueryVariables>(GetManagedAclsWithEventIdDocument, variables, options);
+useMuiGetManagedAclsWithEventIdQuery.fetcher = (variables: MuiGetManagedAclsWithEventIdQueryVariables, options?: RequestInit['headers']) => fetchData<MuiGetManagedAclsWithEventIdQuery, MuiGetManagedAclsWithEventIdQueryVariables>(MuiGetManagedAclsWithEventIdDocument, variables, options);
 
-export const GetManagedAclsWithSeriesIdDocument = `
-    query GetManagedAclsWithSeriesId($id: String!) {
+export const MuiGetManagedAclsWithSeriesIdDocument = `
+    query MuiGetManagedAclsWithSeriesId($id: String!) {
   managedAcls {
     nodes {
       name
@@ -1954,125 +1954,125 @@ export const GetManagedAclsWithSeriesIdDocument = `
       }
     }
   }
-  ...SeriesAclData
+  ...MuiSeriesAclData
 }
-    ${SeriesAclDataFragmentDoc}`;
+    ${MuiSeriesAclDataFragmentDoc}`;
 
-export const useGetManagedAclsWithSeriesIdQuery = <
-      TData = GetManagedAclsWithSeriesIdQuery,
+export const useMuiGetManagedAclsWithSeriesIdQuery = <
+      TData = MuiGetManagedAclsWithSeriesIdQuery,
       TError = unknown
     >(
-      variables: GetManagedAclsWithSeriesIdQueryVariables,
-      options?: Omit<UseQueryOptions<GetManagedAclsWithSeriesIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetManagedAclsWithSeriesIdQuery, TError, TData>['queryKey'] }
+      variables: MuiGetManagedAclsWithSeriesIdQueryVariables,
+      options?: Omit<UseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useQuery<GetManagedAclsWithSeriesIdQuery, TError, TData>(
+    return useQuery<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>(
       {
-    queryKey: ['GetManagedAclsWithSeriesId', variables],
-    queryFn: fetchData<GetManagedAclsWithSeriesIdQuery, GetManagedAclsWithSeriesIdQueryVariables>(GetManagedAclsWithSeriesIdDocument, variables),
+    queryKey: ['MuiGetManagedAclsWithSeriesId', variables],
+    queryFn: fetchData<MuiGetManagedAclsWithSeriesIdQuery, MuiGetManagedAclsWithSeriesIdQueryVariables>(MuiGetManagedAclsWithSeriesIdDocument, variables),
     ...options
   }
     )};
 
-useGetManagedAclsWithSeriesIdQuery.getKey = (variables: GetManagedAclsWithSeriesIdQueryVariables) => ['GetManagedAclsWithSeriesId', variables];
+useMuiGetManagedAclsWithSeriesIdQuery.getKey = (variables: MuiGetManagedAclsWithSeriesIdQueryVariables) => ['MuiGetManagedAclsWithSeriesId', variables];
 
 export const useSuspenseGetManagedAclsWithSeriesIdQuery = <
-      TData = GetManagedAclsWithSeriesIdQuery,
+      TData = MuiGetManagedAclsWithSeriesIdQuery,
       TError = unknown
     >(
-      variables: GetManagedAclsWithSeriesIdQueryVariables,
-      options?: Omit<UseSuspenseQueryOptions<GetManagedAclsWithSeriesIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<GetManagedAclsWithSeriesIdQuery, TError, TData>['queryKey'] }
+      variables: MuiGetManagedAclsWithSeriesIdQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>['queryKey'] }
     ) => {
     
-    return useSuspenseQuery<GetManagedAclsWithSeriesIdQuery, TError, TData>(
+    return useSuspenseQuery<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>(
       {
     queryKey: ['GetManagedAclsWithSeriesIdSuspense', variables],
-    queryFn: fetchData<GetManagedAclsWithSeriesIdQuery, GetManagedAclsWithSeriesIdQueryVariables>(GetManagedAclsWithSeriesIdDocument, variables),
+    queryFn: fetchData<MuiGetManagedAclsWithSeriesIdQuery, MuiGetManagedAclsWithSeriesIdQueryVariables>(MuiGetManagedAclsWithSeriesIdDocument, variables),
     ...options
   }
     )};
 
-useSuspenseGetManagedAclsWithSeriesIdQuery.getKey = (variables: GetManagedAclsWithSeriesIdQueryVariables) => ['GetManagedAclsWithSeriesIdSuspense', variables];
+useSuspenseGetManagedAclsWithSeriesIdQuery.getKey = (variables: MuiGetManagedAclsWithSeriesIdQueryVariables) => ['GetManagedAclsWithSeriesIdSuspense', variables];
 
 
-useGetManagedAclsWithSeriesIdQuery.fetcher = (variables: GetManagedAclsWithSeriesIdQueryVariables, options?: RequestInit['headers']) => fetchData<GetManagedAclsWithSeriesIdQuery, GetManagedAclsWithSeriesIdQueryVariables>(GetManagedAclsWithSeriesIdDocument, variables, options);
+useMuiGetManagedAclsWithSeriesIdQuery.fetcher = (variables: MuiGetManagedAclsWithSeriesIdQueryVariables, options?: RequestInit['headers']) => fetchData<MuiGetManagedAclsWithSeriesIdQuery, MuiGetManagedAclsWithSeriesIdQueryVariables>(MuiGetManagedAclsWithSeriesIdDocument, variables, options);
 
-export const CreateSeriesDocument = `
-    mutation CreateSeries($acl: AccessControlListInput!, $metadata: CommonSeriesMetadataInput!) {
+export const MuiCreateSeriesDocument = `
+    mutation MuiCreateSeries($acl: AccessControlListInput!, $metadata: CommonSeriesMetadataInput!) {
   createSeries(acl: $acl, metadata: $metadata) {
-    ...SeriesData
+    ...MuiSeriesData
   }
 }
-    ${SeriesDataFragmentDoc}`;
+    ${MuiSeriesDataFragmentDoc}`;
 
-export const useCreateSeriesMutation = <
+export const useMuiCreateSeriesMutation = <
       TError = unknown,
       TContext = unknown
-    >(options?: UseMutationOptions<CreateSeriesMutation, TError, CreateSeriesMutationVariables, TContext>) => {
+    >(options?: UseMutationOptions<MuiCreateSeriesMutation, TError, MuiCreateSeriesMutationVariables, TContext>) => {
     
-    return useMutation<CreateSeriesMutation, TError, CreateSeriesMutationVariables, TContext>(
+    return useMutation<MuiCreateSeriesMutation, TError, MuiCreateSeriesMutationVariables, TContext>(
       {
-    mutationKey: ['CreateSeries'],
-    mutationFn: (variables?: CreateSeriesMutationVariables) => fetchData<CreateSeriesMutation, CreateSeriesMutationVariables>(CreateSeriesDocument, variables)(),
+    mutationKey: ['MuiCreateSeries'],
+    mutationFn: (variables?: MuiCreateSeriesMutationVariables) => fetchData<MuiCreateSeriesMutation, MuiCreateSeriesMutationVariables>(MuiCreateSeriesDocument, variables)(),
     ...options
   }
     )};
 
 
-useCreateSeriesMutation.fetcher = (variables: CreateSeriesMutationVariables, options?: RequestInit['headers']) => fetchData<CreateSeriesMutation, CreateSeriesMutationVariables>(CreateSeriesDocument, variables, options);
+useMuiCreateSeriesMutation.fetcher = (variables: MuiCreateSeriesMutationVariables, options?: RequestInit['headers']) => fetchData<MuiCreateSeriesMutation, MuiCreateSeriesMutationVariables>(MuiCreateSeriesDocument, variables, options);
 
-export const UpdateSeriesDocument = `
-    mutation UpdateSeries($seriesId: String!, $metadata: CommonSeriesMetadataInput!) {
+export const MuiUpdateSeriesDocument = `
+    mutation MuiUpdateSeries($seriesId: String!, $metadata: CommonSeriesMetadataInput!) {
   updateSeries(id: $seriesId, metadata: $metadata) {
-    ...SeriesData
+    ...MuiSeriesData
   }
 }
-    ${SeriesDataFragmentDoc}`;
+    ${MuiSeriesDataFragmentDoc}`;
 
-export const useUpdateSeriesMutation = <
+export const useMuiUpdateSeriesMutation = <
       TError = unknown,
       TContext = unknown
-    >(options?: UseMutationOptions<UpdateSeriesMutation, TError, UpdateSeriesMutationVariables, TContext>) => {
+    >(options?: UseMutationOptions<MuiUpdateSeriesMutation, TError, MuiUpdateSeriesMutationVariables, TContext>) => {
     
-    return useMutation<UpdateSeriesMutation, TError, UpdateSeriesMutationVariables, TContext>(
+    return useMutation<MuiUpdateSeriesMutation, TError, MuiUpdateSeriesMutationVariables, TContext>(
       {
-    mutationKey: ['UpdateSeries'],
-    mutationFn: (variables?: UpdateSeriesMutationVariables) => fetchData<UpdateSeriesMutation, UpdateSeriesMutationVariables>(UpdateSeriesDocument, variables)(),
+    mutationKey: ['MuiUpdateSeries'],
+    mutationFn: (variables?: MuiUpdateSeriesMutationVariables) => fetchData<MuiUpdateSeriesMutation, MuiUpdateSeriesMutationVariables>(MuiUpdateSeriesDocument, variables)(),
     ...options
   }
     )};
 
 
-useUpdateSeriesMutation.fetcher = (variables: UpdateSeriesMutationVariables, options?: RequestInit['headers']) => fetchData<UpdateSeriesMutation, UpdateSeriesMutationVariables>(UpdateSeriesDocument, variables, options);
+useMuiUpdateSeriesMutation.fetcher = (variables: MuiUpdateSeriesMutationVariables, options?: RequestInit['headers']) => fetchData<MuiUpdateSeriesMutation, MuiUpdateSeriesMutationVariables>(MuiUpdateSeriesDocument, variables, options);
 
-export const UpdateEventDocument = `
-    mutation UpdateEvent($eventId: String!, $metadata: CommonEventMetadataInput!) {
+export const MuiUpdateEventDocument = `
+    mutation MuiUpdateEvent($eventId: String!, $metadata: CommonEventMetadataInput!) {
   mui {
     updateEvent(id: $eventId, metadata: $metadata) {
-      ...EventsData
+      ...MuiEventsData
     }
   }
 }
-    ${EventsDataFragmentDoc}`;
+    ${MuiEventsDataFragmentDoc}`;
 
-export const useUpdateEventMutation = <
+export const useMuiUpdateEventMutation = <
       TError = unknown,
       TContext = unknown
-    >(options?: UseMutationOptions<UpdateEventMutation, TError, UpdateEventMutationVariables, TContext>) => {
+    >(options?: UseMutationOptions<MuiUpdateEventMutation, TError, MuiUpdateEventMutationVariables, TContext>) => {
     
-    return useMutation<UpdateEventMutation, TError, UpdateEventMutationVariables, TContext>(
+    return useMutation<MuiUpdateEventMutation, TError, MuiUpdateEventMutationVariables, TContext>(
       {
-    mutationKey: ['UpdateEvent'],
-    mutationFn: (variables?: UpdateEventMutationVariables) => fetchData<UpdateEventMutation, UpdateEventMutationVariables>(UpdateEventDocument, variables)(),
+    mutationKey: ['MuiUpdateEvent'],
+    mutationFn: (variables?: MuiUpdateEventMutationVariables) => fetchData<MuiUpdateEventMutation, MuiUpdateEventMutationVariables>(MuiUpdateEventDocument, variables)(),
     ...options
   }
     )};
 
 
-useUpdateEventMutation.fetcher = (variables: UpdateEventMutationVariables, options?: RequestInit['headers']) => fetchData<UpdateEventMutation, UpdateEventMutationVariables>(UpdateEventDocument, variables, options);
+useMuiUpdateEventMutation.fetcher = (variables: MuiUpdateEventMutationVariables, options?: RequestInit['headers']) => fetchData<MuiUpdateEventMutation, MuiUpdateEventMutationVariables>(MuiUpdateEventDocument, variables, options);
 
-export const DeleteEventDocument = `
-    mutation DeleteEvent($eventId: String!) {
+export const MuiDeleteEventDocument = `
+    mutation MuiDeleteEvent($eventId: String!) {
   mui {
     deleteEvent(id: $eventId) {
       id
@@ -2081,24 +2081,24 @@ export const DeleteEventDocument = `
 }
     `;
 
-export const useDeleteEventMutation = <
+export const useMuiDeleteEventMutation = <
       TError = unknown,
       TContext = unknown
-    >(options?: UseMutationOptions<DeleteEventMutation, TError, DeleteEventMutationVariables, TContext>) => {
+    >(options?: UseMutationOptions<MuiDeleteEventMutation, TError, MuiDeleteEventMutationVariables, TContext>) => {
     
-    return useMutation<DeleteEventMutation, TError, DeleteEventMutationVariables, TContext>(
+    return useMutation<MuiDeleteEventMutation, TError, MuiDeleteEventMutationVariables, TContext>(
       {
-    mutationKey: ['DeleteEvent'],
-    mutationFn: (variables?: DeleteEventMutationVariables) => fetchData<DeleteEventMutation, DeleteEventMutationVariables>(DeleteEventDocument, variables)(),
+    mutationKey: ['MuiDeleteEvent'],
+    mutationFn: (variables?: MuiDeleteEventMutationVariables) => fetchData<MuiDeleteEventMutation, MuiDeleteEventMutationVariables>(MuiDeleteEventDocument, variables)(),
     ...options
   }
     )};
 
 
-useDeleteEventMutation.fetcher = (variables: DeleteEventMutationVariables, options?: RequestInit['headers']) => fetchData<DeleteEventMutation, DeleteEventMutationVariables>(DeleteEventDocument, variables, options);
+useMuiDeleteEventMutation.fetcher = (variables: MuiDeleteEventMutationVariables, options?: RequestInit['headers']) => fetchData<MuiDeleteEventMutation, MuiDeleteEventMutationVariables>(MuiDeleteEventDocument, variables, options);
 
-export const UpdateEventAclDocument = `
-    mutation UpdateEventAcl($eventId: String!, $acl: AccessControlListInput!) {
+export const MuiUpdateEventAclDocument = `
+    mutation MuiUpdateEventAcl($eventId: String!, $acl: AccessControlListInput!) {
   mui {
     updateEventAcl(id: $eventId, acl: $acl) {
       muiEventInfo {
@@ -2109,24 +2109,24 @@ export const UpdateEventAclDocument = `
 }
     `;
 
-export const useUpdateEventAclMutation = <
+export const useMuiUpdateEventAclMutation = <
       TError = unknown,
       TContext = unknown
-    >(options?: UseMutationOptions<UpdateEventAclMutation, TError, UpdateEventAclMutationVariables, TContext>) => {
+    >(options?: UseMutationOptions<MuiUpdateEventAclMutation, TError, MuiUpdateEventAclMutationVariables, TContext>) => {
     
-    return useMutation<UpdateEventAclMutation, TError, UpdateEventAclMutationVariables, TContext>(
+    return useMutation<MuiUpdateEventAclMutation, TError, MuiUpdateEventAclMutationVariables, TContext>(
       {
-    mutationKey: ['UpdateEventAcl'],
-    mutationFn: (variables?: UpdateEventAclMutationVariables) => fetchData<UpdateEventAclMutation, UpdateEventAclMutationVariables>(UpdateEventAclDocument, variables)(),
+    mutationKey: ['MuiUpdateEventAcl'],
+    mutationFn: (variables?: MuiUpdateEventAclMutationVariables) => fetchData<MuiUpdateEventAclMutation, MuiUpdateEventAclMutationVariables>(MuiUpdateEventAclDocument, variables)(),
     ...options
   }
     )};
 
 
-useUpdateEventAclMutation.fetcher = (variables: UpdateEventAclMutationVariables, options?: RequestInit['headers']) => fetchData<UpdateEventAclMutation, UpdateEventAclMutationVariables>(UpdateEventAclDocument, variables, options);
+useMuiUpdateEventAclMutation.fetcher = (variables: MuiUpdateEventAclMutationVariables, options?: RequestInit['headers']) => fetchData<MuiUpdateEventAclMutation, MuiUpdateEventAclMutationVariables>(MuiUpdateEventAclDocument, variables, options);
 
-export const UpdateSeriesAclDocument = `
-    mutation UpdateSeriesAcl($seriesId: String!, $acl: AccessControlListInput!) {
+export const MuiUpdateSeriesAclDocument = `
+    mutation MuiUpdateSeriesAcl($seriesId: String!, $acl: AccessControlListInput!) {
   updateSeriesAcl(id: $seriesId, acl: $acl) {
     muiSeriesInfo {
       managedAclId
@@ -2135,18 +2135,18 @@ export const UpdateSeriesAclDocument = `
 }
     `;
 
-export const useUpdateSeriesAclMutation = <
+export const useMuiUpdateSeriesAclMutation = <
       TError = unknown,
       TContext = unknown
-    >(options?: UseMutationOptions<UpdateSeriesAclMutation, TError, UpdateSeriesAclMutationVariables, TContext>) => {
+    >(options?: UseMutationOptions<MuiUpdateSeriesAclMutation, TError, MuiUpdateSeriesAclMutationVariables, TContext>) => {
     
-    return useMutation<UpdateSeriesAclMutation, TError, UpdateSeriesAclMutationVariables, TContext>(
+    return useMutation<MuiUpdateSeriesAclMutation, TError, MuiUpdateSeriesAclMutationVariables, TContext>(
       {
-    mutationKey: ['UpdateSeriesAcl'],
-    mutationFn: (variables?: UpdateSeriesAclMutationVariables) => fetchData<UpdateSeriesAclMutation, UpdateSeriesAclMutationVariables>(UpdateSeriesAclDocument, variables)(),
+    mutationKey: ['MuiUpdateSeriesAcl'],
+    mutationFn: (variables?: MuiUpdateSeriesAclMutationVariables) => fetchData<MuiUpdateSeriesAclMutation, MuiUpdateSeriesAclMutationVariables>(MuiUpdateSeriesAclDocument, variables)(),
     ...options
   }
     )};
 
 
-useUpdateSeriesAclMutation.fetcher = (variables: UpdateSeriesAclMutationVariables, options?: RequestInit['headers']) => fetchData<UpdateSeriesAclMutation, UpdateSeriesAclMutationVariables>(UpdateSeriesAclDocument, variables, options);
+useMuiUpdateSeriesAclMutation.fetcher = (variables: MuiUpdateSeriesAclMutationVariables, options?: RequestInit['headers']) => fetchData<MuiUpdateSeriesAclMutation, MuiUpdateSeriesAclMutationVariables>(MuiUpdateSeriesAclDocument, variables, options);

@@ -1,7 +1,7 @@
 import { Film, Info } from "lucide-react";
 
 import { i18next } from "@oc-mui/i18n";
-import type { SeriesDataFragment } from "@oc-mui/query";
+import type { MuiSeriesDataFragment } from "@oc-mui/query";
 import { Link } from "@oc-mui/router";
 import {
   createColumnHelper,
@@ -16,7 +16,7 @@ import { cn } from "@oc-mui/ui/lib";
 
 import SeriesActionsCell from "./components/SeriesActionsCell";
 
-const columnHelper = createColumnHelper<SeriesDataFragment>();
+const columnHelper = createColumnHelper<MuiSeriesDataFragment>();
 
 // Convert columns to a factory function that accepts setIsEditing
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

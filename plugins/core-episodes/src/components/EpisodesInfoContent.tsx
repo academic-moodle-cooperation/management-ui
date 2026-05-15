@@ -2,8 +2,8 @@ import React from "react";
 
 import { useI18n } from "@oc-mui/i18n";
 import type {
-  GetEventByIdInputFieldsQuery,
-  GetInputFieldsMetaDataFragment,
+  MuiGetEventByIdInputFieldsQuery,
+  MuiGetInputFieldsMetaDataFragment,
 } from "@oc-mui/query";
 import {
   Button,
@@ -27,7 +27,7 @@ type EpisodesUpdateData = {
 interface EpisodesInfoContentProps {
   editEpisode: boolean;
   episodesUpdateData: EpisodesUpdateData | undefined;
-  episodesInputFields: GetEventByIdInputFieldsQuery | undefined;
+  episodesInputFields: MuiGetEventByIdInputFieldsQuery | undefined;
   setEpisodesUpdateData: (value: EpisodesUpdateData) => void;
   setUpdateField: (value: string) => void;
   updateField: string;
@@ -65,7 +65,7 @@ const EpisodesInfoContent = ({
             .map(([key, field]) => (field ? { ...field, id: key } : null))
             .filter(Boolean)
             .sort((a, b) => ((a?.order ?? 0) > (b?.order ?? 0) ? 1 : -1))
-            .map((field: GetInputFieldsMetaDataFragment | null) => {
+            .map((field: MuiGetInputFieldsMetaDataFragment | null) => {
               if (!field?.id || !isVisible(field.id)) {
                 return null;
               }
