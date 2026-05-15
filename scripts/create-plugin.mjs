@@ -78,6 +78,9 @@ if (!/^[a-z][a-z0-9-]*$/.test(pluginName)) {
 
 // camelCase identifier for the JS variable export (`my-poll` → `myPoll`).
 const pluginVarName = pluginName.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
+// PascalCase variant used as the GraphQL operation/fragment prefix per
+// CONTRACTS.md §6 (e.g. `my-plugin` → `MyPlugin` → `MyPluginGetSomething`).
+const pluginPascalName = pluginVarName.charAt(0).toUpperCase() + pluginVarName.slice(1);
 
 const targetParent = flags.has("--in-tree") ? "plugins" : ".local-plugins";
 const targetDir = resolve(repoRoot, targetParent, pluginName);
@@ -113,7 +116,8 @@ async function copyTemplates(srcDir, baseSrc, baseDest) {
     const content = await readFile(srcPath, "utf8");
     const rendered = content
       .replaceAll("__PLUGIN_NAME__", pluginName)
-      .replaceAll("__PLUGIN_VAR_NAME__", pluginVarName);
+      .replaceAll("__PLUGIN_VAR_NAME__", pluginVarName)
+      .replaceAll("__PLUGIN_PASCAL_NAME__", pluginPascalName);
     await writeFile(destPath, rendered);
     console.log(`  + ${relative(repoRoot, destPath)}`);
   }

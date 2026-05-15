@@ -5,13 +5,14 @@
 
 This document lists everything a third-party plugin author or downstream app may rely on. Anything not listed here is internal and may change without notice.
 
-There are **five contracts**:
+There are **six contracts**:
 
 1. [Plugin Manifest Contract](#1-plugin-manifest-contract) - the shape of `plugin.json`.
 2. [Plugin Runtime API Contract](#2-plugin-runtime-api-contract) - what a plugin receives from the host at runtime and the API version semantics.
 3. [Theme Contract](#3-theme-contract) - CSS tokens and rules for styling.
 4. [Config Contract](#4-config-contract) - how plugins declare and consume configuration (full model: [`CONFIGURATION.md`](./CONFIGURATION.md)).
 5. [Shared Runtime Dependencies](#5-shared-runtime-dependencies) - which packages the host provides to every plugin, and which majors are in force.
+6. [GraphQL Operation Naming](#6-graphql-operation-naming) - how plugins name their GraphQL operations and fragments to avoid cross-plugin collisions.
 
 Each contract has its own version. Breaking changes to any of them require a major version bump of `@<scope>/plugin-system`.
 
@@ -197,6 +198,60 @@ Removing a name has the same effect as bumping its major from the plugin's persp
 
 The marketplace's `securityService.checkVersionCompatibility` (in `plugins/admin-marketplace/`) implements an older, marketplace-scoped version of this check that reads from a `RegistryPlugin` shape rather than from `plugin.json`. The two will converge over time; `checkSharedDependencyCompatibility` is the new canonical implementation, and the JAR loader and `.local-plugins/` discovery path don't currently enforce shared-deps compatibility at all (tracked as a follow-up in [`operations/open-followups.md`](../operations/open-followups.md#53-shared-npm-deps-version-locking)).
 
+## 6. GraphQL Operation Naming
+
+**Contract version:** 1.0.
+
+GraphQL operations and fragments declared in a plugin (or in `@oc-mui/query` for shared core operations) must be prefixed with the plugin's namespace, converted to PascalCase. The rule keeps plugin authors from accidentally colliding on operation/fragment names — and gives operators a way to attribute backend load and errors per plugin.
+
+### The rule
+
+For every `query`, `mutation`, `subscription`, and `fragment` you declare in a `gql\`\`` template literal or `.graphql` file:
+
+```
+<PascalCaseNamespace><OperationName>
+```
+
+The PascalCase namespace is mechanically derived from the kebab-case `namespace` field in `plugin.json` (or in the `createPlugin({ namespace })` call). For shared operations that live in `@oc-mui/query` itself (not in any one plugin), the prefix is `Mui`.
+
+| Plugin `namespace` | Prefix | Example operation | Example fragment |
+|--------------------|--------|-------------------|------------------|
+| `core` *(see below)* | `Core` | `CoreGetSomething` | `CoreSomethingFields` |
+| `episodes` | `Episodes` | `EpisodesGetEpisodeDetails` | `EpisodesEpisodeFields` |
+| `series` | `Series` | `SeriesGetMySeries` | `SeriesSeriesFields` |
+| `upload` | `Upload` | `UploadGetWorkflows` | `UploadWorkflowFields` |
+| `univie` | `Univie` | `UnivieGetCourseList` | `UnivieCourseListEntry` |
+| `my-plugin` | `MyPlugin` | `MyPluginGetSomething` | `MyPluginThingFields` |
+| `@oc-mui/query` (shared) | `Mui` | `MuiGetMyEvents` | `MuiCurrentUserFields` |
+
+**Note** on the `core` namespace: there is no single `plugins/core*/` plugin that owns "everything shared". Each core plugin (`episodes`, `series`, `upload`, `admin-marketplace`, …) uses its own namespace. Operations that genuinely live in shared infrastructure (the `@oc-mui/query` package) use `Mui`. Reserve `Core` for the `plugin-core` plugin itself.
+
+### What this enforces
+
+1. **No fragment-name collisions.** GraphQL Codegen reads every `gql\`\`` template across the workspace and emits one big union of typed hooks/fragments. Two plugins each declaring `fragment EpisodeFields` either fail the build or silently overwrite each other depending on file order. Prefixing eliminates the class.
+2. **Server-side attribution.** Backend logs and Apollo Studio identify operations by name. `EpisodesGetMyEvents` tells the ops team which plugin issued the call; `GetMyEvents` doesn't.
+3. **Cache isolation.** TanStack Query keys are derived from operation names. Two same-named operations with different shapes would compete for the same cache entry; prefixing avoids it.
+4. **Future-proofing.** As more plugins ship the cost of "we'll rename it later" rises sharply. The fewer violators, the cheaper the migration.
+
+### What it doesn't cover
+
+- **Schema field and type names.** `type Episode`, `field events: [Event]` — owned by the Opencast backend schema, not the client. Not in this contract.
+- **Variables.** Operation variables (`$limit`, `$offset`) are scoped to the operation; collisions are impossible.
+- **Internal client-side helpers** that aren't real GraphQL operations.
+
+### Enforcement
+
+**1.0 (this release): documentation + manual review.** New PRs follow the convention; reviewers spot-check operation names. Existing operations in `packages/query/src/queries.graphql` (which today use bare names like `GetMyEvents` plus a partial `PluginXxxFields` pattern) are **grandfathered** — they will be renamed in a follow-up batch.
+
+**Planned: ESLint rule** (`@oc-mui/eslint-config`) that parses `gql\`\`` template literals and `.graphql` files, looks up the file's owning plugin namespace, and fails the lint pass on any operation or fragment that doesn't carry the right prefix. Existing grandfathered operations get `eslint-disable` comments which double as the migration tracker. Tracked as the next follow-up in [`operations/open-followups.md`](../operations/open-followups.md#51-graphql-operation-naming-enforcement).
+
+### Versioning rules
+
+- **Minor**: relaxing the convention (allowing additional valid forms). No plugin breaks.
+- **Major**: tightening (e.g. mandating that the namespace also appears in `subscription` names if subscriptions are ever supported), or changing the casing convention. Plugins compiled against the old rule fail lint and must rename.
+
+The contract version lives in this document. A bump is recorded in the changelog at the bottom.
+
 ## Contract Change Process
 
 Changing any contract requires:
@@ -214,3 +269,4 @@ No contract change is allowed without the changeset - plugins cannot cope with s
 - **2026-04-17:** Config Contract promoted to 1.0. Stable keys: `app.theme`, `app.locale`, `app.enabledPlugins`, `config.plugins[pluginId]`, `config.plugins[pluginId].enabled`. Layered merge order (`app:config:defaults` ⊕ base ⊕ `app:config`) and the `definePluginConfig` reader API are now frozen for 1.x. See [`CONFIGURATION.md`](./CONFIGURATION.md).
 - **2026-04-17:** Manifest Contract bumped to 1.1 (minor). New optional field `extensionPoints: string[]` on the top-level manifest, consumed by the contract-test harness in `@oc-mui/plugin-testing` and reserved for marketplace tooling. Runtime loader behaviour is unchanged, so existing 1.0 manifests remain valid. Host `PLUGIN_API_VERSION` bumped from `1.0.0` to `1.1.0` accordingly. Plugin-system now also exports `validatePluginMetadata` and the `PluginContext` React context so that tooling can validate manifests and inject a pre-configured `PluginManager` without reaching into `src/`.
 - **2026-05-13:** Shared Runtime Dependencies Contract 1.0 added. New section [§5](#5-shared-runtime-dependencies) formalises the list of host-provided packages (`SHARED_RUNTIME_MAJORS` in `@oc-mui/plugin-system`) and the rule that a plugin's `workspaceDependencies` lower-bound major must match the host's. New helpers `checkSharedDependencyCompatibility` and `parseRangeMajor` are exported from `@oc-mui/plugin-system`. The runtime check is **not yet wired** into the JAR loader or `.local-plugins/` discovery path — those follow-ups are tracked in [`operations/open-followups.md`](../operations/open-followups.md#53-shared-npm-deps-version-locking). Existing plugins are unaffected; the contract is additive.
+- **2026-05-14:** GraphQL Operation Naming Contract 1.0 added. New section [§6](#6-graphql-operation-naming) mandates that every `query`/`mutation`/`subscription`/`fragment` declared in a plugin (or in `@oc-mui/query` for shared core operations) be prefixed with the plugin's namespace in PascalCase (`MuiGetMyEvents`, `EpisodesEpisodeFields`, …). Shipping with documentation + manual review only; an ESLint rule that fails CI on violations is the next planned follow-up. Existing operations in `packages/query/src/queries.graphql` are grandfathered and will be renamed in a follow-up batch — see [`operations/open-followups.md`](../operations/open-followups.md#51-graphql-operation-naming-enforcement).
