@@ -18,6 +18,10 @@ const srcExclude = [
   // Contributor workflows — pending consolidation (see open-followups.md §8.1).
   "workflows/ADDING_APPS.md",
   "workflows/ADDING_PACKAGES.md",
+
+  // Maven build-time config that lives under docs/ for legacy parent-POM
+  // reasons. Not documentation. See open-followups.md §8.5.
+  "checkstyle/**",
 ];
 
 // Base path defaults to the eventual AMC public URL
