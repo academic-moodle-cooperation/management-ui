@@ -196,3 +196,13 @@ Decommission: when AMC ships its own Pages deploy (after Phase 6d, or earlier if
 
 - **When to revisit**: if/when a new top-level docs section is added. Update `DOCS_SUBDIRS` in the same PR.
 - **Suggested alternative**: replace the whitelist with a build-time check of the actual filesystem (list immediate `docs/*` subdirs). Low priority — the current list is short and easy to keep in sync.
+
+### 8.5 Move `docs/checkstyle/` out from under `docs/`
+
+[`docs/checkstyle/`](../../docs/checkstyle/) is Maven build-time configuration — checkstyle ruleset, suppressions, license header, helper scripts — referenced by the `org.opencastproject:base` parent POM at the hardcoded path `${project.basedir}/docs/checkstyle/...`. It sits under `docs/` only because of that historical path expectation. The contents aren't documentation and are excluded from the VitePress site.
+
+This is a footgun: it looks like a docs subdirectory but isn't. The Phase 3a restructure mistakenly deleted it because of that mistaken assumption, breaking staging Maven builds until a hotfix restored it.
+
+- **When to revisit**: when the AMC Maven workflow is well-understood and the team has bandwidth to coordinate with Opencast upstream. Likely after Phase 6d.
+- **Suggested form**: override `checkstyle.suppressions.file`, `checkstyle.config.location`, and `checkstyle.header.file` in the workspace `pom.xml` to point at a new location like `build-config/checkstyle/` (or `tooling/checkstyle/`). Move the files. Delete `docs/checkstyle/`. Make sure the JAR build still produces the same artifact.
+- **Detail**: the inline [`docs/checkstyle/README.md`](../../docs/checkstyle/README.md) explains what each file is and why the directory must not be touched lightly.
