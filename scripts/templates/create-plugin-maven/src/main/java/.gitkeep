@@ -1,0 +1,4 @@
+# Empty placeholder. If your plugin ships Java backend code, drop it
+# under this directory (in the right `org/...` package). The POM is
+# already wired to compile it. For pure-frontend plugins this directory
+# stays empty.

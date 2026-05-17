@@ -13,8 +13,7 @@ later phase (see [ADR-003](../../docs/architecture/decisions/003-shell-plus-core
 
 - Not a production app. Not shipped to Opencast. No JAR is produced.
 - Not the feature surface for users - that is `apps/shell`.
-- Not a plugin template - see [`plugins/example/`](../../plugins/example/) and
-  [`examples/community-plugin-template/`](../../examples/community-plugin-template/).
+- Not a plugin template — see [`plugins/example/`](../../plugins/example/) or scaffold a new one with `pnpm create-plugin <name>`.
 
 ## Usage
 
