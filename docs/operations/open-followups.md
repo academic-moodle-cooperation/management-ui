@@ -206,3 +206,16 @@ This is a footgun: it looks like a docs subdirectory but isn't. The Phase 3a res
 - **When to revisit**: when the AMC Maven workflow is well-understood and the team has bandwidth to coordinate with Opencast upstream. Likely after Phase 6d.
 - **Suggested form**: override `checkstyle.suppressions.file`, `checkstyle.config.location`, and `checkstyle.header.file` in the workspace `pom.xml` to point at a new location like `build-config/checkstyle/` (or `tooling/checkstyle/`). Move the files. Delete `docs/checkstyle/`. Make sure the JAR build still produces the same artifact.
 - **Detail**: the inline [`docs/checkstyle/README.md`](../../docs/checkstyle/README.md) explains what each file is and why the directory must not be touched lightly.
+
+### 8.6 Decide whether to keep `docs/operations/test-protocol.md` long-term
+
+The release test protocol was shipped to gate the first 1.0 public cut. It's written generally enough to be re-run before any major release of a contract-stable package, but its real proof-of-value is the first run.
+
+After the first full pass, decide:
+
+- **Keep as-is**: re-run before every major bump of `@oc-mui/plugin-system` (or any of the six contract-stable packages). Treat it as the canonical pre-release gate.
+- **Generalize**: drop the "1.0-flip-specific" framing in the closing section, lift any 1.0-only items, document a leaner version that focuses on the integration surfaces (the four loading paths, the six contracts, the Maven build) without the publishing-flip walkthrough.
+- **Retire**: if the protocol's content is redundant with something else (e.g. an external QA process, or if it turns out our automated tests cover everything that mattered), delete it and rely on the automation.
+
+- **When to revisit**: immediately after the first full pass against staging. The protocol's author should write a one-line decision on each section while the experience is fresh: "still relevant", "could be automated", "covers something CI already does", etc.
+- **Suggested form**: a short follow-up PR after the 1.0 release that either trims, generalizes, or retires the doc based on what the first run taught.
