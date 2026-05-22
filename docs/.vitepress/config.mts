@@ -22,6 +22,11 @@ const srcExclude = [
   // Maven build-time config that lives under docs/ for legacy parent-POM
   // reasons. Not documentation. See open-followups.md §8.5.
   "checkstyle/**",
+
+  // Local-only archive directory (gitignored). Owners may stash arbitrary
+  // notes here; we don't want VitePress trying to compile them as pages,
+  // and they'd 404 on the public site anyway because git doesn't ship them.
+  "archive/**",
 ];
 
 // Base path defaults to the eventual AMC public URL
