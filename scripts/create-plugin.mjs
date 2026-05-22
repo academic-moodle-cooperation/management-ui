@@ -1,11 +1,20 @@
 #!/usr/bin/env node
 /**
- * pnpm create-plugin <name> [--in-tree]
+ * pnpm create-plugin <name> [--in-tree] [--no-pom]
  *
  * Scaffolds a new plugin directory at either:
  *   .local-plugins/<name>/   (default — for org / community plugin authors)
  *   plugins/<name>/          (--in-tree — for core contributors adding a
  *                             built-in plugin)
+ *
+ * For `.local-plugins/<name>/` scaffolds, a `backend/` subdirectory with
+ * a working Maven POM is included by default. Almost every org plugin
+ * eventually deploys as a JAR to Opencast (the Management UI itself is
+ * one), so the Maven scaffold ships ready-to-build. Pass --no-pom to
+ * skip it if you genuinely only want a frontend/CDN-distributed plugin.
+ *
+ * `--in-tree` scaffolds never include the Maven layout — those plugins
+ * ship as part of the shell's JAR, not their own.
  *
  * The scaffolded plugin includes a placeholder `app:header-logo`
  * registration so `pnpm --filter @oc-mui/plugin-<name> test:contract`
@@ -24,9 +33,10 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, "..");
 const templatesDir = resolve(__dirname, "templates", "create-plugin");
+const mavenTemplatesDir = resolve(__dirname, "templates", "create-plugin-maven");
 
 const USAGE = `Usage:
-  pnpm create-plugin <plugin-name> [--in-tree]
+  pnpm create-plugin <plugin-name> [--in-tree] [--no-pom]
 
 Arguments:
   <plugin-name>   kebab-case, [a-z][a-z0-9-]*. Used as the npm package
@@ -35,12 +45,18 @@ Arguments:
 Options:
   --in-tree       Scaffold under plugins/<name>/ instead of the default
                   .local-plugins/<name>/. Use this when adding a built-in
-                  plugin that ships with the core repo.
+                  plugin that ships with the core repo. Implies --no-pom
+                  (in-tree plugins ship inside the shell's JAR).
+  --no-pom        Skip scaffolding the backend/ Maven layout. Default
+                  scaffold includes it; pass this flag for plugins that
+                  will only ever be distributed as a frontend bundle
+                  (CDN / marketplace).
   --help, -h      Show this message.
 
 Examples:
-  pnpm create-plugin audience-poll
-  pnpm create-plugin admin-dashboard --in-tree`;
+  pnpm create-plugin audience-poll                # full scaffold including backend/
+  pnpm create-plugin tiny-widget --no-pom         # frontend-only, no Maven
+  pnpm create-plugin admin-dashboard --in-tree    # built-in core plugin`;
 
 function fail(message, code = 1) {
   console.error(`✗ ${message}`);
@@ -56,7 +72,8 @@ if (args.includes("--help") || args.includes("-h")) {
 const flags = new Set(args.filter((a) => a.startsWith("--")));
 const positionals = args.filter((a) => !a.startsWith("--"));
 
-const unknownFlags = [...flags].filter((f) => f !== "--in-tree");
+const KNOWN_FLAGS = new Set(["--in-tree", "--no-pom"]);
+const unknownFlags = [...flags].filter((f) => !KNOWN_FLAGS.has(f));
 if (unknownFlags.length > 0) {
   console.error(USAGE);
   fail(`Unknown flag(s): ${unknownFlags.join(", ")}`, 2);
@@ -82,9 +99,15 @@ const pluginVarName = pluginName.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase
 // CONTRACTS.md §6 (e.g. `my-plugin` → `MyPlugin` → `MyPluginGetSomething`).
 const pluginPascalName = pluginVarName.charAt(0).toUpperCase() + pluginVarName.slice(1);
 
-const targetParent = flags.has("--in-tree") ? "plugins" : ".local-plugins";
+const isInTree = flags.has("--in-tree");
+const targetParent = isInTree ? "plugins" : ".local-plugins";
 const targetDir = resolve(repoRoot, targetParent, pluginName);
 const relativeTarget = relative(repoRoot, targetDir);
+
+// In-tree plugins ship as part of the shell's JAR — they don't get
+// their own Maven layout. Explicit --no-pom always wins. Otherwise the
+// default for `.local-plugins/` scaffolds includes the Maven template.
+const includeMaven = !isInTree && !flags.has("--no-pom");
 
 try {
   await stat(targetDir);
@@ -126,6 +149,10 @@ async function copyTemplates(srcDir, baseSrc, baseDest) {
 await mkdir(targetDir, { recursive: true });
 await copyTemplates(templatesDir, templatesDir, targetDir);
 
+if (includeMaven) {
+  await copyTemplates(mavenTemplatesDir, mavenTemplatesDir, join(targetDir, "backend"));
+}
+
 console.log("");
 console.log("✓ Done.");
 console.log("");
@@ -136,5 +163,15 @@ console.log(`  2. pnpm build                  # one-time, populates dist-types/ 
 console.log(`  3. edit ${relativeTarget}/plugin.json   # fill in description, author, real extensionPoints`);
 console.log(`  4. edit ${relativeTarget}/src/index.ts  # replace the placeholder registration`);
 console.log(`  5. pnpm --filter @oc-mui/plugin-${pluginName} test:contract`);
+if (includeMaven) {
+  console.log("");
+  console.log("Maven-side (the backend/ subdirectory):");
+  console.log("");
+  console.log(`  6. edit ${relativeTarget}/backend/pom.xml   # confirm groupId and version`);
+  console.log(`  7. (cd ${relativeTarget}/backend && mvn package)   # produces target/${pluginName}-1.0.0-SNAPSHOT.jar`);
+  console.log(`  8. cp ${relativeTarget}/backend/target/${pluginName}-1.0.0-SNAPSHOT.jar $OPENCAST_HOME/deploy/`);
+  console.log("");
+  console.log(`  See ${relativeTarget}/backend/README.md for build options and the full deploy story.`);
+}
 console.log("");
 console.log("Read AGENTS.md (repo root) for the full plugin authoring rules.");

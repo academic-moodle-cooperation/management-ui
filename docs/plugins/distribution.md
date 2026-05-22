@@ -65,35 +65,96 @@ This path is **dev only**. Production never reads `.local-plugins/`.
 
 ## Path 3 — JAR (production)
 
-For deployments that already ship an Opencast backend, plugins are packaged as JARs and dropped into Opencast's `deploy/` directory. The backend serves a `plugins.json` listing every JAR's frontend modules.
+For deployments that already ship an Opencast backend, plugins are packaged as JARs and dropped into Opencast's `deploy/` directory. The backend's `PluginBundleTracker` discovers them automatically and exposes a `plugins.json` the shell fetches at boot. This is how the Management UI itself ships — it's an Opencast plugin too.
+
+### Scaffolding
+
+`pnpm create-plugin <name>` (the default `.local-plugins/<name>/` mode) **includes a `backend/` Maven layout by default**. Every org plugin eventually deploys as a JAR, so the scaffold ships ready to build:
+
+```
+.local-plugins/my-plugin/
+├── package.json, plugin.json, src/, locales/   ← the frontend
+└── backend/
+    ├── pom.xml                                 ← the Maven config
+    ├── README.md                               ← build + deploy how-to
+    ├── .gitignore                              ← ignores target/
+    └── src/main/java/                          ← optional plugin-side Java
+```
+
+Skip the Maven layout with `--no-pom` for plugins that will only ever be distributed via CDN (Path 4). In-tree plugins (`--in-tree`, scaffolded under `plugins/`) never get a `backend/` — they're bundled into the shell's own JAR rather than shipping as their own.
 
 ### Build
 
-The plugin repo's `backend/` Maven module does two things:
+From inside the plugin's `backend/` directory:
 
-- Copies `dist/*.mjs` + `dist/*.css` into `target/classes/static/plugins/<plugin-id>/` via `maven-resources-plugin`.
-- Sets OSGi headers via `maven-bundle-plugin`:
-  - `Management-Plugin: <plugin-id>` — marker for the backend tracker.
-  - `Http-Alias: /management-ui` — base path.
-  - `Http-Classpath: /static/plugins/<plugin-id>` — JAR-internal asset root.
+```bash
+mvn package
+```
 
-A single JAR can ship multiple `.mjs` entry modules (one folder, many bundles).
+This runs in three steps:
+
+1. **Frontend** — installs Node + pnpm under the plugin root and runs `pnpm install && pnpm run build`, producing `dist/<plugin-id>.mjs` (and optionally `.css`, `assets/`).
+2. **Resource copy** — copies `dist/`, `plugin.json`, and `locales/` into `target/classes/static/plugins/<plugin-id>/`.
+3. **OSGi bundle** — packages everything as a JAR with the headers the tracker reads:
+
+   | Header | Value | Required? |
+   |--------|-------|-----------|
+   | `Management-Plugin` | `<plugin-id>` | Yes — marker that triggers discovery |
+   | `Http-Alias` | `/management-ui/static/plugins/<plugin-id>` | Yes — URL prefix |
+   | `Http-Classpath` | `/static/plugins/<plugin-id>` | Yes — JAR-internal directory served at the alias |
+   | `Include-Resource` | `static/=target/classes/static` | Yes — embeds the assets in the JAR |
+   | `Management-Plugin-Css` | filename stem if not `<plugin-id>.css` | Optional |
+   | `Management-Plugin-I18n` | comma-separated namespace list | Optional |
+
+If you already built the frontend separately (e.g. a CI pipeline that builds JS and JAR independently), skip the Node toolchain:
+
+```bash
+mvn package -Dskip.frontend.build=true
+```
+
+The Maven build will only run the copy + bundle steps.
 
 ### Deploy
 
+Drop the JAR into Opencast's `deploy/` directory. No restart needed — Karaf picks it up immediately:
+
 ```bash
-cp my-plugin-backend-1.0.0.jar $OPENCAST_HOME/deploy/
+cp target/<plugin-id>-1.0.0-SNAPSHOT.jar $OPENCAST_HOME/deploy/
 ```
 
-No additional configuration.
+Or have Maven copy it for you on `mvn install`:
+
+```bash
+mvn install -DdeployTo=$OPENCAST_HOME
+```
+
+Without `-DdeployTo`, the copy step is a no-op.
 
 ### Discovery & load
 
-Backend (`backend/management-config`) tracks bundles with the `Management-Plugin` header, scans `static/plugins/<id>/` for `*.mjs`, and exposes the list at `GET /management-tool/ui/config/plugins.json`.
+Backend ([`backend/management-config/.../PluginBundleTracker.java`](../../backend/management-config/src/main/java/org/opencastproject/management/ui/config/PluginBundleTracker.java)) tracks every OSGi bundle that carries the `Management-Plugin` header. For each, it reads `static/plugins/<plugin-id>/plugin.json` (the canonical source of truth) and emits a `PluginConfig` per module declared in the manifest. If `plugin.json` is missing, the tracker falls back to filename-convention discovery: every `*.mjs` in the static directory becomes its own entry.
 
-Frontend (`apps/shell/src/services/jarPluginLoader.ts`) fetches that file. Matching `config`-type plugins load first, runtime config is re-merged, then the rest load filtered by `app.enabledPlugins` and `config.plugins[id].enabled`.
+The aggregated list is served at `GET /management-tool/ui/config/plugins.json`, which the shell ([`apps/shell/src/services/jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts)) fetches at boot. Matching `config`-type plugins load first, runtime config is re-merged, then the rest load filtered by `app.enabledPlugins` and `config.plugins[id].enabled`.
+
+A single JAR can ship multiple `.mjs` entry modules (one folder, many bundles). Declare them in `plugin.json`'s `modules` array; the tracker will emit one entry per module.
 
 See [`architecture/CONFIGURATION.md`](../architecture/CONFIGURATION.md) for the full filtering model.
+
+### What the POM does (and doesn't)
+
+The scaffolded POM inherits from `org.opencastproject:base:19-SNAPSHOT` directly. This matches what the Management UI itself does (`apps/shell/pom.xml`). External plugin authors need Opencast's Maven repository reachable from their build environment.
+
+The POM:
+
+- Pins Node 24 and pnpm 10.28 (matching the workspace).
+- Skips checkstyle (the suppressions file lives in this repo, not in the plugin's repo).
+- Compiles Java for the JDK 21 target Opencast uses.
+- Exposes `-DdeployTo=...` and `-Dskip.frontend.build=true` as the two knobs you'll routinely tweak.
+
+The POM does **not**:
+
+- Bundle React, `@oc-mui/*`, `lucide-react`, or any other shared runtime dep into the JAR. Those are provided by the host shell. See [`architecture/CONTRACTS.md` § 5](../architecture/CONTRACTS.md#5-shared-runtime-dependencies).
+- Publish the plugin to a Maven repository. If you want a public Maven artifact, add `distributionManagement` and run `mvn deploy` yourself.
 
 ## Path 4 — CDN / community registry
 

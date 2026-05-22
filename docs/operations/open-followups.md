@@ -14,20 +14,22 @@ If you start work on a follow-up here, delete its entry in the PR that lands the
 
 ## 1. Scaffolding & community plugin distribution
 
-### 1.1 Retire vs. extract `examples/community-plugin-template/`
+### 1.1 ✅ Done — `examples/community-plugin-template/` retired
 
-The directory was originally consumed by `scripts/export-plugin-to-local.js` and `scripts/extract-module-to-plugin.mjs`, both retired in PR #126 in favour of `pnpm create-plugin`. The template's original reason for existing is gone, but it still ships a more elaborate starter (peerDependencies-shaped, multi-module-friendly) than the minimal scaffold the CLI emits today.
+The directory was originally consumed by `scripts/export-plugin-to-local.js` and `scripts/extract-module-to-plugin.mjs`, both retired in PR #126 in favour of `pnpm create-plugin`. With Phase 8.5.2 shipping the canonical Maven scaffold under `scripts/templates/create-plugin-maven/` (consumed by the default `pnpm create-plugin <name>` flow), the example directory had nothing left to teach and was deleted in the same PR.
 
-- **When to revisit**: Phase 6 (OSS readiness — "where do community plugins live").
-- **Detail**: [`examples/community-plugin-template/EXTRACT_ME.md`](../../examples/community-plugin-template/EXTRACT_ME.md) — two end-states (retire / extract) with execution steps.
-- **Tied to**: the Phase 6 publishing-strategy decision and the namespace rename.
+### 1.2 ✅ Done — external plugin POM template
 
-### 1.2 External plugin POM template + Maven parent
+Shipped in Phase 8.5.2. `pnpm create-plugin <name>` now scaffolds a `backend/pom.xml` by default (skip with `--no-pom`); the template inherits from `org.opencastproject:base:19-SNAPSHOT` and produces a deployable Opencast JAR via `mvn package`. Full how-to in [`docs/plugins/distribution.md`](../plugins/distribution.md#path-3--jar-production). The future option of publishing a dedicated `management-ui-plugin-parent` POM (Option B from the design discussion) is tracked in §1.3 below.
 
-There's no public template for "here is how an external plugin's `pom.xml` should look, and which Maven parent it inherits from". The in-tree Maven setup (`apps/shell/pom.xml` + `assemblies/management-ui-feature/`) is shell-internal.
+### 1.3 (Maybe) publish a `management-ui-plugin-parent` POM
 
-- **When to revisit**: Phase 8 (Backend & external-plugin contract).
-- **Detail**: master-plan Phase 8 entry; could be folded into a `--with-pom` flag on `pnpm create-plugin`.
+Today the scaffolded plugin POM inherits from `org.opencastproject:base` directly and declares its own `frontend-maven-plugin`, `maven-resources-plugin`, and OSGi defaults inline. If a non-trivial number of external plugins start shipping and end up duplicating the same POM scaffolding, it's worth publishing a `org.amc.management:management-ui-plugin-parent` artifact that plugins inherit from instead, moving the shared defaults into the parent.
+
+- **When to revisit**: when we see 5+ external plugin POMs in the wild and notice consistent duplication of the same `<build>` config. Or when the scaffold needs a default that's awkward to update across all consumers (e.g. a Node version bump).
+- **Effort estimate**: ~1 day to publish the parent once the artifact destination is decided (Maven Central / AMC Nexus). Each existing plugin needs a one-stanza `<parent>` swap to consume it.
+- **Cost ramp**: cheap before any external plugins exist (we just announce "switch your `<parent>` block"); rises with every plugin published on the old parent.
+- **Detail**: design discussion captured in the Phase 8.5.2 PR description.
 
 ---
 
@@ -158,10 +160,6 @@ PR-3a restructured `docs/` from 40 files to 20, rewrote the plugin-author and op
 The two surviving workflow docs (~1.4k lines combined) are written for a contributor adding a new top-level app or package. They still link to deleted docs (`COUPLING_ANALYSIS.md`, `templates/PACKAGE_README_TEMPLATE.md`, `AI_DEVELOPMENT_GUIDE.md`). They're not broken — adding a top-level app or package is rare and the existing prose still describes the operation — but the references are dangling. They're also excluded from the VitePress site (PR-3c) for the same reason — they shouldn't be public-facing until rewritten.
 
 - **When to revisit**: small standalone PR. Consolidate both into a single `docs/operations/extending-the-workspace.md` (~150 lines, two sections) or shrink in place. Once they're in shape, drop them from `docs/.vitepress/config.mts`'s `srcExclude` list and add them to the Operations sidebar.
-
-### 8.2 `examples/community-plugin-template/`
-
-The leftover template directory (`AVAILABLE_PACKAGES.md`, `README.md`, etc.) still references `COMMUNITY_PLUGIN_DEVELOPMENT.md` etc. Already tracked in [1.1](#11-retire-vs-extract-examplescommunity-plugin-template) — when that decision is executed (retire or extract), the references go with it.
 
 ### 8.3 Going public with the docs site
 
