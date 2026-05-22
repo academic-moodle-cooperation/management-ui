@@ -157,6 +157,7 @@ export default defineConfig({
           text: "Operations",
           items: [
             { text: "Release & versioning", link: "/operations/release" },
+            { text: "Release test protocol", link: "/operations/test-protocol" },
             { text: "CI", link: "/operations/ci" },
             { text: "Testing", link: "/operations/testing" },
           ],

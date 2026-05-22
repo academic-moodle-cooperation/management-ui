@@ -27,6 +27,7 @@ Routing by audience. Pick the path that matches what you're doing.
 - [`architecture/CONFIGURATION.md`](./architecture/CONFIGURATION.md) — the full config layer model.
 - [`operations/testing.md`](./operations/testing.md) — the test pyramid.
 - [`operations/release.md`](./operations/release.md) — versioning, changesets, publishing.
+- [`operations/test-protocol.md`](./operations/test-protocol.md) — end-to-end checklist to run before every release.
 - [`operations/ci.md`](./operations/ci.md) — what runs on every PR.
 
 ## I want the canonical reference

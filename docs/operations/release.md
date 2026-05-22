@@ -90,6 +90,8 @@ Plugin authors get a one-major-cycle grace window: when the host bumps `PLUGIN_A
 
 > **Note:** During the OSS-readiness phases, the workspace is still configured with `access: "restricted"` in `.changeset/config.json`. The first public publish happens in Phase 6d, after every other phase is finished and the build has been verified on the test server.
 
+Before any release — and especially before the first public 1.0 cut or any major bump of a contract-stable package — run the [release test protocol](./test-protocol.md). It's the integration-level gate that complements `pnpm verify`'s mechanical checks.
+
 The release flow once `access` is flipped to `"public"`:
 
 1. **Merge changesets into `main`** (or whichever release branch is configured). The Changesets GitHub Action opens a "Version Packages" PR that aggregates pending `.changeset/*.md` files into version bumps and changelog updates.
@@ -101,6 +103,7 @@ There is no manual `pnpm publish` step. If a release goes sideways, deprecate th
 ## See also
 
 - [`CONTRIBUTING.md`](../../CONTRIBUTING.md#versioning-changesets-and-deprecations) — the day-to-day version of this page.
-- [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md) — the four frozen contracts.
+- [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md) — the six frozen contracts.
 - [`.changeset/config.json`](../../.changeset/config.json) — current changesets configuration.
+- [`test-protocol.md`](./test-protocol.md) — end-to-end checklist to run before every release.
 - [`ci.md`](./ci.md) — what runs on every PR.
