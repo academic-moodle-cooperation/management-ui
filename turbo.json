@@ -35,6 +35,15 @@
     "@oc-mui/plugin-admin-marketplace#build": {
       "outputs": []
     },
+    "@oc-mui/plugin-core-episodes#build": {
+      "outputs": []
+    },
+    "@oc-mui/plugin-core-series#build": {
+      "outputs": []
+    },
+    "@oc-mui/plugin-core-upload#build": {
+      "outputs": []
+    },
     "preview": {
       "dependsOn": [
         "build"
