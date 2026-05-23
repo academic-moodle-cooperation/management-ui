@@ -1,8 +1,10 @@
 ---
+"@oc-mui/query": minor
 ---
 
 Friendly "Backend not reachable" notice when the Vite proxy can't reach
-the configured target on dev-server boot.
+the configured target on dev-server boot, plus a real error screen in
+the browser when the shell can't fetch its config.
 
 Surfaced by Section 2 of the release test protocol — without a backend,
 Vite was logging an 8-9-line ECONNREFUSED stack trace for every blocked
@@ -40,5 +42,29 @@ custom-logger wiring to suppress. Could be a follow-up if anyone finds
 the residual noise annoying; for now the friendly notice is the signal
 and the rest is short enough to ignore.
 
-No package code touched in any shipped consumer; the change is
-internal to the vite-config build helper.
+No package code touched in any shipped consumer; the vite-config
+change is internal to the build helper.
+
+**Browser-side error UI (the second half of the fix).** Previously the
+shell rendered `<AppLoader>Loading configuration...</AppLoader>`
+indefinitely on a failed config fetch — React Query retries 3× with
+exponential backoff, then sits in the error state forever because
+nothing was handling `isError`. Now:
+
+- `@oc-mui/query` exposes `refetch` and `configUrl` from `useAppConfig`
+  (purely additive — minor bump). `refetch` lets a recovery UI re-run
+  the fetch without a full page reload; `configUrl` lets the error
+  screen show what was tried.
+- `apps/shell/src/components/ConfigLoadError.tsx` (new) renders when
+  `isError` is true. Dev environment shows the URL we tried, the error
+  message, the `VITE_PROXY_TARGET=...` instruction, and a link to
+  `docs/getting-started/installation.md`. Prod shows a generic
+  "contact your administrator" message. Both have Retry + Reload page
+  buttons.
+- `apps/shell/src/main.tsx` branches on `isError` and renders the new
+  screen instead of falling through to a half-bootstrapped shell.
+
+Verified by starting `pnpm dev` with no backend running. After the
+React-Query retries exhaust (~10s), the screen swaps from "Loading
+configuration..." to the new error layout. The Retry button re-fires
+the fetch without reload.
