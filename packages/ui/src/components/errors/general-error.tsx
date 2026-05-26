@@ -2,14 +2,22 @@ import { Component, type ErrorInfo, type ReactNode } from "react";
 
 import { logger } from "@oc-mui/utils";
 
-import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 
-interface GeneralErrorProps extends React.HTMLAttributes<HTMLDivElement> {
+import { ErrorPage } from "./error-page";
+
+interface GeneralErrorProps {
+  /**
+   * Embedded variant: hides the big "500" and the action buttons so the
+   * component can be slotted into a smaller surface (e.g. a panel that
+   * failed to load).
+   */
   minimal?: boolean | undefined;
+  /** Optional extra detail line — typically `error.message` in dev. */
   message?: string | undefined;
   onHomeClick?: (() => void) | undefined;
   onBackClick?: (() => void) | undefined;
+  className?: string | undefined;
 }
 
 interface ErrorBoundaryProps {
@@ -75,23 +83,28 @@ export function GeneralError({
   onBackClick,
 }: GeneralErrorProps) {
   return (
-    <div className={cn("h-svh w-full", className)}>
-      <div className="m-auto flex h-full w-full flex-col items-center justify-center gap-2">
-        {!minimal && <h1 className="text-[7rem] font-bold leading-tight">500</h1>}
-        <span className="font-medium">Oops! Something went wrong {`:')`}</span>
-        {message && <p className="text-center text-muted-foreground">{message}</p>}
-        <p className="text-center text-muted-foreground">
-          We apologize for the inconvenience. <br /> Please try again later.
-        </p>
-        {!minimal && (
-          <div className="mt-6 flex gap-4">
+    <ErrorPage
+      className={className}
+      code={!minimal && "500"}
+      title={`Oops! Something went wrong :')`}
+      description={
+        <>
+          {message && <p className="mb-1">{message}</p>}
+          <p>
+            We apologize for the inconvenience. <br /> Please try again later.
+          </p>
+        </>
+      }
+      actions={
+        !minimal && (
+          <>
             <Button variant="outline" onClick={onBackClick}>
               Go Back
             </Button>
             <Button onClick={onHomeClick}>Back to Home</Button>
-          </div>
-        )}
-      </div>
-    </div>
+          </>
+        )
+      }
+    />
   );
 }

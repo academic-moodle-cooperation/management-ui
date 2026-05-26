@@ -1,5 +1,10 @@
-// Error components
-export { ErrorBoundary, ModuleErrorFallback, NotFoundError } from "./errors/ErrorBoundary";
+// Error components — ErrorBoundary and NotFoundError live in
+// `@oc-mui/ui/components`; only the shell-specific inline fallback
+// is re-exported here.
+export { ModuleErrorFallback } from "./errors/ModuleErrorFallback";
+
+// Config bootstrap error screen.
+export { ConfigLoadError } from "./ConfigLoadError";
 
 // Layout components
 export { CoreAppShellLayout } from "./layout/CoreAppShellLayout";

@@ -1,5 +1,6 @@
 ---
 "@oc-mui/query": minor
+"@oc-mui/ui": minor
 ---
 
 Friendly "Backend not reachable" notice when the Vite proxy can't reach
@@ -56,8 +57,10 @@ nothing was handling `isError`. Now:
   the fetch without a full page reload; `configUrl` lets the error
   screen show what was tried.
 - `apps/shell/src/components/ConfigLoadError.tsx` (new) renders when
-  `isError` is true. Dev environment shows the URL we tried, the error
-  message, the `VITE_PROXY_TARGET=...` instruction, and a link to
+  `isError` is true. Composed from the shared `<ErrorPage code="502">`
+  primitive so it matches the rest of the error-page family. Dev
+  environment shows the URL we tried, the error message, the
+  `VITE_PROXY_TARGET=...` instruction, and a link to
   `docs/getting-started/installation.md`. Prod shows a generic
   "contact your administrator" message. Both have Retry + Reload page
   buttons.
@@ -68,3 +71,40 @@ Verified by starting `pnpm dev` with no backend running. After the
 React-Query retries exhaust (~10s), the screen swaps from "Loading
 configuration..." to the new error layout. The Retry button re-fires
 the fetch without reload.
+
+**Error-page consolidation (`@oc-mui/ui` minor).** While wiring
+`ConfigLoadError` into the existing error-page family (404 / 500 / 401
+/ 403 / 503), the family itself wasn't really a family — each page
+duplicated the same centered-layout / big-status-code / actions-row
+markup, the shell had its own divergent `NotFoundError` using raw gray
+colors, and the maintenance page had a dead "Learn more" button. New
+shape:
+
+- `packages/ui/src/components/errors/error-page.tsx` (new) — shared
+  `<ErrorPage code title description details actions />` primitive
+  owning the centered layout, the big numeric code, typography, and
+  the actions row. Exported from `@oc-mui/ui/components`.
+- All five existing error pages refactored to compose `<ErrorPage>`:
+  `GeneralError`, `NotFoundError`, `UnauthorisedError`,
+  `ForbiddenError`, `MaintenanceError`. Same visual output, ~half the
+  code, single place to evolve the look.
+- `MaintenanceError`: the previously-dead "Learn more" button now
+  takes an optional `onLearnMoreClick` handler and is hidden if no
+  handler is provided.
+- `ConfigLoadError` composes the same `<ErrorPage>` so the
+  "couldn't load config" screen matches the rest of the family.
+- `apps/shell/src/components/errors/ErrorBoundary.tsx` →
+  `ModuleErrorFallback.tsx`: the file previously exported a duplicate
+  `ErrorBoundary` class and a divergent `NotFoundError` using raw
+  Tailwind palette colors. Both are now sourced from
+  `@oc-mui/ui/components` (single canonical implementation), and the
+  remaining inline fallback was switched from `bg-red-50` /
+  `text-red-700` to the semantic `bg-destructive/5` /
+  `text-destructive` tokens so it themes correctly.
+- `DynamicRouterProvider` wires `useNavigate` into the 404 page so the
+  "Go Back" and "Back to Home" buttons actually do something.
+
+Net: every full-screen error in the app now goes through the same
+primitive, every error page is themeable, and there are no more
+duplicate `ErrorBoundary` / `NotFoundError` definitions drifting from
+each other.
