@@ -112,6 +112,23 @@ pnpm docs:build                                         # static build of the do
 
 `pnpm verify` runs `lint → check-types → build → test → test:contract → api-check → test:e2e` in dependency order. If it's green locally it's green in CI; the only flakes you'll see in CI that you don't see locally are cold-start E2E timeouts, which Playwright retries automatically.
 
+### GraphQL code generation
+
+`@oc-mui/query` generates TypeScript types, React Query hooks, and the
+backend-orderable field lists from the live GraphQL schema. The generated
+files are **committed**, so a fresh clone and `pnpm verify` work without a
+backend — you only run codegen when the **schema itself changes**:
+
+```bash
+GRAPHQL_ENDPOINT=https://your-opencast/graphql \
+  pnpm --filter @oc-mui/query codegen
+```
+
+Commit the regenerated `src/gql-generated.ts` and
+`src/schema-input-fields.generated.ts`. See
+[`packages/query/README.md` → Code generation](packages/query/README.md#code-generation)
+for the full story.
+
 ### TypeScript
 
 Strict mode. Avoid `any`; if you genuinely need an escape hatch, document it in a comment at the call site.

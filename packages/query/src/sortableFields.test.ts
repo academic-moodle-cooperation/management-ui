@@ -2,12 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import { EVENT_SORTABLE_FIELDS, SERIES_SORTABLE_FIELDS } from "./sortableFields";
 
-// These tests pin the runtime field lists so an unintended change shows up
-// in a diff. The compile-time `satisfies` + completeness assertions in
-// sortableFields.ts already guarantee the lists agree with the generated
-// EventOrderByInput / SeriesOrderByInput types; the snapshot here guards
-// against a *deliberate-looking* but wrong edit (e.g. dropping a field by
-// hand without the schema actually changing).
+// These lists are generated from the GraphQL schema (see
+// codegen-plugins/input-field-names.mjs → schema-input-fields.generated.ts,
+// re-exported by sortableFields.ts). These tests pin the expected field
+// set so that a schema change which alters sortability surfaces as a test
+// failure on the next codegen run — a deliberate gate, not a silent shift.
 
 describe("EVENT_SORTABLE_FIELDS", () => {
   it("matches the backend's EventOrderByInput fields", () => {

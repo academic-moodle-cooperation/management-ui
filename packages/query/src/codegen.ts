@@ -49,6 +49,15 @@ const config: CodegenConfig = {
         },
       },
     },
+    // Runtime field-name arrays for the backend's *OrderByInput /
+    // *FilterByInput types. TypeScript input types are erased at runtime,
+    // so the UI can't enumerate them — this emits real `as const` arrays
+    // the table layer feeds into restrictSortingToFields (@oc-mui/ui).
+    // Plugin path is cwd-relative (codegen runs from packages/query/),
+    // matching the `documents` and output paths above.
+    "./src/schema-input-fields.generated.ts": {
+      plugins: ["./src/codegen-plugins/input-field-names.mjs"],
+    },
   },
 };
 export default config;
