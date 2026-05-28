@@ -123,12 +123,15 @@ Cache defaults that these checks assume (`packages/query/src/QueryProvider.tsx`)
 
 `config.json` is the deployment-time source of truth. Verify it's actually consumed.
 
+The file the shell fetches is `apps/shell/public/ui/config/management-ui/config.json` (served at the origin-absolute path `/ui/config/management-ui/config.json`). For these checks run **without** a backend (`pnpm dev`, `VITE_PROXY_TARGET` unset) so the dev server serves that local file — edit it and reload to see changes. With `VITE_PROXY_TARGET` set the config is proxied to the backend and the local file is ignored; edit the backend's config instead. See [`docs/getting-started/configuration.md` → Where the host's config.json comes from](../getting-started/configuration.md#where-the-host-s-config-json-comes-from).
+
 | # | Test | Expected |
 |---|------|----------|
-| 6.1 | Edit `apps/shell/public/config.json`'s `app.theme` | New theme applies after page reload. |
+| 6.1 | Edit `app.theme` in `apps/shell/public/ui/config/management-ui/config.json` | New theme applies after page reload (no dev-server restart). |
 | 6.2 | Remove a plugin from `app.enabledPlugins` | Plugin no longer loads; its sidebar entry disappears. |
 | 6.3 | Set `config.plugins.episodes.enabled = false` | Episodes plugin loads (it's in the ship filter) but doesn't activate; sidebar entry hidden. |
 | 6.4 | Change a plugin's config slice value (e.g. `config.plugins.upload.workflows`) | Plugin reads new value via `definePluginConfig().use()`. |
+| 6.5 | Add an unknown top-level key (e.g. `"legacyThing": 1`) and reload | Shell still boots; the unknown key is ignored, not a crash. (Confirms the `[key: string]: unknown` passthrough.) |
 
 ## Section 7 — Theming
 

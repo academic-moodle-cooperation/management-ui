@@ -21,18 +21,12 @@ export const defaultConfig: AppConfig = {
     includeSearch: true,
   },
   app: {
-    title: "management-ui",
     appName: "Video Management Platform",
-    version: "0.0.1",
     locale: "en",
     HtmlDocumentTitle: "Management UI",
-    appTitle: "",
     logoUrl: "assets/default/logo.svg",
     orgLogoUrl: "",
     faviconUrl: "assets/favicon/favicon.svg",
-    organizationUrls: {
-      main: "https://example.com",
-    },
     theme: "default",
     // Core OSS plugins that ship with the shell plus the two integration
     // hooks:
@@ -51,7 +45,6 @@ export const defaultConfig: AppConfig = {
   plugins: {},
   api: {
     baseUrl: "/management-ui",
-    timeout: 30000,
     graphqlEndpoint: "/graphql",
   },
 };
@@ -59,9 +52,8 @@ export const defaultConfig: AppConfig = {
 /**
  * Merges an instance config on top of {@link defaultConfig}.
  *
- * Keeps the legacy semantics for the shell-owned keys (app/auth/api are
- * shallow-merged, `organizationUrls` gets a nested merge) and passes the
- * plugin map through as-is. Per-plugin defaults are contributed at runtime
+ * The shell-owned keys (app/auth/api) are shallow-merged and the plugin
+ * map passes through as-is. Per-plugin defaults are contributed at runtime
  * via the `app:config:defaults` extension point, so this function intentionally does
  * not carry plugin-specific knowledge any more.
  */
@@ -78,15 +70,6 @@ export const getAppConfig = (instanceConfig?: Partial<AppConfig>): AppConfig => 
     app: {
       ...defaultConfig.app,
       ...(instanceConfig?.app || {}),
-      organizationUrls: {
-        main:
-          instanceConfig?.app?.organizationUrls?.main ??
-          defaultConfig.app.organizationUrls?.main ??
-          "",
-        ...(instanceConfig?.app?.organizationUrls?.support && {
-          support: instanceConfig.app.organizationUrls.support,
-        }),
-      },
       enabledPlugins: instanceConfig?.app?.enabledPlugins || defaultConfig.app.enabledPlugins,
     },
     auth: {

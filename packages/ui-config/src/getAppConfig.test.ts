@@ -18,11 +18,8 @@ describe("getAppConfig", () => {
       app: {
         appName: "Custom App Name",
         theme: "custom-theme",
-        title: defaultConfig.app.title,
-        version: defaultConfig.app.version,
         locale: defaultConfig.app.locale,
         HtmlDocumentTitle: defaultConfig.app.HtmlDocumentTitle,
-        appTitle: defaultConfig.app.appTitle,
         enabledPlugins: defaultConfig.app.enabledPlugins,
       },
     };
@@ -32,42 +29,8 @@ describe("getAppConfig", () => {
     expect(config.app.appName).toBe("Custom App Name");
     expect(config.app.theme).toBe("custom-theme");
     // Other defaults should still be present
-    expect(config.app.version).toBe(defaultConfig.app.version);
     expect(config.app.locale).toBe(defaultConfig.app.locale);
-  });
-
-  it("should merge organizationUrls correctly", () => {
-    const instanceConfig: Partial<AppConfig> = {
-      app: {
-        ...defaultConfig.app,
-        organizationUrls: {
-          main: "https://custom.example.com",
-          support: "https://support.example.com",
-        },
-      },
-    };
-
-    const config = getAppConfig(instanceConfig);
-
-    expect(config.app.organizationUrls?.main).toBe("https://custom.example.com");
-    expect(config.app.organizationUrls?.support).toBe("https://support.example.com");
-  });
-
-  it("should use default main URL when instance config doesn't provide it", () => {
-    const instanceConfig: Partial<AppConfig> = {
-      app: {
-        ...defaultConfig.app,
-        organizationUrls: {
-          main: defaultConfig.app.organizationUrls?.main || "",
-          support: "https://support.example.com",
-        },
-      },
-    };
-
-    const config = getAppConfig(instanceConfig);
-
-    expect(config.app.organizationUrls?.main).toBe(defaultConfig.app.organizationUrls?.main);
-    expect(config.app.organizationUrls?.support).toBe("https://support.example.com");
+    expect(config.app.HtmlDocumentTitle).toBe(defaultConfig.app.HtmlDocumentTitle);
   });
 
   it("should merge auth config", () => {
@@ -115,7 +78,6 @@ describe("getAppConfig", () => {
     const instanceConfig: Partial<AppConfig> = {
       api: {
         baseUrl: "/custom-api",
-        timeout: 60000,
         graphqlEndpoint: defaultConfig.api.graphqlEndpoint,
       },
     };
@@ -123,7 +85,6 @@ describe("getAppConfig", () => {
     const config = getAppConfig(instanceConfig);
 
     expect(config.api.baseUrl).toBe("/custom-api");
-    expect(config.api.timeout).toBe(60000);
     // graphqlEndpoint should still be from default
     expect(config.api.graphqlEndpoint).toBe(defaultConfig.api.graphqlEndpoint);
   });
