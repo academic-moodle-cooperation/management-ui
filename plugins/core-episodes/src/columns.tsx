@@ -131,6 +131,9 @@ export const createColumns = (
           </div>
         );
       },
+      // Not in EventOrderByInput — the backend can't sort events by
+      // description, so don't offer the control.
+      enableSorting: false,
       meta: getMeta("description", "episodes:episodesTable.heading.description"),
     }),
     columnHelper.accessor("eventStatus", {
@@ -180,6 +183,8 @@ export const createColumns = (
           </OverflowTooltip>
         );
       },
+      // Not in EventOrderByInput — events can't be sorted by contributors.
+      enableSorting: false,
       meta: getMeta("contributors", "episodes:episodesTable.heading.contributors"),
     }),
     columnHelper.accessor("presenters", {
@@ -273,6 +278,8 @@ export const createColumns = (
           </div>
         );
       },
+      // Not in EventOrderByInput — events can't be sorted by duration.
+      enableSorting: false,
       meta: getMeta("duration", "episodes:episodesTable.heading.duration"),
     }),
     columnHelper.accessor("startDate", {
