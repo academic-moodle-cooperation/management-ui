@@ -40,6 +40,7 @@ export * from "./config";
 
 export * from "./client";
 export * from "./gql-generated";
+export * from "./sortableFields";
 
 // Explicitly re-export commonly used types for Vite/Rollup compatibility
 // when using 'import type' syntax
