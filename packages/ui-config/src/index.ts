@@ -37,8 +37,8 @@ export const defaultConfig: AppConfig = {
     enabledPlugins: ["core", "episodes", "series", "upload", "admin", "config"],
   },
   auth: {
-    loginUrl: "/Shibboleth.sso/Login?target=/management-ui",
-    logoutUrl: "/Shibboleth.sso/Logout?return=/management-ui",
+    loginUrl: "/Shibboleth.sso/Login?target=/management-ui/",
+    logoutUrl: "/Shibboleth.sso/Logout?return=/management-ui/",
     loginUrlDev: "/j_spring_security_login",
     logoutUrlDev: "/j_spring_security_logout",
   },
