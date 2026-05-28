@@ -1,5 +1,5 @@
 export { createBaseConfig, type CreateBaseConfigOptions } from "./base.config.js";
-export { createProxyConfig, type CreateProxyConfigOptions } from "./proxy.js";
+export { createProxyConfig, CONFIG_JSON_PATH, type CreateProxyConfigOptions } from "./proxy.js";
 export {
   DEFAULT_SHELL_APP_PORT,
   getAppBasePath, // For shell app
@@ -26,3 +26,7 @@ export {
   localPluginsDevPlugin,
   type LocalPluginsDevPluginOptions,
 } from "./plugins/local-plugins-dev.js";
+export {
+  localConfigDevPlugin,
+  type LocalConfigDevPluginOptions,
+} from "./plugins/local-config-dev.js";

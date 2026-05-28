@@ -1,0 +1,27 @@
+{
+  "$comment": "Default Management UI deployment config. In dev (no VITE_PROXY_TARGET) the shell serves THIS file at /ui/config/management-ui/config.json — edit it and reload to test config changes without a backend. It also ships inside the JAR as the shipped default; production deployments mount their own config.json over it at the same path. Anything omitted here falls back to defaultConfig in @oc-mui/ui-config; plugins contribute their own slice defaults at runtime.",
+  "app": {
+    "appName": "Video Management Platform",
+    "HtmlDocumentTitle": "Management UI",
+    "locale": "en",
+    "theme": "default",
+    "logoUrl": "assets/default/logo.svg",
+    "faviconUrl": "assets/favicon/favicon.svg",
+    "orgLogoUrl": "",
+    "enabledPlugins": ["core", "episodes", "series", "upload", "admin", "config"]
+  },
+  "auth": {
+    "loginUrl": "/Shibboleth.sso/Login?target=/management-ui/",
+    "logoutUrl": "/Shibboleth.sso/Logout?return=/management-ui/",
+    "loginUrlDev": "/j_spring_security_login",
+    "logoutUrlDev": "/j_spring_security_logout"
+  },
+  "api": {
+    "baseUrl": "/management-ui",
+    "graphqlEndpoint": "/graphql"
+  },
+  "matomo": {
+    "enabled": false
+  },
+  "plugins": {}
+}

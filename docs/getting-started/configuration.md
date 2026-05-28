@@ -70,7 +70,8 @@ Orgs typically ship these overrides in a tiny `.local-plugins/<org>-config/` plu
 ```
 app:config:defaults     ← plugin defaults (via app:config:defaults extension point)
        ⊕
-base config             ← what the host ships in apps/shell/public/config.json
+base config             ← defaultConfig (baked into @oc-mui/ui-config)
+                           ⊕ the fetched config.json (see below)
        ⊕
 app:config              ← config plugin's overlay (via app:config extension point)
 ```
@@ -136,7 +137,17 @@ The Zod schema is used at runtime to validate the merged slice. Invalid values a
 
 ## Where the host's `config.json` comes from
 
-`apps/shell/public/config.json` ships a sensible default. Production deployments mount their own `config.json` over the bundled one at the same path; no rebuild required. Orgs typically ship a tiny `.local-plugins/<org>-config/` plugin that registers an `app:config` overlay — this lets them override values across deployments without editing a JSON file.
+The shell fetches it on boot from `productionConfigUrl` (default `/ui/config/management-ui/config.json`). What answers that request depends on where you're running:
+
+| Context | What serves `config.json` |
+| --- | --- |
+| **Production** | The Opencast JAR ships a sensible default at that path (built from `apps/shell/public/ui/config/management-ui/config.json`). Deployments mount their own `config.json` over it at the same path; no rebuild required. |
+| **Dev, no backend** (`pnpm dev`) | The dev server serves the committed `apps/shell/public/ui/config/management-ui/config.json` at that exact path. **Edit it and reload to test config changes — no backend needed.** |
+| **Dev, with backend** (`VITE_PROXY_TARGET=… pnpm dev`) | The request is proxied to that backend, so you exercise the backend's real `config.json`. The committed local file is not used. |
+
+Anything the file omits falls back to `defaultConfig` in [`@oc-mui/ui-config`](../../packages/ui-config/), and plugins contribute their own slice defaults at runtime — so the file only needs to carry what a deployment actually overrides.
+
+Orgs typically ship a tiny `.local-plugins/<org>-config/` plugin that registers an `app:config` overlay instead of editing a JSON file — this lets them override values across deployments and wins over `config.json` (see the merge order above).
 
 ## Theme & locale
 

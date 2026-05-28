@@ -24,17 +24,14 @@ interface AppConfig {
   productionConfigUrl: string;
   productionAppPluginUrl: string;
   downloadBaseUrl?: string;
+  matomo: MatomoConfig;
   app: {
-    title: string;
-    appName: string;
-    version: string;
+    appName: string;        // product name shown in chrome
     locale: string;
-    HtmlDocumentTitle: string;
-    appTitle: string;
+    HtmlDocumentTitle: string; // <title> of the document
     logoUrl?: string;
     orgLogoUrl?: string;
     faviconUrl?: string;
-    organizationUrls?: { main: string; support?: string };
     theme: string;
 
     // Ship filter — only plugins whose namespace is listed here are
@@ -50,14 +47,27 @@ interface AppConfig {
     logoutUrl: string;
     loginUrlDev?: string;
     logoutUrlDev?: string;
-    tokenRefreshUrl?: string;
   };
-  api: { baseUrl: string; graphqlEndpoint: string; timeout?: number };
+  api: { baseUrl: string; graphqlEndpoint: string };
 
   // Opaque map of plugin-owned slices keyed by plugin id.
   plugins: Record<string, unknown>;
+
+  // Deployments may carry extra top-level keys we don't model; they pass
+  // through untyped rather than failing validation.
+  [key: string]: unknown;
 }
 ```
+
+> **Pruned in the OSS cleanup (pre-1.0):** `app.title`, `app.appTitle`,
+> `app.version`, `app.organizationUrls`, `auth.tokenRefreshUrl`, and
+> `api.timeout` were removed — none had any reader in the codebase. They
+> were never part of the [Config Contract](./CONTRACTS.md#4-config-contract)
+> (which freezes only `app.theme`, `app.locale`, `app.enabledPlugins`,
+> `config.plugins[id]`, and the merge order/reader), so this is not a
+> contract break. A deployment `config.json` may still carry them — the
+> `[key: string]: unknown` index keeps them from failing validation; they
+> just aren't read.
 
 The core knows **nothing** about individual plugin slices. Each plugin
 owns the shape of `config.plugins[<id>]` and exposes a typed reader via
@@ -234,7 +244,7 @@ runs this sequence:
 Both phase-2 passes use the same layered merge as the hook, so the
 view the loader sees and the view React sees are identical.
 
-## `config.json` in production
+## `config.json` — where it comes from
 
 A deployment customizes the shell by placing a JSON file at
 `config.productionConfigUrl` (default
@@ -243,7 +253,20 @@ and treats it as the **base** layer — shell defaults fill in anything
 it leaves out, plugin defaults contribute their slices below it, and
 `.local-plugins`/JAR config plugins overlay it above.
 
-There is no longer any build-time merge. The old `generateConfigPlugin`
+A committed default lives at
+[`apps/shell/public/ui/config/management-ui/config.json`](../../apps/shell/public/ui/config/management-ui/config.json).
+Vite copies it into the build output, so the Opencast JAR ships it at the
+production path; deployments mount their own file over it (no rebuild).
+
+How it's served depends on context:
+
+| Context | Serves `config.json` |
+| --- | --- |
+| Production | The JAR's bundled file, or the deployment's mounted override at the same path. |
+| `pnpm dev` (no backend) | A dev-only Vite middleware (`localConfigDevPlugin`) serves the committed file at the exact fetch path, re-read each request — **edit + reload, no backend**. The proxy leaves the config path alone in this mode (see `packages/vite-config/src/proxy.ts`). |
+| `VITE_PROXY_TARGET=… pnpm dev` | The config path is proxied to that backend; its real `config.json` wins and the local file is ignored. |
+
+There is no build-time merge. The old `generateConfigPlugin`
 and `PLUGIN_CONFIGS` array were removed in Phase 2b Commit 1.
 Deployments produce a single `config.json` by hand or via CI (merging
 whatever org snippets they want into one file) and drop it on the

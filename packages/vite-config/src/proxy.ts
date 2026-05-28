@@ -8,9 +8,17 @@ export interface CreateProxyConfigOptions {
   customProxies?: Record<string, string | ProxyOptions>;
 }
 
-const defaultBackendTarget =
-  (typeof process !== "undefined" && process.env["VITE_PROXY_TARGET"]) ||
-  "http://localhost:8080";
+const viteProxyTargetEnv =
+  (typeof process !== "undefined" && process.env["VITE_PROXY_TARGET"]) || undefined;
+const defaultBackendTarget = viteProxyTargetEnv || "http://localhost:8080";
+
+// The path the shell fetches its deployment config from. Special-cased in
+// createProxyConfig: when no backend is *explicitly* configured we leave this
+// path un-proxied so `localConfigDevPlugin` can serve a committed default
+// config.json locally — letting devs edit config + reload without a backend.
+// When a backend is requested (VITE_PROXY_TARGET set, or an explicit target
+// passed) the deployment's real config.json wins via the proxy as before.
+export const CONFIG_JSON_PATH = "/ui/config/management-ui/config.json";
 
 const defaultProxyPaths: Record<string, string | ProxyOptions> = {
   "/j_spring_security_login": "",
@@ -148,7 +156,10 @@ function attachFriendlyErrorHandler(
 export function createProxyConfig(
   options?: CreateProxyConfigOptions,
 ): Record<string, string | ProxyOptions> {
-  const target = options?.target || defaultBackendTarget;
+  // A backend is "explicitly configured" when the caller passes a target or
+  // VITE_PROXY_TARGET is set. Absent that, the config path is served locally.
+  const explicitTarget = options?.target ?? viteProxyTargetEnv;
+  const target = explicitTarget || defaultBackendTarget;
 
   const resolvedProxies: Record<string, string | ProxyOptions> = {};
 
@@ -158,6 +169,9 @@ export function createProxyConfig(
   for (const path in defaultProxyPaths) {
     const pathConfig = defaultProxyPaths[path];
     if (pathConfig === undefined) continue;
+    // Without an explicit backend, leave the config path un-proxied so the
+    // committed default config.json is served locally (localConfigDevPlugin).
+    if (path === CONFIG_JSON_PATH && !explicitTarget) continue;
     const baseOptions: ProxyOptions =
       typeof pathConfig === "string"
         ? { target }

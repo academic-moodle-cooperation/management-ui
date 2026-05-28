@@ -2013,19 +2013,12 @@ export function useAppConfig(): {
     downloadBaseUrl?: string | undefined;
     matomo: MatomoConfig;
     app: {
-    title: string;
     appName: string;
-    version: string;
     locale: string;
     HtmlDocumentTitle: string;
-    appTitle: string;
     logoUrl?: string;
     orgLogoUrl?: string;
     faviconUrl?: string;
-    organizationUrls?: {
-    main: string;
-    support?: string;
-    };
     theme: string;
     enabledPlugins: string[];
     };
@@ -2034,12 +2027,10 @@ export function useAppConfig(): {
     logoutUrl: string;
     loginUrlDev?: string;
     logoutUrlDev?: string;
-    tokenRefreshUrl?: string;
     };
     plugins: PluginsConfig;
     api: {
     baseUrl: string;
-    timeout?: number;
     graphqlEndpoint: string;
     };
     } | undefined, Error>>;

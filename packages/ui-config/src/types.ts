@@ -57,19 +57,14 @@ export interface AppConfig {
   downloadBaseUrl?: string | undefined;
   matomo: MatomoConfig;
   app: {
-    title: string;
+    /** Product name shown in chrome (header, etc.). */
     appName: string;
-    version: string;
     locale: string;
+    /** `<title>` of the HTML document. */
     HtmlDocumentTitle: string;
-    appTitle: string;
     logoUrl?: string;
     orgLogoUrl?: string;
     faviconUrl?: string;
-    organizationUrls?: {
-      main: string;
-      support?: string;
-    };
     theme: string;
     /**
      * Flat list of plugin namespaces the shell is allowed to load at all
@@ -89,13 +84,14 @@ export interface AppConfig {
     logoutUrl: string;
     loginUrlDev?: string;
     logoutUrlDev?: string;
-    tokenRefreshUrl?: string;
   };
   plugins: PluginsConfig;
   api: {
     baseUrl: string;
-    timeout?: number;
     graphqlEndpoint: string;
   };
+  // Deployments may carry extra top-level keys we don't model here (legacy
+  // fields, org-specific knobs read by a config plugin). They pass through
+  // untyped rather than failing validation.
   [key: string]: unknown;
 }

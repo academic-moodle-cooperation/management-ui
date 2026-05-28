@@ -11,24 +11,16 @@ export interface AppConfig {
     // (undocumented)
     api: {
         baseUrl: string;
-        timeout?: number;
         graphqlEndpoint: string;
     };
     // (undocumented)
     app: {
-        title: string;
         appName: string;
-        version: string;
         locale: string;
         HtmlDocumentTitle: string;
-        appTitle: string;
         logoUrl?: string;
         orgLogoUrl?: string;
         faviconUrl?: string;
-        organizationUrls?: {
-            main: string;
-            support?: string;
-        };
         theme: string;
         enabledPlugins: string[];
     };
@@ -38,7 +30,6 @@ export interface AppConfig {
         logoutUrl: string;
         loginUrlDev?: string;
         logoutUrlDev?: string;
-        tokenRefreshUrl?: string;
     };
     // (undocumented)
     downloadBaseUrl?: string | undefined;
