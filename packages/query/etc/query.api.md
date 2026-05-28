@@ -278,6 +278,9 @@ type Event_2 = {
 export { Event_2 as Event }
 
 // @public
+export const EVENT_SORTABLE_FIELDS: readonly ["created", "endDate", "eventStatus", "location", "presenters", "seriesName", "startDate", "technicalEndTime", "technicalStartTime", "title", "workflowState"];
+
+// @public
 export enum EventFilter {
     Ingesting = "INGESTING",
     Paused = "PAUSED",
@@ -333,6 +336,9 @@ export enum EventRemovalResult {
     Retracting = "RETRACTING",
     Success = "SUCCESS"
 }
+
+// @public (undocumented)
+export type EventSortableField = (typeof EVENT_SORTABLE_FIELDS)[number];
 
 // @public (undocumented)
 export type Exact<T extends {
@@ -1917,6 +1923,9 @@ export type Series = {
 };
 
 // @public
+export const SERIES_SORTABLE_FIELDS: readonly ["contributors", "created", "creator", "description", "language", "license", "publishers", "rightHolder", "subject", "title"];
+
+// @public
 export type SeriesEventsArgs = {
     limit?: InputMaybe<Scalars['Int']['input']>;
     offset?: InputMaybe<Scalars['Int']['input']>;
@@ -1944,6 +1953,9 @@ export type SeriesOrderByInput = {
     subject?: InputMaybe<OrderDirection>;
     title?: InputMaybe<OrderDirection>;
 };
+
+// @public (undocumented)
+export type SeriesSortableField = (typeof SERIES_SORTABLE_FIELDS)[number];
 
 // @public (undocumented)
 export type StringMetadataField = MetadataFieldInterface & {

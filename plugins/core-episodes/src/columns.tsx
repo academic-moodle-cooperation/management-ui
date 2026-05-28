@@ -15,6 +15,7 @@ import {
 import React from "react";
 
 import { i18next } from "@oc-mui/i18n";
+import { EVENT_SORTABLE_FIELDS } from "@oc-mui/query";
 import type { MuiEventsDataFragment } from "@oc-mui/query";
 import {
   createColumnHelper,
@@ -24,6 +25,7 @@ import {
   Button,
   DataTableColumnHeader,
   OverflowTooltip,
+  restrictSortingToFields,
   type ColumnDef,
   type Row,
   type Column,
@@ -503,5 +505,10 @@ export const createColumns = (
     }),
   ];
 
-  return layout === "gallery" ? galleryColumns : listColumns;
+  // Derive sortability from the backend's EventOrderByInput rather than
+  // hardcoding enableSorting per column: any column whose field the
+  // backend can't order by loses its sort control automatically. Keeps
+  // the table honest when columns are added or the schema changes.
+  const columns = layout === "gallery" ? galleryColumns : listColumns;
+  return restrictSortingToFields(columns, EVENT_SORTABLE_FIELDS);
 };
