@@ -16,7 +16,7 @@ import {
   type AnyRoute,
   type AnyRouter,
 } from "@oc-mui/router";
-import { AppLoader, Button, ErrorBoundary, ErrorPage, NotFoundError } from "@oc-mui/ui/components";
+import { AppLoader, ErrorBoundary, NotFoundError } from "@oc-mui/ui/components";
 import { logger } from "@oc-mui/utils";
 
 import { createCommonRoutes } from "../shared/commonRoutes";
@@ -51,30 +51,6 @@ const NotFoundRoute = () => {
   );
 };
 
-/**
- * 401 screen injected into `<AppProtection>` for the (rare) case where a
- * user is anonymous but the deployment has no `auth.loginUrl` configured,
- * so we can't bounce them to a login form. `AppProtection` lives in
- * `@oc-mui/router` and can't import `<ErrorPage>` from `@oc-mui/ui`
- * (cycle), so the shell injects the branded screen via prop.
- */
-const UnauthenticatedFallback = () => {
-  const navigate = useNavigate();
-  return (
-    <ErrorPage
-      code="401"
-      title="Authentication required"
-      description="You need to sign in to access this app, but no login endpoint is configured for this deployment."
-      details="If you administer this server, set auth.loginUrl in the management-ui config. Otherwise, please contact your administrator."
-      actions={
-        <Button variant="outline" onClick={() => navigate({ to: "/" })}>
-          Back to Home
-        </Button>
-      }
-    />
-  );
-};
-
 const appCoreRootRoute = createRootRoute({
   component: CoreAppShellLayout,
   notFoundComponent: NotFoundRoute,
@@ -103,7 +79,6 @@ const createRoutesFromApps = (apps: AppDefinition[]): AnyRoute[] => {
         appName={appDef.id}
         loadingComponent={AppLoader}
         redirectingComponent={<AppLoader>Redirecting to login…</AppLoader>}
-        unauthenticatedFallback={<UnauthenticatedFallback />}
       >
         <ErrorBoundary fallback={<ModuleErrorFallback name={appDef.name} />}>
           <Suspense fallback={<AppLoader />}>

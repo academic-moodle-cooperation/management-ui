@@ -6,6 +6,7 @@ import {
 } from "@oc-mui/router";
 import { AppLoader } from "@oc-mui/ui/components";
 
+import { LoginForm } from "../components/auth/LoginForm";
 import { DefaultLandingComponent } from "../components/DefaultLandingComponent";
 
 /**
@@ -36,9 +37,12 @@ export const createCommonRoutes = (parentRoute: AnyRoute) => {
     component: DefaultLandingComponent,
   });
 
-  // Create auth routes with AppLoader as the loading component
+  // Create auth routes with AppLoader as the loading component. The
+  // native LoginForm is injected for password backends; SSO backends
+  // fall back to an external redirect inside createLoginRoute.
   const loginRoute = createLoginRoute(parentRoute, {
     loadingComponent: AppLoader,
+    formComponent: LoginForm,
   });
 
   const logoutRoute = createLogoutRoute(parentRoute, {

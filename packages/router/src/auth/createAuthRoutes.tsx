@@ -4,12 +4,46 @@ import React from "react";
 import { useAppConfig } from "@oc-mui/query";
 
 /**
+ * Props passed to a consumer-supplied login form component (see
+ * `AuthRouteOptions.formComponent`).
+ */
+export interface LoginFormComponentProps {
+  /**
+   * Where to send the user after a successful login — a path relative to
+   * the app origin (e.g. `/management-ui/episodes`), taken from the
+   * `?redirect=` query param. The form is responsible for navigating
+   * there once authentication succeeds.
+   */
+  redirect: string;
+}
+
+/**
  * Configuration options for creating auth routes
  */
 export interface AuthRouteOptions {
   /** Custom loading component to use (e.g., AppLoader from @oc-mui/ui) */
   loadingComponent?: React.ComponentType;
+  /**
+   * Login form rendered for password (Spring `j_spring_security_*`)
+   * backends. Injected by the consumer because the form needs
+   * `@oc-mui/ui` components, and this package can't import `@oc-mui/ui`
+   * (that package already depends on `@oc-mui/router`, so importing back
+   * would create a cycle). When omitted, or when the configured login
+   * URL points at an external IdP (SSO), the route falls back to a
+   * full-page redirect to that URL instead.
+   */
+  formComponent?: React.ComponentType<LoginFormComponentProps>;
 }
+
+/**
+ * A login URL is a Spring Security form-login endpoint when it targets
+ * the well-known `j_spring_security_*` paths. Those backends accept a
+ * username/password POST to `/j_spring_security_check`, so we can render
+ * a native in-app form. Anything else (Shibboleth, OIDC, CAS, …) is an
+ * external IdP we have to hand off to via a full-page redirect.
+ */
+const isFormLoginUrl = (loginUrl: string | undefined): boolean =>
+  !!loginUrl && loginUrl.includes("j_spring_security");
 
 /**
  * Creates standardized login and logout routes that handle:
@@ -19,12 +53,18 @@ export interface AuthRouteOptions {
  *
  * Pass AppLoader as loadingComponent to maintain consistency across the app.
  *
+ * For password backends, pass `formComponent` to render an in-app login
+ * form (best UX, and the only way to reliably return the user to where
+ * they started — see the comment in that component). For SSO backends
+ * the route redirects out to the configured IdP.
+ *
  * These routes should be used consistently across all router configurations
  * to centralize authentication logic.
  */
 
 export const createLoginRoute = (parentRoute: AnyRoute, options: AuthRouteOptions = {}) => {
   const LoadingComponent = options.loadingComponent || (() => <div>Loading...</div>);
+  const FormComponent = options.formComponent;
 
   return createRoute({
     getParentRoute: () => parentRoute,
@@ -43,15 +83,28 @@ export const createLoginRoute = (parentRoute: AnyRoute, options: AuthRouteOption
           : config.auth.loginUrl;
 
       // Handle redirect parameter from query string or default to home
-      const redirectParam =
-        (routerState.location.search as Record<string, unknown>)["redirect"] || "/";
+      const redirectParam = String(
+        (routerState.location.search as Record<string, unknown>)["redirect"] || "/",
+      );
 
-      // Build the final login URL with redirect parameter
-      const finalLoginUrl = `${loginUrl}?redirect=${encodeURIComponent(window.location.origin + redirectParam)}`;
+      // Password backend + an injected form → render the in-app login
+      // form. It owns the POST to /j_spring_security_check and the
+      // post-login navigation, so the user lands back where they started
+      // instead of on the backend's role-based welcome page.
+      if (isFormLoginUrl(loginUrl) && FormComponent) {
+        return <FormComponent redirect={redirectParam} />;
+      }
 
-      // Perform the redirect
-      window.location.href = finalLoginUrl;
-      return <LoadingComponent />;
+      // External IdP (SSO) — hand off with a full-page redirect, passing
+      // the absolute return URL so the IdP can send the user back.
+      if (loginUrl) {
+        const finalLoginUrl = `${loginUrl}?redirect=${encodeURIComponent(window.location.origin + redirectParam)}`;
+        window.location.href = finalLoginUrl;
+        return <LoadingComponent />;
+      }
+
+      // No login URL configured and no form to fall back to.
+      return <div>No login method is configured for this deployment.</div>;
     },
   });
 };

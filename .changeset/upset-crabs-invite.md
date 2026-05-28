@@ -145,3 +145,53 @@ Surfaced by Section 3 of the test protocol — visiting a protected route
 Verified by visiting `/episodes` logged out against a local backend:
 the browser now follows through to Opencast's login form instead of
 bouncing on a dead `/login.html`.
+
+**Shell-native login form (`@oc-mui/router` minor + shell).** Proxying
+`/login.html` only got us a half-working flow: the form's assets
+(`/styles`, `/scripts`, `/img`) aren't proxied so it renders unstyled,
+and — more fundamentally — after login Opencast's
+`AuthenticationSuccessHandler` sends you to the role-based welcome page
+(`/admin-ui/index.html`) rather than back to the management UI. The
+"return to where you started" mechanism (`session[INITIAL_REQUEST_PATH]`)
+only fires when Spring's entry point intercepts a protected *backend*
+path; in dev the shell is served by Vite on a different origin, so it
+never fires. Result: logging in from a protected route dumped you in the
+Opencast admin.
+
+Fix: own the login exchange in the shell.
+
+- `apps/shell/src/components/auth/LoginForm.tsx` (new) — a themed login
+  form (built from `@oc-mui/ui` `Card`/`Input`/`Button`/`Checkbox`) that
+  POSTs `j_username` / `j_password` to `/j_spring_security_check`
+  (already proxied → same-origin session cookie) with
+  `Accept: application/json` (so the success handler replies with a
+  harmless redirect to `/info/me.json` instead of the welcome page).
+  It then confirms success via the canonical `useGetCurrentUser` query
+  and navigates to the originally-requested path itself — so post-login
+  destination is fully under our control, in dev and prod alike. On
+  localhost it prefills the stock `admin`/`opencast` test credentials
+  (mirrors Opencast's own `login.js`). Redirect target is sanitised
+  against open-redirects.
+
+- `@oc-mui/router` `createLoginRoute` gains an optional `formComponent`
+  (and exports `AuthRouteOptions` + `LoginFormComponentProps`). For
+  Spring password backends (`loginUrl` contains `j_spring_security`) it
+  renders the injected form; for external IdPs (Shibboleth/OIDC/CAS) it
+  keeps the full-page redirect. The form is injected rather than
+  imported because `@oc-mui/router` can't depend on `@oc-mui/ui`
+  (cycle). Additive → minor bump; the snapshot also picks up the
+  now-properly-exported `AuthRouteOptions` (was an `ae-forgotten-export`
+  warning before).
+
+- `AppProtection` now redirects anonymous users to the shell's `/login`
+  route (preserving the attempted path in `?redirect=`) instead of
+  straight to the backend login endpoint — so the native form is the
+  single login entry point. The `unauthenticatedFallback` prop added
+  earlier in this changeset is removed again (superseded: the `/login`
+  route owns the no-login-method case), and the matching
+  `<ErrorPage code="401">` injection in `DynamicRouterProvider` goes
+  with it.
+
+Verified: visiting `/episodes` logged out now lands on the in-app login
+form; signing in returns to `/episodes` (not the Opencast admin), with
+the session cookie correctly set through the dev proxy.

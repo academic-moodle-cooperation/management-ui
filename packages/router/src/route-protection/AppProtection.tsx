@@ -9,36 +9,41 @@ interface AppProtectionProps {
   children: React.ReactNode;
   loadingComponent?: React.ComponentType<{ children?: React.ReactNode }>;
   /**
-   * Rendered while the auth state is still being resolved *and* while a
-   * login redirect is in flight. Lets the consumer inject a branded
-   * loader (e.g. the shell's `<AppLoader>`) instead of the bare inline
-   * fallback. Optional — falls back to a minimal themed placeholder.
+   * Rendered while the auth state is still being resolved *and* while the
+   * redirect to the login route is in flight. Lets the consumer inject a
+   * branded loader (e.g. the shell's `<AppLoader>`) instead of the bare
+   * inline fallback. Optional — falls back to a minimal themed placeholder.
    */
   redirectingComponent?: React.ReactNode;
-  /**
-   * Rendered when the user is anonymous and there is no `loginUrl` to
-   * redirect to (so we can't bounce them to a login form). The shell
-   * injects a full `<ErrorPage code="401">` here. Kept as a prop rather
-   * than imported from `@oc-mui/ui` so the router package doesn't take a
-   * dependency on the UI package (which already depends on the router —
-   * importing back would create a cycle). Optional — falls back to a
-   * minimal themed message.
-   */
-  unauthenticatedFallback?: React.ReactNode;
 }
+
+/**
+ * Builds the shell's `/login` route URL, preserving where the user was
+ * trying to go via a `?redirect=` param so the login form can send them
+ * back there afterwards. Uses `BASE_URL` (e.g. `/management-ui/`) so the
+ * path is correct under the app's base.
+ */
+const buildLoginRedirectUrl = (): string => {
+  const base = import.meta.env.BASE_URL || "/";
+  const loginPath = `${base.replace(/\/$/, "")}/login`;
+  const here = window.location.pathname + window.location.search;
+  return `${loginPath}?redirect=${encodeURIComponent(here)}`;
+};
 
 /**
  * Simple app-level protection component.
  *
  * - If app is marked as public in config, allows access
  * - If app is protected (default), requires authentication
- * - Redirects to login URL from config if not authenticated
+ * - Redirects anonymous users to the shell's `/login` route, which owns
+ *   the actual login UX (native form for password backends, or a
+ *   redirect to an external IdP for SSO). The originally-requested path
+ *   is preserved in the login route's `?redirect=` param.
  *
- * The UI shown for the loading / redirecting / unauthenticated states is
- * injectable via props so this component stays UI-light: the router
+ * The loading / redirecting UI is injectable via `loadingComponent` /
+ * `redirectingComponent` so this component stays UI-light: the router
  * package can't import `@oc-mui/ui` (that package already depends on the
- * router, so importing back would form a cycle). Consumers pass the
- * branded components in; sensible themed fallbacks are used otherwise.
+ * router, so importing back would form a cycle).
  *
  * Usage:
  * ```tsx
@@ -52,7 +57,6 @@ export const AppProtection: React.FC<AppProtectionProps> = ({
   children,
   loadingComponent: LoadingComponent,
   redirectingComponent,
-  unauthenticatedFallback,
 }) => {
   const { config } = useAppConfig();
   const { user, isAuthenticated } = useAuth();
@@ -83,34 +87,19 @@ export const AppProtection: React.FC<AppProtectionProps> = ({
   const isAnonymous = !isAuthenticated || userRole === "ROLE_USER_ANONYMOUS";
 
   if (isAnonymous) {
-    // User not authenticated - redirect to login
-    const loginUrl = import.meta.env.DEV
-      ? config?.auth?.loginUrlDev || config?.auth?.loginUrl
-      : config?.auth?.loginUrl;
-
-    if (loginUrl && typeof window !== "undefined") {
-      window.location.href = loginUrl;
-      // Brief flash while the browser navigates to the login form.
-      return (
-        <>
-          {redirectingComponent ?? (
-            <div className="p-8 text-center text-muted-foreground">Redirecting to login…</div>
-          )}
-        </>
-      );
+    // Send anonymous users to the shell's /login route (single login
+    // entry point), preserving where they wanted to go. The /login route
+    // decides between the native form and an external-IdP redirect.
+    if (typeof window !== "undefined") {
+      window.location.href = buildLoginRedirectUrl();
     }
-
-    // No login URL configured — we can't bounce the user anywhere, so
-    // show the injected error screen (or a minimal themed fallback).
-    if (unauthenticatedFallback !== undefined) {
-      return <>{unauthenticatedFallback}</>;
-    }
-
+    // Brief flash while the browser navigates to /login.
     return (
-      <div className="p-8 text-center">
-        <h2 className="mb-2 text-xl font-semibold text-foreground">Authentication Required</h2>
-        <p className="text-muted-foreground">Please log in to access this application.</p>
-      </div>
+      <>
+        {redirectingComponent ?? (
+          <div className="p-8 text-center text-muted-foreground">Redirecting to login…</div>
+        )}
+      </>
     );
   }
 
