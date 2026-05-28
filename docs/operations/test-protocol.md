@@ -80,15 +80,35 @@ Each core plugin's route should mount, render, and react to user input. Backend 
 
 ## Section 4 — GraphQL data flow
 
-Verifies the `@oc-mui/query` layer and the GraphQL Operation Naming Contract.
+Verifies the `@oc-mui/query` layer and the GraphQL Operation Naming Contract (`Mui`-prefixed operations — see [`docs/architecture/CONTRACTS.md`](../architecture/CONTRACTS.md)).
 
-| # | Test | Expected |
-|---|------|----------|
-| 4.1 | Network tab during `/episodes` load | Operation name is `MuiGetMyEvents` (Mui-prefixed). |
-| 4.2 | Network tab during `/series` load | `MuiGetMySeries` (Mui-prefixed). |
-| 4.3 | Network tab during "Create series" | `MuiCreateSeries` mutation; succeeds. |
-| 4.4 | Server-side log (Opencast) | Operations attribute to the right plugin namespace by the prefix. |
-| 4.5 | TanStack Query cache | Refetch on focus works; cached data shows immediately. |
+### How to read GraphQL traffic
+
+Every operation is a **POST to the same `/graphql` URL** — the request URL never tells you which operation ran. You read the operation name out of the request body.
+
+1. Open devtools → **Network** tab. Filter by `graphql` (or filter on **Fetch/XHR**).
+2. Trigger the action (load a route, submit a dialog).
+3. Click the `graphql` request → **Payload** (Chrome) / **Request** (Firefox) tab. The JSON body has a `query` field whose text begins with the operation, e.g. `query MuiGetMyEvents(...)` or `mutation MuiCreateSeries(...)`. That word after `query`/`mutation` is the operation name — confirm the **`Mui` prefix**.
+4. Click the **Response** (or **Preview**) tab to see the result. Success = a `data` object with the expected shape. Failure = a top-level `errors` array (this is how the episodes-sort regression surfaced: `field 'description' is not defined for input object type 'EventOrderByInput'`).
+
+> Tip: a single route load fires several operations (current user, the list query, lookups). Match on the operation name in the payload, not on request order.
+
+### How to inspect the TanStack Query cache
+
+`QueryProvider` mounts **React Query Devtools** unconditionally (the floating TanStack logo, bottom corner). Click it to open the panel. Each query is listed by its `queryKey` with a live status badge — `fresh`, `stale`, `fetching`, `inactive`. Use this panel for 4.4–4.6 instead of guessing from the Network tab.
+
+Cache defaults that these checks assume (`packages/query/src/QueryProvider.tsx`): `staleTime` 5 min, `refetchOnWindowFocus: false`, `retry: 1`. Individual hooks override these — note that below.
+
+| # | Test | How | Expected |
+|---|------|-----|----------|
+| 4.1 | `/episodes` list query | Load `/episodes`, read the list request's payload. | Operation name `MuiGetMyEvents`. Response has `data`, no `errors`. |
+| 4.2 | `/series` list query | Load `/series`, read the list request's payload. | Operation name `MuiGetMySeries`. Response has `data`, no `errors`. |
+| 4.3 | "Create series" mutation | `/series` → "Create series" → fill + submit. | A POST with `mutation MuiCreateSeries`; Response has `data.createSeries` (no `errors`); the new series appears in the list. |
+| 4.4 | Sorting sends a valid `orderBy` | Click each sortable column header on `/episodes` and `/series`. | Each click fires `MuiGetMyEvents`/`MuiGetMySeries` with an `orderBy` variable and returns `data` with **no `errors`**. Columns the backend can't sort show no sort control (enforced by `restrictSortingToFields` against the generated `*_SORTABLE_FIELDS`). |
+| 4.5 | Cache serves repeat visits instantly | Load `/episodes`, navigate away, return within 5 min. | No new `MuiGetMyEvents` POST on return; data renders immediately. Devtools shows the query `fresh`. (5-min `staleTime`.) |
+| 4.6 | List auto-refetch only while processing | Have an event/series mid-workflow; watch Network on `/episodes` or `/series`. | The list re-polls (`MuiGetMyEvents`/`MuiGetMySeries`) every ~10 s **only while an item is processing** (`refetchInterval`), then stops. There is **no** refetch on window focus for lists — global default is `refetchOnWindowFocus: false`. |
+| 4.7 | Auth query revalidates on focus | Switch to another window/tab, then back to the shell; watch Network. | `MuiGetCurrentUser` refetches on focus. This is the **one** query that opts into `refetchOnWindowFocus: true` (plus `staleTime: 0`, `refetchOnMount: "always"`) — confirms auth state re-checks without a full reload. |
+| 4.8 | Server-side attribution (optional) | If your staging Opencast logs GraphQL operation names, grep the Karaf log after the steps above. | Operation names appear `Mui`-prefixed, making them traceable to this UI. ➖ if the backend isn't configured to log operation names — not a release blocker. |
 
 ## Section 5 — i18n
 
