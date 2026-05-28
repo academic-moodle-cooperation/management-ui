@@ -8,6 +8,23 @@ interface AppProtectionProps {
   appName: string;
   children: React.ReactNode;
   loadingComponent?: React.ComponentType<{ children?: React.ReactNode }>;
+  /**
+   * Rendered while the auth state is still being resolved *and* while a
+   * login redirect is in flight. Lets the consumer inject a branded
+   * loader (e.g. the shell's `<AppLoader>`) instead of the bare inline
+   * fallback. Optional — falls back to a minimal themed placeholder.
+   */
+  redirectingComponent?: React.ReactNode;
+  /**
+   * Rendered when the user is anonymous and there is no `loginUrl` to
+   * redirect to (so we can't bounce them to a login form). The shell
+   * injects a full `<ErrorPage code="401">` here. Kept as a prop rather
+   * than imported from `@oc-mui/ui` so the router package doesn't take a
+   * dependency on the UI package (which already depends on the router —
+   * importing back would create a cycle). Optional — falls back to a
+   * minimal themed message.
+   */
+  unauthenticatedFallback?: React.ReactNode;
 }
 
 /**
@@ -16,6 +33,12 @@ interface AppProtectionProps {
  * - If app is marked as public in config, allows access
  * - If app is protected (default), requires authentication
  * - Redirects to login URL from config if not authenticated
+ *
+ * The UI shown for the loading / redirecting / unauthenticated states is
+ * injectable via props so this component stays UI-light: the router
+ * package can't import `@oc-mui/ui` (that package already depends on the
+ * router, so importing back would form a cycle). Consumers pass the
+ * branded components in; sensible themed fallbacks are used otherwise.
  *
  * Usage:
  * ```tsx
@@ -28,6 +51,8 @@ export const AppProtection: React.FC<AppProtectionProps> = ({
   appName,
   children,
   loadingComponent: LoadingComponent,
+  redirectingComponent,
+  unauthenticatedFallback,
 }) => {
   const { config } = useAppConfig();
   const { user, isAuthenticated } = useAuth();
@@ -41,23 +66,16 @@ export const AppProtection: React.FC<AppProtectionProps> = ({
     return <>{children}</>;
   }
 
-  // Wait for auth state to be determined before making decisions
-  // user === undefined means AuthInitializer is still loading auth data
+  // Wait for auth state to be determined before making decisions.
+  // user === undefined means AuthInitializer is still loading auth data.
   if (user === undefined) {
-    if (LoadingComponent) {
-      return (
-        <LoadingComponent>
-          <div className="p-8 text-center">
-            <div className="text-gray-600">Checking authentication...</div>
-          </div>
-        </LoadingComponent>
-      );
-    }
-    return (
-      <div className="p-8 text-center">
-        <div className="text-gray-600">Checking authentication...</div>
-      </div>
+    const checkingMessage = (
+      <div className="p-8 text-center text-muted-foreground">Checking authentication…</div>
     );
+    if (LoadingComponent) {
+      return <LoadingComponent>{checkingMessage}</LoadingComponent>;
+    }
+    return checkingMessage;
   }
 
   // Default is protected - check authentication
@@ -72,21 +90,26 @@ export const AppProtection: React.FC<AppProtectionProps> = ({
 
     if (loginUrl && typeof window !== "undefined") {
       window.location.href = loginUrl;
-      return <div className="p-8 text-center">Redirecting to login...</div>;
+      // Brief flash while the browser navigates to the login form.
+      return (
+        <>
+          {redirectingComponent ?? (
+            <div className="p-8 text-center text-muted-foreground">Redirecting to login…</div>
+          )}
+        </>
+      );
+    }
+
+    // No login URL configured — we can't bounce the user anywhere, so
+    // show the injected error screen (or a minimal themed fallback).
+    if (unauthenticatedFallback !== undefined) {
+      return <>{unauthenticatedFallback}</>;
     }
 
     return (
       <div className="p-8 text-center">
-        <h2 className="text-xl font-semibold mb-2">Authentication Required</h2>
-        <p className="text-gray-600">Please log in to access this application.</p>
-        {loginUrl && (
-          <a
-            href={loginUrl}
-            className="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Go to Login
-          </a>
-        )}
+        <h2 className="mb-2 text-xl font-semibold text-foreground">Authentication Required</h2>
+        <p className="text-muted-foreground">Please log in to access this application.</p>
       </div>
     );
   }

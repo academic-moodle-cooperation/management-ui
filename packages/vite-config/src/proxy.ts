@@ -16,6 +16,12 @@ const defaultProxyPaths: Record<string, string | ProxyOptions> = {
   "/j_spring_security_login": "",
   "/j_spring_security_check": "",
   "/j_spring_security_logout": "",
+  // Opencast's Spring Security login form. A GET to /j_spring_security_login
+  // 302-redirects here, so without proxying it the browser lands on a
+  // /login.html URL the Vite SPA fallback can't serve — which re-runs the
+  // shell, re-triggers the auth redirect, and loops. Proxy it to the
+  // backend, which serves the real form (runtime-info-ui module).
+  "/login.html": "",
   "/management-tool/ui/config/plugins.json": "",
   "/info/me.json": "",
   "/ui/config/management-ui/config.json": "",

@@ -1,6 +1,7 @@
 ---
 "@oc-mui/query": minor
 "@oc-mui/ui": minor
+"@oc-mui/router": minor
 ---
 
 Friendly "Backend not reachable" notice when the Vite proxy can't reach
@@ -108,3 +109,39 @@ Net: every full-screen error in the app now goes through the same
 primitive, every error page is themeable, and there are no more
 duplicate `ErrorBoundary` / `NotFoundError` definitions drifting from
 each other.
+
+**Login redirect loop fix (`@oc-mui/router` minor + vite-config).**
+Surfaced by Section 3 of the test protocol — visiting a protected route
+(`/episodes`) while logged out sent the browser to
+`http://localhost:3000/login.html` and got stuck there. Root cause:
+
+- `packages/vite-config/src/proxy.ts` no longer proxied `/login.html`.
+  When `AppProtection` redirects an anonymous user to
+  `/j_spring_security_login`, Opencast's Spring Security 302-redirects to
+  `/login.html` (its real login form). Vite had no proxy entry for that
+  path, so the SPA fallback served the shell again, which re-ran
+  `AppProtection`, which redirected again — a loop. The entry existed on
+  a pre-OSS branch but was dropped during the open-source extraction.
+  Put it back.
+
+- `packages/router/src/route-protection/AppProtection.tsx`: the
+  loading / redirecting / unauthenticated states used raw Tailwind
+  palette colors (`text-gray-600`, `bg-blue-500`) and duplicated the
+  "Checking authentication" markup three times. Cleaned up to semantic
+  tokens (`text-muted-foreground` etc.) and given two new **optional**
+  props — `redirectingComponent` and `unauthenticatedFallback` — so the
+  consumer can inject branded UI. (Additive, hence the minor bump; the
+  props aren't part of the public `.api.md` surface since
+  `AppProtectionProps` is internal.) The router package deliberately
+  does *not* import `<ErrorPage>` from `@oc-mui/ui` — `@oc-mui/ui`
+  already depends on `@oc-mui/router`, so importing back would form a
+  dependency cycle. Dependency injection sidesteps it.
+
+- `apps/shell/src/components/DynamicRouterProvider.tsx` injects an
+  `<AppLoader>Redirecting to login…</AppLoader>` for the redirect flash
+  and a branded `<ErrorPage code="401">` (with a "Back to Home" button)
+  for the no-login-URL fallback.
+
+Verified by visiting `/episodes` logged out against a local backend:
+the browser now follows through to Opencast's login form instead of
+bouncing on a dead `/login.html`.
