@@ -195,3 +195,14 @@ Fix: own the login exchange in the shell.
 Verified: visiting `/episodes` logged out now lands on the in-app login
 form; signing in returns to `/episodes` (not the Opencast admin), with
 the session cookie correctly set through the dev proxy.
+
+SSO backends are unchanged in behavior but the redirect URL is now
+clean: `createLoginRoute`'s external-IdP branch navigates to the
+configured `auth.loginUrl` verbatim instead of appending a malformed
+`?redirect=` (the shipped default already ends in `?target=/management-ui`,
+so the old append produced a double-`?` URL, and the param name is
+IdP-specific anyway — the backend bean that honored it,
+`RedirectQueryParamAuthenticationEntryPoint`, is commented out in
+`mh_default_org.xml`). The org encodes the post-login return target
+inside `loginUrl` (Shibboleth `target=`, OIDC `redirect_uri`, …), which
+is how every IdP expects it.

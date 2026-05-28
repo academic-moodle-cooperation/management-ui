@@ -129,6 +129,17 @@ What's still missing — **the actual call sites that gate plugin loading on the
 
 - **When to revisit**: small follow-up PR (or three small ones, one per call site). Probably worth doing 'b' for both manifest paths — the loader fetches the manifest itself — because that mirrors how `apiVersion` enforcement works today and avoids a backend API change.
 
+### 5.4 Deep-link return after SSO login
+
+The shell-native password-login form returns the user to the exact route they first requested (it owns the post-login navigation). The **SSO** path can't: `createLoginRoute` redirects to `auth.loginUrl` verbatim, and the IdP returns the user to whatever return target is encoded in that URL (Shibboleth `target=`, OIDC `redirect_uri`, …) — typically the static app root, not the deep route.
+
+To support deep-link return after SSO we'd need to inject the attempted path into the IdP's return param, which means knowing **which param** each IdP uses. Options:
+
+- Add an optional `auth.loginRedirectParam` (e.g. `"target"`) to the config schema (additive → minor); when set, `createLoginRoute` appends `&<param>=<encoded attempted path>` to `loginUrl`.
+- Or leave it as-is — landing on the app root after SSO is acceptable for most deployments.
+
+- **When to revisit**: only if an org asks for exact-route return after SSO. Detail: SSO branch of [`packages/router/src/auth/createAuthRoutes.tsx`](../../packages/router/src/auth/createAuthRoutes.tsx).
+
 ---
 
 ## 6. Testing

@@ -95,11 +95,17 @@ export const createLoginRoute = (parentRoute: AnyRoute, options: AuthRouteOption
         return <FormComponent redirect={redirectParam} />;
       }
 
-      // External IdP (SSO) — hand off with a full-page redirect, passing
-      // the absolute return URL so the IdP can send the user back.
+      // External IdP (SSO, e.g. Shibboleth / OIDC / CAS). Hand off with a
+      // full-page redirect to the configured URL *verbatim* — the org
+      // encodes the post-login return target inside it (Shibboleth's
+      // `target=`, OIDC's `redirect_uri`, …). We deliberately don't
+      // append our own `?redirect=`: the param name is IdP-specific, and
+      // blindly appending corrupts a login URL that already carries a
+      // query string (the shipped default ends in `?target=/management-ui`).
+      // Returning the user to the *exact* deep route after SSO would need
+      // per-IdP return-param support — tracked as a follow-up.
       if (loginUrl) {
-        const finalLoginUrl = `${loginUrl}?redirect=${encodeURIComponent(window.location.origin + redirectParam)}`;
-        window.location.href = finalLoginUrl;
+        window.location.href = loginUrl;
         return <LoadingComponent />;
       }
 

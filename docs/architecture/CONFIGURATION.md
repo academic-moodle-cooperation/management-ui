@@ -43,7 +43,15 @@ interface AppConfig {
     // for the `.local-plugins/config/` loader).
     enabledPlugins: string[];
   };
-  auth: { loginUrl: string; logoutUrl: string; /* … */ };
+  // Where to send users to log in / out. Dev variants override when
+  // running `pnpm dev`. See getting-started/configuration.md → Authentication.
+  auth: {
+    loginUrl: string;
+    logoutUrl: string;
+    loginUrlDev?: string;
+    logoutUrlDev?: string;
+    tokenRefreshUrl?: string;
+  };
   api: { baseUrl: string; graphqlEndpoint: string; timeout?: number };
 
   // Opaque map of plugin-owned slices keyed by plugin id.
