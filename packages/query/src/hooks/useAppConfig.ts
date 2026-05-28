@@ -114,6 +114,15 @@ export function useAppConfig() {
     isError,
     error,
     isFetched,
+    // Re-runs the underlying TanStack Query fetch. Useful for an
+    // error-recovery "Retry" button so callers don't have to full-page-
+    // reload to escape a transient failure (e.g. the backend was down
+    // when the shell booted and is up now).
+    refetch: queryResult.refetch,
+    // The URL the hook tried to fetch from. Surfaced so error UIs can
+    // show "we tried <url>"; reproduces the value the shell would have
+    // computed anyway.
+    configUrl,
   };
 }
 export type { AppConfig };

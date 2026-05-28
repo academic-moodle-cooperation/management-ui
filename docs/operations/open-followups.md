@@ -77,6 +77,19 @@ Today the boundaries rule allows any `package` to import from any other `package
 - **When to revisit**: after Phase 6 namespace rename; mechanising this needs the same boundaries-elements infrastructure with `capture` rules to express layer order.
 - **Detail**: comment block in [`packages/eslint-config/base.js`](../../packages/eslint-config/base.js).
 
+### 3.5 Untangle the `@oc-mui/ui` → `@oc-mui/router` dependency
+
+`@oc-mui/ui` depends on `@oc-mui/router` for three reasons today, which is a layering inversion (UI primitives should sit *below* routing, not above it):
+
+- **Auth context**: `auth-status/{AuthStatus,AuthDebug,AuthMethodsDemo}.tsx` import `useAuth` / `useAuthActions`, which live in `packages/router/src/auth/`. Auth state isn't really routing — it's a cross-cutting concern that arguably belongs in its own `@oc-mui/auth` package (or `@oc-mui/query`, which already owns the user fetch).
+- **Router-aware components**: `appshell/components/nav-main.tsx` (`Link`, `useRouterState`) and `datatable/{data-table-body,data-table-empty-state}.tsx` (`useRouter`, `Link`) legitimately need router primitives.
+
+Because of this one-way dep, the *reverse* import is impossible: `@oc-mui/router` can't pull `<ErrorPage>` / `<AppLoader>` back from `@oc-mui/ui` without forming a cycle. We worked around it in PR #146 via dependency injection (`AppProtection` takes `redirectingComponent` / `unauthenticatedFallback` props that the shell fills with `@oc-mui/ui` components) — fine for one case, but it'll keep biting.
+
+- **Proposed shape**: split `@oc-mui/router` into `@oc-mui/auth` (auth context, `AuthInitializer`, `useAuthActions`, `useAuth`) + `@oc-mui/router` (routing only). Move `nav-main` + the router-aware datatable bits out of `@oc-mui/ui` into `@oc-mui/router` (or a thin `@oc-mui/router-ui`). Then `@oc-mui/ui` is router-free and the dependency arrow only points one way.
+- **Scope**: ~1.5–2h. Touches every plugin/app/test that imports those components or the auth hooks from `@oc-mui/ui` / `@oc-mui/router`. Best done as its own PR (unrelated to any feature work) with a careful `pnpm verify` pass.
+- **When to revisit**: before or shortly after 1.0 — it's pure internal architecture, no consumer-visible change, so it can land any time the monorepo is otherwise quiet.
+
 ---
 
 ## 4. API Extractor
@@ -115,6 +128,17 @@ What's still missing — **the actual call sites that gate plugin loading on the
 - **Marketplace** ([`plugins/admin-marketplace/src/services/security.ts`](../../plugins/admin-marketplace/src/services/security.ts)) has its own older check (`securityService.checkVersionCompatibility`) that reads from `RegistryPlugin` metadata. Refactor to call `checkSharedDependencyCompatibility` from `@oc-mui/plugin-system` so all three paths use the same logic.
 
 - **When to revisit**: small follow-up PR (or three small ones, one per call site). Probably worth doing 'b' for both manifest paths — the loader fetches the manifest itself — because that mirrors how `apiVersion` enforcement works today and avoids a backend API change.
+
+### 5.4 Deep-link return after SSO login
+
+The shell-native password-login form returns the user to the exact route they first requested (it owns the post-login navigation). The **SSO** path can't: `createLoginRoute` redirects to `auth.loginUrl` verbatim, and the IdP returns the user to whatever return target is encoded in that URL (Shibboleth `target=`, OIDC `redirect_uri`, …) — typically the static app root, not the deep route.
+
+To support deep-link return after SSO we'd need to inject the attempted path into the IdP's return param, which means knowing **which param** each IdP uses. Options:
+
+- Add an optional `auth.loginRedirectParam` (e.g. `"target"`) to the config schema (additive → minor); when set, `createLoginRoute` appends `&<param>=<encoded attempted path>` to `loginUrl`.
+- Or leave it as-is — landing on the app root after SSO is acceptable for most deployments.
+
+- **When to revisit**: only if an org asks for exact-route return after SSO. Detail: SSO branch of [`packages/router/src/auth/createAuthRoutes.tsx`](../../packages/router/src/auth/createAuthRoutes.tsx).
 
 ---
 

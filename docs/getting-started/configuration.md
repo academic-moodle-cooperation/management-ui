@@ -12,7 +12,10 @@ Quick reference for what the shell reads, where each piece comes from, and how p
     "enabledPlugins": ["core", "admin", "episodes", "series", "upload"]
   },
   "auth": {
-    "method": "oc-shibboleth"
+    "loginUrl": "/Shibboleth.sso/Login?target=/management-ui",
+    "logoutUrl": "/Shibboleth.sso/Logout?return=/management-ui",
+    "loginUrlDev": "/j_spring_security_login",
+    "logoutUrlDev": "/j_spring_security_logout"
   },
   "plugins": {
     "episodes": { "pageSize": 50 },
@@ -24,8 +27,43 @@ Quick reference for what the shell reads, where each piece comes from, and how p
 
 - **`app.*`** — top-level shell settings. Stable keys: `theme`, `locale`, `enabledPlugins`.
 - **`app.enabledPlugins`** — the **ship filter**. Only namespaces listed here load at all. To prevent a plugin from running, remove its namespace.
+- **`auth.*`** — where the shell sends users to log in / out. See [Authentication](#authentication).
 - **`plugins[id]`** — per-plugin slice. Each plugin owns the sub-shape; the shell just persists it.
 - **`plugins[id].enabled: false`** — the **runtime switch**. The plugin loads but skips activation. Use this when you want a plugin available but currently off.
+
+## Authentication
+
+The shell does **not** implement an identity provider. It only needs to know **where to send users** to authenticate; the backend (Opencast) does the actual enforcement and IdP wiring. So auth is configured in two places:
+
+| Layer | Responsibility | Where |
+| --- | --- | --- |
+| **Backend** | *Which* method is enforced + the IdP integration (Shibboleth, OpenID Connect, CAS, JWT, LDAP, AAI, LTI — each a `security-*` Opencast module) | `etc/security/mh_default_org.xml` — see the [Opencast security docs](https://docs.opencast.org/). Not part of this repo. |
+| **Frontend (here)** | *Where* to send users to start login / logout | `auth.*` in `config.json` |
+
+### The `auth` fields
+
+| Field | Meaning |
+| --- | --- |
+| `loginUrl` | Where to send users to log in (production). |
+| `logoutUrl` | Where to send users to log out (production). |
+| `loginUrlDev` | Optional dev override, used when running `pnpm dev`. Falls back to `loginUrl` if unset. |
+| `logoutUrlDev` | Optional dev override for logout. |
+
+### How the shell picks a login UX
+
+The `/login` route inspects the effective login URL and chooses automatically:
+
+- **Password backends (Spring form login).** If the URL targets `j_spring_security_*` (e.g. `loginUrlDev: "/j_spring_security_login"`), the shell renders its **own themed login form** and POSTs the credentials to `/j_spring_security_check`, then returns the user to wherever they were headed. This avoids Opencast's `/login.html` (whose post-login redirect lands on the role-based welcome page — the Opencast admin — rather than back in the management UI).
+- **External IdP (SSO).** Any other URL (e.g. `loginUrl: "/Shibboleth.sso/Login?target=/management-ui"`) is treated as an external IdP: the shell does a full-page redirect to it **verbatim**. Encode the post-login return target **inside** the URL using whatever param your IdP expects — Shibboleth's `target=`, OIDC's `redirect_uri`, CAS's `service=`, and so on. The shell does not append its own return param.
+
+> **Note:** After an SSO login the user returns to the static `target` you configured (typically the app root), not the exact deep route they first requested. Deep-link return after SSO would require per-IdP return-param support and is a tracked follow-up. Password-form login *does* return to the exact route.
+
+### Choosing your org's method
+
+1. Configure the auth method in the **backend** (`mh_default_org.xml` + the relevant `security-*` module). This is an Opencast deployment decision.
+2. Set `auth.loginUrl` / `logoutUrl` in your `config.json` to match — point them at your IdP's entry/exit endpoints (with the return target encoded in), or at the Spring endpoints for password login.
+
+Orgs typically ship these overrides in a tiny `.local-plugins/<org>-config/` plugin that registers an `app:config` overlay (see [below](#where-the-hosts-configjson-comes-from)), so they don't have to edit the bundled `config.json`.
 
 ## Where values come from (merge order)
 

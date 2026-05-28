@@ -71,11 +71,15 @@ export const AuthProvider: React_2.FC<{
     children: React_2.ReactNode;
 }>;
 
+// @public
+export interface AuthRouteOptions {
+    formComponent?: React_2.ComponentType<LoginFormComponentProps>;
+    loadingComponent?: React_2.ComponentType;
+}
+
 // @public (undocumented)
 export const baseRootRoute: RootRoute<undefined, {}, AnyContext, AnyContext, {}, undefined, unknown, unknown>;
 
-// Warning: (ae-forgotten-export) The symbol "AuthRouteOptions" needs to be exported by the entry point index.d.ts
-//
 // @public
 export const createLoginRoute: (parentRoute: AnyRoute, options?: AuthRouteOptions) => Route<AnyRoute, "/login", "/login" | `/${any}/login`, string, "/login" | `/${any}/login`, undefined, ResolveParams<"/login">, AnyContext, AnyContext, AnyContext, {}, undefined, unknown, unknown>;
 
@@ -118,6 +122,11 @@ export function getRouteProtection(route: RouteWithStaticData): {
 export function isProtectedRoute(route: RouteWithStaticData): boolean;
 
 export { Link }
+
+// @public
+export interface LoginFormComponentProps {
+    redirect: string;
+}
 
 export { Navigate }
 

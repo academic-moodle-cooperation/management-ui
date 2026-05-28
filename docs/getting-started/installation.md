@@ -29,9 +29,21 @@ Opens the shell at **http://127.0.0.1:3000/management-ui/**. The Vite dev server
 
 ## Configure the backend
 
-The shell reads `apps/shell/public/config.json` at boot. The shipped default expects backend endpoints to be proxied to a local Opencast instance. For a real backend, point `vite.config.ts`'s proxy targets at your Opencast host — the helper lives in [`@oc-mui/vite-config/proxy`](../../packages/vite-config/src/proxy.ts).
+The shell expects a backend to be reachable at boot for `config.json`, `plugins.json`, `/info/me.json`, and `/graphql`. The Vite dev server proxies those paths to a configurable target (defaults to `http://localhost:8080`). If nothing is listening on the target, your browser will see 502s and the terminal running `pnpm dev` will print a single friendly notice (then go quiet) explaining what's missing.
 
-For development without a backend, the Playwright smoke test in `tests/e2e/smoke.spec.ts` shows the minimal set of endpoints to stub (`config.json`, `plugins.json`, `/info/me.json`, `/graphql`).
+You have three options, in increasing order of effort:
+
+1. **Point at an existing backend** (recommended for plugin authors):
+
+   ```bash
+   VITE_PROXY_TARGET=https://your-staging.example.org pnpm dev
+   ```
+
+   The shell talks to that backend; no local Opencast needed. Reload after starting.
+
+2. **Run Opencast locally** and let the default proxy target (`http://localhost:8080`) reach it. See the Opencast docs for setup; the proxy paths the shell needs are listed in [`packages/vite-config/src/proxy.ts`](../../packages/vite-config/src/proxy.ts).
+
+3. **Skip the backend entirely** for pure plugin-authoring work that doesn't depend on live data. Stub the four endpoints the shell needs at boot — the Playwright smoke test in [`tests/e2e/smoke.spec.ts`](../../tests/e2e/smoke.spec.ts) shows the minimal set (`/ui/config/management-ui/config.json`, `/management-tool/ui/config/plugins.json`, `/info/me.json`, `/graphql`). You can do this with any local HTTP server that serves four static JSON files, then point `VITE_PROXY_TARGET` at it.
 
 Configuration model details: [`configuration.md`](./configuration.md).
 

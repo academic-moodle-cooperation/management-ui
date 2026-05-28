@@ -31,6 +31,14 @@ pnpm install
 pnpm build
 ```
 
+**Point Vite at your staging backend** before running Section 2 onwards — otherwise the proxy can't reach the endpoints the shell loads at boot (`config.json`, `plugins.json`, `/info/me.json`, `/graphql`) and most sections will fail:
+
+```bash
+export VITE_PROXY_TARGET=https://your-staging.example.org
+```
+
+Without this, the Vite dev server will print a single "Backend not reachable" notice the first time the shell tries to fetch and then go quiet. Most of the protocol's checks won't pass; Sections 1, 8, 13, 14 are the only parts that don't need a backend. See [`docs/getting-started/installation.md` → Configure the backend](../getting-started/installation.md#configure-the-backend) for the three options (point at a real backend, run Opencast locally, or stub the four endpoints).
+
 ## Section 1 — Workspace baseline
 
 Pre-flight. If any of these fail, stop. The release is broken in a way that doesn't need staging to surface.

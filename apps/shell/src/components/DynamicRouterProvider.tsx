@@ -12,15 +12,16 @@ import {
   createRouter,
   createRoute,
   createRootRoute,
+  useNavigate,
   type AnyRoute,
   type AnyRouter,
 } from "@oc-mui/router";
-import { AppLoader } from "@oc-mui/ui/components";
+import { AppLoader, ErrorBoundary, NotFoundError } from "@oc-mui/ui/components";
 import { logger } from "@oc-mui/utils";
 
 import { createCommonRoutes } from "../shared/commonRoutes";
 
-import { ErrorBoundary, ModuleErrorFallback, NotFoundError } from "./errors/ErrorBoundary";
+import { ModuleErrorFallback } from "./errors/ModuleErrorFallback";
 import { CoreAppShellLayout } from "./layout/CoreAppShellLayout";
 
 /**
@@ -34,9 +35,25 @@ import { CoreAppShellLayout } from "./layout/CoreAppShellLayout";
  * child for nested paths) per app.
  */
 
+/**
+ * Wraps the shared `<NotFoundError>` so the page's "Go Back" and
+ * "Back to Home" buttons actually do something inside the router
+ * context. `NotFoundError` itself is router-agnostic (it lives in
+ * `@oc-mui/ui`), so wiring nav has to happen at the consumer.
+ */
+const NotFoundRoute = () => {
+  const navigate = useNavigate();
+  return (
+    <NotFoundError
+      onBackClick={() => window.history.back()}
+      onHomeClick={() => navigate({ to: "/" })}
+    />
+  );
+};
+
 const appCoreRootRoute = createRootRoute({
   component: CoreAppShellLayout,
-  notFoundComponent: NotFoundError,
+  notFoundComponent: NotFoundRoute,
 });
 
 const commonRoutes = createCommonRoutes(appCoreRootRoute);
@@ -58,7 +75,11 @@ const createRoutesFromApps = (apps: AppDefinition[]): AnyRoute[] => {
     const PluginAppComponent = appDef.component;
 
     const renderApp = () => (
-      <AppProtection appName={appDef.id} loadingComponent={AppLoader}>
+      <AppProtection
+        appName={appDef.id}
+        loadingComponent={AppLoader}
+        redirectingComponent={<AppLoader>Redirecting to login…</AppLoader>}
+      >
         <ErrorBoundary fallback={<ModuleErrorFallback name={appDef.name} />}>
           <Suspense fallback={<AppLoader />}>
             <PluginAppComponent />

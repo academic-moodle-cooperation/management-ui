@@ -10,12 +10,16 @@ import { gql } from 'graphql-request';
 import { GraphQLClient } from 'graphql-request';
 import { InfiniteData } from '@tanstack/react-query';
 import { InfiniteQueryObserverResult } from '@tanstack/react-query';
+import { MatomoConfig } from '@oc-mui/ui-config';
 import { NoInfer as NoInfer_2 } from '@tanstack/react-query';
 import { PluginManager } from '@oc-mui/plugin-system';
+import { PluginsConfig } from '@oc-mui/ui-config';
 import { QueryClient } from '@tanstack/react-query';
 import { QueryClientConfig } from '@tanstack/react-query';
 import { QueryKey } from '@tanstack/react-query';
+import { QueryObserverResult } from '@tanstack/react-query';
 import { default as React_2 } from 'react';
+import { RefetchOptions } from '@tanstack/react-query';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useMutation } from '@tanstack/react-query';
 import { UseMutationOptions } from '@tanstack/react-query';
@@ -1990,6 +1994,44 @@ export function useAppConfig(): {
     isError: boolean;
     error: Error | null;
     isFetched: boolean;
+    refetch: (options?: RefetchOptions) => Promise<QueryObserverResult<    {
+    [x: string]: unknown;
+    productionConfigUrl: string;
+    productionAppPluginUrl: string;
+    downloadBaseUrl?: string | undefined;
+    matomo: MatomoConfig;
+    app: {
+    title: string;
+    appName: string;
+    version: string;
+    locale: string;
+    HtmlDocumentTitle: string;
+    appTitle: string;
+    logoUrl?: string;
+    orgLogoUrl?: string;
+    faviconUrl?: string;
+    organizationUrls?: {
+    main: string;
+    support?: string;
+    };
+    theme: string;
+    enabledPlugins: string[];
+    };
+    auth: {
+    loginUrl: string;
+    logoutUrl: string;
+    loginUrlDev?: string;
+    logoutUrlDev?: string;
+    tokenRefreshUrl?: string;
+    };
+    plugins: PluginsConfig;
+    api: {
+    baseUrl: string;
+    timeout?: number;
+    graphqlEndpoint: string;
+    };
+    } | undefined, Error>>;
+    configUrl: string | undefined;
 };
 
 // @public

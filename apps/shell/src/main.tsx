@@ -10,6 +10,7 @@ import { useAppConfig, QueryProvider } from "@oc-mui/query";
 import { type AnyRouter } from "@oc-mui/router";
 import { AppLoader } from "@oc-mui/ui/components";
 
+import { ConfigLoadError } from "./components/ConfigLoadError";
 import { DynamicRouterProvider } from "./components/DynamicRouterProvider";
 import { PluginInitializer } from "./components/PluginInitializer";
 import { exposeSharedModules } from "./shared/sharedModules";
@@ -28,7 +29,7 @@ const AppContent = () => {
 };
 
 const AppWithConfig = () => {
-  const { config, isLoading } = useAppConfig();
+  const { config, isLoading, isError, error, configUrl, refetch } = useAppConfig();
   const themeModules = import.meta.glob("../../../plugins/themes/*.css", {
     eager: false,
     query: "?rcss",
@@ -96,6 +97,14 @@ const AppWithConfig = () => {
 
   // If config is not ready, show a loading state
   if (isLoading) return <AppLoader>Loading configuration...</AppLoader>;
+
+  // If the config fetch failed, render a screen explaining what went wrong
+  // instead of an indefinite loading spinner. The dev path tells you
+  // exactly which env var fixes it; the prod path is a generic
+  // "contact your admin". See ConfigLoadError for the messaging.
+  if (isError) {
+    return <ConfigLoadError error={error} configUrl={configUrl} onRetry={() => refetch()} />;
+  }
 
   return (
     <PluginInitializer config={config}>
