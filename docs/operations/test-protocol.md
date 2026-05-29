@@ -123,7 +123,7 @@ Cache defaults that these checks assume (`packages/query/src/QueryProvider.tsx`)
 
 `config.json` is the deployment-time source of truth. Verify it's actually consumed.
 
-The file the shell fetches is `apps/shell/public/ui/config/management-ui/config.json` (served at the origin-absolute path `/ui/config/management-ui/config.json`). For these checks run **without** a backend (`pnpm dev`, `VITE_PROXY_TARGET` unset) so the dev server serves that local file — edit it and reload to see changes. With `VITE_PROXY_TARGET` set the config is proxied to the backend and the local file is ignored; edit the backend's config instead. See [`docs/getting-started/configuration.md` → Where the host's config.json comes from](../getting-started/configuration.md#where-the-host-s-config-json-comes-from).
+The file the shell fetches is `apps/shell/public/ui/config/management-ui/config.json` (served at the origin-absolute path `/ui/config/management-ui/config.json`). For these checks, serve that local file by running either **without** a backend (`pnpm dev`, `VITE_PROXY_TARGET` unset) or **with** a backend plus `VITE_LOCAL_CONFIG=true` (`VITE_PROXY_TARGET=… VITE_LOCAL_CONFIG=true pnpm dev`) — the latter keeps real data/auth while letting you edit config locally. Edit the file and reload to see changes. With a backend and `VITE_LOCAL_CONFIG` unset, config is proxied to the backend and the local file is ignored; edit the backend's config instead. Restart the dev server after changing env vars. See [`docs/getting-started/configuration.md` → Where the host's config.json comes from](../getting-started/configuration.md#where-the-host-s-config-json-comes-from).
 
 | # | Test | Expected |
 |---|------|----------|

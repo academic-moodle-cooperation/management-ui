@@ -6,6 +6,13 @@ export interface CreateProxyConfigOptions {
   isProduction: boolean;
   target?: string;
   customProxies?: Record<string, string | ProxyOptions>;
+  /**
+   * Force the deployment config path to be served locally even when a
+   * backend `target` is set — so a dev can override config locally while
+   * still pointing data/auth at a real backend. Driven by `VITE_LOCAL_CONFIG`
+   * in the shell; pairs with `localConfigDevPlugin`, which serves the file.
+   */
+  forceLocalConfig?: boolean;
 }
 
 const viteProxyTargetEnv =
@@ -157,9 +164,12 @@ export function createProxyConfig(
   options?: CreateProxyConfigOptions,
 ): Record<string, string | ProxyOptions> {
   // A backend is "explicitly configured" when the caller passes a target or
-  // VITE_PROXY_TARGET is set. Absent that, the config path is served locally.
+  // VITE_PROXY_TARGET is set. The config path is served locally when there's
+  // no backend at all, or when the dev forces it (VITE_LOCAL_CONFIG) while
+  // still pointing everything else at the backend.
   const explicitTarget = options?.target ?? viteProxyTargetEnv;
   const target = explicitTarget || defaultBackendTarget;
+  const serveConfigLocally = !explicitTarget || options?.forceLocalConfig === true;
 
   const resolvedProxies: Record<string, string | ProxyOptions> = {};
 
@@ -169,9 +179,9 @@ export function createProxyConfig(
   for (const path in defaultProxyPaths) {
     const pathConfig = defaultProxyPaths[path];
     if (pathConfig === undefined) continue;
-    // Without an explicit backend, leave the config path un-proxied so the
-    // committed default config.json is served locally (localConfigDevPlugin).
-    if (path === CONFIG_JSON_PATH && !explicitTarget) continue;
+    // Leave the config path un-proxied when it's being served locally so the
+    // committed default config.json wins (localConfigDevPlugin).
+    if (path === CONFIG_JSON_PATH && serveConfigLocally) continue;
     const baseOptions: ProxyOptions =
       typeof pathConfig === "string"
         ? { target }

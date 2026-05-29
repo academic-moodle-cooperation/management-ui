@@ -265,6 +265,7 @@ How it's served depends on context:
 | Production | The JAR's bundled file, or the deployment's mounted override at the same path. |
 | `pnpm dev` (no backend) | A dev-only Vite middleware (`localConfigDevPlugin`) serves the committed file at the exact fetch path, re-read each request — **edit + reload, no backend**. The proxy leaves the config path alone in this mode (see `packages/vite-config/src/proxy.ts`). |
 | `VITE_PROXY_TARGET=… pnpm dev` | The config path is proxied to that backend; its real `config.json` wins and the local file is ignored. |
+| `VITE_PROXY_TARGET=… VITE_LOCAL_CONFIG=true pnpm dev` | `localConfigDevPlugin` serves the committed file for **config only**; all other endpoints (GraphQL, auth, …) still proxy to the backend. Override config locally against live data. `forceLocalConfig` (driven by `VITE_LOCAL_CONFIG`) tells `createProxyConfig` to skip proxying the config path. |
 
 There is no build-time merge. The old `generateConfigPlugin`
 and `PLUGIN_CONFIGS` array were removed in Phase 2b Commit 1.

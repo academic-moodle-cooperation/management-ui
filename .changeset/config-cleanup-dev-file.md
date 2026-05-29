@@ -29,6 +29,11 @@ dev, re-read on each request — so `pnpm dev` (no backend) lets you edit
 path un-proxied in that mode; when `VITE_PROXY_TARGET` is set the path is
 proxied to the backend as before and the local file is ignored.
 
+**`VITE_LOCAL_CONFIG=true`** forces the committed config to be served locally
+*even with* `VITE_PROXY_TARGET` set — config is editable locally while
+GraphQL/auth/uploads still hit the backend (`createProxyConfig` gains a
+`forceLocalConfig` option). Documented in `.env.example`.
+
 Docs updated (`getting-started/configuration.md`,
 `architecture/CONFIGURATION.md`, `architecture/CONTRACTS.md` changelog,
 `operations/test-protocol.md` §6) to match.

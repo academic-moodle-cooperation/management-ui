@@ -32,10 +32,13 @@ export default defineConfig(({ mode }) => {
       }),
     );
 
-    // Serve the committed default config.json locally only when no backend
-    // is configured. With VITE_PROXY_TARGET set, the config path is proxied
-    // to that backend instead (see proxy.ts), so its real config wins.
-    if (!env["VITE_PROXY_TARGET"]) {
+    // Serve the committed default config.json locally when there's no backend,
+    // or when VITE_LOCAL_CONFIG=true forces it (edit config locally while
+    // data/auth still hit VITE_PROXY_TARGET). With a backend and the flag off,
+    // the config path is proxied instead (see proxy.ts) so the real config wins.
+    const serveLocalConfig =
+      !env["VITE_PROXY_TARGET"] || env["VITE_LOCAL_CONFIG"] === "true";
+    if (serveLocalConfig) {
       baseConfig.plugins.push(
         localConfigDevPlugin({
           configFilePath: path.resolve(
