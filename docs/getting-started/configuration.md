@@ -144,6 +144,9 @@ The shell fetches it on boot from `productionConfigUrl` (default `/ui/config/man
 | **Production** | The Opencast JAR ships a sensible default at that path (built from `apps/shell/public/ui/config/management-ui/config.json`). Deployments mount their own `config.json` over it at the same path; no rebuild required. |
 | **Dev, no backend** (`pnpm dev`) | The dev server serves the committed `apps/shell/public/ui/config/management-ui/config.json` at that exact path. **Edit it and reload to test config changes — no backend needed.** |
 | **Dev, with backend** (`VITE_PROXY_TARGET=… pnpm dev`) | The request is proxied to that backend, so you exercise the backend's real `config.json`. The committed local file is not used. |
+| **Dev, backend + local config override** (`VITE_PROXY_TARGET=… VITE_LOCAL_CONFIG=true pnpm dev`) | The committed local file is served for `config.json`, but **everything else** (GraphQL, auth, uploads, …) still hits the backend. Lets you tweak theme / `enabledPlugins` / plugin slices against real data before changing the backend's config. |
+
+> `VITE_LOCAL_CONFIG` only affects the config path; all other endpoints follow `VITE_PROXY_TARGET`. Restart the dev server after changing either (env is read once at startup).
 
 Anything the file omits falls back to `defaultConfig` in [`@oc-mui/ui-config`](../../packages/ui-config/), and plugins contribute their own slice defaults at runtime — so the file only needs to carry what a deployment actually overrides.
 

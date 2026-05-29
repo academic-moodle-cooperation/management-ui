@@ -173,6 +173,9 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
   const proxyConfiguration = createProxyConfig({
     isProduction,
     ...(env["VITE_PROXY_TARGET"] !== undefined && { target: env["VITE_PROXY_TARGET"] }),
+    // Serve the committed config.json locally even with a backend, so config
+    // can be edited locally while data/auth still hit VITE_PROXY_TARGET.
+    forceLocalConfig: env["VITE_LOCAL_CONFIG"] === "true",
     // customProxies: { ... } // if shell needs specific proxies from env or hardcoded
   });
 
