@@ -1,3 +1,5 @@
+import { useTranslation } from "@oc-mui/i18n";
+
 import { Button } from "../ui/button";
 
 import { ErrorPage } from "./error-page";
@@ -9,22 +11,18 @@ export function ForbiddenError({
   onHomeClick?: () => void;
   onBackClick?: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <ErrorPage
       code="403"
-      title="Access Forbidden"
-      description={
-        <>
-          You don&apos;t have necessary permission <br />
-          to view this resource.
-        </>
-      }
+      title={t("errors.forbidden.title")}
+      description={t("errors.forbidden.description")}
       actions={
         <>
           <Button variant="outline" onClick={onBackClick}>
-            Go Back
+            {t("goBack")}
           </Button>
-          <Button onClick={onHomeClick}>Back to Home</Button>
+          <Button onClick={onHomeClick}>{t("backToHome")}</Button>
         </>
       }
     />

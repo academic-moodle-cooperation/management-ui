@@ -1,3 +1,5 @@
+import { useTranslation } from "@oc-mui/i18n";
+
 import { Button } from "../ui/button";
 
 import { ErrorPage } from "./error-page";
@@ -9,21 +11,18 @@ export function UnauthorisedError({
   onBackClick?: () => void;
   onHomeClick?: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <ErrorPage
       code="401"
-      title="Unauthorized Access"
-      description={
-        <>
-          Please log in with the appropriate credentials <br /> to access this resource.
-        </>
-      }
+      title={t("errors.unauthorized.title")}
+      description={t("errors.unauthorized.description")}
       actions={
         <>
           <Button variant="outline" onClick={onBackClick}>
-            Go Back
+            {t("goBack")}
           </Button>
-          <Button onClick={onHomeClick}>Back to Home</Button>
+          <Button onClick={onHomeClick}>{t("backToHome")}</Button>
         </>
       }
     />

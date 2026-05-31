@@ -1,5 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
+import { useTranslation } from "@oc-mui/i18n";
 import { logger } from "@oc-mui/utils";
 
 import { Button } from "../ui/button";
@@ -82,26 +83,25 @@ export function GeneralError({
   onHomeClick,
   onBackClick,
 }: GeneralErrorProps) {
+  const { t } = useTranslation();
   return (
     <ErrorPage
       className={className}
       code={!minimal && "500"}
-      title={`Oops! Something went wrong :')`}
+      title={t("errors.general.title")}
       description={
         <>
           {message && <p className="mb-1">{message}</p>}
-          <p>
-            We apologize for the inconvenience. <br /> Please try again later.
-          </p>
+          <p>{t("errors.general.description")}</p>
         </>
       }
       actions={
         !minimal && (
           <>
             <Button variant="outline" onClick={onBackClick}>
-              Go Back
+              {t("goBack")}
             </Button>
-            <Button onClick={onHomeClick}>Back to Home</Button>
+            <Button onClick={onHomeClick}>{t("backToHome")}</Button>
           </>
         )
       }

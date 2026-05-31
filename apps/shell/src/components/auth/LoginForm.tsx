@@ -26,6 +26,7 @@
  */
 import { useState, type FormEvent } from "react";
 
+import { useTranslation } from "@oc-mui/i18n";
 import { useGetCurrentUser } from "@oc-mui/query";
 import type { LoginFormComponentProps } from "@oc-mui/router";
 import {
@@ -57,6 +58,7 @@ const safeRedirect = (redirect: string): string => {
 };
 
 export function LoginForm({ redirect }: LoginFormComponentProps) {
+  const { t } = useTranslation();
   const { refetch } = useGetCurrentUser();
 
   // On localhost dev, prefill the stock Opencast test credentials —
@@ -108,9 +110,9 @@ export function LoginForm({ redirect }: LoginFormComponentProps) {
         return;
       }
 
-      setError("Incorrect username or password.");
+      setError(t("auth.errorInvalidCredentials"));
     } catch {
-      setError("Couldn't reach the server. Check your connection and try again.");
+      setError(t("auth.errorServerUnreachable"));
     } finally {
       setSubmitting(false);
     }
@@ -120,13 +122,13 @@ export function LoginForm({ redirect }: LoginFormComponentProps) {
     <div className="min-h-svh w-full flex items-center justify-center bg-background p-6">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl font-heading">Sign in</CardTitle>
-          <CardDescription>Sign in to access the Management UI.</CardDescription>
+          <CardTitle className="text-2xl font-heading">{t("auth.signIn")}</CardTitle>
+          <CardDescription>{t("auth.signInDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">{t("auth.username")}</Label>
               <Input
                 id="username"
                 name="username"
@@ -140,7 +142,7 @@ export function LoginForm({ redirect }: LoginFormComponentProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t("auth.password")}</Label>
               <Input
                 id="password"
                 name="password"
@@ -161,7 +163,7 @@ export function LoginForm({ redirect }: LoginFormComponentProps) {
                 disabled={submitting}
               />
               <Label htmlFor="remember" className="font-normal">
-                Remember me
+                {t("auth.rememberMe")}
               </Label>
             </div>
 
@@ -172,7 +174,7 @@ export function LoginForm({ redirect }: LoginFormComponentProps) {
             )}
 
             <Button type="submit" className="w-full" disabled={submitting}>
-              {submitting ? "Signing in…" : "Sign in"}
+              {submitting ? t("auth.signingIn") : t("auth.signIn")}
             </Button>
           </form>
         </CardContent>

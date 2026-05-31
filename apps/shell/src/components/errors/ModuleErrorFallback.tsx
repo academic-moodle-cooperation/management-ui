@@ -9,14 +9,20 @@
  * page both live in `@oc-mui/ui/components` so every app/plugin can
  * reuse the same primitives — no need to duplicate them here.
  */
+import { useTranslation } from "@oc-mui/i18n";
+
 import type { FC } from "react";
 
-export const ModuleErrorFallback: FC<{ name: string }> = ({ name }) => (
-  <div className="flex items-center justify-center min-h-64 border border-destructive/40 bg-destructive/5 rounded-lg">
-    <div className="text-center text-destructive">
-      <h3 className="text-lg font-semibold mb-2">Module Error</h3>
-      <p>Error loading module: {name}</p>
-      <p className="text-sm mt-2 text-muted-foreground">Please try refreshing the page.</p>
+
+export const ModuleErrorFallback: FC<{ name: string }> = ({ name }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="flex items-center justify-center min-h-64 border border-destructive/40 bg-destructive/5 rounded-lg">
+      <div className="text-center text-destructive">
+        <h3 className="text-lg font-semibold mb-2">{t("errors.module.title")}</h3>
+        <p>{t("errors.module.loadingFailed", { name })}</p>
+        <p className="text-sm mt-2 text-muted-foreground">{t("errors.module.description")}</p>
+      </div>
     </div>
-  </div>
-);
+  );
+};
