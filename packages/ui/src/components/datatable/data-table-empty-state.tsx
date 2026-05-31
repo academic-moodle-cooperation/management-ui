@@ -99,7 +99,7 @@ const EmptyStateContent = ({
     );
   }
 
-  return <div>No results.</div>;
+  return <div>{i18next.t("common:noResults")}</div>;
 };
 
 export { EmptyStateContent };

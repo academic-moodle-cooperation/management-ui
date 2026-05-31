@@ -340,7 +340,7 @@ export const MetadataUpdateField = ({
             date={new Date(value as string)}
             onDateChange={(date) => onUpdate(date?.toISOString() || "")}
           >
-            <span>Pick a Date</span>
+            <span>{t("datepicker.pickDate")}</span>
           </DatePicker>
         </>
       );
@@ -354,7 +354,7 @@ export const MetadataUpdateField = ({
             date={new Date(value as string)}
             onDateChange={(date) => onUpdate(date?.toISOString() || "")}
           >
-            <span>Pick a Date</span>
+            <span>{t("datepicker.pickDate")}</span>
           </DatePicker>
         </>
       );

@@ -24,6 +24,7 @@
  * The "Retry" button calls TanStack Query's `refetch` so the user can
  * recover without a full page reload once the backend is back up.
  */
+import { useTranslation } from "@oc-mui/i18n";
 import { Button, ErrorPage } from "@oc-mui/ui/components";
 
 export interface ConfigLoadErrorProps {
@@ -36,13 +37,14 @@ export interface ConfigLoadErrorProps {
 }
 
 export function ConfigLoadError({ error, configUrl, onRetry }: ConfigLoadErrorProps) {
+  const { t } = useTranslation();
   const isDev = !!import.meta.env.DEV;
   const message = error instanceof Error ? error.message : String(error ?? "");
 
   return (
     <ErrorPage
       code="502"
-      title="Couldn't load configuration"
+      title={t("configError.title")}
       description={
         <p>
           The shell tried to fetch{" "}
@@ -92,19 +94,16 @@ export function ConfigLoadError({ error, configUrl, onRetry }: ConfigLoadErrorPr
               </p>
             </div>
           ) : (
-            <p>
-              Couldn&rsquo;t load the configuration this UI needs to start. This is usually a
-              backend-side issue — please contact your administrator.
-            </p>
+            <p>{t("configError.prodMessage")}</p>
           )}
         </div>
       }
       actions={
         <>
           <Button variant="outline" onClick={() => window.location.reload()}>
-            Reload page
+            {t("configError.reload")}
           </Button>
-          <Button onClick={onRetry}>Retry</Button>
+          <Button onClick={onRetry}>{t("configError.retry")}</Button>
         </>
       }
     />

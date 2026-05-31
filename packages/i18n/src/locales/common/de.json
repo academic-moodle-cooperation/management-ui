@@ -119,5 +119,34 @@
     "light": "Hell",
     "dark": "Dunkel",
     "system": "System"
+  },
+  "noResults": "Keine Ergebnisse.",
+  "datepicker": {
+    "pickDate": "Datum wählen"
+  },
+  "a11y": {
+    "sidebar": "Seitenleiste",
+    "sidebarDescription": "Zeigt die mobile Seitenleiste an.",
+    "toggleSidebar": "Seitenleiste umschalten",
+    "closeSidebar": "Seitenleiste schließen"
+  },
+  "landing": {
+    "update": "Neu!",
+    "newVersion": "Neue Version verfügbar",
+    "welcome": "Willkommen bei der",
+    "tagline": "Die Admin-UI Ihrer Träume ✨",
+    "description": "Verwalten und organisieren Sie Ihre Audio- und Videoinhalte mühelos. Passen Sie die Benutzeroberfläche und ihre Funktionen an Ihre Bedürfnisse an, gestalten Sie das Erscheinungsbild und erweitern Sie sie. Entwickelt mit Fokus auf Flexibilität und langfristiges Wachstum."
+  },
+  "configError": {
+    "title": "Konfiguration konnte nicht geladen werden",
+    "prodMessage": "Die für den Start dieser Oberfläche benötigte Konfiguration konnte nicht geladen werden. Dies ist üblicherweise ein Problem auf der Backend-Seite — bitte wenden Sie sich an Ihre Administratorin oder Ihren Administrator.",
+    "reload": "Seite neu laden",
+    "retry": "Erneut versuchen"
+  },
+  "authRoutes": {
+    "loading": "Wird geladen …",
+    "errorLoginConfig": "Fehler beim Laden der Anmeldekonfiguration.",
+    "errorLogoutConfig": "Fehler beim Laden der Abmeldekonfiguration.",
+    "noLoginMethod": "Für diese Installation ist keine Anmeldemethode konfiguriert."
   }
 }
