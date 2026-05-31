@@ -138,9 +138,12 @@ The file the shell fetches is `apps/shell/public/ui/config/management-ui/config.
 | # | Test | Expected |
 |---|------|----------|
 | 7.1 | Default light theme | OKLCH tokens applied; no hardcoded colors visible. |
-| 7.2 | Switch to dark mode (if configured) | All tokens flip; no broken contrast. |
-| 7.3 | Drop a custom theme CSS file into `apps/shell/src/themes/<org>.css` overriding `--primary` | Set `app.theme: "<org>"` in config; reload; primary color changes everywhere it's used. |
-| 7.4 | No org-theme CSS overrides component classes directly | grep your theme file — `:root { --primary: ... }` only, no `.button { ... }`. |
+| 7.2 | Appearance toggle in the header → Dark | All tokens flip to the dark palette; no broken contrast. Defaults to the OS preference (System); choice persists across reload. |
+| 7.3 | Appearance toggle → Light / System | Switches back; System follows the OS setting live. |
+| 7.4 | Marketplace → Themes → preview a showcase theme (e.g. Oxford Navy) | Color **and** structure change (radius, headings font, shadows) — not just hue. Works in light and dark. |
+| 7.5 | Set `app.theme: "forest-sage"` in `config.json`; reload | The same theme applies via config (loaded from `apps/shell/public/plugins/themes/<name>.css`). |
+| 7.6 | Drop a custom org theme — `.local-plugins/<org>/themes/<org>.css` (dev) or its JAR at `/static/plugins/<org>/<org>.css` (prod) — overriding `--primary` + `.dark` | Set `app.theme: "<org>"`; reload; primary changes everywhere, in light and dark. |
+| 7.7 | No theme CSS overrides component classes directly | grep the theme file — `:root { --primary: … }` / `.dark { … }` only, no `.button { … }`. No external `@import` of web fonts (GDPR/offline). |
 
 ## Section 8 — Plugin scaffolding (`pnpm create-plugin`)
 
