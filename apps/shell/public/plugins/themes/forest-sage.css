@@ -1,12 +1,27 @@
 /**
- * Forest Sage — a calm, natural-sciences palette.
+ * Forest Sage — organic, calm, rounded.
  *
- * Deep forest green with warm stone/sand neutrals and a humanist serif.
- * Reads as sustainability / life-sciences. Ships both light and dark.
+ * Deep forest green + warm stone, *rounded humanist sans*, *very round* corners,
+ * *soft low* shadows and relaxed spacing — a wellness / sustainability feel.
+ * Ships both light (:root) and dark (.dark).
  */
 :root {
   --theme-name: "Forest Sage";
 
+  /* --- Structure: very round, soft, humanist sans --- */
+  --radius: 1.25rem;
+  --font-heading: "Trebuchet MS", "Segoe UI", "Verdana", system-ui, sans-serif;
+  --font-sans: "Trebuchet MS", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --spacing-normal: 0.875rem;
+  --spacing-relaxed: 1.25rem;
+  --spacing-card: 1.25rem;
+  --shadow-sm: 0 1px 2px 0 rgb(20 40 28 / 0.05);
+  --shadow-md: 0 3px 10px -3px rgb(20 40 28 / 0.08);
+  --shadow-lg: 0 10px 24px -8px rgb(20 40 28 / 0.1);
+  --shadow-card: 0 2px 6px -2px rgb(20 40 28 / 0.06);
+  --shadow-sidebar: 1px 0 0 0 rgb(20 40 28 / 0.06);
+
+  /* --- Color --- */
   --background: oklch(0.99 0.006 100);
   --foreground: oklch(0.23 0.02 150);
   --card: oklch(1 0 0);
@@ -42,9 +57,6 @@
   --chart-3: oklch(0.65 0.10 85);
   --chart-4: oklch(0.55 0.09 220);
   --chart-5: oklch(0.55 0.10 30);
-
-  --font-heading: "Lora", Georgia, serif;
-  --radius: 0.5rem;
 }
 
 .dark {

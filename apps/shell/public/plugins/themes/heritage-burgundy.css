@@ -1,12 +1,27 @@
 /**
- * Heritage Burgundy — a refined, old-institution palette.
+ * Heritage Burgundy — refined, luxe, restrained.
  *
- * Deep burgundy/crimson with warm cream neutrals and serif headings; the
- * Ivy-League character. Ships both light (:root) and dark (.dark).
+ * Deep burgundy + warm cream, *elegant serif* headings (Palatino), small
+ * radius, *minimal* shadows and *generous* spacing — a fine-press, old-
+ * institution character. Ships both light (:root) and dark (.dark).
  */
 :root {
   --theme-name: "Heritage Burgundy";
 
+  /* --- Structure: elegant serif, restrained radius, generous spacing --- */
+  --radius: 0.375rem;
+  --font-heading: "Palatino Linotype", Palatino, "Book Antiqua", "Iowan Old Style", Georgia, serif;
+  --spacing-normal: 1rem;
+  --spacing-relaxed: 1.5rem;
+  --spacing-card: 1.5rem;
+  --spacing-sidebar: 1rem;
+  --shadow-sm: 0 1px 2px 0 rgb(48 18 22 / 0.05);
+  --shadow-md: 0 2px 8px -2px rgb(48 18 22 / 0.07);
+  --shadow-lg: 0 8px 24px -6px rgb(48 18 22 / 0.09);
+  --shadow-card: 0 1px 3px 0 rgb(48 18 22 / 0.06);
+  --shadow-sidebar: 1px 0 0 0 rgb(48 18 22 / 0.06);
+
+  /* --- Color --- */
   --background: oklch(0.99 0.008 75);
   --foreground: oklch(0.23 0.02 25);
   --card: oklch(1 0 0);
@@ -42,9 +57,6 @@
   --chart-3: oklch(0.50 0.08 320);
   --chart-4: oklch(0.55 0.09 145);
   --chart-5: oklch(0.60 0.07 250);
-
-  --font-heading: Georgia, "Times New Roman", serif;
-  --radius: 0.375rem;
 }
 
 .dark {

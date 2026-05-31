@@ -3,14 +3,23 @@
 ---
 
 Add four professional showcase themes for the marketplace, replacing the
-"bad examples" with distinct, university-style palettes that each ship both
-light (`:root`) and dark (`.dark`) variants using only the standard semantic
-tokens:
+"bad examples". Each is a **distinct design language** — not just a recolor —
+varying color, typography, radius, shadows and spacing, and shipping both
+light (`:root`) and dark (`.dark`) using only the standard semantic tokens:
 
-- **Oxford Navy** — deep navy + warm gold, serif headings (traditional).
-- **Modern Slate & Teal** — cool slate neutrals + teal, clean sans (contemporary).
-- **Heritage Burgundy** — burgundy/crimson + cream, serif (old-institution).
-- **Forest Sage** — forest green + warm stone (natural-sciences / sustainability).
+- **Oxford Navy** — navy + gold, serif headings, sharp `0.25rem` radius, crisp shadows (editorial/formal).
+- **Modern Slate & Teal** — slate + teal, geometric sans, soft `0.875rem` radius, diffused shadows, airy spacing (SaaS).
+- **Heritage Burgundy** — burgundy + cream, elegant serif (Palatino), `0.375rem` radius, minimal shadows, generous spacing (luxe).
+- **Forest Sage** — forest green + stone, rounded humanist sans (Trebuchet), round `1.25rem` radius, soft shadows (organic/calm).
+
+Typography uses **system font stacks only** — no web fonts — to stay GDPR-safe
+and work offline. The structural variety also folds in what the old
+".local-plugins" demo themes (compact/rounded/minimal/warm) used to show.
+
+The registry is cleaned up: the six `.local-plugins` entries (tuwien, univie,
+compact, rounded, minimal, warm) are removed — they pointed at a private repo,
+only worked in dev, and broke in a build. The shipped registry now lists only
+themes that actually apply everywhere: the four showcases + the example.
 
 The CSS files live in `apps/shell/public/plugins/themes/*.css` so they are
 served as **raw `text/css`** at the marketplace's preview URL
