@@ -1,0 +1,109 @@
+/**
+ * Aurora — modern, vivid, rounded.
+ *
+ * Vivid indigo on near-white, *large radius*, *soft purple-tinted shadows*,
+ * a *rounded geometric sans* and relaxed spacing — a contemporary product feel.
+ * Ships both light (:root) and dark (.dark).
+ *
+ * Typography note: the original concept used "Plus Jakarta Sans" (a web font).
+ * To stay GDPR-safe and offline we use a system rounded-geometric stack instead
+ * — SF Pro Rounded / Avenir on Apple, Segoe UI / system-ui elsewhere. The large
+ * radius carries most of the soft, friendly identity regardless of platform.
+ */
+:root {
+  --theme-name: "Aurora";
+
+  /* --- Structure: large radius, soft shadows, rounded geometric sans --- */
+  --radius: 0.875rem;
+  --font-heading: ui-rounded, "SF Pro Rounded", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Avenir Next", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
+  --spacing-tight: 0.625rem;
+  --spacing-normal: 1rem;
+  --spacing-relaxed: 1.5rem;
+  --spacing-card: 1.25rem;
+  --spacing-sidebar: 0.875rem;
+  --shadow-sm: 0 2px 6px -1px rgb(70 50 160 / 0.08);
+  --shadow-md: 0 10px 24px -6px rgb(70 50 160 / 0.12), 0 4px 8px -4px rgb(70 50 160 / 0.08);
+  --shadow-lg: 0 18px 40px -12px rgb(70 50 160 / 0.18), 0 6px 14px -6px rgb(70 50 160 / 0.1);
+  --shadow-card: 0 6px 18px -6px rgb(70 50 160 / 0.12), 0 2px 6px -3px rgb(70 50 160 / 0.08);
+  --shadow-sidebar: 0 4px 16px -8px rgb(70 50 160 / 0.14);
+  --duration-transition: 220ms;
+
+  /* --- Color --- */
+  --background: oklch(0.99 0.004 285);
+  --foreground: oklch(0.22 0.022 285);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.022 285);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.022 285);
+
+  --primary: oklch(0.55 0.215 280);
+  --primary-foreground: oklch(0.99 0.005 285);
+  --secondary: oklch(0.965 0.012 285);
+  --secondary-foreground: oklch(0.30 0.04 285);
+  --muted: oklch(0.966 0.01 285);
+  --muted-foreground: oklch(0.52 0.025 285);
+  --accent: oklch(0.95 0.035 285);
+  --accent-foreground: oklch(0.40 0.13 282);
+
+  --border: oklch(0.925 0.01 285);
+  --input: oklch(0.925 0.01 285);
+  --ring: oklch(0.55 0.215 280);
+
+  --sidebar: oklch(0.985 0.008 285);
+  --sidebar-foreground: oklch(0.22 0.022 285);
+  --sidebar-primary: oklch(0.55 0.215 280);
+  --sidebar-primary-foreground: oklch(0.99 0.005 285);
+  --sidebar-accent: oklch(0.945 0.035 285);
+  --sidebar-accent-foreground: oklch(0.40 0.13 282);
+  --sidebar-border: oklch(0.925 0.01 285);
+  --sidebar-ring: oklch(0.55 0.215 280);
+  --color-footer: oklch(0.966 0.012 285);
+
+  --chart-1: oklch(0.55 0.215 280);
+  --chart-2: oklch(0.62 0.18 320);
+  --chart-3: oklch(0.65 0.14 230);
+  --chart-4: oklch(0.66 0.16 158);
+  --chart-5: oklch(0.80 0.16 78);
+}
+
+.dark {
+  --background: oklch(0.17 0.022 285);
+  --foreground: oklch(0.95 0.01 285);
+  --card: oklch(0.21 0.026 285);
+  --card-foreground: oklch(0.95 0.01 285);
+  --popover: oklch(0.21 0.026 285);
+  --popover-foreground: oklch(0.95 0.01 285);
+
+  --primary: oklch(0.68 0.19 283);
+  --primary-foreground: oklch(0.16 0.03 285);
+  --secondary: oklch(0.27 0.03 285);
+  --secondary-foreground: oklch(0.95 0.01 285);
+  --muted: oklch(0.27 0.03 285);
+  --muted-foreground: oklch(0.72 0.025 285);
+  --accent: oklch(0.32 0.06 284);
+  --accent-foreground: oklch(0.85 0.10 284);
+
+  --border: oklch(0.30 0.03 285);
+  --input: oklch(0.32 0.03 285);
+  --ring: oklch(0.68 0.19 283);
+
+  --sidebar: oklch(0.20 0.026 285);
+  --sidebar-foreground: oklch(0.95 0.01 285);
+  --sidebar-primary: oklch(0.68 0.19 283);
+  --sidebar-primary-foreground: oklch(0.16 0.03 285);
+  --sidebar-accent: oklch(0.30 0.055 284);
+  --sidebar-accent-foreground: oklch(0.85 0.10 284);
+  --sidebar-border: oklch(0.30 0.03 285);
+  --sidebar-ring: oklch(0.68 0.19 283);
+  --color-footer: oklch(0.20 0.026 285);
+
+  --shadow-card: 0 6px 18px -6px rgb(0 0 0 / 0.45);
+
+  --chart-1: oklch(0.68 0.19 283);
+  --chart-2: oklch(0.72 0.16 320);
+  --chart-3: oklch(0.74 0.13 230);
+  --chart-4: oklch(0.74 0.14 158);
+  --chart-5: oklch(0.82 0.15 78);
+}

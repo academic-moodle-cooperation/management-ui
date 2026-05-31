@@ -1,0 +1,107 @@
+/**
+ * Press — editorial, high-contrast, flat.
+ *
+ * Near-black ink on white, *zero radius*, *no shadows*, *bold borders* and a
+ * *grotesque sans* — a newspaper / print masthead feel. Ships both light
+ * (:root) and dark (.dark).
+ *
+ * Typography note: the original concept used "Archivo" (a web font). To stay
+ * GDPR-safe and offline we use the classic grotesque system stack instead —
+ * Helvetica Neue / Arial — which carries the same crisp editorial character on
+ * every platform without an external font request.
+ */
+:root {
+  --theme-name: "Press";
+
+  /* --- Structure: zero radius, flat, bold borders, grotesque sans --- */
+  --radius: 0rem;
+  --font-heading: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", system-ui, sans-serif;
+  --font-sans: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  --spacing-tight: 0.5rem;
+  --spacing-normal: 1rem;
+  --spacing-relaxed: 1.5rem;
+  --spacing-card: 1.5rem;
+  --spacing-sidebar: 0.75rem;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-card: none;
+  --shadow-sidebar: none;
+  --duration-transition: 110ms;
+
+  /* --- Color: high-contrast monochrome, deliberately strong borders --- */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.10 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.10 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.10 0 0);
+
+  --primary: oklch(0.12 0 0);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0 0);
+  --secondary-foreground: oklch(0.12 0 0);
+  --muted: oklch(0.965 0 0);
+  --muted-foreground: oklch(0.42 0 0);
+  --accent: oklch(0.93 0 0);
+  --accent-foreground: oklch(0.12 0 0);
+
+  --border: oklch(0.74 0 0);
+  --input: oklch(0.55 0 0);
+  --ring: oklch(0.10 0 0);
+
+  --sidebar: oklch(0.99 0 0);
+  --sidebar-foreground: oklch(0.10 0 0);
+  --sidebar-primary: oklch(0.12 0 0);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.92 0 0);
+  --sidebar-accent-foreground: oklch(0.12 0 0);
+  --sidebar-border: oklch(0.74 0 0);
+  --sidebar-ring: oklch(0.10 0 0);
+  --color-footer: oklch(1 0 0);
+
+  --chart-1: oklch(0.45 0.10 250);
+  --chart-2: oklch(0.55 0.16 27);
+  --chart-3: oklch(0.55 0.16 152);
+  --chart-4: oklch(0.72 0.16 75);
+  --chart-5: oklch(0.45 0 0);
+}
+
+.dark {
+  --background: oklch(0.12 0 0);
+  --foreground: oklch(0.97 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.97 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.97 0 0);
+
+  --primary: oklch(0.97 0 0);
+  --primary-foreground: oklch(0.12 0 0);
+  --secondary: oklch(0.22 0 0);
+  --secondary-foreground: oklch(0.97 0 0);
+  --muted: oklch(0.20 0 0);
+  --muted-foreground: oklch(0.68 0 0);
+  --accent: oklch(0.26 0 0);
+  --accent-foreground: oklch(0.97 0 0);
+
+  --border: oklch(0.42 0 0);
+  --input: oklch(0.50 0 0);
+  --ring: oklch(0.97 0 0);
+
+  --sidebar: oklch(0.10 0 0);
+  --sidebar-foreground: oklch(0.97 0 0);
+  --sidebar-primary: oklch(0.97 0 0);
+  --sidebar-primary-foreground: oklch(0.12 0 0);
+  --sidebar-accent: oklch(0.24 0 0);
+  --sidebar-accent-foreground: oklch(0.97 0 0);
+  --sidebar-border: oklch(0.42 0 0);
+  --sidebar-ring: oklch(0.97 0 0);
+  --color-footer: oklch(0.10 0 0);
+
+  --chart-1: oklch(0.70 0.12 250);
+  --chart-2: oklch(0.68 0.16 27);
+  --chart-3: oklch(0.70 0.14 152);
+  --chart-4: oklch(0.80 0.15 75);
+  --chart-5: oklch(0.72 0 0);
+}
