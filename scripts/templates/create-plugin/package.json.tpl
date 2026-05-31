@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "check-types": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
@@ -19,8 +21,10 @@
     "@oc-mui/eslint-config": "workspace:*",
     "@oc-mui/plugin-testing": "workspace:*",
     "@oc-mui/typescript-config": "workspace:*",
+    "@oc-mui/vite-config": "workspace:*",
     "eslint": "^9.20.0",
     "typescript": "^5.3.3",
+    "vite": "^6.3.5",
     "vitest": "^4.0.17"
   }
 }
