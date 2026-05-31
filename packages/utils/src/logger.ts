@@ -24,12 +24,19 @@ class Logger {
       nodeEnv = proc.env?.NODE_ENV === "development" || proc.env?.DEV === "true";
     }
 
-    // Check Vite environment (for runtime packages)
+    // Check Vite environment (for runtime packages).
+    // IMPORTANT: read the *literal* `import.meta.env.DEV`. Vite replaces
+    // that exact token at compile time; it does NOT expose `env` on the
+    // native `import.meta` object. Aliasing first (`const meta =
+    // import.meta; meta.env.DEV`) defeats the replacement, leaving the
+    // read permanently `undefined` — which silently disabled all dev-only
+    // logging (logger.info / logger.debug) in the browser.
     let viteEnv = false;
     try {
-      // Use type assertion to avoid TypeScript errors in Node.js environments
-      const meta = import.meta as { env?: { DEV?: boolean } };
-      viteEnv = meta.env?.DEV === true;
+      // @ts-expect-error `import.meta.env` is injected by Vite at build time and
+      // is intentionally untyped here (this package carries no vite/client types,
+      // and a global ImportMeta augmentation would clash with consumers' types).
+      viteEnv = import.meta.env.DEV === true;
     } catch {
       // import.meta.env not available (e.g., in Node.js build context)
       viteEnv = false;
