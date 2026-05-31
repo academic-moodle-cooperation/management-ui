@@ -21,11 +21,16 @@
  * passes on first run. Edit src/index.ts + plugin.json's extensionPoints
  * to replace the placeholder with real logic.
  *
+ * After scaffolding it runs `pnpm install` to link the new package into
+ * the workspace (so the `--filter` above resolves immediately). Pass
+ * --no-install to skip that for batch/CI use.
+ *
  * Replaces the previous `scripts/export-plugin-to-local.js` and
  * `scripts/extract-module-to-plugin.mjs`. See AGENTS.md (repo root) for
  * the plugin authoring rules.
  */
 
+import { spawnSync } from "node:child_process";
 import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -51,6 +56,9 @@ Options:
                   scaffold includes it; pass this flag for plugins that
                   will only ever be distributed as a frontend bundle
                   (CDN / marketplace).
+  --no-install    Skip the automatic 'pnpm install' that links the new
+                  package into the workspace. Useful for batch scaffolding
+                  or CI; you must run 'pnpm install' yourself afterwards.
   --help, -h      Show this message.
 
 Examples:
@@ -72,7 +80,7 @@ if (args.includes("--help") || args.includes("-h")) {
 const flags = new Set(args.filter((a) => a.startsWith("--")));
 const positionals = args.filter((a) => !a.startsWith("--"));
 
-const KNOWN_FLAGS = new Set(["--in-tree", "--no-pom"]);
+const KNOWN_FLAGS = new Set(["--in-tree", "--no-pom", "--no-install"]);
 const unknownFlags = [...flags].filter((f) => !KNOWN_FLAGS.has(f));
 if (unknownFlags.length > 0) {
   console.error(USAGE);
@@ -153,23 +161,41 @@ if (includeMaven) {
   await copyTemplates(mavenTemplatesDir, mavenTemplatesDir, join(targetDir, "backend"));
 }
 
+const skipInstall = flags.has("--no-install");
+
 console.log("");
-console.log("✓ Done.");
+console.log("✓ Scaffolded.");
+
+// Link the new package into the workspace so `pnpm --filter` resolves it
+// immediately (the scaffold lives under a `pnpm-workspace.yaml` glob, but
+// its deps aren't linked until an install runs). Skip with --no-install.
+if (!skipInstall) {
+  console.log("→ Linking the new package (pnpm install)…");
+  const result = spawnSync("pnpm", ["install"], { cwd: repoRoot, stdio: "inherit" });
+  if (result.status !== 0) {
+    console.log("");
+    console.log("⚠ pnpm install did not finish cleanly — run it yourself before the next steps.");
+  }
+}
+
 console.log("");
 console.log("Next steps (from the repo root):");
 console.log("");
-console.log(`  1. pnpm install`);
-console.log(`  2. pnpm build                  # one-time, populates dist-types/ for upstream packages`);
-console.log(`  3. edit ${relativeTarget}/plugin.json   # fill in description, author, real extensionPoints`);
-console.log(`  4. edit ${relativeTarget}/src/index.ts  # replace the placeholder registration`);
-console.log(`  5. pnpm --filter @oc-mui/plugin-${pluginName} test:contract`);
+let step = 1;
+if (skipInstall) {
+  console.log(`  ${step++}. pnpm install                # link the new package (skipped via --no-install)`);
+}
+console.log(`  ${step++}. pnpm build                  # one-time, populates dist-types/ for upstream packages`);
+console.log(`  ${step++}. edit ${relativeTarget}/plugin.json   # fill in description, author, real extensionPoints`);
+console.log(`  ${step++}. edit ${relativeTarget}/src/index.ts  # replace the placeholder registration`);
+console.log(`  ${step++}. pnpm --filter @oc-mui/plugin-${pluginName} test:contract`);
 if (includeMaven) {
   console.log("");
   console.log("Maven-side (the backend/ subdirectory):");
   console.log("");
-  console.log(`  6. edit ${relativeTarget}/backend/pom.xml   # confirm groupId and version`);
-  console.log(`  7. (cd ${relativeTarget}/backend && mvn package)   # produces target/${pluginName}-1.0.0-SNAPSHOT.jar`);
-  console.log(`  8. cp ${relativeTarget}/backend/target/${pluginName}-1.0.0-SNAPSHOT.jar $OPENCAST_HOME/deploy/`);
+  console.log(`  ${step++}. edit ${relativeTarget}/backend/pom.xml   # confirm groupId and version`);
+  console.log(`  ${step++}. (cd ${relativeTarget}/backend && mvn package)   # produces target/${pluginName}-1.0.0-SNAPSHOT.jar`);
+  console.log(`  ${step++}. cp ${relativeTarget}/backend/target/${pluginName}-1.0.0-SNAPSHOT.jar $OPENCAST_HOME/deploy/`);
   console.log("");
   console.log(`  See ${relativeTarget}/backend/README.md for build options and the full deploy story.`);
 }

@@ -165,9 +165,9 @@ The three modes documented in `docs/plugins/distribution.md`.
 |---|------|----------|
 | 9.1 | Scaffold `pnpm create-plugin demo-local` | Folder created with full Maven layout. |
 | 9.2 | `pnpm --filter @oc-mui/plugin-demo-local build` | Produces `dist/demo-local.mjs`. |
-| 9.3 | Add `"demo-local"` to `app.enabledPlugins` in `config.json` | (or via a `.local-plugins/config/` plugin if you use that pattern.) |
-| 9.4 | `pnpm dev` and reload | Browser console shows `[demo-local] activated`. Plugin's logo placeholder shows in the header. |
-| 9.5 | Inspect `http://127.0.0.1:3000/local-plugins/manifest.json` | Lists `demo-local` with the correct URL. |
+| 9.3 | Add `"demo-local"` to `app.enabledPlugins` in the served `config.json` | Edit `apps/shell/public/ui/config/management-ui/config.json` and run dev **without** a backend (or with `VITE_LOCAL_CONFIG=true`) so that file is the one served — see §6. (Or inject it via a `.local-plugins/config/` plugin if you use that pattern.) |
+| 9.4 | `pnpm dev` and reload | Browser console shows `[demo-local] activated`. Plugin's logo placeholder shows in the header (the `/assets/demo-local-logo.svg` image 404s — that's the expected placeholder; the registration taking effect is the signal). |
+| 9.5 | Inspect `http://127.0.0.1:3000/management-ui/local-plugins/manifest.json` | Lists `demo-local` with the correct URL. (The dev manifest is served under the shell base path `/management-ui/`, not at the origin root.) |
 
 ## Section 10 — JAR build + deployment
 
