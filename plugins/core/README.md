@@ -10,7 +10,7 @@ These plugins register documentation entries on `extension-points:documentation`
 
 | Extension point | Owner | Purpose |
 |------|------|------|
-| `app:header-logo` | `appLayoutExtensionPoints` | Logo in the header. Org plugins override. |
+| `app:header-logo` | `appLayoutExtensionPoints` | Logo in the header. **Declared only — no default renderer consumes it in the current shell**, so registering one has no visible effect yet. (It's the scaffold's contract-test placeholder.) |
 | `app:header-actions` | `appLayoutExtensionPoints` | Action buttons in the header. |
 | `app:footer` | `appLayoutExtensionPoints` | Footer content. |
 | `app:branding` | `appLayoutExtensionPoints` | Theme + branding settings. |
