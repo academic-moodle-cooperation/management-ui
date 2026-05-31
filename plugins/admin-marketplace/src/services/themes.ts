@@ -67,6 +67,22 @@ export const AVAILABLE_THEMES: ThemeDefinition[] = [
     author: "Management UI",
   },
   {
+    id: "aurora",
+    name: "Aurora",
+    description: "Modern & vivid — indigo, large rounded corners, soft shadows, a rounded geometric sans and relaxed spacing.",
+    previewUrl: "/management-ui/plugins/themes/aurora.css",
+    category: "Showcase",
+    author: "Management UI",
+  },
+  {
+    id: "press",
+    name: "Press",
+    description: "Editorial & high-contrast — monochrome ink on white, zero radius, no shadows, bold borders, a grotesque sans.",
+    previewUrl: "/management-ui/plugins/themes/press.css",
+    category: "Showcase",
+    author: "Management UI",
+  },
+  {
     id: "example-theme",
     name: "Example",
     description: "Minimal reference theme — a single-token recolor (Harvard Crimson primary) showing the smallest possible theme",
