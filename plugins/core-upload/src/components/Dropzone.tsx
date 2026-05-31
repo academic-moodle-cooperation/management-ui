@@ -81,7 +81,7 @@ const Dropzone: FC<DropzoneProps> = ({
           <Label
             htmlFor="dropzone-file"
             className={cn(
-              "flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-primary-foreground hover:bg-accent text-foreground border-border",
+              "flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-muted hover:bg-accent text-foreground border-border",
               onFileDrop && "border-primary",
             )}
             onDragEnter={(e) => {
