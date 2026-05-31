@@ -1,7 +1,7 @@
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { afterAll, beforeAll, describe, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import {
   loadPluginInHarness,
@@ -9,7 +9,7 @@ import {
   type TestHarness,
 } from "@oc-mui/plugin-testing";
 
-import { __PLUGIN_VAR_NAME__Plugin } from "./index";
+import defaultExport, { __PLUGIN_VAR_NAME__Plugin } from "./index";
 
 const pluginDir = resolve(fileURLToPath(import.meta.url), "..", "..");
 
@@ -24,6 +24,13 @@ describe("__PLUGIN_NAME__ plugin contract", () => {
   });
 
   afterAll(() => harness.dispose());
+
+  // The remote-plugin loader registers via `module.default`. A named-only
+  // export builds and passes the harness below, but is silently never
+  // loaded at runtime — so assert the default export explicitly.
+  it("exposes the plugin as the default export (required by the loader)", () => {
+    expect(defaultExport).toBe(__PLUGIN_VAR_NAME__Plugin);
+  });
 
   it("activates cleanly", () => harness.expectActivated());
 
