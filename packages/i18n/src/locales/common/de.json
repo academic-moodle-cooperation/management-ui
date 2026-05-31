@@ -78,5 +78,40 @@
   "noData": "Keine Daten vorhanden",
   "noOptionSelected": "Keine Option ausgewählt",
   "noEntriesHeading": "Keine Einträge gefunden",
-  "noEntriesText": "Ihre Suche lieferte keine Ergebnisse. Bitte versuchen Sie, Ihre Suche anzupassen oder nach anderen Suchbegriffen zu suchen."
+  "noEntriesText": "Ihre Suche lieferte keine Ergebnisse. Bitte versuchen Sie, Ihre Suche anzupassen oder nach anderen Suchbegriffen zu suchen.",
+  "goBack": "Zurück",
+  "backToHome": "Zur Startseite",
+  "auth": {
+    "signIn": "Anmelden",
+    "signInDescription": "Melden Sie sich an, um auf die Management UI zuzugreifen.",
+    "username": "Benutzername",
+    "password": "Passwort",
+    "rememberMe": "Angemeldet bleiben",
+    "signingIn": "Anmeldung läuft…",
+    "errorInvalidCredentials": "Benutzername oder Passwort ist falsch.",
+    "errorServerUnreachable": "Server nicht erreichbar. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+  },
+  "errors": {
+    "notFound": {
+      "title": "Hoppla! Seite nicht gefunden!",
+      "description": "Die gesuchte Seite existiert nicht oder wurde möglicherweise entfernt."
+    },
+    "unauthorized": {
+      "title": "Nicht autorisiert",
+      "description": "Bitte melden Sie sich mit den entsprechenden Zugangsdaten an, um auf diese Ressource zuzugreifen."
+    },
+    "forbidden": {
+      "title": "Zugriff verweigert",
+      "description": "Sie haben nicht die erforderliche Berechtigung, um diese Ressource anzuzeigen."
+    },
+    "general": {
+      "title": "Hoppla! Etwas ist schiefgelaufen",
+      "description": "Wir entschuldigen uns für die Unannehmlichkeiten. Bitte versuchen Sie es später erneut."
+    },
+    "module": {
+      "title": "Modulfehler",
+      "loadingFailed": "Modul konnte nicht geladen werden: {{name}}",
+      "description": "Bitte laden Sie die Seite neu."
+    }
+  }
 }

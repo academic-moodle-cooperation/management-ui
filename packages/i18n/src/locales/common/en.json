@@ -78,5 +78,40 @@
   "noData": "No data available",
   "noOptionSelected": "No option selected",
   "noEntriesHeading": "No results found",
-  "noEntriesText": "Your search returned no results. Please try adjusting your query or searching for different keywords."
+  "noEntriesText": "Your search returned no results. Please try adjusting your query or searching for different keywords.",
+  "goBack": "Go Back",
+  "backToHome": "Back to Home",
+  "auth": {
+    "signIn": "Sign in",
+    "signInDescription": "Sign in to access the Management UI.",
+    "username": "Username",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "signingIn": "Signing in…",
+    "errorInvalidCredentials": "Incorrect username or password.",
+    "errorServerUnreachable": "Couldn't reach the server. Check your connection and try again."
+  },
+  "errors": {
+    "notFound": {
+      "title": "Oops! Page Not Found!",
+      "description": "It seems like the page you're looking for does not exist or might have been removed."
+    },
+    "unauthorized": {
+      "title": "Unauthorized Access",
+      "description": "Please log in with the appropriate credentials to access this resource."
+    },
+    "forbidden": {
+      "title": "Access Forbidden",
+      "description": "You don't have the necessary permission to view this resource."
+    },
+    "general": {
+      "title": "Oops! Something went wrong",
+      "description": "We apologize for the inconvenience. Please try again later."
+    },
+    "module": {
+      "title": "Module Error",
+      "loadingFailed": "Error loading module: {{name}}",
+      "description": "Please try refreshing the page."
+    }
+  }
 }
