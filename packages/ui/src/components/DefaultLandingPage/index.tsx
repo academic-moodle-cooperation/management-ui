@@ -1,9 +1,12 @@
+import { useTranslation } from "@oc-mui/i18n";
+
 import { Icons, ArrowRight, LogIn } from "../icons";
 import { Badge, Button } from "../ui";
 
 import type { FC } from "react";
 
 const DefaultLandingPage: FC = () => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="absolute z-20 top-16 inset-x-0 flex justify-center overflow-hidden pointer-events-none">
@@ -33,15 +36,15 @@ const DefaultLandingPage: FC = () => {
           <div className="text-center space-y-8">
             <Badge variant="outline" className="text-sm py-2">
               <span className="mr-2 text-primary">
-                <Badge>Update!</Badge>
+                <Badge>{t("landing.update")}</Badge>
               </span>
-              <span> New version out now </span>
+              <span> {t("landing.newVersion")} </span>
               <ArrowRight className="w-4 h-4 ml-1" />
             </Badge>
 
             <div className="max-w-screen-lg mx-auto text-center text-3xl md:text-5xl font-bold">
               <h1 className="text-3xl font-semibold -tracking-4 md:text-5xl mb-6 md:mb-4">
-                Welcome to the
+                {t("landing.welcome")}
               </h1>
               {/* <h1>
                 Welcome to the
@@ -52,18 +55,18 @@ const DefaultLandingPage: FC = () => {
                 </span>
               </h1>
               <h2 className="text-2xl md:text-3xl font-normal text-muted-foreground mt-10">
-                The Admin UI of your dreams ✨
+                {t("landing.tagline")}
               </h2>
             </div>
 
             <p className="max-w-screen-md mx-auto text-xl text-muted-foreground mt-10">
-              {`Seamlessly manage and organize your audio and video content with ease. Customize, theme, and expand the user interface and its functionality to meet your specific needs. Built with a focus on flexibility and long-term growth.`}
+              {t("landing.description")}
             </p>
 
             <div className="space-y-4 md:space-y-0 md:space-x-4 mt-10">
               <Button className="w-5/6  md:w-1/4 font-bold group/arrow">
                 <LogIn className="size-5" />
-                Login
+                {t("auth.signIn")}
                 {/* <ArrowRight className="size-5 ml-2 group-hover/arrow:translate-x-1 transition-transform" /> */}
               </Button>
 

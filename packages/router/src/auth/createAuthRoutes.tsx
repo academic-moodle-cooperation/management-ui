@@ -1,7 +1,15 @@
 import { createRoute, useRouterState, type AnyRoute } from "@tanstack/react-router";
 import React from "react";
 
+import { useTranslation } from "@oc-mui/i18n";
 import { useAppConfig } from "@oc-mui/query";
+
+/** Minimal default loader: an i18n'd "Loading…" line. Consumers normally
+ * inject a richer `loadingComponent` (e.g. `AppLoader`). */
+function DefaultLoading() {
+  const { t } = useTranslation();
+  return <div>{t("authRoutes.loading")}</div>;
+}
 
 /**
  * Props passed to a consumer-supplied login form component (see
@@ -63,7 +71,7 @@ const isFormLoginUrl = (loginUrl: string | undefined): boolean =>
  */
 
 export const createLoginRoute = (parentRoute: AnyRoute, options: AuthRouteOptions = {}) => {
-  const LoadingComponent = options.loadingComponent || (() => <div>Loading...</div>);
+  const LoadingComponent = options.loadingComponent || DefaultLoading;
   const FormComponent = options.formComponent;
 
   return createRoute({
@@ -72,9 +80,10 @@ export const createLoginRoute = (parentRoute: AnyRoute, options: AuthRouteOption
     component: function LoginComponent() {
       const { config, isLoading, isError } = useAppConfig();
       const routerState = useRouterState();
+      const { t } = useTranslation();
 
       if (isLoading) return <LoadingComponent />;
-      if (isError || !config) return <div>Error loading login configuration.</div>;
+      if (isError || !config) return <div>{t("authRoutes.errorLoginConfig")}</div>;
 
       // Choose the appropriate login URL based on environment
       const loginUrl =
@@ -110,22 +119,23 @@ export const createLoginRoute = (parentRoute: AnyRoute, options: AuthRouteOption
       }
 
       // No login URL configured and no form to fall back to.
-      return <div>No login method is configured for this deployment.</div>;
+      return <div>{t("authRoutes.noLoginMethod")}</div>;
     },
   });
 };
 
 export const createLogoutRoute = (parentRoute: AnyRoute, options: AuthRouteOptions = {}) => {
-  const LoadingComponent = options.loadingComponent || (() => <div>Loading...</div>);
+  const LoadingComponent = options.loadingComponent || DefaultLoading;
 
   return createRoute({
     getParentRoute: () => parentRoute,
     path: "/logout",
     component: function LogoutComponent() {
       const { config, isLoading, isError } = useAppConfig();
+      const { t } = useTranslation();
 
       if (isLoading) return <LoadingComponent />;
-      if (isError || !config) return <div>Error loading logout configuration.</div>;
+      if (isError || !config) return <div>{t("authRoutes.errorLogoutConfig")}</div>;
 
       // Choose the appropriate logout URL based on environment
       const logoutUrl =

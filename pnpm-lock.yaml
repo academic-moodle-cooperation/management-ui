@@ -604,6 +604,9 @@ importers:
 
   packages/router:
     dependencies:
+      '@oc-mui/i18n':
+        specifier: workspace:*
+        version: link:../i18n
       '@oc-mui/query':
         specifier: workspace:*
         version: link:../query

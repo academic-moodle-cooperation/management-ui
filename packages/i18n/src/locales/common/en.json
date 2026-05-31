@@ -119,5 +119,34 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "noResults": "No results.",
+  "datepicker": {
+    "pickDate": "Pick a Date"
+  },
+  "a11y": {
+    "sidebar": "Sidebar",
+    "sidebarDescription": "Displays the mobile sidebar.",
+    "toggleSidebar": "Toggle Sidebar",
+    "closeSidebar": "Close sidebar"
+  },
+  "landing": {
+    "update": "Update!",
+    "newVersion": "New version out now",
+    "welcome": "Welcome to the",
+    "tagline": "The Admin UI of your dreams ✨",
+    "description": "Seamlessly manage and organize your audio and video content with ease. Customize, theme, and expand the user interface and its functionality to meet your specific needs. Built with a focus on flexibility and long-term growth."
+  },
+  "configError": {
+    "title": "Couldn't load configuration",
+    "prodMessage": "Couldn't load the configuration this UI needs to start. This is usually a backend-side issue — please contact your administrator.",
+    "reload": "Reload page",
+    "retry": "Retry"
+  },
+  "authRoutes": {
+    "loading": "Loading…",
+    "errorLoginConfig": "Error loading login configuration.",
+    "errorLogoutConfig": "Error loading logout configuration.",
+    "noLoginMethod": "No login method is configured for this deployment."
   }
 }

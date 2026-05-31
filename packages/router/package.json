@@ -24,6 +24,7 @@
   "dependencies": {
     "@tanstack/react-router": "^1.45.0",
     "@tanstack/router-core": "^1.120.10",
+    "@oc-mui/i18n": "workspace:*",
     "@oc-mui/query": "workspace:*"
   },
   "peerDependencies": {
