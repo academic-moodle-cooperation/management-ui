@@ -21,7 +21,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf target && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
-    "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.7",
@@ -35,6 +37,7 @@
     "@oc-mui/eslint-config": "workspace:*",
     "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.8.0",
-    "typescript": "~5.5.4"
+    "typescript": "~5.5.4",
+    "vitest": "^4.0.17"
   }
 }
