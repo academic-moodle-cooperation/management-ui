@@ -605,7 +605,7 @@ export const App = () => {
                       loadingBehavior="none"
                     />
 
-                    <div className="flex flex-row justify-center items-center my-4 sticky bottom-0 p-4 bg-white">
+                    <div className="flex flex-row justify-center items-center my-4 sticky bottom-0 p-4 bg-background">
                       <Button
                         color="primary"
                         variant={

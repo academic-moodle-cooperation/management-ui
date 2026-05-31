@@ -113,5 +113,11 @@
       "loadingFailed": "Modul konnte nicht geladen werden: {{name}}",
       "description": "Bitte laden Sie die Seite neu."
     }
+  },
+  "appearance": {
+    "toggle": "Erscheinungsbild umschalten",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "system": "System"
   }
 }

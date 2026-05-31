@@ -113,5 +113,11 @@
       "loadingFailed": "Error loading module: {{name}}",
       "description": "Please try refreshing the page."
     }
+  },
+  "appearance": {
+    "toggle": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   }
 }

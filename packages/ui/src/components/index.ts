@@ -16,6 +16,7 @@ export * from "./infinite-scroll";
 export * from "./overflow-tooltip";
 export * from "./appLoader";
 export * from "./acl-editor";
+export * from "./theme-mode";
 
 export { Switch as SwitchHeadlessUI } from "@headlessui/react";
 

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { SidebarTrigger } from "@oc-mui/ui/components";
+import { SidebarTrigger, ThemeModeToggle } from "@oc-mui/ui/components";
 
 import { LangSwitcher } from "./LangSwitcher";
 import { LoginButton } from "./LoginButton";
@@ -18,8 +18,9 @@ const DefaultHeader: React.FC = () => {
         <SidebarTrigger className="-ml-1" />
       </div>
 
-      {/* Right side - Language switcher and login button */}
-      <div className="flex items-center gap-6">
+      {/* Right side - Appearance toggle, language switcher and login button */}
+      <div className="flex items-center gap-4">
+        <ThemeModeToggle />
         <LangSwitcher />
         <LoginButton />
       </div>

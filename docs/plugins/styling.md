@@ -146,6 +146,27 @@ When you must restyle a host or shared component:
 }
 ```
 
+## Dark mode
+
+Light/dark is the **appearance axis**, separate from the org-branding theme (`app.theme`). The shell mounts `ThemeModeProvider` (from `@oc-mui/ui`, wrapping [`next-themes`](https://github.com/pacocoursey/next-themes)) and renders a Light/Dark/System toggle in the header. It defaults to the user's OS preference and persists their choice, applying a `.dark` class on `<html>` that activates the dark token block in `globals.css`.
+
+**Your plugin gets dark mode for free — if you follow the one rule.** Because every semantic token (`--background`, `--primary`, `--sidebar`, …) already has a `.dark` value, a plugin that uses the token-backed utilities (`bg-background`, `text-foreground`, `border-border`, `text-muted-foreground`, …) flips automatically. You do nothing.
+
+You only need to think about dark mode when you reach for a **non-token** color — which you should avoid, but if you must, use Tailwind's `dark:` variant so both appearances are covered:
+
+```tsx
+// ✅ token-backed — adapts automatically
+<div className="bg-card text-card-foreground border border-border" />
+
+// ⚠️ one-off color — cover both appearances explicitly
+<div className="bg-emerald-50 dark:bg-emerald-950" />
+
+// ❌ never — breaks in dark mode
+<div className="bg-white text-black" />
+```
+
+> Verify your plugin in **both** appearances (toggle in the header). If something looks wrong in dark mode, it's almost always a hardcoded color that should be a token.
+
 ## How org themes work
 
 An org ships a CSS file that overrides token values. Plugins pick them up automatically.
