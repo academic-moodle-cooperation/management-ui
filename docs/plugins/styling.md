@@ -167,17 +167,17 @@ You only need to think about dark mode when you reach for a **non-token** color 
 
 > Verify your plugin in **both** appearances (toggle in the header). If something looks wrong in dark mode, it's almost always a hardcoded color that should be a token.
 
-## How org themes work
+## How themes work
 
-An org ships a CSS file that overrides token values. Plugins pick them up automatically.
+A theme is a CSS file that overrides token values — color **and** structure (radius, fonts, shadows, spacing). Plugins pick them up automatically.
 
 ```css
-/* themes/univie.css */
+/* <theme>.css */
 :root {
   --primary: oklch(0.45 0.15 250);
   --sidebar: oklch(0.20 0.05 250);
-  --font-heading: "Merriweather", serif;
   --radius: 0.5rem;
+  --font-heading: Georgia, "Times New Roman", serif; /* system stack — see below */
 }
 
 .dark {
@@ -185,6 +185,18 @@ An org ships a CSS file that overrides token values. Plugins pick them up automa
   --sidebar: oklch(0.15 0.03 250);
 }
 ```
+
+**No external web fonts.** Set `--font-*` to **system font stacks only** — don't `@import` Google Fonts (or any remote font). Embedding remote fonts sends every user's IP to a third party, which is a GDPR problem for EU/university deployments (and breaks offline/air-gapped installs). Use serif vs. sans, plus `--radius`/`--shadow-*`/`--spacing-*`, to give a theme its character. See `apps/shell/public/plugins/themes/*.css` for worked examples.
+
+**Where themes live & how they're served:**
+
+| Theme kind | Location | Applied via |
+| --- | --- | --- |
+| Shipped showcase themes | `apps/shell/public/plugins/themes/<name>.css` | marketplace **and** `app.theme` |
+| Org themes (dev) | `.local-plugins/<org>/themes/<org>.css` | `app.theme` |
+| Org themes (prod) | the org's JAR, served at `/static/plugins/<org>/<org>.css` | `app.theme` |
+
+> Theme CSS **must be served as a raw `text/css` static file**. A `.css` under a *source* dir (e.g. `plugins/themes/`) is returned by Vite as a JS module (dev) or the SPA `index.html` fallback (build), so a `<link rel="stylesheet">` "loads" it (200) but applies nothing. That's why shipped themes live under `public/`. The default baseline (`apps/shell/src/themes/default.css`) is the one exception — it's `import`ed directly by the shell, not loaded by name.
 
 ## Review checklist
 
@@ -194,9 +206,11 @@ An org ships a CSS file that overrides token values. Plugins pick them up automa
 - [ ] Any host-component overrides are scoped with a plugin-root selector.
 - [ ] Renders correctly in light and dark mode.
 - [ ] Renders correctly against the default theme **and** at least one org theme.
+- [ ] Theme files set `--font-*` to system stacks only — no remote `@import` of web fonts.
 
 ## See also
 
 - [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md#3-theme-contract) — stability guarantees and versioning.
 - [`packages/ui/src/styles/globals.css`](../../packages/ui/src/styles/globals.css) — the source-of-truth token list.
-- [`apps/shell/src/themes/`](../../apps/shell/src/themes/) — example org themes.
+- [`apps/shell/public/plugins/themes/`](../../apps/shell/public/plugins/themes/) — the shipped showcase themes (worked examples of full design languages).
+- [`apps/shell/src/themes/default.css`](../../apps/shell/src/themes/default.css) — the always-loaded baseline.

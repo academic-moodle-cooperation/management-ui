@@ -154,7 +154,7 @@ Orgs typically ship a tiny `.local-plugins/<org>-config/` plugin that registers 
 
 ## Theme & locale
 
-- **`app.theme`** picks a theme CSS file from the shell's theme directory (`apps/shell/src/themes/`) or from any plugin's theme registration. Plugins ship theme tokens as CSS variable overrides — see [`docs/plugins/styling.md`](../plugins/styling.md).
+- **`app.theme`** picks a theme by name. The shell resolves `<name>.css` from the shipped showcase themes (`apps/shell/public/plugins/themes/`), an org theme in `.local-plugins/<name>/themes/` (dev) or its JAR at `/static/plugins/<name>/` (prod), and applies it on top of the always-loaded `default` baseline. Themes override CSS-variable tokens only — see [`docs/plugins/styling.md`](../plugins/styling.md). This is the **org-branding** axis; light/dark is a *separate* appearance toggle in the header.
 - **`app.locale`** picks the active i18next language. Plugins ship locale files under `<plugin>/locales/<namespace>/<lng>.json` and declare `i18nNamespaces` in `plugin.json`.
 
 ## See also
