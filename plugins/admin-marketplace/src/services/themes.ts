@@ -67,8 +67,8 @@ export const AVAILABLE_THEMES: ThemeDefinition[] = [
   {
     id: "example-theme",
     name: "Example",
-    description: "Neutral reference theme shipped with @oc-mui/plugin-example",
-    previewUrl: "/management-ui/plugins/example/example.css",
+    description: "Neutral reference theme — the minimal starting point for a custom theme",
+    previewUrl: "/management-ui/plugins/themes/example.css",
     category: "Example",
     author: "Management UI",
   },

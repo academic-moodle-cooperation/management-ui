@@ -68,29 +68,42 @@ const AppWithConfig = () => {
     } else {
       const key = `../../../plugins/themes/${themeName}.css`;
       const loader = themeModules[key];
+      document.querySelectorAll("link[data-theme]").forEach((el) => el.remove());
 
       if (loader) {
         loader().catch(() => undefined);
-      } else if (import.meta.env.DEV) {
-        // In dev, try .local-plugins/<name>/themes/<name>.css (migrated org themes)
-        document.querySelectorAll("link[data-theme]").forEach((el) => el.remove());
-        const base = import.meta.env.BASE_URL ?? "/";
-        const themeUrl = `${base.replace(/\/$/, "")}/local-plugins/${themeName}/themes/${themeName}.css`;
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = themeUrl;
-        link.dataset["theme"] = themeName;
-        document.head.appendChild(link);
       } else {
-        // Production: load theme from JAR (same path as plugin: /static/plugins/<name>/<name>.css)
-        document.querySelectorAll("link[data-theme]").forEach((el) => el.remove());
-        const base = import.meta.env.BASE_URL ?? "/";
-        const themeUrl = `${base.replace(/\/$/, "")}/static/plugins/${themeName}/${themeName}.css`;
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = themeUrl;
-        link.dataset["theme"] = themeName;
-        document.head.appendChild(link);
+        // Resolve `<theme>.css` by probing known locations and injecting the
+        // first that actually serves CSS. The dev server / SPA returns a
+        // `200` index.html for missing paths, so `<link>` `onerror` never
+        // fires — we check the `content-type` instead. Shipped showcase/
+        // example themes live in `public/plugins/themes/` (the same raw-served
+        // path the marketplace previews from); org themes live in
+        // `.local-plugins/` (dev) or the JAR (`/static/plugins`, prod).
+        const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "");
+        const candidates = [
+          `${base}/plugins/themes/${themeName}.css`,
+          import.meta.env.DEV
+            ? `${base}/local-plugins/${themeName}/themes/${themeName}.css`
+            : `${base}/static/plugins/${themeName}/${themeName}.css`,
+        ];
+        void (async () => {
+          for (const href of candidates) {
+            try {
+              const res = await fetch(href);
+              if (res.ok && (res.headers.get("content-type") ?? "").includes("css")) {
+                const link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = href;
+                link.dataset["theme"] = themeName;
+                document.head.appendChild(link);
+                return;
+              }
+            } catch {
+              /* try next candidate */
+            }
+          }
+        })();
       }
     }
   }, [config, themeModules]);

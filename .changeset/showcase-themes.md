@@ -22,9 +22,15 @@ Note: marketplace theme CSS *must* be served as a static file. Files under a
 source dir like `plugins/themes/` are returned by Vite as JS modules (dev) or
 the SPA `index.html` fallback (build), so injecting them via `<link rel=
 stylesheet>` "loads" (200) but applies nothing — which is why marketplace
-theme-apply silently did nothing for these (and still does for the existing
-`example` theme at `plugins/example/example.css`, tracked separately).
+theme-apply silently did nothing. The shipped **`example`** theme had the same
+bug; it's moved to `public/plugins/themes/example.css` too.
 
-Verified live: applying Oxford Navy via the marketplace's `ThemeLoader.apply`
-mechanism (the exact `<link>` injection) flips `--theme-name`/`--primary` and
-renders correctly in light and dark.
+The shell's config (`app.theme`) loader is updated to resolve a theme by
+**probing candidate URLs and checking the `content-type` is CSS** before
+injecting — `<link>` `onerror` can't be used because the SPA returns `200`
+`index.html` for missing paths. So both the marketplace path *and*
+`app.theme` now apply these themes, in dev and build.
+
+Verified live: Oxford Navy applies via the marketplace's `ThemeLoader.apply`
+mechanism **and** via `app.theme` in `config.json` — both flip
+`--theme-name`/`--primary` and render correctly in light and dark.
