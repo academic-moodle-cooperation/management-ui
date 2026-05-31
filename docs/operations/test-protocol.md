@@ -164,7 +164,7 @@ The three modes documented in `docs/plugins/distribution.md`.
 | # | Test | Expected |
 |---|------|----------|
 | 9.1 | Scaffold `pnpm create-plugin demo-local` | Folder created with full Maven layout. |
-| 9.2 | `pnpm --filter @oc-mui/plugin-demo-local build` | Produces `dist/demo-local.mjs`. |
+| 9.2 | `pnpm build` once (builds `@oc-mui/vite-config` etc.), then `pnpm --filter @oc-mui/plugin-demo-local build` | Produces `dist/demo-local.mjs`. The plugin's `vite.config.ts` imports `@oc-mui/vite-config`, so that workspace package must be built first — that's what the scaffold's step 2 (`pnpm build`) is for. |
 | 9.3 | Add `"demo-local"` to `app.enabledPlugins` in the served `config.json` | Edit `apps/shell/public/ui/config/management-ui/config.json` and run dev **without** a backend (or with `VITE_LOCAL_CONFIG=true`) so that file is the one served — see §6. (Or inject it via a `.local-plugins/config/` plugin if you use that pattern.) |
 | 9.4 | `pnpm dev` and reload | Browser console shows `[demo-local] activated`. Plugin's logo placeholder shows in the header (the `/assets/demo-local-logo.svg` image 404s — that's the expected placeholder; the registration taking effect is the signal). |
 | 9.5 | Inspect `http://127.0.0.1:3000/management-ui/local-plugins/manifest.json` | Lists `demo-local` with the correct URL. (The dev manifest is served under the shell base path `/management-ui/`, not at the origin root.) |
