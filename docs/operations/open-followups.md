@@ -90,6 +90,15 @@ Because of this one-way dep, the *reverse* import is impossible: `@oc-mui/router
 - **Scope**: ~1.5–2h. Touches every plugin/app/test that imports those components or the auth hooks from `@oc-mui/ui` / `@oc-mui/router`. Best done as its own PR (unrelated to any feature work) with a careful `pnpm verify` pass.
 - **When to revisit**: before or shortly after 1.0 — it's pure internal architecture, no consumer-visible change, so it can land any time the monorepo is otherwise quiet.
 
+### 3.6 Review unshipped demo/template UI components for removal
+
+Surfaced during the i18n sweep: these `@oc-mui/ui` components are **exported but rendered nowhere** in the shipped app (confirmed by grep), so they were deliberately *not* translated.
+
+- `appshell/components/nav-projects.tsx` + `team-switcher.tsx` — shadcn sidebar boilerplate with hardcoded "Projects" / "View Project" / "Teams" / "Add team" content. Almost certainly removable.
+- `auth-status/{AuthStatus,AuthMethodsDemo,AuthDebug}.tsx` — auth debug/demo scaffolding. These are *also* the components that drive the `@oc-mui/ui → @oc-mui/router` dependency inversion in §3.5, so removing them shrinks that tangle too.
+
+**Decision needed:** keep or delete. If kept as reusable primitives for plugin authors, they must be i18n'd (re-add to the sweep) and documented. If not, delete them. Recommended: **delete unless a concrete consumer is identified** — dead exported UI is a maintenance and a11y/i18n liability for an OSS surface.
+
 ---
 
 ## 4. API Extractor
