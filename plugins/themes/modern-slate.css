@@ -1,0 +1,86 @@
+/**
+ * Modern Slate & Teal — a contemporary, tech-forward campus palette.
+ *
+ * Cool slate neutrals with a clear teal accent and a clean geometric sans.
+ * Light keeps a bright, airy sidebar; dark goes deep cool-slate. Both ship.
+ */
+:root {
+  --theme-name: "Modern Slate & Teal";
+
+  --background: oklch(0.99 0.003 235);
+  --foreground: oklch(0.22 0.02 245);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.02 245);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.02 245);
+
+  --primary: oklch(0.55 0.10 195);
+  --primary-foreground: oklch(0.99 0.01 195);
+  --secondary: oklch(0.96 0.008 235);
+  --secondary-foreground: oklch(0.30 0.03 245);
+  --muted: oklch(0.96 0.006 235);
+  --muted-foreground: oklch(0.50 0.02 240);
+  --accent: oklch(0.93 0.04 195);
+  --accent-foreground: oklch(0.35 0.08 198);
+
+  --border: oklch(0.91 0.008 235);
+  --input: oklch(0.91 0.008 235);
+  --ring: oklch(0.55 0.10 195);
+
+  --sidebar: oklch(0.97 0.006 235);
+  --sidebar-foreground: oklch(0.28 0.02 245);
+  --sidebar-primary: oklch(0.55 0.10 195);
+  --sidebar-primary-foreground: oklch(0.99 0.01 195);
+  --sidebar-accent: oklch(0.93 0.02 235);
+  --sidebar-accent-foreground: oklch(0.30 0.03 245);
+  --sidebar-border: oklch(0.90 0.008 235);
+  --sidebar-ring: oklch(0.55 0.10 195);
+  --color-footer: oklch(0.96 0.006 235);
+
+  --chart-1: oklch(0.55 0.10 195);
+  --chart-2: oklch(0.60 0.10 245);
+  --chart-3: oklch(0.70 0.13 75);
+  --chart-4: oklch(0.55 0.12 320);
+  --chart-5: oklch(0.65 0.13 145);
+
+  --font-heading: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: oklch(0.20 0.015 245);
+  --foreground: oklch(0.96 0.005 235);
+  --card: oklch(0.23 0.015 245);
+  --card-foreground: oklch(0.96 0.005 235);
+  --popover: oklch(0.23 0.015 245);
+  --popover-foreground: oklch(0.96 0.005 235);
+
+  --primary: oklch(0.72 0.10 195);
+  --primary-foreground: oklch(0.18 0.03 198);
+  --secondary: oklch(0.28 0.02 245);
+  --secondary-foreground: oklch(0.96 0.005 235);
+  --muted: oklch(0.27 0.018 245);
+  --muted-foreground: oklch(0.72 0.015 235);
+  --accent: oklch(0.30 0.03 240);
+  --accent-foreground: oklch(0.96 0.005 235);
+
+  --border: oklch(0.30 0.02 245);
+  --input: oklch(0.30 0.02 245);
+  --ring: oklch(0.72 0.10 195);
+
+  --sidebar: oklch(0.17 0.015 245);
+  --sidebar-foreground: oklch(0.93 0.006 235);
+  --sidebar-primary: oklch(0.72 0.10 195);
+  --sidebar-primary-foreground: oklch(0.18 0.03 198);
+  --sidebar-accent: oklch(0.25 0.02 245);
+  --sidebar-accent-foreground: oklch(0.93 0.006 235);
+  --sidebar-border: oklch(0.27 0.018 245);
+  --sidebar-ring: oklch(0.72 0.10 195);
+  --color-footer: oklch(0.23 0.015 245);
+
+  --chart-1: oklch(0.72 0.10 195);
+  --chart-2: oklch(0.70 0.10 245);
+  --chart-3: oklch(0.78 0.13 75);
+  --chart-4: oklch(0.68 0.12 320);
+  --chart-5: oklch(0.72 0.13 145);
+}

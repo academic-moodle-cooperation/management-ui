@@ -1,0 +1,86 @@
+/**
+ * Forest Sage — a calm, natural-sciences palette.
+ *
+ * Deep forest green with warm stone/sand neutrals and a humanist serif.
+ * Reads as sustainability / life-sciences. Ships both light and dark.
+ */
+:root {
+  --theme-name: "Forest Sage";
+
+  --background: oklch(0.99 0.006 100);
+  --foreground: oklch(0.23 0.02 150);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.23 0.02 150);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.23 0.02 150);
+
+  --primary: oklch(0.45 0.10 155);
+  --primary-foreground: oklch(0.99 0.01 120);
+  --secondary: oklch(0.96 0.01 120);
+  --secondary-foreground: oklch(0.32 0.06 155);
+  --muted: oklch(0.96 0.008 110);
+  --muted-foreground: oklch(0.49 0.025 150);
+  --accent: oklch(0.93 0.04 150);
+  --accent-foreground: oklch(0.35 0.08 155);
+
+  --border: oklch(0.90 0.012 120);
+  --input: oklch(0.90 0.012 120);
+  --ring: oklch(0.45 0.10 155);
+
+  --sidebar: oklch(0.27 0.06 155);
+  --sidebar-foreground: oklch(0.93 0.02 120);
+  --sidebar-primary: oklch(0.80 0.10 150);
+  --sidebar-primary-foreground: oklch(0.24 0.05 155);
+  --sidebar-accent: oklch(0.33 0.06 155);
+  --sidebar-accent-foreground: oklch(0.95 0.015 120);
+  --sidebar-border: oklch(0.35 0.05 155);
+  --sidebar-ring: oklch(0.80 0.10 150);
+  --color-footer: oklch(0.96 0.01 110);
+
+  --chart-1: oklch(0.50 0.11 155);
+  --chart-2: oklch(0.70 0.12 130);
+  --chart-3: oklch(0.65 0.10 85);
+  --chart-4: oklch(0.55 0.09 220);
+  --chart-5: oklch(0.55 0.10 30);
+
+  --font-heading: "Lora", Georgia, serif;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: oklch(0.19 0.015 150);
+  --foreground: oklch(0.95 0.01 120);
+  --card: oklch(0.22 0.015 150);
+  --card-foreground: oklch(0.95 0.01 120);
+  --popover: oklch(0.22 0.015 150);
+  --popover-foreground: oklch(0.95 0.01 120);
+
+  --primary: oklch(0.68 0.12 150);
+  --primary-foreground: oklch(0.16 0.03 155);
+  --secondary: oklch(0.28 0.025 150);
+  --secondary-foreground: oklch(0.95 0.01 120);
+  --muted: oklch(0.27 0.02 150);
+  --muted-foreground: oklch(0.73 0.018 120);
+  --accent: oklch(0.30 0.04 150);
+  --accent-foreground: oklch(0.95 0.01 120);
+
+  --border: oklch(0.30 0.022 150);
+  --input: oklch(0.30 0.022 150);
+  --ring: oklch(0.68 0.12 150);
+
+  --sidebar: oklch(0.16 0.015 155);
+  --sidebar-foreground: oklch(0.91 0.02 120);
+  --sidebar-primary: oklch(0.74 0.12 150);
+  --sidebar-primary-foreground: oklch(0.16 0.04 155);
+  --sidebar-accent: oklch(0.24 0.02 155);
+  --sidebar-accent-foreground: oklch(0.93 0.015 120);
+  --sidebar-border: oklch(0.26 0.02 155);
+  --sidebar-ring: oklch(0.74 0.12 150);
+  --color-footer: oklch(0.22 0.015 150);
+
+  --chart-1: oklch(0.68 0.12 150);
+  --chart-2: oklch(0.76 0.12 130);
+  --chart-3: oklch(0.74 0.11 85);
+  --chart-4: oklch(0.68 0.10 220);
+  --chart-5: oklch(0.68 0.11 30);
+}
