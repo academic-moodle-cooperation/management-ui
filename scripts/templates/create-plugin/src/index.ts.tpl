@@ -27,10 +27,13 @@ export const __PLUGIN_VAR_NAME__Plugin = createPlugin({
   },
 
   activate() {
-    logger.debug("[__PLUGIN_NAME__] activated");
+    // `logger.info` (→ console.info) shows at Chrome DevTools' default level.
+    // `logger.debug` would be hidden unless you enable the "Verbose" filter,
+    // which makes "did my plugin load?" needlessly confusing on first run.
+    logger.info("[__PLUGIN_NAME__] activated");
   },
 
   deactivate() {
-    logger.debug("[__PLUGIN_NAME__] deactivated");
+    logger.info("[__PLUGIN_NAME__] deactivated");
   },
 });
