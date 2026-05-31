@@ -2,6 +2,7 @@
 "@oc-mui/ui": minor
 "@oc-mui/i18n": patch
 "@oc-mui/plugins": patch
+"@oc-mui/plugin-core-upload": patch
 ---
 
 Dark mode: make the existing dark tokens actually reachable.
@@ -18,3 +19,11 @@ Plugins that use the semantic token utilities (`bg-background`,
 `text-foreground`, …) get dark mode for free; `docs/plugins/styling.md` gains
 a "Dark mode" section explaining the contract. Toggle labels are i18n'd
 (`common.appearance.*`, en + de).
+
+Also fixes the default-theme dark-mode regressions that this surfaced — all
+hardcoded palette colors that ignored the tokens: the data-table border/body
+text/dividers (`border-gray-*`, `text-gray-600`, `divide-gray-*` →
+`border-border`/`text-foreground`/`divide-border`), the empty-state icons
+(`text-gray-400`), the logo "M" (`text-white` → `text-primary-foreground`, so
+it's no longer white-on-white in dark), and the upload action bar
+(`bg-white` → `bg-background`).

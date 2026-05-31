@@ -7,7 +7,7 @@ const wrapper = cva(["w-full", "overflow-auto", "border-collapse"], {
       solid: ["border-solid"],
     },
     outerBorders: {
-      true: ["border", "border-gray-200"],
+      true: ["border", "border-border"],
       false: [],
     },
     radius: {
@@ -49,7 +49,7 @@ const thead = cva([], {
       lg: ["text-base"],
     },
     headerBorders: {
-      true: ["border-b", "border-gray-300/75"],
+      true: ["border-b", "border-border"],
       false: [],
     },
     headerColor: {
@@ -58,7 +58,7 @@ const thead = cva([], {
   },
 });
 
-const tbody = cva(["font-normal", "text-gray-600"], {
+const tbody = cva(["font-normal", "text-foreground"], {
   variants: {
     borderStyle: {
       dashed: ["divide-dashed"],
@@ -71,12 +71,12 @@ const tbody = cva(["font-normal", "text-gray-600"], {
       lg: ["text-lg"],
     },
     horizontalBorders: {
-      true: ["divide-y", "divide-gray-200"],
+      true: ["divide-y", "divide-border"],
     },
   },
 });
 
-const tfoot = cva(["text-gray-700"], {
+const tfoot = cva(["text-muted-foreground"], {
   variants: {
     borderStyle: {
       dashed: ["border-dashed"],
@@ -88,7 +88,7 @@ const tfoot = cva(["text-gray-700"], {
       lg: ["text-base"],
     },
     footerBorders: {
-      true: ["border-t", "border-gray-300/75"],
+      true: ["border-t", "border-border"],
       false: [],
     },
   },
@@ -101,7 +101,7 @@ const tr = cva([], {
       solid: ["divide-solid"],
     },
     verticalBorders: {
-      true: ["divide-x", "divide-gray-200"],
+      true: ["divide-x", "divide-border"],
       false: [],
     },
     hoverable: {

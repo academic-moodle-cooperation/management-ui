@@ -42,7 +42,7 @@ const Logo = ({
             {/* Position the M exactly like in the SVG */}
             <span
               className={cn(
-                "text-white font-normal transition-all duration-300 leading-none",
+                "text-primary-foreground font-normal transition-all duration-300 leading-none",
                 collapsed ? "text-base" : "text-2xl ",
               )}
             >
