@@ -69,7 +69,7 @@ export const AVAILABLE_THEMES: ThemeDefinition[] = [
   {
     id: "example-theme",
     name: "Example",
-    description: "Neutral reference theme — the minimal starting point for a custom theme",
+    description: "Minimal reference theme — a single-token recolor (Harvard Crimson primary) showing the smallest possible theme",
     previewUrl: "/management-ui/plugins/themes/example.css",
     category: "Example",
     author: "Management UI",
