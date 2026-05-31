@@ -89,7 +89,7 @@
       <!--
         1) Install Node + pnpm and run the plugin's `pnpm build`.
 
-        Runs `pnpm install --frozen-lockfile && pnpm run build` from the
+        Runs `pnpm install` (with a frozen lockfile) then `pnpm run build` from the
         plugin root (one level up from this POM). The build is expected
         to produce dist/<pluginId>.mjs (and optionally dist/<pluginId>.css,
         dist/assets/**).
