@@ -37,3 +37,9 @@ export const __PLUGIN_VAR_NAME__Plugin = createPlugin({
     logger.info("[__PLUGIN_NAME__] deactivated");
   },
 });
+
+// The remote-plugin loader (used for .local-plugins and JAR plugins)
+// imports the plugin via `module.default`, so the plugin object MUST be
+// the default export. Without this, the plugin is fetched but silently
+// never registered. The named export above is kept for tests/direct imports.
+export default __PLUGIN_VAR_NAME__Plugin;

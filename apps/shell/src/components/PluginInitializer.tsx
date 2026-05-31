@@ -420,6 +420,15 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                   );
                 } else if (result.status === "fulfilled" && result.value.skipped && result.value.plugin) {
                   disabledByOverride.push(result.value.plugin);
+                } else if (result.status === "fulfilled" && !result.value.success) {
+                  // The plugin was fetched but loadAndRegister rejected it
+                  // (e.g. no default export). Surface it — otherwise the
+                  // plugin silently never registers and "why won't my plugin
+                  // load?" is impossible to debug.
+                  logger.warn(
+                    `PluginInitializer: .local-plugins "${entry.name}" failed to load`,
+                    { url: entry.url, error: result.value.error },
+                  );
                 }
               });
             };
