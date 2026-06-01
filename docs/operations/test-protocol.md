@@ -180,7 +180,7 @@ This is the big one. The whole point of Maven scaffolding.
 | 10.3 | `unzip -l <jar>` | Contains `static/plugins/demo-local/demo-local.mjs`, `static/plugins/demo-local/plugin.json`. |
 | 10.4 | `cp <jar> $OPENCAST_HOME/deploy/` | Opencast picks it up. Inspect Karaf log: `Tracked plugin: demo-local`. |
 | 10.5 | `curl http://staging/management-tool/ui/config/plugins.json` | Returns the plugin entry with the correct `scriptUrl`. |
-| 10.6 | Reload the shell at staging | Plugin loads from the JAR. Console shows `[demo-local] activated`. |
+| 10.6 | Reload the shell at staging | Plugin loads from the JAR. **No `[demo-local] activated` line** — staging is a *production* build, where `logger.info` is suppressed by design. Confirm instead via: the JAR's bundle is served (DevTools → Network: `…/static/plugins/demo-local/demo-local.mjs` → `200`, `application/javascript`), **no** plugin-load error in that console, and the plugin's actual effect is present. (The scaffold placeholder has no visible effect — see §9.4; a real plugin shows its UI.) Don't test this through a local dev server pointed at the backend: the dev server doesn't serve the JAR's `/static/plugins/…` assets, so you'll get a spurious "Plugin URL returned HTML (404 or SPA fallback)" error — open the deployed shell directly. |
 | 10.7 | `mvn install -DdeployTo=$OPENCAST_HOME` | The convenience copy-to-deploy path works. |
 | 10.8 | `mvn package -Dskip.frontend.build=true` (after a manual `pnpm build`) | JAR still produced; frontend not rebuilt. |
 
@@ -192,7 +192,7 @@ Verifies the dynamic-load path used for community plugins.
 |---|------|----------|
 | 11.1 | Build `dist/demo-local.mjs` and host it on any HTTPS URL with CORS open | (jsDelivr against a tagged GitHub release works; or your own static server.) |
 | 11.2 | Navigate to `/admin/marketplace` | UI loads. |
-| 11.3 | Developer Mode → paste URL → Try | Plugin loads temporarily. Console shows activation. |
+| 11.3 | Developer Mode → paste URL → Try | Plugin loads temporarily. Console shows activation *(in a dev build — suppressed in production, like §10.6)*. Use a plugin **not already loaded** locally, or you'll hit a duplicate-registration skip instead of a fresh activation. |
 | 11.4 | Reload | Without Install, plugin gone. |
 | 11.5 | Developer Mode → paste URL → Install | Plugin persists in localStorage. |
 | 11.6 | Reload | Plugin loads on its own without re-entering the URL. |
