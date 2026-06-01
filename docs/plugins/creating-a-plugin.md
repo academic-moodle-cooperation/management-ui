@@ -61,6 +61,89 @@ export const myPlugin = createPlugin({
 
 **The registration rule:** every `manager.registerObject(...)` call goes in `initialize()`. `activate()` and `deactivate()` are for side effects only (logging, subscribing). The test harness re-registers between tests; registering in `activate()` means the second test sees nothing.
 
+> **`export default` is mandatory.** The remote loader (used for
+> `.local-plugins/` and JAR plugins) registers via `module.default`. A
+> named-only export builds and passes the contract test but is silently
+> never loaded at runtime. The scaffold does this for you; keep it.
+
+### Worked example: a screen with a sidebar entry
+
+This is the most common thing a plugin does — add a page and a left-nav
+link to it. It's modelled verbatim on `plugins/core-upload/src/index.ts`,
+so it's guaranteed to render (the "Upload" nav entry you see in the shell
+*is* this pattern). Unlike the scaffold's `app:header-logo` placeholder —
+which the core shell does not render, so it produces no visible result —
+a `sidebar:nav-items` + `apps:definitions` pair is visible in **both dev
+and production**.
+
+```tsx
+// src/ReportsPage.tsx — your screen (any React component)
+export function ReportsPage() {
+  return <div className="p-6">Reports go here.</div>;
+}
+```
+
+```ts
+// src/index.ts
+import { FileText } from "lucide-react"; // any lucide-react icon
+
+import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
+
+import { ReportsPage } from "./ReportsPage";
+
+export const reportsPlugin = createPlugin({
+  namespace: "reports", // matches plugin.json `namespace` + `id`
+  type: "app",
+  version: "1.0.0",
+
+  initialize(manager: PluginManager) {
+    // 1) The screen: a route + component the shell mounts at /reports.
+    manager.registerObject("apps:definitions", "reports", {
+      id: "reports",
+      name: "Reports",
+      routePath: "/reports",
+      component: ReportsPage,
+    });
+
+    // 2) The left-nav entry that links to it.
+    manager.registerObject("sidebar:nav-items", "reports", {
+      title: "Reports",
+      path: "/reports",
+      icon: FileText,      // an icon *component*, not a string
+      order: 50,           // lower numbers sort higher in the list
+      permissions: [],     // e.g. ["reports.view"] to gate visibility
+      featureFlags: [],
+      category: "content",
+    });
+  },
+
+  activate() {},
+  deactivate() {},
+});
+
+export default reportsPlugin; // required — the loader reads module.default
+```
+
+Then declare both points in `plugin.json` so the contract test passes:
+
+```jsonc
+{
+  "type": "app",
+  "extensionPoints": ["apps:definitions", "sidebar:nav-items"]
+}
+```
+
+`AppDefinition` (`apps:definitions`) requires `{ id, name, routePath, component }`
+and optionally takes `navigation`, `loader`, `version`, `description` — see
+[`@oc-mui/plugin-system` `appTypes.ts`](../../packages/plugin-system/src/appTypes.ts).
+Nested routes like `/reports/:id` work automatically (the shell adds a
+`$routeSubPath` child route); read the param with `useParams({ strict: false })`.
+
+For the full list of slots you can register on — header actions, footer,
+table-row detail panels, the ACL/metadata editors, etc. — see
+[`plugins/core/README.md`](../../plugins/core/README.md), which lists every
+extension point, its owner, and what renders it.
+
 ### The manifest (`plugin.json`)
 
 Every extension point your `initialize()` touches must also appear in `plugin.json`'s `extensionPoints` array. The contract test fails when an entry is declared but not populated. Lint fails when a key collides with another plugin's.
@@ -86,12 +169,12 @@ pnpm --filter @oc-mui/plugin-my-plugin test:contract
 
 | Point | What you register | Example |
 |-------|-------------------|---------|
-| `apps:definitions` | A route + component the shell mounts under `/<routePath>` | `plugins/core-episodes/src/index.ts` |
+| `apps:definitions` | A route + component the shell mounts under `/<routePath>` | `plugins/core-upload/src/index.ts` |
 | `sidebar:nav-items` | Left-nav entry | same file |
 | `app:config:defaults` | A `Partial<AppConfig>` slice merged below `config.json` | `plugins/core-*/src/config.ts` |
-| `app:header-logo` | An `{ src, alt, href, width, height }` object | `plugins/example/` |
+| `app:header-logo` | An `{ src, alt, href, width, height }` object — **note:** declared but the default shell does not currently render it, so it has no visible effect on its own. It's the scaffold's contract-test placeholder; swap it for `apps:definitions` (above) for a visible feature. | `plugins/example/` |
 
-The full set is documented at the registration sites and in [`@oc-mui/plugin-system`](../../packages/plugin-system/README.md).
+The full set — with owner and what renders each — is in [`plugins/core/README.md`](../../plugins/core/README.md), and at the registration sites in [`@oc-mui/plugin-system`](../../packages/plugin-system/README.md).
 
 ## Configuration
 
