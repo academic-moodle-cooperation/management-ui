@@ -1,8 +1,9 @@
 import React from "react";
 
-import { useAppConfig } from "@oc-mui/query";
+import { useAppConfig, useGetCurrentUser } from "@oc-mui/query";
 
 import { useAuth } from "../auth/AuthContext";
+import { isAuthenticationError } from "../auth/isAuthenticationError";
 
 interface AppProtectionProps {
   appName: string;
@@ -15,6 +16,15 @@ interface AppProtectionProps {
    * inline fallback. Optional — falls back to a minimal themed placeholder.
    */
   redirectingComponent?: React.ReactNode;
+  /**
+   * Rendered when the auth check fails with a non-auth (e.g. backend 5xx /
+   * network) error and no user could be resolved — instead of the infinite
+   * "Checking authentication…" spinner. Receives the error and a retry
+   * callback (re-runs the `currentUser` fetch). Injected by the shell so this
+   * package needn't import `@oc-mui/ui`. Optional — falls back to a minimal
+   * inline message with a Retry button.
+   */
+  errorComponent?: React.ComponentType<{ error: unknown; onRetry: () => void }>;
 }
 
 /**
@@ -57,9 +67,14 @@ export const AppProtection: React.FC<AppProtectionProps> = ({
   children,
   loadingComponent: LoadingComponent,
   redirectingComponent,
+  errorComponent: ErrorComponent,
 }) => {
   const { config } = useAppConfig();
   const { user, isAuthenticated } = useAuth();
+  // Subscribe to the same `currentUser` query AuthInitializer drives (TanStack
+  // dedupes by queryKey — no extra request) so we can tell "still loading" from
+  // "errored with no user" and avoid an indefinite spinner on a backend outage.
+  const { isError, error, refetch } = useGetCurrentUser();
 
   // Get app protection config
   const appProtection = (config?.plugins?.[appName] as { protection?: { public?: boolean } })
@@ -68,6 +83,25 @@ export const AppProtection: React.FC<AppProtectionProps> = ({
   // If marked as public, allow access
   if (appProtection?.public === true) {
     return <>{children}</>;
+  }
+
+  // The auth check finished with an error and no user was resolved. A 401/403
+  // means the session is invalid → fall through to the login redirect below.
+  // Anything else (backend 5xx, network) is a real outage → show an error
+  // screen with Retry instead of spinning on "Checking authentication…".
+  if (user === undefined && isError && error && !isAuthenticationError(error)) {
+    const onRetry = () => void refetch();
+    if (ErrorComponent) {
+      return <ErrorComponent error={error} onRetry={onRetry} />;
+    }
+    return (
+      <div className="p-8 text-center text-muted-foreground space-y-3">
+        <p>Couldn&rsquo;t verify your session — the server didn&rsquo;t respond.</p>
+        <button type="button" className="underline" onClick={onRetry}>
+          Retry
+        </button>
+      </div>
+    );
   }
 
   // Wait for auth state to be determined before making decisions.

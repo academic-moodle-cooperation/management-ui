@@ -21,6 +21,7 @@ import { logger } from "@oc-mui/utils";
 
 import { createCommonRoutes } from "../shared/commonRoutes";
 
+import { AuthCheckError } from "./AuthCheckError";
 import { ModuleErrorFallback } from "./errors/ModuleErrorFallback";
 import { CoreAppShellLayout } from "./layout/CoreAppShellLayout";
 
@@ -79,6 +80,7 @@ const createRoutesFromApps = (apps: AppDefinition[]): AnyRoute[] => {
         appName={appDef.id}
         loadingComponent={AppLoader}
         redirectingComponent={<AppLoader>Redirecting to login…</AppLoader>}
+        errorComponent={AuthCheckError}
       >
         <ErrorBoundary fallback={<ModuleErrorFallback name={appDef.name} />}>
           <Suspense fallback={<AppLoader />}>
