@@ -21,7 +21,7 @@ export interface MarketplaceState {
   communityPlugins: RegistryPlugin[];
   communityPluginsLoading: boolean;
 
-  jarPlugins: { name: string; path: string; scope: string; url: string }[];
+  jarPlugins: { id?: string; name: string; path: string; scope: string; url: string }[];
 
   installedRemotePlugins: string[];
   installedTheme: string | null;
@@ -69,7 +69,7 @@ export function useMarketplace(manager: PluginManager): MarketplaceState & Marke
   const [communityPlugins, setCommunityPlugins] = useState<RegistryPlugin[]>([]);
   const [communityPluginsLoading, setCommunityPluginsLoading] = useState(true);
 
-  const [jarPlugins, setJarPlugins] = useState<{ name: string; path: string; scope: string; url: string }[]>([]);
+  const [jarPlugins, setJarPlugins] = useState<{ id?: string; name: string; path: string; scope: string; url: string }[]>([]);
 
   const [installedRemotePlugins, setInstalledRemotePlugins] = useState<string[]>(
     RemoteLoader.getInstalledUrls(),
@@ -123,7 +123,7 @@ export function useMarketplace(manager: PluginManager): MarketplaceState & Marke
   // --- Load JAR plugins ---
   useEffect(() => {
     if (typeof manager.executeFunction !== "function") return;
-    const list = manager.executeFunction<{ name: string; path: string; scope: string; url: string }[]>(
+    const list = manager.executeFunction<{ id?: string; name: string; path: string; scope: string; url: string }[]>(
       "marketplace.getJarPlugins",
     );
     setJarPlugins(Array.isArray(list) ? list : []);
