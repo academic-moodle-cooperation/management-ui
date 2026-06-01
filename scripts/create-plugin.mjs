@@ -38,16 +38,28 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, "..");
 const templatesDir = resolve(__dirname, "templates", "create-plugin");
+// Overlay copied on top of the base for `--template app`: only the files
+// that differ (package.json, plugin.json, src/index.ts, the page component).
+const templateAppDir = resolve(__dirname, "templates", "create-plugin-app");
 const mavenTemplatesDir = resolve(__dirname, "templates", "create-plugin-maven");
 
+const VALID_TEMPLATES = new Set(["minimal", "app"]);
+
 const USAGE = `Usage:
-  pnpm create-plugin <plugin-name> [--in-tree] [--no-pom]
+  pnpm create-plugin <plugin-name> [--template <minimal|app>] [--in-tree] [--no-pom]
 
 Arguments:
   <plugin-name>   kebab-case, [a-z][a-z0-9-]*. Used as the npm package
                   suffix, the plugin id, and the namespace.
 
 Options:
+  --template <t>  Which starter to scaffold (default: minimal):
+                    minimal  a placeholder app:header-logo registration —
+                             passes the contract test but has no visible
+                             effect (nothing in the shell renders it).
+                    app      a visible screen + sidebar entry
+                             (apps:definitions + sidebar:nav-items + a page
+                             component). Renders in dev AND production.
   --in-tree       Scaffold under plugins/<name>/ instead of the default
                   .local-plugins/<name>/. Use this when adding a built-in
                   plugin that ships with the core repo. Implies --no-pom
@@ -63,6 +75,7 @@ Options:
 
 Examples:
   pnpm create-plugin audience-poll                # full scaffold including backend/
+  pnpm create-plugin reports --template app       # visible screen + sidebar entry
   pnpm create-plugin tiny-widget --no-pom         # frontend-only, no Maven
   pnpm create-plugin admin-dashboard --in-tree    # built-in core plugin`;
 
@@ -77,8 +90,30 @@ if (args.includes("--help") || args.includes("-h")) {
   process.exit(0);
 }
 
-const flags = new Set(args.filter((a) => a.startsWith("--")));
-const positionals = args.filter((a) => !a.startsWith("--"));
+// Pull out `--template <name>` / `--template=<name>` first — its value is
+// not a flag or a positional, so it must not reach the splits below.
+let template = "minimal";
+const restArgs = [];
+for (let i = 0; i < args.length; i++) {
+  const a = args[i];
+  if (a === "--template") {
+    template = args[i + 1];
+    i++;
+    continue;
+  }
+  if (a.startsWith("--template=")) {
+    template = a.slice("--template=".length);
+    continue;
+  }
+  restArgs.push(a);
+}
+if (!VALID_TEMPLATES.has(template)) {
+  console.error(USAGE);
+  fail(`Unknown --template "${template ?? ""}". Valid templates: ${[...VALID_TEMPLATES].join(", ")}.`, 2);
+}
+
+const flags = new Set(restArgs.filter((a) => a.startsWith("--")));
+const positionals = restArgs.filter((a) => !a.startsWith("--"));
 
 const KNOWN_FLAGS = new Set(["--in-tree", "--no-pom", "--no-install"]);
 const unknownFlags = [...flags].filter((f) => !KNOWN_FLAGS.has(f));
@@ -141,7 +176,13 @@ async function copyTemplates(srcDir, baseSrc, baseDest) {
     }
     if (!entry.isFile()) continue;
     const relSrc = relative(baseSrc, srcPath);
-    const relDest = relSrc.endsWith(".tpl") ? relSrc.slice(0, -4) : relSrc;
+    // Substitute placeholders in the path too (not just the contents), so a
+    // file like `src/__PLUGIN_PASCAL_NAME__Page.tsx.tpl` lands as
+    // `src/MyPluginPage.tsx`.
+    const relDest = (relSrc.endsWith(".tpl") ? relSrc.slice(0, -4) : relSrc)
+      .replaceAll("__PLUGIN_NAME__", pluginName)
+      .replaceAll("__PLUGIN_VAR_NAME__", pluginVarName)
+      .replaceAll("__PLUGIN_PASCAL_NAME__", pluginPascalName);
     const destPath = join(baseDest, relDest);
     await mkdir(dirname(destPath), { recursive: true });
     const content = await readFile(srcPath, "utf8");
@@ -156,6 +197,13 @@ async function copyTemplates(srcDir, baseSrc, baseDest) {
 
 await mkdir(targetDir, { recursive: true });
 await copyTemplates(templatesDir, templatesDir, targetDir);
+
+// `--template app` overlays its variant files on top of the base,
+// overwriting src/index.ts + plugin.json + package.json and adding the
+// page component. The base contract test is generic and reused as-is.
+if (template === "app") {
+  await copyTemplates(templateAppDir, templateAppDir, targetDir);
+}
 
 if (includeMaven) {
   await copyTemplates(mavenTemplatesDir, mavenTemplatesDir, join(targetDir, "backend"));
