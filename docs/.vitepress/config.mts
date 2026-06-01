@@ -119,6 +119,7 @@ export default defineConfig({
         {
           text: "Plugins",
           items: [
+            { text: "Your first plugin", link: "/plugins/first-plugin" },
             { text: "Creating a plugin", link: "/plugins/creating-a-plugin" },
             { text: "Distribution", link: "/plugins/distribution" },
             { text: "Styling", link: "/plugins/styling" },
