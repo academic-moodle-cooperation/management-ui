@@ -63,6 +63,45 @@ The shell fetches that manifest, filters by `app.enabledPlugins`, and loads each
 
 This path is **dev only**. Production never reads `.local-plugins/`.
 
+### Developing a plugin that's also deployed as a JAR
+
+When you dev-mount a plugin under `.local-plugins/` **and** point the dev
+shell at a backend that already has the same plugin deployed as a JAR
+(Path 3), the shell sees *both* — and tries to load the JAR's `.mjs` from
+the dev server, which doesn't serve it. You get a duplicate in the
+marketplace and a console error like:
+
+```
+[ERROR] Failed to load plugin from /management-ui/static/plugins/<id>/<id>.mjs
+        → "Plugin URL returned HTML (404 or SPA fallback)"
+[WARN]  PluginInitializer: JAR plugin "<id>" failed to load
+```
+
+(The JAR's static assets live on the backend under its own base path, not
+on your dev server — so this error is a dev/remote mismatch, not a broken
+JAR.)
+
+To make the dev shell **use your local build and skip the JAR**, declare
+the JAR's scope in your `plugin.json`:
+
+```jsonc
+{
+  "id": "demo-local",
+  "namespace": "demo-local",
+  // The backend plugins.json lists this JAR under `scope`. Naming it here
+  // makes the dev shell skip the JAR and load your local build instead.
+  "replacesJarScopes": ["management_ui_plugin_demo_local"]
+}
+```
+
+On the next reload the console shows `Skipping JAR plugin(s) replaced by
+.local-plugins` instead of the error, and only your local copy loads.
+`replacesJarScopes` is **dev-only metadata** — it has no effect in
+production (which never reads `.local-plugins/`), so it's safe to ship in
+the manifest. Find the scope to use in the backend's
+`/management-tool/ui/config/plugins.json` (`scope` field) or the
+marketplace's "Organization (JAR)" card.
+
 ## Path 3 — JAR (production)
 
 For deployments that already ship an Opencast backend, plugins are packaged as JARs and dropped into Opencast's `deploy/` directory. The backend's `PluginBundleTracker` discovers them automatically and exposes a `plugins.json` the shell fetches at boot. This is how the Management UI itself ships — it's an Opencast plugin too.
