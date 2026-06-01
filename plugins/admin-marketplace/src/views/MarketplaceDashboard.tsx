@@ -671,9 +671,9 @@ const PluginSourceSection: React.FC<{
             />
           );
         })}
-        {jarPlugins?.map((p) => (
+        {jarPlugins?.map((p, idx) => (
           <PluginGridCard
-            key={`jar:${p.scope}`}
+            key={`jar:${p.id ?? `${p.scope}:${idx}`}`}
             name={p.name}
             displayName={p.name}
             description={`Scope: ${p.scope}`}
