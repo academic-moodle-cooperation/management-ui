@@ -188,11 +188,9 @@ Not eslint warnings, don't trip `--max-warnings 0`. Will disappear naturally whe
 
 PR-3a restructured `docs/` from 40 files to 20, rewrote the plugin-author and operations docs, and replaced `AI_DEVELOPMENT_GUIDE.md` with `architecture/overview.md`. Two pockets weren't touched and still reference removed paths internally; the references are inside files that are themselves on a retirement path, so they were left for the dedicated follow-up rather than patched in place.
 
-### 8.1 `docs/workflows/ADDING_APPS.md` + `ADDING_PACKAGES.md`
+### 8.1 ✅ Done — workflow docs consolidated
 
-The two surviving workflow docs (~1.4k lines combined) are written for a contributor adding a new top-level app or package. They still link to deleted docs (`COUPLING_ANALYSIS.md`, `templates/PACKAGE_README_TEMPLATE.md`, `AI_DEVELOPMENT_GUIDE.md`). They're not broken — adding a top-level app or package is rare and the existing prose still describes the operation — but the references are dangling. They're also excluded from the VitePress site (PR-3c) for the same reason — they shouldn't be public-facing until rewritten.
-
-- **When to revisit**: small standalone PR. Consolidate both into a single `docs/operations/extending-the-workspace.md` (~150 lines, two sections) or shrink in place. Once they're in shape, drop them from `docs/.vitepress/config.mts`'s `srcExclude` list and add them to the Operations sidebar.
+`docs/workflows/ADDING_APPS.md` + `ADDING_PACKAGES.md` (~1.4k lines, with dangling links to deleted docs — `COUPLING_ANALYSIS.md`, `PACKAGE_README_TEMPLATE.md`, `AI_DEVELOPMENT_GUIDE.md` — and stale paths like `apps/management-ui-core`) were replaced by a single concise [`extending-the-workspace.md`](extending-the-workspace.md), added to the Operations sidebar and dropped from `config.mts`'s `srcExclude`. The `docs/workflows/` directory is now gone.
 
 ### 8.3 Going public with the docs site
 
