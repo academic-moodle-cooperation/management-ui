@@ -15,10 +15,6 @@ const srcExclude = [
   "operations/open-followups.md",
   "operations/shadcn-typescript-errors.md",
 
-  // Contributor workflows — pending consolidation (see open-followups.md §8.1).
-  "workflows/ADDING_APPS.md",
-  "workflows/ADDING_PACKAGES.md",
-
   // Maven build-time config that lives under docs/ for legacy parent-POM
   // reasons. Not documentation. See open-followups.md §8.5.
   "checkstyle/**",
@@ -164,6 +160,7 @@ export default defineConfig({
           items: [
             { text: "Release & versioning", link: "/operations/release" },
             { text: "Release test protocol", link: "/operations/test-protocol" },
+            { text: "Extending the workspace", link: "/operations/extending-the-workspace" },
             { text: "CI", link: "/operations/ci" },
             { text: "Testing", link: "/operations/testing" },
           ],
