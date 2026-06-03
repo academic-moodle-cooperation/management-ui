@@ -95,12 +95,9 @@ Because of this one-way dep, the *reverse* import is impossible: `@oc-mui/router
 
 ## 4. API Extractor
 
-### 4.1 TSDoc warnings in `@oc-mui/plugin-system` (and elsewhere)
+### 4.1 ✅ Done — TSDoc warnings resolved
 
-`api-extractor run` emits non-blocking warnings for TSDoc tags like `@default`, `@param`, and `}` characters that aren't escaped (`tsdoc-malformed-inline-tag`). They're not errors and don't fail CI, but they clutter the output.
-
-- **When to revisit**: a quiet hour, or as part of a doc-quality pass before publishing.
-- **Detail**: warnings appear in any `pnpm api-check` run.
+`api-extractor run` previously emitted non-blocking `tsdoc-malformed-inline-tag` warnings. Verified resolved: `pnpm api-check` run directly (uncached) on all six API-snapshot packages (`plugin-system`, `query`, `router`, `i18n`, `store`, `ui-config`) now reports "API Extractor completed successfully" with zero warnings.
 
 ---
 
@@ -140,6 +137,13 @@ To support deep-link return after SSO we'd need to inject the attempted path int
 - Or leave it as-is — landing on the app root after SSO is acceptable for most deployments.
 
 - **When to revisit**: only if an org asks for exact-route return after SSO. Detail: SSO branch of [`packages/router/src/auth/createAuthRoutes.tsx`](../../packages/router/src/auth/createAuthRoutes.tsx).
+
+### 5.5 Auth-error screen dumps the raw GraphQL error to the user
+
+When the `currentUser` check fails against a 5xx/unreachable backend, [`apps/shell/src/components/AuthCheckError.tsx`](../../apps/shell/src/components/AuthCheckError.tsx) renders `error.message` verbatim in its `details` slot — for a GraphQL client error that's the full blob (`GraphQL Error (Code: 500): {"response":…,"request":{"query":"…MuiGetCurrentUser…"}}`). Fine for an admin debugging, but verbose and it exposes the operation/query text.
+
+- **Suggested form**: trim to a friendly one-line summary (status + "couldn't reach the server"), and move the raw message behind a collapsible "Show details" expander (or gate it on dev). Small, self-contained shell PR.
+- **When to revisit**: a UI-polish pass before the 1.0 cut. Surfaced while diagnosing a backend-down screen with the VPN disconnected.
 
 ---
 
