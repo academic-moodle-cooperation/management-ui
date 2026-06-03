@@ -4,9 +4,9 @@ import { ChevronRight, type LucideIcon } from "lucide-react";
 import * as React from "react";
 
 import { useTranslation } from "@oc-mui/i18n";
-import { Link, useRouterState } from "@oc-mui/router";
 
 import { cn } from "../../../lib/utils";
+import { useUiRouter } from "../../router-context";
 import {
   Collapsible,
   CollapsibleContent,
@@ -60,7 +60,8 @@ export function NavMain({
   customActiveStyles,
 }: NavMainProps) {
   const { t, i18n } = useTranslation();
-  const pathname = useRouterState({ select: (s) => s?.location?.pathname ?? "" });
+  const { Link, usePathname } = useUiRouter();
+  const pathname = usePathname();
 
   const translatedItems = React.useMemo(() => {
     return items.map((item) => {

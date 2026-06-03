@@ -1,6 +1,7 @@
 import { i18next } from "@oc-mui/i18n";
 import { ComponentResolver } from "@oc-mui/plugin-system";
-import { Link } from "@oc-mui/router";
+
+import { useUiRouter } from "../router-context";
 
 /**
  * Component to display when no rows match the filter criteria
@@ -19,7 +20,9 @@ const NoFilteredResults = () => (
 /**
  * Component to display when no episodes are available
  */
-const NoEpisodesAvailable = () => (
+const NoEpisodesAvailable = () => {
+  const { Link } = useUiRouter();
+  return (
   <div className="text-center my-16 flex flex-col items-center">
     <Link to={"/upload"} title="Upload">
       <svg
@@ -40,7 +43,8 @@ const NoEpisodesAvailable = () => (
       <p className="text-sm text-muted-foreground">{i18next.t("episodes:noVideos")}</p>
     </Link>
   </div>
-);
+  );
+};
 
 /**
  * Component to display when no series are available

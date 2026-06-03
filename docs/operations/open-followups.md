@@ -77,19 +77,11 @@ Today the boundaries rule allows any `package` to import from any other `package
 - **When to revisit**: after Phase 6 namespace rename; mechanising this needs the same boundaries-elements infrastructure with `capture` rules to express layer order.
 - **Detail**: comment block in [`packages/eslint-config/base.js`](../../packages/eslint-config/base.js).
 
-### 3.5 Untangle the `@oc-mui/ui` → `@oc-mui/router` dependency
+### 3.5 ✅ `@oc-mui/ui` is now router-free — residual: optional `@oc-mui/auth` split
 
-`@oc-mui/ui` depends on `@oc-mui/router` today because two of its components need router primitives — a layering inversion (UI primitives should sit *below* routing, not above it):
+The `@oc-mui/ui → @oc-mui/router` inversion is **resolved**. `@oc-mui/ui` no longer depends on `@oc-mui/router`: its three router-aware components (`appshell/components/nav-main.tsx`, `datatable/{data-table-body,data-table-empty-state}.tsx`) now read a `UiRouterProvider` context ([`packages/ui/src/components/router-context.tsx`](../../packages/ui/src/components/router-context.tsx)) that the shell fills with `@oc-mui/router`'s `Link` + a `useRouterState`-derived pathname. The context ships plain-`<a>` / empty-path defaults, so the components still render without a provider (tests, standalone). "Moving them out" wasn't viable — they're rendered by higher-level `@oc-mui/ui` components (`app-sidebar`, `data-table`), so the router import would just cascade up the tree.
 
-- **Router-aware components**: `appshell/components/nav-main.tsx` (`Link`, `useRouterState`) and `datatable/{data-table-body,data-table-empty-state}.tsx` (`useRouter`, `Link`) legitimately need router primitives.
-
-(A third arm — the `auth-status/*` demo components importing `useAuth` / `useAuthActions` — was removed with the dead-UI cleanup, so what remains is just the router-aware components above. The auth split into a dedicated `@oc-mui/auth` package is still worthwhile for `@oc-mui/router`'s own internal layering.)
-
-Because of this one-way dep, the *reverse* import is impossible: `@oc-mui/router` can't pull `<ErrorPage>` / `<AppLoader>` back from `@oc-mui/ui` without forming a cycle. We worked around it in PR #146 via dependency injection (`AppProtection` takes `redirectingComponent` / `unauthenticatedFallback` props that the shell fills with `@oc-mui/ui` components) — fine for one case, but it'll keep biting.
-
-- **Proposed shape**: split `@oc-mui/router` into `@oc-mui/auth` (auth context, `AuthInitializer`, `useAuthActions`, `useAuth`) + `@oc-mui/router` (routing only). Move `nav-main` + the router-aware datatable bits out of `@oc-mui/ui` into `@oc-mui/router` (or a thin `@oc-mui/router-ui`). Then `@oc-mui/ui` is router-free and the dependency arrow only points one way.
-- **Scope**: ~1.5–2h. Touches every plugin/app/test that imports those components or the auth hooks from `@oc-mui/ui` / `@oc-mui/router`. Best done as its own PR (unrelated to any feature work) with a careful `pnpm verify` pass.
-- **When to revisit**: before or shortly after 1.0 — it's pure internal architecture, no consumer-visible change, so it can land any time the monorepo is otherwise quiet.
+**Residual (optional, low priority):** split auth context (`AuthInitializer`, `useAuth`, `useAuthActions`) out of `@oc-mui/router` into a dedicated `@oc-mui/auth` package — purely for `@oc-mui/router`'s own internal layering. No longer blocking anything now that the cycle is broken (`@oc-mui/router` could already import `@oc-mui/ui` if it wanted, e.g. to drop the PR-#146 DI workaround in `AppProtection`).
 
 ---
 

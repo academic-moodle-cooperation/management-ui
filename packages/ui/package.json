@@ -48,7 +48,6 @@
     "@oc-mui/i18n": "workspace:*",
     "@oc-mui/plugin-system": "workspace:*",
     "@oc-mui/query": "workspace:*",
-    "@oc-mui/router": "workspace:*",
     "@oc-mui/ui-config": "workspace:*",
     "@oc-mui/utils": "workspace:*",
     "class-variance-authority": "^0.7.1",

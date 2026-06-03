@@ -1346,9 +1346,6 @@ importers:
       '@oc-mui/query':
         specifier: workspace:*
         version: link:../query
-      '@oc-mui/router':
-        specifier: workspace:*
-        version: link:../router
       '@oc-mui/ui-config':
         specifier: workspace:*
         version: link:../ui-config

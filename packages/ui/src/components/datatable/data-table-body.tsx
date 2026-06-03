@@ -1,8 +1,6 @@
 import { flexRender } from "@tanstack/react-table";
-import { useMemo } from "react";
 
-import { useRouter } from "@oc-mui/router";
-
+import { useUiRouter } from "../router-context";
 import { TableBody, TableCell, TableRow } from "../ui";
 
 import { EmptyStateContent } from "./data-table-empty-state";
@@ -28,10 +26,9 @@ function DataTableBody<TData extends Record<string, unknown>, TValue>({
   onClickRowAction,
   queryFilter,
 }: DataTableBodyProps<TData, TValue>) {
-  const router = useRouter();
-
-  // Get current path for empty state detection
-  const pathname = useMemo(() => router.parseLocation().pathname, [router]);
+  // Current path for empty-state detection (host-injected; see router-context).
+  const { usePathname } = useUiRouter();
+  const pathname = usePathname();
 
   return (
     <TableBody className={className}>
