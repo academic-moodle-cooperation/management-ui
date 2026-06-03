@@ -77,19 +77,14 @@ Today the boundaries rule allows any `package` to import from any other `package
 - **When to revisit**: after Phase 6 namespace rename; mechanising this needs the same boundaries-elements infrastructure with `capture` rules to express layer order.
 - **Detail**: comment block in [`packages/eslint-config/base.js`](../../packages/eslint-config/base.js).
 
-### 3.5 Untangle the `@oc-mui/ui` → `@oc-mui/router` dependency
+### 3.5 ✅ `@oc-mui/ui` is now router-free — residual: optional `@oc-mui/auth` split
 
-`@oc-mui/ui` depends on `@oc-mui/router` today because two of its components need router primitives — a layering inversion (UI primitives should sit *below* routing, not above it):
+The `@oc-mui/ui → @oc-mui/router` inversion is **resolved** (PR #180). `@oc-mui/ui` no longer depends on `@oc-mui/router`. Two distinct fixes, by component:
 
-- **Router-aware components**: `appshell/components/nav-main.tsx` (`Link`, `useRouterState`) and `datatable/{data-table-body,data-table-empty-state}.tsx` (`useRouter`, `Link`) legitimately need router primitives.
+- **Data table** — fully decoupled (not just DI'd). The empty state used to branch on `pathname` and hardcode app routes (`/upload`, `/episodes`, `/series`) + a `<Link>`. It now takes an additive `emptyState` prop threaded `MUITable → DataTable → DataTableBody`; the owning plugins provide it: `core-episodes/components/EpisodesEmptyState.tsx` (real `@oc-mui/router` Link) and `core-series/components/SeriesEmptyState.tsx` (keeps the `series:empty-state` `ComponentResolver` override hook). `data-table-{body,empty-state}` now hold **zero** routing/app knowledge.
+- **`appshell/components/nav-main.tsx`** — keeps DI via the `UiRouterProvider` context ([`packages/ui/src/components/router-context.tsx`](../../packages/ui/src/components/router-context.tsx)), which the shell fills with `@oc-mui/router`'s `Link` + a `useRouterState`-derived pathname (plain-`<a>` / empty-path defaults so it still renders provider-less in tests). A nav menu intrinsically needs routing, and it leans on TanStack's `Link` for basepath-aware active matching, so component injection (à la MUI's `LinkComponent`) is the right tool — re-implementing the matching via `navigate`/`useHref` was considered and rejected (regression risk for marginal gain). This is now the **only** consumer of the context DI.
 
-(A third arm — the `auth-status/*` demo components importing `useAuth` / `useAuthActions` — was removed with the dead-UI cleanup, so what remains is just the router-aware components above. The auth split into a dedicated `@oc-mui/auth` package is still worthwhile for `@oc-mui/router`'s own internal layering.)
-
-Because of this one-way dep, the *reverse* import is impossible: `@oc-mui/router` can't pull `<ErrorPage>` / `<AppLoader>` back from `@oc-mui/ui` without forming a cycle. We worked around it in PR #146 via dependency injection (`AppProtection` takes `redirectingComponent` / `unauthenticatedFallback` props that the shell fills with `@oc-mui/ui` components) — fine for one case, but it'll keep biting.
-
-- **Proposed shape**: split `@oc-mui/router` into `@oc-mui/auth` (auth context, `AuthInitializer`, `useAuthActions`, `useAuth`) + `@oc-mui/router` (routing only). Move `nav-main` + the router-aware datatable bits out of `@oc-mui/ui` into `@oc-mui/router` (or a thin `@oc-mui/router-ui`). Then `@oc-mui/ui` is router-free and the dependency arrow only points one way.
-- **Scope**: ~1.5–2h. Touches every plugin/app/test that imports those components or the auth hooks from `@oc-mui/ui` / `@oc-mui/router`. Best done as its own PR (unrelated to any feature work) with a careful `pnpm verify` pass.
-- **When to revisit**: before or shortly after 1.0 — it's pure internal architecture, no consumer-visible change, so it can land any time the monorepo is otherwise quiet.
+**Residual (optional, low priority):** split auth context (`AuthInitializer`, `useAuth`, `useAuthActions`) out of `@oc-mui/router` into a dedicated `@oc-mui/auth` package — purely for `@oc-mui/router`'s own internal layering. No longer blocking anything now that the cycle is broken (`@oc-mui/router` could already import `@oc-mui/ui` if it wanted, e.g. to drop the PR-#146 DI workaround in `AppProtection`).
 
 ---
 
@@ -144,6 +139,18 @@ When the `currentUser` check fails against a 5xx/unreachable backend, [`apps/she
 
 - **Suggested form**: trim to a friendly one-line summary (status + "couldn't reach the server"), and move the raw message behind a collapsible "Show details" expander (or gate it on dev). Small, self-contained shell PR.
 - **When to revisit**: a UI-polish pass before the 1.0 cut. Surfaced while diagnosing a backend-down screen with the VPN disconnected.
+
+### 5.6 A misbehaving remote plugin crashes the whole shell on boot
+
+**Symptom.** Booting the shell against a live backend throws `TypeError: Cannot read properties of undefined (reading 'length')` from inside a remote-loaded plugin blob (a `<L>` component in the dev console), and the app renders the error boundary instead of the UI. The console also shows `Warning: The following error wasn't caught by any route!` — so the failure is **not** contained to the offending plugin's route; it takes down the boot.
+
+**Scope / not a regression.** Observed only in the **main-repo checkout**, which carries `.local-plugins/univie/` plus the bundled community example plugins (`poll-plugin`, `video-playlists-plugin`, `series-create-acl-editor-plugin`, …). These load against the klingee3 backend's `enabledPlugins` and one of them reads `.length` on an undefined value. It **reproduces on the clean `release/oss-1.0` base** (checked out without any in-flight branch), so it is unrelated to PR #180 / §3.5. A fresh clone that lacks those `.local-plugins/` boots fine — which is why it hasn't surfaced elsewhere.
+
+**Two follow-up dimensions:**
+1. **Find & fix the offending plugin.** Narrow it down by bisecting `enabledPlugins` (or watching which plugin's blob is in the `<L>` stack frame) — prime suspects are the `univie:*` org plugin and the community fixtures. Likely a data-shape assumption that holds offline but breaks against real backend data (an array that's `undefined` until loaded).
+2. **Robustness (the more important one).** A single third-party plugin throwing during render should be *isolated*, not fatal to the shell. The remote-plugin render path needs a per-plugin error boundary so a broken plugin degrades to a placeholder rather than an app-wide crash — this matters once external orgs ship their own plugins. Related: the loader already logs `success:false` per plugin (PluginInitializer), but rendering isn't guarded the same way.
+
+- **When to revisit**: dimension 2 before the public plugin ecosystem opens up; dimension 1 whenever the univie/community fixtures are next touched. Repro: `VITE_PROXY_TARGET=<backend> pnpm --filter shell dev` in a checkout that has `.local-plugins/univie/`.
 
 ---
 

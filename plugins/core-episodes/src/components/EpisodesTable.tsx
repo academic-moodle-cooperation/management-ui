@@ -29,6 +29,7 @@ import {
 import { useEpisodesTable } from "../hooks";
 import { useSidebarStore } from "../stores/sidebarStore";
 
+import { EpisodesEmptyState } from "./EpisodesEmptyState";
 import { EpisodesTableSidebar } from "./EpisodesTableSidebar";
 
 import type { MouseEvent } from "react";
@@ -283,6 +284,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
           columnVisibility={columnVisibility}
           setColumnVisibility={setColumnVisibility}
           designButton={layoutToggleButton}
+          emptyState={<EpisodesEmptyState />}
         />
       </div>
 

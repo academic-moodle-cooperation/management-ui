@@ -7,8 +7,13 @@ import { loadNamespace, useTranslation } from "@oc-mui/i18n";
 import { PluginProvider } from "@oc-mui/plugin-system";
 import { AppProviders } from "@oc-mui/providers";
 import { useAppConfig, QueryProvider } from "@oc-mui/query";
-import { type AnyRouter } from "@oc-mui/router";
-import { AppLoader, ThemeModeProvider } from "@oc-mui/ui/components";
+import { type AnyRouter, Link as RouterLink, useRouterState } from "@oc-mui/router";
+import {
+  AppLoader,
+  ThemeModeProvider,
+  UiRouterProvider,
+  type UiRouterPrimitives,
+} from "@oc-mui/ui/components";
 
 import { ConfigLoadError } from "./components/ConfigLoadError";
 import { DynamicRouterProvider } from "./components/DynamicRouterProvider";
@@ -17,6 +22,18 @@ import { exposeSharedModules } from "./shared/sharedModules";
 
 // Expose shared modules early for community plugins
 exposeSharedModules();
+
+// Router primitives injected into @oc-mui/ui's router-aware components
+// (NavMain, the data table) so @oc-mui/ui itself stays router-free — see
+// @oc-mui/ui's router-context. Filled with @oc-mui/router's real Link and a
+// useRouterState-derived pathname; only invoked deep inside the RouterProvider.
+function useRouterPathname() {
+  return useRouterState({ select: (s) => s?.location?.pathname ?? "" });
+}
+const uiRouterPrimitives: UiRouterPrimitives = {
+  Link: RouterLink as unknown as UiRouterPrimitives["Link"],
+  usePathname: useRouterPathname,
+};
 
 const AppContent = () => {
   const { i18n } = useTranslation();
@@ -142,7 +159,9 @@ export const AppContainer = () => {
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeModeProvider>
-      <AppContainer />
+      <UiRouterProvider value={uiRouterPrimitives}>
+        <AppContainer />
+      </UiRouterProvider>
     </ThemeModeProvider>
   </React.StrictMode>,
 );

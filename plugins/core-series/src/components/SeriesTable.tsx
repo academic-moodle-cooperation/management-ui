@@ -13,6 +13,7 @@ import { seriesConfig } from "../config";
 import { useSeriesTable, type SeriesUpdateData } from "../hooks";
 import { useSidebarStore } from "../stores/sidebarStore";
 
+import { SeriesEmptyState } from "./SeriesEmptyState";
 import { SeriesTableSidebar } from "./SeriesTableSidebar";
 
 import type { ComponentType, MouseEvent } from "react";
@@ -272,6 +273,7 @@ const SeriesTable = () => {
           columnVisibility={columnVisibility}
           setColumnVisibility={setColumnVisibility}
           toolbarEndButtons={toolbarEndButtons}
+          emptyState={<SeriesEmptyState />}
         />
       </div>
 
