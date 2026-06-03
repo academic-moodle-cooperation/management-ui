@@ -35,6 +35,7 @@ function MUITable<TData extends Record<string, unknown>, TValue>({
   setColumnVisibility,
   designButton,
   toolbarEndButtons,
+  emptyState,
 }: MUITableProps<TData, TValue>) {
   const { i18n } = useI18n();
 
@@ -71,6 +72,7 @@ function MUITable<TData extends Record<string, unknown>, TValue>({
             designButton={designButton}
             toolbarEndButtons={toolbarEndButtons}
             refetch={refetch}
+            emptyState={emptyState}
           />
         </Container>
       </Container>

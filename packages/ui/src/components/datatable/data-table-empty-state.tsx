@@ -1,10 +1,11 @@
 import { i18next } from "@oc-mui/i18n";
-import { ComponentResolver } from "@oc-mui/plugin-system";
 
-import { useUiRouter } from "../router-context";
+import type { ReactNode } from "react";
 
 /**
- * Component to display when no rows match the filter criteria
+ * Shown when an active search/filter yields no matches. This case is generic —
+ * it applies to any table regardless of what it lists — so it stays in
+ * @oc-mui/ui.
  */
 const NoFilteredResults = () => (
   <div className="text-center my-16 flex flex-col items-center">
@@ -18,89 +19,30 @@ const NoFilteredResults = () => (
 );
 
 /**
- * Component to display when no episodes are available
- */
-const NoEpisodesAvailable = () => {
-  const { Link } = useUiRouter();
-  return (
-  <div className="text-center my-16 flex flex-col items-center">
-    <Link to={"/upload"} title="Upload">
-      <svg
-        className="w-12 h-12 mx-auto text-muted-foreground"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          vectorEffect="non-scaling-stroke"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-        />
-      </svg>
-      <p className="text-sm text-muted-foreground">{i18next.t("episodes:noVideos")}</p>
-    </Link>
-  </div>
-  );
-};
-
-/**
- * Component to display when no series are available
- */
-const NoSeriesAvailable = () => (
-  <div className="text-center my-16 flex flex-col items-center">
-    <svg
-      className="w-12 h-12 mx-auto text-gray-400"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      aria-hidden="true"
-    >
-      <path
-        vectorEffect="non-scaling-stroke"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-      />
-    </svg>
-    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-      {i18next.t("series:noSeriesAvailable.title")}
-    </h4>
-  </div>
-);
-
-/**
- * Component to render the empty state based on path and filter state
+ * Renders a data table's empty state.
+ *
+ * - With an active `queryFilter`, shows a generic "no matches" message.
+ * - Otherwise renders the `emptyState` supplied by the feature that owns the
+ *   table (e.g. the episodes/series plugins pass their own route-aware empty
+ *   state), falling back to a plain "no results" line.
+ *
+ * @oc-mui/ui deliberately holds no knowledge of specific app routes here — that
+ * lives with the plugin that owns the table, which keeps this package free of
+ * any router dependency.
  */
 const EmptyStateContent = ({
   queryFilter,
-  pathname,
+  emptyState,
 }: {
   queryFilter?: string;
-  pathname: string;
+  emptyState?: ReactNode;
 }) => {
   if (queryFilter) {
     return <NoFilteredResults />;
   }
 
-  const baseUrl = import.meta.env.BASE_URL;
-
-  if (pathname.startsWith(`${baseUrl}/episodes`)) {
-    return <NoEpisodesAvailable />;
-  }
-
-  if (pathname.startsWith(`${baseUrl}/series`)) {
-    return (
-      <ComponentResolver
-        componentType="series:empty-state"
-        defaultComponent={() => <NoSeriesAvailable />}
-        componentProps={{}}
-        loadingBehavior="none"
-      />
-    );
+  if (emptyState !== undefined) {
+    return <>{emptyState}</>;
   }
 
   return <div>{i18next.t("common:noResults")}</div>;

@@ -1,11 +1,11 @@
 import { flexRender } from "@tanstack/react-table";
 
-import { useUiRouter } from "../router-context";
 import { TableBody, TableCell, TableRow } from "../ui";
 
 import { EmptyStateContent } from "./data-table-empty-state";
 
 import type { ColumnDef, Row, Table } from "@tanstack/react-table";
+import type { ReactNode } from "react";
 
 interface DataTableBodyProps<TData, TValue> {
   table: Table<TData>;
@@ -16,6 +16,8 @@ interface DataTableBodyProps<TData, TValue> {
     | ((event: React.MouseEvent<HTMLTableRowElement>, row: Row<TData>) => void)
     | undefined;
   queryFilter?: string | undefined;
+  /** Empty state rendered when there are no rows and no active filter. */
+  emptyState?: ReactNode | undefined;
 }
 
 function DataTableBody<TData extends Record<string, unknown>, TValue>({
@@ -25,11 +27,8 @@ function DataTableBody<TData extends Record<string, unknown>, TValue>({
   selectedId,
   onClickRowAction,
   queryFilter,
+  emptyState,
 }: DataTableBodyProps<TData, TValue>) {
-  // Current path for empty-state detection (host-injected; see router-context).
-  const { usePathname } = useUiRouter();
-  const pathname = usePathname();
-
   return (
     <TableBody className={className}>
       {table.getRowModel().rows?.length ? (
@@ -60,7 +59,7 @@ function DataTableBody<TData extends Record<string, unknown>, TValue>({
           <TableCell colSpan={columns.length} className="h-24 text-center">
             <EmptyStateContent
               {...(queryFilter !== undefined && { queryFilter })}
-              pathname={pathname}
+              {...(emptyState !== undefined && { emptyState })}
             />
           </TableCell>
         </TableRow>

@@ -71,6 +71,12 @@ export interface DataTableProps<TData, TValue> {
   designButton?: React.ReactNode;
   /** Custom buttons rendered at toolbar end (right of reload) */
   toolbarEndButtons?: React.ReactNode;
+  /**
+   * Empty state shown when the table has no rows and no active filter. Supplied
+   * by the feature that owns the table so @oc-mui/ui needs no knowledge of app
+   * routes; falls back to a generic message when omitted.
+   */
+  emptyState?: React.ReactNode;
 }
 
 /**
@@ -98,6 +104,7 @@ function DataTable<TData extends Record<string, unknown>, TValue>({
   refetch,
   designButton,
   toolbarEndButtons,
+  emptyState,
 }: DataTableProps<TData, TValue>) {
   // Initialize table instance - hooks must be called before any early returns
   const table = useReactTable({
@@ -170,6 +177,7 @@ function DataTable<TData extends Record<string, unknown>, TValue>({
             selectedId={selectedId}
             onClickRowAction={onClickRowAction}
             queryFilter={queryFilter}
+            emptyState={emptyState}
           />
         </Table>
       </div>
