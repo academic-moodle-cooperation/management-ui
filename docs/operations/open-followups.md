@@ -79,25 +79,17 @@ Today the boundaries rule allows any `package` to import from any other `package
 
 ### 3.5 Untangle the `@oc-mui/ui` → `@oc-mui/router` dependency
 
-`@oc-mui/ui` depends on `@oc-mui/router` for three reasons today, which is a layering inversion (UI primitives should sit *below* routing, not above it):
+`@oc-mui/ui` depends on `@oc-mui/router` today because two of its components need router primitives — a layering inversion (UI primitives should sit *below* routing, not above it):
 
-- **Auth context**: `auth-status/{AuthStatus,AuthDebug,AuthMethodsDemo}.tsx` import `useAuth` / `useAuthActions`, which live in `packages/router/src/auth/`. Auth state isn't really routing — it's a cross-cutting concern that arguably belongs in its own `@oc-mui/auth` package (or `@oc-mui/query`, which already owns the user fetch).
 - **Router-aware components**: `appshell/components/nav-main.tsx` (`Link`, `useRouterState`) and `datatable/{data-table-body,data-table-empty-state}.tsx` (`useRouter`, `Link`) legitimately need router primitives.
+
+(A third arm — the `auth-status/*` demo components importing `useAuth` / `useAuthActions` — was removed with the dead-UI cleanup, so what remains is just the router-aware components above. The auth split into a dedicated `@oc-mui/auth` package is still worthwhile for `@oc-mui/router`'s own internal layering.)
 
 Because of this one-way dep, the *reverse* import is impossible: `@oc-mui/router` can't pull `<ErrorPage>` / `<AppLoader>` back from `@oc-mui/ui` without forming a cycle. We worked around it in PR #146 via dependency injection (`AppProtection` takes `redirectingComponent` / `unauthenticatedFallback` props that the shell fills with `@oc-mui/ui` components) — fine for one case, but it'll keep biting.
 
 - **Proposed shape**: split `@oc-mui/router` into `@oc-mui/auth` (auth context, `AuthInitializer`, `useAuthActions`, `useAuth`) + `@oc-mui/router` (routing only). Move `nav-main` + the router-aware datatable bits out of `@oc-mui/ui` into `@oc-mui/router` (or a thin `@oc-mui/router-ui`). Then `@oc-mui/ui` is router-free and the dependency arrow only points one way.
 - **Scope**: ~1.5–2h. Touches every plugin/app/test that imports those components or the auth hooks from `@oc-mui/ui` / `@oc-mui/router`. Best done as its own PR (unrelated to any feature work) with a careful `pnpm verify` pass.
 - **When to revisit**: before or shortly after 1.0 — it's pure internal architecture, no consumer-visible change, so it can land any time the monorepo is otherwise quiet.
-
-### 3.6 Review unshipped demo/template UI components for removal
-
-Surfaced during the i18n sweep: these `@oc-mui/ui` components are **exported but rendered nowhere** in the shipped app (confirmed by grep), so they were deliberately *not* translated.
-
-- `appshell/components/nav-projects.tsx` + `team-switcher.tsx` — shadcn sidebar boilerplate with hardcoded "Projects" / "View Project" / "Teams" / "Add team" content. Almost certainly removable.
-- `auth-status/{AuthStatus,AuthMethodsDemo,AuthDebug}.tsx` — auth debug/demo scaffolding. These are *also* the components that drive the `@oc-mui/ui → @oc-mui/router` dependency inversion in §3.5, so removing them shrinks that tangle too.
-
-**Decision needed:** keep or delete. If kept as reusable primitives for plugin authors, they must be i18n'd (re-add to the sweep) and documented. If not, delete them. Recommended: **delete unless a concrete consumer is identified** — dead exported UI is a maintenance and a11y/i18n liability for an OSS surface.
 
 ---
 
