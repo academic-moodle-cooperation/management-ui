@@ -24,6 +24,7 @@ import {
   loadLocalPluginsManifest,
   getLocalPluginFullUrl,
 } from "../services/localPluginsManifest";
+import { passesSharedDependencyGate } from "../services/sharedDepsGate";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Plugin Override Types & Helpers
@@ -330,12 +331,16 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
               phase: 1 | 2,
             ) => {
               if (entries.length === 0) return;
-              registerPluginLocales(entries);
+              // Shared-runtime gate: refuse JAR plugins that target an
+              // incompatible shared-dependency major (see sharedDepsGate).
+              const loadable = entries.filter(passesSharedDependencyGate);
+              if (loadable.length === 0) return;
+              registerPluginLocales(loadable);
               logger.info(`PluginInitializer: Loading JAR plugin(s) from backend (phase ${phase})`, {
-                count: entries.length,
+                count: loadable.length,
               });
               const results = await Promise.allSettled(
-                entries.map((jarPlugin) =>
+                loadable.map((jarPlugin) =>
                   loadAndRegister(jarPlugin.url, manager, {
                     ...(jarPlugin.cssUrl ? { cssUrl: jarPlugin.cssUrl } : {}),
                     skipUrlValidation: true,
@@ -344,7 +349,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                 ),
               );
               results.forEach((result, index) => {
-                const jarPlugin = entries[index];
+                const jarPlugin = loadable[index];
                 if (!jarPlugin) return;
                 if (result.status === "rejected") {
                   logger.error(
@@ -399,8 +404,11 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           } else {
             const loadBatch = async (entries: typeof localManifest) => {
               if (entries.length === 0) return;
+              // Shared-runtime gate (mirrors the JAR + marketplace paths).
+              const loadable = entries.filter(passesSharedDependencyGate);
+              if (loadable.length === 0) return;
               const results = await Promise.allSettled(
-                entries.map((entry) =>
+                loadable.map((entry) =>
                   loadAndRegister(getLocalPluginFullUrl(entry), manager, {
                     ...(entry.cssUrl ? { cssUrl: entry.cssUrl } : {}),
                     skipUrlValidation: true,
@@ -409,7 +417,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
                 ),
               );
               results.forEach((result, index) => {
-                const entry = entries[index];
+                const entry = loadable[index];
                 if (!entry) return;
                 if (result.status === "rejected") {
                   logger.error(

@@ -181,7 +181,7 @@ Declare every shared dep the plugin actually imports in `workspaceDependencies` 
 }
 ```
 
-Compatibility is checked at load time by `checkSharedDependencyCompatibility` (exported from `@oc-mui/plugin-system`). A plugin whose declared major doesn't match the host's is rejected by the loader with a clear `"Plugin requires <name> major X, host provides Y"` error.
+Compatibility is checked at load time by `checkSharedDependencyCompatibility` (exported from `@oc-mui/plugin-system`). A plugin whose declared major doesn't match the host's is rejected by the loader with a clear `"Plugin requires <name> major X, host provides Y"` error. All three loader paths funnel through this one function: the **marketplace** (via `securityService.checkVersionCompatibility`, which now delegates to it), the **`.local-plugins/` dev** path, and the **JAR** path (both via the shell's `passesSharedDependencyGate` in `PluginInitializer`). A plugin that declares no `workspaceDependencies` is not gated.
 
 ### Versioning rules
 
@@ -195,9 +195,13 @@ Removing a name has the same effect as bumping its major from the plugin's persp
 - The exact patch/minor of any shared dep beyond the major. Hosts may roll forward within a major and plugins must not pin to a specific patch.
 - Other packages the host happens to use internally. The contract list is exhaustive — `lodash`, `date-fns`, `axios`, etc. are *not* shared and a plugin that needs them must bundle them.
 
-### Note on the existing marketplace check
+### Enforcement across the three loader paths
 
-The marketplace's `securityService.checkVersionCompatibility` (in `plugins/admin-marketplace/`) implements an older, marketplace-scoped version of this check that reads from a `RegistryPlugin` shape rather than from `plugin.json`. The two will converge over time; `checkSharedDependencyCompatibility` is the new canonical implementation, and the JAR loader and `.local-plugins/` discovery path don't currently enforce shared-deps compatibility at all (tracked as a follow-up in [`operations/open-followups.md`](../operations/open-followups.md#53-shared-npm-deps-version-locking)).
+All loader paths now share the canonical `checkSharedDependencyCompatibility`:
+
+- **Marketplace** — `securityService.checkVersionCompatibility` (in `plugins/admin-marketplace/`) is now a thin adapter over the canonical function, mapping its result to the marketplace's `{ valid, error, warnings }` shape. Both the install-time load gate and the UI compatibility badge go through it, so they can't diverge.
+- **`.local-plugins/` dev** — the dev server surfaces each plugin's `workspaceDependencies` (read from `plugin.json`) into `/local-plugins/manifest.json`, and the shell gates each entry via `passesSharedDependencyGate` before loading.
+- **JAR** — the shell applies the same gate to entries from the backend's `plugins.json`. The gate is a no-op until the backend includes `workspaceDependencies` per plugin in `plugins.json` (the shell types are forward-compatible and read it when present); that backend step is tracked in [`operations/open-followups.md` §5.3](../operations/open-followups.md#53-shared-npm-deps-version-locking).
 
 ## 6. GraphQL Operation Naming
 

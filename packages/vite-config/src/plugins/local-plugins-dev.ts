@@ -39,6 +39,8 @@ interface LocalPluginEntry {
   localesUrl?: string;
   /** i18n namespaces available for this plugin */
   i18nNamespaces?: string[];
+  /** Shared-runtime majors the plugin targets (from plugin.json `workspaceDependencies`). */
+  workspaceDependencies?: Record<string, string>;
 }
 
 function discoverPluginLocaleNamespaces(pluginDir: string): string[] {
@@ -95,6 +97,12 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
     let displayName = dirent.name;
     let defaultId = dirent.name;
     let replacesJarScopes: string[] | undefined;
+    let workspaceDependencies: Record<string, string> | undefined;
+
+    const readWorkspaceDeps = (value: unknown): Record<string, string> | undefined =>
+      value && typeof value === "object" && !Array.isArray(value)
+        ? (value as Record<string, string>)
+        : undefined;
 
     // Read plugin.json (canonical manifest), fall back to package.json pluginMetadata
     const pluginJsonPath = path.join(pluginDir, "plugin.json");
@@ -106,6 +114,7 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
         if (manifest.id) defaultId = manifest.id;
         if (Array.isArray(manifest.replacesJarScopes))
           replacesJarScopes = manifest.replacesJarScopes;
+        workspaceDependencies = readWorkspaceDeps(manifest.workspaceDependencies);
       } catch {
         // ignore
       }
@@ -117,6 +126,7 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
         if (meta?.id) defaultId = meta.id;
         if (Array.isArray(meta?.replacesJarScopes))
           replacesJarScopes = meta.replacesJarScopes;
+        workspaceDependencies = readWorkspaceDeps(meta?.workspaceDependencies);
       } catch {
         // ignore
       }
@@ -143,6 +153,7 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
         ...(replacesJarScopes?.length ? { replacesJarScopes } : {}),
         ...(localesUrl ? { localesUrl } : {}),
         ...(i18nNamespaces.length > 0 ? { i18nNamespaces } : {}),
+        ...(workspaceDependencies ? { workspaceDependencies } : {}),
       });
     }
   }

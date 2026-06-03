@@ -54,3 +54,31 @@ describe("RemoteLoader.loadAndRegister apiVersion gate", () => {
     expect(result.error).toMatch(/not a valid semver/);
   });
 });
+
+describe("RemoteLoader.loadAndRegister shared-dependency gate", () => {
+  // The marketplace gate now flows through `checkSharedDependencyCompatibility`
+  // (the canonical checker shared with the JAR and .local-plugins loaders),
+  // adapted via `securityService.checkVersionCompatibility`. As with the
+  // apiVersion gate, these cases reject before the network call.
+  it("rejects a plugin whose workspaceDependencies target an incompatible major", async () => {
+    const result = await RemoteLoader.loadAndRegister(baseMetadata.url, fakeManager, {
+      ...baseMetadata,
+      // Host ships @oc-mui/ui major 1; a plugin asking for major 2 is rejected.
+      workspaceDependencies: { "@oc-mui/ui": "^2.0.0" },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/@oc-mui\/ui/);
+    expect(result.error).toMatch(/major 2/);
+  });
+
+  it("rejects a plugin that declares an unparseable shared-dependency range", async () => {
+    const result = await RemoteLoader.loadAndRegister(baseMetadata.url, fakeManager, {
+      ...baseMetadata,
+      workspaceDependencies: { "@oc-mui/ui": "not-a-range" },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/unparseable/i);
+  });
+});
