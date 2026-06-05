@@ -131,11 +131,54 @@
     "closeSidebar": "Seitenleiste schließen"
   },
   "landing": {
-    "update": "Neu!",
-    "newVersion": "Neue Version verfügbar",
-    "welcome": "Willkommen bei der",
-    "tagline": "Die Admin-UI Ihrer Träume ✨",
-    "description": "Verwalten und organisieren Sie Ihre Audio- und Videoinhalte mühelos. Passen Sie die Benutzeroberfläche und ihre Funktionen an Ihre Bedürfnisse an, gestalten Sie das Erscheinungsbild und erweitern Sie sie. Entwickelt mit Fokus auf Flexibilität und langfristiges Wachstum."
+    "getStarted": "Erste Schritte",
+    "viewOnGithub": "Auf GitHub ansehen",
+    "starOnGithub": "Stern auf GitHub",
+    "tabs": {
+      "about": "Über",
+      "operations": "Betrieb",
+      "developers": "Entwickler"
+    },
+    "about": {
+      "badgeNew": "Neu",
+      "badgeFrozen": "Verträge für die gesamte 1.x-Linie eingefroren",
+      "lead": "Eine Plugin-first-Verwaltungsoberfläche für Opencast.",
+      "tagline": "Eine schlanke Shell kümmert sich um Routing, Auth und Layout. Alles, was du siehst — Seiten, Navigation, sogar das Theme — ist ein Plugin, das du hinzufügen, austauschen oder selbst bauen kannst.",
+      "checks": {
+        "pluginFirst": "Plugin-first",
+        "frozenContracts": "Eingefrorene Verträge",
+        "semanticTheming": "Semantisches Theming"
+      },
+      "links": {
+        "docs": "Dokumentation",
+        "help": "Hilfe & Support",
+        "whatsNew": "Was ist neu"
+      }
+    },
+    "operations": {
+      "eyebrow": "Für Betreiber",
+      "headline": "Erweitere die Oberfläche —",
+      "headlineEm": "ohne sie zu forken.",
+      "tagline": "Füge Funktionen hinzu, tausche Themes aus und passe die Konfiguration über Plugins an — als JAR ausgeliefert, über ein CDN bereitgestellt oder lokal eingebunden. Die Runtime-Verträge sind über die gesamte 1.x-Linie eingefroren, sodass Upgrades langweilig bleiben.",
+      "readDocs": "Doku lesen",
+      "resources": "Ressourcen",
+      "links": {
+        "docs": "Dokumentation",
+        "config": "Konfigurationsguide",
+        "changelog": "Changelog"
+      }
+    },
+    "developers": {
+      "eyebrow": "Für Entwickler",
+      "headline": "Jede sichtbare Funktion ist ein Plugin.",
+      "tagline": "Erstelle ein Plugin mit einem einzigen Befehl, binde es zur Entwicklungszeit ein und liefere es als JAR oder über ein beliebiges CDN aus. Der Runtime-Vertrag ändert sich innerhalb von 1.x nicht unter dir.",
+      "contribute": "Mitmachen",
+      "links": {
+        "docs": "Dokumentation",
+        "contributing": "Contributing-Guide",
+        "openIssue": "Issue melden"
+      }
+    }
   },
   "configError": {
     "title": "Konfiguration konnte nicht geladen werden",

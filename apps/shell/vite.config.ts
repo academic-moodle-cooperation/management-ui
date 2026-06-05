@@ -1,3 +1,5 @@
+import { execSync } from "node:child_process";
+import fs from "node:fs";
 import path from "node:path";
 
 import { defineConfig, loadEnv } from "vite";
@@ -10,6 +12,49 @@ import {
 
 const packageName = process.env["npm_package_name"] || "shell";
 
+/**
+ * Build-time app version. Prefers an explicit release value (set
+ * `VITE_APP_VERSION` or the GitLab `CI_COMMIT_TAG` when cutting a release),
+ * then falls back to this app's package.json version.
+ */
+function resolveAppVersion(): string {
+  const explicit = process.env["VITE_APP_VERSION"] || process.env["CI_COMMIT_TAG"];
+  if (explicit) return explicit.replace(/^v/i, "");
+  try {
+    const pkg = JSON.parse(
+      fs.readFileSync(path.resolve(__dirname, "package.json"), "utf8"),
+    ) as { version?: string };
+    // package.json is still the 0.0.0 dev placeholder pre-release; fall back to
+    // the 1.x baseline so the UI shows a meaningful version until a release sets
+    // VITE_APP_VERSION / CI_COMMIT_TAG.
+    return pkg.version && pkg.version !== "0.0.0" ? pkg.version : "1.0.0";
+  } catch {
+    return "1.0.0";
+  }
+}
+
+/**
+ * Short SHA of the deployed commit. Prefers CI-provided env vars (GitLab,
+ * GitHub), then asks git directly. Returns "" when unavailable — the footer
+ * then renders the version without a commit link.
+ */
+function resolveGitCommit(): string {
+  const fromCi =
+    process.env["CI_COMMIT_SHORT_SHA"] ||
+    (process.env["GITHUB_SHA"] ? process.env["GITHUB_SHA"].slice(0, 7) : "");
+  if (fromCi) return fromCi;
+  try {
+    return execSync("git rev-parse --short HEAD", {
+      cwd: __dirname,
+      stdio: ["ignore", "pipe", "ignore"],
+    })
+      .toString()
+      .trim();
+  } catch {
+    return "";
+  }
+}
+
 export default defineConfig(({ mode }) => {
   const monorepoRootPath = path.resolve(__dirname, "../..");
   const env = loadEnv(mode, monorepoRootPath, "");
@@ -20,6 +65,15 @@ export default defineConfig(({ mode }) => {
     env,
     invokerDir: __dirname,
   });
+
+  // Build-time constants, replaced inline across the bundle (including the
+  // footer and landing page, which are aliased to source). Consumed via
+  // `__APP_VERSION__` / `__GIT_COMMIT__` with `typeof` guards.
+  baseConfig.define = {
+    ...(baseConfig.define ?? {}),
+    __APP_VERSION__: JSON.stringify(resolveAppVersion()),
+    __GIT_COMMIT__: JSON.stringify(resolveGitCommit()),
+  };
 
   // In dev, serve .local-plugins/ and expose /local-plugins/manifest.json
   if (mode === "development") {
