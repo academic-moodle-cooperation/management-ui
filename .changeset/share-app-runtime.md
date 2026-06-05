@@ -11,7 +11,12 @@ import failed at load. Added to `SHARED_MODULE_NAMES`, `SHARED_RUNTIME_MAJORS`,
 and the shell's `exposeSharedModules()` (the three lists that must stay in
 sync).
 
-Also hardens the contract: the remote-plugin loader now logs a clear,
-actionable error naming any `@oc-mui/*` package a plugin imports that the host
-doesn't expose — instead of the previous silent failure with a cryptic
-blob-import error.
+Also hardens the contract in two ways:
+
+- The remote-plugin loader now logs a clear, actionable error naming any
+  `@oc-mui/*` package a plugin imports that the host doesn't expose — instead of
+  the previous silent failure with a cryptic blob-import error.
+- `checkSharedDependencyCompatibility` now **rejects** a wrong-scope reference to
+  a host package (e.g. a plugin declaring `@workspace/plugin-system`, the
+  pre-rename namespace, while the host provides `@oc-mui/plugin-system`) with a
+  rename hint, instead of waving it through as a benign "unknown" dependency.

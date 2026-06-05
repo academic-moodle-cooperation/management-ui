@@ -146,6 +146,25 @@ describe("checkSharedDependencyCompatibility", () => {
     expect(result.unknown).toEqual(["some-other-lib"]);
   });
 
+  it("rejects a wrong-scope reference to a host package (e.g. pre-rename @workspace/*)", () => {
+    const result = checkSharedDependencyCompatibility({
+      "@workspace/plugin-system": ">=1.0.0",
+      "@workspace/ui": "^1.0.0",
+    });
+    expect(result.compatible).toBe(false);
+    const names = (result.incompatibilities ?? []).map((i) => i.name);
+    expect(names).toContain("@workspace/plugin-system");
+    expect(names).toContain("@workspace/ui");
+    const reasons = (result.incompatibilities ?? []).map((i) => i.reason).join(" ");
+    expect(reasons).toContain("@oc-mui/plugin-system");
+  });
+
+  it("still treats a genuinely unknown scoped dep as non-blocking", () => {
+    const result = checkSharedDependencyCompatibility({ "@other/thing": "^1.0.0" });
+    expect(result.compatible).toBe(true);
+    expect(result.unknown).toEqual(["@other/thing"]);
+  });
+
   it("treats an unparseable range as an incompatibility", () => {
     const result = checkSharedDependencyCompatibility({
       "react": "not-a-version",
