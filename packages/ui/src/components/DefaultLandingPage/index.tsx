@@ -19,7 +19,7 @@ import {
   FileText,
   AlertCircle,
 } from "../icons";
-import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from "../ui";
+import { Button, Tabs, TabsList, TabsTrigger } from "../ui";
 
 import type { LucideIcon } from "../icons";
 import type { CSSProperties, FC, ReactNode } from "react";
@@ -224,9 +224,19 @@ const pill =
 const TAB_TRIGGER =
   "gap-1.5 rounded-md px-3 py-1.5 text-[13px] font-semibold text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm";
 
+// All panels share one grid cell (constant height = tallest panel, so the tab
+// bar never shifts). Visibility is driven by our own state — not Radix's
+// Presence — so the swap is instant in a single commit, with no exit-frame
+// overlap between the outgoing and incoming panel.
+const panelClass = (active: boolean): string =>
+  `col-start-1 row-start-1 flex flex-col justify-center outline-none${
+    active ? "" : " invisible pointer-events-none"
+  }`;
+
 const DefaultLandingPage: FC = () => {
   const { t } = useTranslation();
   const update = useUpdateCheck(APP_VERSION);
+  const [tab, setTab] = useState("about");
 
   const hasUpdate = update.isNewer && !!update.tag;
   const badgeText = hasUpdate
@@ -269,7 +279,7 @@ const DefaultLandingPage: FC = () => {
         {t("landing.starOnGithub")}
       </a>
 
-      <Tabs defaultValue="about" className="relative my-auto w-full">
+      <Tabs value={tab} onValueChange={setTab} className="relative my-auto w-full">
         {/* Centered audience tabs on top */}
         <div className="flex justify-center">
           <TabsList className="h-auto gap-1 rounded-lg border bg-muted p-1">
@@ -293,7 +303,7 @@ const DefaultLandingPage: FC = () => {
             at any viewport width. Inactive panels stay laid out but invisible. */}
         <div className="mt-7 grid">
           {/* ============ ABOUT — centered launch ============ */}
-          <TabsContent forceMount value="about" className="col-start-1 row-start-1 flex flex-col justify-center data-[state=inactive]:invisible data-[state=inactive]:pointer-events-none focus-visible:outline-none">
+          <div role="tabpanel" aria-hidden={tab !== "about"} className={panelClass(tab === "about")}>
           <div className="mx-auto max-w-[760px] text-center">
             <a
               href={badgeHref}
@@ -376,10 +386,10 @@ const DefaultLandingPage: FC = () => {
               />
             </div>
           </div>
-        </TabsContent>
+          </div>
 
         {/* ============ OPERATIONS — editorial / left ============ */}
-        <TabsContent forceMount value="operations" className="col-start-1 row-start-1 flex flex-col justify-center data-[state=inactive]:invisible data-[state=inactive]:pointer-events-none focus-visible:outline-none">
+          <div role="tabpanel" aria-hidden={tab !== "operations"} className={panelClass(tab === "operations")}>
           <div className="max-w-[760px]">
             <Eyebrow>{t("landing.operations.eyebrow")}</Eyebrow>
             <h1 className="mt-6 max-w-[15ch] font-heading text-4xl font-extrabold leading-[1.04] tracking-tight md:text-5xl">
@@ -432,10 +442,10 @@ const DefaultLandingPage: FC = () => {
               ))}
             </div>
           </div>
-        </TabsContent>
+          </div>
 
         {/* ============ DEVELOPERS — split with terminal ============ */}
-        <TabsContent forceMount value="developers" className="col-start-1 row-start-1 flex flex-col justify-center data-[state=inactive]:invisible data-[state=inactive]:pointer-events-none focus-visible:outline-none">
+          <div role="tabpanel" aria-hidden={tab !== "developers"} className={panelClass(tab === "developers")}>
           <div className="max-w-[940px]">
             <div className="grid items-center gap-8 md:grid-cols-[1fr_1.08fr] md:gap-10">
               <div className="flex flex-col items-start">
@@ -542,7 +552,7 @@ const DefaultLandingPage: FC = () => {
               </div>
             </div>
           </div>
-        </TabsContent>
+          </div>
         </div>
       </Tabs>
     </section>
