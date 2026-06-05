@@ -383,7 +383,7 @@ const DefaultLandingPage: FC = () => {
 
   const developersContent = (
     <div className="max-w-[940px]">
-      <div className="grid items-center gap-8 md:grid-cols-[1fr_1.08fr] md:gap-10">
+      <div className="grid items-center gap-8 xl:grid-cols-[1fr_1.08fr] xl:gap-10">
         <div className="flex flex-col items-start">
           <Eyebrow>{t("landing.developers.eyebrow")}</Eyebrow>
           <h1 className="mt-5 max-w-[18ch] font-heading text-3xl font-extrabold leading-[1.08] tracking-tight md:text-[40px]">
