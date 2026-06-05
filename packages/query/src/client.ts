@@ -1,11 +1,17 @@
 import { QueryClient } from "@tanstack/react-query";
 import { GraphQLClient } from "graphql-request";
 
+import { fetchWithTimeout } from "./timeoutFetch";
+
+// All GraphQL clients fetch through `fetchWithTimeout` so an unreachable backend
+// fails promptly instead of leaving queries pending forever (see timeoutFetch).
+const clientConfig = { fetch: fetchWithTimeout } as const;
+
 let graphQLClient: GraphQLClient | null = null;
 
 export const initializeGraphQLClient = (url: string): GraphQLClient => {
   if (!graphQLClient) {
-    graphQLClient = new GraphQLClient(url);
+    graphQLClient = new GraphQLClient(url, clientConfig);
   }
   return graphQLClient;
 };
@@ -63,7 +69,7 @@ export const createGraphQLClient = (url: string): GraphQLClient => {
   }
 
   try {
-    return new GraphQLClient(absoluteUrl);
+    return new GraphQLClient(absoluteUrl, clientConfig);
   } catch (error) {
     throw new Error(
       `Failed to create GraphQL client with URL "${absoluteUrl}": ${error instanceof Error ? error.message : String(error)}`,
