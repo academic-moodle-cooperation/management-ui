@@ -131,11 +131,54 @@
     "closeSidebar": "Close sidebar"
   },
   "landing": {
-    "update": "Update!",
-    "newVersion": "New version out now",
-    "welcome": "Welcome to the",
-    "tagline": "The Admin UI of your dreams ✨",
-    "description": "Seamlessly manage and organize your audio and video content with ease. Customize, theme, and expand the user interface and its functionality to meet your specific needs. Built with a focus on flexibility and long-term growth."
+    "getStarted": "Get started",
+    "viewOnGithub": "View on GitHub",
+    "starOnGithub": "Star on GitHub",
+    "tabs": {
+      "about": "About",
+      "operations": "Operations",
+      "developers": "Developers"
+    },
+    "about": {
+      "badgeNew": "New",
+      "badgeFrozen": "contracts frozen for the entire 1.x line",
+      "lead": "A plugin-first admin interface for Opencast.",
+      "tagline": "A thin shell handles routing, auth, and layout. Everything you see — pages, navigation, even the theme — is a plugin you can add, swap, or build yourself.",
+      "checks": {
+        "pluginFirst": "Plugin-first",
+        "frozenContracts": "Frozen contracts",
+        "semanticTheming": "Semantic theming"
+      },
+      "links": {
+        "docs": "Documentation",
+        "help": "Help & support",
+        "whatsNew": "What's new"
+      }
+    },
+    "operations": {
+      "eyebrow": "For operators",
+      "headline": "Extend the admin UI —",
+      "headlineEm": "without forking it.",
+      "tagline": "Add features, swap themes, and adjust config through plugins — distributed as a JAR, served from a CDN, or dropped in locally. Runtime contracts are frozen across the whole 1.x line, so upgrades stay boring.",
+      "readDocs": "Read the docs",
+      "resources": "Resources",
+      "links": {
+        "docs": "Documentation",
+        "config": "Configuration guide",
+        "changelog": "Changelog"
+      }
+    },
+    "developers": {
+      "eyebrow": "For developers",
+      "headline": "Every visible feature is a plugin.",
+      "tagline": "Scaffold a plugin in one command, mount it at dev time, and ship it as a JAR or to any CDN. The runtime contract won't change under you within 1.x.",
+      "contribute": "Contribute",
+      "links": {
+        "docs": "Documentation",
+        "contributing": "Contributing guide",
+        "openIssue": "Open an issue"
+      }
+    }
   },
   "configError": {
     "title": "Couldn't load configuration",

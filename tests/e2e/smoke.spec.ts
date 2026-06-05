@@ -43,6 +43,17 @@ test("shell boots and renders without console errors", async ({ page }) => {
       body: JSON.stringify({ data: null }),
     }),
   );
+  // The landing page checks GitHub Releases for a newer version. Stub it so the
+  // test stays self-contained and offline — and so an unstubbed 404/network
+  // failure doesn't surface a "failed to load resource" console error. A tag
+  // equal to the running build means no update badge is shown.
+  await page.route("https://api.github.com/**", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ tag_name: "v0.0.0" }),
+    }),
+  );
 
   await page.goto("/management-ui/");
 
