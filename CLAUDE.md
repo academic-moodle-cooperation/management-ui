@@ -1,0 +1,40 @@
+See @AGENTS.md for all project conventions.
+
+`AGENTS.md` is the canonical operational guide for AI agents in this repo — plugin
+layout, import boundaries, contract tests, config slices, versioning/changesets, and
+the `pnpm verify` pre-push gate. `CONTRIBUTING.md` carries the same rules in long form
+for humans, and `docs/architecture/overview.md` is the architecture tour. Read those
+first; this file only documents the Claude Code-specific layer that sits on top.
+
+## Working with Claude Code
+
+**Slash commands** (you type these):
+
+- `/verify` — run the canonical pre-push gate (`pnpm verify`: lint → check-types →
+  build → unit → contract → api-check → Playwright E2E).
+- `/new-plugin <name> [--in-tree]` — scaffold a plugin with `pnpm create-plugin` and
+  wire it to the AGENTS.md layout (`.local-plugins/` by default; `--in-tree` for a
+  built-in plugin shipped with the repo).
+
+**Skills** (Claude invokes these on its own when relevant):
+
+- `pre-flight-check` — walks the AGENTS.md pre-flight checklist before a
+  plugin/package change is declared done.
+
+**Subagent**:
+
+- `plugin-boundary-reviewer` — read-only reviewer enforcing the AGENTS.md import
+  boundaries, the config-slice rule, the required contract test, and the
+  changeset + `api-check` requirement for public-API changes. Runs proactively after
+  plugin work; ask for it by name with "review plugin boundaries".
+
+**Hooks** (configured in `.claude/settings.json`, run automatically):
+
+- *Session start* — installs dependencies if `node_modules/` is missing, then loads a
+  command cheat-sheet into context.
+- *Generated-file guard* — blocks hand-edits to `dist/`, `dist-types/`, `target/`,
+  `*.tsbuildinfo`, `pnpm-lock.yaml`, `packages/*/etc/*.api.md`, and GraphQL codegen
+  output, pointing to the regeneration command instead.
+- *Post-edit lint* — runs `eslint --fix` on edited `.ts`/`.tsx` files (non-blocking).
+
+See `.claude/README.md` for how this configuration is organized and how to extend it.
