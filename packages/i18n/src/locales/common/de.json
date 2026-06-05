@@ -188,7 +188,8 @@
   },
   "authError": {
     "title": "Sitzung konnte nicht überprüft werden",
-    "description": "Die Management UI hat den Server erreicht, aber die Anfrage zur Überprüfung Ihrer Anmeldung ist fehlgeschlagen. Das ist meist ein vorübergehendes Backend-Problem — versuchen Sie es gleich noch einmal."
+    "description": "Die Management UI hat den Server erreicht, aber die Anfrage zur Überprüfung Ihrer Anmeldung ist fehlgeschlagen. Das ist meist ein vorübergehendes Backend-Problem — versuchen Sie es gleich noch einmal.",
+    "showDetails": "Technische Details anzeigen"
   },
   "authRoutes": {
     "loading": "Wird geladen …",

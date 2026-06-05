@@ -188,7 +188,8 @@
   },
   "authError": {
     "title": "Couldn't verify your session",
-    "description": "The Management UI reached the server, but the request to verify who you are failed. This is usually a temporary backend problem — try again in a moment."
+    "description": "The Management UI reached the server, but the request to verify who you are failed. This is usually a temporary backend problem — try again in a moment.",
+    "showDetails": "Show technical details"
   },
   "authRoutes": {
     "loading": "Loading…",
