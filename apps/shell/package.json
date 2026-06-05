@@ -13,6 +13,7 @@
     "check-types": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "@oc-mui/app-runtime": "workspace:*",
     "@oc-mui/i18n": "workspace:*",
     "@oc-mui/plugin-system": "workspace:*",
     "@oc-mui/plugins": "workspace:*",

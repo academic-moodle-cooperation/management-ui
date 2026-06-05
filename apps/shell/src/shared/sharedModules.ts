@@ -15,6 +15,7 @@ import * as React from "react";
 import * as ReactJSXRuntime from "react/jsx-runtime";
 import * as ReactDOM from "react-dom";
 
+import * as AppRuntime from "@oc-mui/app-runtime";
 import * as I18n from "@oc-mui/i18n";
 import * as PluginSystem from "@oc-mui/plugin-system";
 import * as Query from "@oc-mui/query";
@@ -37,6 +38,7 @@ export interface SharedModuleRegistry {
   "react-dom": typeof ReactDOM;
   "react/jsx-runtime": typeof ReactJSXRuntime;
   "lucide-react": typeof LucideReact;
+  "@oc-mui/app-runtime": typeof AppRuntime;
   "@oc-mui/plugin-system": typeof PluginSystem;
   "@oc-mui/ui/components": typeof UIComponents;
   "@oc-mui/ui/components/icons": typeof UIComponentsIcons;
@@ -72,6 +74,7 @@ export function exposeSharedModules(): void {
     "react-dom": ReactDOM,
     "react/jsx-runtime": ReactJSXRuntime,
     "lucide-react": LucideReact,
+    "@oc-mui/app-runtime": AppRuntime,
     "@oc-mui/plugin-system": PluginSystem,
     "@oc-mui/ui/components": UIComponents,
     "@oc-mui/ui/components/icons": UIComponentsIcons,

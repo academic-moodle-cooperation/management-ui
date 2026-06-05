@@ -34,6 +34,7 @@ export const SHARED_RUNTIME_MAJORS: Readonly<Record<string, number>> = Object.fr
 
   // Workspace packages — all 1.x for the OSS-readiness line
   "@oc-mui/plugin-system": 1,
+  "@oc-mui/app-runtime": 1,
   "@oc-mui/ui": 1,
   "@oc-mui/query": 1,
   "@oc-mui/router": 1,

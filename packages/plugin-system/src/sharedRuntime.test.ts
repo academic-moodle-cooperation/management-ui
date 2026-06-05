@@ -17,6 +17,7 @@ describe("SHARED_RUNTIME_MAJORS", () => {
       "react/jsx-runtime": 19,
       "lucide-react": 0,
       "@oc-mui/plugin-system": 1,
+      "@oc-mui/app-runtime": 1,
       "@oc-mui/ui": 1,
       "@oc-mui/query": 1,
       "@oc-mui/router": 1,

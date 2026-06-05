@@ -28,6 +28,7 @@ export const SHARED_MODULE_NAMES = [
   "@oc-mui/router",
   "@oc-mui/utils",
   "@oc-mui/i18n",
+  "@oc-mui/app-runtime",
 ];
 
 /**
@@ -170,6 +171,26 @@ ${moduleNames
         }
       }
     }
+  }
+
+  // Fail loudly, not silently: a plugin that imports an `@oc-mui/*` package the
+  // host doesn't expose as a shared module would otherwise keep a bare import in
+  // the blob and die with a cryptic "Failed to load plugin". Surface exactly
+  // which package is missing and how to fix it. (Keep this list — SHARED_MODULE_NAMES —
+  // in sync with the host's `exposeSharedModules()` and `SHARED_RUNTIME_MAJORS`.)
+  const unprovidedOcMui = [
+    ...new Set(
+      (transformed.match(/from\s+["'](@oc-mui\/[^"']+)["']/g) ?? []).map((stmt) =>
+        stmt.replace(/^.*["'](@oc-mui\/[^"']+)["'].*$/, "$1"),
+      ),
+    ),
+  ];
+  if (unprovidedOcMui.length > 0) {
+    remoteLoaderLogger.error(
+      `Plugin imports @oc-mui package(s) the host does not provide as shared modules: ${unprovidedOcMui.join(
+        ", ",
+      )}. The plugin will fail to load. Either add them to SHARED_MODULE_NAMES + the host's exposeSharedModules(), or bundle them into the plugin instead of externalizing @oc-mui/*.`,
+    );
   }
 
   return preamble + transformed;

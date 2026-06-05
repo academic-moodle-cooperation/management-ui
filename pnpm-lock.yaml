@@ -748,6 +748,9 @@ importers:
 
   apps/shell:
     dependencies:
+      '@oc-mui/app-runtime':
+        specifier: workspace:*
+        version: link:../../packages/app-runtime
       '@oc-mui/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
