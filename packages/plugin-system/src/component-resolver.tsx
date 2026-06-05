@@ -1,6 +1,7 @@
 import React from "react";
 
 import { ComponentLoader } from "./ComponentLoader";
+import { PluginErrorBoundary } from "./PluginErrorBoundary";
 import { usePluginManager } from "./PluginProvider";
 
 type ComponentResolverProps<P extends object = Record<string, unknown>> = {
@@ -110,9 +111,17 @@ export const ComponentResolver = <P extends object>({
     return <>{loaderComponent || <ComponentLoader {...loaderProps} />}</>;
   }
 
-  // Render the custom component if available, otherwise fall back to default
+  // Render the custom (plugin-provided) component if available, otherwise the
+  // default. The plugin override is wrapped in an error boundary so that if a
+  // third-party plugin throws during render, it degrades to the built-in
+  // default component instead of crashing the whole shell.
   return CustomComponent ? (
-    <CustomComponent {...componentProps} />
+    <PluginErrorBoundary
+      label={componentType}
+      fallback={<DefaultComponent {...componentProps} />}
+    >
+      <CustomComponent {...componentProps} />
+    </PluginErrorBoundary>
   ) : (
     <DefaultComponent {...componentProps} />
   );
