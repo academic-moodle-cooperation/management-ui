@@ -224,15 +224,6 @@ const pill =
 const TAB_TRIGGER =
   "gap-1.5 rounded-md px-3 py-1.5 text-[13px] font-semibold text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm";
 
-// All panels share one grid cell (constant height = tallest panel, so the tab
-// bar never shifts). Visibility is driven by our own state — not Radix's
-// Presence — so the swap is instant in a single commit, with no exit-frame
-// overlap between the outgoing and incoming panel.
-const panelClass = (active: boolean): string =>
-  `col-start-1 row-start-1 flex flex-col justify-center outline-none${
-    active ? "" : " invisible pointer-events-none"
-  }`;
-
 const DefaultLandingPage: FC = () => {
   const { t } = useTranslation();
   const update = useUpdateCheck(APP_VERSION);
@@ -251,6 +242,250 @@ const DefaultLandingPage: FC = () => {
     { label: "Theme", value: "2.0" },
     { label: "Config", value: "1.0" },
     { label: "ECL", value: "2.0" },
+  ];
+
+  // Each panel's content as a value. We render every panel twice: once as an
+  // invisible "sizer" (so the grid cell stays as tall as the tallest panel —
+  // no tab-bar jump) and once in the single, always-visible panel below. Since
+  // that visible element never toggles — only its children swap on tab change —
+  // there is no outgoing/incoming overlap, hence no flash.
+  const aboutContent = (
+    <div className="mx-auto max-w-[760px] text-center">
+      <a
+        href={badgeHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2.5 rounded-full border bg-card px-1.5 py-1 text-[13px] text-muted-foreground shadow-sm transition-colors hover:text-foreground"
+      >
+        <b className="rounded-full bg-primary px-2.5 py-[3px] text-[11.5px] font-bold text-primary-foreground">
+          {t("landing.about.badgeNew")}
+        </b>
+        <span className="flex items-center gap-1.5 whitespace-nowrap pr-2">
+          {badgeText}
+          <ChevronRight className="size-3" />
+        </span>
+      </a>
+
+      <h1 className="mt-6 font-heading text-5xl font-extrabold leading-[0.98] tracking-tight md:text-7xl">
+        Management{" "}
+        <span
+          className="bg-clip-text text-transparent"
+          style={{
+            backgroundImage:
+              "linear-gradient(100deg, var(--primary), color-mix(in oklab, var(--primary) 35%, var(--foreground)))",
+          }}
+        >
+          UI
+        </span>
+      </h1>
+
+      <p className="mt-6 text-xl font-semibold text-foreground md:text-2xl">
+        {t("landing.about.lead")}
+      </p>
+      <p className="mx-auto mt-3.5 max-w-[56ch] text-base leading-relaxed text-muted-foreground md:text-[16.5px]">
+        {t("landing.about.tagline")}
+      </p>
+
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <PrimaryCta
+          href={`${DOCS_URL}/getting-started/what-is-management-ui`}
+          label={t("landing.getStarted")}
+        />
+        <OutlineCta
+          href={REPO_URL}
+          label={t("landing.viewOnGithub")}
+          icon={<Icons.gitHub className="size-4" />}
+        />
+      </div>
+
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
+        {[
+          t("landing.about.checks.pluginFirst"),
+          t("landing.about.checks.frozenContracts"),
+          t("landing.about.checks.semanticTheming"),
+        ].map((label, i) => (
+          <span key={label} className="flex items-center gap-2">
+            {i > 0 && <span className="h-3 w-px bg-border" />}
+            <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Check className="size-3.5 text-ok" />
+              {label}
+            </span>
+          </span>
+        ))}
+      </div>
+
+      <div className="mt-9 flex flex-wrap justify-center gap-1">
+        <HelpLink href={`${DOCS_URL}/`} icon={BookOpen} label={t("landing.about.links.docs")} />
+        <HelpLink
+          href={`${REPO_URL}/discussions`}
+          icon={LifeBuoy}
+          label={t("landing.about.links.help")}
+        />
+        <HelpLink
+          href={`${REPO_URL}/releases`}
+          icon={Sparkles}
+          label={t("landing.about.links.whatsNew")}
+        />
+      </div>
+    </div>
+  );
+
+  const operationsContent = (
+    <div className="max-w-[760px]">
+      <Eyebrow>{t("landing.operations.eyebrow")}</Eyebrow>
+      <h1 className="mt-6 max-w-[15ch] font-heading text-4xl font-extrabold leading-[1.04] tracking-tight md:text-5xl">
+        {t("landing.operations.headline")}{" "}
+        <span className="text-primary">{t("landing.operations.headlineEm")}</span>
+      </h1>
+      <p className="mt-6 max-w-[58ch] text-lg leading-relaxed text-muted-foreground md:text-[19px]">
+        {t("landing.operations.tagline")}
+      </p>
+      <div className="mt-8 flex flex-wrap gap-3">
+        <PrimaryCta
+          href={`${DOCS_URL}/getting-started/installation`}
+          label={t("landing.getStarted")}
+        />
+        <OutlineCta href={`${DOCS_URL}/`} label={t("landing.operations.readDocs")} />
+      </div>
+
+      <div className="my-9 h-px bg-border" />
+
+      <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+        {t("landing.operations.resources")}
+      </div>
+      <div className="flex flex-wrap items-center gap-1">
+        <HelpLink href={`${DOCS_URL}/`} icon={BookOpen} label={t("landing.operations.links.docs")} />
+        <HelpLink
+          href={`${DOCS_URL}/getting-started/configuration`}
+          icon={Settings}
+          label={t("landing.operations.links.config")}
+        />
+        <HelpLink
+          href={`${REPO_URL}/releases`}
+          icon={History}
+          label={t("landing.operations.links.changelog")}
+        />
+      </div>
+
+      <div className="mt-7 flex flex-wrap gap-2">
+        {metaPills.map((p) => (
+          <span
+            key={p.label ?? p.value}
+            className="rounded-full border bg-card px-3 py-1 font-mono text-[11.5px] text-muted-foreground"
+          >
+            {p.label ? `${p.label} ` : ""}
+            <b className="font-semibold text-foreground">{p.value}</b>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+
+  const developersContent = (
+    <div className="max-w-[940px]">
+      <div className="grid items-center gap-8 md:grid-cols-[1fr_1.08fr] md:gap-10">
+        <div className="flex flex-col items-start">
+          <Eyebrow>{t("landing.developers.eyebrow")}</Eyebrow>
+          <h1 className="mt-5 max-w-[18ch] font-heading text-3xl font-extrabold leading-[1.08] tracking-tight md:text-[40px]">
+            {t("landing.developers.headline")}
+          </h1>
+          <p className="mt-5 max-w-[60ch] text-base leading-relaxed text-muted-foreground md:text-[16.5px]">
+            {t("landing.developers.tagline")}
+          </p>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <PrimaryCta
+              href={`${DOCS_URL}/plugins/creating-a-plugin`}
+              label={t("landing.getStarted")}
+            />
+            <OutlineCta
+              href={`${REPO_BLOB}/CONTRIBUTING.md`}
+              label={t("landing.developers.contribute")}
+              icon={<Code2 className="size-4" />}
+            />
+          </div>
+        </div>
+
+        {/* Mock terminal */}
+        <div className="overflow-hidden rounded-xl border bg-card shadow-md">
+          <div className="flex items-center gap-2 border-b bg-muted px-3.5 py-3">
+            <span className="size-[11px] rounded-full bg-[#ef5f56]" />
+            <span className="size-[11px] rounded-full bg-[#f5bd4f]" />
+            <span className="size-[11px] rounded-full bg-[#61c554]" />
+            <span className="ml-2 font-mono text-xs text-muted-foreground">management-ui — zsh</span>
+          </div>
+          <div className="px-5 py-4 font-mono text-[13px] leading-[1.95] text-foreground">
+            <div>
+              <span className="font-semibold text-primary">$</span> git clone{" "}
+              <span className="text-info underline underline-offset-2">{CLONE_LABEL}</span>
+            </div>
+            <div>
+              <span className="font-semibold text-primary">$</span> pnpm install
+            </div>
+            <div>
+              <span className="font-semibold text-primary">$</span> pnpm create-plugin{" "}
+              <span className="text-info">my-plugin</span>
+            </div>
+            <div>
+              <span className="text-ok">✔</span>{" "}
+              <span className="text-muted-foreground">Scaffolded .local-plugins/my-plugin</span>
+            </div>
+            <div>
+              <span className="font-semibold text-primary">$</span> pnpm dev
+            </div>
+            <div>
+              <span className="text-muted-foreground">➜ Local:</span>{" "}
+              <span className="text-info underline underline-offset-2">
+                http://127.0.0.1:3000/management-ui/
+              </span>
+            </div>
+            <div>
+              <span className="font-semibold text-primary">$</span>
+              <span className="ml-1.5 inline-block h-[15px] w-2 animate-pulse bg-primary align-[-3px]" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-9 space-y-4 border-t pt-5">
+        <div className="flex flex-wrap items-center gap-1">
+          <HelpLink href={`${DOCS_URL}/`} icon={BookOpen} label={t("landing.developers.links.docs")} />
+          <HelpLink
+            href={`${REPO_BLOB}/CONTRIBUTING.md`}
+            icon={FileText}
+            label={t("landing.developers.links.contributing")}
+          />
+          <HelpLink
+            href={`${REPO_URL}/issues`}
+            icon={AlertCircle}
+            label={t("landing.developers.links.openIssue")}
+          />
+        </div>
+
+        {/* Project identity bar */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <a
+            href={REPO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${pill} font-mono`}
+          >
+            <Icons.gitHub className="size-[15px]" />
+            {REPO_ORG}
+            <span className="text-muted-foreground">/</span>
+            {REPO_NAME}
+          </a>
+          <Shield label="release" value={`v${APP_VERSION}`} />
+          <Shield label="license" value="ECL-2.0" />
+          <Shield label="contributions" value="welcome" ok />
+        </div>
+      </div>
+    </div>
+  );
+
+  const panels: { key: string; node: ReactNode }[] = [
+    { key: "about", node: aboutContent },
+    { key: "operations", node: operationsContent },
+    { key: "developers", node: developersContent },
   ];
 
   return (
@@ -298,260 +533,25 @@ const DefaultLandingPage: FC = () => {
           </TabsList>
         </div>
 
-        {/* Panels share one grid cell, so the container is always as tall as the
-            tallest panel. The centered block never shifts when switching tabs —
-            at any viewport width. Inactive panels stay laid out but invisible. */}
+        {/* All three panels render as invisible "sizers" so the grid cell stays
+            as tall as the tallest one — the tab bar never shifts. The single
+            visible panel below just swaps its content on tab change; the visible
+            element itself never toggles, so nothing overlaps on switch. */}
         <div className="mt-7 grid">
-          {/* ============ ABOUT — centered launch ============ */}
-          <div role="tabpanel" aria-hidden={tab !== "about"} className={panelClass(tab === "about")}>
-          <div className="mx-auto max-w-[760px] text-center">
-            <a
-              href={badgeHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 rounded-full border bg-card px-1.5 py-1 text-[13px] text-muted-foreground shadow-sm transition-colors hover:text-foreground"
+          {panels.map((p) => (
+            <div
+              key={`sizer-${p.key}`}
+              aria-hidden
+              className="pointer-events-none invisible col-start-1 row-start-1 flex flex-col justify-center"
             >
-              <b className="rounded-full bg-primary px-2.5 py-[3px] text-[11.5px] font-bold text-primary-foreground">
-                {t("landing.about.badgeNew")}
-              </b>
-              <span className="flex items-center gap-1.5 whitespace-nowrap pr-2">
-                {badgeText}
-                <ChevronRight className="size-3" />
-              </span>
-            </a>
-
-            <h1 className="mt-6 font-heading text-5xl font-extrabold leading-[0.98] tracking-tight md:text-7xl">
-              Management{" "}
-              <span
-                className="bg-clip-text text-transparent"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(100deg, var(--primary), color-mix(in oklab, var(--primary) 35%, var(--foreground)))",
-                }}
-              >
-                UI
-              </span>
-            </h1>
-
-            <p className="mt-6 text-xl font-semibold text-foreground md:text-2xl">
-              {t("landing.about.lead")}
-            </p>
-            <p className="mx-auto mt-3.5 max-w-[56ch] text-base leading-relaxed text-muted-foreground md:text-[16.5px]">
-              {t("landing.about.tagline")}
-            </p>
-
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <PrimaryCta
-                href={`${DOCS_URL}/getting-started/what-is-management-ui`}
-                label={t("landing.getStarted")}
-              />
-              <OutlineCta
-                href={REPO_URL}
-                label={t("landing.viewOnGithub")}
-                icon={<Icons.gitHub className="size-4" />}
-              />
+              {p.node}
             </div>
-
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
-              {[
-                t("landing.about.checks.pluginFirst"),
-                t("landing.about.checks.frozenContracts"),
-                t("landing.about.checks.semanticTheming"),
-              ].map((label, i) => (
-                <span key={label} className="flex items-center gap-2">
-                  {i > 0 && <span className="h-3 w-px bg-border" />}
-                  <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Check className="size-3.5 text-ok" />
-                    {label}
-                  </span>
-                </span>
-              ))}
-            </div>
-
-            <div className="mt-9 flex flex-wrap justify-center gap-1">
-              <HelpLink
-                href={`${DOCS_URL}/`}
-                icon={BookOpen}
-                label={t("landing.about.links.docs")}
-              />
-              <HelpLink
-                href={`${REPO_URL}/discussions`}
-                icon={LifeBuoy}
-                label={t("landing.about.links.help")}
-              />
-              <HelpLink
-                href={`${REPO_URL}/releases`}
-                icon={Sparkles}
-                label={t("landing.about.links.whatsNew")}
-              />
-            </div>
-          </div>
-          </div>
-
-        {/* ============ OPERATIONS — editorial / left ============ */}
-          <div role="tabpanel" aria-hidden={tab !== "operations"} className={panelClass(tab === "operations")}>
-          <div className="max-w-[760px]">
-            <Eyebrow>{t("landing.operations.eyebrow")}</Eyebrow>
-            <h1 className="mt-6 max-w-[15ch] font-heading text-4xl font-extrabold leading-[1.04] tracking-tight md:text-5xl">
-              {t("landing.operations.headline")}{" "}
-              <span className="text-primary">{t("landing.operations.headlineEm")}</span>
-            </h1>
-            <p className="mt-6 max-w-[58ch] text-lg leading-relaxed text-muted-foreground md:text-[19px]">
-              {t("landing.operations.tagline")}
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <PrimaryCta
-                href={`${DOCS_URL}/getting-started/installation`}
-                label={t("landing.getStarted")}
-              />
-              <OutlineCta href={`${DOCS_URL}/`} label={t("landing.operations.readDocs")} />
-            </div>
-
-            <div className="my-9 h-px bg-border" />
-
-            <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
-              {t("landing.operations.resources")}
-            </div>
-            <div className="flex flex-wrap items-center gap-1">
-              <HelpLink
-                href={`${DOCS_URL}/`}
-                icon={BookOpen}
-                label={t("landing.operations.links.docs")}
-              />
-              <HelpLink
-                href={`${DOCS_URL}/getting-started/configuration`}
-                icon={Settings}
-                label={t("landing.operations.links.config")}
-              />
-              <HelpLink
-                href={`${REPO_URL}/releases`}
-                icon={History}
-                label={t("landing.operations.links.changelog")}
-              />
-            </div>
-
-            <div className="mt-7 flex flex-wrap gap-2">
-              {metaPills.map((p) => (
-                <span
-                  key={p.label ?? p.value}
-                  className="rounded-full border bg-card px-3 py-1 font-mono text-[11.5px] text-muted-foreground"
-                >
-                  {p.label ? `${p.label} ` : ""}
-                  <b className="font-semibold text-foreground">{p.value}</b>
-                </span>
-              ))}
-            </div>
-          </div>
-          </div>
-
-        {/* ============ DEVELOPERS — split with terminal ============ */}
-          <div role="tabpanel" aria-hidden={tab !== "developers"} className={panelClass(tab === "developers")}>
-          <div className="max-w-[940px]">
-            <div className="grid items-center gap-8 md:grid-cols-[1fr_1.08fr] md:gap-10">
-              <div className="flex flex-col items-start">
-                <Eyebrow>{t("landing.developers.eyebrow")}</Eyebrow>
-                <h1 className="mt-5 max-w-[18ch] font-heading text-3xl font-extrabold leading-[1.08] tracking-tight md:text-[40px]">
-                  {t("landing.developers.headline")}
-                </h1>
-                <p className="mt-5 max-w-[60ch] text-base leading-relaxed text-muted-foreground md:text-[16.5px]">
-                  {t("landing.developers.tagline")}
-                </p>
-                <div className="mt-7 flex flex-wrap gap-3">
-                  <PrimaryCta
-                    href={`${DOCS_URL}/plugins/creating-a-plugin`}
-                    label={t("landing.getStarted")}
-                  />
-                  <OutlineCta
-                    href={`${REPO_BLOB}/CONTRIBUTING.md`}
-                    label={t("landing.developers.contribute")}
-                    icon={<Code2 className="size-4" />}
-                  />
-                </div>
-              </div>
-
-              {/* Mock terminal */}
-              <div className="overflow-hidden rounded-xl border bg-card shadow-md">
-                <div className="flex items-center gap-2 border-b bg-muted px-3.5 py-3">
-                  <span className="size-[11px] rounded-full bg-[#ef5f56]" />
-                  <span className="size-[11px] rounded-full bg-[#f5bd4f]" />
-                  <span className="size-[11px] rounded-full bg-[#61c554]" />
-                  <span className="ml-2 font-mono text-xs text-muted-foreground">
-                    management-ui — zsh
-                  </span>
-                </div>
-                <div className="px-5 py-4 font-mono text-[13px] leading-[1.95] text-foreground">
-                  <div>
-                    <span className="font-semibold text-primary">$</span> git clone{" "}
-                    <span className="text-info underline underline-offset-2">{CLONE_LABEL}</span>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-primary">$</span> pnpm install
-                  </div>
-                  <div>
-                    <span className="font-semibold text-primary">$</span> pnpm create-plugin{" "}
-                    <span className="text-info">my-plugin</span>
-                  </div>
-                  <div>
-                    <span className="text-ok">✔</span>{" "}
-                    <span className="text-muted-foreground">
-                      Scaffolded .local-plugins/my-plugin
-                    </span>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-primary">$</span> pnpm dev
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">➜ Local:</span>{" "}
-                    <span className="text-info underline underline-offset-2">
-                      http://127.0.0.1:3000/management-ui/
-                    </span>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-primary">$</span>
-                    <span className="ml-1.5 inline-block h-[15px] w-2 animate-pulse bg-primary align-[-3px]" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-9 space-y-4 border-t pt-5">
-              <div className="flex flex-wrap items-center gap-1">
-                <HelpLink
-                  href={`${DOCS_URL}/`}
-                  icon={BookOpen}
-                  label={t("landing.developers.links.docs")}
-                />
-                <HelpLink
-                  href={`${REPO_BLOB}/CONTRIBUTING.md`}
-                  icon={FileText}
-                  label={t("landing.developers.links.contributing")}
-                />
-                <HelpLink
-                  href={`${REPO_URL}/issues`}
-                  icon={AlertCircle}
-                  label={t("landing.developers.links.openIssue")}
-                />
-              </div>
-
-              {/* Project identity bar */}
-              <div className="flex flex-wrap items-center gap-2.5">
-                <a
-                  href={REPO_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${pill} font-mono`}
-                >
-                  <Icons.gitHub className="size-[15px]" />
-                  {REPO_ORG}
-                  <span className="text-muted-foreground">/</span>
-                  {REPO_NAME}
-                </a>
-                <Shield label="release" value={`v${APP_VERSION}`} />
-                <Shield label="license" value="ECL-2.0" />
-                <Shield label="contributions" value="welcome" ok />
-              </div>
-            </div>
-          </div>
+          ))}
+          <div
+            role="tabpanel"
+            className="col-start-1 row-start-1 flex flex-col justify-center outline-none"
+          >
+            {panels.find((p) => p.key === tab)?.node}
           </div>
         </div>
       </Tabs>
