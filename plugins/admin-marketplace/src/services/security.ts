@@ -11,6 +11,8 @@
  * - Plugin metadata validation
  */
 
+import { checkSharedDependencyCompatibility } from "@oc-mui/plugin-system";
+
 /**
  * Plugin metadata for version compatibility checking
  */
@@ -219,127 +221,46 @@ class SecurityService {
   }
 
   /**
-   * Parse a semver version string into components
-   * Simple implementation - for production, consider using a proper semver library
-   */
-  private parseSemver(version: string): { major: number; minor: number; patch: number } | null {
-    // Remove 'v' prefix if present
-    const cleanVersion = version.replace(/^v/, "");
-    const match = cleanVersion.match(/^(\d+)\.(\d+)\.(\d+)/);
-
-    if (!match || !match[1] || !match[2] || !match[3]) return null;
-
-    return {
-      major: parseInt(match[1], 10),
-      minor: parseInt(match[2], 10),
-      patch: parseInt(match[3], 10),
-    };
-  }
-
-  /**
-   * Check if a version satisfies a constraint
-   * Supports: ">=X.Y.Z", "^X.Y.Z", "~X.Y.Z", "X.Y.Z"
-   */
-  private satisfiesConstraint(version: string, constraint: string): boolean {
-    const parsed = this.parseSemver(version);
-    if (!parsed) return false;
-
-    // Handle >= constraint
-    if (constraint.startsWith(">=")) {
-      const constraintParsed = this.parseSemver(constraint.substring(2));
-      if (!constraintParsed) return false;
-
-      if (parsed.major > constraintParsed.major) return true;
-      if (parsed.major < constraintParsed.major) return false;
-      if (parsed.minor > constraintParsed.minor) return true;
-      if (parsed.minor < constraintParsed.minor) return false;
-      return parsed.patch >= constraintParsed.patch;
-    }
-
-    // Handle ^ constraint (compatible with major version)
-    if (constraint.startsWith("^")) {
-      const constraintParsed = this.parseSemver(constraint.substring(1));
-      if (!constraintParsed) return false;
-
-      if (parsed.major !== constraintParsed.major) return false;
-      if (parsed.minor > constraintParsed.minor) return true;
-      if (parsed.minor < constraintParsed.minor) return false;
-      return parsed.patch >= constraintParsed.patch;
-    }
-
-    // Handle ~ constraint (compatible with minor version)
-    if (constraint.startsWith("~")) {
-      const constraintParsed = this.parseSemver(constraint.substring(1));
-      if (!constraintParsed) return false;
-
-      if (parsed.major !== constraintParsed.major) return false;
-      if (parsed.minor !== constraintParsed.minor) return false;
-      return parsed.patch >= constraintParsed.patch;
-    }
-
-    // Handle * constraint (any version)
-    if (constraint === "*") return true;
-
-    // Exact version match
-    const constraintParsed = this.parseSemver(constraint);
-    if (!constraintParsed) return false;
-
-    return (
-      parsed.major === constraintParsed.major &&
-      parsed.minor === constraintParsed.minor &&
-      parsed.patch === constraintParsed.patch
-    );
-  }
-
-  /**
-   * Check version compatibility of a plugin
+   * Check whether a plugin's declared `workspaceDependencies` are compatible
+   * with the host's shared runtime majors.
    *
-   * @param pluginConstraints - Version constraints from the plugin
-   * @param installedVersions - Currently installed versions of packages
-   * @returns Validation result
+   * Delegates to {@link checkSharedDependencyCompatibility} — the single source
+   * of truth in `@oc-mui/plugin-system`, shared with the JAR and .local-plugins
+   * loaders — and adapts its result to {@link SecurityValidationResult}: a major
+   * mismatch (or an unparseable range) blocks (`valid: false`); deps the host
+   * doesn't provide are reported as non-blocking warnings.
+   *
+   * @param pluginConstraints - Version constraints from the plugin manifest.
+   * @returns Validation result.
    */
   checkVersionCompatibility(
     pluginConstraints: PluginVersionConstraints,
-    installedVersions: Record<string, string> = {},
   ): SecurityValidationResult {
-    const warnings: string[] = [];
-    const errors: string[] = [];
-
-    // Use core version if no installed versions provided
-    const versions: Record<string, string> = {
-      "@oc-mui/plugin-system": this.config.coreVersion,
-      ...installedVersions,
-    };
-
-    for (const [pkg, constraint] of Object.entries(pluginConstraints)) {
-      if (!constraint) continue;
-
-      const installedVersion = versions[pkg];
-
-      if (!installedVersion) {
-        warnings.push(`Cannot verify compatibility: ${pkg} version is unknown.`);
-        continue;
-      }
-
-      if (!this.satisfiesConstraint(installedVersion, constraint)) {
-        errors.push(
-          `Incompatible ${pkg}: requires ${constraint}, but ${installedVersion} is installed.`,
-        );
-      }
+    // Drop undefined-valued entries before the canonical check, which treats a
+    // non-string range as an unparseable (blocking) declaration.
+    const declared: Record<string, string> = {};
+    for (const [name, range] of Object.entries(pluginConstraints ?? {})) {
+      if (typeof range === "string") declared[name] = range;
     }
 
-    if (errors.length > 0) {
+    const result = checkSharedDependencyCompatibility(declared);
+
+    const warnings: string[] = [];
+    if (result.unknown?.length) {
+      warnings.push(
+        `Cannot verify compatibility for ${result.unknown.join(", ")}: not part of the host's shared runtime.`,
+      );
+    }
+
+    if (!result.compatible) {
       return {
         valid: false,
-        error: errors.join(" "),
+        error: (result.incompatibilities ?? []).map((i) => i.reason).join(" "),
         warnings,
       };
     }
 
-    return {
-      valid: true,
-      warnings,
-    };
+    return { valid: true, warnings };
   }
 
   /**

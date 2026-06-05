@@ -108,19 +108,17 @@ Three items added to the master plan after Phase 7. None has been started; all n
 
 See [1.2](#12-external-plugin-pom-template--maven-parent) above.
 
-### 5.3 Shared-npm-deps version-locking
+### 5.3 ✅ Shared-npm-deps version-locking — wired into the loaders (residual: backend `plugins.json`)
 
-**Status:** contract and check function shipped; loader-side enforcement still to do.
+**Status:** contract + check function shipped; loader-side enforcement now wired across all three paths. Only the JAR path's data source is residual (backend-owned).
 
-The Shared Runtime Dependencies contract (`@oc-mui/plugin-system`'s `SHARED_RUNTIME_MAJORS`, documented in [`architecture/CONTRACTS.md` §5](../architecture/CONTRACTS.md#5-shared-runtime-dependencies)) defines which packages the host provides and what major a plugin must declare in `workspaceDependencies`. The check function `checkSharedDependencyCompatibility` is exported and tested, mirroring `checkApiVersionCompatibility`.
+The Shared Runtime Dependencies contract (`@oc-mui/plugin-system`'s `SHARED_RUNTIME_MAJORS`, documented in [`architecture/CONTRACTS.md` §5](../architecture/CONTRACTS.md#5-shared-runtime-dependencies)) defines which packages the host provides and what major a plugin must declare in `workspaceDependencies`. `checkSharedDependencyCompatibility` is the single source of truth; all three loader paths now funnel through it:
 
-What's still missing — **the actual call sites that gate plugin loading on the check**:
+- ✅ **Marketplace** — `securityService.checkVersionCompatibility` ([`security.ts`](../../plugins/admin-marketplace/src/services/security.ts)) is now a thin adapter over the canonical function (the older exact-semver logic was removed). Both the install-time load gate (`remote-loader.ts`) and the UI compatibility badge (`useMarketplace`) now use canonical major-matching, so they can't diverge.
+- ✅ **`.local-plugins/` dev** — the dev server surfaces each plugin's `workspaceDependencies` (read from `plugin.json`) into `/local-plugins/manifest.json` ([`local-plugins-dev.ts`](../../packages/vite-config/src/plugins/local-plugins-dev.ts)); the shell gates each entry via `passesSharedDependencyGate` ([`sharedDepsGate.ts`](../../apps/shell/src/services/sharedDepsGate.ts)) in `PluginInitializer` before loading.
+- ⏳ **JAR** — the same gate is applied to backend entries, and [`jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts) reads `workspaceDependencies` when present. **Residual:** the backend's aggregated `plugins.json` doesn't carry `workspaceDependencies` per plugin yet, so the gate is a no-op for JAR plugins until then. Chosen option (a) — backend embeds the field per plugin in `plugins.json` (forward-compatible; the shell already consumes it). The alternative (b, loader fetches `<pluginDir>/plugin.json`) remains open if the backend change is undesirable.
 
-- **JAR loader** ([`apps/shell/src/services/jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts)) doesn't fetch each plugin's `plugin.json` today; the backend's aggregated `plugins.json` doesn't carry the manifest. Wiring the check in requires either (a) the backend to embed the manifest per plugin in `plugins.json`, or (b) the loader to fetch `<pluginDir>/plugin.json` alongside the `.mjs`.
-- **`.local-plugins/` discovery** ([`packages/vite-config/src/plugins/local-plugins-dev.ts`](../../packages/vite-config/src/plugins/local-plugins-dev.ts)) similarly doesn't surface the per-plugin manifest in `/local-plugins/manifest.json`. Same two options.
-- **Marketplace** ([`plugins/admin-marketplace/src/services/security.ts`](../../plugins/admin-marketplace/src/services/security.ts)) has its own older check (`securityService.checkVersionCompatibility`) that reads from `RegistryPlugin` metadata. Refactor to call `checkSharedDependencyCompatibility` from `@oc-mui/plugin-system` so all three paths use the same logic.
-
-- **When to revisit**: small follow-up PR (or three small ones, one per call site). Probably worth doing 'b' for both manifest paths — the loader fetches the manifest itself — because that mirrors how `apiVersion` enforcement works today and avoids a backend API change.
+- **When to revisit**: the JAR residual when the backend `plugins.json` producer is next touched (Opencast-side). Everything in-repo is done.
 
 ### 5.4 Deep-link return after SSO login
 

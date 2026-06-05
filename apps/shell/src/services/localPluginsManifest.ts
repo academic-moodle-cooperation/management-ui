@@ -23,6 +23,11 @@ export interface LocalPluginsManifestEntry {
   localesUrl?: string;
   /** Optional i18n namespaces served from localesUrl */
   i18nNamespaces?: string[];
+  /**
+   * Shared-runtime majors the plugin targets, read from its `plugin.json`
+   * `workspaceDependencies`. Gated by the shared-dependency check at load time.
+   */
+  workspaceDependencies?: Record<string, string>;
 }
 
 interface LocalPluginsManifestResponse {
