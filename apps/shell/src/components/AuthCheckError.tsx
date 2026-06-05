@@ -37,12 +37,17 @@ export function AuthCheckError({ error, onRetry }: AuthCheckErrorProps) {
       description={<p>{t("authError.description")}</p>}
       details={
         message ? (
-          <p>
-            Error:{" "}
-            <code className="text-foreground bg-muted px-1.5 py-0.5 rounded text-xs">
+          // Keep the raw error (a verbose GraphQL client blob that includes the
+          // operation text) out of the user's face — behind a collapsible so an
+          // admin can still expand it to debug.
+          <details className="text-left">
+            <summary className="cursor-pointer select-none text-xs text-muted-foreground hover:text-foreground">
+              {t("authError.showDetails")}
+            </summary>
+            <code className="mt-2 block whitespace-pre-wrap break-words rounded bg-muted px-2 py-1.5 text-xs text-foreground">
               {message}
             </code>
-          </p>
+          </details>
         ) : undefined
       }
       actions={
