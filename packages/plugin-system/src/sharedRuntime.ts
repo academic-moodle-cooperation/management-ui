@@ -34,6 +34,7 @@ export const SHARED_RUNTIME_MAJORS: Readonly<Record<string, number>> = Object.fr
 
   // Workspace packages — all 1.x for the OSS-readiness line
   "@oc-mui/plugin-system": 1,
+  "@oc-mui/app-runtime": 1,
   "@oc-mui/ui": 1,
   "@oc-mui/query": 1,
   "@oc-mui/router": 1,
@@ -97,6 +98,21 @@ export function checkSharedDependencyCompatibility(
   for (const [name, range] of Object.entries(requiredDependencies)) {
     const hostMajor = hostMajors[name];
     if (typeof hostMajor !== "number") {
+      // The host doesn't ship a package by this exact name. But if it ships the
+      // *same* package under its canonical scope — e.g. the plugin declares
+      // "@workspace/plugin-system" (the pre-rename namespace) while the host
+      // provides "@oc-mui/plugin-system" — that's a real incompatibility (the
+      // plugin targets a different host), not a benign "unknown" dependency.
+      const canonical = wrongScopeHostEquivalent(name, hostMajors);
+      if (canonical) {
+        incompatibilities.push({
+          name,
+          required: String(range),
+          hostMajor: hostMajors[canonical] as number,
+          reason: `Plugin requires "${name}", which looks like a wrong-scope / pre-rename reference to the host package "${canonical}". Rename it to "${canonical}".`,
+        });
+        continue;
+      }
       unknown.push(name);
       continue;
     }
@@ -132,6 +148,24 @@ export function checkSharedDependencyCompatibility(
     result.unknown = unknown;
   }
   return result;
+}
+
+/**
+ * If a declared dependency isn't a host package by its exact name, but the host
+ * ships the *same* package under the canonical `@oc-mui/` scope (i.e. the plugin
+ * used a different/old scope such as the pre-rename `@workspace/`), return that
+ * canonical name. Lets {@link checkSharedDependencyCompatibility} turn a
+ * wrong-namespace declaration into a real incompatibility instead of a silently
+ * ignored "unknown" dependency.
+ */
+function wrongScopeHostEquivalent(
+  name: string,
+  hostMajors: Readonly<Record<string, number>>,
+): string | null {
+  const bare = name.replace(/^@[^/]+\//, "");
+  if (bare === name) return null; // not a scoped package — nothing to compare
+  const canonical = `@oc-mui/${bare}`;
+  return canonical !== name && canonical in hostMajors ? canonical : null;
 }
 
 /**

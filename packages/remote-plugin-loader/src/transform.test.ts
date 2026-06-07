@@ -93,6 +93,22 @@ describe("transformModuleSource", () => {
     );
     expect(result).toContain("new URL(__PLUGIN_BASE_URL__, window.location.href).href");
   });
+
+  it("rewrites @oc-mui/app-runtime imports (now a host-provided shared module)", () => {
+    expect(SHARED_MODULE_NAMES).toContain("@oc-mui/app-runtime");
+    const source = 'import { AdaptiveAppWrapper } from "@oc-mui/app-runtime";';
+    const result = transformModuleSource(source);
+    expect(result).toContain("AdaptiveAppWrapper } =");
+    expect(result).not.toMatch(/import\s+\{[^}]*\}\s+from\s+["']@oc-mui\/app-runtime["']/);
+  });
+
+  it("logs a clear error when a plugin imports an @oc-mui package the host doesn't provide", () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    transformModuleSource('import { useStore } from "@oc-mui/store";');
+    const logged = errorSpy.mock.calls.map((call) => String(call[0])).join("\n");
+    expect(logged).toMatch(/does not provide.*@oc-mui\/store/);
+    errorSpy.mockRestore();
+  });
 });
 
 describe("isSameOriginUrl", () => {
