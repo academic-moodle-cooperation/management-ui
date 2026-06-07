@@ -4,7 +4,6 @@ import { ChevronsUpDown, LogOut } from "lucide-react";
 import React from "react";
 
 import { useGetCurrentUser } from "@oc-mui/query";
-import { sha256 } from "@oc-mui/utils";
 
 import {
   Avatar,
@@ -21,6 +20,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "../../ui";
+
+import { gravatarAvatarUrl } from "./gravatar";
 
 // Separate data concerns from presentation
 type UserData = {
@@ -118,12 +119,14 @@ export const useUserData = (): {
     const name = data.currentUser.name ?? data.currentUser.username ?? "";
     const email = data.currentUser.email ?? "";
 
+    // Only resolve a Gravatar when there is an authenticated user with an email;
+    // anonymous users have no email, so we skip the third-party request entirely.
+    const avatarUrl = gravatarAvatarUrl(data.currentUser.email);
+
     return {
       name,
       email,
-      avatarUrl: `https://www.gravatar.com/avatar/${sha256(
-        email.toLowerCase().trim(),
-      )}?s=64&d=404`,
+      ...(avatarUrl !== undefined && { avatarUrl }),
       role: data.currentUser.userRole,
     };
   }, [data]);
