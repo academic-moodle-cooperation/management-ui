@@ -22,6 +22,8 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:install": "playwright install --with-deps chromium",
+    "test:integration": "playwright test --config=playwright.integration.config.ts",
+    "test:integration:ui": "playwright test --config=playwright.integration.config.ts --ui",
     "changeset": "changeset",
     "changeset:status": "changeset status",
     "changeset:version": "changeset version",
