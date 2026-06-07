@@ -9,7 +9,10 @@ export const selectedLanguage = {
   en: "English",
 };
 
-const defaultLocalesBase = import.meta.env.DEV ? "/management-ui/dist/locales" : "/management-ui/locales";
+// Core locales are emitted to `<shellBase>/locales` in both dev (served by
+// vite-plugin-static-copy) and prod (build output). The dev server does NOT
+// expose them under a `/dist/` prefix, so both modes use the same base.
+const defaultLocalesBase = "/management-ui/locales";
 const pluginNamespaceBases = new Map<string, string>();
 
 const buildLocaleUrl = (namespace: string, language: string) => {
