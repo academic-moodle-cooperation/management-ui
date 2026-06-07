@@ -1,17 +1,16 @@
 import { useI18n } from "@oc-mui/i18n";
-import { useMuiGetSeriesNameByIdQuery } from "@oc-mui/query";
 import { useParams } from "@oc-mui/router";
 import { AppHeading, Container, Separator } from "@oc-mui/ui/components";
 
 import { EpisodesTable } from "./components/EpisodesTable";
+import { useSeriesName } from "./hooks/useSeriesName";
 
 import "./index.css";
 
 export const App = () => {
   const { t } = useI18n();
   const { routeSubPath: seriesId } = useParams({ strict: false });
-  const { data } = useMuiGetSeriesNameByIdQuery({ seriesId: seriesId || "" });
-  const seriesTitle = data?.seriesById?.title;
+  const seriesTitle = useSeriesName(seriesId);
 
   const getHeading = () => {
     if (!seriesTitle) return t("common:episodes");
