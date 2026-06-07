@@ -7,10 +7,9 @@ import { GraphqlRecorder } from "./graphql-recorder";
  * backend (the §4 GraphQL data assertions live in graphql.spec.ts; here we check
  * the rendered result the user actually sees).
  *
- * Non-destructive only: the §3.2 "Create series" mutation is intentionally NOT
- * automated here — it writes a series the API offers no delete for, so running it
- * against a shared backend leaves litter. It belongs on a disposable backend
- * (the podman stack) — tracked in docs/operations/test-automation-plan.md Task 2.
+ * Non-destructive only. The §3.2 "Create series" mutation lives in
+ * create-series.spec.ts instead — it writes a series the API can't delete, so
+ * it's opt-in (OPENCAST_ALLOW_MUTATIONS) and meant for a disposable backend.
  */
 
 test("§3.2 series route renders a table", async ({ page }) => {
