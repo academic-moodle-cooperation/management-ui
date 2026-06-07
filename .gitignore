@@ -33,6 +33,7 @@ coverage
 .nyc_output
 playwright-report/
 playwright-report-integration/
+playwright-report-visual/
 test-results/
 .playwright/
 playwright/.auth/
