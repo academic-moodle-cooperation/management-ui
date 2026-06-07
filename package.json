@@ -24,6 +24,7 @@
     "test:e2e:install": "playwright install --with-deps chromium",
     "test:integration": "playwright test --config=playwright.integration.config.ts",
     "test:integration:ui": "playwright test --config=playwright.integration.config.ts --ui",
+    "test:jar-deploy": "bash scripts/verify-jar-deploy.sh",
     "changeset": "changeset",
     "changeset:status": "changeset status",
     "changeset:version": "changeset version",

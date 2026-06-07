@@ -52,6 +52,27 @@ pnpm test:integration         # headless
 pnpm test:integration:ui      # interactive UI mode
 ```
 
+### Mutating specs (opt-in)
+
+The §3.2 create-series spec writes a series the API can't delete, so it's gated
+behind `OPENCAST_ALLOW_MUTATIONS` and skipped otherwise. Run it only against a
+disposable backend:
+
+```bash
+OPENCAST_ALLOW_MUTATIONS=1 OPENCAST_BASE_URL=http://localhost:8080 pnpm test:integration
+```
+
+### §10 JAR build + deploy
+
+[`scripts/verify-jar-deploy.sh`](../../scripts/verify-jar-deploy.sh) (`pnpm
+test:jar-deploy`) automates the JAR pipeline against a disposable Opencast:
+scaffolds a throwaway plugin, `mvn package`s the OSGi JAR, asserts its
+headers/contents, `podman cp`s it into the container's `deploy/`, and polls
+`plugins.json` until Opencast's PluginBundleTracker reports it — cleaning up
+(container JAR, scaffold, lockfile) on exit. Needs `mvn` with the Opencast
+parent POM reachable (present in `~/.m2` on the host that built Hinkelstein) and
+a running local podman stack. It's backend-mutating — local only, never shared.
+
 ## Configuration (env vars)
 
 Everything is overridable — see [`opencast-env.ts`](opencast-env.ts) for the
