@@ -1,0 +1,13 @@
+/*
+ * Live Polls renders entirely with shared UI components and semantic theme
+ * tokens (see docs/plugins/styling.md), so there are no plugin-specific colors
+ * or fonts here. This file exists as the conventional per-plugin stylesheet seam
+ * and for the one bit of dynamic motion the results bars rely on.
+ */
+
+@media (prefers-reduced-motion: reduce) {
+  .live-polls-no-motion,
+  .live-polls-no-motion * {
+    transition: none !important;
+  }
+}

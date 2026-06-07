@@ -1,0 +1,136 @@
+{
+  "nav": {
+    "title": "Live-Umfragen"
+  },
+  "app": {
+    "title": "Live-Umfragen",
+    "subtitle": "Erstelle Fragensets, starte eine Live-Sitzung und lass dein Publikum in Echtzeit antworten."
+  },
+  "manager": {
+    "newDeck": "Neues Set",
+    "newDeckTitle": "Unbenanntes Set",
+    "confirmDelete": "Dieses Set und seine Fragen löschen?",
+    "empty": {
+      "title": "Noch keine Fragensets",
+      "body": "Erstelle dein erstes Set, um Live-Antworten zu sammeln."
+    },
+    "deck": {
+      "questions_one": "{{count}} Frage",
+      "questions_other": "{{count}} Fragen",
+      "noQuestions": "Noch keine Fragen",
+      "linkedSeries": "Mit einer Serie verknüpft",
+      "notLinked": "Mit keiner Serie verknüpft"
+    },
+    "actions": {
+      "edit": "Bearbeiten",
+      "present": "Präsentieren",
+      "duplicate": "Duplizieren",
+      "delete": "Löschen"
+    }
+  },
+  "editor": {
+    "back": "Zurück zu den Sets",
+    "deckTitle": "Titel des Sets",
+    "deckTitlePlaceholder": "z. B. Vorlesung 4 – Aufwärmen",
+    "deckDescription": "Beschreibung",
+    "deckDescriptionPlaceholder": "Optionale Notizen für dich",
+    "linkSeries": "Verknüpfte Serie (optional)",
+    "linkSeriesHint": "Ordne dieses Set einer Opencast-Serie zu.",
+    "questions": "Fragen",
+    "addQuestion": "Frage hinzufügen",
+    "noQuestions": "Dieses Set hat noch keine Fragen. Füge eine hinzu, um zu starten.",
+    "questionPrompt": "Frage",
+    "questionPromptPlaceholder": "Was möchtest du fragen?",
+    "questionType": "Typ",
+    "option": "Option",
+    "optionPlaceholder": "Optionstext",
+    "addOption": "Option hinzufügen",
+    "removeOption": "Option entfernen",
+    "correctAnswer": "Richtige Antwort",
+    "points": "Punkte",
+    "scaleMin": "Niedrigster Wert",
+    "scaleMax": "Höchster Wert",
+    "scaleMinLabel": "Bezeichnung niedrig",
+    "scaleMaxLabel": "Bezeichnung hoch",
+    "maxWords": "Wörter pro Teilnehmer:in",
+    "moveUp": "Nach oben",
+    "moveDown": "Nach unten",
+    "removeQuestion": "Frage entfernen",
+    "present": "Präsentieren"
+  },
+  "questionTypes": {
+    "single": "Einfachauswahl",
+    "multiple": "Mehrfachauswahl",
+    "scale": "Skala",
+    "wordcloud": "Wortwolke",
+    "quiz": "Quiz",
+    "singleDesc": "Genau eine Option wählen",
+    "multipleDesc": "Beliebig viele Optionen wählen",
+    "scaleDesc": "Auf einer Zahlenskala bewerten",
+    "wordcloudDesc": "Freitext-Wörter sammeln",
+    "quizDesc": "Eine richtige Antwort, mit Punkten"
+  },
+  "present": {
+    "noDeck": "Dieses Set hat keine Fragen zum Präsentieren.",
+    "join": {
+      "hint": "Mitmachen unter",
+      "code": "Code",
+      "copyLink": "Beitrittslink kopieren",
+      "copied": "Kopiert!",
+      "openParticipant": "Publikumsansicht öffnen"
+    },
+    "participants_one": "{{count}} Teilnehmer:in",
+    "participants_other": "{{count}} Teilnehmer:innen",
+    "lobby": {
+      "title": "Warteraum",
+      "body": "Teile den Beitrittscode mit deinem Publikum und starte dann."
+    },
+    "start": "Starten",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "reveal": "Ergebnisse zeigen",
+    "hide": "Ergebnisse verbergen",
+    "finish": "Sitzung beenden",
+    "closed": "Sitzung beendet",
+    "progress": "Frage {{current}} von {{total}}",
+    "responses_one": "{{count}} Antwort",
+    "responses_other": "{{count}} Antworten",
+    "leaderboard": "Bestenliste",
+    "correctAnswer": "Richtige Antwort",
+    "average": "Durchschnitt: {{value}}"
+  },
+  "join": {
+    "title": "Einer Live-Umfrage beitreten",
+    "enterName": "Dein Name",
+    "namePlaceholder": "z. B. Alex",
+    "anonymous": "Anonym beitreten",
+    "join": "Beitreten",
+    "noSession": "Keine aktive Sitzung für den Code „{{code}}“.",
+    "missingCode": "Öffne den Beitrittslink der präsentierenden Person, um teilzunehmen.",
+    "sessionClosed": "Diese Sitzung ist beendet. Danke fürs Mitmachen!",
+    "lobby": "Du bist dabei! Warte, bis die Moderation startet…",
+    "standby": "Warte auf die nächste Frage…",
+    "submit": "Absenden",
+    "submitted": "Antwort gesendet",
+    "changeAnswer": "Antwort ändern",
+    "selectOne": "Wähle eine",
+    "selectMany": "Wähle eine oder mehrere",
+    "typeWord": "Wort eingeben",
+    "addWord": "Hinzufügen",
+    "wordsLeft_one": "{{count}} Wort übrig",
+    "wordsLeft_other": "{{count}} Wörter übrig",
+    "thanks": "Danke für deine Antwort!"
+  },
+  "results": {
+    "votes_one": "{{count}} Stimme",
+    "votes_other": "{{count}} Stimmen",
+    "noResponses": "Noch keine Antworten",
+    "you": "Du"
+  },
+  "common": {
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "close": "Schließen"
+  }
+}

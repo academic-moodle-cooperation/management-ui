@@ -1,0 +1,20 @@
+{
+  "$schema": "../../packages/plugin-system/src/schemas/plugin.schema.json",
+  "id": "live-polls",
+  "name": "Live Polls",
+  "version": "1.0.0",
+  "description": "Audience-response plugin (SRS): build poll decks, run a live session, and let the audience answer by join code. Results update live across browser tabs via a local BroadcastChannel transport. Showcase example for plugin development.",
+  "author": {
+    "name": "Management UI Core"
+  },
+  "namespace": "live-polls",
+  "type": "app",
+  "category": "feature",
+  "extensionPoints": [
+    "apps:definitions",
+    "sidebar:nav-items",
+    "app:config:defaults"
+  ],
+  "i18nNamespaces": ["live-polls"],
+  "locales": "locales"
+}

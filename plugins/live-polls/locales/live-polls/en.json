@@ -1,0 +1,136 @@
+{
+  "nav": {
+    "title": "Live Polls"
+  },
+  "app": {
+    "title": "Live Polls",
+    "subtitle": "Build poll decks, run a live session, and let your audience answer in real time."
+  },
+  "manager": {
+    "newDeck": "New deck",
+    "newDeckTitle": "Untitled deck",
+    "confirmDelete": "Delete this deck and its questions?",
+    "empty": {
+      "title": "No poll decks yet",
+      "body": "Create your first deck to start collecting live responses."
+    },
+    "deck": {
+      "questions_one": "{{count}} question",
+      "questions_other": "{{count}} questions",
+      "noQuestions": "No questions yet",
+      "linkedSeries": "Linked to a series",
+      "notLinked": "Not linked to a series"
+    },
+    "actions": {
+      "edit": "Edit",
+      "present": "Present",
+      "duplicate": "Duplicate",
+      "delete": "Delete"
+    }
+  },
+  "editor": {
+    "back": "Back to decks",
+    "deckTitle": "Deck title",
+    "deckTitlePlaceholder": "e.g. Lecture 4 — warm-up",
+    "deckDescription": "Description",
+    "deckDescriptionPlaceholder": "Optional notes for yourself",
+    "linkSeries": "Linked series (optional)",
+    "linkSeriesHint": "Group this deck under an Opencast series.",
+    "questions": "Questions",
+    "addQuestion": "Add question",
+    "noQuestions": "This deck has no questions yet. Add one to get started.",
+    "questionPrompt": "Question",
+    "questionPromptPlaceholder": "What do you want to ask?",
+    "questionType": "Type",
+    "option": "Option",
+    "optionPlaceholder": "Option text",
+    "addOption": "Add option",
+    "removeOption": "Remove option",
+    "correctAnswer": "Correct answer",
+    "points": "Points",
+    "scaleMin": "Lowest value",
+    "scaleMax": "Highest value",
+    "scaleMinLabel": "Low label",
+    "scaleMaxLabel": "High label",
+    "maxWords": "Words per participant",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "removeQuestion": "Remove question",
+    "present": "Present"
+  },
+  "questionTypes": {
+    "single": "Single choice",
+    "multiple": "Multiple choice",
+    "scale": "Scale",
+    "wordcloud": "Word cloud",
+    "quiz": "Quiz",
+    "singleDesc": "Pick exactly one option",
+    "multipleDesc": "Pick any number of options",
+    "scaleDesc": "Rate on a numeric scale",
+    "wordcloudDesc": "Collect free-text words",
+    "quizDesc": "One correct answer, scored"
+  },
+  "present": {
+    "noDeck": "This deck has no questions to present.",
+    "join": {
+      "hint": "Join at",
+      "code": "Code",
+      "copyLink": "Copy join link",
+      "copied": "Copied!",
+      "openParticipant": "Open audience view"
+    },
+    "participants_one": "{{count}} participant",
+    "participants_other": "{{count}} participants",
+    "lobby": {
+      "title": "Waiting room",
+      "body": "Share the join code with your audience, then start when ready."
+    },
+    "start": "Start",
+    "previous": "Previous",
+    "next": "Next",
+    "reveal": "Show results",
+    "hide": "Hide results",
+    "finish": "End session",
+    "closed": "Session ended",
+    "progress": "Question {{current}} of {{total}}",
+    "responses_one": "{{count}} response",
+    "responses_other": "{{count}} responses",
+    "leaderboard": "Leaderboard",
+    "correctAnswer": "Correct answer",
+    "average": "Average: {{value}}"
+  },
+  "join": {
+    "title": "Join a live poll",
+    "enterName": "Your name",
+    "namePlaceholder": "e.g. Alex",
+    "anonymous": "Join anonymously",
+    "join": "Join",
+    "noSession": "No active session for code \"{{code}}\".",
+    "missingCode": "Open the join link from the presenter to take part.",
+    "sessionClosed": "This session has ended. Thanks for taking part!",
+    "lobby": "You're in! Waiting for the host to start…",
+    "standby": "Waiting for the next question…",
+    "submit": "Submit",
+    "submitted": "Answer sent",
+    "changeAnswer": "Change answer",
+    "selectOne": "Pick one",
+    "selectMany": "Pick one or more",
+    "typeWord": "Type a word",
+    "addWord": "Add",
+    "wordsLeft_one": "{{count}} word left",
+    "wordsLeft_other": "{{count}} words left",
+    "thanks": "Thanks for your answer!"
+  },
+  "results": {
+    "votes_one": "{{count}} vote",
+    "votes_other": "{{count}} votes",
+    "noResponses": "No responses yet",
+    "you": "You"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "close": "Close"
+  }
+}

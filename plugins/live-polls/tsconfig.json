@@ -1,0 +1,12 @@
+{
+  "extends": "@oc-mui/typescript-config/react-library.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": ".",
+    "composite": false,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "include": ["**/*.ts", "**/*.tsx", "**/*.json", "vite-env.d.ts"],
+  "exclude": ["node_modules", "dist"]
+}
