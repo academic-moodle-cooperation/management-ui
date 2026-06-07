@@ -72,15 +72,18 @@ Example against a `localhost`-published Opencast you start yourself:
 OPENCAST_BASE_URL=http://localhost:8080 pnpm test:integration
 ```
 
-## Status / "confirm locally"
+## Status
 
-These specs are a **first cut** — the infrastructure (health-check, proxy, login)
-is solid, but a few things can only be confirmed against a live backend:
+Validated **green against a real Opencast backend** (all 6 specs pass: auth
+setup, §4 GraphQL data flow on episodes + series, §3 episodes table + sort). The
+infrastructure (health-check, proxy, form login → saved session) and the
+backend-specific assumptions are confirmed:
 
-- The login form field names / success redirect are Opencast's Spring Security
-  defaults; adjust `auth.setup.ts` if your deployment customised them.
-- The episodes view is asserted to render a `<table>`; if it defaults to a
-  gallery/grid, update `episodes.spec.ts`.
-- The sort `orderBy` variable name is assumed from `test-protocol.md` §4.4.
+- Login uses Opencast's Spring Security defaults (`/j_spring_security_check`,
+  `j_username` / `j_password`); the session authenticates through the proxy.
+- The episodes view renders a `<table>` (`getByRole("table")`).
+- Sorting fires `MuiGetMyEvents` carrying an `orderBy` variable.
 
-Iterate these to green locally, then they become permanent regression cover.
+If a future UI change moves any of these (e.g. episodes defaults to a
+gallery/grid, or a custom auth provider replaces the form), update the
+corresponding spec — that's the regression signal doing its job.
