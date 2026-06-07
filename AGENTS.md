@@ -14,7 +14,7 @@ Before you finish a plugin-touching change:
 4. A `src/plugin.contract.test.ts` exists, copy-pasted from a sibling plugin and only the import line changed. ✓
 5. Plugin imports nothing from `apps/*`, `plugins/<other>/*`, or any external library not already wrapped behind a `@oc-mui/*` facade. ✓
 6. `pnpm verify` passes locally. ✓
-7. If a public `@oc-mui/*` API surface changed, you ran `pnpm api-check` and committed the regenerated `etc/<pkg>.api.md` *and* added a changeset. ✓
+7. **Changeset committed.** If you changed *any* versioned package, you ran `pnpm changeset`, picked the bump level, and **committed** the `.changeset/*.md` file. "Versioned" = every package under `packages/*` and `plugins/*`, **including private (`"private": true`) ones** — the *only* exemptions are those listed in `.changeset/config.json`'s `ignore` (currently just `shell` and `playground`). This is **not** limited to public-API changes: a dev-server tweak, an internal bug fix, a new asset MIME type all need one. An uncommitted changeset does **not** count — CI runs `changeset status` against the committed tree. When unsure, run `pnpm changeset status --since=origin/<base-branch>` (green = covered). If the change *also* touched a public `@oc-mui/*` API surface, additionally run `pnpm api-check` and commit the regenerated `etc/<pkg>.api.md`. ✓
 8. **Docs stay in sync.** Any doc your change makes stale is updated in the same PR. If you renamed a public symbol, fix every doc that names it; if you changed an extension point's contract, fix [`docs/plugins/`](docs/plugins/) and [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md); if you changed how something is built or released, fix [`docs/operations/`](docs/operations/). Use the "Where to find things" table at the bottom of this file to find every doc that mentions what you touched. ✓
 
 If any of those is unchecked, do not declare the change finished.
@@ -180,16 +180,23 @@ No hex colors, no hardcoded font names, no raw spacing values in plugin code. Us
 - Locale files at `<plugin>/locales/<namespace>/<locale>.json`. The contract test's `expectI18nKeyParity` fails when locale files have mismatched key sets.
 - Reference keys with `t("namespace:key")` via `useTranslation` from `@oc-mui/i18n`.
 
-## Versioning a public-API change
+## Versioning — changesets (every versioned package) and public-API changes
 
-If your change touches a `@oc-mui/*` package's public surface (anything reachable through its `exports` field):
+**The changeset rule is broad, and this trips people up: _any_ change to a versioned package needs a committed changeset — not just public-API changes.** "Versioned" means every package under `packages/*` and `plugins/*`, **including private (`"private": true`) ones**. The *only* exceptions are the packages listed in `.changeset/config.json`'s `ignore` array (currently `shell` and `playground`). A dev-only config tweak, a bug fix in an internal package, a new asset MIME type — all of them need a changeset. "It's private, so it doesn't need one" is wrong; private packages still get versioned and only the `ignore` list is exempt.
+
+For any versioned-package change:
 
 1. Make the code change.
-2. `pnpm api-check` regenerates the affected `etc/<pkg>.api.md`. Inspect the diff; commit it if the change was intentional.
-3. `pnpm changeset` — pick the affected packages and the bump level (patch / minor / major). The CLI writes a `.changeset/<slug>.md` file; commit it alongside the rest.
-4. Major bumps require a `@deprecated` JSDoc tag on the previous version, kept for one full major cycle. See [`CONTRIBUTING.md`](CONTRIBUTING.md#-versioning-changesets-and-deprecations) for the full rule.
+2. `pnpm changeset` — pick the affected packages and the bump level (patch / minor / major). The CLI writes a `.changeset/<slug>.md` file.
+3. **Commit the `.changeset/*.md` file.** `changeset status` (which CI runs) reads the committed tree — an unstaged or uncommitted changeset still fails the check, which is the classic "I added it but CI still says no changesets were found" trap.
+4. Verify locally with `pnpm changeset status --since=origin/<base-branch>` (e.g. `--since=origin/release/oss-1.0` — match the branch your PR targets, since CI runs `changeset status --since=origin/$BASE`). Green means every changed-and-versioned package is covered. A bare `pnpm changeset status` compares against the configured `baseBranch` (`develop`), which is misleading on a long-lived release branch — pass `--since` explicitly there.
 
-CI rejects PRs that change a versioned package without a changeset, and rejects PRs whose `.api.md` snapshots drift without an accompanying regeneration.
+If the change *also* touches a `@oc-mui/*` package's public surface (anything reachable through its `exports` field), additionally:
+
+5. `pnpm api-check` regenerates the affected `etc/<pkg>.api.md`. Inspect the diff; commit it if the change was intentional.
+6. Major bumps require a `@deprecated` JSDoc tag on the previous version, kept for one full major cycle. See [`CONTRIBUTING.md`](CONTRIBUTING.md#-versioning-changesets-and-deprecations) for the full rule.
+
+CI rejects PRs that change a versioned package without a changeset (`.github/workflows/changeset.yml`), and rejects PRs whose `.api.md` snapshots drift without an accompanying regeneration.
 
 ## Pre-push gate — `pnpm verify`
 
