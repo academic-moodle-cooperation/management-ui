@@ -158,17 +158,27 @@ Including `build` in the chain is intentional: `vite dev` warns where `vite buil
 
 ## Follow-ups
 
-The MVP shipped in Phase 4 covers exactly **one** contract test (core-episodes) and **one** smoke E2E. The following work is deferred and tracked here so it doesn't silently fall off the radar:
+Every plugin now ships a `plugin.contract.test.ts`, and on top of the mocked smoke E2E there is a real-backend [integration tier](../../tests/integration/README.md) and a [visual-regression tier](../../tests/visual/README.md). The following work is still deferred and tracked here so it doesn't silently fall off the radar:
 
-1. **Contract tests for the remaining plugins** — `core-series`, `core-upload`, `admin-marketplace`, `example`. Each is a copy of [plugins/core-episodes/src/plugin.contract.test.ts](../../plugins/core-episodes/src/plugin.contract.test.ts) with a renamed import and a manifest-side `extensionPoints` array.
-2. **E2E suites per feature** — the smoke spec is a sanity check, not a real flow. Each domain plugin should grow its own spec: upload-flow, series-flow, episodes-flow, marketplace-activation. Drop them next to `smoke.spec.ts` and reuse the route-mock pattern.
-3. **Coverage gates — extend to remaining packages** — the core-infra packages (`utils`, `plugin-system`, `store`) now enforce no-regression thresholds in their `vitest.config.ts` (floors set a few points below current coverage, so a real drop fails `pnpm test:coverage`). Extend the same ratchet to the foundation/integration packages (`i18n`, `query`, `router`, `ui`, …) and the apps, working toward the master-plan target of **80%** for foundation/integration packages and **60%** for apps. Codecov already ingests uploads from CI.
-4. **Playground as plugin runner** — [apps/playground](../../apps/playground) is a static placeholder today. Phase 4 of the master plan calls for a `?plugin=<id>` query-driven runner that loads any single plugin in isolation, enabling per-plugin visual debugging and reusable E2E fixtures.
-5. **Marketplace metadata cleanup** — [plugins/admin-marketplace/src/services/plugin-metadata.ts](../../plugins/admin-marketplace/src/services/plugin-metadata.ts) currently hard-codes which extension points each plugin advertises. Once every core plugin declares `extensionPoints` in its manifest, the marketplace can read straight from the manifest and the hard-coded map disappears.
-6. **Visual regression** — Playwright screenshot diffs across the default theme + at least one alternate theme, gated behind a separate job because of flake risk. Listed as Phase 4b in the master plan.
-7. **Remote turbo cache** — the four CI jobs each rebuild the workspace today. Enabling Turbo Remote Cache would let `unit`, `contract`, and `e2e` share artefacts from `lint-types`, cutting overall pipeline time substantially.
+1. **E2E suites per feature (mocked)** — the smoke spec is a sanity check, not a real flow. The standard mocked project should grow per-feature flows (upload, series, episodes, marketplace-activation) next to `smoke.spec.ts`, reusing the route-mock pattern. (Real-backend versions of several of these already live in [`tests/integration/`](../../tests/integration/).)
+2. **Coverage gates — extend to remaining packages** — the core-infra packages (`utils`, `plugin-system`, `store`) now enforce no-regression thresholds in their `vitest.config.ts` (floors set a few points below current coverage, so a real drop fails `pnpm test:coverage`). Extend the same ratchet to the foundation/integration packages (`i18n`, `query`, `router`, `ui`, …) and the apps, working toward the master-plan target of **80%** for foundation/integration packages and **60%** for apps. Codecov already ingests uploads from CI.
+3. **Playground as plugin runner** — [apps/playground](../../apps/playground) is a static placeholder today. Phase 4 of the master plan calls for a `?plugin=<id>` query-driven runner that loads any single plugin in isolation, enabling per-plugin visual debugging and reusable E2E fixtures.
+4. **Marketplace metadata cleanup** — [plugins/admin-marketplace/src/services/plugin-metadata.ts](../../plugins/admin-marketplace/src/services/plugin-metadata.ts) currently hard-codes which extension points each plugin advertises. Once every core plugin declares `extensionPoints` in its manifest, the marketplace can read straight from the manifest and the hard-coded map disappears.
+5. **Visual regression — expand + promote to CI** — the [visual tier](../../tests/visual/README.md) (`pnpm test:visual`) snapshots the shell landing in light + dark today. Extend it to an alternate showcase theme and the key data screens (episodes/series tables), and promote it from an opt-in command to a CI job rendered in a fixed container for byte-stable baselines.
+6. **Remote turbo cache** — the CI jobs each rebuild the workspace today. Enabling Turbo Remote Cache would let `unit`, `contract`, and `e2e` share artefacts from `lint-types`, cutting overall pipeline time substantially.
 
 When you tackle one of these, delete the entry from this list and reference the resulting commit in the deletion's commit body.
+
+## Every manual run feeds automation
+
+When a release-protocol run finds a bug, the bug is telling you which automated test was missing. Convert it, don't just fix it:
+
+- **Pure logic bug** (formatter, sort field, config parse) → write a failing **unit test**, then fix.
+- **Plugin not registering / manifest drift / console error on load** → strengthen that plugin's `plugin.contract.test.ts`.
+- **Broken user flow** → add an **E2E spec** (the `EventOrderByInput` sort regression is the canonical example of something that should be a permanent E2E test).
+- **Only-a-real-backend bug** → add/refine an **integration-E2E** spec in [`tests/integration/`](../../tests/integration/) and/or a row in [`test-protocol.md`](./test-protocol.md).
+
+The rule: every protocol run either converts a found bug into a permanent automated test, or adds/refines a checklist row — so the manual protocol shrinks every release instead of being a recurring slog.
 
 ## See also
 
