@@ -57,7 +57,7 @@ test("series route: MuiGetMySeries returns data, not errors", async ({ page }) =
   for (const call of gql.byName("MuiGetMySeries")) assertHealthyCall(call);
 });
 
-test("every GraphQL operation the shell fires honours the Mui naming contract", async ({
+test("every GraphQL operation the shell fires is healthy (Mui-named, data, no errors)", async ({
   page,
 }) => {
   const gql = GraphqlRecorder.attach(page);
@@ -69,16 +69,12 @@ test("every GraphQL operation the shell fires honours the Mui naming contract", 
   await page.goto("/management-ui/series");
   await page.waitForTimeout(2_000);
 
-  // The universal, stable §4 contract is the operation *naming* (Mui prefix) —
-  // assert it across every op. We deliberately do NOT assert every lookup is
-  // error-free here: the shell currently fires MuiGetSeriesNameById with a null
-  // identifier for series-less events, which the backend rejects — a real but
-  // pre-existing app bug (see the spawned follow-up), not something this suite
-  // should flake on. The data-not-errors guarantee for the primary list queries
-  // is covered by the two targeted specs above.
+  // Every op the shell fires must honour the §4 contract end-to-end: the Mui
+  // naming prefix *and* a healthy response (data, no errors). This used to be
+  // relaxed to naming-only because the shell fired MuiGetSeriesNameById with a
+  // null identifier for series-less events and the backend rejected it; that
+  // bug is now fixed (the lookup is guarded with `enabled: Boolean(seriesId)`),
+  // so the full guarantee holds across the board.
   expect(gql.calls.length, "expected the shell to fire GraphQL").toBeGreaterThan(0);
-  for (const call of gql.calls) {
-    expect(call.operationName, "operation must carry the Mui prefix").toMatch(/^Mui/);
-    expect(call.response, `${call.operationName} returned no JSON body`).not.toBeNull();
-  }
+  for (const call of gql.calls) assertHealthyCall(call);
 });
