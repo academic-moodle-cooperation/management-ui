@@ -54,6 +54,20 @@ test("shell boots and renders without console errors", async ({ page }) => {
       body: JSON.stringify({ tag_name: "v0.0.0" }),
     }),
   );
+  // The user-avatar resolves through Gravatar with `d=404`, so Gravatar returns
+  // 404 when no avatar exists — which surfaces as a "failed to load resource"
+  // console error. Stub it to a 1x1 PNG to keep the smoke self-contained and
+  // offline, exactly like the GitHub stub above.
+  await page.route("https://www.gravatar.com/**", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "image/png",
+      body: Buffer.from(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+        "base64",
+      ),
+    }),
+  );
 
   await page.goto("/management-ui/");
 
