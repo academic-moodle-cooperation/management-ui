@@ -1,0 +1,83 @@
+name: Integration (real backend)
+
+# The real-backend tier of the test pyramid (docs/operations/test-automation-plan.md).
+# Per-PR CI stays mocked (test.yml); this job runs `pnpm test:integration` against
+# a LIVE Opencast on a schedule + on demand, so schema drift / auth / real-data
+# regressions surface without slowing every PR.
+#
+# Backend wiring (pick one):
+#   * Configure repo variable OPENCAST_BASE_URL + secrets OPENCAST_USER/OPENCAST_PASS
+#     and point at a reachable Opencast (staging, or a podman stack on a
+#     self-hosted runner).
+#   * A GitHub-HOSTED runner can only reach a PUBLICLY reachable Opencast. For an
+#     internal/campus backend or a podman-spun stack, switch `runs-on` to a
+#     self-hosted runner inside that network (see the commented line below).
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # nightly 03:00 UTC
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Opencast base URL (overrides the OPENCAST_BASE_URL repo variable)"
+        required: false
+
+concurrency:
+  group: integration-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  integration:
+    name: Integration E2E (live Opencast)
+    runs-on: ubuntu-latest
+    # For an internal backend or a podman stack, use a self-hosted runner instead:
+    # runs-on: [self-hosted, opencast]
+
+    # Skip cleanly when no backend is configured (e.g. forks without the variable),
+    # so scheduled runs don't show up as red failures.
+    if: ${{ github.event.inputs.base_url != '' || vars.OPENCAST_BASE_URL != '' }}
+
+    env:
+      OPENCAST_BASE_URL: ${{ github.event.inputs.base_url || vars.OPENCAST_BASE_URL }}
+      OPENCAST_USER: ${{ secrets.OPENCAST_USER }}
+      OPENCAST_PASS: ${{ secrets.OPENCAST_PASS }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build vite-config
+        run: |
+          # The Playwright webServer starts the shell in dev mode, which imports
+          # @oc-mui/vite-config from dist/. Dev aliases the other @oc-mui packages
+          # to source, so only this one needs building (same as test.yml's e2e job).
+          pnpm turbo run build --force --filter=@oc-mui/vite-config
+          test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
+
+      - name: Ensure .local-plugins exists
+        run: mkdir -p .local-plugins
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run integration tests
+        run: pnpm test:integration
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-integration
+          path: playwright-report-integration/
+          retention-days: 7
