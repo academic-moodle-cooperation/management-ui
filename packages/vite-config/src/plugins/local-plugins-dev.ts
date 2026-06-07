@@ -16,6 +16,27 @@ import type { Plugin } from "vite";
 const MANIFEST_PATH = "/local-plugins/manifest.json";
 const LOCAL_PLUGINS_PREFIX = "/local-plugins/";
 
+/** Content-Type by file extension for assets served from `.local-plugins/`. */
+const LOCAL_PLUGIN_ASSET_MIME: Record<string, string> = {
+  ".mjs": "application/javascript",
+  ".js": "application/javascript",
+  ".css": "text/css",
+  ".json": "application/json",
+  ".map": "application/json",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".gif": "image/gif",
+  ".webp": "image/webp",
+  ".avif": "image/avif",
+  ".ico": "image/x-icon",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2",
+  ".ttf": "font/ttf",
+  ".otf": "font/otf",
+};
+
 export interface LocalPluginsDevPluginOptions {
   /** Monorepo root (e.g. path.resolve(__dirname, "../..")) */
   monorepoRoot: string;
@@ -277,13 +298,14 @@ export function localPluginsDevPlugin(options: LocalPluginsDevPluginOptions): Pl
               return;
             }
             const content = fs.readFileSync(filePath);
-            const ext = path.extname(filePath);
-            const mime =
-              ext === ".mjs" || ext === ".js"
-                ? "application/javascript"
-                : ext === ".css"
-                  ? "text/css"
-                  : "application/octet-stream";
+            const ext = path.extname(filePath).toLowerCase();
+            // Serve a correct Content-Type per extension. This matters for
+            // assets the browser won't content-sniff — notably SVG, which is
+            // only treated as an image when served as `image/svg+xml` (an SVG
+            // sent as octet-stream silently won't render as a background-image
+            // or <img>). Raster formats sniff by magic bytes, but we set them
+            // explicitly anyway. Unknown types fall back to octet-stream.
+            const mime = LOCAL_PLUGIN_ASSET_MIME[ext] ?? "application/octet-stream";
             res.setHeader("Content-Type", mime);
             res.end(content);
             return;
