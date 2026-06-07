@@ -4,7 +4,6 @@ import { ChevronsUpDown, LogOut } from "lucide-react";
 import React from "react";
 
 import { useGetCurrentUser } from "@oc-mui/query";
-import { sha256 } from "@oc-mui/utils";
 
 import {
   Avatar,
@@ -121,9 +120,10 @@ export const useUserData = (): {
     return {
       name,
       email,
-      avatarUrl: `https://www.gravatar.com/avatar/${sha256(
-        email.toLowerCase().trim(),
-      )}?s=64&d=404`,
+      // No external avatar service: the initials AvatarFallback is the avatar.
+      // Requesting gravatar.com leaks a hash of the user's email to a third
+      // party (counter to this project's GDPR/offline stance) and 404s for any
+      // user without a Gravatar — which surfaced as a console error.
       role: data.currentUser.userRole,
     };
   }, [data]);
