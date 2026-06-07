@@ -51,7 +51,11 @@ export default defineConfig({
     command: "pnpm --filter shell dev",
     url: BASE_URL,
     timeout: 180_000,
-    reuseExistingServer: !process.env["CI"],
+    // Never reuse a server for visual baselines: reusing a stray dev server
+    // (e.g. one pointed at a real backend) silently captures the wrong UI —
+    // a backend-loaded landing/theme plugin instead of the mocked default.
+    // Always boot a clean, mocked-backend shell so snapshots are deterministic.
+    reuseExistingServer: false,
     stdout: "pipe",
     stderr: "pipe",
   },
