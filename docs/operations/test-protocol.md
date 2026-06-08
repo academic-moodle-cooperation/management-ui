@@ -30,16 +30,18 @@ hand-check the residue (the design is in [`test-automation-plan.md`](./test-auto
 | 8 | Plugin scaffolding | `pnpm test:scaffold` |
 | 9 | `.local-plugins/` loading | `pnpm test:local-plugin` |
 | 10 | JAR build + deploy | `pnpm test:jar-deploy` (local podman) |
-| 11 | Marketplace (CDN load) | **manual** — real-backend automation still pending |
+| 11 | Marketplace (CDN load) | `pnpm test:marketplace` (Developer-Tools Try / Install / Uninstall + localStorage persistence) |
 | 12 | Contracts enforcement | CI: `pnpm lint` (`graphql-operation-naming`) + `pnpm api-check:ci` + changeset gate; the rule ships its own unit tests |
 | 13 | CI gates | the workflows themselves |
 | 14 | Documentation site | `pnpm test:docs` |
 | 15 | Authentication | `pnpm test:integration` (`auth.setup.ts` + §15.3) |
 
 The real-backend tiers (§3/§4/§10/§15) need a local Opencast — see
-[`tests/integration/README.md`](../../tests/integration/README.md). The remaining
-manual gaps are **§11** (marketplace CDN Try/Install/Uninstall) and per-screen
-visual diffs against real data.
+[`tests/integration/README.md`](../../tests/integration/README.md). **Every
+section now has automated coverage.** What still benefits from a human pass:
+first-time confirmation when new test infra is wired, genuine "does it feel
+right" UX judgment, and per-screen visual diffs against real data (today's
+visual tier snapshots the landing on a mocked backend).
 
 ## Setup
 
