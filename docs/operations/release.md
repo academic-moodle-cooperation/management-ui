@@ -8,29 +8,32 @@ The published npm packages exist for **one purpose: writing plugins without chec
 
 Everything else stays `private: true` **permanently**. The feature plugins ship inside the application (as JARs / via the marketplace), not as libraries someone imports; the host-only infrastructure has no meaning outside the shell. `private: true` is therefore their intended end state, not a temporary pre-1.0 lock.
 
-**Published — the SDK (13 packages).** A plugin author imports or builds with these. The set is dependency-closed: nothing here depends on a non-published package.
+The set is decided **forward-looking**: it covers what a plugin author can legitimately need to write a plugin against the supported model — not merely what an in-tree plugin happens to import today. (Current imports are a floor: `@oc-mui/app-runtime`, for instance, has no in-tree plugin consumer but is imported by an external TU Wien plugin; `@oc-mui/tailwind-config` has no in-tree dependent but any plugin that builds its own Tailwind needs the preset.) The set is dependency-closed: nothing published depends on a non-published package.
+
+**Published — the SDK (15 packages).**
 
 | Package | Why a plugin author needs it |
 |---|---|
 | `@oc-mui/plugin-system` | `createPlugin`, `PluginManager`, extension-point registration |
 | `@oc-mui/plugin-core` | shared extension-point identifiers every plugin may import |
+| `@oc-mui/app-runtime` | `AppRuntimeProvider` / `useAppRuntime` and the standalone-app bootstrap (`StandaloneAppWrapper`, `bootstrapStandaloneApp`) an external/standalone plugin boots with |
 | `@oc-mui/ui` | the React component library |
+| `@oc-mui/tailwind-config` | the shadcn design-token preset, so custom plugin markup matches the host's styling |
 | `@oc-mui/utils` | logger, asset URLs, deep-merge |
 | `@oc-mui/i18n` · `@oc-mui/query` · `@oc-mui/router` · `@oc-mui/store` | the wrapper facades (i18next / TanStack Query / TanStack Router / Jotai) |
 | `@oc-mui/ui-config` | `AppConfig` types + defaults |
 | `@oc-mui/plugin-testing` | the contract-test harness (devDependency) |
 | `@oc-mui/eslint-config` · `@oc-mui/typescript-config` · `@oc-mui/vite-config` | the shared lint / TS / build configs the scaffold wires in |
 
-**Never published — stays `private: true` (9 packages).**
+**Never published — stays `private: true` (7 packages).** The guiding rule: *publishing is a commitment* — every published package is a versioned public contract. Adding a package to npm later is a non-breaking change; un-publishing one is not. So when a package is a host internal rather than part of the authoring contract, it stays private until there's a concrete reason to expose it.
 
 | Package | Why it is not an SDK package |
 |---|---|
-| `@oc-mui/plugin-core-episodes` · `-series` · `-upload` | feature plugins — application products, shipped via JAR/marketplace |
+| `@oc-mui/plugin-core-episodes` · `-series` · `-upload` | feature plugins — application products, shipped via JAR/marketplace. The architecture forbids importing one plugin from another (communicate via extension points), so no author depends on these as packages. |
 | `@oc-mui/plugin-admin-marketplace` | the host's admin product |
-| `@oc-mui/plugin-example` | reference/scaffold source, not an import dependency |
-| `@oc-mui/remote-plugin-loader` | host-side mechanism for loading remote plugins |
-| `@oc-mui/providers` · `@oc-mui/app-runtime` | app-level composition / shared-runtime wiring; no plugin imports them |
-| `@oc-mui/tailwind-config` | build tooling, not a runtime/scaffold dependency today — promote to the SDK only if external plugins are expected to author custom Tailwind against the preset |
+| `@oc-mui/plugin-example` | reference/scaffold source, read not installed |
+| `@oc-mui/remote-plugin-loader` | host-side mechanism for loading remote plugins; an author writes a plugin, the host loads it |
+| `@oc-mui/providers` | app-level provider composition; authors reach the same wiring through `@oc-mui/app-runtime`'s standalone wrappers. Promote it only if we commit to authors composing providers by hand. |
 
 > The SDK packages carry full npm metadata (`description`, `repository`, `author`, `keywords`, `publishConfig.access = public`) and a per-package `LICENSE`, but they remain `private: true` until the Phase 6d flip. **Two changes are still required before they actually publish** (tracked, not done): point each `exports` at built `dist/` instead of `.ts`/`.tsx` source and add a matching `files` allowlist (most ship raw source today, and at least `@oc-mui/i18n`'s current `files` doesn't even cover its `exports` entry); and move React from `dependencies` to `peerDependencies` on `plugin-system` (and friends) to avoid duplicate-React in a consumer install.
 
