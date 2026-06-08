@@ -23,10 +23,10 @@ pnpm --filter @oc-mui/plugin-__PLUGIN_NAME__ test:contract
    - Adjust `type` (e.g. `app`, `header`, `sidebar`, `theme`).
    - Update `extensionPoints` to match what `initialize()` actually registers.
 3. Run `pnpm test:contract` from this directory after every change.
-4. Read [AGENTS.md](../../AGENTS.md) (in the repo root) for the full plugin
+4. Read [AGENTS.md](https://github.com/academic-moodle-cooperation/management-tool/blob/HEAD/AGENTS.md) (in the repo root) for the full plugin
    authoring rules.
 
 ## Conventions
 
-- **GraphQL operations and fragments**: prefix every `query`/`mutation`/`subscription`/`fragment` you declare with your plugin's namespace, in PascalCase (e.g. `__PLUGIN_PASCAL_NAME__GetSomething`, `__PLUGIN_PASCAL_NAME__ThingFields`). This avoids name collisions with other plugins at the GraphQL Codegen step. Full rules: [`docs/architecture/CONTRACTS.md` § 6](../../docs/architecture/CONTRACTS.md#6-graphql-operation-naming).
-- **Plugin manifest's `workspaceDependencies`**: declare every shared dep you import from the host. The host refuses plugins whose required major doesn't match. Full rules: [`docs/architecture/CONTRACTS.md` § 5](../../docs/architecture/CONTRACTS.md#5-shared-runtime-dependencies).
+- **GraphQL operations and fragments**: prefix every `query`/`mutation`/`subscription`/`fragment` you declare with your plugin's namespace, in PascalCase (e.g. `__PLUGIN_PASCAL_NAME__GetSomething`, `__PLUGIN_PASCAL_NAME__ThingFields`). This avoids name collisions with other plugins at the GraphQL Codegen step. Full rules: [`docs/architecture/CONTRACTS.md` § 6](https://github.com/academic-moodle-cooperation/management-tool/blob/HEAD/docs/architecture/CONTRACTS.md#6-graphql-operation-naming).
+- **Plugin manifest's `workspaceDependencies`**: declare every shared dep you import from the host. The host refuses plugins whose required major doesn't match. Full rules: [`docs/architecture/CONTRACTS.md` § 5](https://github.com/academic-moodle-cooperation/management-tool/blob/HEAD/docs/architecture/CONTRACTS.md#5-shared-runtime-dependencies).

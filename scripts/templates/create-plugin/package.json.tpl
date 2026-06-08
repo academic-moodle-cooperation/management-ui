@@ -17,6 +17,7 @@
     "react": "^19.1.0"
   },
   "devDependencies": {
+    "@types/node": "^22.0.0",
     "@types/react": "^18.0.0 || ^19.0.0",
     "@oc-mui/eslint-config": "workspace:*",
     "@oc-mui/plugin-testing": "workspace:*",
