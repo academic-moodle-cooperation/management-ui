@@ -13,6 +13,36 @@ Mark each item ✅ / ❌ / ➖ (skipped, justified). Any ❌ blocks the release.
 - Before any release that touches the JAR-packaging pipeline (Maven POMs, `apps/shell/pom.xml`, the `PluginBundleTracker`).
 - Annually, as a calibration pass even if none of the above triggered.
 
+## Automation status
+
+Most of this protocol is now automated — run the commands below and you only
+hand-check the residue (the design is in [`test-automation-plan.md`](./test-automation-plan.md)).
+
+| § | Section | Automated by |
+|---|---|---|
+| 1 | Workspace baseline | `pnpm verify` (+ `pnpm api-check`) |
+| 2 | Shell boots cleanly | `pnpm test:e2e` (smoke) |
+| 3 | Built-in plugin features | `pnpm test:integration` (real backend) + `pnpm test:e2e` (config gating) |
+| 4 | GraphQL data flow | `pnpm test:integration` (`Mui` ops return `data`, not `errors`) |
+| 5 | i18n | `pnpm test:e2e` (`i18n.spec.ts`) |
+| 6 | Configuration | `pnpm test:e2e` (`config.spec.ts`) |
+| 7 | Theming | `pnpm test:e2e` (`theming.spec.ts`) + `pnpm test:visual` |
+| 8 | Plugin scaffolding | `pnpm test:scaffold` |
+| 9 | `.local-plugins/` loading | `pnpm test:local-plugin` |
+| 10 | JAR build + deploy | `pnpm test:jar-deploy` (local podman) |
+| 11 | Marketplace (CDN load) | `pnpm test:marketplace` (Developer-Tools Try / Install / Uninstall + localStorage persistence) |
+| 12 | Contracts enforcement | CI: `pnpm lint` (`graphql-operation-naming`) + `pnpm api-check:ci` + changeset gate; the rule ships its own unit tests |
+| 13 | CI gates | the workflows themselves |
+| 14 | Documentation site | `pnpm test:docs` |
+| 15 | Authentication | `pnpm test:integration` (`auth.setup.ts` + §15.3) |
+
+The real-backend tiers (§3/§4/§10/§15) need a local Opencast — see
+[`tests/integration/README.md`](../../tests/integration/README.md). **Every
+section now has automated coverage.** What still benefits from a human pass:
+first-time confirmation when new test infra is wired, genuine "does it feel
+right" UX judgment, and per-screen visual diffs against real data (today's
+visual tier snapshots the landing on a mocked backend).
+
 ## Setup
 
 You need:

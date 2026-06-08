@@ -4,19 +4,25 @@ import { defaultConfig } from "../../packages/ui-config/src";
 
 /**
  * test-protocol.md §7 — Theming, as pixel diffs. Renders the shell against a
- * mocked backend (deterministic) in light and dark, so a token/theme regression
- * shows up as a screenshot diff instead of needing a human to eyeball it.
+ * mocked backend (deterministic) so a token/theme regression shows up as a
+ * screenshot diff instead of needing a human to eyeball it. Covers the default
+ * theme + an alternate showcase theme (oxford-navy), each in light and dark, on
+ * the landing + the episodes/series screens.
  */
 
-// Stub the four endpoints the shell hits during boot + the landing page's
-// GitHub release check — same set as the functional smoke spec.
-async function stubBackend(page: Page): Promise<void> {
+type AppConfig = typeof defaultConfig;
+
+const oxfordNavy: AppConfig = {
+  ...defaultConfig,
+  app: { ...defaultConfig.app, theme: "oxford-navy" },
+};
+
+// Stub the endpoints the shell hits during boot + the landing page's GitHub
+// release check + gravatar — same set as the functional smoke spec. `config`
+// lets a variant render with an alternate theme.
+async function stubBackend(page: Page, config: AppConfig = defaultConfig): Promise<void> {
   await page.route("**/ui/config/management-ui/config.json", (route) =>
-    route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify(defaultConfig),
-    }),
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(config) }),
   );
   await page.route("**/management-tool/ui/config/plugins.json", (route) =>
     route.fulfill({
@@ -46,6 +52,9 @@ async function stubBackend(page: Page): Promise<void> {
       body: JSON.stringify({ tag_name: "v0.0.0" }),
     }),
   );
+  await page.route("https://www.gravatar.com/**", (route) =>
+    route.fulfill({ status: 200, contentType: "image/png", body: Buffer.from([]) }),
+  );
 }
 
 // Kill anything that moves (caret, transitions, animations) and wait for web
@@ -58,23 +67,32 @@ async function settle(page: Page): Promise<void> {
   await page.evaluate(() => document.fonts.ready);
 }
 
+const MASK = (page: Page) => ({ mask: [page.locator("footer")], fullPage: true as const });
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`${scheme} theme`, () => {
     // The shell defaults to "System" appearance, so emulating the OS color
-    // scheme drives the theme without touching app state.
+    // scheme drives light/dark without touching app state.
     test.use({ colorScheme: scheme });
 
-    test("shell landing page", async ({ page }) => {
+    test("landing — default theme", async ({ page }) => {
       await stubBackend(page);
       await page.goto("/management-ui/");
       await expect(page.getByRole("link", { name: /home/i })).toBeVisible({ timeout: 15_000 });
       await settle(page);
-
-      await expect(page).toHaveScreenshot(`shell-landing-${scheme}.png`, {
-        fullPage: true,
-        // Footer carries the build version + commit sha, which vary per build.
-        mask: [page.locator("footer")],
-      });
+      await expect(page).toHaveScreenshot(`shell-landing-${scheme}.png`, MASK(page));
     });
+
+    test("landing — oxford-navy theme", async ({ page }) => {
+      await stubBackend(page, oxfordNavy);
+      await page.goto("/management-ui/");
+      await expect(page.getByRole("link", { name: /home/i })).toBeVisible({ timeout: 15_000 });
+      await settle(page);
+      await expect(page).toHaveScreenshot(`shell-landing-oxford-navy-${scheme}.png`, MASK(page));
+    });
+
+    // Per-screen visual (episodes/series tables) needs real rows to be
+    // meaningful — with the mocked null backend the table never populates. Those
+    // belong in a real-backend visual tier (integration); tracked as a follow-up.
   });
 }

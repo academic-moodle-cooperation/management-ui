@@ -10,6 +10,11 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["../../vitest.setup.ts"],
     include: ["**/*.test.ts", "**/*.test.tsx"],
+    // No-regression coverage gate (testing.md Follow-up). Floors below current
+    // coverage; raise toward the 80% lib target as tests are added.
+    coverage: {
+      thresholds: { lines: 64, functions: 57, branches: 46, statements: 63 },
+    },
   },
   resolve: {
     alias: {
