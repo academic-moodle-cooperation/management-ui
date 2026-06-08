@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 /**
  * test-protocol.md §9.5 — the dev server exposes scaffolded .local-plugins via
  * /management-ui/local-plugins/manifest.json. The demo plugin was scaffolded +
- * built by verify-local-plugin.sh before the dev server (webServer) started.
+ * built by global-setup.ts before the dev server (webServer) started.
  */
 test("§9.5 the dev local-plugins manifest lists the built plugin", async ({ request }) => {
   const res = await request.get("local-plugins/manifest.json");
