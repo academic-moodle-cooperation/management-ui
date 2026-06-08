@@ -1,0 +1,84 @@
+name: Release
+
+# Changesets release automation.
+#
+# On every push to the release branch this job either:
+#   1. opens/updates a "Version Packages" PR that aggregates the pending
+#      .changeset/*.md files into version bumps + changelog edits, OR
+#   2. (once that PR is merged and no changesets remain) runs
+#      `pnpm changeset:publish` to publish the bumped packages and push tags.
+#
+# NOTE — pre-1.0 state: `.changeset/config.json` has `access: "restricted"`
+# and every @oc-mui/* package is still `"private": true`. `changeset publish`
+# skips private packages, so the publish half is intentionally a no-op until
+# the Phase 6d public flip (drop `private`, set access to "public"). The
+# version/changelog half (the "Version Packages" PR) works today and is the
+# reason to wire this now.
+#
+# Required before this can actually publish:
+#   - Repo setting: Settings → Actions → General → "Allow GitHub Actions to
+#     create and approve pull requests" must be ON (for the Version PR).
+#   - Secret NPM_TOKEN: an npm automation token with publish rights (only
+#     consumed once packages go public).
+
+on:
+  push:
+    branches: ["release/oss-1.0"]
+
+# Let the action push the Version Packages branch and open its PR.
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+# Never run two releases concurrently against the same branch.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Version or publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # Full history so changesets can compute version bumps + changelogs.
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: |
+          # Build vite-config first so its dist files exist before any package
+          # that imports it — same ordering the test workflow relies on.
+          pnpm turbo run build --force --filter=@oc-mui/vite-config
+          test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
+          pnpm turbo run build --force
+
+      - name: Create Release PR or publish
+        uses: changesets/action@v1
+        with:
+          # Aggregates .changeset/*.md into a "Version Packages" PR.
+          version: pnpm changeset:version
+          # Runs on the merged Version PR when no changesets remain. No-op
+          # while packages are private; publishes once they go public.
+          publish: pnpm changeset:publish
+          title: "chore: version packages"
+          commit: "chore: version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
