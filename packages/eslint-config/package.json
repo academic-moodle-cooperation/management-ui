@@ -34,19 +34,32 @@
     "./react-internal": "./react-internal.js",
     "./type-aware": "./type-aware.js"
   },
-  "devDependencies": {
+  "files": [
+    "base.js",
+    "react-internal.js",
+    "type-aware.js",
+    "rules/index.js",
+    "rules/graphql-operation-naming.js"
+  ],
+  "dependencies": {
     "@eslint/js": "^9.27.0",
     "@graphql-eslint/eslint-plugin": "^4.4.0",
-    "eslint": "^9.27.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-boundaries": "^6.0.2",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-only-warn": "^1.1.0",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-turbo": "^2.5.0",
     "globals": "^16.2.0",
     "graphql": "^16.11.0",
-    "typescript-eslint": "^8.32.0",
+    "typescript-eslint": "^8.32.0"
+  },
+  "peerDependencies": {
+    "eslint": "^9.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.27.0",
     "vitest": "^4.0.17"
   }
 }

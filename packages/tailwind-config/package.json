@@ -31,6 +31,10 @@
     "./preset": "./src/shadcn-preset.ts",
     "./plugin": "./src/shadcn-plugin.ts"
   },
+  "files": [
+    "tailwind.config.ts",
+    "src"
+  ],
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf target && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
     "lint": "eslint . --ext .ts,.js --report-unused-disable-directives --max-warnings 0",
