@@ -21,3 +21,13 @@ tsc / Tailwind directly), so no build step is involved — this is the first,
 zero-risk slice of the broader exports→dist packaging work. `files` only
 filters the tarball; monorepo consumers use workspace symlinks and are
 unaffected.
+
+`@oc-mui/eslint-config` additionally gets its dependencies fixed: the ESLint
+plugins its exported configs `import` at runtime (`@eslint/js`,
+`typescript-eslint`, `eslint-plugin-{boundaries,import,only-warn,react,
+react-hooks,turbo}`, `eslint-config-prettier`, `globals`, `graphql`,
+`@graphql-eslint/eslint-plugin`) were declared under `devDependencies`, so a
+consumer install would not have pulled them in. They move to `dependencies`,
+and `eslint` itself becomes a `peerDependency`. This also adds
+`eslint-plugin-import`, which `base.js` imports but was missing from the
+manifest entirely (resolved only via workspace hoisting).
