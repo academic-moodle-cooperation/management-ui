@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Internationalization facade (i18next) for the Opencast Management UI and its plugins.",
   "author": "Academic Moodle Cooperation",
-  "homepage": "https://github.com/academic-moodle-cooperation/management-tool/tree/release/oss-1.0/packages/i18n#readme",
+  "homepage": "https://github.com/academic-moodle-cooperation/management-tool/tree/HEAD/packages/i18n#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/academic-moodle-cooperation/management-tool.git",

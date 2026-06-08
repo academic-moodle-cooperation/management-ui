@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Shared TypeScript configurations for the Opencast Management UI and its plugins.",
   "author": "Academic Moodle Cooperation",
-  "homepage": "https://github.com/academic-moodle-cooperation/management-tool/tree/release/oss-1.0/packages/typescript-config#readme",
+  "homepage": "https://github.com/academic-moodle-cooperation/management-tool/tree/HEAD/packages/typescript-config#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/academic-moodle-cooperation/management-tool.git",

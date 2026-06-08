@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Plugin runtime for the Opencast Management UI — createPlugin, PluginManager, and extension-point registration.",
   "author": "Academic Moodle Cooperation",
-  "homepage": "https://github.com/academic-moodle-cooperation/management-tool/tree/release/oss-1.0/packages/plugin-system#readme",
+  "homepage": "https://github.com/academic-moodle-cooperation/management-tool/tree/HEAD/packages/plugin-system#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/academic-moodle-cooperation/management-tool.git",
