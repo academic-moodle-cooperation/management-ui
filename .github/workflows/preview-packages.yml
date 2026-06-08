@@ -9,15 +9,20 @@ name: Preview packages (pkg.pr.new)
 # On a PR, pkg.pr.new comments the ready-to-copy install URLs.
 #
 # ── ONE-TIME SETUP (maintainer, on github.com) ────────────────────────────────
-# Install the pkg.pr.new GitHub App on this repository:
+# Install the pkg.pr.new GitHub App on the repo running this workflow:
 #   https://github.com/apps/pkg-pr-new
-# Until that's done this workflow runs but the publish step is rejected. No npm
-# account or token is involved — pkg.pr.new is a preview CDN, not npm, and it
-# happily publishes packages that are still `private: true`.
+# pkg.pr.new checks the App against $GITHUB_REPOSITORY (the repo the job runs
+# on), so install it wherever you want previews. Until then the publish step is
+# rejected — but it's `continue-on-error`, so it never fails the PR. No npm
+# account or token is involved; pkg.pr.new is a preview CDN, not npm.
 #
-# The packages must be built first (they ship dist/ via publishConfig); the
-# `--pnpm` flag makes pkg.pr.new pack with pnpm so publishConfig.exports is
-# applied (consumers get the dist artifact, same as a real publish).
+# Note: pkg.pr.new SKIPS `private: true` packages. The SDK is `private` pre-1.0,
+# so a dedicated step strips `private` before publishing (the runner checkout is
+# throwaway, so it is not restored).
+#
+# The packages are built first (they ship dist/ via publishConfig); the `--pnpm`
+# flag makes pkg.pr.new pack with pnpm so publishConfig.exports is applied
+# (consumers get the dist artifact, same as a real publish).
 
 on:
   workflow_dispatch:
@@ -58,7 +63,33 @@ jobs:
       - name: Ensure .local-plugins exists
         run: mkdir -p .local-plugins
 
+      - name: Make the SDK packages publishable (strip private)
+        # pkg.pr.new skips `private: true` packages; the SDK is private pre-1.0.
+        # Strip it for this throwaway build (not restored — the runner checkout
+        # is ephemeral). Keep this list in sync with the publish list below.
+        run: >
+          node -e 'for (const d of process.argv.slice(1)) { const fs = require("fs"), p = d + "/package.json"; const j = JSON.parse(fs.readFileSync(p, "utf8")); delete j.private; fs.writeFileSync(p, JSON.stringify(j, null, 2) + "\n"); }'
+          packages/plugin-system
+          plugins/core
+          packages/app-runtime
+          packages/ui
+          packages/ui-config
+          packages/utils
+          packages/i18n
+          packages/query
+          packages/router
+          packages/store
+          packages/plugin-testing
+          packages/vite-config
+          packages/eslint-config
+          packages/typescript-config
+          packages/tailwind-config
+
       - name: Publish preview packages
+        # Optional convenience job — never fail the PR if pkg.pr.new isn't set up
+        # on this repo (App not installed, etc.). The PR comment (or its absence)
+        # is the real signal.
+        continue-on-error: true
         # Only the 15 publishable SDK packages — not the feature plugins or
         # host-only infra. Keep this list in sync with the SDK set documented in
         # docs/operations/release.md ("What gets published").
