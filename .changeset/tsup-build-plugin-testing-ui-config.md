@@ -43,10 +43,14 @@ Per-package notes:
   the `./components/*` and `./hooks/*` wildcard targets, structure mirrored
   into `dist/`). `globals.css` and bundled fonts are copied verbatim into
   `dist/styles` (the CSS is a Tailwind-v4 entry the consumer processes, not
-  built). Known limitation, tracked separately: that `globals.css` carries
-  monorepo-relative `@source` globs, so the external standalone-plugin styling
-  story (a consumer providing its own Tailwind entry) still needs design — out
-  of scope for this packaging change.
+  built). `globals.css` was also cleaned for external consumers: the
+  monorepo-specific `@source` globs (apps/plugins/.local-plugins) moved out of
+  the shared stylesheet into the shell's own Tailwind entry, leaving only a
+  self-scan of the library's own files. A consumer now gets working styling
+  from `@import "@oc-mui/ui/globals.css"` alone (component classes + tokens +
+  fonts; Tailwind v4 auto-scans their own project). Verified pixel-identical
+  against the visual-regression baselines and with a real external Tailwind
+  build.
 
 Verified with `pnpm pack`: each tarball's `exports`/`main`/`types` resolve to
 `dist`, containing only built output + README + LICENSE — no source or tests.

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 
-import "@oc-mui/ui/globals.css";
+import "./app.css";
 import "./themes/default.css";
 import { loadNamespace, useTranslation } from "@oc-mui/i18n";
 import { PluginProvider } from "@oc-mui/plugin-system";

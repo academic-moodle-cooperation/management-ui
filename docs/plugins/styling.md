@@ -208,6 +208,19 @@ A theme is a CSS file that overrides token values — color **and** structure (r
 - [ ] Renders correctly against the default theme **and** at least one org theme.
 - [ ] Theme files set `--font-*` to system stacks only — no remote `@import` of web fonts.
 
+## Consuming `@oc-mui/ui` outside the monorepo
+
+A plugin built in its own repo — installing `@oc-mui/ui` from the registry rather than via the workspace — gets working styling from a single import in its Tailwind entry:
+
+```css
+/* your-plugin/src/app.css */
+@import "@oc-mui/ui/globals.css";
+```
+
+That one line pulls in Tailwind, the `tailwindcss-animate` plugin, the design tokens, the Geist fonts, and a scan of `@oc-mui/ui`'s own compiled classes — so the components you render are styled. Tailwind v4 additionally auto-scans your plugin's own project, so the utility classes in your markup are generated too; only content sources Tailwind can't auto-detect need an explicit `@source`. Override tokens exactly as in-repo (see [Overrides](#overrides)) — your theme CSS sets the same `--*` variables.
+
+> The host application (the shell) declares the *app's* content sources in its own entry, [`apps/shell/src/app.css`](../../apps/shell/src/app.css), not in `globals.css` — which is why the shared stylesheet stays free of monorepo-specific paths and works unchanged for external consumers.
+
 ## See also
 
 - [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md#3-theme-contract) — stability guarantees and versioning.
