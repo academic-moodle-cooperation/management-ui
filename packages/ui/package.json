@@ -21,13 +21,57 @@
     "components"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist-types/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist-types/index.d.ts",
+        "import": "./dist/index.js"
+      },
+      "./components": {
+        "types": "./dist-types/components/index.d.ts",
+        "import": "./dist/components/index.js"
+      },
+      "./components/*": {
+        "types": "./dist-types/components/*.d.ts",
+        "import": "./dist/components/*.js"
+      },
+      "./config-primitives": {
+        "types": "./dist-types/config-primitives.d.ts",
+        "import": "./dist/config-primitives.js"
+      },
+      "./hooks": {
+        "types": "./dist-types/hooks/index.d.ts",
+        "import": "./dist/hooks/index.js"
+      },
+      "./hooks/*": {
+        "types": "./dist-types/hooks/*.d.ts",
+        "import": "./dist/hooks/*.js"
+      },
+      "./lib": {
+        "types": "./dist-types/lib/index.d.ts",
+        "import": "./dist/lib/index.js"
+      },
+      "./lib/utils": {
+        "types": "./dist-types/lib/utils.d.ts",
+        "import": "./dist/lib/utils.js"
+      },
+      "./styles": {
+        "types": "./dist-types/styles/index.d.ts",
+        "import": "./dist/styles/index.js"
+      },
+      "./globals.css": "./dist/styles/globals.css",
+      "./postcss.config": "./postcss.config.mjs"
+    }
   },
   "license": "ECL-2.0",
   "type": "module",
   "private": true,
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf target && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
+    "build": "tsup",
+    "build:types": "tsc -p tsconfig.build.json",
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "check-types": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
@@ -47,6 +91,11 @@
     "./globals.css": "./src/styles/globals.css",
     "./postcss.config": "./postcss.config.mjs"
   },
+  "files": [
+    "dist",
+    "dist-types",
+    "postcss.config.mjs"
+  ],
   "dependencies": {
     "@headlessui/react": "^2.2.4",
     "@internationalized/date": "^3.8.1",
@@ -98,6 +147,7 @@
     "jsdom": "^27.4.0",
     "react": "^19.1.0",
     "tailwindcss": "^4.1.7",
+    "tsup": "^8.5.0",
     "typescript": "~5.5.4",
     "vitest": "^4.0.17"
   },

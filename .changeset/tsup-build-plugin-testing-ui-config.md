@@ -8,6 +8,7 @@
 "@oc-mui/router": patch
 "@oc-mui/app-runtime": patch
 "@oc-mui/plugin-core": patch
+"@oc-mui/ui": patch
 ---
 
 Ship a built `dist/` for the SDK packages so external consumers get compiled
@@ -38,6 +39,14 @@ Per-package notes:
   entry), a build/types pipeline, and moves `react` from `dependencies` to
   `peerDependencies` (the same fix the other runtime packages got — previously
   missed here).
+- `ui` — multi-entry tsup over the whole component tree (~95 components, incl.
+  the `./components/*` and `./hooks/*` wildcard targets, structure mirrored
+  into `dist/`). `globals.css` and bundled fonts are copied verbatim into
+  `dist/styles` (the CSS is a Tailwind-v4 entry the consumer processes, not
+  built). Known limitation, tracked separately: that `globals.css` carries
+  monorepo-relative `@source` globs, so the external standalone-plugin styling
+  story (a consumer providing its own Tailwind entry) still needs design — out
+  of scope for this packaging change.
 
 Verified with `pnpm pack`: each tarball's `exports`/`main`/`types` resolve to
 `dist`, containing only built output + README + LICENSE — no source or tests.
