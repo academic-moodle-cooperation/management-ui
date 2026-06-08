@@ -1,0 +1,81 @@
+name: Preview packages (pkg.pr.new)
+
+# Publishes per-commit *preview* builds of the SDK packages to the pkg.pr.new
+# CDN, so anyone (e.g. a backend / plugin author) can install the exact
+# artifacts from a branch or PR before they're ever published to npm:
+#
+#   pnpm add https://pkg.pr.new/@oc-mui/ui@<commit-sha>
+#
+# On a PR, pkg.pr.new comments the ready-to-copy install URLs.
+#
+# ── ONE-TIME SETUP (maintainer, on github.com) ────────────────────────────────
+# Install the pkg.pr.new GitHub App on this repository:
+#   https://github.com/apps/pkg-pr-new
+# Until that's done this workflow runs but the publish step is rejected. No npm
+# account or token is involved — pkg.pr.new is a preview CDN, not npm, and it
+# happily publishes packages that are still `private: true`.
+#
+# The packages must be built first (they ship dist/ via publishConfig); the
+# `--pnpm` flag makes pkg.pr.new pack with pnpm so publishConfig.exports is
+# applied (consumers get the dist artifact, same as a real publish).
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main, develop, "release/**"]
+    paths:
+      - "packages/**"
+      - "plugins/**"
+      - ".github/workflows/preview-packages.yml"
+
+jobs:
+  preview:
+    name: Publish preview packages
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the SDK (dist + dist-types)
+        run: |
+          # vite-config first (ordering guard), then the full build.
+          pnpm turbo run build --force --filter=@oc-mui/vite-config
+          test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
+          pnpm turbo run build build:types
+
+      - name: Ensure .local-plugins exists
+        run: mkdir -p .local-plugins
+
+      - name: Publish preview packages
+        # Only the 15 publishable SDK packages — not the feature plugins or
+        # host-only infra. Keep this list in sync with the SDK set documented in
+        # docs/operations/release.md ("What gets published").
+        run: >
+          pnpm dlx pkg-pr-new publish --pnpm
+          ./packages/plugin-system
+          ./plugins/core
+          ./packages/app-runtime
+          ./packages/ui
+          ./packages/ui-config
+          ./packages/utils
+          ./packages/i18n
+          ./packages/query
+          ./packages/router
+          ./packages/store
+          ./packages/plugin-testing
+          ./packages/vite-config
+          ./packages/eslint-config
+          ./packages/typescript-config
+          ./packages/tailwind-config
