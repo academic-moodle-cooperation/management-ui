@@ -4,10 +4,14 @@
 "@oc-mui/store": patch
 "@oc-mui/query": patch
 "@oc-mui/i18n": patch
+"@oc-mui/plugin-system": patch
+"@oc-mui/router": patch
+"@oc-mui/app-runtime": patch
+"@oc-mui/plugin-core": patch
 ---
 
-Ship a built `dist/` for the pure-TS SDK packages so external consumers get
-compiled JS instead of raw `.ts`/`.tsx`.
+Ship a built `dist/` for the SDK packages so external consumers get compiled
+JS instead of raw `.ts`/`.tsx`.
 
 Each gains a tsup `build` (ESM JS → `dist/`) while declarations keep coming
 from `tsc` (`build:types` → `dist-types/`), which also feeds api-extractor —
@@ -25,6 +29,15 @@ Per-package notes:
   not bundled.
 - `i18n` — tsup replaces the old `tsc --build`; locale JSON (runtime HTTP
   assets) is copied to `dist/locales` on build.
+- `app-runtime` — gained a `build:types` + `tsconfig.build.json` and a `types`
+  export condition it lacked; declarations emit to `dist-types/src/`.
+- `router` — declarations emit to `dist-types/src/` (preserved by its build
+  tsconfig); `publishConfig` points there.
+- `plugin-core` — had **no `exports` field at all** and was effectively a
+  bundler-resolved package; it now declares proper `exports` (root `index.ts`
+  entry), a build/types pipeline, and moves `react` from `dependencies` to
+  `peerDependencies` (the same fix the other runtime packages got — previously
+  missed here).
 
 Verified with `pnpm pack`: each tarball's `exports`/`main`/`types` resolve to
 `dist`, containing only built output + README + LICENSE — no source or tests.

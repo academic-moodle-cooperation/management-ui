@@ -19,16 +19,33 @@
     "standalone"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist-types/src/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist-types/src/index.d.ts",
+        "import": "./dist/index.js"
+      }
+    }
   },
   "license": "ECL-2.0",
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist-types/src/index.d.ts",
+      "default": "./src/index.ts"
+    }
   },
+  "files": [
+    "dist",
+    "dist-types"
+  ],
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf target && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
+    "build": "tsup",
+    "build:types": "tsc -p tsconfig.build.json",
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "check-types": "tsc --noEmit -p tsconfig.json"
   },
@@ -52,6 +69,7 @@
     "@oc-mui/eslint-config": "workspace:*",
     "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.20.0",
+    "tsup": "^8.5.0",
     "typescript": "^5.3.3"
   }
 }

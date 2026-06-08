@@ -19,7 +19,15 @@
     "extension-points"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist-types/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist-types/index.d.ts",
+        "import": "./dist/index.js"
+      }
+    }
   },
   "license": "ECL-2.0",
   "private": true,
@@ -30,8 +38,13 @@
       "default": "./src/index.ts"
     }
   },
+  "files": [
+    "dist",
+    "dist-types"
+  ],
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf target && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
+    "build": "tsup",
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "check-types": "tsc --noEmit -p tsconfig.json",
     "build:types": "tsc -p tsconfig.build.json",
@@ -57,6 +70,7 @@
     "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.20.0",
     "tailwindcss": "^4.1.7",
+    "tsup": "^8.5.0",
     "typescript": "^5.3.3",
     "vitest": "^4.0.17",
     "@testing-library/react": "^16.3.1",
