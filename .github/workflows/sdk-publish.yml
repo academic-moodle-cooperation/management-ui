@@ -1,0 +1,54 @@
+name: SDK publish smoke-test
+
+# Acceptance gate for the SDK packaging (exports→dist) work: proves a plugin
+# can install and build against the @oc-mui/* packages as published npm
+# artifacts, without the monorepo. Builds the SDK, publishes it to a throwaway
+# Verdaccio registry, then installs it into a consumer project outside the
+# workspace and runs a type-check + runtime smoke test.
+#
+# Runs on PRs that touch the SDK packages (and on demand). It's heavier than the
+# unit/contract jobs (a full build + 15 publishes + a fresh install) but it is
+# the only check that exercises the real install artifacts end-to-end.
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main, develop, "release/**"]
+    paths:
+      - "packages/**"
+      - "plugins/**"
+      - "scripts/verify-sdk-publish.sh"
+      - ".github/workflows/sdk-publish.yml"
+
+jobs:
+  sdk-publish:
+    name: Publish + install smoke-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build vite-config first
+        run: |
+          # Same ordering guard the other workflows use — vite-config's dist must
+          # exist before packages that import it build.
+          pnpm turbo run build --force --filter=@oc-mui/vite-config
+          test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
+
+      - name: Ensure .local-plugins exists
+        run: mkdir -p .local-plugins
+
+      - name: SDK publish smoke-test
+        run: bash scripts/verify-sdk-publish.sh

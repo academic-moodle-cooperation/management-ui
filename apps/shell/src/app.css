@@ -1,0 +1,23 @@
+/*
+ * The shell's Tailwind entry.
+ *
+ * Imports the shared @oc-mui/ui base (Tailwind, the tailwindcss-animate plugin,
+ * design tokens, fonts, and a scan of @oc-mui/ui's own classes) and then
+ * declares the *host's* content sources — every app, in-tree plugin, and local
+ * plugin — so the utility classes used across the running application are
+ * generated.
+ *
+ * These globs used to live in @oc-mui/ui's globals.css, but they are
+ * host-specific (they only make sense from the monorepo root) and don't belong
+ * in the shared, publishable library. A standalone plugin consuming @oc-mui/ui
+ * provides its own equivalent entry instead (Tailwind v4 also auto-scans the
+ * project that holds the CSS file, so most authors just need
+ * `@import "@oc-mui/ui/globals.css"`).
+ *
+ * Paths are relative to this file (apps/shell/src/).
+ */
+@import "@oc-mui/ui/globals.css";
+
+@source "../../**/*.{ts,tsx,js,jsx}";
+@source "../../../plugins/**/*.{ts,tsx,js,jsx}";
+@source "../../../.local-plugins/**/*.{ts,tsx,js,jsx}";
