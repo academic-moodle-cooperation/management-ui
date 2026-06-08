@@ -2,6 +2,38 @@
 
 How a change gets from a merged PR to a published version. The day-to-day rules are in [`CONTRIBUTING.md`](../../CONTRIBUTING.md#versioning-changesets-and-deprecations); this page is the deeper reference, plus the operational details a maintainer needs to actually cut a release.
 
+## What gets published — the plugin-author SDK
+
+The published npm packages exist for **one purpose: writing plugins without checking out this monorepo.** Someone running `pnpm create-plugin` (or building a plugin in their own repo) installs a handful of `@oc-mui/*` packages and nothing else. That set — and only that set — is what we publish to npm.
+
+Everything else stays `private: true` **permanently**. The feature plugins ship inside the application (as JARs / via the marketplace), not as libraries someone imports; the host-only infrastructure has no meaning outside the shell. `private: true` is therefore their intended end state, not a temporary pre-1.0 lock.
+
+**Published — the SDK (13 packages).** A plugin author imports or builds with these. The set is dependency-closed: nothing here depends on a non-published package.
+
+| Package | Why a plugin author needs it |
+|---|---|
+| `@oc-mui/plugin-system` | `createPlugin`, `PluginManager`, extension-point registration |
+| `@oc-mui/plugin-core` | shared extension-point identifiers every plugin may import |
+| `@oc-mui/ui` | the React component library |
+| `@oc-mui/utils` | logger, asset URLs, deep-merge |
+| `@oc-mui/i18n` · `@oc-mui/query` · `@oc-mui/router` · `@oc-mui/store` | the wrapper facades (i18next / TanStack Query / TanStack Router / Jotai) |
+| `@oc-mui/ui-config` | `AppConfig` types + defaults |
+| `@oc-mui/plugin-testing` | the contract-test harness (devDependency) |
+| `@oc-mui/eslint-config` · `@oc-mui/typescript-config` · `@oc-mui/vite-config` | the shared lint / TS / build configs the scaffold wires in |
+
+**Never published — stays `private: true` (9 packages).**
+
+| Package | Why it is not an SDK package |
+|---|---|
+| `@oc-mui/plugin-core-episodes` · `-series` · `-upload` | feature plugins — application products, shipped via JAR/marketplace |
+| `@oc-mui/plugin-admin-marketplace` | the host's admin product |
+| `@oc-mui/plugin-example` | reference/scaffold source, not an import dependency |
+| `@oc-mui/remote-plugin-loader` | host-side mechanism for loading remote plugins |
+| `@oc-mui/providers` · `@oc-mui/app-runtime` | app-level composition / shared-runtime wiring; no plugin imports them |
+| `@oc-mui/tailwind-config` | build tooling, not a runtime/scaffold dependency today — promote to the SDK only if external plugins are expected to author custom Tailwind against the preset |
+
+> The SDK packages carry full npm metadata (`description`, `repository`, `author`, `keywords`, `publishConfig.access = public`) and a per-package `LICENSE`, but they remain `private: true` until the Phase 6d flip. **Two changes are still required before they actually publish** (tracked, not done): point each `exports` at built `dist/` instead of `.ts`/`.tsx` source and add a matching `files` allowlist (most ship raw source today, and at least `@oc-mui/i18n`'s current `files` doesn't even cover its `exports` entry); and move React from `dependencies` to `peerDependencies` on `plugin-system` (and friends) to avoid duplicate-React in a consumer install.
+
 ## Versioning model
 
 Every workspace package under `packages/` and `plugins/` is **versioned independently** following [Semver 2.0](https://semver.org/). Apps under `apps/` (`shell`, `playground`) are not published and not versioned.
