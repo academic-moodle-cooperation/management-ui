@@ -35,7 +35,19 @@ The set is decided **forward-looking**: it covers what a plugin author can legit
 | `@oc-mui/remote-plugin-loader` | host-side mechanism for loading remote plugins; an author writes a plugin, the host loads it |
 | `@oc-mui/providers` | app-level provider composition; authors reach the same wiring through `@oc-mui/app-runtime`'s standalone wrappers. Promote it only if we commit to authors composing providers by hand. |
 
-> The SDK packages carry full npm metadata (`description`, `repository`, `author`, `keywords`, `publishConfig.access = public`) and a per-package `LICENSE`, but they remain `private: true` until the Phase 6d flip. **Two changes are still required before they actually publish** (tracked, not done): point each `exports` at built `dist/` instead of `.ts`/`.tsx` source and add a matching `files` allowlist (most ship raw source today, and at least `@oc-mui/i18n`'s current `files` doesn't even cover its `exports` entry); and move React from `dependencies` to `peerDependencies` on `plugin-system` (and friends) to avoid duplicate-React in a consumer install.
+> The SDK packages carry full npm metadata (`description`, `repository`, `author`, `keywords`, `publishConfig.access = public`) and a per-package `LICENSE`, but they remain `private: true` until the Phase 6d flip.
+
+### Publish-readiness checklist (the work before the flip)
+
+The packages are not yet npm-installable; getting there is tracked as:
+
+- [x] **Metadata + per-package `LICENSE`** on the 15 SDK packages.
+- [x] **React → `peerDependencies`** on `plugin-system`, `app-runtime`, `plugin-testing` (avoids duplicate-React in a consumer install).
+- [ ] **`exports` → built `dist/` + `files` allowlist** for every SDK package, so consumers get compiled JS, not raw `.ts`/`.tsx`. Pattern: tsup builds ESM JS → `dist/`; `tsc` emits `.d.ts` → `dist-types/` (also feeds api-extractor); package `exports` stay on `src` for in-repo dev/HMR while a **`publishConfig.exports`** swaps to `dist` at pack/publish time. _Done: config packages, `plugin-testing`, `ui-config`, `store`, `query`, `i18n`. Remaining: the JSX packages (`plugin-system`, `plugin-core`, `app-runtime`, `router`) and `@oc-mui/ui` (CSS + many subpath exports)._
+- [ ] **Verdaccio publish-smoke-test (the acceptance gate).** A CI job that strips `private` in a temp checkout, publishes the whole SDK to a throwaway local registry, runs `pnpm create-plugin`, installs the SDK from Verdaccio into the fresh plugin, and runs its `build` + `test:contract`. This is the real proof that "a plugin can install and build against our packages without the monorepo." Verified today that the mechanism works (a leaf package, `@oc-mui/utils`, installs and imports cleanly from its `pnpm pack` tarball); the full-graph test needs every package shipping `dist` first, so it lands as the closing step of the exports→dist work.
+- [ ] **`pkg.pr.new` per-PR preview packages.** A GitHub Action that publishes preview builds to a CDN on each PR/commit, so anyone (e.g. a backend/plugin author) can `pnpm add https://pkg.pr.new/@oc-mui/<pkg>@<sha>` and test against real artifacts on any branch before a permanent npm publish. Needs the `dist` build; add alongside the Verdaccio gate.
+
+The last two are the explicit **closing tasks of the exports→dist effort** — once all packages ship `dist`, they become the standing answer to "can we test against staged packages before publishing?"
 
 ## Versioning model
 

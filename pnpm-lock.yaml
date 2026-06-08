@@ -357,6 +357,9 @@ importers:
       jsdom:
         specifier: ^27.4.0
         version: 27.4.0
+      tsup:
+        specifier: ^8.5.0
+        version: 8.5.1(@microsoft/api-extractor@7.58.7(@types/node@25.0.6))(@swc/core@1.12.11(@swc/helpers@0.5.17))(jiti@2.4.2)(postcss@8.5.14)(typescript@5.5.4)(yaml@2.8.0)
       typescript:
         specifier: ~5.5.4
         version: 5.5.4
@@ -580,6 +583,9 @@ importers:
       jsdom:
         specifier: ^27.4.0
         version: 27.4.0
+      tsup:
+        specifier: ^8.5.0
+        version: 8.5.1(@microsoft/api-extractor@7.58.7(@types/node@25.0.6))(@swc/core@1.12.11(@swc/helpers@0.5.17))(jiti@2.4.2)(postcss@8.5.14)(typescript@5.5.4)(yaml@2.8.0)
       typescript:
         specifier: ~5.5.4
         version: 5.5.4
@@ -697,6 +703,9 @@ importers:
       jsdom:
         specifier: ^27.4.0
         version: 27.4.0
+      tsup:
+        specifier: ^8.5.0
+        version: 8.5.1(@microsoft/api-extractor@7.58.7(@types/node@25.0.6))(@swc/core@1.12.11(@swc/helpers@0.5.17))(jiti@2.4.2)(postcss@8.5.14)(typescript@5.5.4)(yaml@2.8.0)
       typescript:
         specifier: ~5.5.4
         version: 5.5.4
