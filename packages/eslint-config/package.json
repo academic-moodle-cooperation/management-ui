@@ -1,6 +1,26 @@
 {
   "name": "@oc-mui/eslint-config",
   "version": "1.0.0",
+  "description": "Shared ESLint configuration (wrapper-library and architectural boundary rules) for the Opencast Management UI and its plugins.",
+  "author": "Academic Moodle Cooperation",
+  "homepage": "https://github.com/academic-moodle-cooperation/management-tool/tree/HEAD/packages/eslint-config#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/academic-moodle-cooperation/management-tool.git",
+    "directory": "packages/eslint-config"
+  },
+  "bugs": "https://github.com/academic-moodle-cooperation/management-tool/issues",
+  "keywords": [
+    "opencast",
+    "management-ui",
+    "oc-mui",
+    "plugin",
+    "eslint",
+    "eslint-config"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "ECL-2.0",
   "type": "module",
   "private": true,

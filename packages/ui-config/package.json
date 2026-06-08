@@ -1,6 +1,25 @@
 {
   "name": "@oc-mui/ui-config",
   "version": "1.0.0",
+  "description": "Application configuration schema, types, and defaults for the Opencast Management UI.",
+  "author": "Academic Moodle Cooperation",
+  "homepage": "https://github.com/academic-moodle-cooperation/management-tool/tree/HEAD/packages/ui-config#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/academic-moodle-cooperation/management-tool.git",
+    "directory": "packages/ui-config"
+  },
+  "bugs": "https://github.com/academic-moodle-cooperation/management-tool/issues",
+  "keywords": [
+    "opencast",
+    "management-ui",
+    "oc-mui",
+    "plugin",
+    "config"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "ECL-2.0",
   "private": true,
   "type": "module",

@@ -1,6 +1,23 @@
 {
   "name": "@oc-mui/typescript-config",
   "version": "1.0.0",
+  "description": "Shared TypeScript configurations for the Opencast Management UI and its plugins.",
+  "author": "Academic Moodle Cooperation",
+  "homepage": "https://github.com/academic-moodle-cooperation/management-tool/tree/HEAD/packages/typescript-config#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/academic-moodle-cooperation/management-tool.git",
+    "directory": "packages/typescript-config"
+  },
+  "bugs": "https://github.com/academic-moodle-cooperation/management-tool/issues",
+  "keywords": [
+    "opencast",
+    "management-ui",
+    "oc-mui",
+    "plugin",
+    "typescript",
+    "tsconfig"
+  ],
   "license": "ECL-2.0",
   "private": true,
   "publishConfig": {

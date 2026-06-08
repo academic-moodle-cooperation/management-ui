@@ -1,6 +1,26 @@
 {
   "name": "@oc-mui/query",
   "version": "1.0.0",
+  "description": "Data-fetching and plugin-config facade (TanStack Query) for the Opencast Management UI and its plugins.",
+  "author": "Academic Moodle Cooperation",
+  "homepage": "https://github.com/academic-moodle-cooperation/management-tool/tree/HEAD/packages/query#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/academic-moodle-cooperation/management-tool.git",
+    "directory": "packages/query"
+  },
+  "bugs": "https://github.com/academic-moodle-cooperation/management-tool/issues",
+  "keywords": [
+    "opencast",
+    "management-ui",
+    "oc-mui",
+    "plugin",
+    "data-fetching",
+    "tanstack-query"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "ECL-2.0",
   "private": true,
   "type": "module",
