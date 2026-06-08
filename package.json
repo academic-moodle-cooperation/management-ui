@@ -25,6 +25,7 @@
     "test:integration": "playwright test --config=playwright.integration.config.ts",
     "test:integration:ui": "playwright test --config=playwright.integration.config.ts --ui",
     "test:jar-deploy": "bash scripts/verify-jar-deploy.sh",
+    "test:sdk-publish": "bash scripts/verify-sdk-publish.sh",
     "test:scaffold": "bash scripts/verify-scaffold.sh",
     "test:docs": "bash scripts/verify-docs.sh",
     "test:local-plugin": "playwright test --config=playwright.local-plugin.config.ts",
