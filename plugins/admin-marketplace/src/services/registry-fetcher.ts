@@ -134,12 +134,6 @@ const DEFAULT_CONFIG: RegistryFetcherConfig = {
 };
 
 /**
- * Default community registry URL — the org-owned community plugin registry.
- */
-const DEFAULT_COMMUNITY_REGISTRY =
-  "https://raw.githubusercontent.com/academic-moodle-cooperation/management-ui-registry/main/registry.json";
-
-/**
  * Registry Fetcher class
  */
 class RegistryFetcherService {
@@ -249,10 +243,9 @@ class RegistryFetcherService {
       }
     }
 
-    // Add default community registry if no URLs configured
-    if (allUrls.length === 0) {
-      allUrls.push(DEFAULT_COMMUNITY_REGISTRY);
-    }
+    // No community registry is shipped by default — deployments opt in by
+    // setting registryUrls. With none configured (and outside dev), the
+    // marketplace simply lists locally installed plugins.
 
     // Fetch all registries in parallel
     const results = await Promise.all(allUrls.map((url) => this.fetchRegistry(url)));
