@@ -396,7 +396,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
         // 8. Load .local-plugins/ from dev server manifest (dev only, no Marketplace required)
         // Two-phase load: first load entries matching current config (e.g. "config" namespace);
         // then re-merge config from manager (config plugin may have registered app:config with
-        // more namespaces) and load remaining .local-plugins (e.g. univie, tuwien).
+        // more namespaces) and load remaining .local-plugins (e.g. org-a, org-b).
         try {
           const localManifest = await loadLocalPluginsManifest();
           if (localManifest.length === 0) {
@@ -456,7 +456,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
             }
 
             // Phase 2: re-merge config from manager (config plugin may have added namespaces),
-            // then load remaining .local-plugins that now match (e.g. univie, tuwien) and types
+            // then load remaining .local-plugins that now match (e.g. org-a, org-b) and types
             const mergedLocalConfig = getAppConfigSync(manager, config);
             const enabled2 = getEnabledPluginNamespaces(mergedLocalConfig);
             const loadedUrls = new Set(toLoad1.map((e) => e.url));

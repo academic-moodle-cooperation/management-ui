@@ -10,9 +10,10 @@ const PLUGIN_DEV_PORT_START = 3001;
 // added by appending a single name, without touching port-allocation logic.
 const CORE_APP_NAMES = ["playground"];
 
-// Known plugin packages - simplified to avoid dynamic discovery issues
+// Known plugin packages - simplified to avoid dynamic discovery issues.
+// Orgs append their own .local-plugins package names here (dev-only, for port allocation).
 const discoverPluginPackages = (): string[] => {
-  return ["plugin-tuwien", "plugin-univie", "@oc-mui/plugin-example"];
+  return ["@oc-mui/plugin-example"];
 };
 
 interface PluginPorts {

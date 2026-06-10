@@ -5,6 +5,12 @@
  * Supports temporary theme preview ("Try") and persistent theme installation ("Install").
  */
 
+import { logger } from "@oc-mui/utils";
+
+import { isUrlAllowed } from "./security";
+
+const log = logger.child({ component: "ThemeLoader" });
+
 const STORAGE_KEY = "installed_theme_url";
 const THEME_LINK_ID = "marketplace-dynamic-theme";
 const ALLOWED_THEME_PREFIX = "/management-ui/plugins/themes/";
@@ -38,11 +44,9 @@ const ensureThemeLinkIsLast = (): void => {
  *
  * Manages dynamic theme loading, application, and persistence.
  * 
- * SECURITY NOTE: This service loads CSS from URLs. In production:
- * - Implement URL allowlisting to only allow trusted sources
- * - Use HTTPS-only URLs
- * - Validate CSS content if loading from untrusted sources
- * - Consider implementing CSP (Content Security Policy) headers
+ * SECURITY: This service loads CSS from URLs. Relative URLs are restricted to
+ * known theme path prefixes; absolute URLs are protocol-checked and run through
+ * the marketplace domain allowlist (see ./security), matching the plugin loader.
  */
 export const ThemeLoader = {
   /**
@@ -75,9 +79,15 @@ export const ThemeLoader = {
               `Invalid theme path: ${pathname}. Theme URLs must start with ${ALLOWED_THEME_PREFIX}, ${ALLOWED_JAR_THEME_PREFIX}, or local-plugins path`
             );
           }
-        } else if (!["http:", "https:"].includes(parsedUrl.protocol)) {
-          // This is an absolute URL - validate protocol
-          throw new Error(`Invalid protocol: ${parsedUrl.protocol}. Only http: and https: are allowed.`);
+        } else {
+          // Absolute URL — enforce protocol AND the shared domain allowlist
+          // (parity with remote plugin loading; see ./security).
+          if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+            throw new Error(`Invalid protocol: ${parsedUrl.protocol}. Only http: and https: are allowed.`);
+          }
+          if (!isUrlAllowed(parsedUrl.href)) {
+            throw new Error(`Theme domain "${parsedUrl.hostname}" is not in the allowed list.`);
+          }
         }
 
         // Remove existing theme link if present
@@ -94,7 +104,7 @@ export const ThemeLoader = {
 
         // Add success handler
         link.onload = () => {
-          console.log(`Applied theme from ${url}`);
+          log.debug(`applied theme from ${url}`);
           // Ensure our theme stays at the end after it loads
           ensureThemeLinkIsLast();
           resolve();
@@ -103,7 +113,7 @@ export const ThemeLoader = {
         // Add error handler for failed loads
         link.onerror = () => {
           const error = new Error(`Failed to load theme from ${url}`);
-          console.error(error.message);
+          log.error(error.message, error);
           // Remove the failed link element
           link.remove();
           reject(error);
@@ -125,7 +135,7 @@ export const ThemeLoader = {
           document.head.appendChild(link);
         }
       } catch (error) {
-        console.error(`Failed to apply theme from ${url}:`, error);
+        log.error(`failed to apply theme from ${url}`, error instanceof Error ? error : new Error(String(error)));
         reject(error);
       }
     });
@@ -138,7 +148,7 @@ export const ThemeLoader = {
     const existingLink = document.getElementById(THEME_LINK_ID);
     if (existingLink) {
       existingLink.remove();
-      console.log("Removed active theme");
+      log.debug("removed active theme");
     }
   },
 
@@ -150,9 +160,9 @@ export const ThemeLoader = {
   persist(url: string): void {
     try {
       localStorage.setItem(STORAGE_KEY, url);
-      console.log(`Persisted theme URL to localStorage: ${url}`);
+      log.debug(`persisted theme URL: ${url}`);
     } catch (error) {
-      console.error("Failed to persist theme to localStorage:", error);
+      log.error("failed to persist theme", error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   },
@@ -163,9 +173,9 @@ export const ThemeLoader = {
   unpersist(): void {
     try {
       localStorage.removeItem(STORAGE_KEY);
-      console.log("Removed persisted theme from localStorage");
+      log.debug("removed persisted theme");
     } catch (error) {
-      console.error("Failed to remove persisted theme from localStorage:", error);
+      log.error("failed to remove persisted theme", error instanceof Error ? error : new Error(String(error)));
     }
   },
 
@@ -178,7 +188,7 @@ export const ThemeLoader = {
     try {
       return localStorage.getItem(STORAGE_KEY);
     } catch (error) {
-      console.error("Failed to get installed theme from localStorage:", error);
+      log.error("failed to read installed theme", error instanceof Error ? error : new Error(String(error)));
       return null;
     }
   },
@@ -201,7 +211,7 @@ export const ThemeLoader = {
   async initialize(): Promise<void> {
     const installedUrl = this.getInstalledUrl();
     if (installedUrl) {
-      console.log(`Loading installed theme from localStorage: ${installedUrl}`);
+      log.debug(`loading installed theme: ${installedUrl}`);
       try {
         // Small delay to ensure config-based themes (from main.tsx) load first
         // This ensures marketplace themes override config themes
@@ -212,7 +222,7 @@ export const ThemeLoader = {
         await new Promise((resolve) => setTimeout(resolve, 200));
         ensureThemeLinkIsLast();
       } catch (error) {
-        console.error("Failed to load installed theme:", error);
+        log.error("failed to load installed theme", error instanceof Error ? error : new Error(String(error)));
         // Clear the corrupted/invalid theme URL
         this.unpersist();
       }

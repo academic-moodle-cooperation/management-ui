@@ -24,11 +24,11 @@ Both favicon URLs and HTML document titles can now be configured through the app
 Universities can override these settings in their plugin configuration:
 
 ```typescript
-// plugins/tuwien/implementations/config/config.ts
+// plugins/org-a/implementations/config/config.ts
 export const config = {
   app: {
-    faviconUrl: "/management-ui/assets/favicon/tuwien-favicon.svg",
-    HtmlDocumentTitle: "TU Wien Video Management",
+    faviconUrl: "/management-ui/assets/favicon/org-a-favicon.svg",
+    HtmlDocumentTitle: "Organization A Video Management",
     // ... other config
   },
 };
@@ -63,30 +63,30 @@ export const config = {
 - **Type**: `string`
 - **Default**: `"Management UI"`
 - **Description**: The HTML document title
-- **Example**: `"TU Wien Video Management"`
+- **Example**: `"Organization A Video Management"`
 
 ## University Customization Examples
 
-### TU Wien Example
+### Organization A Example
 
 ```typescript
 export const config = {
   app: {
-    faviconUrl: "/management-ui/assets/favicon/tuwien-favicon.svg",
-    HtmlDocumentTitle: "TU Wien Video Management",
-    theme: "tuwien",
+    faviconUrl: "/management-ui/assets/favicon/org-a-favicon.svg",
+    HtmlDocumentTitle: "Organization A Video Management",
+    theme: "org-a",
   },
 };
 ```
 
-### University of Vienna Example
+### Organization B Example
 
 ```typescript
 export const config = {
   app: {
-    faviconUrl: "/management-ui/assets/favicon/univie-favicon.svg",
-    HtmlDocumentTitle: "UniVie Video Platform",
-    theme: "univie",
+    faviconUrl: "/management-ui/assets/favicon/org-b-favicon.svg",
+    HtmlDocumentTitle: "Organization B Video Platform",
+    theme: "org-b",
   },
 };
 ```
@@ -99,13 +99,13 @@ Universities should place their favicon files in the plugin assets directory:
 
 ```
 plugins/
-├── tuwien/
+├── org-a/
 │   └── assets/
 │       └── favicon/
 │           ├── favicon.svg
 │           ├── favicon.ico
 │           └── site.webmanifest
-└── univie/
+└── org-b/
     └── assets/
         └── favicon/
             ├── favicon.svg

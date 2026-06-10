@@ -4,7 +4,7 @@ import { OPENCAST_BASE_URL, SHELL_BASE_URL, STORAGE_STATE } from "./tests/integr
 
 /**
  * Integration-E2E config — the **real podman Opencast** tier of the test
- * pyramid (see docs/operations/test-automation-plan.md). Distinct from the
+ * pyramid (see tests/integration/README.md). Distinct from the
  * mocked-backend smoke suite in playwright.config.ts.
  *
  * Architecture: Playwright drives the shell dev server at 127.0.0.1:3000, and

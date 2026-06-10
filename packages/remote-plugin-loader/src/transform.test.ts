@@ -71,11 +71,11 @@ describe("transformModuleSource", () => {
     const source = 'export default { name: "plugin" };';
     const result = transformModuleSource(
       source,
-      "http://127.0.0.1:3000/management-ui/local-plugins/univie/univie.mjs",
+      "http://127.0.0.1:3000/management-ui/local-plugins/example-org/example-org.mjs",
     );
 
     expect(result).toContain(
-      'const __PLUGIN_BASE_URL__ = "http://127.0.0.1:3000/management-ui/local-plugins/univie/";',
+      'const __PLUGIN_BASE_URL__ = "http://127.0.0.1:3000/management-ui/local-plugins/example-org/";',
     );
     expect(result).toContain("new URL(__PLUGIN_BASE_URL__, window.location.href).href");
     expect(result).not.toContain("window.location.origin + __PLUGIN_BASE_URL__");
@@ -85,11 +85,11 @@ describe("transformModuleSource", () => {
     const source = 'export default { name: "plugin" };';
     const result = transformModuleSource(
       source,
-      "/management-ui/static/plugins/univie/univie.mjs",
+      "/management-ui/static/plugins/example-org/example-org.mjs",
     );
 
     expect(result).toContain(
-      'const __PLUGIN_BASE_URL__ = "/management-ui/static/plugins/univie/";',
+      'const __PLUGIN_BASE_URL__ = "/management-ui/static/plugins/example-org/";',
     );
     expect(result).toContain("new URL(__PLUGIN_BASE_URL__, window.location.href).href");
   });

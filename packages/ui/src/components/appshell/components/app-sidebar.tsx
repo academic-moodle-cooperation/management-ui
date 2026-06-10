@@ -81,7 +81,7 @@ export function AppSidebar({
           componentType="appshell:sidebar:header"
           defaultComponent={Logo}
           componentProps={{
-            color: "#0066cc",
+            color: "var(--primary)",
             fontFamily: "Georgia, Times New Roman, serif",
             collapsed: !open,
             className: "max-w-full text-primary",

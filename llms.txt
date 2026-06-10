@@ -102,7 +102,7 @@ The runtime loads plugins in two phases:
 2. Phase 2: Merge `app:config:defaults` ⊕ base ⊕ `app:config`, then load remaining plugins filtered by `app.enabledPlugins` (ship filter) and per-slice `config.plugins[<id>].enabled` (runtime switch). Full model: `docs/architecture/CONFIGURATION.md`.
 
 This allows a config plugin (e.g., `.local-plugins/config/`) to declare which
-namespaces to enable (e.g., `enabledPlugins: ["core", "admin", "episodes", "series", "upload", "config", "univie"]`),
+namespaces to enable (e.g., `enabledPlugins: ["core", "admin", "episodes", "series", "upload", "config", "org-a"]`),
 and those plugins load in phase 2.
 
 ### Loading Mechanisms

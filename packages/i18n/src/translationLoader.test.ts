@@ -25,13 +25,13 @@ describe("translationLoader", () => {
 
   describe("createOrganizationNamespace", () => {
     it("should create organization namespace", () => {
-      const result = createOrganizationNamespace("tuwien", "footer");
-      expect(result).toBe("tuwien-footer");
+      const result = createOrganizationNamespace("org-a", "footer");
+      expect(result).toBe("org-a-footer");
     });
 
     it("should handle different organizations", () => {
-      const result = createOrganizationNamespace("univie", "header");
-      expect(result).toBe("univie-header");
+      const result = createOrganizationNamespace("org-b", "header");
+      expect(result).toBe("org-b-header");
     });
   });
 });

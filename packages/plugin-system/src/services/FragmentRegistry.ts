@@ -17,6 +17,10 @@
  * // After load, core GetMyEvents / EventsFromSeries / etc. responses include quizInfo and quiz.
  */
 
+import { logger } from "@oc-mui/utils";
+
+const log = logger.child({ component: "FragmentRegistry" });
+
 export interface RegisteredFragment {
   /** The GraphQL type this fragment extends (e.g., "Event", "Series") */
   targetType: string;
@@ -57,8 +61,8 @@ class FragmentRegistryService {
     const existing = this.fragmentsByType.get(fragment.targetType) || [];
     this.fragmentsByType.set(fragment.targetType, [...existing, registeredFragment]);
 
-    console.log(
-      `[FragmentRegistry] Registered fragment "${fragment.fragmentName}" for type "${fragment.targetType}"` +
+    log.debug(
+      `registered fragment "${fragment.fragmentName}" for type "${fragment.targetType}"` +
         (pluginId ? ` from plugin "${pluginId}"` : ""),
     );
   }
@@ -172,7 +176,7 @@ class FragmentRegistryService {
       }
     }
 
-    console.log(`[FragmentRegistry] Unregistered all fragments from plugin "${pluginId}"`);
+    log.debug(`unregistered all fragments from plugin "${pluginId}"`);
   }
 
   /**
@@ -182,7 +186,7 @@ class FragmentRegistryService {
   clear(): void {
     this.fragmentsByType.clear();
     this.allFragments = [];
-    console.log("[FragmentRegistry] Cleared all fragments");
+    log.debug("cleared all fragments");
   }
 
   /**

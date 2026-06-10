@@ -16,7 +16,7 @@ Mark each item ✅ / ❌ / ➖ (skipped, justified). Any ❌ blocks the release.
 ## Automation status
 
 Most of this protocol is now automated — run the commands below and you only
-hand-check the residue (the design is in [`test-automation-plan.md`](./test-automation-plan.md)).
+hand-check the residue (the design is in [`tests/integration/README.md`](../../tests/integration/README.md)).
 
 | § | Section | Automated by |
 |---|---|---|

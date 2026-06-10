@@ -43,7 +43,7 @@ function escapeRegExp(str: string): string {
  *
  * Replaces bare import specifiers with references to the shared module registry.
  * When pluginScriptUrl is provided, injects __PLUGIN_BASE_URL__ so loaders that
- * dynamic-import sibling chunks (e.g. univie.mjs) resolve from the server path
+ * dynamic-import sibling chunks (e.g. example-org.mjs) resolve from the server path
  * instead of the blob URL.
  *
  * @param source - ES module source code
@@ -60,7 +60,7 @@ export function transformModuleSource(source: string, pluginScriptUrl?: string):
 
   const moduleNames = SHARED_MODULE_NAMES;
 
-  // Base URL for this plugin (directory of the .mjs). Used by multi-chunk plugins (e.g. univie)
+  // Base URL for this plugin (directory of the .mjs). Used by multi-chunk plugins (e.g. example-org)
   // so dynamic imports resolve to the server path instead of the blob URL.
   // Resolve against window.location.href so both relative and absolute plugin URLs stay valid.
   const baseUrlLine =

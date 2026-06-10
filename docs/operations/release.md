@@ -8,7 +8,7 @@ The published npm packages exist for **one purpose: writing plugins without chec
 
 Everything else stays `private: true` **permanently**. The feature plugins ship inside the application (as JARs / via the marketplace), not as libraries someone imports; the host-only infrastructure has no meaning outside the shell. `private: true` is therefore their intended end state, not a temporary pre-1.0 lock.
 
-The set is decided **forward-looking**: it covers what a plugin author can legitimately need to write a plugin against the supported model — not merely what an in-tree plugin happens to import today. (Current imports are a floor: `@oc-mui/app-runtime`, for instance, has no in-tree plugin consumer but is imported by an external TU Wien plugin; `@oc-mui/tailwind-config` has no in-tree dependent but any plugin that builds its own Tailwind needs the preset.) The set is dependency-closed: nothing published depends on a non-published package.
+The set is decided **forward-looking**: it covers what a plugin author can legitimately need to write a plugin against the supported model — not merely what an in-tree plugin happens to import today. (Current imports are a floor: `@oc-mui/app-runtime`, for instance, has no in-tree plugin consumer but is imported by an external third-party plugin; `@oc-mui/tailwind-config` has no in-tree dependent but any plugin that builds its own Tailwind needs the preset.) The set is dependency-closed: nothing published depends on a non-published package.
 
 **Published — the SDK (15 packages).**
 

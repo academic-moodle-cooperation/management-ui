@@ -51,7 +51,7 @@ export const createNamespacedKey = (namespace: string, key: string) => `${namesp
 
 /**
  * Helper for organization-specific namespace patterns
- * @param organization - Organization code (e.g., 'tuwien', 'univie')
+ * @param organization - Organization code (e.g., 'org-a', 'org-b')
  * @param component - Component name (e.g., 'footer', 'header')
  * @returns Standardized namespace
  */

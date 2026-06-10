@@ -1,10 +1,13 @@
 import { ShoppingBag } from "lucide-react";
 
 import { createPlugin } from "@oc-mui/plugin-system";
+import { logger } from "@oc-mui/utils";
 
 import { RemoteLoader } from "./services/remote-loader";
 import { ThemeLoader } from "./services/theme-loader";
 import { MarketplaceDashboard } from "./views/MarketplaceDashboard";
+
+const log = logger.child({ component: "admin-marketplace" });
 
 /**
  * Admin Marketplace Plugin
@@ -32,7 +35,7 @@ export const adminMarketplacePlugin = createPlugin({
   version: "1.0.0",
 
   async initialize(manager) {
-    console.log("Admin Marketplace plugin initializing...");
+    log.debug("initializing");
 
     // Load installed theme in background (do not block plugin init or router)
     void ThemeLoader.initialize();
@@ -76,9 +79,7 @@ export const adminMarketplacePlugin = createPlugin({
     // Load all persisted plugins from localStorage (validates URL + version before loading)
     const savedUrls = RemoteLoader.getInstalledUrls();
     if (savedUrls.length > 0) {
-      console.log(
-        `Loading ${savedUrls.length} installed plugin(s) from localStorage...`
-      );
+      log.debug(`loading ${savedUrls.length} installed plugin(s)`);
 
       const loadResults = await Promise.allSettled(
         savedUrls.map((url) => RemoteLoader.loadAndRegister(url, manager))
@@ -86,22 +87,25 @@ export const adminMarketplacePlugin = createPlugin({
 
       loadResults.forEach((result, index) => {
         if (result.status === "rejected") {
-          console.error(`Failed to load installed plugin from ${savedUrls[index]}:`, result.reason);
+          log.error(
+            `failed to load installed plugin from ${savedUrls[index]}`,
+            result.reason instanceof Error ? result.reason : new Error(String(result.reason)),
+          );
         }
       });
     }
 
     // .local-plugins/ are loaded by the core in dev (PluginInitializer); no need to load here
 
-    console.log("Admin Marketplace plugin initialized");
+    log.debug("initialized");
   },
 
   activate() {
-    console.log("Admin Marketplace plugin activated");
+    log.debug("activated");
   },
 
   deactivate() {
-    console.log("Admin Marketplace plugin deactivated");
+    log.debug("deactivated");
   },
 });
 

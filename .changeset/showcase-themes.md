@@ -16,7 +16,7 @@ Typography uses **system font stacks only** — no web fonts — to stay GDPR-sa
 and work offline. The structural variety also folds in what the old
 ".local-plugins" demo themes (compact/rounded/minimal/warm) used to show.
 
-The registry is cleaned up: the six `.local-plugins` entries (tuwien, univie,
+The registry is cleaned up: the six `.local-plugins` entries (org-a, org-b,
 compact, rounded, minimal, warm) are removed — they pointed at a private repo,
 only worked in dev, and broke in a build. The shipped registry now lists only
 themes that actually apply everywhere: the four showcases + the example.

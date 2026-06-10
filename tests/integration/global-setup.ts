@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 
 import {
   HEALTH_TIMEOUT_MS,
-  HINKELSTEIN_PODMAN_DIR,
+  OPENCAST_PODMAN_DIR,
   OPENCAST_AUTOSTART,
   OPENCAST_BASE_URL,
   OPENCAST_HEALTH_PATH,
@@ -13,12 +13,12 @@ import {
  * Playwright globalSetup for the integration-E2E project.
  *
  * The contract is deliberately small: make sure a real Opencast is answering at
- * OPENCAST_BASE_URL before any spec runs. We do NOT build Hinkelstein from
- * sources here — that compiles Opencast (minutes to hours, and may need VPN
- * access to univie infra). The expectation is "your podman Opencast is already
- * up"; autostart is an opt-in convenience, not the default path.
+ * OPENCAST_BASE_URL before any spec runs. We do NOT build Opencast from
+ * sources here — that compiles Opencast (minutes to hours). The expectation is
+ * "your podman Opencast is already up"; autostart is an opt-in convenience,
+ * not the default path.
  *
- * See docs/operations/test-automation-plan.md → "Fixture design".
+ * See tests/integration/README.md → "Fixture design".
  */
 
 const HEALTH_URL = `${OPENCAST_BASE_URL}${OPENCAST_HEALTH_PATH}`;
@@ -53,10 +53,10 @@ async function waitForHealthy(timeoutMs: number): Promise<boolean> {
 }
 
 function tryAutostart(): void {
-  if (!HINKELSTEIN_PODMAN_DIR) {
+  if (!OPENCAST_PODMAN_DIR) {
     throw new Error(
-      "OPENCAST_AUTOSTART is set but HINKELSTEIN_PODMAN_DIR is not — " +
-        "point it at your hinkelstein-podman checkout so I can run runtime.sh.",
+      "OPENCAST_AUTOSTART is set but OPENCAST_PODMAN_DIR is not — " +
+        "point it at your opencast-podman checkout so I can run runtime.sh.",
     );
   }
   if (!OPENCAST_VERSION) {
@@ -67,12 +67,12 @@ function tryAutostart(): void {
   }
   console.log(
     `[integration] Opencast not up; running runtime.sh start ${OPENCAST_VERSION} ` +
-      `in ${HINKELSTEIN_PODMAN_DIR}`,
+      `in ${OPENCAST_PODMAN_DIR}`,
   );
   // runtime.sh backgrounds podman-compose itself; this returns once the stack
   // is launching. We then fall back to polling the health endpoint below.
   execFileSync("./runtime.sh", ["start", OPENCAST_VERSION], {
-    cwd: HINKELSTEIN_PODMAN_DIR,
+    cwd: OPENCAST_PODMAN_DIR,
     stdio: "inherit",
   });
 }
@@ -94,13 +94,13 @@ export default async function globalSetup(): Promise<void> {
         `Opencast is not reachable at ${HEALTH_URL}.`,
         "",
         "Start your podman Opencast first, e.g.:",
-        "  cd hinkelstein-podman && ./runtime.sh start <version>",
+        "  cd opencast-podman && ./runtime.sh start <version>",
         "",
         "If 'opencast-runtime' doesn't resolve, add to /etc/hosts:",
         "  127.0.0.1 opencast-runtime",
         "",
         "Or point the suite elsewhere:  OPENCAST_BASE_URL=http://localhost:8080",
-        "Or let me start it:            OPENCAST_AUTOSTART=1 HINKELSTEIN_PODMAN_DIR=... OPENCAST_VERSION=18",
+        "Or let me start it:            OPENCAST_AUTOSTART=1 OPENCAST_PODMAN_DIR=... OPENCAST_VERSION=18",
       ].join("\n"),
     );
   }

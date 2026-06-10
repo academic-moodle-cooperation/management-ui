@@ -14,11 +14,11 @@ const packageName = process.env["npm_package_name"] || "shell";
 
 /**
  * Build-time app version. Prefers an explicit release value (set
- * `VITE_APP_VERSION` or the GitLab `CI_COMMIT_TAG` when cutting a release),
+ * `VITE_APP_VERSION` when cutting a release — e.g. from the release workflow),
  * then falls back to this app's package.json version.
  */
 function resolveAppVersion(): string {
-  const explicit = process.env["VITE_APP_VERSION"] || process.env["CI_COMMIT_TAG"];
+  const explicit = process.env["VITE_APP_VERSION"];
   if (explicit) return explicit.replace(/^v/i, "");
   try {
     const pkg = JSON.parse(
@@ -26,7 +26,7 @@ function resolveAppVersion(): string {
     ) as { version?: string };
     // package.json is still the 0.0.0 dev placeholder pre-release; fall back to
     // the 1.x baseline so the UI shows a meaningful version until a release sets
-    // VITE_APP_VERSION / CI_COMMIT_TAG.
+    // VITE_APP_VERSION.
     return pkg.version && pkg.version !== "0.0.0" ? pkg.version : "1.0.0";
   } catch {
     return "1.0.0";
@@ -34,14 +34,12 @@ function resolveAppVersion(): string {
 }
 
 /**
- * Short SHA of the deployed commit. Prefers CI-provided env vars (GitLab,
- * GitHub), then asks git directly. Returns "" when unavailable — the footer
- * then renders the version without a commit link.
+ * Short SHA of the deployed commit. Prefers a CI-provided env var (GITHUB_SHA),
+ * then asks git directly. Returns "" when unavailable — the footer then renders
+ * the version without a commit link.
  */
 function resolveGitCommit(): string {
-  const fromCi =
-    process.env["CI_COMMIT_SHORT_SHA"] ||
-    (process.env["GITHUB_SHA"] ? process.env["GITHUB_SHA"].slice(0, 7) : "");
+  const fromCi = process.env["GITHUB_SHA"] ? process.env["GITHUB_SHA"].slice(0, 7) : "";
   if (fromCi) return fromCi;
   try {
     return execSync("git rev-parse --short HEAD", {

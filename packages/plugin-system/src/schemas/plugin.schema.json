@@ -12,7 +12,7 @@
     "id": {
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9.-]*$",
-      "description": "Globally unique plugin identifier. Use kebab-case or reverse-domain notation (e.g., 'my-analytics', 'org.univie.apps'). This is the canonical ID used in dependency references, the registry, and activation config."
+      "description": "Globally unique plugin identifier. Use kebab-case or reverse-domain notation (e.g., 'my-analytics', 'org.example.apps'). This is the canonical ID used in dependency references, the registry, and activation config."
     },
     "name": {
       "type": "string",
@@ -36,7 +36,7 @@
         "url": { "type": "string", "format": "uri" },
         "organization": {
           "type": "string",
-          "description": "Organization name (e.g., 'University of Vienna')."
+          "description": "Organization name (e.g., 'Example University')."
         }
       },
       "additionalProperties": false
@@ -45,7 +45,7 @@
     "namespace": {
       "type": "string",
       "pattern": "^[a-z0-9-]+$",
-      "description": "Plugin namespace for config-based activation. Typically the org or feature name (e.g., 'univie', 'tuwien', 'analytics'). The runtime uses app.enabledPlugins to enable/disable namespaces."
+      "description": "Plugin namespace for config-based activation. Typically the org or feature name (e.g., 'example-org', 'analytics'). The runtime uses app.enabledPlugins to enable/disable namespaces."
     },
     "type": {
       "type": "string",
@@ -76,7 +76,7 @@
     "pluginDependencies": {
       "type": "array",
       "items": { "type": "string" },
-      "description": "IDs of other plugins that must be loaded before this one (e.g., ['core-config', 'org.univie.config'])."
+      "description": "IDs of other plugins that must be loaded before this one (e.g., ['core-config', 'org.example.config'])."
     },
 
     "entry": {
@@ -181,7 +181,7 @@
       "properties": {
         "managementPlugin": {
           "type": "string",
-          "description": "OSGi Management-Plugin header value (e.g., 'univie'). The backend uses this to discover and expose the plugin."
+          "description": "OSGi Management-Plugin header value (e.g., 'example-org'). The backend uses this to discover and expose the plugin."
         },
         "httpAlias": {
           "type": "string",
@@ -189,7 +189,7 @@
         },
         "httpClasspath": {
           "type": "string",
-          "description": "Classpath for static files inside the JAR (e.g., '/static/plugins/univie')."
+          "description": "Classpath for static files inside the JAR (e.g., '/static/plugins/example-org')."
         }
       },
       "additionalProperties": false
@@ -198,7 +198,7 @@
     "replacesJarScopes": {
       "type": "array",
       "items": { "type": "string" },
-      "description": "JAR plugin scopes this .local-plugins entry replaces during dev (e.g., ['management_ui_plugin_univie']). Only used in dev when a local build overrides a deployed JAR."
+      "description": "JAR plugin scopes this .local-plugins entry replaces during dev (e.g., ['management_ui_plugin_example']). Only used in dev when a local build overrides a deployed JAR."
     }
   },
   "additionalProperties": false,
