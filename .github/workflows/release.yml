@@ -1,36 +1,41 @@
 name: Release
 
-# Versions and publishes the @oc-mui/* SDK packages via Changesets.
+# Changesets release automation (see docs/operations/release.md -> "Cutting a release").
 #
-# Flow (see docs/operations/release.md -> "Cutting a release"):
-#   - On each run the Changesets action checks for pending .changeset/*.md files.
-#   - If any exist, it opens/updates a "Version Packages" PR that aggregates them
-#     into version bumps + changelogs (runs `pnpm changeset:version`).
-#   - When that PR is merged (no changesets left), the next run publishes: it
-#     runs `pnpm changeset publish` -> npm publish per bumped package + git tags.
+# On every push to the release branch this job either:
+#   1. opens/updates a "Version Packages" PR that aggregates the pending
+#      .changeset/*.md files into version bumps + changelog edits, OR
+#   2. (once that PR is merged and no changesets remain) runs
+#      `pnpm changeset:publish` to publish the bumped packages and push tags.
 #
-# ── NOT LIVE YET (the Phase 6d publish flip) ──────────────────────────────────
-# Dispatch-only until the flip. Even if run now it publishes nothing: the SDK
-# packages are `private: true` (Changesets skips private packages) and
-# .changeset/config.json has `access: "restricted"`. To go live (release.md):
-#   1. Drop `private: true` from the 15 SDK packages.
-#   2. Flip .changeset/config.json "access" -> "public".
-#   3. Add the NPM_TOKEN repo secret (an npm automation token with publish
-#      rights to the @oc-mui scope).
-#   4. Uncomment the `push:` trigger below and point it at your release branch
-#      (keep it aligned with `baseBranch` in .changeset/config.json).
+# NOTE - pre-1.0 state: `.changeset/config.json` has `access: "restricted"`
+# and every @oc-mui/* package is still `"private": true`. `changeset publish`
+# skips private packages, so the publish half is intentionally a no-op until
+# the Phase 6d public flip (drop `private`, set access to "public"). The
+# version/changelog half (the "Version Packages" PR) works today and is the
+# reason to wire this now.
+#
+# Required before this can actually publish:
+#   - Repo setting: Settings -> Actions -> General -> "Allow GitHub Actions to
+#     create and approve pull requests" must be ON (for the Version PR).
+#   - Secret NPM_TOKEN: an npm automation token with publish rights to the
+#     @oc-mui scope (only consumed once packages go public).
+#   - The @oc-mui npm org exists and the token owner can publish to it.
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches: [main]
+  push:
+    branches: ["release/oss-1.0"]
 
-# Only one release run at a time (they race on tags and the Version PR).
-concurrency: ${{ github.workflow }}
-
+# Let the action push the Version Packages branch and open its PR.
 permissions:
-  contents: write # commit version bumps + push git tags
-  pull-requests: write # open/update the "Version Packages" PR
+  contents: write
+  pull-requests: write
+
+# Never run two releases concurrently against the same branch.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   release:
@@ -42,7 +47,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 0 # Changesets needs full history to diff/tag
+          # Full history so changesets can compute version bumps + changelogs.
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
@@ -52,6 +58,7 @@ jobs:
         with:
           node-version: "20"
           cache: "pnpm"
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -62,22 +69,19 @@ jobs:
       - name: Build the SDK (dist + dist-types)
         run: |
           # vite-config first (ordering guard - other packages import its dist),
-          # then the full build so every SDK package ships dist/ + dist-types/
-          # for publishConfig.exports.
+          # then the full build INCLUDING build:types - publishConfig points
+          # `types` at dist-types/, which only build:types emits.
           pnpm turbo run build --force --filter=@oc-mui/vite-config
           test -f packages/vite-config/dist/plugin.config.js || (echo "vite-config dist files missing" && exit 1)
           pnpm turbo run build build:types
-
-      - name: Configure npm auth
-        # pnpm expands ${NPM_TOKEN} from the env at publish time, so the literal
-        # token is never written to disk. The runner checkout is throwaway.
-        run: echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> .npmrc
 
       - name: Create Version PR or publish
         uses: changesets/action@v1
         with:
           version: pnpm changeset:version
-          publish: pnpm changeset publish
+          # Runs on the merged Version PR when no changesets remain. No-op
+          # while packages are private; publishes once they go public.
+          publish: pnpm changeset:publish
           commit: "chore(release): version packages"
           title: "chore(release): version packages"
         env:

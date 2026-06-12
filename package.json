@@ -36,6 +36,7 @@
     "changeset": "changeset",
     "changeset:status": "changeset status",
     "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish",
     "api-check": "turbo run api-check",
     "api-check:ci": "turbo run api-check:ci",
     "docs:dev": "vitepress dev docs",
