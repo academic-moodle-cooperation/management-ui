@@ -73,7 +73,7 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
     // Silently ignore if plugins directory does not exist in certain environments
   }
 
-  // Discover .local-plugins asset directories (e.g. .local-plugins/univie/assets/**/*)
+  // Discover .local-plugins asset directories (e.g. .local-plugins/example-org/assets/**/*)
   const localPluginsRoot = path.resolve(monorepoRootPath, ".local-plugins");
   let localPluginAssetTargets: { src: string; dest: string }[] = [];
   try {
@@ -132,7 +132,7 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
       },
       // Per-plugin assets (encapsulated under /assets/<plugin>/...)
       ...perPluginAssetTargets,
-      // .local-plugins assets (e.g. assets/univie/logo.png)
+      // .local-plugins assets (e.g. assets/example-org/logo.png)
       ...localPluginAssetTargets,
     ],
   });

@@ -590,7 +590,7 @@ export const App = () => {
                       placeholder={t("upload:selectSeries")}
                     />
 
-                    {/* TU Wien ACL Editor Plugin Integration */}
+                    {/* Org ACL Editor Plugin Integration */}
                     <ComponentResolver
                       componentType="upload:acl-editor"
                       defaultComponent={() => null} // No default component

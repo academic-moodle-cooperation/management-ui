@@ -46,7 +46,7 @@ const REPO_BLOB = `${REPO_URL}/blob/release/oss-1.0`;
 const GITHUB_REPO = "academic-moodle-cooperation/management-tool"; // owner/repo for the Releases API
 const REPO_ORG = "academic-moodle-cooperation";
 const REPO_NAME = "management-tool";
-const DOCS_URL = "https://eduardklinger.github.io/management-ui";
+const DOCS_URL = "https://academic-moodle-cooperation.github.io/management-tool";
 const CLONE_LABEL = "github.com/academic-moodle-cooperation/management-tool";
 
 // The landing wears its own brand skin regardless of the active app theme — an

@@ -1,6 +1,6 @@
 name: Integration (real backend)
 
-# The real-backend tier of the test pyramid (docs/operations/test-automation-plan.md).
+# The real-backend tier of the test pyramid (tests/integration/README.md).
 # Per-PR CI stays mocked (test.yml); this job runs `pnpm test:integration` against
 # a LIVE Opencast on a schedule + on demand, so schema drift / auth / real-data
 # regressions surface without slowing every PR.

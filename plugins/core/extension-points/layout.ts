@@ -31,8 +31,8 @@ export const appLayoutExtensionPoints = createPlugin({
       },
       examples: [
         {
-          src: "/assets/univie-logo.png",
-          alt: "University of Vienna",
+          src: "/assets/logo.png",
+          alt: "Example Organization",
           width: 120,
           height: 40,
           href: import.meta.env["VITE_INSTITUTION_WEBSITE"] || "#",

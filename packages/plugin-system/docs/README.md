@@ -27,8 +27,8 @@ The plugin system enables **controlled extensibility** where:
 │ └─ Lifecycle Coordination                       │
 ├─────────────────────────────────────────────────┤
 │ 🏛️  University Implementations                │
-│ ├─ TU Wien Plugins                             │
-│ ├─ University of Vienna Plugins                │
+│ ├─ Organization A Plugins                             │
+│ ├─ Organization B Plugins                │
 │ └─ Example University Plugins                  │
 └─────────────────────────────────────────────────┘
 ```
@@ -169,10 +169,10 @@ Multiple plugins can target the same extension point:
 
 ```typescript
 // Higher priority (lower number) wins
-manager.registerComponent("app:header", TUWienHeader, { priority: 10 });
+manager.registerComponent("app:header", OrgHeader, { priority: 10 });
 manager.registerComponent("app:header", GenericHeader, { priority: 50 });
 
-// TUWienHeader will be used
+// OrgHeader will be used
 ```
 
 ## 🎨 Extension Points Reference

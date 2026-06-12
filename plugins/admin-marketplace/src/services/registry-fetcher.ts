@@ -25,7 +25,11 @@
  * ```
  */
 
+import { logger } from "@oc-mui/utils";
+
 import { type PluginVersionConstraints } from "./security";
+
+const log = logger.child({ component: "RegistryFetcher" });
 
 /**
  * Author information for a plugin
@@ -130,13 +134,6 @@ const DEFAULT_CONFIG: RegistryFetcherConfig = {
 };
 
 /**
- * Default community registry URL
- * This should point to the official opencast-management-ui-registry repo
- */
-const DEFAULT_COMMUNITY_REGISTRY =
-  "https://raw.githubusercontent.com/eduardklinger/management-ui-registry/main/registry.json";
-
-/**
  * Registry Fetcher class
  */
 class RegistryFetcherService {
@@ -162,21 +159,21 @@ class RegistryFetcherService {
     // Check cache first
     const cached = this.cache.get(url);
     if (cached && this.isCacheValid(cached)) {
-      console.log(`[RegistryFetcher] Using cached registry from ${url}`);
+      log.debug(`using cached registry from ${url}`);
       return cached.registry;
     }
 
     // Check if there's already a fetch in progress for this URL
     const existingPromise = this.fetchPromises.get(url);
     if (existingPromise) {
-      console.log(`[RegistryFetcher] Waiting for existing fetch from ${url}`);
+      log.debug(`waiting for existing fetch from ${url}`);
       return existingPromise;
     }
 
     // Start a new fetch
     const fetchPromise = (async () => {
       try {
-        console.log(`[RegistryFetcher] Fetching registry from ${url}`);
+        log.debug(`fetching registry from ${url}`);
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), this.config.timeoutMs);
@@ -208,16 +205,14 @@ class RegistryFetcherService {
           url,
         });
 
-        console.log(
-          `[RegistryFetcher] Fetched ${registry.plugins.length} plugins from ${url}`,
-        );
+        log.debug(`fetched ${registry.plugins.length} plugins from ${url}`);
 
         return registry;
       } catch (error) {
         if (error instanceof Error && error.name === "AbortError") {
-          console.error(`[RegistryFetcher] Timeout fetching registry from ${url}`);
+          log.warn(`timeout fetching registry from ${url}`);
         } else {
-          console.error(`[RegistryFetcher] Failed to fetch registry from ${url}:`, error);
+          log.error(`failed to fetch registry from ${url}`, error instanceof Error ? error : new Error(String(error)));
         }
         return null;
       } finally {
@@ -248,10 +243,9 @@ class RegistryFetcherService {
       }
     }
 
-    // Add default community registry if no URLs configured
-    if (allUrls.length === 0) {
-      allUrls.push(DEFAULT_COMMUNITY_REGISTRY);
-    }
+    // No community registry is shipped by default — deployments opt in by
+    // setting registryUrls. With none configured (and outside dev), the
+    // marketplace simply lists locally installed plugins.
 
     // Fetch all registries in parallel
     const results = await Promise.all(allUrls.map((url) => this.fetchRegistry(url)));
@@ -366,7 +360,7 @@ class RegistryFetcherService {
    */
   clearCache(): void {
     this.cache.clear();
-    console.log("[RegistryFetcher] Cache cleared");
+    log.debug("cache cleared");
   }
 
   /**

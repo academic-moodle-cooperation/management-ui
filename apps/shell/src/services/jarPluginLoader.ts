@@ -18,7 +18,7 @@ export interface JarPluginInfo {
   id?: string;
   /** Plugin name (from backend) */
   name: string;
-  /** Path where the plugin is served (e.g. /static/plugins/univie) */
+  /** Path where the plugin is served (e.g. /static/plugins/example-org) */
   path: string;
   /** Module scope (for SystemJS compatibility, if used) */
   scope: string;

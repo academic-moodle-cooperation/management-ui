@@ -153,7 +153,7 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
       }
     }
 
-    // One manifest entry per .mjs so you can split bundles (e.g. plugin-univie-sidebar.mjs)
+    // One manifest entry per .mjs so you can split bundles (e.g. plugin-example-sidebar.mjs)
     // Type from filename: plugin-<namespace>-<type>.mjs → type (e.g. "sidebar", "landing-page")
     const namespacePrefix = `plugin-${dirent.name}-`;
     for (const mjsFile of mjsFiles) {

@@ -10,9 +10,11 @@ const PLUGIN_DEV_PORT_START = 3001;
 // added by appending a single name, without touching port-allocation logic.
 const CORE_APP_NAMES = ["playground"];
 
-// Known plugin packages - simplified to avoid dynamic discovery issues
+// Known in-repo plugin packages, used to assign deterministic dev/preview ports.
+// Standalone and .local-plugins plugins instead pick a free dev port in their own
+// vite.config.ts — see docs/operations/extending-the-workspace.md.
 const discoverPluginPackages = (): string[] => {
-  return ["plugin-tuwien", "plugin-univie", "@oc-mui/plugin-example"];
+  return ["@oc-mui/plugin-example"];
 };
 
 interface PluginPorts {

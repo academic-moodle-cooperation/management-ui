@@ -12,7 +12,7 @@
 :root {
   --theme-name: "Example";
 
-  /* Harvard Crimson (#A51C30) as the primary, to show a single-token recolor. */
+  /* A crimson primary, to show a single-token recolor. */
   --primary: oklch(0.45 0.165 20);
   --primary-foreground: oklch(0.985 0.005 20);
   --ring: oklch(0.52 0.15 20);

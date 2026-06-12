@@ -11,12 +11,12 @@
 #
 # This is OPT-IN and backend-mutating: run it against a DISPOSABLE local Opencast
 # (your podman stack), never a shared one. It needs: a running podman Opencast,
-# `mvn` with the Opencast parent POM reachable (the host that built Hinkelstein
+# `mvn` with the Opencast parent POM reachable (the host that built Opencast
 # has it in ~/.m2), and `podman`.
 #
 # Config (env, with the local-podman defaults):
 #   OPENCAST_BASE_URL   http://localhost:8080
-#   OPENCAST_USER/PASS  admin / livestream
+#   OPENCAST_USER/PASS  admin / opencast
 #   OPENCAST_CONTAINER  opencast-runtime
 #   OPENCAST_DEPLOY_DIR /opt/opencast/deploy
 #   PLUGINS_JSON_PATH   /management-tool/ui/config/plugins.json
@@ -26,7 +26,7 @@ set -euo pipefail
 
 OPENCAST_BASE_URL="${OPENCAST_BASE_URL:-http://localhost:8080}"
 OPENCAST_USER="${OPENCAST_USER:-admin}"
-OPENCAST_PASS="${OPENCAST_PASS:-livestream}"
+OPENCAST_PASS="${OPENCAST_PASS:-opencast}"
 OPENCAST_CONTAINER="${OPENCAST_CONTAINER:-opencast-runtime}"
 OPENCAST_DEPLOY_DIR="${OPENCAST_DEPLOY_DIR:-/opt/opencast/deploy}"
 PLUGINS_JSON_PATH="${PLUGINS_JSON_PATH:-/management-tool/ui/config/plugins.json}"

@@ -19,8 +19,6 @@
   "acls": {
     "authenticated": "Authenticated",
     "private": "Not listed",
-    "public": "Public",
-    "tuw": "TU Wien",
-    "tuwel": "TUWEL course"
+    "public": "Public"
   }
 }

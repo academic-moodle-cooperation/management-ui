@@ -225,7 +225,7 @@ The PascalCase namespace is mechanically derived from the kebab-case `namespace`
 | `episodes` | `Episodes` | `EpisodesGetEpisodeDetails` | `EpisodesEpisodeFields` |
 | `series` | `Series` | `SeriesGetMySeries` | `SeriesSeriesFields` |
 | `upload` | `Upload` | `UploadGetWorkflows` | `UploadWorkflowFields` |
-| `univie` | `Univie` | `UnivieGetCourseList` | `UnivieCourseListEntry` |
+| `org-a` | `OrgA` | `OrgAGetCourseList` | `OrgACourseListEntry` |
 | `my-plugin` | `MyPlugin` | `MyPluginGetSomething` | `MyPluginThingFields` |
 | `@oc-mui/query` (shared) | `Mui` | `MuiGetMyEvents` | `MuiCurrentUserFields` |
 

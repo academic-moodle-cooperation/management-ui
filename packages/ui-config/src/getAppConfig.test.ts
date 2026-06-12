@@ -130,12 +130,12 @@ describe("getAppConfig", () => {
 
   it("should merge downloadBaseUrl", () => {
     const instanceConfig: Partial<AppConfig> = {
-      downloadBaseUrl: "https://admin.oc.univie.ac.at/static",
+      downloadBaseUrl: "https://opencast.example.org/static",
     };
 
     const config = getAppConfig(instanceConfig);
 
-    expect(config.downloadBaseUrl).toBe("https://admin.oc.univie.ac.at/static");
+    expect(config.downloadBaseUrl).toBe("https://opencast.example.org/static");
   });
 
   it("should merge matomo config with defaults", () => {

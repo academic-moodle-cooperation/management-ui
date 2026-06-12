@@ -27,7 +27,7 @@ Shipped in Phase 8.5.2. `pnpm create-plugin <name>` now scaffolds a `backend/pom
 Today the scaffolded plugin POM inherits from `org.opencastproject:base` directly and declares its own `frontend-maven-plugin`, `maven-resources-plugin`, and OSGi defaults inline. If a non-trivial number of external plugins start shipping and end up duplicating the same POM scaffolding, it's worth publishing a `org.amc.management:management-ui-plugin-parent` artifact that plugins inherit from instead, moving the shared defaults into the parent.
 
 - **When to revisit**: when we see 5+ external plugin POMs in the wild and notice consistent duplication of the same `<build>` config. Or when the scaffold needs a default that's awkward to update across all consumers (e.g. a Node version bump).
-- **Effort estimate**: ~1 day to publish the parent once the artifact destination is decided (Maven Central / AMC Nexus). Each existing plugin needs a one-stanza `<parent>` swap to consume it.
+- **Effort estimate**: ~1 day to publish the parent once the artifact destination is decided (e.g. Maven Central or a private Maven registry). Each existing plugin needs a one-stanza `<parent>` swap to consume it.
 - **Cost ramp**: cheap before any external plugins exist (we just announce "switch your `<parent>` block"); rises with every plugin published on the old parent.
 - **Detail**: design discussion captured in the Phase 8.5.2 PR description.
 
@@ -136,19 +136,19 @@ To support deep-link return after SSO we'd need to inject the attempted path int
 When the `currentUser` check fails against a 5xx/unreachable backend, [`apps/shell/src/components/AuthCheckError.tsx`](../../apps/shell/src/components/AuthCheckError.tsx) renders `error.message` verbatim in its `details` slot — for a GraphQL client error that's the full blob (`GraphQL Error (Code: 500): {"response":…,"request":{"query":"…MuiGetCurrentUser…"}}`). Fine for an admin debugging, but verbose and it exposes the operation/query text.
 
 - **Suggested form**: trim to a friendly one-line summary (status + "couldn't reach the server"), and move the raw message behind a collapsible "Show details" expander (or gate it on dev). Small, self-contained shell PR.
-- **When to revisit**: a UI-polish pass before the 1.0 cut. Surfaced while diagnosing a backend-down screen with the VPN disconnected.
+- **When to revisit**: a UI-polish pass before the 1.0 cut. Surfaced while diagnosing a backend-down screen.
 
 ### 5.6 A misbehaving remote plugin crashes the whole shell on boot
 
 **Symptom.** Booting the shell against a live backend throws `TypeError: Cannot read properties of undefined (reading 'length')` from inside a remote-loaded plugin blob (a `<L>` component in the dev console), and the app renders the error boundary instead of the UI. The console also shows `Warning: The following error wasn't caught by any route!` — so the failure is **not** contained to the offending plugin's route; it takes down the boot.
 
-**Scope / not a regression.** Observed only in the **main-repo checkout**, which carries `.local-plugins/univie/` plus the bundled community example plugins (`poll-plugin`, `video-playlists-plugin`, `series-create-acl-editor-plugin`, …). These load against the klingee3 backend's `enabledPlugins` and one of them reads `.length` on an undefined value. It **reproduces on the clean `release/oss-1.0` base** (checked out without any in-flight branch), so it is unrelated to PR #180 / §3.5. A fresh clone that lacks those `.local-plugins/` boots fine — which is why it hasn't surfaced elsewhere.
+**Scope / not a regression.** Observed only in a checkout that carries org `.local-plugins/` plus bundled community example plugins (`poll-plugin`, `video-playlists-plugin`, `series-create-acl-editor-plugin`, …). These load against a real backend's `enabledPlugins` and one of them reads `.length` on an undefined value. A fresh clone that lacks those `.local-plugins/` boots fine — which is why it hasn't surfaced elsewhere.
 
 **Two follow-up dimensions:**
-1. **Find & fix the offending plugin.** Narrow it down by bisecting `enabledPlugins` (or watching which plugin's blob is in the `<L>` stack frame) — prime suspects are the `univie:*` org plugin and the community fixtures. Likely a data-shape assumption that holds offline but breaks against real backend data (an array that's `undefined` until loaded).
+1. **Find & fix the offending plugin.** Narrow it down by bisecting `enabledPlugins` (or watching which plugin's blob is in the `<L>` stack frame) — prime suspects are an org plugin and the community fixtures. Likely a data-shape assumption that holds offline but breaks against real backend data (an array that's `undefined` until loaded).
 2. **Robustness (the more important one).** A single third-party plugin throwing during render should be *isolated*, not fatal to the shell. The remote-plugin render path needs a per-plugin error boundary so a broken plugin degrades to a placeholder rather than an app-wide crash — this matters once external orgs ship their own plugins. Related: the loader already logs `success:false` per plugin (PluginInitializer), but rendering isn't guarded the same way.
 
-- **When to revisit**: dimension 2 before the public plugin ecosystem opens up; dimension 1 whenever the univie/community fixtures are next touched. Repro: `VITE_PROXY_TARGET=<backend> pnpm --filter shell dev` in a checkout that has `.local-plugins/univie/`.
+- **When to revisit**: dimension 2 before the public plugin ecosystem opens up; dimension 1 whenever the org/community fixtures are next touched. Repro: `VITE_PROXY_TARGET=<backend> pnpm --filter shell dev` in a checkout that has org `.local-plugins/`.
 
 ---
 
@@ -206,19 +206,6 @@ The doc site is built and deployable but **discouraged from indexing** until the
 **When to revisit**: alongside Phase 6d (the `access: "restricted" → "public"` npm-publish flip). Once everything has been verified on the test server and the plan is finished, do all three together — the `robots.txt` + meta-tag combo is belt-and-suspenders (robots.txt is advisory; the meta tag is what most search engines actually obey, so flipping only one leaves the other gating).
 
 **First-time enablement on GitHub**: when you're ready to ship even a manual deploy, enable GitHub Pages in the repo settings under **Settings → Pages**, source: **GitHub Actions** (not "Deploy from a branch"). The workflow's `actions/deploy-pages` step needs that to be set, otherwise it errors out. While the guards are in place, you can do a manual `workflow_dispatch` deploy any time — the URL exists, but search engines stay away.
-
-### 8.3a Interim deploy: personal-repo publication mirror
-
-Until the AMC org repo can host the docs site (currently blocked: private + Free plan), the docs are published to a personal-repo mirror on a Pro plan, which supports GitHub Pages on private repos. The personal repo is treated as a **publication endpoint, not a code mirror** — its history is force-overwritten from `amc/release/oss-1.0` whenever a fresh deploy is wanted. The pre-OSS history is preserved on an `archive/pre-oss-1.0` tag.
-
-| Aspect | AMC repo (long-term home) | Personal repo (interim mirror) |
-|--------|---------------------------|--------------------------------|
-| URL | `academic-moodle-cooperation.github.io/management-tool/` | `<user>.github.io/management-ui/` |
-| `DOCS_BASE` | Default `/management-tool/` | Override to `/management-ui/` via **Settings → Actions → Variables**. |
-| Trigger | `workflow_dispatch` only (until Phase 6d) | `workflow_dispatch`; deploys whenever the user manually triggers it. |
-| Update path | Merges to `release/oss-1.0` | `git push --force eduardklinger amc/release/oss-1.0:release/oss-1.0` from the AMC checkout, then Run workflow on the personal repo. |
-
-Decommission: when AMC ships its own Pages deploy (after Phase 6d, or earlier if AMC admins enable Pages on the private repo), drop the personal mirror or keep it as a private staging environment.
 
 ### 8.4 Source-link rewriting is heuristic-based
 

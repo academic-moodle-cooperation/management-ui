@@ -70,13 +70,13 @@ The shell loads plugins in two phases to handle the chicken-and-egg of config-dr
 
 Full model: [`CONFIGURATION.md`](./CONFIGURATION.md).
 
-This is why a `.local-plugins/config/` plugin can declare `enabledPlugins: ["core", "admin", "univie", ...]` and have univie load even though core has never heard of it.
+This is why a `.local-plugins/config/` plugin can declare `enabledPlugins: ["core", "admin", "org-a", ...]` and have org-a load even though core has never heard of it.
 
 ## Naming: `namespace:type`
 
 Plugins are identified by a `namespace:type` pair.
 
-- **`namespace`** — who provides the plugin. Lowercase kebab-case. Examples: `core`, `admin`, `episodes`, `univie`, `tuwien`, `my-org`.
+- **`namespace`** — who provides the plugin. Lowercase kebab-case. Examples: `core`, `admin`, `episodes`, `org-a`, `org-b`, `my-org`.
 - **`type`** — the role the plugin fills. Lowercase kebab-case. Standard types: `app`, `config`, `navigation`, `sidebar`, `header`, `footer`, `landing-page`, `empty-state`, `layout`, `marketplace`, `dashboard`. Custom types are allowed for domain-specific plugins (`episodes-actions`, etc.).
 
 Both must match between `plugin.json` and the `createPlugin({ namespace, type, ... })` call. Examples:
@@ -84,8 +84,8 @@ Both must match between `plugin.json` and the `createPlugin({ namespace, type, .
 ```
 core:layout            # core extension-point slots
 core:footer            # default footer implementation
-univie:footer          # univie's footer override
-univie:landing-page    # univie's landing page
+org-a:footer          # org-a's footer override
+org-a:landing-page    # org-a's landing page
 admin:marketplace      # the marketplace plugin
 ```
 
