@@ -133,17 +133,50 @@ Removing a public symbol is a major bump and requires a deprecation warning in t
 
 Plugin authors get a one-major-cycle grace window: when the host bumps `PLUGIN_API_VERSION` major, plugins compiled against the previous major are cleanly rejected by the loader with a "Plugin requires API major X, host provides Y" error.
 
+## Branching model
+
+Modeled on the Opencast project's GitFlow-style branching. Three branch roles matter for releases:
+
+| Branch | Role |
+|---|---|
+| **`develop`** | Integration. Feature branches are cut from here and their PRs merge back here, each with a changeset. The latest integrated code — not yet released. `.changeset/config.json`'s `baseBranch` is `develop`. |
+| **`main`** | Released, stable code. A merge into `main` **is** a release — it triggers [`release.yml`](../../.github/workflows/release.yml). Nothing lands here except releases (and hotfixes). |
+| **`r/NN.x`** | Maintenance branches for already-shipped majors (e.g. `r/19.x`). Used only to patch an old release in isolation, without pulling in newer `develop` work. Not part of the routine release flow. |
+
+### The everyday loop
+
+1. Branch a feature off `develop`; open a PR back into `develop` **with a changeset** (CI enforces it).
+2. Features accumulate on `develop` along with their changesets.
+3. To release, merge `develop` → `main`.
+4. On `main`, the changesets action opens a **"Version Packages" PR** (version bumps + changelog).
+5. Merge that PR → the action publishes the bumped packages to npm and tags them.
+6. Back-merge `main` → `develop` once, so `develop` also carries the new version numbers.
+
+So: **`develop` collects, `main` ships.** There is never a manual `npm publish`.
+
+The npm SDK packages are versioned independently of Opencast's `r/NN.x` majors, so they publish from `main` — you'd only publish the SDK from an `r/NN.x` branch to patch an old shipped major in isolation.
+
+> **Migration in progress.** Today the mature trunk is `release/oss-1.0`, `develop` is far behind it, and `main` does not exist yet — so `release.yml` currently triggers on `release/oss-1.0` as a stopgap. Promoting to the model above is the one-time switch below.
+
+### Branch migration (one-time)
+
+1. **Promote `develop`.** Bring `develop` up to `release/oss-1.0`'s content (it's behind), so `develop` holds the mature code; repoint any open PRs at `develop`.
+2. **Create `main`** from the verified `develop` state, and set it as the repo's **default branch**.
+3. **Repoint the release trigger:** in [`release.yml`](../../.github/workflows/release.yml) change `push: branches: ["release/oss-1.0"]` → `["main"]`. Leave `.changeset/config.json`'s `baseBranch: "develop"` as-is.
+4. **Swap the hardcoded `release/oss-1.0` references → `main`.** Run `git grep "release/oss-1.0"` to find them all. Two of them **ship in packages** and matter most: `packages/eslint-config/rules/graphql-operation-naming.js` (a doc URL) and `packages/ui/src/components/DefaultLandingPage/index.tsx` (`REPO_BLOB`). The rest are repo-internal: `docs/.vitepress/config.mts`, `SECURITY.md`, `docs.yml`, `bug_report.yml`, `robots.txt`, `docs/index.md`, `test-protocol.md`, `AGENTS.md`.
+5. **Retire `release/oss-1.0`** once nothing references it.
+
 ## Cutting a release
 
 > **Note:** During the OSS-readiness phases, the workspace is still configured with `access: "restricted"` in `.changeset/config.json`. The first public publish happens in Phase 6d, after every other phase is finished and the build has been verified on the test server.
 
 Before any release — and especially before the first public 1.0 cut or any major bump of a contract-stable package — run the [release test protocol](./test-protocol.md). It's the integration-level gate that complements `pnpm verify`'s mechanical checks.
 
-The automation lives in [`.github/workflows/release.yml`](../../.github/workflows/release.yml), which runs the [`changesets/action`](https://github.com/changesets/action) on every push to the release branch (`release/oss-1.0`). The release flow:
+The automation lives in [`.github/workflows/release.yml`](../../.github/workflows/release.yml), which runs the [`changesets/action`](https://github.com/changesets/action) on every push to **`main`** (see [Branching model](#branching-model) — until the branch migration completes, the trigger is `release/oss-1.0`). The release flow:
 
-1. **Merge changesets into the release branch.** On the resulting push, the action opens (or updates) a **"Version Packages" PR** that aggregates the pending `.changeset/*.md` files into version bumps and changelog updates.
+1. **Merge `develop` → `main`.** On the resulting push, the action opens (or updates) a **"Version Packages" PR** that aggregates the pending `.changeset/*.md` files into version bumps and changelog updates.
 2. **Review and merge the Version Packages PR.** This commits the version bumps, regenerated changelogs, and consumes the `.changeset/*.md` files.
-3. **The action publishes.** When that merge lands and no changesets remain, the same workflow runs `pnpm changeset:publish`, which calls `npm publish` for every bumped package and creates matching git tags.
+3. **The action publishes.** When that merge lands and no changesets remain, the same workflow runs `pnpm changeset:publish`, which calls `npm publish` for every bumped package and creates matching git tags. Then back-merge `main` → `develop` so the version bumps flow back.
 
 There is no manual `pnpm publish` step. If a release goes sideways, deprecate the bad version with `npm deprecate` rather than unpublishing.
 
