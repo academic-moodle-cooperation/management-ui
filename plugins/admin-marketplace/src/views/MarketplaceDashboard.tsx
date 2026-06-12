@@ -454,7 +454,13 @@ const StatusBanners: React.FC<{
       <div className="flex items-center gap-3 rounded-lg border border-destructive/50 bg-destructive/5 px-4 py-3">
         <AlertTriangle className="h-4 w-4 shrink-0 text-destructive" />
         <p className="flex-1 text-sm text-destructive">{error}</p>
-        <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={onClearError}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 shrink-0"
+          aria-label="Dismiss error"
+          onClick={onClearError}
+        >
           <X className="h-3.5 w-3.5" />
         </Button>
       </div>
@@ -724,6 +730,7 @@ const CommunitySection: React.FC<{
           variant="ghost"
           size="icon"
           className="h-6 w-6 text-muted-foreground"
+          aria-label="Refresh community plugins"
           onClick={onRefresh}
         >
           <RefreshCw className="h-3 w-3" />

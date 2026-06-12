@@ -1,371 +1,156 @@
-# Plugin System Documentation
+# Plugin System — concepts
 
-The core plugin architecture for the Management UI system. This package provides the foundational plugin loading, management, and extension point system that enables university-specific customizations without modifying core application code.
+Conceptual companion to the [package README](../README.md), which documents the API surface. This page explains the model: what extension points are, how registration and resolution work, and how organizations customize the Management UI without modifying core code.
 
-## 🎯 Overview
+## Overview
 
-The plugin system enables **controlled extensibility** where:
+The plugin system enables **controlled extensibility**:
 
-- **Core applications** define extension points (what can be customized)
-- **University plugins** implement extensions (how it's customized)
-- **Plugin manager** coordinates loading and lifecycle management
+- **The core (shell + `@oc-mui/plugin-core`)** defines extension points — *what* can be customized.
+- **Plugins** register objects and components on those points — *how* it's customized.
+- **The `PluginManager`** coordinates registration, resolution, and lifecycle.
 
 ```
 ┌─────────────────────────────────────────────────┐
 │ Plugin System Architecture                      │
 ├─────────────────────────────────────────────────┤
-│ 🏗️  Extension Points (Core)                    │
+│ Extension Points (core)                         │
+│ ├─ apps:definitions                             │
 │ ├─ sidebar:nav-items                            │
-│ ├─ app:header                                   │
-│ ├─ app:branding                                 │
-│ └─ metadata:fields                              │
+│ ├─ app:config:defaults                          │
+│ └─ appshell:header / app:header-logo            │
 ├─────────────────────────────────────────────────┤
-│ 🔧 Plugin Manager                              │
-│ ├─ Plugin Discovery & Loading                   │
-│ ├─ Component Registration                       │
-│ ├─ Object Management                            │
-│ └─ Lifecycle Coordination                       │
+│ Plugin Manager                                  │
+│ ├─ Object registry    (registerObject)          │
+│ ├─ Component registry (registerComponent)       │
+│ ├─ Function registry  (addFunction)             │
+│ └─ Event bus          (emit / on / off)         │
 ├─────────────────────────────────────────────────┤
-│ 🏛️  University Implementations                │
-│ ├─ Organization A Plugins                             │
-│ ├─ Organization B Plugins                │
-│ └─ Example University Plugins                  │
+│ Implementations                                 │
+│ ├─ Built-in plugins (episodes, series, upload)  │
+│ ├─ Organization plugins (.local-plugins/, JARs) │
+│ └─ Community plugins (marketplace)              │
 └─────────────────────────────────────────────────┘
 ```
 
-## 🚀 Quick Start
+## Creating a plugin
 
-### Creating a Plugin
+```ts
+import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
 
-```typescript
-import { createPlugin } from "@oc-mui/plugin-system";
-import { MyCustomComponent } from "./MyCustomComponent";
-
-export const MyUniversityPlugin = createPlugin({
-  namespace: "myuni",
-  type: "university-extension",
+export const myPlugin = createPlugin({
+  namespace: "my-org",
+  type: "app",
   version: "1.0.0",
 
-  initialize(manager) {
-    // Register a custom component
-    manager.registerComponent("app:header", MyCustomComponent, { priority: 10 });
-
-    // Register configuration data
-    manager.registerObject("app:branding", "university-theme", {
-      primaryColor: "#003366",
-      logoUrl: "/assets/university-logo.png",
+  initialize(manager: PluginManager) {
+    // All registrations happen HERE (not in activate()).
+    manager.registerObject("sidebar:nav-items", "my-portal", {
+      title: "My Portal",
+      path: "/portal",
+      icon: "building-2",
+      order: 50,
+      permissions: [],
     });
   },
 
   activate() {
-    console.log("MyUniversityPlugin activated");
+    /* one-time side effects only */
   },
-
   deactivate() {
-    console.log("MyUniversityPlugin deactivated");
+    /* clean up activate()'s side effects */
   },
 });
 ```
 
-### Using Components from Plugins
+The full authoring walkthrough lives at [`docs/plugins/creating-a-plugin.md`](../../../docs/plugins/creating-a-plugin.md); the operational rules (manifest, contract test, boundaries) are in [`AGENTS.md`](../../../AGENTS.md).
+
+## Core concepts
+
+### 1. Extension points
+
+An extension point is a string key (`"namespace:thing"`) that the core reads from. Plugins write to it; the core (or another consumer) queries it. There is no separate "define" step — a point exists by convention, documented in [`plugins/core`](../../../plugins/core/README.md)'s declaration tables and frozen by the Manifest/Runtime contracts in [`docs/architecture/CONTRACTS.md`](../../../docs/architecture/CONTRACTS.md).
+
+### 2. Object registration
+
+Data-shaped contributions (routes, nav items, config defaults):
+
+```ts
+manager.registerObject("apps:definitions", "my-app", {
+  id: "my-app",
+  name: "My App",
+  routePath: "/my-app",
+  component: MyAppComponent,
+});
+```
+
+### 3. Component registration and resolution
+
+UI-shaped contributions. Multiple plugins can target the same point; the **lowest `order` wins** when a single component is resolved:
+
+```ts
+// Core registers the default header at order 100…
+manager.registerComponent("appshell:header", DefaultHeader, {
+  key: "default-header",
+  order: 100,
+});
+
+// …an org plugin overrides it by registering with a lower order.
+manager.registerComponent("appshell:header", OrgHeader, {
+  key: "org-header",
+  order: 50,
+});
+```
+
+Consumers render the winner through `ComponentResolver`:
 
 ```tsx
 import { ComponentResolver } from "@oc-mui/plugin-system";
 
-function AppLayout() {
-  return (
-    <div className="app-layout">
-      {/* Header with plugin customizations */}
-      <ComponentResolver
-        componentType="app:header"
-        defaultComponent={DefaultHeader}
-        componentProps={{ user: currentUser }}
-      />
-
-      <main>
-        {/* Main content area */}
-        <ComponentResolver
-          componentType="content:main"
-          defaultComponent={() => <div>Default content</div>}
-        />
-      </main>
-
-      {/* Footer with plugin customizations */}
-      <ComponentResolver componentType="app:footer" defaultComponent={DefaultFooter} />
-    </div>
-  );
-}
+<ComponentResolver
+  componentType="appshell:header"
+  defaultComponent={MinimalHeader}
+  componentProps={{ user: currentUser }}
+/>;
 ```
 
-## 🔧 Core Concepts
+`ComponentResolver` falls back to `defaultComponent` when nothing is registered.
 
-### 1. **Extension Points**
+### 4. Functions and events
 
-Defined locations where plugins can add or override functionality:
+`addFunction` / `executeFunction` register callable extensions; the event bus (`emit` / `on` / `off`) decouples cross-plugin signaling. Both live on the same `PluginManager`.
 
-```typescript
-// Core application defines extension points
-manager.defineExtensionPoint("sidebar:nav-items", {
-  description: "Navigation items in the main sidebar",
-  expectedSchema: {
-    title: "string",
-    path: "string",
-    icon: "string|Component",
-    order: "number",
-    permissions: "string[]",
-  },
-});
-```
+## Which extension points exist?
 
-### 2. **Plugin Registration**
+The canonical, maintained list is **not** in this file — read:
 
-Plugins register components and objects at extension points:
+- [`plugins/core/README.md`](../../../plugins/core/README.md) — every shared extension point, its owner, and its schema.
+- [`AGENTS.md`](../../../AGENTS.md#extension-points--the-four-youll-usually-touch) — the four you'll usually touch (`apps:definitions`, `sidebar:nav-items`, `app:config:defaults`, `app:header-logo`).
 
-```typescript
-// University plugin implements extension points
-manager.registerObject("sidebar:nav-items", "university-portal", {
-  title: "University Portal",
-  path: "/portal",
-  icon: "building-2",
-  order: 50,
-  permissions: ["portal.access"],
-});
-```
+## Testing plugins
 
-### 3. **Component Resolution**
+Use the contract-test harness from `@oc-mui/plugin-testing` — every plugin ships a mechanical `plugin.contract.test.ts` (see [`AGENTS.md`](../../../AGENTS.md#contract-test--required-mechanical) for the template and [`packages/plugin-testing/README.md`](../../plugin-testing/README.md) for the harness API). For unit tests, create a fresh manager with `createPluginManager()` and call your plugin's `initialize()` against it.
 
-The plugin system resolves which components to render:
-
-```typescript
-// Plugin system finds best matching component
-const HeaderComponent = manager.resolveComponent("app:header", {
-  fallback: DefaultHeader,
-  filter: (plugin) => plugin.isActive,
-  sort: (a, b) => a.priority - b.priority,
-});
-```
-
-## 🏗️ Architecture
-
-### Plugin Manager
-
-The central coordination system:
-
-- **Discovery**: Automatically finds and loads plugins
-- **Registration**: Manages component and object registration
-- **Resolution**: Determines which components to use
-- **Lifecycle**: Handles plugin activation/deactivation
-
-### Extension Point Types
-
-1. **Component Extensions**: Replace or enhance UI components
-2. **Object Extensions**: Provide configuration and data
-3. **Function Extensions**: Add custom business logic
-4. **Route Extensions**: Define custom application routes
-
-### Priority System
-
-Multiple plugins can target the same extension point:
-
-```typescript
-// Higher priority (lower number) wins
-manager.registerComponent("app:header", OrgHeader, { priority: 10 });
-manager.registerComponent("app:header", GenericHeader, { priority: 50 });
-
-// OrgHeader will be used
-```
-
-## 🎨 Extension Points Reference
-
-### Layout Extensions
-
-- `app:header` - Main application header
-- `app:footer` - Application footer
-- `app:sidebar` - Main navigation sidebar
-- `app:branding` - Theme colors, logos, and styling
-
-### Navigation Extensions
-
-- `sidebar:nav-items` - Main navigation menu items
-- `sidebar:user-items` - User-specific menu items
-- `sidebar:admin-items` - Administrative menu items
-
-### Content Extensions
-
-- `metadata:fields` - Custom metadata input fields
-- `content:validators` - Custom validation rules
-- `workflows:definitions` - Custom approval workflows
-- `content:transformers` - Custom content processing
-
-### Authentication Extensions
-
-- `auth:provider` - Custom authentication providers
-- `auth:permissions` - Custom permission systems
-- `auth:user-profile` - User profile customizations
-
-## 🧪 Testing Plugins
-
-### Unit Testing
-
-```typescript
-import { PluginManager } from "@oc-mui/plugin-system";
-import { MyUniversityPlugin } from "./MyUniversityPlugin";
-
-describe("MyUniversityPlugin", () => {
-  let manager: PluginManager;
-
-  beforeEach(() => {
-    manager = new PluginManager();
-    MyUniversityPlugin.initialize(manager);
-  });
-
-  it("should register header component", () => {
-    const header = manager.resolveComponent("app:header");
-    expect(header).toBeDefined();
-  });
-
-  it("should provide branding configuration", () => {
-    const branding = manager.getObject("app:branding", "university-theme");
-    expect(branding.primaryColor).toBe("#003366");
-  });
-});
-```
-
-### Integration Testing
-
-```typescript
-import { render } from '@testing-library/react';
-import { ComponentResolver } from '@oc-mui/plugin-system';
-
-it('should render university header', () => {
-  const { getByText } = render(
-    <ComponentResolver
-      componentType="app:header"
-      componentProps={{ title: 'Test App' }}
-    />
-  );
-
-  expect(getByText('University Logo')).toBeInTheDocument();
-});
-```
-
-## 📦 Package Structure
+## Package structure
 
 ```
 packages/plugin-system/
 ├── src/
-│   ├── core/                    # Core plugin system
-│   │   ├── PluginManager.ts     # Main plugin manager
-│   │   ├── Plugin.ts            # Plugin base class
-│   │   └── ExtensionPoint.ts    # Extension point definitions
-│   ├── components/              # React integration
-│   │   ├── ComponentResolver.tsx # Component resolution
-│   │   ├── PluginProvider.tsx   # React context provider
-│   │   └── hooks.ts             # React hooks for plugins
-│   ├── types/                   # TypeScript definitions
-│   │   ├── Plugin.ts            # Plugin interfaces
-│   │   ├── ExtensionPoint.ts    # Extension point types
-│   │   └── ComponentResolver.ts # Component resolver types
-│   └── index.ts                 # Public API exports
-├── docs/                        # Documentation
-├── package.json
-└── README.md
+│   ├── index.ts                  # public API exports
+│   ├── pluginFactory.ts          # createPlugin()
+│   ├── pluginManager.ts          # createPluginManager() + registries
+│   ├── component-resolver.tsx    # ComponentResolver
+│   ├── PluginProvider.tsx        # React context (usePluginManager)
+│   ├── builtins/                 # renderer, app registry, object registry
+│   ├── services/                 # FragmentRegistry (GraphQL fragments)
+│   ├── schemas/plugin.schema.json # the Manifest 1.1 JSON schema
+│   └── utils/                    # manifest validation, semver checks
+├── docs/                         # this page
+└── etc/plugin-system.api.md      # committed API-Extractor snapshot (CI-checked)
 ```
 
-## 🔄 Migration Guide
+## See also
 
-### From Old System
-
-The archived documentation contains detailed migration information:
-
-- **Migration Guide**: [`../../../docs/archive/packages/plugin-system/docs/migration-guide.md`](../../../docs/archive/packages/plugin-system/docs/migration-guide.md)
-- **Plugin System Guide**: [`../../../docs/archive/packages/plugin-system/docs/plugin-system-guide.md`](../../../docs/archive/packages/plugin-system/docs/plugin-system-guide.md)
-- **Naming Conventions**: [`../../../docs/archive/packages/plugin-system/docs/plugin-naming-conventions.md`](../../../docs/archive/packages/plugin-system/docs/plugin-naming-conventions.md)
-
-### Key Changes
-
-1. **Unified API**: Single plugin manager for all extension types
-2. **Type Safety**: Full TypeScript support for plugin development
-3. **React Integration**: Built-in React hooks and components
-4. **Performance**: Optimized component resolution and caching
-
-## 🤝 Contributing
-
-### Plugin Development Guidelines
-
-1. **Follow naming conventions**: Use consistent `namespace:type` patterns
-2. **Document extension points**: Provide clear schemas and examples
-3. **Test thoroughly**: Include unit and integration tests
-4. **Version properly**: Use semantic versioning for plugin releases
-
-### Adding Extension Points
-
-1. **Identify need**: What should be customizable?
-2. **Design API**: Define clear parameters and expected behavior
-3. **Document thoroughly**: Include schema, examples, and usage patterns
-4. **Test implementations**: Verify extension points work as expected
-
-## 📚 Examples
-
-### University Header Plugin
-
-```typescript
-import { createPlugin } from '@oc-mui/plugin-system';
-
-export const UniversityHeaderPlugin = createPlugin({
-  namespace: 'university',
-  type: 'header',
-  version: '1.0.0',
-
-  initialize(manager) {
-    manager.registerComponent('app:header', ({ user }) => (
-      <header className="bg-university-blue text-white p-4">
-        <div className="flex items-center justify-between">
-          <img src="/university-logo.png" alt="University" className="h-8" />
-          <nav className="space-x-4">
-            <a href="/series">Video Series</a>
-            <a href="/episodes">Episodes</a>
-            <a href="/upload">Upload</a>
-          </nav>
-          <div className="user-info">
-            Welcome, {user.name}
-          </div>
-        </div>
-      </header>
-    ));
-  }
-});
-```
-
-### Custom Sidebar Navigation
-
-```typescript
-export const CustomNavigationPlugin = createPlugin({
-  namespace: "university",
-  type: "navigation",
-  version: "1.0.0",
-
-  initialize(manager) {
-    // Add university-specific navigation items
-    manager.registerObject("sidebar:nav-items", "university-policies", {
-      title: "University Policies",
-      path: "/policies",
-      icon: "shield-check",
-      order: 80,
-      permissions: [],
-      category: "university",
-    });
-
-    manager.registerObject("sidebar:nav-items", "student-resources", {
-      title: "Student Resources",
-      path: "/resources",
-      icon: "book-open",
-      order: 90,
-      permissions: ["resources.view"],
-      category: "university",
-    });
-  },
-});
-```
-
-This plugin system provides the foundation for a flexible, maintainable, and university-customizable content management platform.
+- [Package README](../README.md) — API table, architecture, layer rules.
+- [`docs/architecture/CONTRACTS.md`](../../../docs/architecture/CONTRACTS.md) — Manifest 1.1 / Runtime API 1.0 guarantees.
+- [`docs/architecture/decisions/001-plugin-system.md`](../../../docs/architecture/decisions/001-plugin-system.md) — why the architecture is the way it is.

@@ -139,13 +139,28 @@ Plugin authors get a one-major-cycle grace window: when the host bumps `PLUGIN_A
 
 Before any release — and especially before the first public 1.0 cut or any major bump of a contract-stable package — run the [release test protocol](./test-protocol.md). It's the integration-level gate that complements `pnpm verify`'s mechanical checks.
 
-The release flow once `access` is flipped to `"public"`:
+The automation lives in [`.github/workflows/release.yml`](../../.github/workflows/release.yml), which runs the [`changesets/action`](https://github.com/changesets/action) on every push to the release branch (`release/oss-1.0`). The release flow:
 
-1. **Merge changesets into `main`** (or whichever release branch is configured). The Changesets GitHub Action opens a "Version Packages" PR that aggregates pending `.changeset/*.md` files into version bumps and changelog updates.
+1. **Merge changesets into the release branch.** On the resulting push, the action opens (or updates) a **"Version Packages" PR** that aggregates the pending `.changeset/*.md` files into version bumps and changelog updates.
 2. **Review and merge the Version Packages PR.** This commits the version bumps, regenerated changelogs, and consumes the `.changeset/*.md` files.
-3. **CI publishes.** The same action runs `pnpm changeset publish` on the merged commit, which calls `npm publish` for every bumped package and creates matching git tags.
+3. **The action publishes.** When that merge lands and no changesets remain, the same workflow runs `pnpm changeset:publish`, which calls `npm publish` for every bumped package and creates matching git tags.
 
 There is no manual `pnpm publish` step. If a release goes sideways, deprecate the bad version with `npm deprecate` rather than unpublishing.
+
+> **Pre-1.0 reality check.** Until the Phase 6d public flip, `access` is `"restricted"` *and* every `@oc-mui/*` package is still `"private": true`, so step 3's `changeset publish` is a deliberate **no-op** — it skips private packages. The version/changelog half (steps 1–2) works today; the publish half activates once the packages drop `private` and `access` becomes `"public"`. Prerequisites for that flip:
+> - **Repo setting:** *Settings → Actions → General →* enable **"Allow GitHub Actions to create and approve pull requests"** so the action can open the Version Packages PR.
+> - **The `@oc-mui` npm org** exists and the publisher can publish to it.
+> - **npm authentication** — see below.
+
+### npm authentication: token to bootstrap, Trusted Publishing afterwards
+
+Only the release workflow publishes — never a laptop. It authenticates in two phases:
+
+1. **Bootstrap (first publish only).** A brand-new package can't have a trusted publisher configured yet, so the *first* release of the 15 SDK packages uses a **granular npm token** scoped to the `@oc-mui` packages with the shortest workable expiry, stored as the `NPM_TOKEN` repo secret (*Settings → Secrets and variables → Actions*).
+2. **Switch to [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers) (OIDC).** After the first publish, configure each package on npmjs.com to trust this repo + `.github/workflows/release.yml`. GitHub then issues a short-lived identity token per run (the workflow already has `id-token: write`), npm accepts the publish without any stored secret, and provenance attestations come for free.
+3. **Delete the token** — from npm *and* from the repo secrets. There is nothing left to leak or rotate. (npm has been tightening token lifetimes since the 2025 supply-chain attacks, so a long-lived automation token isn't a sustainable alternative anyway.)
+
+> Check npm's current trusted-publishing docs at flip time — if new packages can by then be pre-registered with a trusted publisher, the token bootstrap can be skipped entirely.
 
 ## See also
 
