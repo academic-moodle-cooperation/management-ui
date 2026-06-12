@@ -25,12 +25,10 @@ const srcExclude = [
   "archive/**",
 ];
 
-// Base path defaults to the eventual AMC public URL
+// Base path defaults to the AMC public URL
 // (https://academic-moodle-cooperation.github.io/management-tool/). Override
-// via `DOCS_BASE=/<repo-name>/` in the build environment for deploys to other
-// GitHub Pages targets — e.g. a personal-repo publication mirror at
-// https://<user>.github.io/management-ui/ sets `DOCS_BASE=/management-ui/`.
-// See docs/operations/open-followups.md §8.3 for the deploy strategy.
+// via `DOCS_BASE=/<repo-name>/` in the build environment when deploying to a
+// different GitHub Pages target.
 const DOCS_BASE = process.env.DOCS_BASE ?? "/management-tool/";
 
 export default defineConfig({

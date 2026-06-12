@@ -163,7 +163,7 @@ The npm SDK packages are versioned independently of Opencast's `r/NN.x` majors, 
 1. **Promote `develop`.** Bring `develop` up to `release/oss-1.0`'s content (it's behind), so `develop` holds the mature code; repoint any open PRs at `develop`.
 2. **Create `main`** from the verified `develop` state, and set it as the repo's **default branch**.
 3. **Repoint the release trigger:** in [`release.yml`](../../.github/workflows/release.yml) change `push: branches: ["release/oss-1.0"]` → `["main"]`. Leave `.changeset/config.json`'s `baseBranch: "develop"` as-is.
-4. **Swap the hardcoded `release/oss-1.0` references → `main`.** Run `git grep "release/oss-1.0"` to find them all. Two of them **ship in packages** and matter most: `packages/eslint-config/rules/graphql-operation-naming.js` (a doc URL) and `packages/ui/src/components/DefaultLandingPage/index.tsx` (`REPO_BLOB`). The rest are repo-internal: `docs/.vitepress/config.mts`, `SECURITY.md`, `docs.yml`, `bug_report.yml`, `robots.txt`, `docs/index.md`, `test-protocol.md`, `AGENTS.md`.
+4. **Update the remaining `release/oss-1.0` references.** Source/blob links already use branch-agnostic `/blob/HEAD/`, so they need no change. What's left are branch-as-concept mentions: point the `release.yml` / `docs.yml` triggers at `main`, and change the `--since=origin/release/oss-1.0` examples in `AGENTS.md` + `test-protocol.md` to `origin/develop` (the changeset base). Run `git grep "release/oss-1.0"` to confirm none remain.
 5. **Retire `release/oss-1.0`** once nothing references it.
 
 ## Cutting a release

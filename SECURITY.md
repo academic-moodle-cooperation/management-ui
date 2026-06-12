@@ -2,11 +2,11 @@
 
 ## Supported versions
 
-Until the first public 1.0 release of Management UI, only the current `release/oss-1.0` integration branch and the most recent tagged pre-release are eligible for security updates. After 1.0 ships, the table below will list the supported version ranges; until then, please upgrade to the latest commit on `release/oss-1.0` before reporting.
+Until the first public 1.0 release of Management UI, only the latest commit on the repository's default branch and the most recent tagged pre-release are eligible for security updates. After 1.0 ships, the table below will list the supported version ranges; until then, please upgrade to the latest default-branch commit before reporting.
 
 | Version | Supported |
 | --- | --- |
-| `release/oss-1.0` (head) | ✅ |
+| Default branch (head) | ✅ |
 | Older snapshots / forks | ❌ |
 
 ## Reporting a vulnerability
@@ -16,7 +16,7 @@ Until the first public 1.0 release of Management UI, only the current `release/o
 Report security issues privately by either of:
 
 - Using GitHub's [private vulnerability reporting](https://github.com/academic-moodle-cooperation/management-tool/security/advisories) (preferred) — opens a private advisory on this repo that the maintainers see immediately and that we use to coordinate the fix and the eventual public CVE.
-- Emailing **security@academic-moodle-cooperation.at** with a description, reproduction steps, affected version (commit SHA on `release/oss-1.0` is fine), and your assessment of impact.
+- Emailing **security@academic-moodle-cooperation.at** with a description, reproduction steps, affected version (a commit SHA on the default branch is fine), and your assessment of impact.
 
 What happens next:
 

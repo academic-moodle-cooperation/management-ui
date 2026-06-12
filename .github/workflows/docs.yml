@@ -67,9 +67,7 @@ jobs:
       - name: Build docs site
         env:
           # Override the VitePress base path here when the deploy target's
-          # URL prefix differs from the default (/management-tool/). For
-          # example, a personal-repo Pages mirror at <user>.github.io/management-ui/
-          # would set this to "/management-ui/". See docs/operations/open-followups.md §8.3.
+          # URL prefix differs from the default (/management-tool/).
           DOCS_BASE: ${{ vars.DOCS_BASE || '/management-tool/' }}
         run: pnpm docs:build
 

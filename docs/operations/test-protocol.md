@@ -262,9 +262,9 @@ Push the release branch to GitHub (any name; doesn't have to be `release/oss-1.0
 | 14.6 | Internal docs link (e.g. `[CONTRACTS.md](../architecture/CONTRACTS.md)`) | Routes correctly to `/architecture/contracts`. |
 | 14.7 | Source-file link (e.g. `[packages/plugin-system/](../../packages/plugin-system/)`) | Routes to the GitHub URL, opens in a new tab. |
 | 14.8 | `pnpm docs:build` | Builds without errors; `docs/.vitepress/dist/` populated. |
-| 14.9 | Force-push `release/oss-1.0` to your personal repo + trigger Deploy docs workflow | Pages site updates within ~3 min at `https://<user>.github.io/management-ui/`. |
+| 14.9 | Run the **Deploy docs** workflow (Actions → Run workflow) | Pages site updates within ~3 min at `https://academic-moodle-cooperation.github.io/management-tool/`. |
 | 14.10 | View-source on any built page | `<meta name="robots" content="noindex, nofollow">` is present. (Pre-1.0 guard. Goes away in Phase 6d.) |
-| 14.11 | `curl https://<user>.github.io/management-ui/robots.txt` | Returns `Disallow: /`. (Pre-1.0 guard.) |
+| 14.11 | `curl https://academic-moodle-cooperation.github.io/management-tool/robots.txt` | Returns `Disallow: /`. (Pre-1.0 guard.) |
 
 ## Section 15 — Authentication (depends on backend)
 
