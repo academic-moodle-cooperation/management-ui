@@ -40,4 +40,4 @@ Use the top navigation to find your audience:
 - **[Architecture](/architecture/overview)** — three pillars, dependency layers, contracts, ADRs.
 - **[Operations](/operations/release)** — releases, CI, the test pyramid.
 
-Contributing? Read [`CONTRIBUTING.md`](https://github.com/academic-moodle-cooperation/management-tool/blob/release/oss-1.0/CONTRIBUTING.md) and [`AGENTS.md`](https://github.com/academic-moodle-cooperation/management-tool/blob/release/oss-1.0/AGENTS.md) on GitHub.
+Contributing? Read [`CONTRIBUTING.md`](https://github.com/academic-moodle-cooperation/management-tool/blob/HEAD/CONTRIBUTING.md) and [`AGENTS.md`](https://github.com/academic-moodle-cooperation/management-tool/blob/HEAD/AGENTS.md) on GitHub.

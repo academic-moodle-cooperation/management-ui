@@ -42,7 +42,7 @@ const APP_VERSION = typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "
 
 // External destinations. Adjust REPO_URL / DOCS_URL if the canonical homes move.
 const REPO_URL = "https://github.com/academic-moodle-cooperation/management-tool";
-const REPO_BLOB = `${REPO_URL}/blob/release/oss-1.0`;
+const REPO_BLOB = `${REPO_URL}/blob/HEAD`;
 const GITHUB_REPO = "academic-moodle-cooperation/management-tool"; // owner/repo for the Releases API
 const REPO_ORG = "academic-moodle-cooperation";
 const REPO_NAME = "management-tool";
