@@ -28,9 +28,13 @@ on:
     branches: ["release/oss-1.0"]
 
 # Let the action push the Version Packages branch and open its PR.
+# id-token lets npm Trusted Publishing (OIDC) authenticate the publish once
+# it is configured on the packages - the post-bootstrap, tokenless end state
+# (see docs/operations/release.md -> "npm authentication").
 permissions:
   contents: write
   pull-requests: write
+  id-token: write
 
 # Never run two releases concurrently against the same branch.
 concurrency:

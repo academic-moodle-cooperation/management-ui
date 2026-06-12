@@ -149,8 +149,18 @@ There is no manual `pnpm publish` step. If a release goes sideways, deprecate th
 
 > **Pre-1.0 reality check.** Until the Phase 6d public flip, `access` is `"restricted"` *and* every `@oc-mui/*` package is still `"private": true`, so step 3's `changeset publish` is a deliberate **no-op** — it skips private packages. The version/changelog half (steps 1–2) works today; the publish half activates once the packages drop `private` and `access` becomes `"public"`. Prerequisites for that flip:
 > - **Repo setting:** *Settings → Actions → General →* enable **"Allow GitHub Actions to create and approve pull requests"** so the action can open the Version Packages PR.
-> - **Secret `NPM_TOKEN`:** an npm automation token with publish rights to the `@oc-mui` scope, added under *Settings → Secrets and variables → Actions*. It's read by the workflow but only used once packages are public.
-> - **The `@oc-mui` npm org** exists and the token owner can publish to it.
+> - **The `@oc-mui` npm org** exists and the publisher can publish to it.
+> - **npm authentication** — see below.
+
+### npm authentication: token to bootstrap, Trusted Publishing afterwards
+
+Only the release workflow publishes — never a laptop. It authenticates in two phases:
+
+1. **Bootstrap (first publish only).** A brand-new package can't have a trusted publisher configured yet, so the *first* release of the 15 SDK packages uses a **granular npm token** scoped to the `@oc-mui` packages with the shortest workable expiry, stored as the `NPM_TOKEN` repo secret (*Settings → Secrets and variables → Actions*).
+2. **Switch to [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers) (OIDC).** After the first publish, configure each package on npmjs.com to trust this repo + `.github/workflows/release.yml`. GitHub then issues a short-lived identity token per run (the workflow already has `id-token: write`), npm accepts the publish without any stored secret, and provenance attestations come for free.
+3. **Delete the token** — from npm *and* from the repo secrets. There is nothing left to leak or rotate. (npm has been tightening token lifetimes since the 2025 supply-chain attacks, so a long-lived automation token isn't a sustainable alternative anyway.)
+
+> Check npm's current trusted-publishing docs at flip time — if new packages can by then be pre-registered with a trusted publisher, the token bootstrap can be skipped entirely.
 
 ## See also
 
