@@ -156,23 +156,13 @@ So: **`develop` collects, `main` ships.** There is never a manual `npm publish`.
 
 The npm SDK packages are versioned independently of Opencast's `r/NN.x` majors, so they publish from `main` — you'd only publish the SDK from an `r/NN.x` branch to patch an old shipped major in isolation.
 
-> **Migration in progress.** Today the mature trunk is `release/oss-1.0`, `develop` is far behind it, and `main` does not exist yet — so `release.yml` currently triggers on `release/oss-1.0` as a stopgap. Promoting to the model above is the one-time switch below.
-
-### Branch migration (one-time)
-
-1. **Promote `develop`.** Bring `develop` up to `release/oss-1.0`'s content (it's behind), so `develop` holds the mature code; repoint any open PRs at `develop`.
-2. **Create `main`** from the verified `develop` state, and set it as the repo's **default branch**.
-3. **Repoint the release trigger:** in [`release.yml`](../../.github/workflows/release.yml) change `push: branches: ["release/oss-1.0"]` → `["main"]`. Leave `.changeset/config.json`'s `baseBranch: "develop"` as-is.
-4. **Update the remaining `release/oss-1.0` references.** Source/blob links already use branch-agnostic `/blob/HEAD/`, so they need no change. What's left are branch-as-concept mentions: point the `release.yml` / `docs.yml` triggers at `main`, and change the `--since=origin/release/oss-1.0` examples in `AGENTS.md` + `test-protocol.md` to `origin/develop` (the changeset base). Run `git grep "release/oss-1.0"` to confirm none remain.
-5. **Retire `release/oss-1.0`** once nothing references it.
-
 ## Cutting a release
 
 > **Note:** During the OSS-readiness phases, the workspace is still configured with `access: "restricted"` in `.changeset/config.json`. The first public publish happens in Phase 6d, after every other phase is finished and the build has been verified on the test server.
 
 Before any release — and especially before the first public 1.0 cut or any major bump of a contract-stable package — run the [release test protocol](./test-protocol.md). It's the integration-level gate that complements `pnpm verify`'s mechanical checks.
 
-The automation lives in [`.github/workflows/release.yml`](../../.github/workflows/release.yml), which runs the [`changesets/action`](https://github.com/changesets/action) on every push to **`main`** (see [Branching model](#branching-model) — until the branch migration completes, the trigger is `release/oss-1.0`). The release flow:
+The automation lives in [`.github/workflows/release.yml`](../../.github/workflows/release.yml), which runs the [`changesets/action`](https://github.com/changesets/action) on every push to **`main`** (see [Branching model](#branching-model)). The release flow:
 
 1. **Merge `develop` → `main`.** On the resulting push, the action opens (or updates) a **"Version Packages" PR** that aggregates the pending `.changeset/*.md` files into version bumps and changelog updates.
 2. **Review and merge the Version Packages PR.** This commits the version bumps, regenerated changelogs, and consumes the `.changeset/*.md` files.

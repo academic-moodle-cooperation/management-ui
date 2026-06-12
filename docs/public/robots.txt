@@ -7,7 +7,7 @@
 #       Disallow:
 # 2. Remove the `noindex` meta tag set in docs/.vitepress/config.mts.
 # 3. Uncomment the `push:` trigger in .github/workflows/docs.yml so merges
-#    to release/oss-1.0 keep the site fresh.
+#    to main keep the site fresh.
 #
 # All three steps are tracked together in docs/operations/open-followups.md §8.3.
 

@@ -238,11 +238,11 @@ The mechanical safeguards we built for plugin authors.
 | 12.2 | Fix to `query PluginPascalNameBrokenName { ... }` | Lint passes. |
 | 12.3 | Scaffold a plugin, set `workspaceDependencies.react: "^18.0.0"` in its `plugin.json` | `checkSharedDependencyCompatibility` returns `compatible: false` (verify by importing the function in a quick scratch test, or by waiting for the load-time enforcement landing later — currently the function exists but is not wired into the loader; tracked in OPEN_FOLLOWUPS §5.3). |
 | 12.4 | Add a new export to `@oc-mui/plugin-system` and run `pnpm api-check:ci` | Fails — snapshot drift. After regenerating + adding a changeset, passes. |
-| 12.5 | Touch a versioned package without adding a changeset | `pnpm changeset:status --since=origin/release/oss-1.0` fails. |
+| 12.5 | Touch a versioned package without adding a changeset | `pnpm changeset:status --since=origin/develop` fails. |
 
 ## Section 13 — CI gates
 
-Push the release branch to GitHub (any name; doesn't have to be `release/oss-1.0` for this check).
+Push your working branch to GitHub (any branch name works for this check).
 
 | # | Test | Expected |
 |---|------|----------|
@@ -283,7 +283,7 @@ You're cleared to flip Phase 6d:
    - Edits `.changeset/config.json` → `"access": "public"`.
    - Deletes `docs/public/robots.txt`'s `Disallow: /` (replace with empty `Disallow:`).
    - Removes the `noindex` meta entry from `docs/.vitepress/config.mts`.
-   - Uncomments the `push: branches: [release/oss-1.0]` block in `.github/workflows/docs.yml`.
+   - Uncomments the `push: branches: [main]` block in `.github/workflows/docs.yml`.
 2. Merge.
 3. The next `pnpm changeset version && pnpm changeset publish` cuts the first public release on npm.
 4. Announce.

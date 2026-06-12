@@ -189,7 +189,7 @@ For any versioned-package change:
 1. Make the code change.
 2. `pnpm changeset` — pick the affected packages and the bump level (patch / minor / major). The CLI writes a `.changeset/<slug>.md` file.
 3. **Commit the `.changeset/*.md` file.** `changeset status` (which CI runs) reads the committed tree — an unstaged or uncommitted changeset still fails the check, which is the classic "I added it but CI still says no changesets were found" trap.
-4. Verify locally with `pnpm changeset status --since=origin/<base-branch>` (e.g. `--since=origin/release/oss-1.0` — match the branch your PR targets, since CI runs `changeset status --since=origin/$BASE`). Green means every changed-and-versioned package is covered. A bare `pnpm changeset status` compares against the configured `baseBranch` (`develop`), which is misleading on a long-lived release branch — pass `--since` explicitly there.
+4. Verify locally with `pnpm changeset status --since=origin/<base-branch>` (e.g. `--since=origin/develop` — match the branch your PR targets, since CI runs `changeset status --since=origin/$BASE`). Green means every changed-and-versioned package is covered. A bare `pnpm changeset status` compares against the configured `baseBranch` (`develop`); if your PR targets a different branch (e.g. a maintenance `r/NN.x` branch), pass `--since` explicitly.
 
 If the change *also* touches a `@oc-mui/*` package's public surface (anything reachable through its `exports` field), additionally:
 

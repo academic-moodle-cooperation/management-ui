@@ -6,9 +6,9 @@ name: Deploy docs
 # - pull_request       — builds the site on every PR that touches docs/ or
 #                        package.json so reviewers know the build still passes.
 #                        Does NOT deploy.
-# - push to release/oss-1.0 — currently disabled. Uncomment when you're ready
+# - push to main       — currently disabled. Uncomment when you're ready
 #                        for the published site to update on every merge to
-#                        release/oss-1.0.
+#                        main.
 #
 # Pre-1.0 the site is also blocked from search indexing through two
 # belt-and-suspenders guards: docs/public/robots.txt + a noindex meta tag in
@@ -25,7 +25,7 @@ on:
       - "pnpm-lock.yaml"
       - ".github/workflows/docs.yml"
   # push:
-  #   branches: [release/oss-1.0]
+  #   branches: [main]
 
 permissions:
   contents: read
