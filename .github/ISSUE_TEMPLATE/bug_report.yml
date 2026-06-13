@@ -17,8 +17,8 @@ body:
     id: version
     attributes:
       label: Version / commit
-      description: The commit SHA on `release/oss-1.0` you're running, or the version of the tagged pre-release.
-      placeholder: "e.g. release/oss-1.0 @ abc1234"
+      description: The commit SHA you're running, or the version of the tagged release.
+      placeholder: "e.g. abc1234 (commit SHA) or v1.0.0"
     validations:
       required: true
 

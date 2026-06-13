@@ -201,7 +201,7 @@ The doc site is built and deployable but **discouraged from indexing** until the
 |------|---------------|--------------------------|
 | [`docs/public/robots.txt`](../../docs/public/robots.txt) | `Disallow: /` | Change to `Disallow:` (empty — allows everything). |
 | [`docs/.vitepress/config.mts`](../../docs/.vitepress/config.mts) | `<meta name="robots" content="noindex, nofollow">` in the `head` array | Remove that entry. |
-| [`.github/workflows/docs.yml`](../../.github/workflows/docs.yml) | `push:` trigger is commented out; deploys only via `workflow_dispatch` | Uncomment the `push: branches: [release/oss-1.0]` block so merges keep the site fresh. |
+| [`.github/workflows/docs.yml`](../../.github/workflows/docs.yml) | `push:` trigger is commented out; deploys only via `workflow_dispatch` | Uncomment the `push: branches: [main]` block so merges keep the site fresh. |
 
 **When to revisit**: alongside Phase 6d (the `access: "restricted" → "public"` npm-publish flip). Once everything has been verified on the test server and the plan is finished, do all three together — the `robots.txt` + meta-tag combo is belt-and-suspenders (robots.txt is advisory; the meta tag is what most search engines actually obey, so flipping only one leaves the other gating).
 

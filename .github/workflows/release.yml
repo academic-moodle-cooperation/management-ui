@@ -25,7 +25,7 @@ name: Release
 on:
   workflow_dispatch:
   push:
-    branches: ["release/oss-1.0"]
+    branches: ["main"]
 
 # Let the action push the Version Packages branch and open its PR.
 # id-token lets npm Trusted Publishing (OIDC) authenticate the publish once
