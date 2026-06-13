@@ -115,7 +115,7 @@ export const graphqlOperationNaming = {
       description:
         "Enforce that every GraphQL operation and fragment is prefixed with the plugin's namespace in PascalCase (CONTRACTS.md §6).",
       recommended: true,
-      url: "https://github.com/academic-moodle-cooperation/management-tool/blob/release/oss-1.0/docs/architecture/CONTRACTS.md#6-graphql-operation-naming",
+      url: "https://github.com/academic-moodle-cooperation/management-tool/blob/HEAD/docs/architecture/CONTRACTS.md#6-graphql-operation-naming",
     },
     messages: {
       missingPrefix:
