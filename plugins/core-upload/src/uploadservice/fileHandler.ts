@@ -1,4 +1,4 @@
-import type { UploadFileBlob, UploadListType } from "@oc-mui/store";
+import type { UploadFileBlob, UploadListType } from "@opencast-mui/store";
 
 const useFileHandler = (
   files: FileList,

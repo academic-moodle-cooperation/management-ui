@@ -1,5 +1,5 @@
 ---
-"@oc-mui/plugin-core-episodes": patch
+"@opencast-mui/plugin-core-episodes": patch
 ---
 
 Skip the series-name lookup when the episodes route has no series selected.

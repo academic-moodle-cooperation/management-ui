@@ -1,7 +1,7 @@
 import { ShoppingBag } from "lucide-react";
 
-import { createPlugin } from "@oc-mui/plugin-system";
-import { logger } from "@oc-mui/utils";
+import { createPlugin } from "@opencast-mui/plugin-system";
+import { logger } from "@opencast-mui/utils";
 
 import { RemoteLoader } from "./services/remote-loader";
 import { ThemeLoader } from "./services/theme-loader";

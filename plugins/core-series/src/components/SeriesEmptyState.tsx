@@ -1,5 +1,5 @@
-import { i18next } from "@oc-mui/i18n";
-import { ComponentResolver } from "@oc-mui/plugin-system";
+import { i18next } from "@opencast-mui/i18n";
+import { ComponentResolver } from "@opencast-mui/plugin-system";
 
 /** Default empty state shown when the user has no series. */
 const NoSeriesAvailable = () => (
@@ -28,7 +28,7 @@ const NoSeriesAvailable = () => (
 /**
  * Empty state for the series table. Resolves the `series:empty-state` override
  * hook so an org plugin can swap it, falling back to the default above. This
- * lives in the series plugin (not @oc-mui/ui) so the shared UI package carries
+ * lives in the series plugin (not @opencast-mui/ui) so the shared UI package carries
  * no extension-point or routing knowledge. Passed to {@link MUITable} via its
  * `emptyState` prop.
  */

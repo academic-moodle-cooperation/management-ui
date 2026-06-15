@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { definePluginConfig } from "@oc-mui/query";
+import { definePluginConfig } from "@opencast-mui/query";
 
 /**
  * Episodes plugin config.

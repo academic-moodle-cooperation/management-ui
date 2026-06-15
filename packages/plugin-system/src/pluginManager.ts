@@ -1,4 +1,4 @@
-import { logger } from "@oc-mui/utils";
+import { logger } from "@opencast-mui/utils";
 
 import type { RegistryObject } from "./builtins/objectRegistry/index";
 import type { Plugin } from "./IPlugin";

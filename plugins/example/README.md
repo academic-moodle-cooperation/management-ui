@@ -1,4 +1,4 @@
-# @oc-mui/plugin-example
+# @opencast-mui/plugin-example
 
 A **minimal, brand-neutral reference plugin**. Copy this folder as the
 starting point for a new plugin and edit the fields that matter to you.

@@ -1,11 +1,11 @@
-import { i18next } from "@oc-mui/i18n";
+import { i18next } from "@opencast-mui/i18n";
 
 import type { ReactNode } from "react";
 
 /**
  * Shown when an active search/filter yields no matches. This case is generic —
  * it applies to any table regardless of what it lists — so it stays in
- * @oc-mui/ui.
+ * @opencast-mui/ui.
  */
 const NoFilteredResults = () => (
   <div className="text-center my-16 flex flex-col items-center">
@@ -26,7 +26,7 @@ const NoFilteredResults = () => (
  *   table (e.g. the episodes/series plugins pass their own route-aware empty
  *   state), falling back to a plain "no results" line.
  *
- * @oc-mui/ui deliberately holds no knowledge of specific app routes here — that
+ * @opencast-mui/ui deliberately holds no knowledge of specific app routes here — that
  * lives with the plugin that owns the table, which keeps this package free of
  * any router dependency.
  */

@@ -1,5 +1,5 @@
 ---
-"@oc-mui/plugin-admin-marketplace": patch
+"@opencast-mui/plugin-admin-marketplace": patch
 ---
 
 Add four professional showcase themes for the marketplace, replacing the

@@ -6,13 +6,13 @@
  *
  * Key features:
  * - Library mode (ES module output)
- * - External dependencies (@oc-mui/*, react, react-dom)
+ * - External dependencies (@opencast-mui/*, react, react-dom)
  * - GraphQL fragment extraction
  * - Source maps for debugging
  *
  * Usage in a community plugin's vite.config.ts:
  * ```typescript
- * import { createCommunityPluginConfig } from "@oc-mui/vite-config";
+ * import { createCommunityPluginConfig } from "@opencast-mui/vite-config";
  *
  * export default createCommunityPluginConfig({
  *   pluginName: "my-community-plugin",
@@ -89,15 +89,15 @@ const DEFAULT_EXTERNALS: (string | RegExp)[] = [
   "react/jsx-dev-runtime",
 
   // All workspace packages - provided by host as runtime singletons.
-  // The host injects these (react, @oc-mui/utils logger, @oc-mui/i18n,
-  // @oc-mui/plugin-system manager, @oc-mui/ui React context, …) so a
+  // The host injects these (react, @opencast-mui/utils logger, @opencast-mui/i18n,
+  // @opencast-mui/plugin-system manager, @opencast-mui/ui React context, …) so a
   // plugin must NOT bundle its own copy — doing so forks the singleton
   // and freezes build-time flags like the logger's `isDevelopment`.
   // NOTE: this regex must track the workspace npm scope. It was
-  // `/^@workspace\//` before the @workspace → @oc-mui rename; that stale
+  // `/^@workspace\//` before the @workspace → @opencast-mui rename; that stale
   // pattern matched nothing, so plugins silently over-bundled the host
   // packages. Keep this in sync if the scope ever changes again.
-  /^@oc-mui\//,
+  /^@opencast-mui\//,
 
   // Common UI libraries that host provides
   "lucide-react",

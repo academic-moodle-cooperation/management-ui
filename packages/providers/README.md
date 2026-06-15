@@ -1,11 +1,11 @@
-# @oc-mui/providers
+# @opencast-mui/providers
 
 Composes every foundational React context provider into a single `AppProviders` wrapper. The shell mounts it once; apps and tests reuse it so the initialization order stays consistent.
 
 ## Usage
 
 ```tsx
-import { AppProviders } from "@oc-mui/providers";
+import { AppProviders } from "@opencast-mui/providers";
 
 createRoot(document.getElementById("root")!).render(
   <AppProviders router={router}>
@@ -18,17 +18,17 @@ createRoot(document.getElementById("root")!).render(
 
 In order, from outermost to innermost:
 
-1. `QueryProvider` (`@oc-mui/query`) — TanStack Query client.
-2. `PluginProvider` (`@oc-mui/plugin-system`) — the `PluginManager` context.
-3. `I18nextProvider` (`@oc-mui/i18n`) — translation engine.
-4. `AuthProvider` (`@oc-mui/router`) — auth context.
-5. `RouterProvider` (`@oc-mui/router`) — the TanStack Router instance the caller passes in.
+1. `QueryProvider` (`@opencast-mui/query`) — TanStack Query client.
+2. `PluginProvider` (`@opencast-mui/plugin-system`) — the `PluginManager` context.
+3. `I18nextProvider` (`@opencast-mui/i18n`) — translation engine.
+4. `AuthProvider` (`@opencast-mui/router`) — auth context.
+5. `RouterProvider` (`@opencast-mui/router`) — the TanStack Router instance the caller passes in.
 
 The order matters: router depends on auth, auth depends on the query client, every consumer expects i18n and the plugin manager to be available.
 
 ## Layer
 
-Application. Depends on `@oc-mui/query`, `@oc-mui/plugin-system`, `@oc-mui/i18n`, `@oc-mui/router`.
+Application. Depends on `@opencast-mui/query`, `@opencast-mui/plugin-system`, `@opencast-mui/i18n`, `@opencast-mui/router`.
 
 ## See also
 

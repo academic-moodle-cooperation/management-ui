@@ -1,5 +1,5 @@
 {
-  "$comment": "Default Management UI deployment config. In dev (no VITE_PROXY_TARGET) the shell serves THIS file at /ui/config/management-ui/config.json — edit it and reload to test config changes without a backend. It also ships inside the JAR as the shipped default; production deployments mount their own config.json over it at the same path. Anything omitted here falls back to defaultConfig in @oc-mui/ui-config; plugins contribute their own slice defaults at runtime.",
+  "$comment": "Default Management UI deployment config. In dev (no VITE_PROXY_TARGET) the shell serves THIS file at /ui/config/management-ui/config.json — edit it and reload to test config changes without a backend. It also ships inside the JAR as the shipped default; production deployments mount their own config.json over it at the same path. Anything omitted here falls back to defaultConfig in @opencast-mui/ui-config; plugins contribute their own slice defaults at runtime.",
   "app": {
     "appName": "Video Management Platform",
     "HtmlDocumentTitle": "Management UI",

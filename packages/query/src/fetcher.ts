@@ -1,4 +1,4 @@
-import { fragmentRegistry } from "@oc-mui/plugin-system";
+import { fragmentRegistry } from "@opencast-mui/plugin-system";
 
 /**
  * Matches stub fragments: "fragment PluginXxxFields on TypeName { __typename }".

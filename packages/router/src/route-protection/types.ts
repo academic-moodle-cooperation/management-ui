@@ -2,8 +2,8 @@
  * Simple protection contract consumed by `AppProtection`.
  *
  * Lives here so the protection primitive and its shape travel together and
- * plugins can import the type from `@oc-mui/router` without reaching into
- * `@oc-mui/ui-config`.
+ * plugins can import the type from `@opencast-mui/router` without reaching into
+ * `@opencast-mui/ui-config`.
  */
 export interface AppProtectionConfig {
   /**

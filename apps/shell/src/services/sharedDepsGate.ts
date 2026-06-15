@@ -2,16 +2,16 @@
  * Shared-runtime-dependency gate for the JAR and .local-plugins loaders.
  *
  * The host ships exactly one copy of each shared dependency (React, the
- * `@oc-mui/*` packages, …). A plugin that targets a different *major* would
- * break React contexts/hooks or the `@oc-mui/*` contracts, so it must not load.
+ * `@opencast-mui/*` packages, …). A plugin that targets a different *major* would
+ * break React contexts/hooks or the `@opencast-mui/*` contracts, so it must not load.
  *
  * This mirrors the marketplace's compatibility gate — all three loader paths
  * funnel through the same canonical `checkSharedDependencyCompatibility` in
- * `@oc-mui/plugin-system`, the single source of truth for the host's majors.
+ * `@opencast-mui/plugin-system`, the single source of truth for the host's majors.
  */
 
-import { checkSharedDependencyCompatibility } from "@oc-mui/plugin-system";
-import { logger } from "@oc-mui/utils";
+import { checkSharedDependencyCompatibility } from "@opencast-mui/plugin-system";
+import { logger } from "@opencast-mui/utils";
 
 const gateLogger = logger.child({ component: "SharedDepsGate" });
 

@@ -60,7 +60,7 @@ Every package, app, and plugin ships its own README:
 
 ## Customization
 
-Plugins register on **extension points** declared by [`@oc-mui/plugin-core`](plugins/core/). To customize the UI without forking:
+Plugins register on **extension points** declared by [`@opencast-mui/plugin-core`](plugins/core/). To customize the UI without forking:
 
 - **Routes and sidebar entries** — register on `apps:definitions` and `sidebar:nav-items`.
 - **Header, footer, branding** — register on `app:header-logo`, `app:footer`, `app:branding`.
@@ -98,7 +98,7 @@ Issue templates: [bug report](https://github.com/academic-moodle-cooperation/man
 
 ## Status
 
-Pre-1.0 — currently in OSS readiness phases. The four contracts are frozen, but the publishing target (`@oc-mui/*` on npm) flips from `restricted` to `public` only after every phase ships and the build is verified against a real Opencast test server. Track the work at [`docs/operations/open-followups.md`](docs/operations/open-followups.md).
+Pre-1.0 — currently in OSS readiness phases. The four contracts are frozen, but the publishing target (`@opencast-mui/*` on npm) flips from `restricted` to `public` only after every phase ships and the build is verified against a real Opencast test server. Track the work at [`docs/operations/open-followups.md`](docs/operations/open-followups.md).
 
 ## License
 

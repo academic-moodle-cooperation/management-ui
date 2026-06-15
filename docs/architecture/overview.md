@@ -11,7 +11,7 @@ plugins/             ← Built-in plugins (ship with the OSS repo)
 .local-plugins/      ← Org or community plugins (gitignored, own repos, mounted at dev time)
 ```
 
-The shell at `apps/shell/` is the only entry point. It boots `@oc-mui/plugin-system`, registers every built-in plugin from `plugins/index.ts`, optionally fetches a JAR `plugins.json` from the backend, and then runs the plugins. Routes, sidebar items, theme — all of it comes from plugin registrations.
+The shell at `apps/shell/` is the only entry point. It boots `@opencast-mui/plugin-system`, registers every built-in plugin from `plugins/index.ts`, optionally fetches a JAR `plugins.json` from the backend, and then runs the plugins. Routes, sidebar items, theme — all of it comes from plugin registrations.
 
 ## Package layers
 
@@ -34,7 +34,7 @@ The shell at `apps/shell/` is the only entry point. It boots `@oc-mui/plugin-sys
 └─────────────────────────────────────────┘
 ```
 
-**The rule:** lower layers never depend on higher layers. Cross-layer breaks are caught by `eslint-plugin-boundaries` configured in [`@oc-mui/eslint-config`](../../packages/eslint-config/base.js). The layer ordering inside `package → package` is enforced by convention today — see [`operations/open-followups.md`](../operations/open-followups.md#34-layer-ordering-inside-package--package).
+**The rule:** lower layers never depend on higher layers. Cross-layer breaks are caught by `eslint-plugin-boundaries` configured in [`@opencast-mui/eslint-config`](../../packages/eslint-config/base.js). The layer ordering inside `package → package` is enforced by convention today — see [`operations/open-followups.md`](../operations/open-followups.md#34-layer-ordering-inside-package--package).
 
 ## Plugin boundaries
 

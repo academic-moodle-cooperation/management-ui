@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 
-import type { MuiUserQuery } from "@oc-mui/query";
+import type { MuiUserQuery } from "@opencast-mui/query";
 
 export interface AuthContextType {
   isAuthenticated: boolean;

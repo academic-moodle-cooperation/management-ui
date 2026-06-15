@@ -8,7 +8,7 @@ import {
   createRendererPlugin,
   type Plugin,
   type PluginManager,
-} from "@oc-mui/plugin-system";
+} from "@opencast-mui/plugin-system";
 
 import { HarnessPluginProvider } from "./harnessContext";
 

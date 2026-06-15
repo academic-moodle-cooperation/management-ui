@@ -1,7 +1,7 @@
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
-import { useTranslation } from "@oc-mui/i18n";
+import { useTranslation } from "@opencast-mui/i18n";
 
 import { Button } from "../ui/button";
 import {

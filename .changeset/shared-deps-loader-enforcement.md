@@ -1,11 +1,11 @@
 ---
-"@oc-mui/plugin-admin-marketplace": patch
-"@oc-mui/vite-config": patch
+"@opencast-mui/plugin-admin-marketplace": patch
+"@opencast-mui/vite-config": patch
 ---
 
 Enforce the Shared Runtime Dependencies contract at every plugin-load path
 (open-followups §5.3). `checkSharedDependencyCompatibility` (in
-`@oc-mui/plugin-system`) becomes the single source of truth across all three
+`@opencast-mui/plugin-system`) becomes the single source of truth across all three
 loaders:
 
 - **Marketplace** — `securityService.checkVersionCompatibility` now delegates
@@ -13,7 +13,7 @@ loaders:
   `satisfiesConstraint` logic is removed). Both the install-time load gate and
   the UI compatibility badge use canonical major-matching, so they can't
   diverge.
-- **`.local-plugins/` dev** — `@oc-mui/vite-config`'s dev plugin surfaces each
+- **`.local-plugins/` dev** — `@opencast-mui/vite-config`'s dev plugin surfaces each
   plugin's `workspaceDependencies` (from `plugin.json`) into
   `/local-plugins/manifest.json`; the shell gates each entry before loading.
 - **JAR** — the shell applies the same gate to backend entries and reads

@@ -1,4 +1,4 @@
-# @oc-mui/plugin-system
+# @opencast-mui/plugin-system
 
 The runtime every plugin runs on. Provides `createPlugin()`, the `PluginManager`, extension-point resolution, and the React context that exposes them to components.
 
@@ -7,7 +7,7 @@ The runtime every plugin runs on. Provides `createPlugin()`, the `PluginManager`
 ## Usage
 
 ```ts
-import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
+import { createPlugin, type PluginManager } from "@opencast-mui/plugin-system";
 
 export const myPlugin = createPlugin({
   namespace: "my-namespace",
@@ -40,7 +40,7 @@ The full plugin-authoring walkthrough lives at [`docs/plugins/creating-a-plugin.
 | `ComponentResolver<P>` | Looks up a component registered on an extension point and renders it with `componentProps`. Falls back to `defaultComponent` if none registered. |
 | `getAllApps(manager)`, `getAppById(manager, id)` | Read helpers over the `apps:definitions` registry. |
 | `createAppRegistryPlugin()`, `createObjectRegistryPlugin()`, `createRendererPlugin()` | The three built-in plugins the shell wires up before any user plugins. |
-| `fragmentRegistry`, `FragmentRegistryService` | GraphQL fragment registry used by `@oc-mui/query`. |
+| `fragmentRegistry`, `FragmentRegistryService` | GraphQL fragment registry used by `@opencast-mui/query`. |
 | `checkApiVersionCompatibility(required, host?)`, `parseSemver(input)` | Runtime checks for the host-vs-plugin API version handshake. |
 | `validatePluginMetadata(json)` | Zod-backed runtime validation against the manifest schema. |
 
@@ -61,7 +61,7 @@ Built-in plugins live in [`src/builtins/`](./src/builtins/) — the renderer, ap
 
 ## Layer
 
-Foundation. Depends only on `@oc-mui/utils` and React. Higher-layer packages (`@oc-mui/query`, `@oc-mui/router`, `@oc-mui/ui`, etc.) depend on this one — never the other way around.
+Foundation. Depends only on `@opencast-mui/utils` and React. Higher-layer packages (`@opencast-mui/query`, `@opencast-mui/router`, `@opencast-mui/ui`, etc.) depend on this one — never the other way around.
 
 ## See also
 

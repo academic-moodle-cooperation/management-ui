@@ -1,4 +1,4 @@
-import { create } from "@oc-mui/store";
+import { create } from "@opencast-mui/store";
 
 export type SeriesUpdateData = {
   [key: string]: string | string[];

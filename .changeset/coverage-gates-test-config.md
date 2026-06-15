@@ -1,7 +1,7 @@
 ---
-"@oc-mui/utils": patch
-"@oc-mui/plugin-system": patch
-"@oc-mui/store": patch
+"@opencast-mui/utils": patch
+"@opencast-mui/plugin-system": patch
+"@opencast-mui/store": patch
 ---
 
 Add no-regression coverage thresholds to these packages' `vitest.config.ts`.

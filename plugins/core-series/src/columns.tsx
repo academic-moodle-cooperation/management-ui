@@ -1,9 +1,9 @@
 import { Film, Info } from "lucide-react";
 
-import { i18next } from "@oc-mui/i18n";
-import { SERIES_SORTABLE_FIELDS } from "@oc-mui/query";
-import type { MuiSeriesDataFragment } from "@oc-mui/query";
-import { Link } from "@oc-mui/router";
+import { i18next } from "@opencast-mui/i18n";
+import { SERIES_SORTABLE_FIELDS } from "@opencast-mui/query";
+import type { MuiSeriesDataFragment } from "@opencast-mui/query";
+import { Link } from "@opencast-mui/router";
 import {
   createColumnHelper,
   Tooltip,
@@ -14,8 +14,8 @@ import {
   OverflowTooltip,
   restrictSortingToFields,
   type ColumnDef,
-} from "@oc-mui/ui/components";
-import { cn } from "@oc-mui/ui/lib";
+} from "@opencast-mui/ui/components";
+import { cn } from "@opencast-mui/ui/lib";
 
 import SeriesActionsCell from "./components/SeriesActionsCell";
 

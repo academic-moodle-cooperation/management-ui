@@ -1,18 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { registerPluginI18nNamespaces } from "@oc-mui/i18n";
+import { registerPluginI18nNamespaces } from "@opencast-mui/i18n";
 import {
   createAppRegistryPlugin,
   createObjectRegistryPlugin,
   createRendererPlugin,
   usePluginManager,
   type Plugin,
-} from "@oc-mui/plugin-system";
-import type { AppConfig } from "@oc-mui/query";
-import { getAppConfigSync } from "@oc-mui/query";
-import { loadAndRegister } from "@oc-mui/remote-plugin-loader";
-import { AppLoader } from "@oc-mui/ui/components";
-import { deepMerge, logger } from "@oc-mui/utils";
+} from "@opencast-mui/plugin-system";
+import type { AppConfig } from "@opencast-mui/query";
+import { getAppConfigSync } from "@opencast-mui/query";
+import { loadAndRegister } from "@opencast-mui/remote-plugin-loader";
+import { AppLoader } from "@opencast-mui/ui/components";
+import { deepMerge, logger } from "@opencast-mui/utils";
 
 import {
   loadAllAvailablePlugins,

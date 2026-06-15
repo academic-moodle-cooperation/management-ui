@@ -4,7 +4,7 @@ name: Preview packages (pkg.pr.new)
 # CDN, so anyone (e.g. a backend / plugin author) can install the exact
 # artifacts from a branch or PR before they're ever published to npm:
 #
-#   pnpm add https://pkg.pr.new/@oc-mui/ui@<commit-sha>
+#   pnpm add https://pkg.pr.new/@opencast-mui/ui@<commit-sha>
 #
 # On a PR, pkg.pr.new comments the ready-to-copy install URLs.
 #
@@ -56,7 +56,7 @@ jobs:
       - name: Build the SDK (dist + dist-types)
         run: |
           # vite-config first (ordering guard), then the full build.
-          pnpm turbo run build --force --filter=@oc-mui/vite-config
+          pnpm turbo run build --force --filter=@opencast-mui/vite-config
           test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
           pnpm turbo run build build:types
 

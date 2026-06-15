@@ -73,7 +73,7 @@ export interface DataTableProps<TData, TValue> {
   toolbarEndButtons?: React.ReactNode;
   /**
    * Empty state shown when the table has no rows and no active filter. Supplied
-   * by the feature that owns the table so @oc-mui/ui needs no knowledge of app
+   * by the feature that owns the table so @opencast-mui/ui needs no knowledge of app
    * routes; falls back to a generic message when omitted.
    */
   emptyState?: React.ReactNode;

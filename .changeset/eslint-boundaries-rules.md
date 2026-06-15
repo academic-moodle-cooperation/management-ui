@@ -1,5 +1,5 @@
 ---
-"@oc-mui/eslint-config": minor
+"@opencast-mui/eslint-config": minor
 ---
 
 Add `eslint-plugin-boundaries` rules to the shared base config to mechanise the
@@ -12,9 +12,9 @@ architectural import boundaries `AGENTS.md` documents:
 
 Cross-plugin imports written as relative paths are now reported as lint errors;
 cross-plugin imports written as workspace package specifiers
-(`@oc-mui/plugin-<other>`) remain a follow-up. See `AGENTS.md` →
+(`@opencast-mui/plugin-<other>`) remain a follow-up. See `AGENTS.md` →
 "Boundaries" for the full picture.
 
-Consumers of `@oc-mui/eslint-config` inherit the rules automatically; no
+Consumers of `@opencast-mui/eslint-config` inherit the rules automatically; no
 per-package action required unless your code currently violates the matrix
 above.

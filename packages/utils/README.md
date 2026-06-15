@@ -1,4 +1,4 @@
-# @oc-mui/utils
+# @opencast-mui/utils
 
 Pure utility functions shared across the workspace. Zero workspace dependencies — every other package can safely import from here.
 
@@ -11,7 +11,7 @@ import {
   parseDuration,
   resolveFirstAssetUrl,
   sha256,
-} from "@oc-mui/utils";
+} from "@opencast-mui/utils";
 
 logger.info("hello");
 const merged = deepMerge(a, b);
@@ -27,7 +27,7 @@ const merged = deepMerge(a, b);
 | `resolveDownloadUrl` | Construct a download URL from a media reference. |
 | `parseDuration`, `serializeDuration` | Round-trip ISO 8601 durations (`PT1H30M`). |
 | `copyText(text)` | Clipboard helper that handles permission errors. |
-| `normalizeMetadataValue`, `normalizeMetadataObject` | Coerce Opencast metadata values into the canonical shape used by `@oc-mui/ui` metadata components. |
+| `normalizeMetadataValue`, `normalizeMetadataObject` | Coerce Opencast metadata values into the canonical shape used by `@opencast-mui/ui` metadata components. |
 | `getEventStatus`, `isEventProcessing`, `hasProcessingEvents` | Status-derivation for Opencast events. |
 | `sha256(text)` | Async SHA-256 hash via the Web Crypto API. |
 

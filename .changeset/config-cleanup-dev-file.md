@@ -1,7 +1,7 @@
 ---
-"@oc-mui/ui-config": major
-"@oc-mui/query": major
-"@oc-mui/vite-config": minor
+"@opencast-mui/ui-config": major
+"@opencast-mui/query": major
+"@opencast-mui/vite-config": minor
 ---
 
 Config cleanup + committed dev config (pre-1.0 OSS prep).
@@ -23,7 +23,7 @@ the build output so the Opencast JAR ships it as the default; deployments
 mount their own over it at the same path.
 
 **Runtime-editable dev config.** New `localConfigDevPlugin` (exported from
-`@oc-mui/vite-config`) serves that committed file at the exact fetch path in
+`@opencast-mui/vite-config`) serves that committed file at the exact fetch path in
 dev, re-read on each request — so `pnpm dev` (no backend) lets you edit
 `config.json` and reload without a backend. `proxy.ts` now leaves the config
 path un-proxied in that mode; when `VITE_PROXY_TARGET` is set the path is

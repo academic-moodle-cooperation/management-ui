@@ -8,11 +8,11 @@ workspace imports as `.d.ts` instead of raw `.ts`.
 
 Newly instrumented:
 
-- `@oc-mui/router`
-- `@oc-mui/query`
-- `@oc-mui/store`
+- `@opencast-mui/router`
+- `@opencast-mui/query`
+- `@opencast-mui/store`
 
-Together with `@oc-mui/plugin-system`, `@oc-mui/i18n`, and `@oc-mui/ui-config`
+Together with `@opencast-mui/plugin-system`, `@opencast-mui/i18n`, and `@opencast-mui/ui-config`
 (already instrumented in the Phase 5 PR-B drop), every package listed under
 `docs/architecture/CONTRACTS.md` now has a committed `etc/<pkg>.api.md` snapshot and
 is gated by the existing `api-check` CI job.

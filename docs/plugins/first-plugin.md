@@ -46,7 +46,7 @@ manager.registerObject("sidebar:nav-items", "reports", {
 
 ```bash
 pnpm build                                  # once — builds the host packages it depends on
-pnpm --filter @oc-mui/plugin-reports build  # → dist/reports.mjs (the dev server serves this)
+pnpm --filter @opencast-mui/plugin-reports build  # → dist/reports.mjs (the dev server serves this)
 ```
 
 Enable it in the **served** config — add `"reports"` to `app.enabledPlugins` in
@@ -66,7 +66,7 @@ Two things worth knowing:
 ## 4. Verify the contract
 
 ```bash
-pnpm --filter @oc-mui/plugin-reports test:contract
+pnpm --filter @opencast-mui/plugin-reports test:contract
 ```
 
 Passes out of the box: it checks the plugin activates, every `extensionPoints` entry in `plugin.json` is populated, there's a `default` export, no console errors, and i18n key parity.

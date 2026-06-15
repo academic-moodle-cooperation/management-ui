@@ -1,5 +1,5 @@
 ---
-"@oc-mui/plugin-admin-marketplace": patch
+"@opencast-mui/plugin-admin-marketplace": patch
 ---
 
 Fix duplicate React keys for JAR plugin cards in the marketplace dashboard.

@@ -12,8 +12,8 @@ import {
   type Plugin,
   type PluginManager,
   type RegisteredFragment,
-} from "@oc-mui/plugin-system";
-import { logger } from "@oc-mui/utils";
+} from "@opencast-mui/plugin-system";
+import { logger } from "@opencast-mui/utils";
 
 import { transformModuleSource } from "./transform";
 
@@ -234,15 +234,15 @@ export async function loadAndRegister(
           "react-dom",
           "react/jsx-runtime",
           "lucide-react",
-          "@oc-mui/plugin-system",
-          "@oc-mui/ui/components",
-          "@oc-mui/ui/components/icons",
-          "@oc-mui/ui/lib",
-          "@oc-mui/ui/lib/utils",
-          "@oc-mui/query",
-          "@oc-mui/router",
-          "@oc-mui/utils",
-          "@oc-mui/i18n",
+          "@opencast-mui/plugin-system",
+          "@opencast-mui/ui/components",
+          "@opencast-mui/ui/components/icons",
+          "@opencast-mui/ui/lib",
+          "@opencast-mui/ui/lib/utils",
+          "@opencast-mui/query",
+          "@opencast-mui/router",
+          "@opencast-mui/utils",
+          "@opencast-mui/i18n",
         ];
         if (!available.some((m) => moduleName === m || moduleName.startsWith(m + "/"))) {
           helpfulError = `Module "${moduleName}" is not available. Available: ${available.join(", ")}. Add it to your plugin's dependencies to bundle it.`;

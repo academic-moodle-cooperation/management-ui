@@ -1,10 +1,10 @@
 import React from "react";
 
-import { useI18n } from "@oc-mui/i18n";
-import { useMuiUpdateEventMutation } from "@oc-mui/query";
-import type { MuiGetEventByIdInputFieldsQuery, MuiEventsDataFragment } from "@oc-mui/query";
-import { Button, toast } from "@oc-mui/ui/components";
-import { normalizeMetadataObject, logger } from "@oc-mui/utils";
+import { useI18n } from "@opencast-mui/i18n";
+import { useMuiUpdateEventMutation } from "@opencast-mui/query";
+import type { MuiGetEventByIdInputFieldsQuery, MuiEventsDataFragment } from "@opencast-mui/query";
+import { Button, toast } from "@opencast-mui/ui/components";
+import { normalizeMetadataObject, logger } from "@opencast-mui/utils";
 
 type EpisodesUpdateData = {
   [T: string]: string | string[];

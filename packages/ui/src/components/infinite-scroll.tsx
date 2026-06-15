@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { logger } from "@oc-mui/utils";
+import { logger } from "@opencast-mui/utils";
 
 interface InfiniteScrollProps {
   isLoading: boolean;

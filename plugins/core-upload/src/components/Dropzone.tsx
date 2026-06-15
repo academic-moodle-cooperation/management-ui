@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-import { useI18n } from "@oc-mui/i18n";
-import type { UploadFileBlob, UploadListType } from "@oc-mui/store";
+import { useI18n } from "@opencast-mui/i18n";
+import type { UploadFileBlob, UploadListType } from "@opencast-mui/store";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -14,8 +14,8 @@ import {
   Card,
   Container,
   Label,
-} from "@oc-mui/ui/components";
-import { cn } from "@oc-mui/ui/lib/utils";
+} from "@opencast-mui/ui/components";
+import { cn } from "@opencast-mui/ui/lib/utils";
 
 import { uploadConfig } from "../config";
 import { useFileHandler } from "../uploadservice/fileHandler";

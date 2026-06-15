@@ -1,8 +1,8 @@
 import { createRoute, useRouterState, type AnyRoute } from "@tanstack/react-router";
 import React from "react";
 
-import { useTranslation } from "@oc-mui/i18n";
-import { useAppConfig } from "@oc-mui/query";
+import { useTranslation } from "@opencast-mui/i18n";
+import { useAppConfig } from "@opencast-mui/query";
 
 /** Minimal default loader: an i18n'd "Loading…" line. Consumers normally
  * inject a richer `loadingComponent` (e.g. `AppLoader`). */
@@ -29,13 +29,13 @@ export interface LoginFormComponentProps {
  * Configuration options for creating auth routes
  */
 export interface AuthRouteOptions {
-  /** Custom loading component to use (e.g., AppLoader from @oc-mui/ui) */
+  /** Custom loading component to use (e.g., AppLoader from @opencast-mui/ui) */
   loadingComponent?: React.ComponentType;
   /**
    * Login form rendered for password (Spring `j_spring_security_*`)
    * backends. Injected by the consumer because the form needs
-   * `@oc-mui/ui` components, and this package can't import `@oc-mui/ui`
-   * (that package already depends on `@oc-mui/router`, so importing back
+   * `@opencast-mui/ui` components, and this package can't import `@opencast-mui/ui`
+   * (that package already depends on `@opencast-mui/router`, so importing back
    * would create a cycle). When omitted, or when the configured login
    * URL points at an external IdP (SSO), the route falls back to a
    * full-page redirect to that URL instead.

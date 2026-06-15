@@ -1,6 +1,6 @@
 ---
-"@oc-mui/query": major
-"@oc-mui/router": major
+"@opencast-mui/query": major
+"@opencast-mui/router": major
 ---
 
 Phase 8.5.1c — rename the 33 grandfathered GraphQL operations and fragments
@@ -9,7 +9,7 @@ the PascalCase prefix required by the GraphQL Operation Naming Contract
 (`CONTRACTS.md` §6).
 
 **This is a major bump because the public hook + type surface of
-`@oc-mui/query` changes.** Every consumer of the generated hooks and
+`@opencast-mui/query` changes.** Every consumer of the generated hooks and
 types needs the corresponding rename in the same release:
 
 - `useGetMyEventsQuery` → `useMuiGetMyEventsQuery`
@@ -41,7 +41,7 @@ Two inline `gql\`\`` operations elsewhere:
   updated to `MuiUserQuery` accordingly).
 - `plugins/core-upload/src/App.tsx`: the inline `query GetMySeriesNameAndId`
   is **deleted** — the plugin now imports `MuiGetMySeriesNameAndIdDocument`
-  from `@oc-mui/query` and passes it to `graphQLClient.request`. One
+  from `@opencast-mui/query` and passes it to `graphQLClient.request`. One
   fewer duplicate to keep in sync.
 
 Migration tracker: every `# eslint-disable-next-line local/graphql-operation-naming`
@@ -50,10 +50,10 @@ comment is removed; `git grep` returns zero hits in source. The
 
 24 consumer files updated to use the renamed hooks and types.
 
-**`@oc-mui/router` is also bumped major** because its `AuthContextType`
-public surface uses the `UserQuery` type from `@oc-mui/query`. The type
+**`@opencast-mui/router` is also bumped major** because its `AuthContextType`
+public surface uses the `UserQuery` type from `@opencast-mui/query`. The type
 is structurally identical to the new `MuiUserQuery`, but the imported
-name changes — any consumer that imported `UserQuery` from `@oc-mui/query`
+name changes — any consumer that imported `UserQuery` from `@opencast-mui/query`
 to type-cast against `AuthContextType.setUser` would need the rename.
 
 Verified: `pnpm verify` runs 89/89 turbo tasks green plus the Playwright

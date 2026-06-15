@@ -4,8 +4,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import * as React from "react";
 import { DayPicker } from "react-day-picker";
 
-import { buttonVariants } from "@oc-mui/ui/components/ui/button";
-import { cn } from "@oc-mui/ui/lib/utils";
+import { buttonVariants } from "@opencast-mui/ui/components/ui/button";
+import { cn } from "@opencast-mui/ui/lib/utils";
 
 function Calendar({
   className,

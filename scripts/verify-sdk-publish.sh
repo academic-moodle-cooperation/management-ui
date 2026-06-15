@@ -2,7 +2,7 @@
 #
 # SDK publish smoke-test (the acceptance gate for the exports→dist work).
 #
-# Proves that a plugin can install and build against the @oc-mui/* SDK packages
+# Proves that a plugin can install and build against the @opencast-mui/* SDK packages
 # *as published npm artifacts*, without the monorepo:
 #
 #   1. build every SDK package (dist/ + dist-types/)
@@ -59,7 +59,7 @@ uplinks:
     url: https://registry.npmjs.org/
     cache: true
 packages:
-  '@oc-mui/*':
+  '@opencast-mui/*':
     access: \$all
     publish: \$anonymous
     unpublish: \$anonymous
@@ -99,13 +99,13 @@ cat > "$CONSUMER/package.json" <<'EOF'
   "type": "module",
   "scripts": { "test": "vitest run" },
   "dependencies": {
-    "@oc-mui/plugin-system": "^1.0.0",
-    "@oc-mui/utils": "^1.0.0",
-    "@oc-mui/ui": "^1.0.0"
+    "@opencast-mui/plugin-system": "^1.0.0",
+    "@opencast-mui/utils": "^1.0.0",
+    "@opencast-mui/ui": "^1.0.0"
   },
   "devDependencies": {
-    "@oc-mui/plugin-testing": "^1.0.0",
-    "@oc-mui/typescript-config": "^1.0.0",
+    "@opencast-mui/plugin-testing": "^1.0.0",
+    "@opencast-mui/typescript-config": "^1.0.0",
     "@types/node": "^25.0.6",
     "@types/react": "^19.0.0",
     "react": "^19.1.0",
@@ -118,15 +118,15 @@ cat > "$CONSUMER/package.json" <<'EOF'
 EOF
 cat > "$CONSUMER/tsconfig.json" <<'EOF'
 {
-  "extends": "@oc-mui/typescript-config/react-library.json",
+  "extends": "@opencast-mui/typescript-config/react-library.json",
   "compilerOptions": { "noEmit": true, "skipLibCheck": true, "composite": false },
   "include": ["src"]
 }
 EOF
 cat > "$CONSUMER/src/index.ts" <<'EOF'
-import { createPlugin } from "@oc-mui/plugin-system";
-import { logger } from "@oc-mui/utils";
-import { cn } from "@oc-mui/ui/lib/utils";
+import { createPlugin } from "@opencast-mui/plugin-system";
+import { logger } from "@opencast-mui/utils";
+import { cn } from "@opencast-mui/ui/lib/utils";
 
 export const smokePlugin = createPlugin({
   namespace: "sdk-smoke",
@@ -141,7 +141,7 @@ export const smokePlugin = createPlugin({
 EOF
 cat > "$CONSUMER/src/smoke.test.ts" <<'EOF'
 import { describe, expect, it } from "vitest";
-import { loadPluginInHarness } from "@oc-mui/plugin-testing";
+import { loadPluginInHarness } from "@opencast-mui/plugin-testing";
 import { smokePlugin } from "./index";
 
 describe("sdk smoke", () => {
@@ -154,7 +154,7 @@ EOF
 
 echo "==> 5/5 Installing from Verdaccio + type-check + runtime test"
 ( cd "$CONSUMER" && pnpm install --registry "$REGISTRY" >/dev/null ) || { echo "install failed"; exit 1; }
-echo "    installed @oc-mui/* from the registry:"
-( cd "$CONSUMER" && node -e 'const fs=require("fs");for(const n of fs.readdirSync("node_modules/@oc-mui")){const v=JSON.parse(fs.readFileSync("node_modules/@oc-mui/"+n+"/package.json","utf8")).version;console.log("      @oc-mui/"+n+"@"+v);}' )
+echo "    installed @opencast-mui/* from the registry:"
+( cd "$CONSUMER" && node -e 'const fs=require("fs");for(const n of fs.readdirSync("node_modules/@opencast-mui")){const v=JSON.parse(fs.readFileSync("node_modules/@opencast-mui/"+n+"/package.json","utf8")).version;console.log("      @opencast-mui/"+n+"@"+v);}' )
 ( cd "$CONSUMER" && pnpm exec tsc -p tsconfig.json ) && echo "    type-check ✓" || { echo "type-check failed"; exit 1; }
 ( cd "$CONSUMER" && pnpm test >/dev/null 2>&1 ) && echo "    runtime smoke test ✓" || { echo "runtime test failed"; ( cd "$CONSUMER" && pnpm test ); exit 1; }

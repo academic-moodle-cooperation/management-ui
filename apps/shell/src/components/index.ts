@@ -1,5 +1,5 @@
 // Error components — ErrorBoundary and NotFoundError live in
-// `@oc-mui/ui/components`; only the shell-specific inline fallback
+// `@opencast-mui/ui/components`; only the shell-specific inline fallback
 // is re-exported here.
 export { ModuleErrorFallback } from "./errors/ModuleErrorFallback";
 

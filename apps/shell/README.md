@@ -12,8 +12,8 @@ pnpm --filter shell preview      # serve the built bundle
 
 ## What it does at boot
 
-1. **Expose shared modules** on `window.__SHARED_MODULES__` so dynamically loaded plugins resolve `react`, `@oc-mui/*`, etc.
-2. **Register built-in plugins** from `@oc-mui/plugins` (the `plugins/index.ts` barrel).
+1. **Expose shared modules** on `window.__SHARED_MODULES__` so dynamically loaded plugins resolve `react`, `@opencast-mui/*`, etc.
+2. **Register built-in plugins** from `@opencast-mui/plugins` (the `plugins/index.ts` barrel).
 3. **Load JAR plugins** from the backend's `/management-tool/ui/config/plugins.json` if present.
 4. **Load `.local-plugins/` (dev only)** by fetching `/local-plugins/manifest.json`.
 5. **Two-phase activation**: load `*:config` plugins first → merge config → load remaining plugins filtered by `app.enabledPlugins`. Full model in [`docs/architecture/CONFIGURATION.md`](../../docs/architecture/CONFIGURATION.md).
@@ -44,7 +44,7 @@ apps/shell/
 
 ## Dev proxy
 
-The Vite dev server proxies backend paths (`/admin-ng`, `/info`, `/graphql`, etc.) to a configurable upstream — see [`@oc-mui/vite-config/proxy`](../../packages/vite-config/src/proxy.ts). Local development typically points at a real Opencast or at a mocking layer.
+The Vite dev server proxies backend paths (`/admin-ng`, `/info`, `/graphql`, etc.) to a configurable upstream — see [`@opencast-mui/vite-config/proxy`](../../packages/vite-config/src/proxy.ts). Local development typically points at a real Opencast or at a mocking layer.
 
 ## Configuration
 
