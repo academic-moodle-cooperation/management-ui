@@ -1,8 +1,8 @@
 import { CheckCircle2, Clock, PencilIcon, X, XCircle } from "lucide-react";
 import React from "react";
 
-import type { UploadFileBlob } from "@oc-mui/store";
-import { cn } from "@oc-mui/ui/lib/utils";
+import type { UploadFileBlob } from "@opencast-mui/store";
+import { cn } from "@opencast-mui/ui/lib/utils";
 
 export const UploadList = ({
   // zustandupload,

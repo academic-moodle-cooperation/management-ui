@@ -68,7 +68,7 @@ export const config = [
           },
           pathGroups: [
             {
-              pattern: "@oc-mui/**",
+              pattern: "@opencast-mui/**",
               group: "internal",
               position: "before",
             },
@@ -86,7 +86,7 @@ export const config = [
       //
       // Prevent direct imports of external libraries that we wrap on purpose.
       // Everything routing/data/state/i18n related must go through the
-      // corresponding @oc-mui/* package so we can swap implementations
+      // corresponding @opencast-mui/* package so we can swap implementations
       // later without breaking plugins. The wrapping package itself overrides
       // this rule via its own eslint.config.js.
       "no-restricted-imports": [
@@ -95,32 +95,32 @@ export const config = [
           patterns: [
             {
               group: [
-                "@oc-mui/ui/src/*",
-                "@oc-mui/ui/components/ui/*",
-                "@oc-mui/ui/components/appshell/components/*",
+                "@opencast-mui/ui/src/*",
+                "@opencast-mui/ui/components/ui/*",
+                "@opencast-mui/ui/components/appshell/components/*",
               ],
               message:
-                "Import from stable entrypoints like '@oc-mui/ui/components' or '@oc-mui/ui/lib/utils' instead of deep paths.",
+                "Import from stable entrypoints like '@opencast-mui/ui/components' or '@opencast-mui/ui/lib/utils' instead of deep paths.",
             },
             {
               group: ["@tanstack/react-router", "@tanstack/react-router/*"],
               message:
-                "Do not import @tanstack/react-router directly. Use @oc-mui/router instead. (Only packages/router/ itself may import @tanstack/react-router.)",
+                "Do not import @tanstack/react-router directly. Use @opencast-mui/router instead. (Only packages/router/ itself may import @tanstack/react-router.)",
             },
             {
               group: ["@tanstack/react-query", "@tanstack/react-query/*"],
               message:
-                "Do not import @tanstack/react-query directly. Use @oc-mui/query instead. (Only packages/query/ itself may import @tanstack/react-query.)",
+                "Do not import @tanstack/react-query directly. Use @opencast-mui/query instead. (Only packages/query/ itself may import @tanstack/react-query.)",
             },
             {
               group: ["react-i18next", "react-i18next/*", "i18next", "i18next/*"],
               message:
-                "Do not import i18next / react-i18next directly. Use @oc-mui/i18n instead. (Only packages/i18n/ itself may import them.)",
+                "Do not import i18next / react-i18next directly. Use @opencast-mui/i18n instead. (Only packages/i18n/ itself may import them.)",
             },
             {
               group: ["jotai", "jotai/*"],
               message:
-                "Do not import jotai directly. Use @oc-mui/store instead. (Only packages/store/ itself may import jotai.)",
+                "Do not import jotai directly. Use @opencast-mui/store instead. (Only packages/store/ itself may import jotai.)",
             },
           ],
         },
@@ -138,7 +138,7 @@ export const config = [
   // Architectural import boundaries (file-path based, namespace-independent).
   //
   // Mechanises the cross-plugin / cross-app / app→plugin rules documented in
-  // AGENTS.md. Wrapper-library rules (use @oc-mui/router instead of
+  // AGENTS.md. Wrapper-library rules (use @opencast-mui/router instead of
   // @tanstack/react-router, etc.) live in the no-restricted-imports block
   // above because they're namespace-coupled and will be updated together
   // when Phase 6 finalises the workspace namespace.
@@ -183,14 +183,14 @@ export const config = [
   //     the object-shape support for `allow:`.
   //
   // (d) Cross-plugin imports written as workspace specifiers
-  //     (`import "@oc-mui/plugin-<other>"`) are NOT caught today; only the
+  //     (`import "@opencast-mui/plugin-<other>"`) are NOT caught today; only the
   //     relative-path form is (`import "../../<other-plugin>/..."`). The
   //     boundaries plugin follows the import resolver, but our pnpm symlinks
   //     don't get traversed in a way the plugin can match against the
   //     `plugins/<name>` element pattern. Likely fixable by configuring
   //     `eslint-import-resolver-typescript` more explicitly, or as a
   //     belt-and-suspenders `no-restricted-imports` rule against
-  //     `@oc-mui/plugin-*` from inside plugin sources.
+  //     `@opencast-mui/plugin-*` from inside plugin sources.
   {
     plugins: { boundaries },
     settings: {
@@ -268,7 +268,7 @@ export const config = [
       // TypeScript strict rules
       "@typescript-eslint/no-explicit-any": "warn", // Start with warn, can escalate to error later
       // Note: no-floating-promises and no-misused-promises require type information
-      // They should be enabled via @oc-mui/eslint-config/type-aware
+      // They should be enabled via @opencast-mui/eslint-config/type-aware
     },
   },
   // --------------------------------------------------------------------

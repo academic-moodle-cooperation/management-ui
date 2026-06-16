@@ -40,7 +40,7 @@ my-plugin/
 ### The entry point
 
 ```ts
-import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
+import { createPlugin, type PluginManager } from "@opencast-mui/plugin-system";
 
 export const myPlugin = createPlugin({
   namespace: "my-namespace", // kebab-case, matches plugin.json
@@ -87,7 +87,7 @@ export function ReportsPage() {
 // src/index.ts
 import { FileText } from "lucide-react"; // any lucide-react icon
 
-import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
+import { createPlugin, type PluginManager } from "@opencast-mui/plugin-system";
 
 import { ReportsPage } from "./ReportsPage";
 
@@ -135,7 +135,7 @@ Then declare both points in `plugin.json` so the contract test passes:
 
 `AppDefinition` (`apps:definitions`) requires `{ id, name, routePath, component }`
 and optionally takes `navigation`, `loader`, `version`, `description` — see
-[`@oc-mui/plugin-system` `appTypes.ts`](../../packages/plugin-system/src/appTypes.ts).
+[`@opencast-mui/plugin-system` `appTypes.ts`](../../packages/plugin-system/src/appTypes.ts).
 Nested routes like `/reports/:id` work automatically (the shell adds a
 `$routeSubPath` child route); read the param with `useParams({ strict: false })`.
 
@@ -162,7 +162,7 @@ Required. Copy [`packages/plugin-testing/README.md`](../../packages/plugin-testi
 Run it with:
 
 ```bash
-pnpm --filter @oc-mui/plugin-my-plugin test:contract
+pnpm --filter @opencast-mui/plugin-my-plugin test:contract
 ```
 
 ## Extension points you'll touch most
@@ -174,7 +174,7 @@ pnpm --filter @oc-mui/plugin-my-plugin test:contract
 | `app:config:defaults` | A `Partial<AppConfig>` slice merged below `config.json` | `plugins/core-*/src/config.ts` |
 | `app:header-logo` | An `{ src, alt, href, width, height }` object — **note:** declared but the default shell does not currently render it, so it has no visible effect on its own. It's the scaffold's contract-test placeholder; swap it for `apps:definitions` (above) for a visible feature. | `plugins/example/` |
 
-The full set — with owner and what renders each — is in [`plugins/core/README.md`](../../plugins/core/README.md), and at the registration sites in [`@oc-mui/plugin-system`](../../packages/plugin-system/README.md).
+The full set — with owner and what renders each — is in [`plugins/core/README.md`](../../plugins/core/README.md), and at the registration sites in [`@opencast-mui/plugin-system`](../../packages/plugin-system/README.md).
 
 ## Configuration
 
@@ -182,7 +182,7 @@ A plugin gets its own slice of `AppConfig` at `config.plugins[id]`. Declare the 
 
 ```ts
 import { z } from "zod";
-import { definePluginConfig } from "@oc-mui/query";
+import { definePluginConfig } from "@opencast-mui/query";
 
 const schema = z.object({
   apiEndpoint: z.string().url(),
@@ -208,7 +208,7 @@ Use semantic tokens — see [`plugins/styling.md`](./styling.md). No hardcoded c
 
 - Declare namespaces in `plugin.json`'s `i18nNamespaces` array.
 - Locale files at `<plugin>/locales/<namespace>/<locale>.json`.
-- Reference keys with `t("namespace:key")` via `useTranslation` from `@oc-mui/i18n`.
+- Reference keys with `t("namespace:key")` via `useTranslation` from `@opencast-mui/i18n`.
 
 The contract test's `expectI18nKeyParity` fails when locale files drift apart.
 
@@ -241,7 +241,7 @@ A custom ESLint rule that flags violations is planned — until it ships, review
 For an in-tree plugin (`plugins/<name>/`), the shell's Vite build picks it up automatically:
 
 ```bash
-pnpm --filter @oc-mui/shell dev
+pnpm --filter @opencast-mui/shell dev
 ```
 
 Add your plugin's id to `app.enabledPlugins` in your config and visit the route you registered on `apps:definitions`.
@@ -249,14 +249,14 @@ Add your plugin's id to `app.enabledPlugins` in your config and visit the route 
 For a `.local-plugins/` plugin, build the plugin once so the loader can find its `dist/`:
 
 ```bash
-pnpm --filter @oc-mui/plugin-my-plugin build
-pnpm --filter @oc-mui/shell dev
+pnpm --filter @opencast-mui/plugin-my-plugin build
+pnpm --filter @opencast-mui/shell dev
 ```
 
 Iterate on the plugin in watch mode:
 
 ```bash
-pnpm --filter @oc-mui/plugin-my-plugin dev
+pnpm --filter @opencast-mui/plugin-my-plugin dev
 ```
 
 ## Pre-flight check
@@ -269,7 +269,7 @@ pnpm verify
 
 That runs lint, type-check, unit tests, contract tests, API check, and a Playwright smoke against the shell — about 90 turbo tasks. If it's red locally it'll be red in CI.
 
-If you changed a public `@oc-mui/*` API, also run `pnpm api-check` and commit the regenerated `etc/<pkg>.api.md` plus a changeset. See [`operations/release.md`](../operations/release.md).
+If you changed a public `@opencast-mui/*` API, also run `pnpm api-check` and commit the regenerated `etc/<pkg>.api.md` plus a changeset. See [`operations/release.md`](../operations/release.md).
 
 ## When the plugin grows up
 

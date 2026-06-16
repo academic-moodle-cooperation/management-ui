@@ -1,7 +1,7 @@
 // import { useReducer } from "react";
-// import { VisibilityState, SortingState, OnChangeFn } from "@oc-mui/ui";
-// import { atomWithStorage, useAtomValue, useSetAtom } from "@oc-mui/store";
-// import { useMatch } from "@oc-mui/router";
+// import { VisibilityState, SortingState, OnChangeFn } from "@opencast-mui/ui";
+// import { atomWithStorage, useAtomValue, useSetAtom } from "@opencast-mui/store";
+// import { useMatch } from "@opencast-mui/router";
 // import { useMemo } from "react";
 
 // export interface TableBaseState {

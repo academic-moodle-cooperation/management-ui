@@ -18,21 +18,21 @@ at). Then check it against the rules below.
 
 A plugin under `plugins/<name>/` or `.local-plugins/<name>/` may import ONLY:
 
-- `@oc-mui/*` packages
+- `@opencast-mui/*` packages
 - `plugins/core` (a.k.a. `plugin-core`) — owns the shared extension-point identifiers
 - itself (relative paths inside its own directory)
-- third-party libs already used by `@oc-mui/*` (e.g. `react`, `lucide-react`, `zod`)
+- third-party libs already used by `@opencast-mui/*` (e.g. `react`, `lucide-react`, `zod`)
 
 Flag as violations:
 
 - any import from `apps/shell` or `apps/playground` (apps consume plugins, not the reverse)
-- any import from another plugin — `../../<other-plugin>/…` **or** `@oc-mui/plugin-<other>`
-- any direct import of a **wrapped** library: `@tanstack/react-router` → use `@oc-mui/router`;
-  `@tanstack/react-query` → `@oc-mui/query`; `i18next` → `@oc-mui/i18n`; `jotai` → `@oc-mui/store`
+- any import from another plugin — `../../<other-plugin>/…` **or** `@opencast-mui/plugin-<other>`
+- any direct import of a **wrapped** library: `@tanstack/react-router` → use `@opencast-mui/router`;
+  `@tanstack/react-query` → `@opencast-mui/query`; `i18next` → `@opencast-mui/i18n`; `jotai` → `@opencast-mui/store`
 
 State which violations lint already catches vs. which it misses: `no-restricted-imports`
 catches the wrapped-lib imports, and `eslint-plugin-boundaries` catches **relative**
-cross-plugin imports — but workspace-package cross-plugin imports (`@oc-mui/plugin-<other>`)
+cross-plugin imports — but workspace-package cross-plugin imports (`@opencast-mui/plugin-<other>`)
 are **not** caught yet (a known resolver gap), so you must flag those yourself.
 
 ## 2. Config slice (AGENTS.md → Config)
@@ -51,7 +51,7 @@ via `.use()`. Flag any read of another plugin's slice (e.g.
 
 ## 4. Public-API change → changeset + api-check (AGENTS.md → Versioning)
 
-If the change touches a `@oc-mui/*` package's exported surface (anything reachable through
+If the change touches a `@opencast-mui/*` package's exported surface (anything reachable through
 its `exports`):
 
 - a regenerated `packages/<pkg>/etc/<pkg>.api.md` must be part of the change, **and**

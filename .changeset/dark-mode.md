@@ -1,15 +1,15 @@
 ---
-"@oc-mui/ui": minor
-"@oc-mui/i18n": patch
-"@oc-mui/plugins": patch
-"@oc-mui/plugin-core-upload": patch
+"@opencast-mui/ui": minor
+"@opencast-mui/i18n": patch
+"@opencast-mui/plugins": patch
+"@opencast-mui/plugin-core-upload": patch
 ---
 
 Dark mode: make the existing dark tokens actually reachable.
 
 The `.dark` token block in `globals.css` was complete but unreachable — no
 provider ever applied the `.dark` class. Adds `ThemeModeProvider` and
-`ThemeModeToggle` (exported from `@oc-mui/ui`), wrapping `next-themes`:
+`ThemeModeToggle` (exported from `@opencast-mui/ui`), wrapping `next-themes`:
 default-to-system with a Light/Dark/System header toggle, persisted, applied
 as a `.dark` class on `<html>`. The shell mounts the provider at the root and
 the core header renders the toggle next to the language switcher.

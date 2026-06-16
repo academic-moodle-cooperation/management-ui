@@ -1,9 +1,9 @@
 import React, { useRef, useState } from "react";
 
-import { useTranslation } from "@oc-mui/i18n";
-import { usePluginManager } from "@oc-mui/plugin-system";
-import { useMuiUpdateEventMutation } from "@oc-mui/query";
-import type { MuiGetEventByIdInputFieldsQuery, MuiEventsDataFragment } from "@oc-mui/query";
+import { useTranslation } from "@opencast-mui/i18n";
+import { usePluginManager } from "@opencast-mui/plugin-system";
+import { useMuiUpdateEventMutation } from "@opencast-mui/query";
+import type { MuiGetEventByIdInputFieldsQuery, MuiEventsDataFragment } from "@opencast-mui/query";
 import {
   Sheet,
   SheetContent,
@@ -15,9 +15,9 @@ import {
   TabsList,
   TabsTrigger,
   TabsContent,
-} from "@oc-mui/ui/components";
-import { useClickOutside } from "@oc-mui/ui/hooks";
-import { logger } from "@oc-mui/utils";
+} from "@opencast-mui/ui/components";
+import { useClickOutside } from "@opencast-mui/ui/hooks";
+import { logger } from "@opencast-mui/utils";
 
 import { EpisodesInfoContent } from "./EpisodesInfoContent";
 import { EpisodesInfoFooter } from "./EpisodesInfoFooter";

@@ -1,7 +1,7 @@
 ---
-"@oc-mui/ui": minor
-"@oc-mui/i18n": patch
-"@oc-mui/plugin-core": patch
+"@opencast-mui/ui": minor
+"@opencast-mui/i18n": patch
+"@opencast-mui/plugin-core": patch
 ---
 
 Redesign the pre-login welcome screen (`DefaultLandingPage`) as a tabbed
@@ -15,8 +15,8 @@ flash-free.
   runtime). The indigo brand accent is scoped to the landing via CSS-variable
   overrides so it stays on-brand under any theme.
 - New landing copy in **en + de** (informal German); a few additional `lucide`
-  icon re-exports from `@oc-mui/ui`.
+  icon re-exports from `@opencast-mui/ui`.
 - A subtle "Star on GitHub" plus a live GitHub-release "what's new" badge
   (cached in `localStorage`, fails silently — no console error offline).
-- The core footer (`@oc-mui/plugin-core`) now shows the build version and the
+- The core footer (`@opencast-mui/plugin-core`) now shows the build version and the
   deployed commit SHA (linked), injected at build time.

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Button } from "@oc-mui/ui/components";
+import { Button } from "@opencast-mui/ui/components";
 
 /**
  * Minimal standalone harness. In the long run this will render a single

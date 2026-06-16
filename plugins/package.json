@@ -1,5 +1,5 @@
 {
-  "name": "@oc-mui/plugins",
+  "name": "@opencast-mui/plugins",
   "version": "1.0.0",
   "license": "ECL-2.0",
   "type": "module",
@@ -16,8 +16,8 @@
     "@types/node": "^25.0.6",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "@oc-mui/eslint-config": "workspace:*",
-    "@oc-mui/typescript-config": "workspace:*",
+    "@opencast-mui/eslint-config": "workspace:*",
+    "@opencast-mui/typescript-config": "workspace:*",
     "eslint": "^9.9.0",
     "typescript": "~5.5.4"
   }

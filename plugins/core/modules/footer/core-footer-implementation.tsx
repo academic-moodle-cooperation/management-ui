@@ -1,5 +1,5 @@
-import { createPlugin } from "@oc-mui/plugin-system";
-import type { PluginManager } from "@oc-mui/plugin-system";
+import { createPlugin } from "@opencast-mui/plugin-system";
+import type { PluginManager } from "@opencast-mui/plugin-system";
 
 import DefaultFooter from "./components/default-footer";
 

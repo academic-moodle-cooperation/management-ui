@@ -1,5 +1,5 @@
 ---
-"@oc-mui/i18n": patch
+"@opencast-mui/i18n": patch
 ---
 
 Backend-down auth UX (§5.5): the "Couldn't verify your session" screen no

@@ -15,7 +15,7 @@ contract test), and say why they're n/a.
 ## Checklist (mirrors AGENTS.md → "Pre-flight checklist")
 
 1. **Plugin entry** — the plugin default/named-exports `createPlugin({...})` from
-   `@oc-mui/plugin-system`, and **every** `manager.registerObject(...)` call lives in
+   `@opencast-mui/plugin-system`, and **every** `manager.registerObject(...)` call lives in
    `initialize()`, not `activate()`. (`activate`/`deactivate` are for side effects only;
    the test harness re-registers between tests.)
 2. **Manifest** — `plugin.json` exists at the plugin root with the Manifest 1.1 fields
@@ -26,16 +26,16 @@ contract test), and say why they're n/a.
    a key colliding with another plugin's fails lint.)
 4. **Contract test** — `src/plugin.contract.test.ts` exists, copied from a sibling with
    only the import line + `describe` label changed, and
-   `pnpm --filter @oc-mui/plugin-<name> test:contract` is green.
+   `pnpm --filter @opencast-mui/plugin-<name> test:contract` is green.
 5. **Boundaries** — the plugin imports nothing from `apps/*`, another
    `plugins/<other>/*` or `.local-plugins/<other>/*`, or a wrapped library directly
-   (use `@oc-mui/router`/`query`/`i18n`/`store`, never `@tanstack/*`, `i18next`,
-   `jotai`). Allowed: `@oc-mui/*`, `plugins/core`, self, already-wrapped third-party libs.
+   (use `@opencast-mui/router`/`query`/`i18n`/`store`, never `@tanstack/*`, `i18next`,
+   `jotai`). Allowed: `@opencast-mui/*`, `plugins/core`, self, already-wrapped third-party libs.
 6. **Config slice** — the plugin declares its schema with `definePluginConfig` and reads
    only its own slice via `.use()`; it never reads another plugin's config slice.
 7. **Theme** — no hex colors, hardcoded font names, or raw spacing values in plugin code;
    semantic tokens only (`docs/plugins/styling.md`).
-8. **Public-API change → api-check + changeset** — if any `@oc-mui/*` package's exported
+8. **Public-API change → api-check + changeset** — if any `@opencast-mui/*` package's exported
    surface changed, you ran `pnpm api-check`, committed the regenerated
    `packages/*/etc/*.api.md`, **and** added a changeset (`pnpm changeset`) at the right
    bump level. (CI rejects a versioned-package change without a changeset, and a drifted

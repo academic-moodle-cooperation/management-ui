@@ -9,7 +9,7 @@ Mark each item ✅ / ❌ / ➖ (skipped, justified). Any ❌ blocks the release.
 ## When to run
 
 - Before the first public 1.0 cut (Phase 6d's npm `restricted → public` flip).
-- Before any major bump of `@oc-mui/plugin-system` (the contract-stable core).
+- Before any major bump of `@opencast-mui/plugin-system` (the contract-stable core).
 - Before any release that touches the JAR-packaging pipeline (Maven POMs, `apps/shell/pom.xml`, the `PluginBundleTracker`).
 - Annually, as a calibration pass even if none of the above triggered.
 
@@ -110,7 +110,7 @@ Each core plugin's route should mount, render, and react to user input. Backend 
 
 ## Section 4 — GraphQL data flow
 
-Verifies the `@oc-mui/query` layer and the GraphQL Operation Naming Contract (`Mui`-prefixed operations — see [`docs/architecture/CONTRACTS.md`](../architecture/CONTRACTS.md)).
+Verifies the `@opencast-mui/query` layer and the GraphQL Operation Naming Contract (`Mui`-prefixed operations — see [`docs/architecture/CONTRACTS.md`](../architecture/CONTRACTS.md)).
 
 ### How to read GraphQL traffic
 
@@ -184,8 +184,8 @@ The three modes documented in `docs/plugins/distribution.md`.
 | 8.1 | `pnpm create-plugin trial-default` | Creates `.local-plugins/trial-default/` with the frontend + `backend/` Maven layout. |
 | 8.2 | `pnpm create-plugin trial-no-pom --no-pom` | Creates `.local-plugins/trial-no-pom/` with no `backend/`. |
 | 8.3 | `pnpm create-plugin trial-in-tree --in-tree` | Creates `plugins/trial-in-tree/`; no `backend/`. |
-| 8.4 | `pnpm --filter @oc-mui/plugin-trial-default test:contract` | Passes on first run. (The placeholder `app:header-logo` registration is intentional.) |
-| 8.5 | `pnpm --filter @oc-mui/plugin-trial-default check-types` | Passes. |
+| 8.4 | `pnpm --filter @opencast-mui/plugin-trial-default test:contract` | Passes on first run. (The placeholder `app:header-logo` registration is intentional.) |
+| 8.5 | `pnpm --filter @opencast-mui/plugin-trial-default check-types` | Passes. |
 | 8.6 | Plugin's `plugin.json` declares `workspaceDependencies` with `Mui` prefix expectation in the README's "Conventions" section | Confirms the scaffold communicates the GraphQL naming + shared-deps contracts. |
 | 8.7 | After test, delete the trial plugins | `rm -rf .local-plugins/trial-default .local-plugins/trial-no-pom plugins/trial-in-tree` |
 
@@ -194,7 +194,7 @@ The three modes documented in `docs/plugins/distribution.md`.
 | # | Test | Expected |
 |---|------|----------|
 | 9.1 | Scaffold `pnpm create-plugin demo-local` | Folder created with full Maven layout. |
-| 9.2 | `pnpm build` once (builds `@oc-mui/vite-config` etc.), then `pnpm --filter @oc-mui/plugin-demo-local build` | Produces `dist/demo-local.mjs`. The plugin's `vite.config.ts` imports `@oc-mui/vite-config`, so that workspace package must be built first — that's what the scaffold's step 2 (`pnpm build`) is for. |
+| 9.2 | `pnpm build` once (builds `@opencast-mui/vite-config` etc.), then `pnpm --filter @opencast-mui/plugin-demo-local build` | Produces `dist/demo-local.mjs`. The plugin's `vite.config.ts` imports `@opencast-mui/vite-config`, so that workspace package must be built first — that's what the scaffold's step 2 (`pnpm build`) is for. |
 | 9.3 | Add `"demo-local"` to `app.enabledPlugins` in the served `config.json` | Edit `apps/shell/public/ui/config/management-ui/config.json` and run dev **without** a backend (or with `VITE_LOCAL_CONFIG=true`) so that file is the one served — see §6. (Or inject it via a `.local-plugins/config/` plugin if you use that pattern.) |
 | 9.4 | `pnpm dev` and reload | Browser console shows `[INFO] [demo-local] activated` (logged via `logger.info`, visible at DevTools' default level — no need to enable "Verbose"). **There is no visual change** — the scaffold's placeholder registers `app:header-logo`, which nothing in the core renders, so the header logo does **not** swap. The console line is the only signal; a real plugin renders whatever UI it implements (e.g. an `apps:definitions` nav entry). **If you don't see the line:** `demo-local` isn't in the *served* config's `app.enabledPlugins`, so the plugin never activates — re-check §9.3 (running without a backend, or `VITE_LOCAL_CONFIG=true`). The shell also logs a warning if a `.local-plugins` entry is fetched but fails to register (e.g. missing `export default`). |
 | 9.5 | Inspect `http://127.0.0.1:3000/management-ui/local-plugins/manifest.json` | Lists `demo-local` with the correct URL. (The dev manifest is served under the shell base path `/management-ui/`, not at the origin root.) |
@@ -234,10 +234,10 @@ The mechanical safeguards we built for plugin authors.
 
 | # | Test | Expected |
 |---|------|----------|
-| 12.1 | Scaffold a plugin, add `query BrokenName { ... }` to its `gql\`\`` | `pnpm --filter @oc-mui/plugin-<name> lint` fails with `local/graphql-operation-naming` violation. |
+| 12.1 | Scaffold a plugin, add `query BrokenName { ... }` to its `gql\`\`` | `pnpm --filter @opencast-mui/plugin-<name> lint` fails with `local/graphql-operation-naming` violation. |
 | 12.2 | Fix to `query PluginPascalNameBrokenName { ... }` | Lint passes. |
 | 12.3 | Scaffold a plugin, set `workspaceDependencies.react: "^18.0.0"` in its `plugin.json` | `checkSharedDependencyCompatibility` returns `compatible: false` (verify by importing the function in a quick scratch test, or by waiting for the load-time enforcement landing later — currently the function exists but is not wired into the loader; tracked in OPEN_FOLLOWUPS §5.3). |
-| 12.4 | Add a new export to `@oc-mui/plugin-system` and run `pnpm api-check:ci` | Fails — snapshot drift. After regenerating + adding a changeset, passes. |
+| 12.4 | Add a new export to `@opencast-mui/plugin-system` and run `pnpm api-check:ci` | Fails — snapshot drift. After regenerating + adding a changeset, passes. |
 | 12.5 | Touch a versioned package without adding a changeset | `pnpm changeset:status --since=origin/develop` fails. |
 
 ## Section 13 — CI gates
@@ -288,7 +288,7 @@ You're cleared to flip Phase 6d:
 3. The next `pnpm changeset version && pnpm changeset publish` cuts the first public release on npm.
 4. Announce.
 
-After publishing, this protocol should run again before any **major** bump of the contract-stable packages (`@oc-mui/plugin-system`, `@oc-mui/router`, `@oc-mui/query`, `@oc-mui/i18n`, `@oc-mui/store`, `@oc-mui/ui-config`).
+After publishing, this protocol should run again before any **major** bump of the contract-stable packages (`@opencast-mui/plugin-system`, `@opencast-mui/router`, `@opencast-mui/query`, `@opencast-mui/i18n`, `@opencast-mui/store`, `@opencast-mui/ui-config`).
 
 ## See also
 

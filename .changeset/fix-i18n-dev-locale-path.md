@@ -1,5 +1,5 @@
 ---
-"@oc-mui/i18n": patch
+"@opencast-mui/i18n": patch
 ---
 
 Fix core i18n namespaces (`common`/`series`/`episodes`/`upload`) returning 404 in

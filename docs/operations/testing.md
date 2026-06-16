@@ -33,7 +33,7 @@ The contract layer asserts that a plugin honours the public contracts from [docs
 
 ### What it checks
 
-The harness lives in [@oc-mui/plugin-testing](../../packages/plugin-testing/README.md). It boots a minimal `PluginManager`, registers the built-in plugins (`objectRegistry`, `renderer`, `appRegistry`), loads the plugin under test, and exposes a small handle:
+The harness lives in [@opencast-mui/plugin-testing](../../packages/plugin-testing/README.md). It boots a minimal `PluginManager`, registers the built-in plugins (`objectRegistry`, `renderer`, `appRegistry`), loads the plugin under test, and exposes a small handle:
 
 | Assertion | What it proves |
 |---|---|
@@ -55,7 +55,7 @@ import {
   loadPluginInHarness,
   readPluginManifest,
   type TestHarness,
-} from "@oc-mui/plugin-testing";
+} from "@opencast-mui/plugin-testing";
 
 import { myPlugin } from "./index";
 
@@ -92,7 +92,7 @@ Two ways to tell the harness which extension points a plugin must populate:
 
 ### Adding a contract test to a plugin
 
-1. Add `@oc-mui/plugin-testing` to the plugin's `devDependencies` (`workspace:*`).
+1. Add `@opencast-mui/plugin-testing` to the plugin's `devDependencies` (`workspace:*`).
 2. Add a `test:contract` script: `"test:contract": "vitest run plugin.contract"`.
 3. Drop the test file next to `index.ts` using the template above.
 4. Add `extensionPoints: [...]` to `plugin.json` if you opted for manifest-driven assertions.

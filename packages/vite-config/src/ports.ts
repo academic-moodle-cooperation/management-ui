@@ -1,4 +1,4 @@
-import { logger } from "@oc-mui/utils";
+import { logger } from "@opencast-mui/utils";
 
 export const DEFAULT_SHELL_APP_PORT = 3000;
 const PLUGIN_DEV_PORT_START = 3001;
@@ -14,7 +14,7 @@ const CORE_APP_NAMES = ["playground"];
 // Standalone and .local-plugins plugins instead pick a free dev port in their own
 // vite.config.ts — see docs/operations/extending-the-workspace.md.
 const discoverPluginPackages = (): string[] => {
-  return ["@oc-mui/plugin-example"];
+  return ["@opencast-mui/plugin-example"];
 };
 
 interface PluginPorts {

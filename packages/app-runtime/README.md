@@ -1,4 +1,4 @@
-# @oc-mui/app-runtime
+# @opencast-mui/app-runtime
 
 Runtime infrastructure that lets a component run **inside the shell** or **standalone** (for plugin dev and contract tests) with the same code path. Wraps the component in the right provider hierarchy depending on what it detects at boot.
 
@@ -11,7 +11,7 @@ The shell mounts `AppRuntimeProvider` once at the root. Plugin-registered apps g
 ### Standalone (a plugin running solo)
 
 ```tsx
-import { bootstrapStandaloneApp } from "@oc-mui/app-runtime";
+import { bootstrapStandaloneApp } from "@opencast-mui/app-runtime";
 import { MyApp } from "./MyApp";
 
 bootstrapStandaloneApp(MyApp, "root", {
@@ -26,7 +26,7 @@ bootstrapStandaloneApp(MyApp, "root", {
 
 | Symbol | Purpose |
 |--------|---------|
-| `AppDefinition` (type) | The shape registered on `apps:definitions`. Same type used by `@oc-mui/plugin-system`. |
+| `AppDefinition` (type) | The shape registered on `apps:definitions`. Same type used by `@opencast-mui/plugin-system`. |
 | `AppRuntimeConfig`, `AppRuntimeContext` | Runtime config shape (base URL, env, etc.) and the React context it surfaces. |
 | `AppRuntimeProvider`, `useAppRuntime()` | Provider + hook. Mounted by the shell at boot; consumed by deep components that need to know "am I standalone or integrated?". |
 | `bootstrapStandaloneApp(AppComponent, containerId?, config)` | One-call entry point for running a single app outside the shell. |
@@ -34,7 +34,7 @@ bootstrapStandaloneApp(MyApp, "root", {
 
 ## Layer
 
-Application. Depends on `@oc-mui/plugin-system`, `@oc-mui/query`, `@oc-mui/router`, `@oc-mui/ui`, `@oc-mui/utils`.
+Application. Depends on `@opencast-mui/plugin-system`, `@opencast-mui/query`, `@opencast-mui/router`, `@opencast-mui/ui`, `@opencast-mui/utils`.
 
 ## See also
 

@@ -70,7 +70,7 @@ Orgs typically ship these overrides in a tiny `.local-plugins/<org>-config/` plu
 ```
 app:config:defaults     ← plugin defaults (via app:config:defaults extension point)
        ⊕
-base config             ← defaultConfig (baked into @oc-mui/ui-config)
+base config             ← defaultConfig (baked into @opencast-mui/ui-config)
                            ⊕ the fetched config.json (see below)
        ⊕
 app:config              ← config plugin's overlay (via app:config extension point)
@@ -78,7 +78,7 @@ app:config              ← config plugin's overlay (via app:config extension po
 
 Higher in the list = lower precedence. The `app:config` overlay wins, so an org config plugin can override anything in `config.json`, and `config.json` can override plugin defaults.
 
-Plugin defaults are contributed through `definePluginConfig({ id, schema, defaults })` from `@oc-mui/query` — see [`packages/query/`](../../packages/query/).
+Plugin defaults are contributed through `definePluginConfig({ id, schema, defaults })` from `@opencast-mui/query` — see [`packages/query/`](../../packages/query/).
 
 ## Reading config
 
@@ -99,19 +99,19 @@ const { pageSize } = episodesConfig.read();  // sync snapshot
 ### Reading the merged app config
 
 ```ts
-import { useAppConfig } from "@oc-mui/query";
+import { useAppConfig } from "@opencast-mui/query";
 
 const { config } = useAppConfig();
 const theme = config.app.theme;
 ```
 
-Reading **another plugin's slice** (`config.plugins["other-plugin"]`) is forbidden — `@oc-mui/eslint-config` catches it.
+Reading **another plugin's slice** (`config.plugins["other-plugin"]`) is forbidden — `@opencast-mui/eslint-config` catches it.
 
 ## Writing your own plugin config
 
 ```ts
 import { z } from "zod";
-import { definePluginConfig } from "@oc-mui/query";
+import { definePluginConfig } from "@opencast-mui/query";
 
 const schema = z.object({
   apiEndpoint: z.string().url(),
@@ -148,7 +148,7 @@ The shell fetches it on boot from `productionConfigUrl` (default `/ui/config/man
 
 > `VITE_LOCAL_CONFIG` only affects the config path; all other endpoints follow `VITE_PROXY_TARGET`. Restart the dev server after changing either (env is read once at startup).
 
-Anything the file omits falls back to `defaultConfig` in [`@oc-mui/ui-config`](../../packages/ui-config/), and plugins contribute their own slice defaults at runtime — so the file only needs to carry what a deployment actually overrides.
+Anything the file omits falls back to `defaultConfig` in [`@opencast-mui/ui-config`](../../packages/ui-config/), and plugins contribute their own slice defaults at runtime — so the file only needs to carry what a deployment actually overrides.
 
 Orgs typically ship a tiny `.local-plugins/<org>-config/` plugin that registers an `app:config` overlay instead of editing a JSON file — this lets them override values across deployments and wins over `config.json` (see the merge order above).
 

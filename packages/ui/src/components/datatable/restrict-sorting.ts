@@ -21,7 +21,7 @@ function columnFieldId<TData, TValue>(column: ColumnDef<TData, TValue>): string 
  * types. A column that maps to a field outside that set must not show a
  * sort control — clicking it would send an `orderBy` variable the server
  * rejects. Feed in the backend's sortable-field list (exported from
- * `@oc-mui/query`, e.g. `EVENT_SORTABLE_FIELDS`) and this flips
+ * `@opencast-mui/query`, e.g. `EVENT_SORTABLE_FIELDS`) and this flips
  * `enableSorting: false` on any column that isn't in it.
  *
  * `DataTableColumnHeader` already renders a plain, non-interactive label

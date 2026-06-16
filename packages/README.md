@@ -2,7 +2,7 @@
 
 Shared infrastructure for the Management UI. Apps and plugins consume these — never the other way around.
 
-The dependency layers are documented in [`docs/architecture/overview.md`](../docs/architecture/overview.md#package-layers). The rule: lower layers never depend on higher layers. The [`@oc-mui/eslint-config`](./eslint-config/) boundaries rule enforces it mechanically.
+The dependency layers are documented in [`docs/architecture/overview.md`](../docs/architecture/overview.md#package-layers). The rule: lower layers never depend on higher layers. The [`@opencast-mui/eslint-config`](./eslint-config/) boundaries rule enforces it mechanically.
 
 ## Catalog
 
@@ -10,37 +10,37 @@ The dependency layers are documented in [`docs/architecture/overview.md`](../doc
 
 | Package | Purpose |
 |---------|---------|
-| [`@oc-mui/utils`](./utils/) | Pure utility functions (`logger`, `deepMerge`, `parseDuration`, …). |
-| [`@oc-mui/typescript-config`](./typescript-config/) | Shared TypeScript configs (`base`, `react-library`, `react-application`, …). |
-| [`@oc-mui/eslint-config`](./eslint-config/) | Shared ESLint configs (`base`, `react-internal`, `type-aware`). Owns the wrapper rule and boundaries rule. |
-| [`@oc-mui/tailwind-config`](./tailwind-config/) | Tailwind preset + plugin. Token-based theming for shadcn/ui. |
-| [`@oc-mui/vite-config`](./vite-config/) | Shared Vite configs (`shell`, `community-plugin`), ports, proxy, custom plugins. |
+| [`@opencast-mui/utils`](./utils/) | Pure utility functions (`logger`, `deepMerge`, `parseDuration`, …). |
+| [`@opencast-mui/typescript-config`](./typescript-config/) | Shared TypeScript configs (`base`, `react-library`, `react-application`, …). |
+| [`@opencast-mui/eslint-config`](./eslint-config/) | Shared ESLint configs (`base`, `react-internal`, `type-aware`). Owns the wrapper rule and boundaries rule. |
+| [`@opencast-mui/tailwind-config`](./tailwind-config/) | Tailwind preset + plugin. Token-based theming for shadcn/ui. |
+| [`@opencast-mui/vite-config`](./vite-config/) | Shared Vite configs (`shell`, `community-plugin`), ports, proxy, custom plugins. |
 
 ### Foundation (depend only on core)
 
 | Package | Purpose | Contract |
 |---------|---------|----------|
-| [`@oc-mui/plugin-system`](./plugin-system/) | `createPlugin`, `PluginManager`, extension-point resolution. The runtime every plugin runs on. | Manifest 1.1 + Runtime API 1.0 |
-| [`@oc-mui/store`](./store/) | State facade over Zustand + Jotai. | 1.x |
-| [`@oc-mui/i18n`](./i18n/) | Translation layer over i18next + react-i18next. | 1.x |
-| [`@oc-mui/ui-config`](./ui-config/) | `AppConfig` type + `defaultConfig` baseline. | Config 1.0 (defines the shape) |
+| [`@opencast-mui/plugin-system`](./plugin-system/) | `createPlugin`, `PluginManager`, extension-point resolution. The runtime every plugin runs on. | Manifest 1.1 + Runtime API 1.0 |
+| [`@opencast-mui/store`](./store/) | State facade over Zustand + Jotai. | 1.x |
+| [`@opencast-mui/i18n`](./i18n/) | Translation layer over i18next + react-i18next. | 1.x |
+| [`@opencast-mui/ui-config`](./ui-config/) | `AppConfig` type + `defaultConfig` baseline. | Config 1.0 (defines the shape) |
 
 ### Integration (depend on foundation + core)
 
 | Package | Purpose | Contract |
 |---------|---------|----------|
-| [`@oc-mui/query`](./query/) | Data fetching over TanStack Query + GraphQL. Owns `definePluginConfig`. | Config 1.0 reader API |
-| [`@oc-mui/router`](./router/) | Routing layer over TanStack Router + auth. | 1.x |
-| [`@oc-mui/ui`](./ui/) | Shared component library on Tailwind + shadcn/ui. | Theme 2.0 consumer |
-| [`@oc-mui/remote-plugin-loader`](./remote-plugin-loader/) | Loads `.mjs` plugins by URL — used by JAR loader and marketplace. | 1.x |
-| [`@oc-mui/plugin-testing`](./plugin-testing/) | Contract-test harness. | Test-only |
+| [`@opencast-mui/query`](./query/) | Data fetching over TanStack Query + GraphQL. Owns `definePluginConfig`. | Config 1.0 reader API |
+| [`@opencast-mui/router`](./router/) | Routing layer over TanStack Router + auth. | 1.x |
+| [`@opencast-mui/ui`](./ui/) | Shared component library on Tailwind + shadcn/ui. | Theme 2.0 consumer |
+| [`@opencast-mui/remote-plugin-loader`](./remote-plugin-loader/) | Loads `.mjs` plugins by URL — used by JAR loader and marketplace. | 1.x |
+| [`@opencast-mui/plugin-testing`](./plugin-testing/) | Contract-test harness. | Test-only |
 
 ### Application (compose everything below)
 
 | Package | Purpose |
 |---------|---------|
-| [`@oc-mui/providers`](./providers/) | `AppProviders` — the canonical provider hierarchy. |
-| [`@oc-mui/app-runtime`](./app-runtime/) | Standalone/integrated dual-mode wrapper for apps registered on `apps:definitions`. |
+| [`@opencast-mui/providers`](./providers/) | `AppProviders` — the canonical provider hierarchy. |
+| [`@opencast-mui/app-runtime`](./app-runtime/) | Standalone/integrated dual-mode wrapper for apps registered on `apps:definitions`. |
 
 ## Adding a new package
 

@@ -1,5 +1,5 @@
 {
-  "name": "@oc-mui/router",
+  "name": "@opencast-mui/router",
   "version": "1.0.0",
   "description": "Routing facade (TanStack Router) for the Opencast Management UI and its plugins.",
   "author": "Academic Moodle Cooperation",
@@ -13,7 +13,7 @@
   "keywords": [
     "opencast",
     "management-ui",
-    "oc-mui",
+    "opencast-mui",
     "plugin",
     "router",
     "tanstack-router"
@@ -57,8 +57,8 @@
   "dependencies": {
     "@tanstack/react-router": "^1.45.0",
     "@tanstack/router-core": "^1.120.10",
-    "@oc-mui/i18n": "workspace:*",
-    "@oc-mui/query": "workspace:*"
+    "@opencast-mui/i18n": "workspace:*",
+    "@opencast-mui/query": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"
@@ -66,9 +66,9 @@
   "devDependencies": {
     "@types/node": "^25.0.6",
     "@types/react": "^18.0.0 || ^19.0.0",
-    "@oc-mui/eslint-config": "workspace:*",
-    "@oc-mui/query": "workspace:*",
-    "@oc-mui/typescript-config": "workspace:*",
+    "@opencast-mui/eslint-config": "workspace:*",
+    "@opencast-mui/query": "workspace:*",
+    "@opencast-mui/typescript-config": "workspace:*",
     "eslint": "^9.9.0",
     "tsup": "^8.5.0",
     "typescript": "~5.5.4",

@@ -10,7 +10,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@oc-mui/ui/components";
+} from "@opencast-mui/ui/components";
 
 import type { ThemeDefinition } from "../services/themes";
 

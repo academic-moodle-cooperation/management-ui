@@ -1,5 +1,5 @@
 {
-  "extends": "@oc-mui/typescript-config/react-library.json",
+  "extends": "@opencast-mui/typescript-config/react-library.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "rootDir": "src",
@@ -7,7 +7,7 @@
     "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@oc-mui/ui/*": ["./src/*"]
+      "@opencast-mui/ui/*": ["./src/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "vite-env.d.ts"],

@@ -6,10 +6,10 @@
  * user can navigate elsewhere.
  *
  * The `ErrorBoundary` class itself and the full-screen `NotFoundError`
- * page both live in `@oc-mui/ui/components` so every app/plugin can
+ * page both live in `@opencast-mui/ui/components` so every app/plugin can
  * reuse the same primitives — no need to duplicate them here.
  */
-import { useTranslation } from "@oc-mui/i18n";
+import { useTranslation } from "@opencast-mui/i18n";
 
 import type { FC } from "react";
 

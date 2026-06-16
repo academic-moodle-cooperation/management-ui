@@ -1,4 +1,4 @@
-# @oc-mui/ui
+# @opencast-mui/ui
 
 Shared component library built on Tailwind CSS v4 and Radix UI primitives (via shadcn/ui). Atomic components (Button, Card, Input, …) plus composed building blocks (app shell, datatable, metadata fields, ACL editor, date picker).
 
@@ -7,9 +7,9 @@ This is the only place plugins should source UI components — the Theme Contrac
 ## Usage
 
 ```tsx
-import { Button, Card, CardContent } from "@oc-mui/ui/components";
-import { cn } from "@oc-mui/ui/lib/utils";
-import { Home, Video } from "@oc-mui/ui/components/icons";
+import { Button, Card, CardContent } from "@opencast-mui/ui/components";
+import { cn } from "@opencast-mui/ui/lib/utils";
+import { Home, Video } from "@opencast-mui/ui/components/icons";
 
 <Card className={cn("bg-card", className)}>
   <CardContent>
@@ -22,14 +22,14 @@ Plugin authors import from the **subpath exports** — never the package root �
 
 | Subpath | What it provides |
 |---------|------------------|
-| `@oc-mui/ui/components` | Atomic + composed components (Button, Card, Table, DataTable, AppShell, …). |
-| `@oc-mui/ui/components/icons` | `lucide-react` icons re-exported with a stable surface (Home, Video, ExternalLink, …). |
-| `@oc-mui/ui/lib` | Utility helpers (`resolveFirstAssetUrl`, …). |
-| `@oc-mui/ui/lib/utils` | The `cn()` class-merging helper. |
-| `@oc-mui/ui/hooks` | `useMobile`, `useClickOutside`, … |
-| `@oc-mui/ui/styles`, `@oc-mui/ui/globals.css` | The semantic-token CSS. Imported once by the shell. |
-| `@oc-mui/ui/config-primitives` | Building blocks for plugin config UIs. |
-| `@oc-mui/ui/postcss.config` | Shared PostCSS config — an app's `vite.config.ts` pulls it in. |
+| `@opencast-mui/ui/components` | Atomic + composed components (Button, Card, Table, DataTable, AppShell, …). |
+| `@opencast-mui/ui/components/icons` | `lucide-react` icons re-exported with a stable surface (Home, Video, ExternalLink, …). |
+| `@opencast-mui/ui/lib` | Utility helpers (`resolveFirstAssetUrl`, …). |
+| `@opencast-mui/ui/lib/utils` | The `cn()` class-merging helper. |
+| `@opencast-mui/ui/hooks` | `useMobile`, `useClickOutside`, … |
+| `@opencast-mui/ui/styles`, `@opencast-mui/ui/globals.css` | The semantic-token CSS. Imported once by the shell. |
+| `@opencast-mui/ui/config-primitives` | Building blocks for plugin config UIs. |
+| `@opencast-mui/ui/postcss.config` | Shared PostCSS config — an app's `vite.config.ts` pulls it in. |
 
 ## Components
 
@@ -51,7 +51,7 @@ Components consume the semantic tokens from [`src/styles/globals.css`](./src/sty
 
 ## Layer
 
-Integration. Depends on `@oc-mui/utils`, `@oc-mui/plugin-system` (for components that integrate with extension points), `@oc-mui/router` (for components that render links).
+Integration. Depends on `@opencast-mui/utils`, `@opencast-mui/plugin-system` (for components that integrate with extension points), `@opencast-mui/router` (for components that render links).
 
 ## See also
 

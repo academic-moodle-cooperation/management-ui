@@ -1,10 +1,10 @@
 import React from "react";
 
-import { useI18n } from "@oc-mui/i18n";
-import { useMuiUpdateSeriesMutation } from "@oc-mui/query";
-import type { MuiGetSeriesByIdInputFieldsQuery } from "@oc-mui/query";
-import { Button, toast } from "@oc-mui/ui/components";
-import { normalizeMetadataObject } from "@oc-mui/utils";
+import { useI18n } from "@opencast-mui/i18n";
+import { useMuiUpdateSeriesMutation } from "@opencast-mui/query";
+import type { MuiGetSeriesByIdInputFieldsQuery } from "@opencast-mui/query";
+import { Button, toast } from "@opencast-mui/ui/components";
+import { normalizeMetadataObject } from "@opencast-mui/utils";
 
 type SeriesUpdateData = {
   [T: string]: string | string[];

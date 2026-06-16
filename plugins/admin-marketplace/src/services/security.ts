@@ -11,18 +11,18 @@
  * - Plugin metadata validation
  */
 
-import { checkSharedDependencyCompatibility } from "@oc-mui/plugin-system";
+import { checkSharedDependencyCompatibility } from "@opencast-mui/plugin-system";
 
 /**
  * Plugin metadata for version compatibility checking
  */
 export interface PluginVersionConstraints {
-  /** Minimum required version of @oc-mui/plugin-system */
-  "@oc-mui/plugin-system"?: string;
-  /** Minimum required version of @oc-mui/ui */
-  "@oc-mui/ui"?: string;
-  /** Minimum required version of @oc-mui/query */
-  "@oc-mui/query"?: string;
+  /** Minimum required version of @opencast-mui/plugin-system */
+  "@opencast-mui/plugin-system"?: string;
+  /** Minimum required version of @opencast-mui/ui */
+  "@opencast-mui/ui"?: string;
+  /** Minimum required version of @opencast-mui/query */
+  "@opencast-mui/query"?: string;
   /** Other workspace packages */
   [key: string]: string | undefined;
 }
@@ -225,7 +225,7 @@ class SecurityService {
    * with the host's shared runtime majors.
    *
    * Delegates to {@link checkSharedDependencyCompatibility} — the single source
-   * of truth in `@oc-mui/plugin-system`, shared with the JAR and .local-plugins
+   * of truth in `@opencast-mui/plugin-system`, shared with the JAR and .local-plugins
    * loaders — and adapts its result to {@link SecurityValidationResult}: a major
    * mismatch (or an unparseable range) blocks (`valid: false`); deps the host
    * doesn't provide are reported as non-blocking warnings.

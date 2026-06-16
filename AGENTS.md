@@ -8,13 +8,13 @@ This file is **not** a project tour. For architecture, package layers, and the g
 
 Before you finish a plugin-touching change:
 
-1. Plugin entry uses `createPlugin({...})` from `@oc-mui/plugin-system`. ✓
+1. Plugin entry uses `createPlugin({...})` from `@opencast-mui/plugin-system`. ✓
 2. `plugin.json` exists at the plugin root with the [required Manifest 1.1 fields](docs/architecture/CONTRACTS.md#1-plugin-manifest-contract) (`id`, `name`, `version`, `description`, `author`, `namespace`) and an `extensionPoints` array. ✓
 3. Every extension point your `initialize()` populates also appears in `plugin.json`'s `extensionPoints`. ✓
 4. A `src/plugin.contract.test.ts` exists, copy-pasted from a sibling plugin and only the import line changed. ✓
-5. Plugin imports nothing from `apps/*`, `plugins/<other>/*`, or any external library not already wrapped behind a `@oc-mui/*` facade. ✓
+5. Plugin imports nothing from `apps/*`, `plugins/<other>/*`, or any external library not already wrapped behind a `@opencast-mui/*` facade. ✓
 6. `pnpm verify` passes locally. ✓
-7. **Changeset committed.** If you changed *any* versioned package, you ran `pnpm changeset`, picked the bump level, and **committed** the `.changeset/*.md` file. "Versioned" = every package under `packages/*` and `plugins/*`, **including private (`"private": true`) ones** — the *only* exemptions are those listed in `.changeset/config.json`'s `ignore` (currently just `shell` and `playground`). This is **not** limited to public-API changes: a dev-server tweak, an internal bug fix, a new asset MIME type all need one. An uncommitted changeset does **not** count — CI runs `changeset status` against the committed tree. When unsure, run `pnpm changeset status --since=origin/<base-branch>` (green = covered). If the change *also* touched a public `@oc-mui/*` API surface, additionally run `pnpm api-check` and commit the regenerated `etc/<pkg>.api.md`. ✓
+7. **Changeset committed.** If you changed *any* versioned package, you ran `pnpm changeset`, picked the bump level, and **committed** the `.changeset/*.md` file. "Versioned" = every package under `packages/*` and `plugins/*`, **including private (`"private": true`) ones** — the *only* exemptions are those listed in `.changeset/config.json`'s `ignore` (currently just `shell` and `playground`). This is **not** limited to public-API changes: a dev-server tweak, an internal bug fix, a new asset MIME type all need one. An uncommitted changeset does **not** count — CI runs `changeset status` against the committed tree. When unsure, run `pnpm changeset status --since=origin/<base-branch>` (green = covered). If the change *also* touched a public `@opencast-mui/*` API surface, additionally run `pnpm api-check` and commit the regenerated `etc/<pkg>.api.md`. ✓
 8. **Docs stay in sync.** Any doc your change makes stale is updated in the same PR. If you renamed a public symbol, fix every doc that names it; if you changed an extension point's contract, fix [`docs/plugins/`](docs/plugins/) and [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md); if you changed how something is built or released, fix [`docs/operations/`](docs/operations/). Use the "Where to find things" table at the bottom of this file to find every doc that mentions what you touched. ✓
 
 If any of those is unchecked, do not declare the change finished.
@@ -54,7 +54,7 @@ you have a real plugin.
 ## The plugin entry
 
 ```ts
-import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
+import { createPlugin, type PluginManager } from "@opencast-mui/plugin-system";
 
 export const myPlugin = createPlugin({
   namespace: "my-namespace",  // kebab-case, no colons, matches plugin.json's `namespace`
@@ -96,7 +96,7 @@ import {
   loadPluginInHarness,
   readPluginManifest,
   type TestHarness,
-} from "@oc-mui/plugin-testing";
+} from "@opencast-mui/plugin-testing";
 
 import { myPlugin } from "./index";
 
@@ -130,18 +130,18 @@ Run with `pnpm test:contract`. The full harness API is documented in [`packages/
 
 A plugin may import from:
 
-- `@oc-mui/*` packages
+- `@opencast-mui/*` packages
 - itself (relative paths within the plugin dir)
 - `plugins/core` (a.k.a. `plugin-core`) — the canonical infrastructure plugin that ships the shared extension-point identifiers; allowed for every plugin
-- third-party libraries already used by `@oc-mui/*` (e.g., `react`, `lucide-react`, `zod`)
+- third-party libraries already used by `@opencast-mui/*` (e.g., `react`, `lucide-react`, `zod`)
 
 A plugin must **not** import from:
 
 - `apps/shell` or `apps/playground` — apps consume plugins, not the other way around
 - any other plugin under `plugins/<name>/*` or `.local-plugins/<name>/*` — communicate via extension points instead
-- A library that has been wrapped behind a `@oc-mui/*` facade (e.g., import `@oc-mui/router`, never `@tanstack/react-router` directly; same for `@tanstack/react-query` → `@oc-mui/query`, `i18next` → `@oc-mui/i18n`, `jotai` → `@oc-mui/store`)
+- A library that has been wrapped behind a `@opencast-mui/*` facade (e.g., import `@opencast-mui/router`, never `@tanstack/react-router` directly; same for `@tanstack/react-query` → `@opencast-mui/query`, `i18next` → `@opencast-mui/i18n`, `jotai` → `@opencast-mui/store`)
 
-The wrapper rule is enforced by `no-restricted-imports` in `@oc-mui/eslint-config/base.js`. The cross-plugin and cross-app rules are enforced by `eslint-plugin-boundaries` rules in the same config — see the comment block in `packages/eslint-config/base.js` for the full element/rule matrix. The boundaries rule today catches cross-plugin imports written as relative paths (`../../<other-plugin>/...`); workspace-package imports (`@oc-mui/plugin-<other>`) are not caught yet because of a resolver gap, tracked as a follow-up.
+The wrapper rule is enforced by `no-restricted-imports` in `@opencast-mui/eslint-config/base.js`. The cross-plugin and cross-app rules are enforced by `eslint-plugin-boundaries` rules in the same config — see the comment block in `packages/eslint-config/base.js` for the full element/rule matrix. The boundaries rule today catches cross-plugin imports written as relative paths (`../../<other-plugin>/...`); workspace-package imports (`@opencast-mui/plugin-<other>`) are not caught yet because of a resolver gap, tracked as a follow-up.
 
 ## Config — read your own slice, never anyone else's
 
@@ -150,7 +150,7 @@ Plugins declare their config schema once and consume it through `useConfig`:
 ```ts
 // src/config.ts — declare schema + defaults + reader
 import { z } from "zod";
-import { definePluginConfig } from "@oc-mui/query";
+import { definePluginConfig } from "@opencast-mui/query";
 
 const schema = z.object({
   enabled: z.boolean().optional(),
@@ -178,7 +178,7 @@ No hex colors, no hardcoded font names, no raw spacing values in plugin code. Us
 
 - Translation namespaces are declared in `plugin.json`'s `i18nNamespaces` array (optional).
 - Locale files at `<plugin>/locales/<namespace>/<locale>.json`. The contract test's `expectI18nKeyParity` fails when locale files have mismatched key sets.
-- Reference keys with `t("namespace:key")` via `useTranslation` from `@oc-mui/i18n`.
+- Reference keys with `t("namespace:key")` via `useTranslation` from `@opencast-mui/i18n`.
 
 ## Versioning — changesets (every versioned package) and public-API changes
 
@@ -191,7 +191,7 @@ For any versioned-package change:
 3. **Commit the `.changeset/*.md` file.** `changeset status` (which CI runs) reads the committed tree — an unstaged or uncommitted changeset still fails the check, which is the classic "I added it but CI still says no changesets were found" trap.
 4. Verify locally with `pnpm changeset status --since=origin/<base-branch>` (e.g. `--since=origin/develop` — match the branch your PR targets, since CI runs `changeset status --since=origin/$BASE`). Green means every changed-and-versioned package is covered. A bare `pnpm changeset status` compares against the configured `baseBranch` (`develop`); if your PR targets a different branch (e.g. a maintenance `r/NN.x` branch), pass `--since` explicitly.
 
-If the change *also* touches a `@oc-mui/*` package's public surface (anything reachable through its `exports` field), additionally:
+If the change *also* touches a `@opencast-mui/*` package's public surface (anything reachable through its `exports` field), additionally:
 
 5. `pnpm api-check` regenerates the affected `etc/<pkg>.api.md`. Inspect the diff; commit it if the change was intentional.
 6. Major bumps require a `@deprecated` JSDoc tag on the previous version, kept for one full major cycle. See [`CONTRIBUTING.md`](CONTRIBUTING.md#-versioning-changesets-and-deprecations) for the full rule.
@@ -204,8 +204,8 @@ This is the canonical command. It runs lint + type-check + build + unit tests + 
 
 If you only want a fast inner loop while iterating on one plugin:
 
-- `pnpm --filter @oc-mui/plugin-<name> test` — that plugin's unit tests
-- `pnpm --filter @oc-mui/plugin-<name> test:contract` — that plugin's contract test
+- `pnpm --filter @opencast-mui/plugin-<name> test` — that plugin's unit tests
+- `pnpm --filter @opencast-mui/plugin-<name> test:contract` — that plugin's contract test
 - `pnpm test:e2e:ui` — Playwright in interactive mode
 
 ## Where to find things

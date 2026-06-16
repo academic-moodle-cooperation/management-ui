@@ -42,7 +42,7 @@ export const PLUGIN_TYPES: PluginTypeDefinition[] = [
       {
         title: "Adding a navigation item",
         code: `
-import { createPlugin } from '@oc-mui/plugin-system';
+import { createPlugin } from '@opencast-mui/plugin-system';
 
 const MyNavItem = () => <div>Custom Navigation</div>;
 
@@ -94,7 +94,7 @@ export const MyPlugin = createPlugin({
       {
         title: "Registering an application",
         code: `
-import { createPlugin } from '@oc-mui/plugin-system';
+import { createPlugin } from '@opencast-mui/plugin-system';
 import { MyAppComponent } from './MyAppComponent';
 
 export const MyAppPlugin = createPlugin({

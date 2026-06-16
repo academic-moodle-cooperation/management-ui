@@ -1,8 +1,8 @@
 ---
-"@oc-mui/query": minor
-"@oc-mui/ui": minor
-"@oc-mui/plugin-core-episodes": patch
-"@oc-mui/plugin-core-series": patch
+"@opencast-mui/query": minor
+"@opencast-mui/ui": minor
+"@opencast-mui/plugin-core-episodes": patch
+"@opencast-mui/plugin-core-series": patch
 ---
 
 Derive table column sortability from the GraphQL schema instead of
@@ -12,7 +12,7 @@ Replaces the per-column `enableSorting: false` band-aid (which silently
 drifts — add a column, forget the flag, reintroduce the "/episodes sort"
 bug) with a schema-driven mechanism:
 
-- `@oc-mui/query` now exports `EVENT_SORTABLE_FIELDS` and
+- `@opencast-mui/query` now exports `EVENT_SORTABLE_FIELDS` and
   `SERIES_SORTABLE_FIELDS` (+ the `EventSortableField` /
   `SeriesSortableField` types). These runtime arrays are the source of
   truth for which fields the backend accepts in `EventOrderByInput` /
@@ -21,7 +21,7 @@ bug) with a schema-driven mechanism:
   in sync with the generated types — change the schema, run codegen, and
   any drift surfaces as a type error.
 
-- `@oc-mui/ui` now exports `restrictSortingToFields(columns,
+- `@opencast-mui/ui` now exports `restrictSortingToFields(columns,
   sortableFields)` — flips `enableSorting: false` on any column whose
   field isn't in the list, while respecting columns that set
   `enableSorting` explicitly. `DataTableColumnHeader` already renders a

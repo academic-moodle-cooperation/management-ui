@@ -1,8 +1,8 @@
 ---
-"@oc-mui/i18n": patch
-"@oc-mui/query": patch
-"@oc-mui/router": patch
-"@oc-mui/ui": patch
+"@opencast-mui/i18n": patch
+"@opencast-mui/query": patch
+"@opencast-mui/router": patch
+"@opencast-mui/ui": patch
 ---
 
 Add no-regression coverage thresholds to `vitest.config.ts` (dev-only). Floors

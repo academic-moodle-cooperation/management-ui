@@ -101,8 +101,8 @@ Deeper material:
 pnpm verify                                              # the pre-push gate (mirrors CI exactly)
 
 # Iterating on a single package or plugin
-pnpm --filter @oc-mui/plugin-system test                # unit tests for one package
-pnpm --filter @oc-mui/plugin-core-episodes test:contract # contract test for one plugin
+pnpm --filter @opencast-mui/plugin-system test                # unit tests for one package
+pnpm --filter @opencast-mui/plugin-core-episodes test:contract # contract test for one plugin
 pnpm api-check                                          # regenerate API surface snapshots
 pnpm test:e2e:ui                                        # Playwright in interactive mode
 pnpm dev                                                # vite dev server
@@ -114,14 +114,14 @@ pnpm docs:build                                         # static build of the do
 
 ### GraphQL code generation
 
-`@oc-mui/query` generates TypeScript types, React Query hooks, and the
+`@opencast-mui/query` generates TypeScript types, React Query hooks, and the
 backend-orderable field lists from the live GraphQL schema. The generated
 files are **committed**, so a fresh clone and `pnpm verify` work without a
 backend — you only run codegen when the **schema itself changes**:
 
 ```bash
 GRAPHQL_ENDPOINT=https://your-opencast/graphql \
-  pnpm --filter @oc-mui/query codegen
+  pnpm --filter @opencast-mui/query codegen
 ```
 
 Commit the regenerated `src/gql-generated.ts` and
@@ -135,7 +135,7 @@ Strict mode. Avoid `any`; if you genuinely need an escape hatch, document it in 
 
 ### Linting and formatting
 
-- `pnpm lint` — ESLint with the wrapper-library rules (`@oc-mui/router` not `@tanstack/react-router` directly, etc.) and the architectural boundaries plugin
+- `pnpm lint` — ESLint with the wrapper-library rules (`@opencast-mui/router` not `@tanstack/react-router` directly, etc.) and the architectural boundaries plugin
 - `pnpm format` — Prettier write
 - `pnpm format:check` — Prettier check (CI)
 
@@ -144,7 +144,7 @@ Strict mode. Avoid `any`; if you genuinely need an escape hatch, document it in 
 Three layers, fully documented in [`docs/operations/testing.md`](docs/operations/testing.md):
 
 - **Unit** (Vitest) — every package
-- **Contract** (`@oc-mui/plugin-testing` harness) — every plugin under `plugins/` ships one `plugin.contract.test.ts`
+- **Contract** (`@opencast-mui/plugin-testing` harness) — every plugin under `plugins/` ships one `plugin.contract.test.ts`
 - **E2E** (Playwright) — a smoke spec against `apps/shell` with stubbed backend endpoints
 
 ---
@@ -163,7 +163,7 @@ Decide based on what the change does to the **package's public surface** — i.e
 | **Minor** | New exports, new optional parameters, a new method on a class, a new optional field on a public type. Existing consumers remain source- and binary-compatible. |
 | **Major** | A removed export, a renamed symbol, a changed signature (including a new required parameter), a behaviour change that an existing consumer would observe (e.g. an extension point's contract changes), or anything that breaks plugin-runtime API/manifest/theme/config compatibility. |
 
-Plugin runtime API contracts have a hard rule: **anything that changes the Plugin Runtime API observable to plugin authors → major bump of `@oc-mui/plugin-system`.** The host loader rejects plugins whose declared `apiVersion` major mismatches the host's `PLUGIN_API_VERSION`.
+Plugin runtime API contracts have a hard rule: **anything that changes the Plugin Runtime API observable to plugin authors → major bump of `@opencast-mui/plugin-system`.** The host loader rejects plugins whose declared `apiVersion` major mismatches the host's `PLUGIN_API_VERSION`.
 
 ### Adding a changeset
 
@@ -189,7 +189,7 @@ Removing a public symbol is a major bump and requires a deprecation warning in t
 
 1.  **Mark it `@deprecated` in JSDoc** with a one-line reason and a pointer to the replacement.
 2.  **Keep the old symbol working for one full major cycle.** A symbol marked `@deprecated` in `1.x` may be removed only in `2.0.0`. Use a minor bump for the deprecation; the eventual removal is its own major changeset.
-3.  **Emit a runtime warning in dev** if the deprecated symbol is called. Use `logger.warn` (from `@oc-mui/utils`) so the message is captured by the same plumbing as other warnings; gate it behind `import.meta.env.DEV` so production callers don't pay the cost. This is encouraged, not mandatory — type-only deprecations (e.g. a renamed type) cannot warn.
+3.  **Emit a runtime warning in dev** if the deprecated symbol is called. Use `logger.warn` (from `@opencast-mui/utils`) so the message is captured by the same plumbing as other warnings; gate it behind `import.meta.env.DEV` so production callers don't pay the cost. This is encouraged, not mandatory — type-only deprecations (e.g. a renamed type) cannot warn.
 4.  **Document the deprecation** in the changeset body so it lands in the package's changelog.
 
 Plugin authors get a one-major-cycle grace window: when the host bumps `PLUGIN_API_VERSION` major, plugins compiled against the previous major will be cleanly rejected with a "Plugin requires API major X, host provides Y" error from the loader.
@@ -209,7 +209,7 @@ git diff packages/*/etc/*.api.md
 
 CI runs `pnpm api-check:ci` (note the `:ci` suffix) which compares the generated reports against the committed snapshots and **fails the PR** if they differ. Authors who intentionally change the surface regenerate, commit the diff, and ship a matching changeset; authors who didn't intend to change the surface get an immediate signal that they did.
 
-Instrumented packages: `@oc-mui/plugin-system`, `@oc-mui/router`, `@oc-mui/query`, `@oc-mui/i18n`, `@oc-mui/store`, `@oc-mui/ui-config` — the six contract-stable packages declared in [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md). The cross-package coupling visible in each report (e.g. `query`'s report imports types from `plugin-system` and `ui-config`) is intentional: when an upstream contract changes, every consumer's snapshot diff surfaces it.
+Instrumented packages: `@opencast-mui/plugin-system`, `@opencast-mui/router`, `@opencast-mui/query`, `@opencast-mui/i18n`, `@opencast-mui/store`, `@opencast-mui/ui-config` — the six contract-stable packages declared in [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md). The cross-package coupling visible in each report (e.g. `query`'s report imports types from `plugin-system` and `ui-config`) is intentional: when an upstream contract changes, every consumer's snapshot diff surfaces it.
 
 ---
 

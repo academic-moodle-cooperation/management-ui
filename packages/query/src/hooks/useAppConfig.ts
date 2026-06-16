@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-import { useRegistry, type PluginManager } from "@oc-mui/plugin-system";
-import { defaultConfig, getAppConfig, type AppConfig } from "@oc-mui/ui-config";
-import { deepMerge, logger } from "@oc-mui/utils";
+import { useRegistry, type PluginManager } from "@opencast-mui/plugin-system";
+import { defaultConfig, getAppConfig, type AppConfig } from "@opencast-mui/ui-config";
+import { deepMerge, logger } from "@opencast-mui/utils";
 
 const CONFIG_QUERY_KEY = ["appConfig"];
 

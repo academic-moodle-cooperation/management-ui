@@ -1,6 +1,6 @@
 import React from "react";
 
-import { usePluginTranslation } from "@oc-mui/i18n";
+import { usePluginTranslation } from "@opencast-mui/i18n";
 
 // Injected at build time via Vite `define` (see apps/shell/vite.config.ts).
 // `typeof` guards keep this rendering sensibly when the define is absent

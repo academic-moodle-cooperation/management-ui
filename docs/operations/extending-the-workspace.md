@@ -9,12 +9,12 @@ Both are picked up automatically — `pnpm-workspace.yaml` globs `packages/*` an
 ## Add a package
 
 1. `mkdir packages/<name>` and mirror the smallest existing package that fits (e.g. [`packages/utils`](../../packages/utils) for a leaf library, [`packages/query`](../../packages/query) for one with workspace deps).
-2. `package.json` — name `@oc-mui/<name>`, `"type": "module"`, the standard scripts (`build` / `check-types` / `lint` / `test`), and workspace deps as `"@oc-mui/<dep>": "workspace:*"`.
-3. `tsconfig.json` — `{ "extends": "@oc-mui/typescript-config/node-esm-library.json" }` (or `react-library.json` for a package that ships components).
+2. `package.json` — name `@opencast-mui/<name>`, `"type": "module"`, the standard scripts (`build` / `check-types` / `lint` / `test`), and workspace deps as `"@opencast-mui/<dep>": "workspace:*"`.
+3. `tsconfig.json` — `{ "extends": "@opencast-mui/typescript-config/node-esm-library.json" }` (or `react-library.json` for a package that ships components).
 4. Place it correctly in the dependency layering (core → foundation → integration → application) described in [`architecture/overview.md`](../architecture/overview.md). The ESLint `boundaries` rules enforce import direction — a wrong-direction import fails `lint`.
 5. Add a short `README.md` (what it is, its layer, what may import it).
 6. `pnpm install` (links it into the workspace), then `pnpm verify`.
-7. If it's a versioned/published `@oc-mui/*` package, add a changeset — see [`release.md`](./release.md).
+7. If it's a versioned/published `@opencast-mui/*` package, add a changeset — see [`release.md`](./release.md).
 
 ## Add an app
 
@@ -27,7 +27,7 @@ Both are picked up automatically — `pnpm-workspace.yaml` globs `packages/*` an
 ## Checklist
 
 - [ ] Directory under `packages/` or `apps/` (auto-discovered by the workspace globs).
-- [ ] `package.json` name is `@oc-mui/<name>`; `tsconfig.json` extends the shared preset.
+- [ ] `package.json` name is `@opencast-mui/<name>`; `tsconfig.json` extends the shared preset.
 - [ ] Correct dependency layer — `pnpm lint` (boundaries) passes.
 - [ ] `README.md` present.
 - [ ] Changeset added if the package is versioned.

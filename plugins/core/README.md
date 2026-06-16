@@ -1,6 +1,6 @@
-# @oc-mui/plugin-core
+# @opencast-mui/plugin-core
 
-Core plugin. Declares the extension points other plugins build on and ships default implementations of the header and footer. Every plugin may import from `@oc-mui/plugin-core` — it's the one cross-plugin exception in the boundaries rule.
+Core plugin. Declares the extension points other plugins build on and ships default implementations of the header and footer. Every plugin may import from `@opencast-mui/plugin-core` — it's the one cross-plugin exception in the boundaries rule.
 
 ## What it provides
 
@@ -38,11 +38,11 @@ Org plugins override by registering their own implementations with **higher prio
 
 ## Why every plugin may import this
 
-The boundaries rule blocks cross-plugin imports — but `@oc-mui/plugin-core` is the exception, because plugins need its extension-point declarations to wire themselves up correctly. See [`@oc-mui/eslint-config`](../../packages/eslint-config/base.js) for the exception.
+The boundaries rule blocks cross-plugin imports — but `@opencast-mui/plugin-core` is the exception, because plugins need its extension-point declarations to wire themselves up correctly. See [`@opencast-mui/eslint-config`](../../packages/eslint-config/base.js) for the exception.
 
 ## Layer
 
-In-tree plugin. Depends on `@oc-mui/plugin-system`, `@oc-mui/ui`, `@oc-mui/utils`, `@oc-mui/i18n`.
+In-tree plugin. Depends on `@opencast-mui/plugin-system`, `@opencast-mui/ui`, `@opencast-mui/utils`, `@opencast-mui/i18n`.
 
 ## See also
 

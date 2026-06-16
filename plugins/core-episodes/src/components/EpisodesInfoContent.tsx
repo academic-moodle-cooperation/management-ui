@@ -1,10 +1,10 @@
 import React from "react";
 
-import { useI18n } from "@oc-mui/i18n";
+import { useI18n } from "@opencast-mui/i18n";
 import type {
   MuiGetEventByIdInputFieldsQuery,
   MuiGetInputFieldsMetaDataFragment,
-} from "@oc-mui/query";
+} from "@opencast-mui/query";
 import {
   Button,
   Container,
@@ -13,10 +13,10 @@ import {
   createMetadataHelpers,
   CopyIcon,
   PencilIcon,
-} from "@oc-mui/ui/components";
-import type { MetadataItem } from "@oc-mui/ui/config-primitives";
-import { cn } from "@oc-mui/ui/lib/utils";
-import { copyText } from "@oc-mui/utils";
+} from "@opencast-mui/ui/components";
+import type { MetadataItem } from "@opencast-mui/ui/config-primitives";
+import { cn } from "@opencast-mui/ui/lib/utils";
+import { copyText } from "@opencast-mui/utils";
 
 import { episodesConfig } from "../config";
 

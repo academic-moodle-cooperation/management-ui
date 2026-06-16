@@ -6,7 +6,7 @@ Conceptual companion to the [package README](../README.md), which documents the 
 
 The plugin system enables **controlled extensibility**:
 
-- **The core (shell + `@oc-mui/plugin-core`)** defines extension points — *what* can be customized.
+- **The core (shell + `@opencast-mui/plugin-core`)** defines extension points — *what* can be customized.
 - **Plugins** register objects and components on those points — *how* it's customized.
 - **The `PluginManager`** coordinates registration, resolution, and lifecycle.
 
@@ -36,7 +36,7 @@ The plugin system enables **controlled extensibility**:
 ## Creating a plugin
 
 ```ts
-import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
+import { createPlugin, type PluginManager } from "@opencast-mui/plugin-system";
 
 export const myPlugin = createPlugin({
   namespace: "my-org",
@@ -105,7 +105,7 @@ manager.registerComponent("appshell:header", OrgHeader, {
 Consumers render the winner through `ComponentResolver`:
 
 ```tsx
-import { ComponentResolver } from "@oc-mui/plugin-system";
+import { ComponentResolver } from "@opencast-mui/plugin-system";
 
 <ComponentResolver
   componentType="appshell:header"
@@ -129,7 +129,7 @@ The canonical, maintained list is **not** in this file — read:
 
 ## Testing plugins
 
-Use the contract-test harness from `@oc-mui/plugin-testing` — every plugin ships a mechanical `plugin.contract.test.ts` (see [`AGENTS.md`](../../../AGENTS.md#contract-test--required-mechanical) for the template and [`packages/plugin-testing/README.md`](../../plugin-testing/README.md) for the harness API). For unit tests, create a fresh manager with `createPluginManager()` and call your plugin's `initialize()` against it.
+Use the contract-test harness from `@opencast-mui/plugin-testing` — every plugin ships a mechanical `plugin.contract.test.ts` (see [`AGENTS.md`](../../../AGENTS.md#contract-test--required-mechanical) for the template and [`packages/plugin-testing/README.md`](../../plugin-testing/README.md) for the harness API). For unit tests, create a fresh manager with `createPluginManager()` and call your plugin's `initialize()` against it.
 
 ## Package structure
 

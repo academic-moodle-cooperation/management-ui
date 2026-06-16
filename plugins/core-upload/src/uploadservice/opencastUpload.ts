@@ -1,9 +1,9 @@
 import Mustache from "mustache";
 
-import { i18next } from "@oc-mui/i18n";
-import type { UploadFileBlob } from "@oc-mui/store";
-import { toast, type AclData, type ACLEntryInput } from "@oc-mui/ui/components";
-import { logger } from "@oc-mui/utils";
+import { i18next } from "@opencast-mui/i18n";
+import type { UploadFileBlob } from "@opencast-mui/store";
+import { toast, type AclData, type ACLEntryInput } from "@opencast-mui/ui/components";
+import { logger } from "@opencast-mui/utils";
 
 import onProgress from "./onProgress";
 

@@ -259,7 +259,7 @@ export const PLUGIN_METADATA: Record<string, PluginMetadata> = {
   },
 
   // ─────────────────────────────────────────────────────────────────────────
-  // @oc-mui/plugin-example (reference implementation)
+  // @opencast-mui/plugin-example (reference implementation)
   // ─────────────────────────────────────────────────────────────────────────
   "example:header": {
     name: "Example Header Logo",

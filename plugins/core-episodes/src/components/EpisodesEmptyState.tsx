@@ -1,9 +1,9 @@
-import { i18next } from "@oc-mui/i18n";
-import { Link } from "@oc-mui/router";
+import { i18next } from "@opencast-mui/i18n";
+import { Link } from "@opencast-mui/router";
 
 /**
  * Empty state for the episodes table: a call-to-action linking to the upload
- * route. This lives in the episodes plugin (not @oc-mui/ui) because it knows
+ * route. This lives in the episodes plugin (not @opencast-mui/ui) because it knows
  * about an app-specific route — keeping that routing knowledge out of the
  * shared UI package. Passed to {@link MUITable} via its `emptyState` prop.
  */

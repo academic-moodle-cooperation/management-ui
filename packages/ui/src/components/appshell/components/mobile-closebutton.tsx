@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 
-import { useTranslation } from "@oc-mui/i18n";
+import { useTranslation } from "@opencast-mui/i18n";
 
 import { useSidebar } from "../../ui";
 

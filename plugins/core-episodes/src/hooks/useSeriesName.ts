@@ -1,4 +1,4 @@
-import { useMuiGetSeriesNameByIdQuery } from "@oc-mui/query";
+import { useMuiGetSeriesNameByIdQuery } from "@opencast-mui/query";
 
 /**
  * Whether the series-name lookup should run for the given identifier.

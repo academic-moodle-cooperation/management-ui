@@ -10,8 +10,8 @@
  * plugin is loaded individually (failed loads don't block others).
  */
 
-import { getCachedAppConfig } from "@oc-mui/query";
-import type { AppConfig } from "@oc-mui/ui-config";
+import { getCachedAppConfig } from "@opencast-mui/query";
+import type { AppConfig } from "@opencast-mui/ui-config";
 
 export interface JarPluginInfo {
   /** Stable entry identifier */

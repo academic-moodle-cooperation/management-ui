@@ -7,7 +7,7 @@ The full testing strategy — pyramid, unit/contract/E2E split, CI gates — liv
 Every plugin ships **one contract test** at `src/plugin.contract.test.ts`. It is mechanical — `pnpm create-plugin` writes it for you, and the only line that changes between plugins is the import.
 
 ```bash
-pnpm --filter @oc-mui/plugin-my-plugin test:contract
+pnpm --filter @opencast-mui/plugin-my-plugin test:contract
 ```
 
 The harness boots a minimal `PluginManager`, runs your plugin's `initialize()` and `activate()`, and checks that:
@@ -19,7 +19,7 @@ The harness boots a minimal `PluginManager`, runs your plugin's `initialize()` a
 
 Drift between `plugin.json` and `initialize()` is caught here — the most common failure mode.
 
-Full assertion API: [`@oc-mui/plugin-testing`](../../packages/plugin-testing/README.md).
+Full assertion API: [`@opencast-mui/plugin-testing`](../../packages/plugin-testing/README.md).
 
 ## Unit tests
 
@@ -38,7 +38,7 @@ src/
 Run them with:
 
 ```bash
-pnpm --filter @oc-mui/plugin-my-plugin test
+pnpm --filter @opencast-mui/plugin-my-plugin test
 ```
 
 The default environment is jsdom. Mock external services; don't hit a real backend from a unit test.
@@ -52,7 +52,7 @@ The default environment is jsdom. Mock external services; don't hit a real backe
 
 You don't need to test:
 
-- Code from `@oc-mui/*` packages — they have their own tests.
+- Code from `@opencast-mui/*` packages — they have their own tests.
 - The shell's routing, config-merge, or manifest validation — covered by core unit + contract tests.
 
 ## End-to-end

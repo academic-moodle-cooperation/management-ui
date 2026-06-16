@@ -8,7 +8,7 @@
 #   2 → ESLint itself crashed            → stay silent (don't nag about tooling)
 #
 # ESLint isn't a root dependency here (it's run per-package via turbo), so we invoke
-# the binary that ships with the in-repo @oc-mui/eslint-config package and run it from
+# the binary that ships with the in-repo @opencast-mui/eslint-config package and run it from
 # the repo root, where the flat config (eslint.config.mjs) and its plugins resolve.
 #
 # Note: this repo's config uses eslint-plugin-only-warn, so rule violations are

@@ -1,5 +1,5 @@
 ---
-"@oc-mui/eslint-config": minor
+"@opencast-mui/eslint-config": minor
 ---
 
 Phase 8.5.1b — mechanical enforcement of the GraphQL Operation Naming

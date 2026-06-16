@@ -1,8 +1,8 @@
 ---
-"@oc-mui/ui": patch
+"@opencast-mui/ui": patch
 ---
 
-Remove five exported-but-unused demo/debug components from `@oc-mui/ui`:
+Remove five exported-but-unused demo/debug components from `@opencast-mui/ui`:
 `appshell/components/{nav-projects,team-switcher}.tsx` (shadcn sidebar
 boilerplate with hardcoded "Projects"/"Teams" content) and
 `auth-status/{AuthStatus,AuthMethodsDemo,AuthDebug}.tsx` (auth debug
@@ -13,5 +13,5 @@ for an OSS package). No real consumers exist (the package is unpublished
 until the 1.0 cut), so this is a patch.
 
 Bonus: the `auth-status/*` components were one arm of the
-`@oc-mui/ui → @oc-mui/router` dependency inversion (open-followups §3.5);
+`@opencast-mui/ui → @opencast-mui/router` dependency inversion (open-followups §3.5);
 removing them shrinks that tangle. Closes open-followups §3.6.

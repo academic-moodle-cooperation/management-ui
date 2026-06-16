@@ -1,8 +1,8 @@
 import { createRef, useCallback, useEffect, useMemo, useState } from "react";
 
-import { useI18n } from "@oc-mui/i18n";
-import { uploadExtensionPoints } from "@oc-mui/plugin-core";
-import { usePluginManager, ComponentResolver } from "@oc-mui/plugin-system";
+import { useI18n } from "@opencast-mui/i18n";
+import { uploadExtensionPoints } from "@opencast-mui/plugin-core";
+import { usePluginManager, ComponentResolver } from "@opencast-mui/plugin-system";
 import {
   createGraphQLClient,
   MuiGetMySeriesNameAndIdDocument,
@@ -11,11 +11,11 @@ import {
   useGetUserInfo,
   useInfiniteQuery,
   useAppConfig,
-} from "@oc-mui/query";
-import type { MuiGetMySeriesNameAndIdQuery } from "@oc-mui/query";
-import { useNavigate, useParams } from "@oc-mui/router";
-import { useStore } from "@oc-mui/store";
-import type { UploadFileBlob } from "@oc-mui/store";
+} from "@opencast-mui/query";
+import type { MuiGetMySeriesNameAndIdQuery } from "@opencast-mui/query";
+import { useNavigate, useParams } from "@opencast-mui/router";
+import { useStore } from "@opencast-mui/store";
+import type { UploadFileBlob } from "@opencast-mui/store";
 import {
   Accordion,
   AccordionContent,
@@ -29,9 +29,9 @@ import {
   Separator,
   Toaster,
   toast,
-} from "@oc-mui/ui/components";
-import type { AclData, SelectedElement } from "@oc-mui/ui/components";
-import { logger } from "@oc-mui/utils";
+} from "@opencast-mui/ui/components";
+import type { AclData, SelectedElement } from "@opencast-mui/ui/components";
+import { logger } from "@opencast-mui/utils";
 
 import Dropzone from "./components/Dropzone";
 import { EmptyState } from "./components/EmptyState";
@@ -120,7 +120,7 @@ export const App = () => {
   );
 
   // Consumes the central `MuiGetMySeriesNameAndId` query document from
-  // @oc-mui/query rather than declaring an inline duplicate (PR-5.1c).
+  // @opencast-mui/query rather than declaring an inline duplicate (PR-5.1c).
   const fetchMySeries = async ({
     pageParam = 0,
     query,

@@ -1,6 +1,6 @@
 import React, { type ReactNode } from "react";
 
-import { PluginContext, type PluginManager } from "@oc-mui/plugin-system";
+import { PluginContext, type PluginManager } from "@opencast-mui/plugin-system";
 
 /**
  * Thin provider that feeds an externally-managed {@link PluginManager} into

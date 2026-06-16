@@ -1,7 +1,7 @@
 import { Navigate } from "@tanstack/react-router";
 import React from "react";
 
-import { useGetCurrentUser } from "@oc-mui/query";
+import { useGetCurrentUser } from "@opencast-mui/query";
 
 import { useAuth } from "../auth/AuthContext";
 import { isAuthenticationError } from "../auth/isAuthenticationError";
@@ -13,7 +13,7 @@ interface ProtectedRouteProps {
    * Rendered when the auth check fails with a non-auth (e.g. backend 5xx /
    * network) error and no user could be resolved — instead of an indefinite
    * "Checking authentication…" spinner. Receives the error and a retry
-   * callback. Injected so this package needn't import `@oc-mui/ui`. Optional —
+   * callback. Injected so this package needn't import `@opencast-mui/ui`. Optional —
    * falls back to a minimal inline message with a Retry button.
    */
   errorComponent?: React.ComponentType<{ error: unknown; onRetry: () => void }>;

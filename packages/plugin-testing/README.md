@@ -1,6 +1,6 @@
-# @oc-mui/plugin-testing
+# @opencast-mui/plugin-testing
 
-Contract-test harness for plugins that target the `@oc-mui/plugin-system`
+Contract-test harness for plugins that target the `@opencast-mui/plugin-system`
 runtime. Boots a minimal manager with the three built-in plugins
 (`objectRegistry`, `renderer`, `appRegistry`), registers the plugin under
 test, and returns a small set of `expect*` assertion helpers tailored to the
@@ -10,7 +10,7 @@ Manifest 1.1 and Runtime API 1.0 contracts documented in
 ## Public API
 
 ```ts
-import { loadPluginInHarness, readPluginManifest } from "@oc-mui/plugin-testing";
+import { loadPluginInHarness, readPluginManifest } from "@opencast-mui/plugin-testing";
 ```
 
 - `loadPluginInHarness(plugin, options?)` — returns a `TestHarness` handle.
@@ -27,7 +27,7 @@ import {
   loadPluginInHarness,
   readPluginManifest,
   type TestHarness,
-} from "@oc-mui/plugin-testing";
+} from "@opencast-mui/plugin-testing";
 import { myPlugin } from "./index";
 
 describe("my-plugin contract", () => {
@@ -82,7 +82,7 @@ MVP ships only the plugin-system provider in `HarnessPluginProvider`. Query / i1
 
 ## Layer
 
-Integration. Depends on `@oc-mui/plugin-system` (the runtime under test) and `@oc-mui/utils`. Not shipped to consumers — it's a workspace dev-only package.
+Integration. Depends on `@opencast-mui/plugin-system` (the runtime under test) and `@opencast-mui/utils`. Not shipped to consumers — it's a workspace dev-only package.
 
 ## See also
 

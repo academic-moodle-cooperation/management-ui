@@ -1,4 +1,4 @@
-# @oc-mui/plugin-core-upload
+# @opencast-mui/plugin-core-upload
 
 Core plugin. Registers the `/upload` route, its sidebar entry, and the upload config slice. Ships with the OSS repo and is enabled by default.
 
@@ -12,7 +12,7 @@ Core plugin. Registers the `/upload` route, its sidebar entry, and the upload co
 
 ## Configuration
 
-The plugin owns `config.plugins.upload`. Schema and defaults live in [`src/config.ts`](./src/config.ts) via `definePluginConfig` from `@oc-mui/query`.
+The plugin owns `config.plugins.upload`. Schema and defaults live in [`src/config.ts`](./src/config.ts) via `definePluginConfig` from `@opencast-mui/query`.
 
 Reading values in a component:
 
@@ -26,8 +26,8 @@ Full merge order: [`docs/architecture/CONFIGURATION.md`](../../docs/architecture
 ## Development
 
 ```bash
-pnpm --filter @oc-mui/plugin-core-upload test:contract
-pnpm --filter @oc-mui/plugin-core-upload test
+pnpm --filter @opencast-mui/plugin-core-upload test:contract
+pnpm --filter @opencast-mui/plugin-core-upload test
 ```
 
 ## See also

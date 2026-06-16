@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import type { PluginManager } from "@oc-mui/plugin-system";
+import type { PluginManager } from "@opencast-mui/plugin-system";
 
 import { RemoteLoader } from "./remote-loader";
 
 import type { RegistryPlugin } from "./registry-fetcher";
 
 // We never reach the network call: `loadAndRegister` rejects on the
-// apiVersion gate before delegating to `@oc-mui/remote-plugin-loader`,
+// apiVersion gate before delegating to `@opencast-mui/remote-plugin-loader`,
 // so a no-op manager stub is enough.
 const fakeManager = {} as unknown as PluginManager;
 
@@ -63,19 +63,19 @@ describe("RemoteLoader.loadAndRegister shared-dependency gate", () => {
   it("rejects a plugin whose workspaceDependencies target an incompatible major", async () => {
     const result = await RemoteLoader.loadAndRegister(baseMetadata.url, fakeManager, {
       ...baseMetadata,
-      // Host ships @oc-mui/ui major 1; a plugin asking for major 2 is rejected.
-      workspaceDependencies: { "@oc-mui/ui": "^2.0.0" },
+      // Host ships @opencast-mui/ui major 1; a plugin asking for major 2 is rejected.
+      workspaceDependencies: { "@opencast-mui/ui": "^2.0.0" },
     });
 
     expect(result.success).toBe(false);
-    expect(result.error).toMatch(/@oc-mui\/ui/);
+    expect(result.error).toMatch(/@opencast-mui\/ui/);
     expect(result.error).toMatch(/major 2/);
   });
 
   it("rejects a plugin that declares an unparseable shared-dependency range", async () => {
     const result = await RemoteLoader.loadAndRegister(baseMetadata.url, fakeManager, {
       ...baseMetadata,
-      workspaceDependencies: { "@oc-mui/ui": "not-a-range" },
+      workspaceDependencies: { "@opencast-mui/ui": "not-a-range" },
     });
 
     expect(result.success).toBe(false);

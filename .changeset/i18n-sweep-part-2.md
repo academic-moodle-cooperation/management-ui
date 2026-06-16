@@ -1,19 +1,19 @@
 ---
-"@oc-mui/ui": patch
-"@oc-mui/i18n": patch
-"@oc-mui/router": patch
+"@opencast-mui/ui": patch
+"@opencast-mui/i18n": patch
+"@opencast-mui/router": patch
 ---
 
 i18n sweep, part 2: translate the remaining shipped user-facing strings (en + de).
 
-- `@oc-mui/ui`: `DefaultLandingPage`, the datatable empty-state ("No results."),
+- `@opencast-mui/ui`: `DefaultLandingPage`, the datatable empty-state ("No results."),
   `MetadataUpdateField` ("Pick a Date"), and the sidebar a11y strings
   (`sr-only`/`aria-label`/SheetTitle: Sidebar / Toggle Sidebar / Close sidebar).
 - shell: `ConfigLoadError` user-facing chrome (title, prod message, buttons).
   The dev-only setup instructions stay English (developer tooling, mirrors the
   English terminal notice).
-- `@oc-mui/router`: the auth-route fallbacks (loading + config-error +
-  "no login method"). `@oc-mui/i18n` added as a router dependency (it's a leaf
+- `@opencast-mui/router`: the auth-route fallbacks (loading + config-error +
+  "no login method"). `@opencast-mui/i18n` added as a router dependency (it's a leaf
   package, so no cycle).
 
 New keys under `common.{landing,configError,authRoutes,a11y,datepicker,noResults}`,

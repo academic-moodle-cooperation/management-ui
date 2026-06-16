@@ -17,7 +17,7 @@ The repository currently ships **five separate Vite applications** in `apps/`:
 `management-ui-core` dynamically loads the other apps at runtime. At the same time, third-party extensions (org customizations, themes, marketplaces) load through the plugin system. This creates **two parallel extension mechanisms** with different contracts, different lifecycles, and different testing stories:
 
 1. "First-class" features → independent Vite apps with privileged wiring.
-2. "Extensions" → plugins loaded through `@oc-mui/plugin-system`.
+2. "Extensions" → plugins loaded through `@opencast-mui/plugin-system`.
 
 Consequences observed in practice:
 
@@ -138,7 +138,7 @@ With the three features gone, the legacy loading path has been removed as well: 
 
 What has **not** been done yet and remains open:
 
-- `@tanstack/react-table` and `mustache` are kept as plugin-level dependencies in `plugins/core-upload`. A later pass may move them behind `@oc-mui/ui` or a shared data-table seam.
+- `@tanstack/react-table` and `mustache` are kept as plugin-level dependencies in `plugins/core-upload`. A later pass may move them behind `@opencast-mui/ui` or a shared data-table seam.
 
 ### Phase 2b / C2 update (2026-04-16)
 
@@ -147,7 +147,7 @@ namespace (`episodes` / `series` / `upload`) now that Phase 3 is complete and
 the core config type is about to become plugin-agnostic. `AppDefinition.id`,
 the `apps:definitions` registry key, and every `config.plugins["management-ui-*"]`
 lookup in the three core plugins use the short id. The default config in
-`@oc-mui/ui-config` was updated to match. This is a breaking change for any
+`@opencast-mui/ui-config` was updated to match. This is a breaking change for any
 `config.json` keyed on the long names — the Phase 2b docs commit carries the
 migration note.
 

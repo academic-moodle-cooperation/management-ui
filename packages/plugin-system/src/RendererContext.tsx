@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useMemo, useEffect, useRef } from "react";
 
-import { logger } from "@oc-mui/utils";
+import { logger } from "@opencast-mui/utils";
 
 import { usePluginManager } from "./PluginProvider";
 

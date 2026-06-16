@@ -1,4 +1,4 @@
-# @oc-mui/plugin-__PLUGIN_NAME__
+# @opencast-mui/plugin-__PLUGIN_NAME__
 
 TODO: One-paragraph description. What does this plugin do, what extension
 points does it register on, what is the configuration story.
@@ -9,9 +9,9 @@ points does it register on, what is the configuration story.
 # from the workspace root
 pnpm install
 
-pnpm --filter @oc-mui/plugin-__PLUGIN_NAME__ check-types
-pnpm --filter @oc-mui/plugin-__PLUGIN_NAME__ lint
-pnpm --filter @oc-mui/plugin-__PLUGIN_NAME__ test:contract
+pnpm --filter @opencast-mui/plugin-__PLUGIN_NAME__ check-types
+pnpm --filter @opencast-mui/plugin-__PLUGIN_NAME__ lint
+pnpm --filter @opencast-mui/plugin-__PLUGIN_NAME__ test:contract
 ```
 
 ## Next steps

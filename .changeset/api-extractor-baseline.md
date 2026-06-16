@@ -2,7 +2,7 @@
 ---
 
 Phase 5 PR-B: introduce API Extractor for the contract-stable packages
-`@oc-mui/plugin-system`, `@oc-mui/i18n`, and `@oc-mui/ui-config`.
+`@opencast-mui/plugin-system`, `@opencast-mui/i18n`, and `@opencast-mui/ui-config`.
 Each package now ships a committed `etc/<pkg>.api.md` snapshot, and CI
 fails when the public API surface drifts without an accompanying update.
 

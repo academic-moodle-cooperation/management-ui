@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { createCommunityPluginConfig } from "./community-plugin.config.js";
 
-// Regression guard for the `@workspace` → `@oc-mui` scope rename. The
+// Regression guard for the `@workspace` → `@opencast-mui` scope rename. The
 // `DEFAULT_EXTERNALS` regex must match the current host scope; if it ever
 // drifts back to the old scope (or any non-matching pattern), community
 // plugins silently bundle the host singletons (logger, React, i18n, plugin
@@ -17,10 +17,10 @@ describe("createCommunityPluginConfig externals", () => {
 
   const isExternal = external as (id: string) => boolean;
 
-  it("externalizes host-provided @oc-mui/* packages", () => {
-    expect(isExternal("@oc-mui/utils")).toBe(true);
-    expect(isExternal("@oc-mui/plugin-system")).toBe(true);
-    expect(isExternal("@oc-mui/ui")).toBe(true);
+  it("externalizes host-provided @opencast-mui/* packages", () => {
+    expect(isExternal("@opencast-mui/utils")).toBe(true);
+    expect(isExternal("@opencast-mui/plugin-system")).toBe(true);
+    expect(isExternal("@opencast-mui/ui")).toBe(true);
   });
 
   it("externalizes the host React runtime", () => {

@@ -1,4 +1,4 @@
-import { cn } from "@oc-mui/ui/lib/utils";
+import { cn } from "@opencast-mui/ui/lib/utils";
 
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (

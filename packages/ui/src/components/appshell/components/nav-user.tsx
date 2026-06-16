@@ -3,7 +3,7 @@
 import { ChevronsUpDown, LogOut } from "lucide-react";
 import React from "react";
 
-import { useGetCurrentUser } from "@oc-mui/query";
+import { useGetCurrentUser } from "@opencast-mui/query";
 
 import {
   Avatar,

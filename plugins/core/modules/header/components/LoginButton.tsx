@@ -1,7 +1,7 @@
 import React from "react";
 
-import { useAuth, useAuthActions } from "@oc-mui/router";
-import { Button } from "@oc-mui/ui/components";
+import { useAuth, useAuthActions } from "@opencast-mui/router";
+import { Button } from "@opencast-mui/ui/components";
 
 export const LoginButton = () => {
   const { isAuthenticated } = useAuth();

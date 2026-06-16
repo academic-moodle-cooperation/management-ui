@@ -1,5 +1,5 @@
 {
-  "name": "@oc-mui/store",
+  "name": "@opencast-mui/store",
   "version": "1.0.0",
   "description": "State-management facade (Jotai) for the Opencast Management UI and its plugins.",
   "author": "Academic Moodle Cooperation",
@@ -13,7 +13,7 @@
   "keywords": [
     "opencast",
     "management-ui",
-    "oc-mui",
+    "opencast-mui",
     "plugin",
     "state",
     "jotai"
@@ -89,8 +89,8 @@
   },
   "devDependencies": {
     "@types/react": "^18.0.0 || ^19.0.0",
-    "@oc-mui/eslint-config": "workspace:*",
-    "@oc-mui/typescript-config": "workspace:*",
+    "@opencast-mui/eslint-config": "workspace:*",
+    "@opencast-mui/typescript-config": "workspace:*",
     "eslint": "^9.9.0",
     "tsup": "^8.5.0",
     "typescript": "~5.5.4",

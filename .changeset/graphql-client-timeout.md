@@ -1,5 +1,5 @@
 ---
-"@oc-mui/query": patch
+"@opencast-mui/query": patch
 ---
 
 GraphQL client: apply a default per-request timeout (15s) so an

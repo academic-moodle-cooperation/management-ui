@@ -14,7 +14,7 @@
 ## Before-merge checklist
 
 - [ ] `pnpm verify` passes locally (lint + check-types + build + unit + contract + api-check + Playwright smoke).
-- [ ] If a `@oc-mui/*` package's public API surface changed: `pnpm api-check` regenerated, the diff in `etc/<pkg>.api.md` is intentional and committed.
+- [ ] If a `@opencast-mui/*` package's public API surface changed: `pnpm api-check` regenerated, the diff in `etc/<pkg>.api.md` is intentional and committed.
 - [ ] If a versioned package changed user-facing behaviour: a [Changeset](https://github.com/changesets/changesets) is included (`pnpm changeset`). Doc-only or shell/playground-only changes can skip this; CI's `Changeset` job tells you which.
 - [ ] [`AGENTS.md`](../AGENTS.md) rules followed for any plugin work (extension points in `plugin.json`, contract test up to date, no cross-plugin or cross-app imports).
 

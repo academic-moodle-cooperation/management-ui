@@ -1,4 +1,4 @@
-import { logger } from "@oc-mui/utils";
+import { logger } from "@opencast-mui/utils";
 
 import type { AppDefinition } from "../../appTypes";
 import type { Plugin } from "../../IPlugin";

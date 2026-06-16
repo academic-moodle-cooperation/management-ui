@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 
-import { Outlet, useRouterState } from "@oc-mui/router";
-import { Appshell } from "@oc-mui/ui/components";
+import { Outlet, useRouterState } from "@opencast-mui/router";
+import { Appshell } from "@opencast-mui/ui/components";
 
 import { MatomoTracker } from "../analytics/MatomoTracker";
 

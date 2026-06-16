@@ -8,7 +8,7 @@ import {
   createShellAppViteConfig,
   localConfigDevPlugin,
   localPluginsDevPlugin,
-} from "@oc-mui/vite-config";
+} from "@opencast-mui/vite-config";
 
 const packageName = process.env["npm_package_name"] || "shell";
 

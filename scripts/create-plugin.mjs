@@ -17,7 +17,7 @@
  * ship as part of the shell's JAR, not their own.
  *
  * The scaffolded plugin includes a placeholder `app:header-logo`
- * registration so `pnpm --filter @oc-mui/plugin-<name> test:contract`
+ * registration so `pnpm --filter @opencast-mui/plugin-<name> test:contract`
  * passes on first run. Edit src/index.ts + plugin.json's extensionPoints
  * to replace the placeholder with real logic.
  *
@@ -236,7 +236,7 @@ if (skipInstall) {
 console.log(`  ${step++}. pnpm build                  # one-time, populates dist-types/ for upstream packages`);
 console.log(`  ${step++}. edit ${relativeTarget}/plugin.json   # fill in description, author, real extensionPoints`);
 console.log(`  ${step++}. edit ${relativeTarget}/src/index.ts  # replace the placeholder registration`);
-console.log(`  ${step++}. pnpm --filter @oc-mui/plugin-${pluginName} test:contract`);
+console.log(`  ${step++}. pnpm --filter @opencast-mui/plugin-${pluginName} test:contract`);
 if (includeMaven) {
   console.log("");
   console.log("Maven-side (the backend/ subdirectory):");

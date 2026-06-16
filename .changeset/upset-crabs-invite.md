@@ -1,7 +1,7 @@
 ---
-"@oc-mui/query": minor
-"@oc-mui/ui": minor
-"@oc-mui/router": minor
+"@opencast-mui/query": minor
+"@opencast-mui/ui": minor
+"@opencast-mui/router": minor
 ---
 
 Friendly "Backend not reachable" notice when the Vite proxy can't reach
@@ -53,7 +53,7 @@ indefinitely on a failed config fetch — React Query retries 3× with
 exponential backoff, then sits in the error state forever because
 nothing was handling `isError`. Now:
 
-- `@oc-mui/query` exposes `refetch` and `configUrl` from `useAppConfig`
+- `@opencast-mui/query` exposes `refetch` and `configUrl` from `useAppConfig`
   (purely additive — minor bump). `refetch` lets a recovery UI re-run
   the fetch without a full page reload; `configUrl` lets the error
   screen show what was tried.
@@ -73,7 +73,7 @@ React-Query retries exhaust (~10s), the screen swaps from "Loading
 configuration..." to the new error layout. The Retry button re-fires
 the fetch without reload.
 
-**Error-page consolidation (`@oc-mui/ui` minor).** While wiring
+**Error-page consolidation (`@opencast-mui/ui` minor).** While wiring
 `ConfigLoadError` into the existing error-page family (404 / 500 / 401
 / 403 / 503), the family itself wasn't really a family — each page
 duplicated the same centered-layout / big-status-code / actions-row
@@ -84,7 +84,7 @@ shape:
 - `packages/ui/src/components/errors/error-page.tsx` (new) — shared
   `<ErrorPage code title description details actions />` primitive
   owning the centered layout, the big numeric code, typography, and
-  the actions row. Exported from `@oc-mui/ui/components`.
+  the actions row. Exported from `@opencast-mui/ui/components`.
 - All five existing error pages refactored to compose `<ErrorPage>`:
   `GeneralError`, `NotFoundError`, `UnauthorisedError`,
   `ForbiddenError`, `MaintenanceError`. Same visual output, ~half the
@@ -98,7 +98,7 @@ shape:
   `ModuleErrorFallback.tsx`: the file previously exported a duplicate
   `ErrorBoundary` class and a divergent `NotFoundError` using raw
   Tailwind palette colors. Both are now sourced from
-  `@oc-mui/ui/components` (single canonical implementation), and the
+  `@opencast-mui/ui/components` (single canonical implementation), and the
   remaining inline fallback was switched from `bg-red-50` /
   `text-red-700` to the semantic `bg-destructive/5` /
   `text-destructive` tokens so it themes correctly.
@@ -110,7 +110,7 @@ primitive, every error page is themeable, and there are no more
 duplicate `ErrorBoundary` / `NotFoundError` definitions drifting from
 each other.
 
-**Login redirect loop fix (`@oc-mui/router` minor + vite-config).**
+**Login redirect loop fix (`@opencast-mui/router` minor + vite-config).**
 Surfaced by Section 3 of the test protocol — visiting a protected route
 (`/episodes`) while logged out sent the browser to
 `http://localhost:3000/login.html` and got stuck there. Root cause:
@@ -133,8 +133,8 @@ Surfaced by Section 3 of the test protocol — visiting a protected route
   consumer can inject branded UI. (Additive, hence the minor bump; the
   props aren't part of the public `.api.md` surface since
   `AppProtectionProps` is internal.) The router package deliberately
-  does *not* import `<ErrorPage>` from `@oc-mui/ui` — `@oc-mui/ui`
-  already depends on `@oc-mui/router`, so importing back would form a
+  does *not* import `<ErrorPage>` from `@opencast-mui/ui` — `@opencast-mui/ui`
+  already depends on `@opencast-mui/router`, so importing back would form a
   dependency cycle. Dependency injection sidesteps it.
 
 - `apps/shell/src/components/DynamicRouterProvider.tsx` injects an
@@ -146,7 +146,7 @@ Verified by visiting `/episodes` logged out against a local backend:
 the browser now follows through to Opencast's login form instead of
 bouncing on a dead `/login.html`.
 
-**Shell-native login form (`@oc-mui/router` minor + shell).** Proxying
+**Shell-native login form (`@opencast-mui/router` minor + shell).** Proxying
 `/login.html` only got us a half-working flow: the form's assets
 (`/styles`, `/scripts`, `/img`) aren't proxied so it renders unstyled,
 and — more fundamentally — after login Opencast's
@@ -161,7 +161,7 @@ Opencast admin.
 Fix: own the login exchange in the shell.
 
 - `apps/shell/src/components/auth/LoginForm.tsx` (new) — a themed login
-  form (built from `@oc-mui/ui` `Card`/`Input`/`Button`/`Checkbox`) that
+  form (built from `@opencast-mui/ui` `Card`/`Input`/`Button`/`Checkbox`) that
   POSTs `j_username` / `j_password` to `/j_spring_security_check`
   (already proxied → same-origin session cookie) with
   `Accept: application/json` (so the success handler replies with a
@@ -173,12 +173,12 @@ Fix: own the login exchange in the shell.
   (mirrors Opencast's own `login.js`). Redirect target is sanitised
   against open-redirects.
 
-- `@oc-mui/router` `createLoginRoute` gains an optional `formComponent`
+- `@opencast-mui/router` `createLoginRoute` gains an optional `formComponent`
   (and exports `AuthRouteOptions` + `LoginFormComponentProps`). For
   Spring password backends (`loginUrl` contains `j_spring_security`) it
   renders the injected form; for external IdPs (Shibboleth/OIDC/CAS) it
   keeps the full-page redirect. The form is injected rather than
-  imported because `@oc-mui/router` can't depend on `@oc-mui/ui`
+  imported because `@opencast-mui/router` can't depend on `@opencast-mui/ui`
   (cycle). Additive → minor bump; the snapshot also picks up the
   now-properly-exported `AuthRouteOptions` (was an `ae-forgotten-export`
   warning before).

@@ -64,10 +64,10 @@ v6 introduced object-shaped selectors (`from: { type: "app" }`, `{{from.plugin}}
 
 ### 3.3 (d) Workspace-specifier cross-plugin import detection
 
-`import "../../<other-plugin>/..."` is caught today. `import "@oc-mui/plugin-<other>"` is not — the boundaries plugin follows the resolver but our pnpm symlinks aren't traversed in a way the rule can match against the `plugins/<name>` element pattern.
+`import "../../<other-plugin>/..."` is caught today. `import "@opencast-mui/plugin-<other>"` is not — the boundaries plugin follows the resolver but our pnpm symlinks aren't traversed in a way the rule can match against the `plugins/<name>` element pattern.
 
 - **When to revisit**: when a real cross-plugin workspace-specifier slip happens, or as a planned hardening pass.
-- **Suggested fix**: experiment with `eslint-import-resolver-typescript` config; fall back to a belt-and-suspenders `no-restricted-imports` rule against `@oc-mui/plugin-*` from inside plugin sources.
+- **Suggested fix**: experiment with `eslint-import-resolver-typescript` config; fall back to a belt-and-suspenders `no-restricted-imports` rule against `@opencast-mui/plugin-*` from inside plugin sources.
 - **Detail**: inline in [`packages/eslint-config/base.js`](../../packages/eslint-config/base.js).
 
 ### 3.4 Layer ordering inside `package → package`
@@ -77,14 +77,14 @@ Today the boundaries rule allows any `package` to import from any other `package
 - **When to revisit**: after Phase 6 namespace rename; mechanising this needs the same boundaries-elements infrastructure with `capture` rules to express layer order.
 - **Detail**: comment block in [`packages/eslint-config/base.js`](../../packages/eslint-config/base.js).
 
-### 3.5 ✅ `@oc-mui/ui` is now router-free — residual: optional `@oc-mui/auth` split
+### 3.5 ✅ `@opencast-mui/ui` is now router-free — residual: optional `@opencast-mui/auth` split
 
-The `@oc-mui/ui → @oc-mui/router` inversion is **resolved** (PR #180). `@oc-mui/ui` no longer depends on `@oc-mui/router`. Two distinct fixes, by component:
+The `@opencast-mui/ui → @opencast-mui/router` inversion is **resolved** (PR #180). `@opencast-mui/ui` no longer depends on `@opencast-mui/router`. Two distinct fixes, by component:
 
-- **Data table** — fully decoupled (not just DI'd). The empty state used to branch on `pathname` and hardcode app routes (`/upload`, `/episodes`, `/series`) + a `<Link>`. It now takes an additive `emptyState` prop threaded `MUITable → DataTable → DataTableBody`; the owning plugins provide it: `core-episodes/components/EpisodesEmptyState.tsx` (real `@oc-mui/router` Link) and `core-series/components/SeriesEmptyState.tsx` (keeps the `series:empty-state` `ComponentResolver` override hook). `data-table-{body,empty-state}` now hold **zero** routing/app knowledge.
-- **`appshell/components/nav-main.tsx`** — keeps DI via the `UiRouterProvider` context ([`packages/ui/src/components/router-context.tsx`](../../packages/ui/src/components/router-context.tsx)), which the shell fills with `@oc-mui/router`'s `Link` + a `useRouterState`-derived pathname (plain-`<a>` / empty-path defaults so it still renders provider-less in tests). A nav menu intrinsically needs routing, and it leans on TanStack's `Link` for basepath-aware active matching, so component injection (à la MUI's `LinkComponent`) is the right tool — re-implementing the matching via `navigate`/`useHref` was considered and rejected (regression risk for marginal gain). This is now the **only** consumer of the context DI.
+- **Data table** — fully decoupled (not just DI'd). The empty state used to branch on `pathname` and hardcode app routes (`/upload`, `/episodes`, `/series`) + a `<Link>`. It now takes an additive `emptyState` prop threaded `MUITable → DataTable → DataTableBody`; the owning plugins provide it: `core-episodes/components/EpisodesEmptyState.tsx` (real `@opencast-mui/router` Link) and `core-series/components/SeriesEmptyState.tsx` (keeps the `series:empty-state` `ComponentResolver` override hook). `data-table-{body,empty-state}` now hold **zero** routing/app knowledge.
+- **`appshell/components/nav-main.tsx`** — keeps DI via the `UiRouterProvider` context ([`packages/ui/src/components/router-context.tsx`](../../packages/ui/src/components/router-context.tsx)), which the shell fills with `@opencast-mui/router`'s `Link` + a `useRouterState`-derived pathname (plain-`<a>` / empty-path defaults so it still renders provider-less in tests). A nav menu intrinsically needs routing, and it leans on TanStack's `Link` for basepath-aware active matching, so component injection (à la MUI's `LinkComponent`) is the right tool — re-implementing the matching via `navigate`/`useHref` was considered and rejected (regression risk for marginal gain). This is now the **only** consumer of the context DI.
 
-**Residual (optional, low priority):** split auth context (`AuthInitializer`, `useAuth`, `useAuthActions`) out of `@oc-mui/router` into a dedicated `@oc-mui/auth` package — purely for `@oc-mui/router`'s own internal layering. No longer blocking anything now that the cycle is broken (`@oc-mui/router` could already import `@oc-mui/ui` if it wanted, e.g. to drop the PR-#146 DI workaround in `AppProtection`).
+**Residual (optional, low priority):** split auth context (`AuthInitializer`, `useAuth`, `useAuthActions`) out of `@opencast-mui/router` into a dedicated `@opencast-mui/auth` package — purely for `@opencast-mui/router`'s own internal layering. No longer blocking anything now that the cycle is broken (`@opencast-mui/router` could already import `@opencast-mui/ui` if it wanted, e.g. to drop the PR-#146 DI workaround in `AppProtection`).
 
 ---
 
@@ -112,7 +112,7 @@ See [1.2](#12-external-plugin-pom-template--maven-parent) above.
 
 **Status:** contract + check function shipped; loader-side enforcement now wired across all three paths. Only the JAR path's data source is residual (backend-owned).
 
-The Shared Runtime Dependencies contract (`@oc-mui/plugin-system`'s `SHARED_RUNTIME_MAJORS`, documented in [`architecture/CONTRACTS.md` §5](../architecture/CONTRACTS.md#5-shared-runtime-dependencies)) defines which packages the host provides and what major a plugin must declare in `workspaceDependencies`. `checkSharedDependencyCompatibility` is the single source of truth; all three loader paths now funnel through it:
+The Shared Runtime Dependencies contract (`@opencast-mui/plugin-system`'s `SHARED_RUNTIME_MAJORS`, documented in [`architecture/CONTRACTS.md` §5](../architecture/CONTRACTS.md#5-shared-runtime-dependencies)) defines which packages the host provides and what major a plugin must declare in `workspaceDependencies`. `checkSharedDependencyCompatibility` is the single source of truth; all three loader paths now funnel through it:
 
 - ✅ **Marketplace** — `securityService.checkVersionCompatibility` ([`security.ts`](../../plugins/admin-marketplace/src/services/security.ts)) is now a thin adapter over the canonical function (the older exact-semver logic was removed). Both the install-time load gate (`remote-loader.ts`) and the UI compatibility badge (`useMarketplace`) now use canonical major-matching, so they can't diverge.
 - ✅ **`.local-plugins/` dev** — the dev server surfaces each plugin's `workspaceDependencies` (read from `plugin.json`) into `/local-plugins/manifest.json` ([`local-plugins-dev.ts`](../../packages/vite-config/src/plugins/local-plugins-dev.ts)); the shell gates each entry via `passesSharedDependencyGate` ([`sharedDepsGate.ts`](../../apps/shell/src/services/sharedDepsGate.ts)) in `PluginInitializer` before loading.
@@ -174,7 +174,7 @@ These showed up during phase work and are explicitly **not** going to be fixed i
 
 Each `.local-plugins/<org>/` is its own git repository (gitignored from this monorepo). Two repo-internal updates land on those repos as a consequence of work that's already merged here:
 
-- **Phase 6b namespace rename — urgent.** Every `package.json` `dependencies` / `devDependencies` entry that references `@workspace/<name>` must be rewritten to `@oc-mui/<name>`, plus every import statement. Once an org pulls Management UI past PR #130, `pnpm install` from inside their `.local-plugins/<org>/` repo will fail until they rename — the main repo no longer publishes `@workspace/*` workspace identifiers. The same rewrite the main repo took works there too: `rg --hidden -l "@workspace/" | xargs perl -pi -e 's|\@workspace/|\@oc-mui/|g'`.
+- **Phase 6b namespace rename — urgent.** Every `package.json` `dependencies` / `devDependencies` entry that references `@workspace/<name>` must be rewritten to `@opencast-mui/<name>`, plus every import statement. Once an org pulls Management UI past PR #130, `pnpm install` from inside their `.local-plugins/<org>/` repo will fail until they rename — the main repo no longer publishes `@workspace/*` workspace identifiers. The same rewrite the main repo took works there too: `rg --hidden -l "@workspace/" | xargs perl -pi -e 's|\@workspace/|\@opencast-mui/|g'`.
 - **Phase 2b `pluginNamespace` cutover — graceful.** Older configs that still use the `pluginNamespace` key keep working only because the shell silently ignores the field; they're not surfacing as an error, but they're also not effective. Migrate at leisure to the `app.enabledPlugins` + `config.plugins[id].enabled` split documented in [`docs/architecture/CONFIGURATION.md`](../architecture/CONFIGURATION.md).
 
 Both updates are explicitly out of scope for the main repo — each org owns the rename in its own repo and on its own timeline.
@@ -230,7 +230,7 @@ The release test protocol was shipped to gate the first 1.0 public cut. It's wri
 
 After the first full pass, decide:
 
-- **Keep as-is**: re-run before every major bump of `@oc-mui/plugin-system` (or any of the six contract-stable packages). Treat it as the canonical pre-release gate.
+- **Keep as-is**: re-run before every major bump of `@opencast-mui/plugin-system` (or any of the six contract-stable packages). Treat it as the canonical pre-release gate.
 - **Generalize**: drop the "1.0-flip-specific" framing in the closing section, lift any 1.0-only items, document a leaner version that focuses on the integration surfaces (the four loading paths, the six contracts, the Maven build) without the publishing-flip walkthrough.
 - **Retire**: if the protocol's content is redundant with something else (e.g. an external QA process, or if it turns out our automated tests cover everything that mattered), delete it and rely on the automation.
 
