@@ -131,24 +131,23 @@ To support deep-link return after SSO we'd need to inject the attempted path int
 
 - **When to revisit**: only if an org asks for exact-route return after SSO. Detail: SSO branch of [`packages/router/src/auth/createAuthRoutes.tsx`](../../packages/router/src/auth/createAuthRoutes.tsx).
 
-### 5.5 Auth-error screen dumps the raw GraphQL error to the user
+### 5.5 ✅ Done — Auth-error screen no longer dumps the raw GraphQL error
 
-When the `currentUser` check fails against a 5xx/unreachable backend, [`apps/shell/src/components/AuthCheckError.tsx`](../../apps/shell/src/components/AuthCheckError.tsx) renders `error.message` verbatim in its `details` slot — for a GraphQL client error that's the full blob (`GraphQL Error (Code: 500): {"response":…,"request":{"query":"…MuiGetCurrentUser…"}}`). Fine for an admin debugging, but verbose and it exposes the operation/query text.
+When the `currentUser` check failed against a 5xx/unreachable backend, [`apps/shell/src/components/AuthCheckError.tsx`](../../apps/shell/src/components/AuthCheckError.tsx) used to render `error.message` verbatim in its `details` slot — for a GraphQL client error that's the full blob (`GraphQL Error (Code: 500): {"response":…,"request":{"query":"…MuiGetCurrentUser…"}}`). Fine for an admin debugging, but verbose and it exposed the operation/query text.
 
-- **Suggested form**: trim to a friendly one-line summary (status + "couldn't reach the server"), and move the raw message behind a collapsible "Show details" expander (or gate it on dev). Small, self-contained shell PR.
-- **When to revisit**: a UI-polish pass before the 1.0 cut. Surfaced while diagnosing a backend-down screen.
+✅ **Done.** The screen now shows a friendly one-line title + description and tucks the raw message behind a collapsible `<details>` "Show details" expander (`authError.showDetails`), so an admin can still expand it to debug but it's out of the user's face by default. See [`AuthCheckError.tsx`](../../apps/shell/src/components/AuthCheckError.tsx).
 
-### 5.6 A misbehaving remote plugin crashes the whole shell on boot
+### 5.6 ✅ Done (robustness) — a misbehaving remote plugin no longer crashes the whole shell
 
-**Symptom.** Booting the shell against a live backend throws `TypeError: Cannot read properties of undefined (reading 'length')` from inside a remote-loaded plugin blob (a `<L>` component in the dev console), and the app renders the error boundary instead of the UI. The console also shows `Warning: The following error wasn't caught by any route!` — so the failure is **not** contained to the offending plugin's route; it takes down the boot.
+**Symptom.** Booting the shell against a live backend threw `TypeError: Cannot read properties of undefined (reading 'length')` from inside a remote-loaded plugin blob (a `<L>` component in the dev console), and the app rendered the error boundary instead of the UI. The console also showed `Warning: The following error wasn't caught by any route!` — so the failure was **not** contained to the offending plugin's route; it took down the boot.
 
 **Scope / not a regression.** Observed only in a checkout that carries org `.local-plugins/` plus bundled community example plugins (`poll-plugin`, `video-playlists-plugin`, `series-create-acl-editor-plugin`, …). These load against a real backend's `enabledPlugins` and one of them reads `.length` on an undefined value. A fresh clone that lacks those `.local-plugins/` boots fine — which is why it hasn't surfaced elsewhere.
 
 **Two follow-up dimensions:**
-1. **Find & fix the offending plugin.** Narrow it down by bisecting `enabledPlugins` (or watching which plugin's blob is in the `<L>` stack frame) — prime suspects are an org plugin and the community fixtures. Likely a data-shape assumption that holds offline but breaks against real backend data (an array that's `undefined` until loaded).
-2. **Robustness (the more important one).** A single third-party plugin throwing during render should be *isolated*, not fatal to the shell. The remote-plugin render path needs a per-plugin error boundary so a broken plugin degrades to a placeholder rather than an app-wide crash — this matters once external orgs ship their own plugins. Related: the loader already logs `success:false` per plugin (PluginInitializer), but rendering isn't guarded the same way.
+1. ⏳ **Find & fix the offending plugin** — *org/community concern, not in-repo.* Narrow it down by bisecting `enabledPlugins` (or watching which plugin's blob is in the `<L>` stack frame) — prime suspects are an org plugin and the community fixtures. Likely a data-shape assumption that holds offline but breaks against real backend data (an array that's `undefined` until loaded). This lives in the org's `.local-plugins/` ([out-of-scope-by-design](#7-out-of-scope-by-design)), not the OSS tree.
+2. ✅ **Robustness (the important one) — Done.** A single third-party plugin throwing during render is now *isolated*, not fatal to the shell. Two render paths are guarded: plugin-provided component overrides go through [`PluginErrorBoundary`](../../packages/plugin-system/src/PluginErrorBoundary.tsx) in [`component-resolver.tsx`](../../packages/plugin-system/src/component-resolver.tsx) (a throwing override degrades to the built-in default component), and each plugin **app route** is wrapped in an `ErrorBoundary` with a `ModuleErrorFallback` in [`DynamicRouterProvider.tsx`](../../apps/shell/src/components/DynamicRouterProvider.tsx) (a broken plugin renders a placeholder for its route instead of taking down the boot). The loader already logs `success:false` per plugin (PluginInitializer); rendering is now guarded the same way.
 
-- **When to revisit**: dimension 2 before the public plugin ecosystem opens up; dimension 1 whenever the org/community fixtures are next touched. Repro: `VITE_PROXY_TARGET=<backend> pnpm --filter shell dev` in a checkout that has org `.local-plugins/`.
+- **When to revisit**: dimension 1 whenever the org/community fixtures are next touched. Repro: `VITE_PROXY_TARGET=<backend> pnpm --filter shell dev` in a checkout that has org `.local-plugins/`.
 
 ---
 
