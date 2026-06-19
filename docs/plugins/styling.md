@@ -10,7 +10,7 @@ This is **Theme Contract 2.0** — frozen for the 1.x line. See [`architecture/C
 
 | Layer | Owns |
 |-------|------|
-| **Host shell** | App chrome (sidebar, header, footer), shared components in `@opencast-mui/ui` |
+| **Host shell** | App chrome (sidebar, header, footer), shared components in `@oc-mui/ui` |
 | **Org theme** | Token values (`--primary`, `--sidebar`, fonts, radius) |
 | **Plugin** | Markup it renders itself — pages, cards, scoped wrappers |
 
@@ -78,7 +78,7 @@ Defined in [`packages/ui/src/styles/globals.css`](../../packages/ui/src/styles/g
 **Do**
 
 - Use semantic token classes (`bg-card`, `text-muted-foreground`, …).
-- Use components from `@opencast-mui/ui/components` (Button, Card, Input, Table, …).
+- Use components from `@oc-mui/ui/components` (Button, Card, Input, Table, …).
 - Use `lucide-react` for icons — provided by the host.
 - Scope any custom CSS to plugin-owned markup.
 - Override theme tokens in **theme CSS files**, not in plugin components.
@@ -148,7 +148,7 @@ When you must restyle a host or shared component:
 
 ## Dark mode
 
-Light/dark is the **appearance axis**, separate from the org-branding theme (`app.theme`). The shell mounts `ThemeModeProvider` (from `@opencast-mui/ui`, wrapping [`next-themes`](https://github.com/pacocoursey/next-themes)) and renders a Light/Dark/System toggle in the header. It defaults to the user's OS preference and persists their choice, applying a `.dark` class on `<html>` that activates the dark token block in `globals.css`.
+Light/dark is the **appearance axis**, separate from the org-branding theme (`app.theme`). The shell mounts `ThemeModeProvider` (from `@oc-mui/ui`, wrapping [`next-themes`](https://github.com/pacocoursey/next-themes)) and renders a Light/Dark/System toggle in the header. It defaults to the user's OS preference and persists their choice, applying a `.dark` class on `<html>` that activates the dark token block in `globals.css`.
 
 **Your plugin gets dark mode for free — if you follow the one rule.** Because every semantic token (`--background`, `--primary`, `--sidebar`, …) already has a `.dark` value, a plugin that uses the token-backed utilities (`bg-background`, `text-foreground`, `border-border`, `text-muted-foreground`, …) flips automatically. You do nothing.
 
@@ -201,23 +201,23 @@ A theme is a CSS file that overrides token values — color **and** structure (r
 ## Review checklist
 
 - [ ] No hardcoded colors, fonts, or sizes.
-- [ ] Uses `@opencast-mui/ui` components, not local shadcn copies.
+- [ ] Uses `@oc-mui/ui` components, not local shadcn copies.
 - [ ] CSS entry declares explicit Tailwind layers.
 - [ ] Any host-component overrides are scoped with a plugin-root selector.
 - [ ] Renders correctly in light and dark mode.
 - [ ] Renders correctly against the default theme **and** at least one org theme.
 - [ ] Theme files set `--font-*` to system stacks only — no remote `@import` of web fonts.
 
-## Consuming `@opencast-mui/ui` outside the monorepo
+## Consuming `@oc-mui/ui` outside the monorepo
 
-A plugin built in its own repo — installing `@opencast-mui/ui` from the registry rather than via the workspace — gets working styling from a single import in its Tailwind entry:
+A plugin built in its own repo — installing `@oc-mui/ui` from the registry rather than via the workspace — gets working styling from a single import in its Tailwind entry:
 
 ```css
 /* your-plugin/src/app.css */
-@import "@opencast-mui/ui/globals.css";
+@import "@oc-mui/ui/globals.css";
 ```
 
-That one line pulls in Tailwind, the `tailwindcss-animate` plugin, the design tokens, the Geist fonts, and a scan of `@opencast-mui/ui`'s own compiled classes — so the components you render are styled. Tailwind v4 additionally auto-scans your plugin's own project, so the utility classes in your markup are generated too; only content sources Tailwind can't auto-detect need an explicit `@source`. Override tokens exactly as in-repo (see [Overrides](#overrides)) — your theme CSS sets the same `--*` variables.
+That one line pulls in Tailwind, the `tailwindcss-animate` plugin, the design tokens, the Geist fonts, and a scan of `@oc-mui/ui`'s own compiled classes — so the components you render are styled. Tailwind v4 additionally auto-scans your plugin's own project, so the utility classes in your markup are generated too; only content sources Tailwind can't auto-detect need an explicit `@source`. Override tokens exactly as in-repo (see [Overrides](#overrides)) — your theme CSS sets the same `--*` variables.
 
 > The host application (the shell) declares the *app's* content sources in its own entry, [`apps/shell/src/app.css`](../../apps/shell/src/app.css), not in `globals.css` — which is why the shared stylesheet stays free of monorepo-specific paths and works unchanged for external consumers.
 

@@ -4,7 +4,7 @@
 #
 # Builds the SDK and publishes it to a Verdaccio registry that STAYS RUNNING,
 # so you can manually create a plugin OUTSIDE the monorepo and install + build
-# it against the @opencast-mui/* packages exactly as if they were on npm. This is the
+# it against the @oc-mui/* packages exactly as if they were on npm. This is the
 # same thing pkg.pr.new gives you on a PR, but entirely local and available now.
 #
 # Usage:
@@ -53,7 +53,7 @@ uplinks:
     url: https://registry.npmjs.org/
     cache: true
 packages:
-  '@opencast-mui/*':
+  '@oc-mui/*':
     access: \$all
     publish: \$anonymous
     unpublish: \$anonymous
@@ -89,21 +89,21 @@ cat <<EOF
     mkdir ~/sdk-test-plugin && cd ~/sdk-test-plugin
     echo 'registry=$REGISTRY/' > .npmrc
     pnpm init
-    pnpm add @opencast-mui/plugin-system @opencast-mui/ui @opencast-mui/utils
-    pnpm add -D @opencast-mui/plugin-testing @opencast-mui/typescript-config \\
-               @opencast-mui/vite-config react react-dom typescript vite
+    pnpm add @oc-mui/plugin-system @oc-mui/ui @oc-mui/utils
+    pnpm add -D @oc-mui/plugin-testing @oc-mui/typescript-config \\
+               @oc-mui/vite-config react react-dom typescript vite
 
   Then write a plugin (src/index.ts):
 
-    import { createPlugin } from "@opencast-mui/plugin-system";
-    import { cn } from "@opencast-mui/ui/lib/utils";
+    import { createPlugin } from "@oc-mui/plugin-system";
+    import { cn } from "@oc-mui/ui/lib/utils";
     export default createPlugin({
       namespace: "my-test", type: "app", version: "1.0.0",
       initialize() {}, activate() {}, deactivate() {},
     });
 
   ...and build it (pnpm exec tsc --noEmit, or a Vite build via
-  @opencast-mui/vite-config's createCommunityPluginConfig).
+  @oc-mui/vite-config's createCommunityPluginConfig).
 
   Leave this terminal open. Press Ctrl-C here when done.
 ============================================================================

@@ -1,4 +1,4 @@
-# @opencast-mui/typescript-config
+# @oc-mui/typescript-config
 
 Shared TypeScript configurations. Every workspace package extends one of these so the compiler flags stay consistent.
 
@@ -16,7 +16,7 @@ Shared TypeScript configurations. Every workspace package extends one of these s
 ```jsonc
 // tsconfig.json
 {
-  "extends": "@opencast-mui/typescript-config/react-library.json",
+  "extends": "@oc-mui/typescript-config/react-library.json",
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

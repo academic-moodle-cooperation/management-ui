@@ -18,14 +18,14 @@
  *       "author": { "name": "Author Name", "url": "https://example.com" },
  *       "url": "https://cdn.jsdelivr.net/gh/org/repo@v1.0.0/dist/plugin.mjs",
  *       "category": "feature",
- *       "workspaceDependencies": { "@opencast-mui/plugin-system": ">=1.0.0" }
+ *       "workspaceDependencies": { "@oc-mui/plugin-system": ">=1.0.0" }
  *     }
  *   ]
  * }
  * ```
  */
 
-import { logger } from "@opencast-mui/utils";
+import { logger } from "@oc-mui/utils";
 
 import { type PluginVersionConstraints } from "./security";
 
@@ -73,7 +73,7 @@ export interface RegistryPlugin {
   /**
    * Minimum plugin runtime API version this plugin requires.
    * The host loader refuses plugins whose major mismatches the host or whose
-   * minor exceeds the host's minor (see `@opencast-mui/plugin-system`'s
+   * minor exceeds the host's minor (see `@oc-mui/plugin-system`'s
    * `checkApiVersionCompatibility`). If absent, "1.0.0" is assumed.
    */
   apiVersion?: string;

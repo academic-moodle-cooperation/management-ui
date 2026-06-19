@@ -3,8 +3,8 @@ import {
   createLogoutRoute,
   createRoute,
   type AnyRoute,
-} from "@opencast-mui/router";
-import { AppLoader } from "@opencast-mui/ui/components";
+} from "@oc-mui/router";
+import { AppLoader } from "@oc-mui/ui/components";
 
 import { LoginForm } from "../components/auth/LoginForm";
 import { DefaultLandingComponent } from "../components/DefaultLandingComponent";

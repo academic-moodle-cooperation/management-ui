@@ -7,7 +7,7 @@ import {
   loadPluginInHarness,
   readPluginManifest,
   type TestHarness,
-} from "@opencast-mui/plugin-testing";
+} from "@oc-mui/plugin-testing";
 
 import { coreUploadPlugin } from "./index";
 

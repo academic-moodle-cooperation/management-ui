@@ -1,6 +1,6 @@
 import { ListVideo } from "lucide-react";
 
-import { createPlugin, type PluginManager } from "@opencast-mui/plugin-system";
+import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
 
 import App from "./App";
 import { CreateSeriesToolbarAction } from "./components/CreateSeriesToolbarAction";

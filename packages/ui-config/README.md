@@ -1,13 +1,13 @@
-# @opencast-mui/ui-config
+# @oc-mui/ui-config
 
-Static, side-effect-free baseline for `AppConfig`. Defines the type shape and the default values; the reactive layer lives in `@opencast-mui/query`'s `useAppConfig` and `definePluginConfig` reader.
+Static, side-effect-free baseline for `AppConfig`. Defines the type shape and the default values; the reactive layer lives in `@oc-mui/query`'s `useAppConfig` and `definePluginConfig` reader.
 
 **Contract**: 1.x. Public API surface tracked in [`etc/ui-config.api.md`](./etc/ui-config.api.md).
 
 ## Usage
 
 ```ts
-import { defaultConfig, getAppConfig, type AppConfig } from "@opencast-mui/ui-config";
+import { defaultConfig, getAppConfig, type AppConfig } from "@oc-mui/ui-config";
 
 // Override a few keys; the rest fall back to defaults.
 const config = getAppConfig({
@@ -15,7 +15,7 @@ const config = getAppConfig({
 });
 ```
 
-The runtime reads `config.json` (or the org-shipped equivalent), merges it on top of `defaultConfig`, and exposes the result through `useAppConfig()` from `@opencast-mui/query`. Plugins read **their own slice** through `definePluginConfig({ id, schema, defaults })`.
+The runtime reads `config.json` (or the org-shipped equivalent), merges it on top of `defaultConfig`, and exposes the result through `useAppConfig()` from `@oc-mui/query`. Plugins read **their own slice** through `definePluginConfig({ id, schema, defaults })`.
 
 ## Surface
 

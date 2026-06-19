@@ -11,10 +11,10 @@
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@opencast-mui/ui/components",
-    "utils": "@opencast-mui/ui/lib/utils",
-    "hooks": "@opencast-mui/ui/hooks",
-    "lib": "@opencast-mui/ui/lib",
-    "ui": "@opencast-mui/ui/components/ui"
+    "components": "@oc-mui/ui/components",
+    "utils": "@oc-mui/ui/lib/utils",
+    "hooks": "@oc-mui/ui/hooks",
+    "lib": "@oc-mui/ui/lib",
+    "ui": "@oc-mui/ui/components/ui"
   }
 }

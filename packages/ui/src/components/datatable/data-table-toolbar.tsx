@@ -2,7 +2,7 @@
 import { X, RefreshCcw } from "lucide-react";
 import React from "react";
 
-import { useI18n } from "@opencast-mui/i18n";
+import { useI18n } from "@oc-mui/i18n";
 
 import { cn } from "../../lib";
 import { DebouncedInput } from "../debounced-input";

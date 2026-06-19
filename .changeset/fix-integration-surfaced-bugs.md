@@ -1,6 +1,6 @@
 ---
-"@opencast-mui/ui": patch
-"@opencast-mui/plugin-core-upload": patch
+"@oc-mui/ui": patch
+"@oc-mui/plugin-core-upload": patch
 ---
 
 Fix two issues surfaced by real-backend integration testing:

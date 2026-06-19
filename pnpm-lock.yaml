@@ -82,10 +82,10 @@ importers:
 
   apps/playground:
     dependencies:
-      '@opencast-mui/app-runtime':
+      '@oc-mui/app-runtime':
         specifier: workspace:*
         version: link:../../packages/app-runtime
-      '@opencast-mui/ui':
+      '@oc-mui/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       react:
@@ -95,13 +95,13 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
-      '@opencast-mui/vite-config':
+      '@oc-mui/vite-config':
         specifier: workspace:*
         version: link:../../packages/vite-config
       '@types/react':
@@ -137,40 +137,40 @@ importers:
 
   apps/shell:
     dependencies:
-      '@opencast-mui/app-runtime':
+      '@oc-mui/app-runtime':
         specifier: workspace:*
         version: link:../../packages/app-runtime
-      '@opencast-mui/i18n':
+      '@oc-mui/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
-      '@opencast-mui/plugin-system':
+      '@oc-mui/plugin-system':
         specifier: workspace:*
         version: link:../../packages/plugin-system
-      '@opencast-mui/plugins':
+      '@oc-mui/plugins':
         specifier: workspace:*
         version: link:../../plugins
-      '@opencast-mui/providers':
+      '@oc-mui/providers':
         specifier: workspace:*
         version: link:../../packages/providers
-      '@opencast-mui/query':
+      '@oc-mui/query':
         specifier: workspace:*
         version: link:../../packages/query
-      '@opencast-mui/remote-plugin-loader':
+      '@oc-mui/remote-plugin-loader':
         specifier: workspace:*
         version: link:../../packages/remote-plugin-loader
-      '@opencast-mui/router':
+      '@oc-mui/router':
         specifier: workspace:*
         version: link:../../packages/router
-      '@opencast-mui/ui':
+      '@oc-mui/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@opencast-mui/ui-config':
+      '@oc-mui/ui-config':
         specifier: workspace:*
         version: link:../../packages/ui-config
-      '@opencast-mui/utils':
+      '@oc-mui/utils':
         specifier: workspace:*
         version: link:../../packages/utils
-      '@opencast-mui/vite-config':
+      '@oc-mui/vite-config':
         specifier: workspace:*
         version: link:../../packages/vite-config
       react:
@@ -180,10 +180,10 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@tailwindcss/vite':
@@ -228,26 +228,26 @@ importers:
 
   packages/app-runtime:
     dependencies:
-      '@opencast-mui/plugin-system':
+      '@oc-mui/plugin-system':
         specifier: workspace:*
         version: link:../plugin-system
-      '@opencast-mui/query':
+      '@oc-mui/query':
         specifier: workspace:*
         version: link:../query
-      '@opencast-mui/router':
+      '@oc-mui/router':
         specifier: workspace:*
         version: link:../router
-      '@opencast-mui/ui':
+      '@oc-mui/ui':
         specifier: workspace:*
         version: link:../ui
-      '@opencast-mui/utils':
+      '@oc-mui/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
@@ -339,10 +339,10 @@ importers:
         specifier: ^14.0.5
         version: 14.1.3(i18next@23.16.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@testing-library/react':
@@ -375,17 +375,17 @@ importers:
 
   packages/plugin-system:
     dependencies:
-      '@opencast-mui/utils':
+      '@oc-mui/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@opencast-mui/tailwind-config':
+      '@oc-mui/tailwind-config':
         specifier: workspace:*
         version: link:../tailwind-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@testing-library/react':
@@ -427,17 +427,17 @@ importers:
 
   packages/plugin-testing:
     dependencies:
-      '@opencast-mui/plugin-system':
+      '@oc-mui/plugin-system':
         specifier: workspace:*
         version: link:../plugin-system
-      '@opencast-mui/utils':
+      '@oc-mui/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@testing-library/jest-dom':
@@ -479,29 +479,29 @@ importers:
 
   packages/providers:
     dependencies:
-      '@opencast-mui/app-runtime':
+      '@oc-mui/app-runtime':
         specifier: workspace:*
         version: link:../app-runtime
-      '@opencast-mui/plugin-system':
+      '@oc-mui/plugin-system':
         specifier: workspace:*
         version: link:../plugin-system
-      '@opencast-mui/query':
+      '@oc-mui/query':
         specifier: workspace:*
         version: link:../query
-      '@opencast-mui/router':
+      '@oc-mui/router':
         specifier: workspace:*
         version: link:../router
-      '@opencast-mui/ui':
+      '@oc-mui/ui':
         specifier: workspace:*
         version: link:../ui
       react:
         specifier: ^18.0.0 || ^19.0.0
         version: 19.1.0
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
@@ -522,13 +522,13 @@ importers:
 
   packages/query:
     dependencies:
-      '@opencast-mui/plugin-system':
+      '@oc-mui/plugin-system':
         specifier: workspace:*
         version: link:../plugin-system
-      '@opencast-mui/ui-config':
+      '@oc-mui/ui-config':
         specifier: workspace:*
         version: link:../ui-config
-      '@opencast-mui/utils':
+      '@oc-mui/utils':
         specifier: workspace:*
         version: link:../utils
       '@tanstack/react-query':
@@ -565,10 +565,10 @@ importers:
       '@graphql-codegen/typescript-react-query':
         specifier: ^6.1.1
         version: 6.1.1(graphql@16.11.0)
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@testing-library/react':
@@ -601,17 +601,17 @@ importers:
 
   packages/remote-plugin-loader:
     dependencies:
-      '@opencast-mui/plugin-system':
+      '@oc-mui/plugin-system':
         specifier: workspace:*
         version: link:../plugin-system
-      '@opencast-mui/utils':
+      '@oc-mui/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       eslint:
@@ -626,10 +626,10 @@ importers:
 
   packages/router:
     dependencies:
-      '@opencast-mui/i18n':
+      '@oc-mui/i18n':
         specifier: workspace:*
         version: link:../i18n
-      '@opencast-mui/query':
+      '@oc-mui/query':
         specifier: workspace:*
         version: link:../query
       '@tanstack/react-router':
@@ -642,10 +642,10 @@ importers:
         specifier: ^18.0.0 || ^19.0.0
         version: 19.1.0
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@testing-library/react':
@@ -694,10 +694,10 @@ importers:
         specifier: ^4.5.4
         version: 4.5.7(@types/react@19.1.8)(immer@10.1.1)(react@19.1.0)
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@testing-library/react':
@@ -731,10 +731,10 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@4.1.11)
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       eslint:
@@ -754,19 +754,19 @@ importers:
       '@internationalized/date':
         specifier: ^3.8.1
         version: 3.8.2
-      '@opencast-mui/i18n':
+      '@oc-mui/i18n':
         specifier: workspace:*
         version: link:../i18n
-      '@opencast-mui/plugin-system':
+      '@oc-mui/plugin-system':
         specifier: workspace:*
         version: link:../plugin-system
-      '@opencast-mui/query':
+      '@oc-mui/query':
         specifier: workspace:*
         version: link:../query
-      '@opencast-mui/ui-config':
+      '@oc-mui/ui-config':
         specifier: workspace:*
         version: link:../ui-config
-      '@opencast-mui/utils':
+      '@oc-mui/utils':
         specifier: workspace:*
         version: link:../utils
       '@radix-ui/react-accordion':
@@ -860,10 +860,10 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@tailwindcss/postcss':
@@ -912,10 +912,10 @@ importers:
         specifier: ^18.0.0 || ^19.0.0
         version: 19.1.0
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
@@ -946,10 +946,10 @@ importers:
         specifier: ^3.3.0
         version: 3.4.1
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/crypto-js':
@@ -967,7 +967,7 @@ importers:
 
   packages/vite-config:
     dependencies:
-      '@opencast-mui/utils':
+      '@oc-mui/utils':
         specifier: workspace:*
         version: link:../utils
       '@tailwindcss/vite':
@@ -983,10 +983,10 @@ importers:
         specifier: '>=2.3.2'
         version: 3.1.4(vite@7.3.1(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
@@ -1004,10 +1004,10 @@ importers:
 
   plugins:
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../packages/eslint-config
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../packages/typescript-config
       '@types/node':
@@ -1028,16 +1028,16 @@ importers:
 
   plugins/admin-marketplace:
     dependencies:
-      '@opencast-mui/plugin-system':
+      '@oc-mui/plugin-system':
         specifier: workspace:*
         version: link:../../packages/plugin-system
-      '@opencast-mui/remote-plugin-loader':
+      '@oc-mui/remote-plugin-loader':
         specifier: workspace:*
         version: link:../../packages/remote-plugin-loader
-      '@opencast-mui/ui':
+      '@oc-mui/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@opencast-mui/utils':
+      '@oc-mui/utils':
         specifier: workspace:*
         version: link:../../packages/utils
       lucide-react:
@@ -1047,13 +1047,13 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@opencast-mui/plugin-testing':
+      '@oc-mui/plugin-testing':
         specifier: workspace:*
         version: link:../../packages/plugin-testing
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/react':
@@ -1071,19 +1071,19 @@ importers:
 
   plugins/core:
     dependencies:
-      '@opencast-mui/i18n':
+      '@oc-mui/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
-      '@opencast-mui/plugin-system':
+      '@oc-mui/plugin-system':
         specifier: workspace:*
         version: link:../../packages/plugin-system
-      '@opencast-mui/query':
+      '@oc-mui/query':
         specifier: workspace:*
         version: link:../../packages/query
-      '@opencast-mui/router':
+      '@oc-mui/router':
         specifier: workspace:*
         version: link:../../packages/router
-      '@opencast-mui/ui':
+      '@oc-mui/ui':
         specifier: workspace:*
         version: link:../../packages/ui
     devDependencies:
@@ -1108,28 +1108,28 @@ importers:
 
   plugins/core-episodes:
     dependencies:
-      '@opencast-mui/i18n':
+      '@oc-mui/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
-      '@opencast-mui/plugin-system':
+      '@oc-mui/plugin-system':
         specifier: workspace:*
         version: link:../../packages/plugin-system
-      '@opencast-mui/query':
+      '@oc-mui/query':
         specifier: workspace:*
         version: link:../../packages/query
-      '@opencast-mui/router':
+      '@oc-mui/router':
         specifier: workspace:*
         version: link:../../packages/router
-      '@opencast-mui/store':
+      '@oc-mui/store':
         specifier: workspace:*
         version: link:../../packages/store
-      '@opencast-mui/ui':
+      '@oc-mui/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@opencast-mui/ui-config':
+      '@oc-mui/ui-config':
         specifier: workspace:*
         version: link:../../packages/ui-config
-      '@opencast-mui/utils':
+      '@oc-mui/utils':
         specifier: workspace:*
         version: link:../../packages/utils
       lucide-react:
@@ -1142,13 +1142,13 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@opencast-mui/plugin-testing':
+      '@oc-mui/plugin-testing':
         specifier: workspace:*
         version: link:../../packages/plugin-testing
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/react':
@@ -1166,31 +1166,31 @@ importers:
 
   plugins/core-series:
     dependencies:
-      '@opencast-mui/i18n':
+      '@oc-mui/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
-      '@opencast-mui/plugin-system':
+      '@oc-mui/plugin-system':
         specifier: workspace:*
         version: link:../../packages/plugin-system
-      '@opencast-mui/providers':
+      '@oc-mui/providers':
         specifier: workspace:*
         version: link:../../packages/providers
-      '@opencast-mui/query':
+      '@oc-mui/query':
         specifier: workspace:*
         version: link:../../packages/query
-      '@opencast-mui/router':
+      '@oc-mui/router':
         specifier: workspace:*
         version: link:../../packages/router
-      '@opencast-mui/store':
+      '@oc-mui/store':
         specifier: workspace:*
         version: link:../../packages/store
-      '@opencast-mui/ui':
+      '@oc-mui/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@opencast-mui/ui-config':
+      '@oc-mui/ui-config':
         specifier: workspace:*
         version: link:../../packages/ui-config
-      '@opencast-mui/utils':
+      '@oc-mui/utils':
         specifier: workspace:*
         version: link:../../packages/utils
       lucide-react:
@@ -1203,13 +1203,13 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@opencast-mui/plugin-testing':
+      '@oc-mui/plugin-testing':
         specifier: workspace:*
         version: link:../../packages/plugin-testing
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/react':
@@ -1227,28 +1227,28 @@ importers:
 
   plugins/core-upload:
     dependencies:
-      '@opencast-mui/i18n':
+      '@oc-mui/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
-      '@opencast-mui/plugin-core':
+      '@oc-mui/plugin-core':
         specifier: workspace:*
         version: link:../core
-      '@opencast-mui/plugin-system':
+      '@oc-mui/plugin-system':
         specifier: workspace:*
         version: link:../../packages/plugin-system
-      '@opencast-mui/query':
+      '@oc-mui/query':
         specifier: workspace:*
         version: link:../../packages/query
-      '@opencast-mui/router':
+      '@oc-mui/router':
         specifier: workspace:*
         version: link:../../packages/router
-      '@opencast-mui/store':
+      '@oc-mui/store':
         specifier: workspace:*
         version: link:../../packages/store
-      '@opencast-mui/ui':
+      '@oc-mui/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@opencast-mui/utils':
+      '@oc-mui/utils':
         specifier: workspace:*
         version: link:../../packages/utils
       '@tanstack/react-table':
@@ -1267,13 +1267,13 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@opencast-mui/plugin-testing':
+      '@oc-mui/plugin-testing':
         specifier: workspace:*
         version: link:../../packages/plugin-testing
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/mustache':
@@ -1294,20 +1294,20 @@ importers:
 
   plugins/example:
     dependencies:
-      '@opencast-mui/plugin-system':
+      '@oc-mui/plugin-system':
         specifier: workspace:*
         version: link:../../packages/plugin-system
-      '@opencast-mui/utils':
+      '@oc-mui/utils':
         specifier: workspace:*
         version: link:../../packages/utils
     devDependencies:
-      '@opencast-mui/eslint-config':
+      '@oc-mui/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@opencast-mui/plugin-testing':
+      '@oc-mui/plugin-testing':
         specifier: workspace:*
         version: link:../../packages/plugin-testing
-      '@opencast-mui/typescript-config':
+      '@oc-mui/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/node':

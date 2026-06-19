@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useAppConfig, useGetCurrentUser } from "@opencast-mui/query";
+import { useAppConfig, useGetCurrentUser } from "@oc-mui/query";
 
 import { useAuth } from "../auth/AuthContext";
 import { isAuthenticationError } from "../auth/isAuthenticationError";
@@ -21,7 +21,7 @@ interface AppProtectionProps {
    * network) error and no user could be resolved — instead of the infinite
    * "Checking authentication…" spinner. Receives the error and a retry
    * callback (re-runs the `currentUser` fetch). Injected by the shell so this
-   * package needn't import `@opencast-mui/ui`. Optional — falls back to a minimal
+   * package needn't import `@oc-mui/ui`. Optional — falls back to a minimal
    * inline message with a Retry button.
    */
   errorComponent?: React.ComponentType<{ error: unknown; onRetry: () => void }>;
@@ -52,7 +52,7 @@ const buildLoginRedirectUrl = (): string => {
  *
  * The loading / redirecting UI is injectable via `loadingComponent` /
  * `redirectingComponent` so this component stays UI-light: the router
- * package can't import `@opencast-mui/ui` (that package already depends on the
+ * package can't import `@oc-mui/ui` (that package already depends on the
  * router, so importing back would form a cycle).
  *
  * Usage:

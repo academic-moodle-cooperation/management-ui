@@ -1,4 +1,4 @@
-import { createPlugin, type PluginManager } from "@opencast-mui/plugin-system";
+import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
 
 /**
  * Upload Extension Points Plugin

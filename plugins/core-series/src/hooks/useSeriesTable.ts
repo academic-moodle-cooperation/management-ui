@@ -4,11 +4,11 @@ import {
   useMuiGetMySeriesQuery,
   OrderDirection,
   useMuiGetSeriesByIdInputFieldsQuery,
-} from "@opencast-mui/query";
-import { useNavigate } from "@opencast-mui/router";
-import { useSidebarContent } from "@opencast-mui/ui/components";
-import type { Row } from "@opencast-mui/ui/components";
-import { hasProcessingEvents } from "@opencast-mui/utils";
+} from "@oc-mui/query";
+import { useNavigate } from "@oc-mui/router";
+import { useSidebarContent } from "@oc-mui/ui/components";
+import type { Row } from "@oc-mui/ui/components";
+import { hasProcessingEvents } from "@oc-mui/utils";
 
 import { useSidebarStore } from "../stores/sidebarStore";
 

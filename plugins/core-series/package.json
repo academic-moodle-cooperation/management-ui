@@ -1,5 +1,5 @@
 {
-  "name": "@opencast-mui/plugin-core-series",
+  "name": "@oc-mui/plugin-core-series",
   "version": "1.0.0",
   "license": "ECL-2.0",
   "private": true,
@@ -14,24 +14,24 @@
     "test:contract": "vitest run plugin.contract"
   },
   "dependencies": {
-    "@opencast-mui/i18n": "workspace:*",
-    "@opencast-mui/plugin-system": "workspace:*",
-    "@opencast-mui/providers": "workspace:*",
-    "@opencast-mui/query": "workspace:*",
-    "@opencast-mui/router": "workspace:*",
-    "@opencast-mui/store": "workspace:*",
-    "@opencast-mui/ui": "workspace:*",
-    "@opencast-mui/ui-config": "workspace:*",
-    "@opencast-mui/utils": "workspace:*",
+    "@oc-mui/i18n": "workspace:*",
+    "@oc-mui/plugin-system": "workspace:*",
+    "@oc-mui/providers": "workspace:*",
+    "@oc-mui/query": "workspace:*",
+    "@oc-mui/router": "workspace:*",
+    "@oc-mui/store": "workspace:*",
+    "@oc-mui/ui": "workspace:*",
+    "@oc-mui/ui-config": "workspace:*",
+    "@oc-mui/utils": "workspace:*",
     "lucide-react": "^0.417.0",
     "react": "^19.1.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/react": "^18.0.0 || ^19.0.0",
-    "@opencast-mui/eslint-config": "workspace:*",
-    "@opencast-mui/plugin-testing": "workspace:*",
-    "@opencast-mui/typescript-config": "workspace:*",
+    "@oc-mui/eslint-config": "workspace:*",
+    "@oc-mui/plugin-testing": "workspace:*",
+    "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.20.0",
     "typescript": "^5.3.3",
     "vitest": "^4.0.17"

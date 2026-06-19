@@ -1,5 +1,5 @@
 /**
- * @opencast-mui/plugin-example
+ * @oc-mui/plugin-example
  *
  * Reference implementation of a minimal plugin. It demonstrates the mandatory
  * plugin lifecycle (initialize / activate / deactivate) and how to register

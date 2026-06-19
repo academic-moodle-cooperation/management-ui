@@ -1,14 +1,14 @@
 ---
-"@opencast-mui/plugin-testing": patch
-"@opencast-mui/ui-config": patch
-"@opencast-mui/store": patch
-"@opencast-mui/query": patch
-"@opencast-mui/i18n": patch
-"@opencast-mui/plugin-system": patch
-"@opencast-mui/router": patch
-"@opencast-mui/app-runtime": patch
-"@opencast-mui/plugin-core": patch
-"@opencast-mui/ui": patch
+"@oc-mui/plugin-testing": patch
+"@oc-mui/ui-config": patch
+"@oc-mui/store": patch
+"@oc-mui/query": patch
+"@oc-mui/i18n": patch
+"@oc-mui/plugin-system": patch
+"@oc-mui/router": patch
+"@oc-mui/app-runtime": patch
+"@oc-mui/plugin-core": patch
+"@oc-mui/ui": patch
 ---
 
 Ship a built `dist/` for the SDK packages so external consumers get compiled
@@ -20,7 +20,7 @@ so the `.api.md` pipeline is untouched (verified green for all four
 instrumented packages here).
 
 Dev/test resolution is preserved: package-level `exports` still point at
-`src`, so vite/vitest keep resolving `@opencast-mui/*` to live TypeScript. A
+`src`, so vite/vitest keep resolving `@oc-mui/*` to live TypeScript. A
 `publishConfig.exports` (applied by pnpm at pack/publish) swaps them to
 `dist` + `dist-types`, and `files` ships only those.
 
@@ -47,7 +47,7 @@ Per-package notes:
   monorepo-specific `@source` globs (apps/plugins/.local-plugins) moved out of
   the shared stylesheet into the shell's own Tailwind entry, leaving only a
   self-scan of the library's own files. A consumer now gets working styling
-  from `@import "@opencast-mui/ui/globals.css"` alone (component classes + tokens +
+  from `@import "@oc-mui/ui/globals.css"` alone (component classes + tokens +
   fonts; Tailwind v4 auto-scans their own project). Verified pixel-identical
   against the visual-regression baselines and with a real external Tailwind
   build.

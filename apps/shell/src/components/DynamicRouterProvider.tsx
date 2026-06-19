@@ -5,8 +5,8 @@ import {
   getAllApps,
   type PluginManager,
   type AppDefinition,
-} from "@opencast-mui/plugin-system";
-import { getCachedAppConfig } from "@opencast-mui/query";
+} from "@oc-mui/plugin-system";
+import { getCachedAppConfig } from "@oc-mui/query";
 import {
   AppProtection,
   createRouter,
@@ -15,9 +15,9 @@ import {
   useNavigate,
   type AnyRoute,
   type AnyRouter,
-} from "@opencast-mui/router";
-import { AppLoader, ErrorBoundary, NotFoundError } from "@opencast-mui/ui/components";
-import { logger } from "@opencast-mui/utils";
+} from "@oc-mui/router";
+import { AppLoader, ErrorBoundary, NotFoundError } from "@oc-mui/ui/components";
+import { logger } from "@oc-mui/utils";
 
 import { createCommonRoutes } from "../shared/commonRoutes";
 
@@ -40,7 +40,7 @@ import { CoreAppShellLayout } from "./layout/CoreAppShellLayout";
  * Wraps the shared `<NotFoundError>` so the page's "Go Back" and
  * "Back to Home" buttons actually do something inside the router
  * context. `NotFoundError` itself is router-agnostic (it lives in
- * `@opencast-mui/ui`), so wiring nav has to happen at the consumer.
+ * `@oc-mui/ui`), so wiring nav has to happen at the consumer.
  */
 const NotFoundRoute = () => {
   const navigate = useNavigate();

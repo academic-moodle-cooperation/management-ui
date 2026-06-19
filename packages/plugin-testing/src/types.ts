@@ -1,4 +1,4 @@
-import type { Plugin, PluginManager } from "@opencast-mui/plugin-system";
+import type { Plugin, PluginManager } from "@oc-mui/plugin-system";
 
 import type { ReactElement, ReactNode } from "react";
 

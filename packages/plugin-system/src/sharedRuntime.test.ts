@@ -16,15 +16,15 @@ describe("SHARED_RUNTIME_MAJORS", () => {
       "react-dom": 19,
       "react/jsx-runtime": 19,
       "lucide-react": 0,
-      "@opencast-mui/plugin-system": 1,
-      "@opencast-mui/app-runtime": 1,
-      "@opencast-mui/ui": 1,
-      "@opencast-mui/query": 1,
-      "@opencast-mui/router": 1,
-      "@opencast-mui/i18n": 1,
-      "@opencast-mui/utils": 1,
-      "@opencast-mui/store": 1,
-      "@opencast-mui/ui-config": 1,
+      "@oc-mui/plugin-system": 1,
+      "@oc-mui/app-runtime": 1,
+      "@oc-mui/ui": 1,
+      "@oc-mui/query": 1,
+      "@oc-mui/router": 1,
+      "@oc-mui/i18n": 1,
+      "@oc-mui/utils": 1,
+      "@oc-mui/store": 1,
+      "@oc-mui/ui-config": 1,
     });
   });
 
@@ -107,7 +107,7 @@ describe("checkSharedDependencyCompatibility", () => {
   it("accepts a plugin pinned to the same major", () => {
     const result = checkSharedDependencyCompatibility({
       react: "^19.0.0",
-      "@opencast-mui/plugin-system": ">=1.0.0",
+      "@oc-mui/plugin-system": ">=1.0.0",
     });
     expect(result.compatible).toBe(true);
     expect(result.incompatibilities).toBeUndefined();
@@ -131,7 +131,7 @@ describe("checkSharedDependencyCompatibility", () => {
   it("collects multiple incompatibilities", () => {
     const result = checkSharedDependencyCompatibility({
       react: "^18.0.0",
-      "@opencast-mui/plugin-system": "^2.0.0",
+      "@oc-mui/plugin-system": "^2.0.0",
     });
     expect(result.compatible).toBe(false);
     expect(result.incompatibilities).toHaveLength(2);
@@ -156,7 +156,7 @@ describe("checkSharedDependencyCompatibility", () => {
     expect(names).toContain("@workspace/plugin-system");
     expect(names).toContain("@workspace/ui");
     const reasons = (result.incompatibilities ?? []).map((i) => i.reason).join(" ");
-    expect(reasons).toContain("@opencast-mui/plugin-system");
+    expect(reasons).toContain("@oc-mui/plugin-system");
   });
 
   it("still treats a genuinely unknown scoped dep as non-blocking", () => {

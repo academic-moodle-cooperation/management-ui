@@ -1,5 +1,5 @@
 ---
-"@opencast-mui/vite-config": patch
+"@oc-mui/vite-config": patch
 ---
 
 Dev server: serve `.local-plugins/` assets with correct per-extension MIME

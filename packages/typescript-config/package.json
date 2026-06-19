@@ -1,5 +1,5 @@
 {
-  "name": "@opencast-mui/typescript-config",
+  "name": "@oc-mui/typescript-config",
   "version": "1.0.0",
   "description": "Shared TypeScript configurations for the Opencast Management UI and its plugins.",
   "author": "Academic Moodle Cooperation",
@@ -13,7 +13,7 @@
   "keywords": [
     "opencast",
     "management-ui",
-    "opencast-mui",
+    "oc-mui",
     "plugin",
     "typescript",
     "tsconfig"

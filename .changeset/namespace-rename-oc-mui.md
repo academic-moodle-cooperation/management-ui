@@ -1,15 +1,15 @@
 ---
 ---
 
-Phase 6b: namespace rename `@workspace/*` → `@opencast-mui/*` across the
+Phase 6b: namespace rename `@workspace/*` → `@oc-mui/*` across the
 entire workspace. Plus the special-case unscoped `plugin-core` →
-`@opencast-mui/plugin-core`.
+`@oc-mui/plugin-core`.
 
 This is a package-identifier change, not a behaviour change. Since no
 package has been published yet (the changesets config still has
 `access: "restricted"` and Phase 6d is the deliberate flip), we are
 keeping every package at its current `1.0.0` rather than treating the
-rename as a major bump. The first public release on `@opencast-mui/*` will be
+rename as a major bump. The first public release on `@oc-mui/*` will be
 `1.0.0` of those packages.
 
 What changed:
@@ -36,7 +36,7 @@ What stayed the same:
 
 - `shell`, `playground` — apps with no `@-scope`, unchanged.
 - `pnpm-workspace.yaml` patterns — folder-based, not name-based.
-- `boundaries/elements` in `@opencast-mui/eslint-config/base.js` — folder
+- `boundaries/elements` in `@oc-mui/eslint-config/base.js` — folder
   patterns (`apps/*`, `plugins/*`, `packages/*`), survived untouched.
 - All file paths and directory names.
 - Plugin namespaces, plugin IDs, plugin types declared in

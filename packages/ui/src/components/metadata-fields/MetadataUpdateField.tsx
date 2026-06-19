@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import React, { useState } from "react";
 
-import { useI18n } from "@opencast-mui/i18n";
+import { useI18n } from "@oc-mui/i18n";
 import {
   useInfiniteQuery,
   createGraphQLClient,
@@ -10,9 +10,9 @@ import {
   OrderDirection,
   type MuiGetMySeriesNameAndIdQuery,
   type Series,
-} from "@opencast-mui/query";
-import { useAppConfig } from "@opencast-mui/query";
-import { serializeDuration } from "@opencast-mui/utils";
+} from "@oc-mui/query";
+import { useAppConfig } from "@oc-mui/query";
+import { serializeDuration } from "@oc-mui/utils";
 
 import { DatePicker } from "../datepicker";
 import { TimePicker } from "../datetime-picker";

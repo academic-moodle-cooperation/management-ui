@@ -1,7 +1,7 @@
 /* eslint-disable */
 // AUTO-GENERATED from the GraphQL schema by
 // codegen-plugins/input-field-names.mjs — DO NOT EDIT BY HAND.
-// Regenerate: pnpm --filter @opencast-mui/query codegen
+// Regenerate: pnpm --filter @oc-mui/query codegen
 
 export const EVENT_FILTER_BY_FIELDS = ["published","seriesId","status"] as const;
 export const EVENT_ORDER_BY_FIELDS = ["created","endDate","eventStatus","location","presenters","seriesName","startDate","technicalEndTime","technicalStartTime","title","workflowState"] as const;

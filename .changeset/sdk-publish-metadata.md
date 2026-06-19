@@ -1,19 +1,19 @@
 ---
-"@opencast-mui/plugin-system": patch
-"@opencast-mui/plugin-core": patch
-"@opencast-mui/plugin-testing": patch
-"@opencast-mui/ui": patch
-"@opencast-mui/ui-config": patch
-"@opencast-mui/utils": patch
-"@opencast-mui/i18n": patch
-"@opencast-mui/query": patch
-"@opencast-mui/router": patch
-"@opencast-mui/store": patch
-"@opencast-mui/vite-config": patch
-"@opencast-mui/eslint-config": patch
-"@opencast-mui/typescript-config": patch
-"@opencast-mui/app-runtime": patch
-"@opencast-mui/tailwind-config": patch
+"@oc-mui/plugin-system": patch
+"@oc-mui/plugin-core": patch
+"@oc-mui/plugin-testing": patch
+"@oc-mui/ui": patch
+"@oc-mui/ui-config": patch
+"@oc-mui/utils": patch
+"@oc-mui/i18n": patch
+"@oc-mui/query": patch
+"@oc-mui/router": patch
+"@oc-mui/store": patch
+"@oc-mui/vite-config": patch
+"@oc-mui/eslint-config": patch
+"@oc-mui/typescript-config": patch
+"@oc-mui/app-runtime": patch
+"@oc-mui/tailwind-config": patch
 ---
 
 Add npm publish metadata to the plugin-author SDK packages.

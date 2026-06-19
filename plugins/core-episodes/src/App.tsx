@@ -1,6 +1,6 @@
-import { useI18n } from "@opencast-mui/i18n";
-import { useParams } from "@opencast-mui/router";
-import { AppHeading, Container, Separator } from "@opencast-mui/ui/components";
+import { useI18n } from "@oc-mui/i18n";
+import { useParams } from "@oc-mui/router";
+import { AppHeading, Container, Separator } from "@oc-mui/ui/components";
 
 import { EpisodesTable } from "./components/EpisodesTable";
 import { useSeriesName } from "./hooks/useSeriesName";

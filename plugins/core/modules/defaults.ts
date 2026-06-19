@@ -1,5 +1,5 @@
-import { createPlugin, type PluginManager } from "@opencast-mui/plugin-system";
-import { Home } from "@opencast-mui/ui/components";
+import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
+import { Home } from "@oc-mui/ui/components";
 
 /**
  * Core Default Implementations

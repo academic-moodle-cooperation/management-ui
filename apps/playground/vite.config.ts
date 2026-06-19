@@ -1,6 +1,6 @@
 import { defineConfig, loadEnv } from "vite";
 
-import { createPluginAppViteConfig } from "@opencast-mui/vite-config";
+import { createPluginAppViteConfig } from "@oc-mui/vite-config";
 
 const packageName = process.env["npm_package_name"] || "playground";
 

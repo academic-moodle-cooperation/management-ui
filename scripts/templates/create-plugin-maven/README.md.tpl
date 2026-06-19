@@ -54,7 +54,7 @@ The tracker then reads `static/plugins/__PLUGIN_NAME__/plugin.json` (copied from
 
 - **Don't move this `backend/` directory** without also updating the relative paths in `pom.xml` (`${project.basedir}/..` is hardcoded as the plugin root).
 - **Don't rename `Management-Plugin` or `Http-Alias` headers** unless you're sure Opencast's tracker has been updated to recognise the new name.
-- **Don't bundle `react`, `@opencast-mui/*`, or other shared runtime deps into the JAR** — they're provided by the host. See [`docs/architecture/CONTRACTS.md` § 5](https://github.com/academic-moodle-cooperation/management-tool/blob/HEAD/docs/architecture/CONTRACTS.md#5-shared-runtime-dependencies) for the full list.
+- **Don't bundle `react`, `@oc-mui/*`, or other shared runtime deps into the JAR** — they're provided by the host. See [`docs/architecture/CONTRACTS.md` § 5](https://github.com/academic-moodle-cooperation/management-tool/blob/HEAD/docs/architecture/CONTRACTS.md#5-shared-runtime-dependencies) for the full list.
 
 ## See also
 

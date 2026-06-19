@@ -1,4 +1,4 @@
-# @opencast-mui/plugin-admin-marketplace
+# @oc-mui/plugin-admin-marketplace
 
 The marketplace UI. Lets administrators browse, try, and install remote plugins (and themes) at runtime through the same loader the shell uses for JAR plugins.
 
@@ -28,7 +28,7 @@ admin-marketplace/
 │   │   ├── plugin-explorer.ts          Discover bundled plugins, enable/disable
 │   │   ├── plugin-metadata.ts          Extension-point hints per plugin (TODO: read from manifest)
 │   │   ├── registry-fetcher.ts         Pull from a registry API
-│   │   ├── remote-loader.ts            Validate URL/version, then delegate to @opencast-mui/remote-plugin-loader
+│   │   ├── remote-loader.ts            Validate URL/version, then delegate to @oc-mui/remote-plugin-loader
 │   │   ├── security.ts                 URL allowlist + version compat checks
 │   │   ├── theme-loader.ts             Theme CSS try/install
 │   │   ├── themes.ts                   Built-in theme list
@@ -45,7 +45,7 @@ admin-marketplace/
 The marketplace doesn't reimplement loading — it composes:
 
 1. **Validate** — `security.ts` checks URL allowlist (HTTPS-only, optional org-pinned hosts) and version compatibility.
-2. **Delegate** — call `loadAndRegister(url, manager, options)` from [`@opencast-mui/remote-plugin-loader`](../../packages/remote-plugin-loader/). That package owns the fetch/transform/CSS-inject/register pipeline.
+2. **Delegate** — call `loadAndRegister(url, manager, options)` from [`@oc-mui/remote-plugin-loader`](../../packages/remote-plugin-loader/). That package owns the fetch/transform/CSS-inject/register pipeline.
 3. **Persist** — if "Install", write to `localStorage` so the shell's auto-loader picks it up next boot.
 
 JAR plugins are loaded by the **shell** at boot, not by the marketplace. The marketplace is optional for JAR deployments.

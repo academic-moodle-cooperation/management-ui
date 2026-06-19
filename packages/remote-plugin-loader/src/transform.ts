@@ -2,10 +2,10 @@
  * ES module source transformation for remote plugins.
  *
  * Replaces bare import specifiers with references to window.__SHARED_MODULES__
- * so community plugins can use host-provided packages (react, @opencast-mui/*).
+ * so community plugins can use host-provided packages (react, @oc-mui/*).
  */
 
-import { logger } from "@opencast-mui/utils";
+import { logger } from "@oc-mui/utils";
 
 const remoteLoaderLogger = logger.child({ component: "RemotePluginLoader" });
 
@@ -19,16 +19,16 @@ export const SHARED_MODULE_NAMES = [
   "react-dom",
   "react/jsx-runtime",
   "lucide-react",
-  "@opencast-mui/plugin-system",
-  "@opencast-mui/ui/components",
-  "@opencast-mui/ui/components/icons",
-  "@opencast-mui/ui/lib",
-  "@opencast-mui/ui/lib/utils",
-  "@opencast-mui/query",
-  "@opencast-mui/router",
-  "@opencast-mui/utils",
-  "@opencast-mui/i18n",
-  "@opencast-mui/app-runtime",
+  "@oc-mui/plugin-system",
+  "@oc-mui/ui/components",
+  "@oc-mui/ui/components/icons",
+  "@oc-mui/ui/lib",
+  "@oc-mui/ui/lib/utils",
+  "@oc-mui/query",
+  "@oc-mui/router",
+  "@oc-mui/utils",
+  "@oc-mui/i18n",
+  "@oc-mui/app-runtime",
 ];
 
 /**
@@ -173,23 +173,23 @@ ${moduleNames
     }
   }
 
-  // Fail loudly, not silently: a plugin that imports an `@opencast-mui/*` package the
+  // Fail loudly, not silently: a plugin that imports an `@oc-mui/*` package the
   // host doesn't expose as a shared module would otherwise keep a bare import in
   // the blob and die with a cryptic "Failed to load plugin". Surface exactly
   // which package is missing and how to fix it. (Keep this list — SHARED_MODULE_NAMES —
   // in sync with the host's `exposeSharedModules()` and `SHARED_RUNTIME_MAJORS`.)
   const unprovidedOcMui = [
     ...new Set(
-      (transformed.match(/from\s+["'](@opencast-mui\/[^"']+)["']/g) ?? []).map((stmt) =>
-        stmt.replace(/^.*["'](@opencast-mui\/[^"']+)["'].*$/, "$1"),
+      (transformed.match(/from\s+["'](@oc-mui\/[^"']+)["']/g) ?? []).map((stmt) =>
+        stmt.replace(/^.*["'](@oc-mui\/[^"']+)["'].*$/, "$1"),
       ),
     ),
   ];
   if (unprovidedOcMui.length > 0) {
     remoteLoaderLogger.error(
-      `Plugin imports @opencast-mui package(s) the host does not provide as shared modules: ${unprovidedOcMui.join(
+      `Plugin imports @oc-mui package(s) the host does not provide as shared modules: ${unprovidedOcMui.join(
         ", ",
-      )}. The plugin will fail to load. Either add them to SHARED_MODULE_NAMES + the host's exposeSharedModules(), or bundle them into the plugin instead of externalizing @opencast-mui/*.`,
+      )}. The plugin will fail to load. Either add them to SHARED_MODULE_NAMES + the host's exposeSharedModules(), or bundle them into the plugin instead of externalizing @oc-mui/*.`,
     );
   }
 

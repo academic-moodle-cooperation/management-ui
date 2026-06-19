@@ -1,11 +1,11 @@
 import { Pencil, PlayCircle, Scissors, Trash2, ArrowDownToLine, MoreVertical } from "lucide-react";
 import React, { useState } from "react";
 
-import { i18next } from "@opencast-mui/i18n";
-import { PluginComponent } from "@opencast-mui/plugin-system";
-import { useAppConfig, useMuiDeleteEventMutation } from "@opencast-mui/query";
-import type { MuiEventsDataFragment } from "@opencast-mui/query";
-import { Link } from "@opencast-mui/router";
+import { i18next } from "@oc-mui/i18n";
+import { PluginComponent } from "@oc-mui/plugin-system";
+import { useAppConfig, useMuiDeleteEventMutation } from "@oc-mui/query";
+import type { MuiEventsDataFragment } from "@oc-mui/query";
+import { Link } from "@oc-mui/router";
 import {
   Button,
   Tooltip,
@@ -28,8 +28,8 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   toast,
-} from "@opencast-mui/ui/components";
-import { resolveDownloadUrl } from "@opencast-mui/utils";
+} from "@oc-mui/ui/components";
+import { resolveDownloadUrl } from "@oc-mui/utils";
 
 import { useSidebarStore } from "../stores/sidebarStore";
 

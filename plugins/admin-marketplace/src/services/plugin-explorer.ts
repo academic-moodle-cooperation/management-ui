@@ -6,7 +6,7 @@
  *
  * MIGRATION PATH (for future external plugins):
  * ─────────────────────────────────────────────
- * This service currently imports plugins from `@opencast-mui/plugins` (static bundle).
+ * This service currently imports plugins from `@oc-mui/plugins` (static bundle).
  * When plugins move to external repositories:
  *
  * 1. Replace `discoverAllPlugins()` with an API call to fetch a plugin registry:
@@ -23,11 +23,11 @@
  * 3. The rest of this architecture (overrides, conflict detection, UI) remains unchanged.
  */
 
-import type { Plugin, PluginManager } from "@opencast-mui/plugin-system";
+import type { Plugin, PluginManager } from "@oc-mui/plugin-system";
 
 // Plugin discovery uses manager.executeFunction("marketplace.getAllPlugins") provided
 // by the app's PluginInitializer. This avoids the admin-marketplace package importing
-// the @opencast-mui/plugins barrel (which would create a circular dependency).
+// the @oc-mui/plugins barrel (which would create a circular dependency).
 //
 // MIGRATION PATH (for future external plugins): Replace the app-injected function
 // with an API call or registry lookup when plugins move to external repositories.

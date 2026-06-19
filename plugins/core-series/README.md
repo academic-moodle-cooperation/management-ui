@@ -1,4 +1,4 @@
-# @opencast-mui/plugin-core-series
+# @oc-mui/plugin-core-series
 
 Core plugin. Registers the `/series` route, its sidebar entry, the Create-series toolbar action, and the series config slice. Ships with the OSS repo and is enabled by default.
 
@@ -13,7 +13,7 @@ Core plugin. Registers the `/series` route, its sidebar entry, the Create-series
 
 ## Configuration
 
-The plugin owns `config.plugins.series`. Schema and defaults live in [`src/config.ts`](./src/config.ts) via `definePluginConfig` from `@opencast-mui/query`.
+The plugin owns `config.plugins.series`. Schema and defaults live in [`src/config.ts`](./src/config.ts) via `definePluginConfig` from `@oc-mui/query`.
 
 Reading values in a component:
 
@@ -27,8 +27,8 @@ Full merge order: [`docs/architecture/CONFIGURATION.md`](../../docs/architecture
 ## Development
 
 ```bash
-pnpm --filter @opencast-mui/plugin-core-series test:contract
-pnpm --filter @opencast-mui/plugin-core-series test
+pnpm --filter @oc-mui/plugin-core-series test:contract
+pnpm --filter @oc-mui/plugin-core-series test
 ```
 
 ## See also

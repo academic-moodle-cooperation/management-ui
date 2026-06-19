@@ -4,7 +4,7 @@
 /* Scan THIS library's own files for the utility classes its components use.
    The path is relative to this CSS file, so it works both in-repo
    (packages/ui/src) and when the built package is consumed from a consumer's
-   node_modules (@opencast-mui/ui/dist). Host applications add their own content
+   node_modules (@oc-mui/ui/dist). Host applications add their own content
    sources (the app, plugins, …) in their own Tailwind entry — see
    apps/shell/src/app.css — rather than here, so this shared stylesheet stays
    free of monorepo-specific paths. */

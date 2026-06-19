@@ -1,6 +1,6 @@
 ---
-"@opencast-mui/router": minor
-"@opencast-mui/i18n": patch
+"@oc-mui/router": minor
+"@oc-mui/i18n": patch
 ---
 
 Fix protected routes hanging on "Checking authentication…" forever when

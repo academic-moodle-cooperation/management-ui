@@ -1,6 +1,6 @@
 import React from "react";
 
-import { SidebarTrigger, ThemeModeToggle } from "@opencast-mui/ui/components";
+import { SidebarTrigger, ThemeModeToggle } from "@oc-mui/ui/components";
 
 import { LangSwitcher } from "./LangSwitcher";
 import { LoginButton } from "./LoginButton";

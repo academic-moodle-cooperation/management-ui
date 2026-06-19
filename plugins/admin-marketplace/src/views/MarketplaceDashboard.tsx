@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import React, { useMemo, useState } from "react";
 
-import type { PluginManager } from "@opencast-mui/plugin-system";
+import type { PluginManager } from "@oc-mui/plugin-system";
 import {
   Badge,
   Button,
@@ -35,7 +35,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@opencast-mui/ui/components";
+} from "@oc-mui/ui/components";
 
 import { PluginDetailView } from "../components/PluginDetailView";
 import { CommunityPluginGridCard, PluginGridCard } from "../components/PluginListItem";

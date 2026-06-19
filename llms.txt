@@ -47,7 +47,7 @@ Every plugin is an ES module that default-exports a plugin object. Per-feature
 source is organized under `modules/<area>/` (not legacy `implementations/`).
 
 ```typescript
-import { createPlugin } from "@opencast-mui/plugin-system";
+import { createPlugin } from "@oc-mui/plugin-system";
 
 export default createPlugin({
   namespace: "my-org", // WHO provides it: org or feature name
@@ -144,7 +144,7 @@ Never use hardcoded hex/rgb/oklch values in plugin code. Always use semantic tok
 
 ### Use Shared UI Components
 
-Import from `@opencast-mui/ui/components` (shadcn/ui based):
+Import from `@oc-mui/ui/components` (shadcn/ui based):
 Button, Card, Input, Select, Dialog, Table, Tabs, Badge, etc.
 
 ### Plugin CSS
@@ -159,10 +159,10 @@ Token reference: `packages/ui/src/styles/globals.css`
 
 ## Data Fetching
 
-Use GraphQL hooks from `@opencast-mui/query`. Never mock data in production plugins.
+Use GraphQL hooks from `@oc-mui/query`. Never mock data in production plugins.
 
 ```typescript
-import { useGetMyEventsQuery } from "@opencast-mui/query";
+import { useGetMyEventsQuery } from "@oc-mui/query";
 const { data, isLoading } = useGetMyEventsQuery({ limit: 20 });
 const events = (data?.currentUser?.myEvents?.nodes || [])
   .filter((e): e is NonNullable<typeof e> => e !== null);
@@ -171,13 +171,13 @@ const events = (data?.currentUser?.myEvents?.nodes || [])
 ## i18n
 
 Plugins ship their own locale files under `locales/<namespace>/<lng>.json`.
-Use `useI18n()` from `@opencast-mui/i18n` with namespaced keys: `t("my-plugin:title")`.
+Use `useI18n()` from `@oc-mui/i18n` with namespaced keys: `t("my-plugin:title")`.
 
 ## Common Mistakes
 
 1. Registering an app without a sidebar nav item (route exists but no navigation)
 2. Forgetting `activate()` and `deactivate()` methods (both required)
-3. Bundling React or @opencast-mui/* packages (must be external)
+3. Bundling React or @oc-mui/* packages (must be external)
 4. Using hardcoded colors instead of semantic tokens
 5. Naming a directory starting with `/api` (conflicts with Vite dev proxy)
 6. Not filtering null values from GraphQL arrays

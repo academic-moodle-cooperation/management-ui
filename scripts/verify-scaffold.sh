@@ -54,11 +54,11 @@ test ! -d "plugins/${INTREE}/backend" || fail "--in-tree scaffold should NOT hav
 echo "  ok — in-tree under plugins/"
 
 say "§8.4 contract test passes on first run"
-pnpm --filter "@opencast-mui/plugin-${DEFAULT}" test:contract >/dev/null 2>&1 || fail "contract test failed on a fresh scaffold"
+pnpm --filter "@oc-mui/plugin-${DEFAULT}" test:contract >/dev/null 2>&1 || fail "contract test failed on a fresh scaffold"
 echo "  ok — placeholder app:header-logo registration passes its contract"
 
 say "§8.5 type-check passes on first run"
-pnpm --filter "@opencast-mui/plugin-${DEFAULT}" check-types >/dev/null 2>&1 || fail "check-types failed on a fresh scaffold"
+pnpm --filter "@oc-mui/plugin-${DEFAULT}" check-types >/dev/null 2>&1 || fail "check-types failed on a fresh scaffold"
 echo "  ok"
 
 echo

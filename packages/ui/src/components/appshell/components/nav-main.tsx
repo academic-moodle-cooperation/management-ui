@@ -3,7 +3,7 @@
 import { ChevronRight, type LucideIcon } from "lucide-react";
 import * as React from "react";
 
-import { useTranslation } from "@opencast-mui/i18n";
+import { useTranslation } from "@oc-mui/i18n";
 
 import { cn } from "../../../lib/utils";
 import { useUiRouter } from "../../router-context";

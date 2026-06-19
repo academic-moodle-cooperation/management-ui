@@ -1,5 +1,5 @@
-import { useI18n } from "@opencast-mui/i18n";
-import { AppHeading, Separator, Container } from "@opencast-mui/ui/components";
+import { useI18n } from "@oc-mui/i18n";
+import { AppHeading, Separator, Container } from "@oc-mui/ui/components";
 
 import { SeriesTable } from "./components/SeriesTable";
 

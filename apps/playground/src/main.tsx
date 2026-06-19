@@ -1,4 +1,4 @@
-import { bootstrapStandaloneApp } from "@opencast-mui/app-runtime";
+import { bootstrapStandaloneApp } from "@oc-mui/app-runtime";
 
 import App from "./App";
 

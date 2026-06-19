@@ -1,5 +1,5 @@
 ---
-"@opencast-mui/plugin-admin-marketplace": patch
+"@oc-mui/plugin-admin-marketplace": patch
 ---
 
 Recolor the marketplace **Example** theme's primary to Harvard Crimson

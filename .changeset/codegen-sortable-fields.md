@@ -14,10 +14,10 @@ re-exports those generated arrays under the friendly
 `EVENT_SORTABLE_FIELDS` / `SERIES_SORTABLE_FIELDS` names rather than
 declaring them by hand.
 
-Net effect: `@opencast-mui/query`'s public surface is unchanged (same exported
+Net effect: `@oc-mui/query`'s public surface is unchanged (same exported
 names and types as before), but the values are now single-sourced from
 the schema — a backend change to which fields are orderable flows through
-`pnpm --filter @opencast-mui/query codegen` automatically. Covers all four
+`pnpm --filter @oc-mui/query codegen` automatically. Covers all four
 matching input types today (Event/Series OrderBy, ManagedAcl OrderBy,
 Event FilterBy), so future sortable/filterable tables are pre-covered.
 

@@ -3,16 +3,16 @@
 import { createContext, useContext, type ComponentType, type ReactNode } from "react";
 
 /**
- * Router injection for `@opencast-mui/ui`.
+ * Router injection for `@oc-mui/ui`.
  *
- * A handful of `@opencast-mui/ui` components are inherently router-aware (the
+ * A handful of `@oc-mui/ui` components are inherently router-aware (the
  * sidebar `NavMain`, the data table) — they render links and read the
- * current path. Importing `@opencast-mui/router` here would invert the layering
+ * current path. Importing `@oc-mui/router` here would invert the layering
  * (UI primitives sitting *above* routing) and forms a dependency cycle that
- * blocks `@opencast-mui/router` from ever importing `@opencast-mui/ui` back.
+ * blocks `@oc-mui/router` from ever importing `@oc-mui/ui` back.
  *
  * Instead the host app injects the router primitives via
- * {@link UiRouterProvider}: the shell fills `Link` with `@opencast-mui/router`'s
+ * {@link UiRouterProvider}: the shell fills `Link` with `@oc-mui/router`'s
  * Link and `usePathname` with a `useRouterState`-derived selector. The
  * context ships **functional defaults** (a plain `<a>` and an empty path),
  * so a component rendered without a provider — in a test, Storybook, or a
@@ -29,7 +29,7 @@ export interface UiLinkProps {
 }
 
 export interface UiRouterPrimitives {
-  /** Router `Link` component (the shell injects `@opencast-mui/router`'s Link). */
+  /** Router `Link` component (the shell injects `@oc-mui/router`'s Link). */
   Link: ComponentType<UiLinkProps>;
   /** The current location pathname. */
   usePathname: () => string;

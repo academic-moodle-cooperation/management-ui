@@ -2,7 +2,7 @@
  * Shared runtime dependencies — major versions the host provides to every
  * loaded plugin. The host loads exactly one copy of each; plugins must
  * consume the host's copy rather than bundling their own, otherwise
- * React contexts break, hooks become inconsistent, and `@opencast-mui/*`
+ * React contexts break, hooks become inconsistent, and `@oc-mui/*`
  * contracts can't be enforced.
  *
  * Plugins declare the majors they target through `workspaceDependencies`
@@ -10,12 +10,12 @@
  * major doesn't match the host's.
  *
  * Versioning rules (see docs/architecture/CONTRACTS.md):
- * - Adding a new entry: **minor** bump of `@opencast-mui/plugin-system`.
- * - Bumping any entry's major: **major** bump of `@opencast-mui/plugin-system`.
+ * - Adding a new entry: **minor** bump of `@oc-mui/plugin-system`.
+ * - Bumping any entry's major: **major** bump of `@oc-mui/plugin-system`.
  * - Removing an entry: **major** bump.
  *
  * The list itself is the source of truth. It must stay in sync with:
- * - `SHARED_MODULE_NAMES` in `@opencast-mui/remote-plugin-loader/src/transform.ts`
+ * - `SHARED_MODULE_NAMES` in `@oc-mui/remote-plugin-loader/src/transform.ts`
  *   (which controls which imports are rewritten to `window.__SHARED_MODULES__`).
  * - The actually-installed majors in the workspace.
  *
@@ -33,15 +33,15 @@ export const SHARED_RUNTIME_MAJORS: Readonly<Record<string, number>> = Object.fr
   "lucide-react": 0,
 
   // Workspace packages — all 1.x for the OSS-readiness line
-  "@opencast-mui/plugin-system": 1,
-  "@opencast-mui/app-runtime": 1,
-  "@opencast-mui/ui": 1,
-  "@opencast-mui/query": 1,
-  "@opencast-mui/router": 1,
-  "@opencast-mui/i18n": 1,
-  "@opencast-mui/utils": 1,
-  "@opencast-mui/store": 1,
-  "@opencast-mui/ui-config": 1,
+  "@oc-mui/plugin-system": 1,
+  "@oc-mui/app-runtime": 1,
+  "@oc-mui/ui": 1,
+  "@oc-mui/query": 1,
+  "@oc-mui/router": 1,
+  "@oc-mui/i18n": 1,
+  "@oc-mui/utils": 1,
+  "@oc-mui/store": 1,
+  "@oc-mui/ui-config": 1,
 });
 
 export type SharedRuntimeDependencyName = keyof typeof SHARED_RUNTIME_MAJORS;
@@ -101,7 +101,7 @@ export function checkSharedDependencyCompatibility(
       // The host doesn't ship a package by this exact name. But if it ships the
       // *same* package under its canonical scope — e.g. the plugin declares
       // "@workspace/plugin-system" (the pre-rename namespace) while the host
-      // provides "@opencast-mui/plugin-system" — that's a real incompatibility (the
+      // provides "@oc-mui/plugin-system" — that's a real incompatibility (the
       // plugin targets a different host), not a benign "unknown" dependency.
       const canonical = wrongScopeHostEquivalent(name, hostMajors);
       if (canonical) {
@@ -152,7 +152,7 @@ export function checkSharedDependencyCompatibility(
 
 /**
  * If a declared dependency isn't a host package by its exact name, but the host
- * ships the *same* package under the canonical `@opencast-mui/` scope (i.e. the plugin
+ * ships the *same* package under the canonical `@oc-mui/` scope (i.e. the plugin
  * used a different/old scope such as the pre-rename `@workspace/`), return that
  * canonical name. Lets {@link checkSharedDependencyCompatibility} turn a
  * wrong-namespace declaration into a real incompatibility instead of a silently
@@ -164,7 +164,7 @@ function wrongScopeHostEquivalent(
 ): string | null {
   const bare = name.replace(/^@[^/]+\//, "");
   if (bare === name) return null; // not a scoped package — nothing to compare
-  const canonical = `@opencast-mui/${bare}`;
+  const canonical = `@oc-mui/${bare}`;
   return canonical !== name && canonical in hostMajors ? canonical : null;
 }
 

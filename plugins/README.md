@@ -20,7 +20,7 @@ See [ADR-003](../docs/architecture/decisions/003-shell-plus-core-plugins.md) for
 
 | Path | Use it for |
 |------|------------|
-| `plugins/<name>/` | Built-in plugins shipped with this repo. Bundled into `@opencast-mui/plugins`, statically loaded at startup. |
+| `plugins/<name>/` | Built-in plugins shipped with this repo. Bundled into `@oc-mui/plugins`, statically loaded at startup. |
 | `.local-plugins/<name>/` | Org or community plugins. Gitignored. Loaded at dev time through `/local-plugins/manifest.json`. Each is its own git repo. |
 
 Full path map: [`docs/plugins/distribution.md`](../docs/plugins/distribution.md).

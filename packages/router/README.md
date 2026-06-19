@@ -1,4 +1,4 @@
-# @opencast-mui/router
+# @oc-mui/router
 
 Routing layer. Wraps TanStack Router behind a single workspace import, plus auth context, route guards, and the shell's dynamic-router glue for plugin-registered apps.
 
@@ -6,14 +6,14 @@ Routing layer. Wraps TanStack Router behind a single workspace import, plus auth
 
 ## The wrapper rule
 
-This package is the **only place in the workspace allowed to import from `@tanstack/react-router`**. Apps, plugins, and other packages must import routing primitives (`createRouter`, `Link`, `Outlet`, `useNavigate`, `AnyRouter`, …) from here. The rule is enforced by `no-restricted-imports` in `@opencast-mui/eslint-config` with an explicit exception for this directory.
+This package is the **only place in the workspace allowed to import from `@tanstack/react-router`**. Apps, plugins, and other packages must import routing primitives (`createRouter`, `Link`, `Outlet`, `useNavigate`, `AnyRouter`, …) from here. The rule is enforced by `no-restricted-imports` in `@oc-mui/eslint-config` with an explicit exception for this directory.
 
-Until we ship a hand-crafted facade type layer, the re-exported types are structurally identical to TanStack Router's. Treat the surface as "owned by `@opencast-mui/router`" — we may tighten it over time.
+Until we ship a hand-crafted facade type layer, the re-exported types are structurally identical to TanStack Router's. Treat the surface as "owned by `@oc-mui/router`" — we may tighten it over time.
 
 ## Usage
 
 ```tsx
-import { RouterProvider, Link } from "@opencast-mui/router";
+import { RouterProvider, Link } from "@oc-mui/router";
 
 <RouterProvider router={router} />;
 
@@ -23,7 +23,7 @@ import { RouterProvider, Link } from "@opencast-mui/router";
 ### Authentication
 
 ```tsx
-import { AuthProvider, useAuth, ProtectedRoute } from "@opencast-mui/router";
+import { AuthProvider, useAuth, ProtectedRoute } from "@oc-mui/router";
 
 <AuthProvider>
   <ProtectedRoute>
@@ -51,7 +51,7 @@ Full surface: [`etc/router.api.md`](./etc/router.api.md).
 
 ## Layer
 
-Integration. Depends on `@opencast-mui/plugin-system`, `@opencast-mui/query` (for user/auth state), `@opencast-mui/utils`.
+Integration. Depends on `@oc-mui/plugin-system`, `@oc-mui/query` (for user/auth state), `@oc-mui/utils`.
 
 ## See also
 

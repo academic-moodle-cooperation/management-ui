@@ -7,7 +7,7 @@
  *
  * Usage:
  * 1. Call `exposeSharedModules()` early in the app initialization
- * 2. Community plugins can then import from "@opencast-mui/*" packages
+ * 2. Community plugins can then import from "@oc-mui/*" packages
  */
 
 import * as LucideReact from "lucide-react";
@@ -15,17 +15,17 @@ import * as React from "react";
 import * as ReactJSXRuntime from "react/jsx-runtime";
 import * as ReactDOM from "react-dom";
 
-import * as AppRuntime from "@opencast-mui/app-runtime";
-import * as I18n from "@opencast-mui/i18n";
-import * as PluginSystem from "@opencast-mui/plugin-system";
-import * as Query from "@opencast-mui/query";
-import * as Router from "@opencast-mui/router";
-import * as UIComponents from "@opencast-mui/ui/components";
-import * as UIComponentsIcons from "@opencast-mui/ui/components/icons";
-import * as UILib from "@opencast-mui/ui/lib";
-import * as UILibUtils from "@opencast-mui/ui/lib/utils";
-import * as Utils from "@opencast-mui/utils";
-import { logger } from "@opencast-mui/utils";
+import * as AppRuntime from "@oc-mui/app-runtime";
+import * as I18n from "@oc-mui/i18n";
+import * as PluginSystem from "@oc-mui/plugin-system";
+import * as Query from "@oc-mui/query";
+import * as Router from "@oc-mui/router";
+import * as UIComponents from "@oc-mui/ui/components";
+import * as UIComponentsIcons from "@oc-mui/ui/components/icons";
+import * as UILib from "@oc-mui/ui/lib";
+import * as UILibUtils from "@oc-mui/ui/lib/utils";
+import * as Utils from "@oc-mui/utils";
+import { logger } from "@oc-mui/utils";
 
 // Re-export UI component types for consumers
 export type { UIComponents };
@@ -38,16 +38,16 @@ export interface SharedModuleRegistry {
   "react-dom": typeof ReactDOM;
   "react/jsx-runtime": typeof ReactJSXRuntime;
   "lucide-react": typeof LucideReact;
-  "@opencast-mui/app-runtime": typeof AppRuntime;
-  "@opencast-mui/plugin-system": typeof PluginSystem;
-  "@opencast-mui/ui/components": typeof UIComponents;
-  "@opencast-mui/ui/components/icons": typeof UIComponentsIcons;
-  "@opencast-mui/ui/lib": typeof UILib;
-  "@opencast-mui/ui/lib/utils": typeof UILibUtils;
-  "@opencast-mui/query": typeof Query;
-  "@opencast-mui/router": typeof Router;
-  "@opencast-mui/utils": typeof Utils;
-  "@opencast-mui/i18n": typeof I18n;
+  "@oc-mui/app-runtime": typeof AppRuntime;
+  "@oc-mui/plugin-system": typeof PluginSystem;
+  "@oc-mui/ui/components": typeof UIComponents;
+  "@oc-mui/ui/components/icons": typeof UIComponentsIcons;
+  "@oc-mui/ui/lib": typeof UILib;
+  "@oc-mui/ui/lib/utils": typeof UILibUtils;
+  "@oc-mui/query": typeof Query;
+  "@oc-mui/router": typeof Router;
+  "@oc-mui/utils": typeof Utils;
+  "@oc-mui/i18n": typeof I18n;
 }
 
 declare global {
@@ -74,16 +74,16 @@ export function exposeSharedModules(): void {
     "react-dom": ReactDOM,
     "react/jsx-runtime": ReactJSXRuntime,
     "lucide-react": LucideReact,
-    "@opencast-mui/app-runtime": AppRuntime,
-    "@opencast-mui/plugin-system": PluginSystem,
-    "@opencast-mui/ui/components": UIComponents,
-    "@opencast-mui/ui/components/icons": UIComponentsIcons,
-    "@opencast-mui/ui/lib": UILib,
-    "@opencast-mui/ui/lib/utils": UILibUtils,
-    "@opencast-mui/query": Query,
-    "@opencast-mui/router": Router,
-    "@opencast-mui/utils": Utils,
-    "@opencast-mui/i18n": I18n,
+    "@oc-mui/app-runtime": AppRuntime,
+    "@oc-mui/plugin-system": PluginSystem,
+    "@oc-mui/ui/components": UIComponents,
+    "@oc-mui/ui/components/icons": UIComponentsIcons,
+    "@oc-mui/ui/lib": UILib,
+    "@oc-mui/ui/lib/utils": UILibUtils,
+    "@oc-mui/query": Query,
+    "@oc-mui/router": Router,
+    "@oc-mui/utils": Utils,
+    "@oc-mui/i18n": I18n,
   };
 
   sharedLogger.debug("Exposed modules for community plugins", { modules: Object.keys(window.__SHARED_MODULES__) });
@@ -92,7 +92,7 @@ export function exposeSharedModules(): void {
 /**
  * Get an exposed module by name
  *
- * @param name - Module name (e.g., "react", "@opencast-mui/plugin-system")
+ * @param name - Module name (e.g., "react", "@oc-mui/plugin-system")
  * @returns The module or undefined
  */
 export function getSharedModule(name: string): unknown {
@@ -110,7 +110,7 @@ export function areSharedModulesAvailable(): boolean {
  * Transform ES module source to use shared modules
  *
  * Replaces bare import specifiers with references to the shared module registry.
- * This allows community plugins to import from "@opencast-mui/*" and "react" without
+ * This allows community plugins to import from "@oc-mui/*" and "react" without
  * the browser needing to resolve those specifiers.
  *
  * @param source - ES module source code

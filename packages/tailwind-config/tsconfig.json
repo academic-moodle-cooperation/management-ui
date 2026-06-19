@@ -1,5 +1,5 @@
 {
-  "extends": "@opencast-mui/typescript-config/base.json",
+  "extends": "@oc-mui/typescript-config/base.json",
   "compilerOptions": {
     "noEmit": true,
     "composite": false

@@ -5,7 +5,7 @@
  * Supports temporary theme preview ("Try") and persistent theme installation ("Install").
  */
 
-import { logger } from "@opencast-mui/utils";
+import { logger } from "@oc-mui/utils";
 
 import { isUrlAllowed } from "./security";
 

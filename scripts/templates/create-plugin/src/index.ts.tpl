@@ -1,5 +1,5 @@
-import { createPlugin, type PluginManager } from "@opencast-mui/plugin-system";
-import { logger } from "@opencast-mui/utils";
+import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
+import { logger } from "@oc-mui/utils";
 
 /**
  * __PLUGIN_NAME__ plugin

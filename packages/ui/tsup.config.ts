@@ -4,7 +4,7 @@ import { defineConfig } from "tsup";
 // `./components/*` and `./hooks/*` wildcard targets) becomes its own dist entry
 // so the subpath exports resolve. Structure under src/ is mirrored into dist/.
 // JS via tsup; declarations via tsc (`build:types` → dist-types/src/). All deps
-// (radix, react-aria, @opencast-mui/*, …) and the React peer are externalised.
+// (radix, react-aria, @oc-mui/*, …) and the React peer are externalised.
 //
 // CSS is not built: `globals.css` is a Tailwind-v4 entry the consumer/host
 // processes, so it (and the bundled fonts) are copied verbatim into dist/styles.

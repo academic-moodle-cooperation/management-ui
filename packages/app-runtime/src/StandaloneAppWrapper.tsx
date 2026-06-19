@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import { PluginProvider, RendererProvider } from "@opencast-mui/plugin-system";
-import { QueryProvider } from "@opencast-mui/query";
+import { PluginProvider, RendererProvider } from "@oc-mui/plugin-system";
+import { QueryProvider } from "@oc-mui/query";
 import {
   AuthProvider,
   AuthInitializer,
@@ -14,15 +14,15 @@ import {
   type RouteComponent,
   type AnyRoute,
   type AnyRouter,
-} from "@opencast-mui/router";
-import { ErrorBoundary } from "@opencast-mui/ui/components/errors/general-error";
+} from "@oc-mui/router";
+import { ErrorBoundary } from "@oc-mui/ui/components/errors/general-error";
 
 import { AppRuntimeProvider, AppRuntimeContextProvider } from "./AppRuntimeProvider";
 
 import type { AppRuntimeConfig } from "./types";
 import type { ReactNode } from "react";
 
-import "@opencast-mui/ui/globals.css";
+import "@oc-mui/ui/globals.css";
 
 interface StandaloneAppWrapperProps {
   children?: ReactNode;
