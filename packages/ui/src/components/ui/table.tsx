@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { cn } from "@opencast-mui/ui/lib/utils";
+import { cn } from "@oc-mui/ui/lib/utils";
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (

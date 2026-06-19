@@ -8,24 +8,24 @@
  * configuration…" spinner with a proper error page that says what went
  * wrong and how to fix it.
  *
- * Visually composes `<ErrorPage code="502">` from `@opencast-mui/ui` so it
+ * Visually composes `<ErrorPage code="502">` from `@oc-mui/ui` so it
  * matches the rest of the error-page family (404 / 500 / 503 / etc.).
- * 502 is what `@opencast-mui/vite-config`'s proxy handler actually responds
+ * 502 is what `@oc-mui/vite-config`'s proxy handler actually responds
  * with on ECONNREFUSED, and it's the most honest code in production
  * too — the shell can reach itself but not the upstream backend.
  *
  * Tailored messaging by environment:
  *   - Dev: full instructions including the `VITE_PROXY_TARGET` env var
  *     and a link to the installation docs. Mirrors the boxed notice
- *     `@opencast-mui/vite-config`'s proxy handler prints in the terminal.
+ *     `@oc-mui/vite-config`'s proxy handler prints in the terminal.
  *   - Prod: short "couldn't load configuration; contact your
  *     administrator" message, no dev-only setup advice.
  *
  * The "Retry" button calls TanStack Query's `refetch` so the user can
  * recover without a full page reload once the backend is back up.
  */
-import { useTranslation } from "@opencast-mui/i18n";
-import { Button, ErrorPage } from "@opencast-mui/ui/components";
+import { useTranslation } from "@oc-mui/i18n";
+import { Button, ErrorPage } from "@oc-mui/ui/components";
 
 export interface ConfigLoadErrorProps {
   /** Error thrown by the config fetch (the `error` returned by `useAppConfig`). */

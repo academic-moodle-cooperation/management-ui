@@ -6,12 +6,12 @@ How plugins get from your editor to a running shell. Pick the path that matches 
 
 | Path | Used for | Where the code lives | How the shell finds it |
 |------|----------|----------------------|------------------------|
-| **In-tree** | Core plugins shipped with this repo | `plugins/<name>/` | Bundled into `@opencast-mui/plugins`, statically imported at app startup |
+| **In-tree** | Core plugins shipped with this repo | `plugins/<name>/` | Bundled into `@oc-mui/plugins`, statically imported at app startup |
 | **`.local-plugins/` dev mount** | Dev-time iteration on an org plugin | `.local-plugins/<name>/` (gitignored) | Vite dev server serves the plugin's `dist/`; shell fetches `/local-plugins/manifest.json` |
 | **JAR** | Production deploy with an Opencast backend | One JAR per org plugin in `$OPENCAST_HOME/deploy/` | Backend exposes `/management-tool/ui/config/plugins.json` |
 | **CDN / community registry** | Plugins users install themselves at runtime | Any HTTPS URL serving an ESM bundle | Marketplace "Developer Mode" or the future registry |
 
-All four paths end at the same place: `@opencast-mui/remote-plugin-loader` fetches the `.mjs`, rewires its bare imports to shared modules, injects the CSS, and registers the plugin with `PluginManager`. The differences are only in **how the URL list is produced**.
+All four paths end at the same place: `@oc-mui/remote-plugin-loader` fetches the `.mjs`, rewires its bare imports to shared modules, injects the CSS, and registers the plugin with `PluginManager`. The differences are only in **how the URL list is produced**.
 
 ## Available packages (the import contract)
 
@@ -19,9 +19,9 @@ A loaded plugin runs inside the host page and **shares modules** with it. You ca
 
 - `react`, `react-dom`, `react/jsx-runtime`
 - `lucide-react`
-- `@opencast-mui/plugin-system`
-- `@opencast-mui/ui/components`, `@opencast-mui/ui/components/icons`, `@opencast-mui/ui/lib`, `@opencast-mui/ui/lib/utils`
-- `@opencast-mui/query`, `@opencast-mui/router`, `@opencast-mui/utils`, `@opencast-mui/i18n`
+- `@oc-mui/plugin-system`
+- `@oc-mui/ui/components`, `@oc-mui/ui/components/icons`, `@oc-mui/ui/lib`, `@oc-mui/ui/lib/utils`
+- `@oc-mui/query`, `@oc-mui/router`, `@oc-mui/utils`, `@oc-mui/i18n`
 
 Authoritative source: [`packages/remote-plugin-loader/src/transform.ts`](../../packages/remote-plugin-loader/src/transform.ts) (`SHARED_MODULE_NAMES`). Adding a name there is a public-API change and needs a changeset.
 
@@ -42,16 +42,16 @@ No build step at distribution time — the shell's Vite build bundles it.
 
 ## Path 2 — `.local-plugins/` (dev only)
 
-Each `.local-plugins/<name>/` is its own git repo, gitignored from this monorepo. `pnpm-workspace.yaml` includes it, so `@opencast-mui/*` dependencies resolve normally.
+Each `.local-plugins/<name>/` is its own git repo, gitignored from this monorepo. `pnpm-workspace.yaml` includes it, so `@oc-mui/*` dependencies resolve normally.
 
 Workflow:
 
 ```bash
 # In the plugin repo
-pnpm --filter @opencast-mui/plugin-my-plugin build
+pnpm --filter @oc-mui/plugin-my-plugin build
 
 # In the shell
-pnpm --filter @opencast-mui/shell dev
+pnpm --filter @oc-mui/shell dev
 ```
 
 The Vite dev plugin at [`packages/vite-config/src/plugins/local-plugins-dev.ts`](../../packages/vite-config/src/plugins/local-plugins-dev.ts) scans every `.local-plugins/<name>/dist/` for `*.mjs` and exposes:
@@ -59,7 +59,7 @@ The Vite dev plugin at [`packages/vite-config/src/plugins/local-plugins-dev.ts`]
 - The bundle at `/local-plugins/<name>/<file>.mjs` (and its `.css` sibling).
 - A manifest at `/local-plugins/manifest.json` listing every discovered bundle.
 
-The shell fetches that manifest, filters by `app.enabledPlugins`, and loads each entry through `@opencast-mui/remote-plugin-loader`. Add the folder name to `app.enabledPlugins` to enable a plugin.
+The shell fetches that manifest, filters by `app.enabledPlugins`, and loads each entry through `@oc-mui/remote-plugin-loader`. Add the folder name to `app.enabledPlugins` to enable a plugin.
 
 This path is **dev only**. Production never reads `.local-plugins/`.
 
@@ -192,7 +192,7 @@ The POM:
 
 The POM does **not**:
 
-- Bundle React, `@opencast-mui/*`, `lucide-react`, or any other shared runtime dep into the JAR. Those are provided by the host shell. See [`architecture/CONTRACTS.md` § 5](../architecture/CONTRACTS.md#5-shared-runtime-dependencies).
+- Bundle React, `@oc-mui/*`, `lucide-react`, or any other shared runtime dep into the JAR. Those are provided by the host shell. See [`architecture/CONTRACTS.md` § 5](../architecture/CONTRACTS.md#5-shared-runtime-dependencies).
 - Publish the plugin to a Maven repository. If you want a public Maven artifact, add `distributionManagement` and run `mvn deploy` yourself.
 
 ## Path 4 — CDN / community registry
@@ -225,7 +225,7 @@ Most production orgs ship JARs. CDN is the route when the plugin has no backend,
 
 ### CSS
 
-`@opencast-mui/remote-plugin-loader` auto-requests `<module>.css` next to every loaded `<module>.mjs`. Build your CSS to the same stem as your bundle. Load order: plugin CSS is inserted **before** host CSS — see [`styling.md`](./styling.md).
+`@oc-mui/remote-plugin-loader` auto-requests `<module>.css` next to every loaded `<module>.mjs`. Build your CSS to the same stem as your bundle. Load order: plugin CSS is inserted **before** host CSS — see [`styling.md`](./styling.md).
 
 ### Versioning
 

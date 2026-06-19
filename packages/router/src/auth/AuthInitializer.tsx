@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import { useGetCurrentUser } from "@opencast-mui/query";
+import { useGetCurrentUser } from "@oc-mui/query";
 
 import { useAuth } from "./AuthContext";
 import { isAuthenticationError } from "./isAuthenticationError";

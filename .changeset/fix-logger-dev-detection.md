@@ -1,5 +1,5 @@
 ---
-"@opencast-mui/utils": patch
+"@oc-mui/utils": patch
 ---
 
 Fix the logger's dev-mode detection so `logger.info` / `logger.debug`

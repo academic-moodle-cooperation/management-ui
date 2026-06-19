@@ -9,15 +9,15 @@
  *
  * Uses `<ErrorPage code="503">` (Service Unavailable): the shell itself is up,
  * it just can't reach the backend to verify the session. The router package
- * can't import `@opencast-mui/ui` (cycle), so the protection components take this as
+ * can't import `@oc-mui/ui` (cycle), so the protection components take this as
  * an injected `errorComponent` and the shell supplies this branded screen.
  *
  * "Retry" re-runs the fetch (no full reload needed once the backend is back);
  * "Reload page" is the bigger hammer. Authentication errors (401/403) never
  * reach here — those redirect to `/login`.
  */
-import { useTranslation } from "@opencast-mui/i18n";
-import { Button, ErrorPage } from "@opencast-mui/ui/components";
+import { useTranslation } from "@oc-mui/i18n";
+import { Button, ErrorPage } from "@oc-mui/ui/components";
 
 export interface AuthCheckErrorProps {
   /** The error thrown by the `currentUser` fetch. */

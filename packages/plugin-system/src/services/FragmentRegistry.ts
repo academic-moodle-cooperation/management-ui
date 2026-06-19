@@ -17,7 +17,7 @@
  * // After load, core GetMyEvents / EventsFromSeries / etc. responses include quizInfo and quiz.
  */
 
-import { logger } from "@opencast-mui/utils";
+import { logger } from "@oc-mui/utils";
 
 const log = logger.child({ component: "FragmentRegistry" });
 

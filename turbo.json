@@ -31,21 +31,21 @@
         "dist/**"
       ]
     },
-    "@opencast-mui/utils#build": {
+    "@oc-mui/utils#build": {
       "outputs": [
         "dist/**"
       ]
     },
-    "@opencast-mui/plugin-admin-marketplace#build": {
+    "@oc-mui/plugin-admin-marketplace#build": {
       "outputs": []
     },
-    "@opencast-mui/plugin-core-episodes#build": {
+    "@oc-mui/plugin-core-episodes#build": {
       "outputs": []
     },
-    "@opencast-mui/plugin-core-series#build": {
+    "@oc-mui/plugin-core-series#build": {
       "outputs": []
     },
-    "@opencast-mui/plugin-core-upload#build": {
+    "@oc-mui/plugin-core-upload#build": {
       "outputs": []
     },
     "preview": {

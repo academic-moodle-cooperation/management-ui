@@ -1,11 +1,11 @@
 import { Pencil, UploadCloud } from "lucide-react";
 import React from "react";
 
-import { i18next } from "@opencast-mui/i18n";
-import { PluginComponent } from "@opencast-mui/plugin-system";
-import type { MuiSeriesDataFragment } from "@opencast-mui/query";
-import { Link } from "@opencast-mui/router";
-import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@opencast-mui/ui/components";
+import { i18next } from "@oc-mui/i18n";
+import { PluginComponent } from "@oc-mui/plugin-system";
+import type { MuiSeriesDataFragment } from "@oc-mui/query";
+import { Link } from "@oc-mui/router";
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@oc-mui/ui/components";
 
 import { useSidebarStore } from "../stores/sidebarStore";
 

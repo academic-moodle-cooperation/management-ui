@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import { defaultConfig } from "@opencast-mui/ui-config";
+import { defaultConfig } from "@oc-mui/ui-config";
 
 import { getCachedAppConfig, clearAppConfigCache } from "./getCachedAppConfig";
 
-// Mock @opencast-mui/ui-config. `getAppConfig` is the normalizer used by the
+// Mock @oc-mui/ui-config. `getAppConfig` is the normalizer used by the
 // real hook + cache — the identity passthrough keeps assertions focused on
 // caching behaviour without coupling tests to the default-merge details.
-vi.mock("@opencast-mui/ui-config", () => ({
+vi.mock("@oc-mui/ui-config", () => ({
   defaultConfig: {
     productionConfigUrl: "/ui/config/config.json",
   },

@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { useAppConfig } from "@opencast-mui/query";
+import { useAppConfig } from "@oc-mui/query";
 
 export interface AuthActions {
   login: (redirectTo?: string) => void;

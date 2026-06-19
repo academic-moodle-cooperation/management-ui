@@ -15,9 +15,9 @@
       "category": "feature",
       "tags": ["poll", "demo", "local-dev"],
       "workspaceDependencies": {
-        "@opencast-mui/plugin-system": ">=1.0.0",
-        "@opencast-mui/ui": ">=1.0.0",
-        "@opencast-mui/query": ">=1.0.0"
+        "@oc-mui/plugin-system": ">=1.0.0",
+        "@oc-mui/ui": ">=1.0.0",
+        "@oc-mui/query": ">=1.0.0"
       }
     }
   ]

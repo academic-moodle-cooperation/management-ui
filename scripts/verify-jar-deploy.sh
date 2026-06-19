@@ -69,7 +69,7 @@ pnpm create-plugin "${PLUGIN_ID}" </dev/null >/dev/null
 echo "  scaffolded ${PLUGIN_DIR}"
 
 say "build frontend"
-pnpm --filter "@opencast-mui/plugin-${PLUGIN_ID}" build >/dev/null
+pnpm --filter "@oc-mui/plugin-${PLUGIN_ID}" build >/dev/null
 test -f "${PLUGIN_DIR}/dist/${PLUGIN_ID}.mjs" || { echo "dist/${PLUGIN_ID}.mjs missing"; exit 1; }
 echo "  built dist/${PLUGIN_ID}.mjs"
 

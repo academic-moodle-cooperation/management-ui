@@ -1,7 +1,7 @@
 import { useReducer, useMemo, useCallback } from "react";
 
-import { atomWithStorage, useAtomValue, useSetAtom } from "@opencast-mui/store";
-import type { OnChangeFn, SortingState, VisibilityState } from "@opencast-mui/ui/components";
+import { atomWithStorage, useAtomValue, useSetAtom } from "@oc-mui/store";
+import type { OnChangeFn, SortingState, VisibilityState } from "@oc-mui/ui/components";
 export interface TableBaseState {
   pageIndex: number;
   pageSize: number;

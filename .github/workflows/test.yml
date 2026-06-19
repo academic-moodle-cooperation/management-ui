@@ -30,7 +30,7 @@ jobs:
         run: |
           # Build vite-config first to ensure dist files are fully available.
           # Prevents race conditions where plugins try to use vite-config before it's fully built.
-          pnpm turbo run build --force --filter=@opencast-mui/vite-config
+          pnpm turbo run build --force --filter=@oc-mui/vite-config
           test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
           pnpm turbo run build --force
 
@@ -74,7 +74,7 @@ jobs:
 
       - name: Build packages
         run: |
-          pnpm turbo run build --force --filter=@opencast-mui/vite-config
+          pnpm turbo run build --force --filter=@oc-mui/vite-config
           test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
           pnpm turbo run build --force
 
@@ -117,7 +117,7 @@ jobs:
 
       - name: Build packages
         run: |
-          pnpm turbo run build --force --filter=@opencast-mui/vite-config
+          pnpm turbo run build --force --filter=@oc-mui/vite-config
           test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
           pnpm turbo run build --force
 
@@ -149,7 +149,7 @@ jobs:
 
       - name: Build packages
         run: |
-          pnpm turbo run build --force --filter=@opencast-mui/vite-config
+          pnpm turbo run build --force --filter=@oc-mui/vite-config
           test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
           pnpm turbo run build --force
 
@@ -186,8 +186,8 @@ jobs:
       - name: Build vite-config
         run: |
           # Shell dev needs vite-config built; the Playwright webServer starts the
-          # shell in dev mode, which imports @opencast-mui/vite-config from dist/.
-          pnpm turbo run build --force --filter=@opencast-mui/vite-config
+          # shell in dev mode, which imports @oc-mui/vite-config from dist/.
+          pnpm turbo run build --force --filter=@oc-mui/vite-config
           test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
 
       - name: Ensure .local-plugins exists

@@ -1,5 +1,5 @@
-import type { TableColumnItem } from "@opencast-mui/ui/config-primitives";
-import type { AppConfig } from "@opencast-mui/ui-config";
+import type { TableColumnItem } from "@oc-mui/ui/config-primitives";
+import type { AppConfig } from "@oc-mui/ui-config";
 
 import { episodesConfig, type EpisodesTable as EpisodesTableConfig } from "./config";
 

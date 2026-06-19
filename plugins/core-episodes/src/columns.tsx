@@ -14,9 +14,9 @@ import {
 } from "lucide-react";
 import React from "react";
 
-import { i18next } from "@opencast-mui/i18n";
-import { EVENT_SORTABLE_FIELDS } from "@opencast-mui/query";
-import type { MuiEventsDataFragment } from "@opencast-mui/query";
+import { i18next } from "@oc-mui/i18n";
+import { EVENT_SORTABLE_FIELDS } from "@oc-mui/query";
+import type { MuiEventsDataFragment } from "@oc-mui/query";
 import {
   createColumnHelper,
   Tooltip,
@@ -29,9 +29,9 @@ import {
   type ColumnDef,
   type Row,
   type Column,
-} from "@opencast-mui/ui/components";
-import { cn } from "@opencast-mui/ui/lib";
-import { parseDuration } from "@opencast-mui/utils";
+} from "@oc-mui/ui/components";
+import { cn } from "@oc-mui/ui/lib";
+import { parseDuration } from "@oc-mui/utils";
 
 import ActionsCell from "./components/ActionsCell";
 import {

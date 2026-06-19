@@ -1,5 +1,5 @@
 {
-  "name": "@opencast-mui/utils",
+  "name": "@oc-mui/utils",
   "version": "1.0.0",
   "description": "Shared utilities (logger, asset URLs, deep-merge) for the Opencast Management UI and its plugins.",
   "author": "Academic Moodle Cooperation",
@@ -13,7 +13,7 @@
   "keywords": [
     "opencast",
     "management-ui",
-    "opencast-mui",
+    "oc-mui",
     "plugin",
     "utils"
   ],
@@ -49,8 +49,8 @@
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",
-    "@opencast-mui/eslint-config": "workspace:*",
-    "@opencast-mui/typescript-config": "workspace:*",
+    "@oc-mui/eslint-config": "workspace:*",
+    "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.9.0",
     "typescript": "~5.5.4",
     "vitest": "^4.0.17"

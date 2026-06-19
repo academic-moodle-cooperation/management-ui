@@ -1,4 +1,4 @@
-# @opencast-mui/i18n
+# @oc-mui/i18n
 
 Translation layer. Wraps `i18next` and `react-i18next` behind a single workspace import, plus the plugin-aware `usePluginTranslation` hook that auto-loads namespaces.
 
@@ -6,14 +6,14 @@ Translation layer. Wraps `i18next` and `react-i18next` behind a single workspace
 
 ## The wrapper rule
 
-This package is the **only place in the workspace allowed to import from `i18next` and `react-i18next`**. Plugins and other packages import translation primitives from here. The rule is enforced by `no-restricted-imports` in `@opencast-mui/eslint-config` with an explicit exception for this directory.
+This package is the **only place in the workspace allowed to import from `i18next` and `react-i18next`**. Plugins and other packages import translation primitives from here. The rule is enforced by `no-restricted-imports` in `@oc-mui/eslint-config` with an explicit exception for this directory.
 
 ## Usage
 
 ### In a plugin component
 
 ```tsx
-import { usePluginTranslation } from "@opencast-mui/i18n";
+import { usePluginTranslation } from "@oc-mui/i18n";
 
 export function MyView() {
   const { t } = usePluginTranslation(["my-plugin"]);

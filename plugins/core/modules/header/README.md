@@ -53,8 +53,8 @@ Universities can create their own complete header components and register them w
 
 ```typescript
 import React from 'react';
-import { SidebarTrigger } from '@opencast-mui/ui/components';
-import { LangSwitcher, LoginButton } from '@opencast-mui/plugin-core';
+import { SidebarTrigger } from '@oc-mui/ui/components';
+import { LangSwitcher, LoginButton } from '@oc-mui/plugin-core';
 
 const UniversityHeader = () => {
   return (
@@ -96,15 +96,15 @@ The core implementation exports reusable components that universities can use in
 - `LoginButton` - Authentication button with proper state
 
 ```typescript
-import { LangSwitcher, LoginButton } from "@opencast-mui/plugin-core";
+import { LangSwitcher, LoginButton } from "@oc-mui/plugin-core";
 ```
 
 ## Usage
 
-The header implementation is automatically loaded when you import from `@opencast-mui/plugin-core`:
+The header implementation is automatically loaded when you import from `@oc-mui/plugin-core`:
 
 ```typescript
-import { coreHeaderImplementation } from "@opencast-mui/plugin-core";
+import { coreHeaderImplementation } from "@oc-mui/plugin-core";
 
 // Automatically provides:
 // ✅ Complete header component (replaces minimal default)
@@ -152,6 +152,6 @@ manager.registerComponent('appshell:header', MyHeader);
 
 - **Extension Point**: `appshell:header` (direct registration)
 - **Priority**: 100 (allows university overrides)
-- **Dependencies**: `@opencast-mui/ui/components`, `@opencast-mui/router`
+- **Dependencies**: `@oc-mui/ui/components`, `@oc-mui/router`
 - **Plugin Type**: `header`
 - **Namespace**: `core`

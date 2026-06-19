@@ -1,7 +1,7 @@
 import { Check, Loader2, Palette } from "lucide-react";
 import React from "react";
 
-import { Badge } from "@opencast-mui/ui/components";
+import { Badge } from "@oc-mui/ui/components";
 
 import type { ThemeDefinition } from "../services/themes";
 

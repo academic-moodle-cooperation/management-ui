@@ -19,7 +19,7 @@ Scaffold a new plugin (`$ARGUMENTS`) and finish wiring it per `AGENTS.md`.
    and runs `pnpm install` to link the package into the workspace.
 
 3. **Confirm the contract test is green out of the box:**
-   `pnpm --filter @opencast-mui/plugin-<name> test:contract`.
+   `pnpm --filter @oc-mui/plugin-<name> test:contract`.
 
 4. **Replace the placeholder.** Update `src/index.ts`'s `initialize()` registrations and
    keep `plugin.json`'s `extensionPoints` array in sync — the contract test fails if a
@@ -27,10 +27,10 @@ Scaffold a new plugin (`$ARGUMENTS`) and finish wiring it per `AGENTS.md`.
    `manager.registerObject(...)` calls in `initialize()`, not `activate()`.
 
 5. **Respect the boundaries** (AGENTS.md → Boundaries). The plugin may import only
-   `@opencast-mui/*`, `plugins/core`, itself, and already-wrapped third-party libs. Never
+   `@oc-mui/*`, `plugins/core`, itself, and already-wrapped third-party libs. Never
    import from `apps/*`, another plugin, or a wrapped library directly (use
-   `@opencast-mui/router`, not `@tanstack/react-router`; `@opencast-mui/query`, `@opencast-mui/i18n`,
-   `@opencast-mui/store` likewise).
+   `@oc-mui/router`, not `@tanstack/react-router`; `@oc-mui/query`, `@oc-mui/i18n`,
+   `@oc-mui/store` likewise).
 
 A `.local-plugins/` plugin is **never** added to `plugins/index.ts`. When the plugin
 work is done, run the `pre-flight-check` skill (or `/verify`) before declaring it complete.

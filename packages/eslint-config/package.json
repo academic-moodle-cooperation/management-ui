@@ -1,5 +1,5 @@
 {
-  "name": "@opencast-mui/eslint-config",
+  "name": "@oc-mui/eslint-config",
   "version": "1.0.0",
   "description": "Shared ESLint configuration (wrapper-library and architectural boundary rules) for the Opencast Management UI and its plugins.",
   "author": "Academic Moodle Cooperation",
@@ -13,7 +13,7 @@
   "keywords": [
     "opencast",
     "management-ui",
-    "opencast-mui",
+    "oc-mui",
     "plugin",
     "eslint",
     "eslint-config"

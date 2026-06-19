@@ -3,26 +3,26 @@ import { cva } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
 import * as React from "react";
 
-import { useTranslation } from "@opencast-mui/i18n";
-import { Button } from "@opencast-mui/ui/components/ui/button";
-import { Input } from "@opencast-mui/ui/components/ui/input";
-import { Separator } from "@opencast-mui/ui/components/ui/separator";
+import { useTranslation } from "@oc-mui/i18n";
+import { Button } from "@oc-mui/ui/components/ui/button";
+import { Input } from "@oc-mui/ui/components/ui/input";
+import { Separator } from "@oc-mui/ui/components/ui/separator";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@opencast-mui/ui/components/ui/sheet";
-import { Skeleton } from "@opencast-mui/ui/components/ui/skeleton";
+} from "@oc-mui/ui/components/ui/sheet";
+import { Skeleton } from "@oc-mui/ui/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@opencast-mui/ui/components/ui/tooltip";
-import { useIsMobile } from "@opencast-mui/ui/hooks/use-mobile";
-import { cn } from "@opencast-mui/ui/lib/utils";
+} from "@oc-mui/ui/components/ui/tooltip";
+import { useIsMobile } from "@oc-mui/ui/hooks/use-mobile";
+import { cn } from "@oc-mui/ui/lib/utils";
 
 import type { VariantProps } from "class-variance-authority";
 

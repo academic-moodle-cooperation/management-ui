@@ -41,7 +41,7 @@ work regardless of the current directory.
 | `post-edit-lint.sh` | `PostToolUse` (Edit/Write/MultiEdit) | `eslint --fix` on the edited `.ts`/`.tsx`. Exit 1 (findings) → surfaced; exit 2 (eslint crash) → silent. | No |
 
 ESLint isn't a root dependency (it runs per-package via turbo), so `post-edit-lint.sh`
-invokes the binary shipped with `@opencast-mui/eslint-config` and runs it from the repo root,
+invokes the binary shipped with `@oc-mui/eslint-config` and runs it from the repo root,
 where the flat config (`eslint.config.mjs`) and its plugins resolve. Because the config
 uses `eslint-plugin-only-warn`, rule violations are warnings (exit 0), so in practice the
 hook is a **silent auto-fixer** — the blocking lint gate stays `pnpm lint` / `pnpm verify`,

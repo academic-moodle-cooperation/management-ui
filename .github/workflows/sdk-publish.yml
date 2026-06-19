@@ -1,7 +1,7 @@
 name: SDK publish smoke-test
 
 # Acceptance gate for the SDK packaging (exports→dist) work: proves a plugin
-# can install and build against the @opencast-mui/* packages as published npm
+# can install and build against the @oc-mui/* packages as published npm
 # artifacts, without the monorepo. Builds the SDK, publishes it to a throwaway
 # Verdaccio registry, then installs it into a consumer project outside the
 # workspace and runs a type-check + runtime smoke test.
@@ -44,7 +44,7 @@ jobs:
         run: |
           # Same ordering guard the other workflows use — vite-config's dist must
           # exist before packages that import it build.
-          pnpm turbo run build --force --filter=@opencast-mui/vite-config
+          pnpm turbo run build --force --filter=@oc-mui/vite-config
           test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
 
       - name: Ensure .local-plugins exists

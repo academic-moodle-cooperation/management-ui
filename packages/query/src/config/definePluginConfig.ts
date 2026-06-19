@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { z } from "zod";
 
-import type { PluginManager } from "@opencast-mui/plugin-system";
-import type { AppConfig } from "@opencast-mui/ui-config";
-import { logger } from "@opencast-mui/utils";
+import type { PluginManager } from "@oc-mui/plugin-system";
+import type { AppConfig } from "@oc-mui/ui-config";
+import { logger } from "@oc-mui/utils";
 
 import { useAppConfig } from "../hooks/useAppConfig";
 

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import { useI18n, loadNamespace } from "@opencast-mui/i18n";
+import { useI18n, loadNamespace } from "@oc-mui/i18n";
 
 import { Container } from "../container";
 import { DataTable, type DataTableProps } from "../datatable";

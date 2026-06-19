@@ -3,12 +3,12 @@
  * `dist/__PLUGIN_NAME__.mjs` that the Management UI loads dynamically
  * (via `.local-plugins/` in dev, or the JAR in production).
  *
- * `createCommunityPluginConfig` (from `@opencast-mui/vite-config`) handles
+ * `createCommunityPluginConfig` (from `@oc-mui/vite-config`) handles
  * library mode, externalizing the host-provided packages (react,
- * `@opencast-mui/*`, …) so they aren't bundled, and auto-extracting any
+ * `@oc-mui/*`, …) so they aren't bundled, and auto-extracting any
  * GraphQL fragments under `src/`.
  */
-import { createCommunityPluginConfig } from "@opencast-mui/vite-config";
+import { createCommunityPluginConfig } from "@oc-mui/vite-config";
 
 export default createCommunityPluginConfig({
   pluginName: "__PLUGIN_NAME__",

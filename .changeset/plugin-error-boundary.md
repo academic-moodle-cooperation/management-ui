@@ -1,5 +1,5 @@
 ---
-"@opencast-mui/plugin-system": patch
+"@oc-mui/plugin-system": patch
 ---
 
 Per-plugin error boundary (§5.6): a plugin component that throws during render

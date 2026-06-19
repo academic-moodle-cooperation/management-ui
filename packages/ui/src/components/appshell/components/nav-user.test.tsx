@@ -1,11 +1,11 @@
 import { renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { useGetCurrentUser } from "@opencast-mui/query";
+import { useGetCurrentUser } from "@oc-mui/query";
 
 import { useUserData } from "./nav-user";
 
-vi.mock("@opencast-mui/query", () => ({
+vi.mock("@oc-mui/query", () => ({
   useGetCurrentUser: vi.fn(),
 }));
 

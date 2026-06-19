@@ -1,7 +1,7 @@
 import { Trash2 } from "lucide-react";
 import React, { useState, useEffect, useCallback } from "react";
 
-import { useI18n, loadNamespace } from "@opencast-mui/i18n";
+import { useI18n, loadNamespace } from "@oc-mui/i18n";
 import {
   useMuiGetAllManagedAclsQuery,
   useMuiUpdateEventAclMutation,
@@ -10,9 +10,9 @@ import {
   useMuiGetManagedAclsWithSeriesIdQuery,
   useMuiSearchUserQuery,
   useQueryClient,
-} from "@opencast-mui/query";
-import type { MuiSearchUserQuery } from "@opencast-mui/query";
-import { logger } from "@opencast-mui/utils";
+} from "@oc-mui/query";
+import type { MuiSearchUserQuery } from "@oc-mui/query";
+import { logger } from "@oc-mui/utils";
 
 import { OverflowTooltip } from "../overflow-tooltip";
 import {

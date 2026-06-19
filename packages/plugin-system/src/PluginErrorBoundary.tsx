@@ -1,6 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
-import { logger } from "@opencast-mui/utils";
+import { logger } from "@oc-mui/utils";
 
 const boundaryLogger = logger.child({ component: "PluginErrorBoundary" });
 
@@ -25,10 +25,10 @@ interface PluginErrorBoundaryState {
  * while rendering, this catches it so the rest of the shell keeps working
  * instead of the whole app falling to the root error boundary.
  *
- * Lives in `@opencast-mui/plugin-system` rather than `@opencast-mui/ui` on purpose —
- * `@opencast-mui/ui` already depends on this package, so importing its `ErrorBoundary`
+ * Lives in `@oc-mui/plugin-system` rather than `@oc-mui/ui` on purpose —
+ * `@oc-mui/ui` already depends on this package, so importing its `ErrorBoundary`
  * here would form a cycle. The fallback is injected by the caller, keeping this
- * UI-light (no `@opencast-mui/ui` dependency).
+ * UI-light (no `@oc-mui/ui` dependency).
  */
 export class PluginErrorBoundary extends Component<
   PluginErrorBoundaryProps,

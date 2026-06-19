@@ -17,4 +17,4 @@ Run `pnpm verify` from the repo root. It runs, in the same order as CI:
   Because `reuseExistingServer` is on locally, if something else is already serving
   port 3000 the suite tests *that* server, not this build — stop the other process first.
 - If you only changed a single plugin/package and want a fast loop instead, prefer
-  `pnpm --filter @opencast-mui/plugin-<name> test` / `test:contract` (see AGENTS.md).
+  `pnpm --filter @oc-mui/plugin-<name> test` / `test:contract` (see AGENTS.md).

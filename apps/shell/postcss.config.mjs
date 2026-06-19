@@ -1,1 +1,1 @@
-export { default } from "@opencast-mui/ui/postcss.config";
+export { default } from "@oc-mui/ui/postcss.config";

@@ -60,9 +60,9 @@ jobs:
       - name: Build vite-config
         run: |
           # The Playwright webServer starts the shell in dev mode, which imports
-          # @opencast-mui/vite-config from dist/. Dev aliases the other @opencast-mui packages
+          # @oc-mui/vite-config from dist/. Dev aliases the other @oc-mui packages
           # to source, so only this one needs building (same as test.yml's e2e job).
-          pnpm turbo run build --force --filter=@opencast-mui/vite-config
+          pnpm turbo run build --force --filter=@oc-mui/vite-config
           test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
 
       - name: Ensure .local-plugins exists

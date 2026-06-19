@@ -1,5 +1,5 @@
 {
-  "extends": "@opencast-mui/typescript-config/react-library.json",
+  "extends": "@oc-mui/typescript-config/react-library.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",

@@ -1,7 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
-import { useTranslation } from "@opencast-mui/i18n";
-import { logger } from "@opencast-mui/utils";
+import { useTranslation } from "@oc-mui/i18n";
+import { logger } from "@oc-mui/utils";
 
 import { Button } from "../ui/button";
 

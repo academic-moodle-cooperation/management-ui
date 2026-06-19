@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { definePluginConfig } from "@opencast-mui/query";
+import { definePluginConfig } from "@oc-mui/query";
 
 /**
  * Upload plugin config — same pattern as `plugins/core-episodes/config.ts`.

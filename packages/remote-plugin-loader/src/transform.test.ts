@@ -7,7 +7,7 @@ describe("transformModuleSource", () => {
   const sharedModules: Record<string, unknown> = {
     react: { default: {}, createElement: vi.fn() },
     "react-dom": { render: vi.fn() },
-    "@opencast-mui/plugin-system": { createPlugin: vi.fn() },
+    "@oc-mui/plugin-system": { createPlugin: vi.fn() },
   };
 
   beforeEach(() => {
@@ -22,7 +22,7 @@ describe("transformModuleSource", () => {
   it("exports SHARED_MODULE_NAMES with expected modules", () => {
     expect(SHARED_MODULE_NAMES).toContain("react");
     expect(SHARED_MODULE_NAMES).toContain("react-dom");
-    expect(SHARED_MODULE_NAMES).toContain("@opencast-mui/plugin-system");
+    expect(SHARED_MODULE_NAMES).toContain("@oc-mui/plugin-system");
   });
 
   it("returns source unchanged when __SHARED_MODULES__ is missing", () => {
@@ -59,7 +59,7 @@ describe("transformModuleSource", () => {
   });
 
   it("includes preamble with all shared module vars", () => {
-    const source = 'import { createPlugin } from "@opencast-mui/plugin-system";';
+    const source = 'import { createPlugin } from "@oc-mui/plugin-system";';
     const result = transformModuleSource(source);
     for (const name of SHARED_MODULE_NAMES) {
       const varName = `__mod_${name.replace(/[^a-zA-Z0-9]/g, "_")}__`;
@@ -94,19 +94,19 @@ describe("transformModuleSource", () => {
     expect(result).toContain("new URL(__PLUGIN_BASE_URL__, window.location.href).href");
   });
 
-  it("rewrites @opencast-mui/app-runtime imports (now a host-provided shared module)", () => {
-    expect(SHARED_MODULE_NAMES).toContain("@opencast-mui/app-runtime");
-    const source = 'import { AdaptiveAppWrapper } from "@opencast-mui/app-runtime";';
+  it("rewrites @oc-mui/app-runtime imports (now a host-provided shared module)", () => {
+    expect(SHARED_MODULE_NAMES).toContain("@oc-mui/app-runtime");
+    const source = 'import { AdaptiveAppWrapper } from "@oc-mui/app-runtime";';
     const result = transformModuleSource(source);
     expect(result).toContain("AdaptiveAppWrapper } =");
-    expect(result).not.toMatch(/import\s+\{[^}]*\}\s+from\s+["']@opencast-mui\/app-runtime["']/);
+    expect(result).not.toMatch(/import\s+\{[^}]*\}\s+from\s+["']@oc-mui\/app-runtime["']/);
   });
 
-  it("logs a clear error when a plugin imports an @opencast-mui package the host doesn't provide", () => {
+  it("logs a clear error when a plugin imports an @oc-mui package the host doesn't provide", () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    transformModuleSource('import { useStore } from "@opencast-mui/store";');
+    transformModuleSource('import { useStore } from "@oc-mui/store";');
     const logged = errorSpy.mock.calls.map((call) => String(call[0])).join("\n");
-    expect(logged).toMatch(/does not provide.*@opencast-mui\/store/);
+    expect(logged).toMatch(/does not provide.*@oc-mui\/store/);
     errorSpy.mockRestore();
   });
 });

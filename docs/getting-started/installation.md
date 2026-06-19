@@ -78,7 +78,7 @@ To mount one: `git clone <your-org-plugin> .local-plugins/<org-name>`, then `pnp
 ## Trouble?
 
 - **`pnpm install` fails complaining about workspace deps.** You're likely on an old pnpm. `corepack prepare pnpm@latest --activate` and retry.
-- **Vite can't find `@opencast-mui/...`.** Ensure `pnpm build` ran at least once.
+- **Vite can't find `@oc-mui/...`.** Ensure `pnpm build` ran at least once.
 - **CI passes but local fails.** Run `pnpm verify` from a clean tree (`git clean -fdx node_modules dist dist-types .turbo`) then `pnpm install` then `pnpm verify` again.
 
 ## See also

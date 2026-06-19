@@ -4,36 +4,36 @@ How a change gets from a merged PR to a published version. The day-to-day rules 
 
 ## What gets published — the plugin-author SDK
 
-The published npm packages exist for **one purpose: writing plugins without checking out this monorepo.** Someone running `pnpm create-plugin` (or building a plugin in their own repo) installs a handful of `@opencast-mui/*` packages and nothing else. That set — and only that set — is what we publish to npm.
+The published npm packages exist for **one purpose: writing plugins without checking out this monorepo.** Someone running `pnpm create-plugin` (or building a plugin in their own repo) installs a handful of `@oc-mui/*` packages and nothing else. That set — and only that set — is what we publish to npm.
 
 Everything else stays `private: true` **permanently**. The feature plugins ship inside the application (as JARs / via the marketplace), not as libraries someone imports; the host-only infrastructure has no meaning outside the shell. `private: true` is therefore their intended end state, not a temporary pre-1.0 lock.
 
-The set is decided **forward-looking**: it covers what a plugin author can legitimately need to write a plugin against the supported model — not merely what an in-tree plugin happens to import today. (Current imports are a floor: `@opencast-mui/app-runtime`, for instance, has no in-tree plugin consumer but is imported by an external third-party plugin; `@opencast-mui/tailwind-config` has no in-tree dependent but any plugin that builds its own Tailwind needs the preset.) The set is dependency-closed: nothing published depends on a non-published package.
+The set is decided **forward-looking**: it covers what a plugin author can legitimately need to write a plugin against the supported model — not merely what an in-tree plugin happens to import today. (Current imports are a floor: `@oc-mui/app-runtime`, for instance, has no in-tree plugin consumer but is imported by an external third-party plugin; `@oc-mui/tailwind-config` has no in-tree dependent but any plugin that builds its own Tailwind needs the preset.) The set is dependency-closed: nothing published depends on a non-published package.
 
 **Published — the SDK (15 packages).**
 
 | Package | Why a plugin author needs it |
 |---|---|
-| `@opencast-mui/plugin-system` | `createPlugin`, `PluginManager`, extension-point registration |
-| `@opencast-mui/plugin-core` | shared extension-point identifiers every plugin may import |
-| `@opencast-mui/app-runtime` | `AppRuntimeProvider` / `useAppRuntime` and the standalone-app bootstrap (`StandaloneAppWrapper`, `bootstrapStandaloneApp`) an external/standalone plugin boots with |
-| `@opencast-mui/ui` | the React component library |
-| `@opencast-mui/tailwind-config` | the shadcn design-token preset, so custom plugin markup matches the host's styling |
-| `@opencast-mui/utils` | logger, asset URLs, deep-merge |
-| `@opencast-mui/i18n` · `@opencast-mui/query` · `@opencast-mui/router` · `@opencast-mui/store` | the wrapper facades (i18next / TanStack Query / TanStack Router / Jotai) |
-| `@opencast-mui/ui-config` | `AppConfig` types + defaults |
-| `@opencast-mui/plugin-testing` | the contract-test harness (devDependency) |
-| `@opencast-mui/eslint-config` · `@opencast-mui/typescript-config` · `@opencast-mui/vite-config` | the shared lint / TS / build configs the scaffold wires in |
+| `@oc-mui/plugin-system` | `createPlugin`, `PluginManager`, extension-point registration |
+| `@oc-mui/plugin-core` | shared extension-point identifiers every plugin may import |
+| `@oc-mui/app-runtime` | `AppRuntimeProvider` / `useAppRuntime` and the standalone-app bootstrap (`StandaloneAppWrapper`, `bootstrapStandaloneApp`) an external/standalone plugin boots with |
+| `@oc-mui/ui` | the React component library |
+| `@oc-mui/tailwind-config` | the shadcn design-token preset, so custom plugin markup matches the host's styling |
+| `@oc-mui/utils` | logger, asset URLs, deep-merge |
+| `@oc-mui/i18n` · `@oc-mui/query` · `@oc-mui/router` · `@oc-mui/store` | the wrapper facades (i18next / TanStack Query / TanStack Router / Jotai) |
+| `@oc-mui/ui-config` | `AppConfig` types + defaults |
+| `@oc-mui/plugin-testing` | the contract-test harness (devDependency) |
+| `@oc-mui/eslint-config` · `@oc-mui/typescript-config` · `@oc-mui/vite-config` | the shared lint / TS / build configs the scaffold wires in |
 
 **Never published — stays `private: true` (7 packages).** The guiding rule: *publishing is a commitment* — every published package is a versioned public contract. Adding a package to npm later is a non-breaking change; un-publishing one is not. So when a package is a host internal rather than part of the authoring contract, it stays private until there's a concrete reason to expose it.
 
 | Package | Why it is not an SDK package |
 |---|---|
-| `@opencast-mui/plugin-core-episodes` · `-series` · `-upload` | feature plugins — application products, shipped via JAR/marketplace. The architecture forbids importing one plugin from another (communicate via extension points), so no author depends on these as packages. |
-| `@opencast-mui/plugin-admin-marketplace` | the host's admin product |
-| `@opencast-mui/plugin-example` | reference/scaffold source, read not installed |
-| `@opencast-mui/remote-plugin-loader` | host-side mechanism for loading remote plugins; an author writes a plugin, the host loads it |
-| `@opencast-mui/providers` | app-level provider composition; authors reach the same wiring through `@opencast-mui/app-runtime`'s standalone wrappers. Promote it only if we commit to authors composing providers by hand. |
+| `@oc-mui/plugin-core-episodes` · `-series` · `-upload` | feature plugins — application products, shipped via JAR/marketplace. The architecture forbids importing one plugin from another (communicate via extension points), so no author depends on these as packages. |
+| `@oc-mui/plugin-admin-marketplace` | the host's admin product |
+| `@oc-mui/plugin-example` | reference/scaffold source, read not installed |
+| `@oc-mui/remote-plugin-loader` | host-side mechanism for loading remote plugins; an author writes a plugin, the host loads it |
+| `@oc-mui/providers` | app-level provider composition; authors reach the same wiring through `@oc-mui/app-runtime`'s standalone wrappers. Promote it only if we commit to authors composing providers by hand. |
 
 > The SDK packages carry full npm metadata (`description`, `repository`, `author`, `keywords`, `publishConfig.access = public`) and a per-package `LICENSE`, but they remain `private: true` until the Phase 6d flip.
 
@@ -43,9 +43,9 @@ The packages are not yet npm-installable; getting there is tracked as:
 
 - [x] **Metadata + per-package `LICENSE`** on the 15 SDK packages.
 - [x] **React → `peerDependencies`** on `plugin-system`, `app-runtime`, `plugin-testing` (avoids duplicate-React in a consumer install).
-- [x] **`exports` → built `dist/` + `files` allowlist** for every SDK package, so consumers get compiled JS, not raw `.ts`/`.tsx`. Pattern: tsup builds ESM JS → `dist/`; `tsc` emits `.d.ts` → `dist-types/` (also feeds api-extractor); package `exports` stay on `src` for in-repo dev/HMR while a **`publishConfig.exports`** swaps to `dist` at pack/publish time. All 15 SDK packages now ship `dist` (the 3 config packages ship source intentionally with a `files` allowlist). _Styling for external consumers works out of the box: `@opencast-mui/ui`'s `globals.css` self-scans its own dist (so component classes are generated) and ships the design tokens + fonts, and Tailwind v4 auto-scans the consumer's project — so a plugin author just needs `@import "@opencast-mui/ui/globals.css"`. The previous monorepo-specific `@source` globs (apps/plugins/.local-plugins) were moved out of the shared stylesheet into the shell's own Tailwind entry ([`apps/shell/src/app.css`](../../apps/shell/src/app.css)); verified against the visual-regression baselines (pixel-identical) and a real external Tailwind build._
+- [x] **`exports` → built `dist/` + `files` allowlist** for every SDK package, so consumers get compiled JS, not raw `.ts`/`.tsx`. Pattern: tsup builds ESM JS → `dist/`; `tsc` emits `.d.ts` → `dist-types/` (also feeds api-extractor); package `exports` stay on `src` for in-repo dev/HMR while a **`publishConfig.exports`** swaps to `dist` at pack/publish time. All 15 SDK packages now ship `dist` (the 3 config packages ship source intentionally with a `files` allowlist). _Styling for external consumers works out of the box: `@oc-mui/ui`'s `globals.css` self-scans its own dist (so component classes are generated) and ships the design tokens + fonts, and Tailwind v4 auto-scans the consumer's project — so a plugin author just needs `@import "@oc-mui/ui/globals.css"`. The previous monorepo-specific `@source` globs (apps/plugins/.local-plugins) were moved out of the shared stylesheet into the shell's own Tailwind entry ([`apps/shell/src/app.css`](../../apps/shell/src/app.css)); verified against the visual-regression baselines (pixel-identical) and a real external Tailwind build._
 - [x] **Verdaccio publish-smoke-test (the acceptance gate).** [`scripts/verify-sdk-publish.sh`](../../scripts/verify-sdk-publish.sh) (run via `pnpm test:sdk-publish`, CI: [`.github/workflows/sdk-publish.yml`](../../.github/workflows/sdk-publish.yml)) builds the SDK, strips `private`, publishes all 15 packages to a throwaway Verdaccio registry, then in a consumer project **outside the workspace** installs the SDK from that registry and runs a type-check (against the shipped `.d.ts`) + a runtime smoke test (against the shipped JS) of a real `createPlugin` plugin. This is the real proof that "a plugin can install and build against our packages without the monorepo." Everything is torn down on exit and the `private` flags restored from git.
-- [x] **`pkg.pr.new` per-PR preview packages.** [`.github/workflows/preview-packages.yml`](../../.github/workflows/preview-packages.yml) publishes preview builds of the 15 SDK packages to the [pkg.pr.new](https://pkg.pr.new) CDN on each PR, and comments the install URLs, so anyone (e.g. a backend/plugin author) can `pnpm add https://pkg.pr.new/@opencast-mui/<pkg>@<sha>` and test the exact artifacts from a branch before a permanent npm publish. It packs with `pnpm` (so `publishConfig.exports` → `dist` is applied) and rewrites workspace deps to sibling preview URLs, so the whole `@opencast-mui` graph resolves from the CDN. pkg.pr.new **skips `private: true` packages**, so the workflow strips `private` in a dedicated step before publishing (the runner checkout is throwaway). **One-time setup (maintainer):** install the [pkg.pr.new GitHub App](https://github.com/apps/pkg-pr-new) on the repo running the workflow — pkg.pr.new checks the App against `$GITHUB_REPOSITORY`, so install it wherever you want previews. Until it's installed the publish step is rejected, but it's `continue-on-error` so it never fails the PR. (No npm token; pkg.pr.new is a preview CDN, not npm.)
+- [x] **`pkg.pr.new` per-PR preview packages.** [`.github/workflows/preview-packages.yml`](../../.github/workflows/preview-packages.yml) publishes preview builds of the 15 SDK packages to the [pkg.pr.new](https://pkg.pr.new) CDN on each PR, and comments the install URLs, so anyone (e.g. a backend/plugin author) can `pnpm add https://pkg.pr.new/@oc-mui/<pkg>@<sha>` and test the exact artifacts from a branch before a permanent npm publish. It packs with `pnpm` (so `publishConfig.exports` → `dist` is applied) and rewrites workspace deps to sibling preview URLs, so the whole `@oc-mui` graph resolves from the CDN. pkg.pr.new **skips `private: true` packages**, so the workflow strips `private` in a dedicated step before publishing (the runner checkout is throwaway). **One-time setup (maintainer):** install the [pkg.pr.new GitHub App](https://github.com/apps/pkg-pr-new) on the repo running the workflow — pkg.pr.new checks the App against `$GITHUB_REPOSITORY`, so install it wherever you want previews. Until it's installed the publish step is rejected, but it's `continue-on-error` so it never fails the PR. (No npm token; pkg.pr.new is a preview CDN, not npm.)
 
 Both closing tasks of the exports→dist effort are now in place — Verdaccio for the all-in-one acceptance gate, pkg.pr.new for low-friction per-branch testing. Together they are the standing answer to "can we test against staged packages before publishing?" — **yes**.
 
@@ -55,10 +55,10 @@ Every workspace package under `packages/` and `plugins/` is **versioned independ
 
 The four contracts in [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md) layer additional rules on top of plain Semver for the frozen surfaces:
 
-- **Manifest 1.1** — `@opencast-mui/plugin-system`
-- **Runtime API 1.0** — `@opencast-mui/plugin-system`
-- **Theme 2.0** — `@opencast-mui/ui` (tokens) + plugin authors (consumers)
-- **Config 1.0** — `@opencast-mui/query` (`definePluginConfig`) + `@opencast-mui/plugin-system` (loader)
+- **Manifest 1.1** — `@oc-mui/plugin-system`
+- **Runtime API 1.0** — `@oc-mui/plugin-system`
+- **Theme 2.0** — `@oc-mui/ui` (tokens) + plugin authors (consumers)
+- **Config 1.0** — `@oc-mui/query` (`definePluginConfig`) + `@oc-mui/plugin-system` (loader)
 
 Any change observable to a plugin author through one of these surfaces is **always a major** bump of the affected package, even if Semver alone would say otherwise.
 
@@ -72,7 +72,7 @@ Decide based on what the change does to the package's **public surface** — the
 | **Minor** | New export, new optional parameter, new method, new optional field on a public type. Existing consumers stay source- and binary-compatible. |
 | **Major** | Removed or renamed export, changed signature, behaviour change a consumer would observe, contract change. |
 
-Plugin runtime API has the hard rule: anything that changes what plugin authors observe → **major** of `@opencast-mui/plugin-system`. The loader rejects plugins whose declared `apiVersion` major doesn't match the host's `PLUGIN_API_VERSION`.
+Plugin runtime API has the hard rule: anything that changes what plugin authors observe → **major** of `@oc-mui/plugin-system`. The loader rejects plugins whose declared `apiVersion` major doesn't match the host's `PLUGIN_API_VERSION`.
 
 ## Changesets
 
@@ -113,12 +113,12 @@ CI runs `pnpm api-check:ci`, which compares the generated reports against the co
 
 Instrumented packages — the six contract-stable ones:
 
-- `@opencast-mui/plugin-system`
-- `@opencast-mui/router`
-- `@opencast-mui/query`
-- `@opencast-mui/i18n`
-- `@opencast-mui/store`
-- `@opencast-mui/ui-config`
+- `@oc-mui/plugin-system`
+- `@oc-mui/router`
+- `@oc-mui/query`
+- `@oc-mui/i18n`
+- `@oc-mui/store`
+- `@oc-mui/ui-config`
 
 Cross-package coupling visible in each report is intentional: when an upstream contract changes, every consumer's snapshot diff surfaces the break.
 
@@ -128,7 +128,7 @@ Removing a public symbol is a major bump and requires a deprecation warning in t
 
 1. Mark it `@deprecated` in JSDoc with a one-line reason and a pointer to the replacement.
 2. Keep the old symbol working for one full major cycle. A symbol marked `@deprecated` in `1.x` may be removed only in `2.0.0`. The deprecation itself is a **minor** bump; the eventual removal is its own **major** changeset.
-3. Emit a runtime warning in dev. Use `logger.warn` from `@opencast-mui/utils`, gated behind `import.meta.env.DEV` so production callers don't pay the cost. Encouraged, not mandatory — type-only deprecations can't warn.
+3. Emit a runtime warning in dev. Use `logger.warn` from `@oc-mui/utils`, gated behind `import.meta.env.DEV` so production callers don't pay the cost. Encouraged, not mandatory — type-only deprecations can't warn.
 4. Document the deprecation in the changeset body so it lands in the changelog.
 
 Plugin authors get a one-major-cycle grace window: when the host bumps `PLUGIN_API_VERSION` major, plugins compiled against the previous major are cleanly rejected by the loader with a "Plugin requires API major X, host provides Y" error.
@@ -170,16 +170,16 @@ The automation lives in [`.github/workflows/release.yml`](../../.github/workflow
 
 There is no manual `pnpm publish` step. If a release goes sideways, deprecate the bad version with `npm deprecate` rather than unpublishing.
 
-> **Pre-1.0 reality check.** Until the Phase 6d public flip, `access` is `"restricted"` *and* every `@opencast-mui/*` package is still `"private": true`, so step 3's `changeset publish` is a deliberate **no-op** — it skips private packages. The version/changelog half (steps 1–2) works today; the publish half activates once the packages drop `private` and `access` becomes `"public"`. Prerequisites for that flip:
+> **Pre-1.0 reality check.** Until the Phase 6d public flip, `access` is `"restricted"` *and* every `@oc-mui/*` package is still `"private": true`, so step 3's `changeset publish` is a deliberate **no-op** — it skips private packages. The version/changelog half (steps 1–2) works today; the publish half activates once the packages drop `private` and `access` becomes `"public"`. Prerequisites for that flip:
 > - **Repo setting:** *Settings → Actions → General →* enable **"Allow GitHub Actions to create and approve pull requests"** so the action can open the Version Packages PR.
-> - **The `@opencast-mui` npm org** exists and the publisher can publish to it.
+> - **The `@oc-mui` npm org** exists and the publisher can publish to it.
 > - **npm authentication** — see below.
 
 ### npm authentication: token to bootstrap, Trusted Publishing afterwards
 
 Only the release workflow publishes — never a laptop. It authenticates in two phases:
 
-1. **Bootstrap (first publish only).** A brand-new package can't have a trusted publisher configured yet, so the *first* release of the 15 SDK packages uses a **granular npm token** scoped to the `@opencast-mui` packages with the shortest workable expiry, stored as the `NPM_TOKEN` repo secret (*Settings → Secrets and variables → Actions*).
+1. **Bootstrap (first publish only).** A brand-new package can't have a trusted publisher configured yet, so the *first* release of the 15 SDK packages uses a **granular npm token** scoped to the `@oc-mui` packages with the shortest workable expiry, stored as the `NPM_TOKEN` repo secret (*Settings → Secrets and variables → Actions*).
 2. **Switch to [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers) (OIDC).** After the first publish, configure each package on npmjs.com to trust this repo + `.github/workflows/release.yml`. GitHub then issues a short-lived identity token per run (the workflow already has `id-token: write`), npm accepts the publish without any stored secret, and provenance attestations come for free.
 3. **Delete the token** — from npm *and* from the repo secrets. There is nothing left to leak or rotate. (npm has been tightening token lifetimes since the 2025 supply-chain attacks, so a long-lived automation token isn't a sustainable alternative anyway.)
 

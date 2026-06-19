@@ -9,7 +9,7 @@ name: Release
 #      `pnpm changeset:publish` to publish the bumped packages and push tags.
 #
 # NOTE - pre-1.0 state: `.changeset/config.json` has `access: "restricted"`
-# and every @opencast-mui/* package is still `"private": true`. `changeset publish`
+# and every @oc-mui/* package is still `"private": true`. `changeset publish`
 # skips private packages, so the publish half is intentionally a no-op until
 # the Phase 6d public flip (drop `private`, set access to "public"). The
 # version/changelog half (the "Version Packages" PR) works today and is the
@@ -19,8 +19,8 @@ name: Release
 #   - Repo setting: Settings -> Actions -> General -> "Allow GitHub Actions to
 #     create and approve pull requests" must be ON (for the Version PR).
 #   - Secret NPM_TOKEN: an npm automation token with publish rights to the
-#     @opencast-mui scope (only consumed once packages go public).
-#   - The @opencast-mui npm org exists and the token owner can publish to it.
+#     @oc-mui scope (only consumed once packages go public).
+#   - The @oc-mui npm org exists and the token owner can publish to it.
 
 on:
   workflow_dispatch:
@@ -75,7 +75,7 @@ jobs:
           # vite-config first (ordering guard - other packages import its dist),
           # then the full build INCLUDING build:types - publishConfig points
           # `types` at dist-types/, which only build:types emits.
-          pnpm turbo run build --force --filter=@opencast-mui/vite-config
+          pnpm turbo run build --force --filter=@oc-mui/vite-config
           test -f packages/vite-config/dist/plugin.config.js || (echo "vite-config dist files missing" && exit 1)
           pnpm turbo run build build:types
 

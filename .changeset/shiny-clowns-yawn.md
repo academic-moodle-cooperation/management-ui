@@ -11,11 +11,11 @@ Fresh clones don't have the directory because it's gitignored. Fix:
 prepend `mkdir -p .local-plugins` so the script self-heals.
 
 **2) `pnpm build` emitted three "no output files found" warnings** for
-`@opencast-mui/plugin-core-{episodes,series,upload}#build`. The three core
+`@oc-mui/plugin-core-{episodes,series,upload}#build`. The three core
 feature plugins are library-shaped — they re-export source from
 `index.ts` and their build script is just an `echo`. The default
 `build` task in `turbo.json` declares `outputs: ["dist/**"]`, which
-turbo then can't satisfy. Same pattern `@opencast-mui/plugin-admin-marketplace`
+turbo then can't satisfy. Same pattern `@oc-mui/plugin-admin-marketplace`
 already uses: add per-package overrides declaring `outputs: []`. Three
 new entries in `turbo.json`'s tasks block.
 

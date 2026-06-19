@@ -1,5 +1,5 @@
 ---
-"@opencast-mui/plugin-core-upload": patch
+"@oc-mui/plugin-core-upload": patch
 ---
 
 Fix the upload drop area rendering as a white box in dark mode. The dropzone

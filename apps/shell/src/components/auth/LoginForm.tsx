@@ -3,10 +3,10 @@
  *
  * Shell-native login form rendered by the `/login` route (wired in
  * `commonRoutes.tsx`) for Opencast's Spring Security password backend.
- * Injected into `@opencast-mui/router`'s `createLoginRoute` via its
- * `formComponent` option — the router package can't import `@opencast-mui/ui`
+ * Injected into `@oc-mui/router`'s `createLoginRoute` via its
+ * `formComponent` option — the router package can't import `@oc-mui/ui`
  * directly (that would form a dependency cycle), so the form lives here
- * in the shell where both `@opencast-mui/ui` and `@opencast-mui/query` are available.
+ * in the shell where both `@oc-mui/ui` and `@oc-mui/query` are available.
  *
  * Why a native form instead of redirecting to Opencast's `/login.html`:
  * the backend's `AuthenticationSuccessHandler` only returns you to your
@@ -26,9 +26,9 @@
  */
 import { useState, type FormEvent } from "react";
 
-import { useTranslation } from "@opencast-mui/i18n";
-import { useGetCurrentUser } from "@opencast-mui/query";
-import type { LoginFormComponentProps } from "@opencast-mui/router";
+import { useTranslation } from "@oc-mui/i18n";
+import { useGetCurrentUser } from "@oc-mui/query";
+import type { LoginFormComponentProps } from "@oc-mui/router";
 import {
   Button,
   Card,
@@ -39,7 +39,7 @@ import {
   Checkbox,
   Input,
   Label,
-} from "@opencast-mui/ui/components";
+} from "@oc-mui/ui/components";
 
 /** Spring Security form-login processing endpoint (proxied in dev). */
 const SPRING_SECURITY_CHECK_URL = "/j_spring_security_check";

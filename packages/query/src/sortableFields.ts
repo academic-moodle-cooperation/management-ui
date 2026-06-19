@@ -8,7 +8,7 @@
  * object type 'EventOrderByInput'").
  *
  * These arrays are the runtime representation of those sets, consumed by
- * `restrictSortingToFields` (from `@opencast-mui/ui`) so the UI never offers a
+ * `restrictSortingToFields` (from `@oc-mui/ui`) so the UI never offers a
  * sort the backend rejects.
  *
  * They are **derived from the schema, not hand-written**: the
@@ -17,7 +17,7 @@
  * `schema-input-fields.generated.ts` straight from the introspected
  * GraphQL schema. This module re-exports them under the sorting-oriented
  * names the UI uses. When the schema changes, run
- * `pnpm --filter @opencast-mui/query codegen` and the lists update with it.
+ * `pnpm --filter @oc-mui/query codegen` and the lists update with it.
  */
 
 import { EVENT_ORDER_BY_FIELDS, SERIES_ORDER_BY_FIELDS } from "./schema-input-fields.generated";

@@ -1,12 +1,12 @@
 import { useMemo, useEffect, useCallback, useRef } from "react";
 
-import { useI18n } from "@opencast-mui/i18n";
-import { useRegistry } from "@opencast-mui/plugin-system";
-import { useMuiUpdateSeriesMutation } from "@opencast-mui/query";
-import type { MuiSeriesDataFragment } from "@opencast-mui/query";
-import { MUITable, createMetadataHelpers, AppLoader, type Row } from "@opencast-mui/ui/components";
-import type { ColumnsField, MetadataItem } from "@opencast-mui/ui/config-primitives";
-import { logger } from "@opencast-mui/utils";
+import { useI18n } from "@oc-mui/i18n";
+import { useRegistry } from "@oc-mui/plugin-system";
+import { useMuiUpdateSeriesMutation } from "@oc-mui/query";
+import type { MuiSeriesDataFragment } from "@oc-mui/query";
+import { MUITable, createMetadataHelpers, AppLoader, type Row } from "@oc-mui/ui/components";
+import type { ColumnsField, MetadataItem } from "@oc-mui/ui/config-primitives";
+import { logger } from "@oc-mui/utils";
 
 import { createColumns } from "../columns";
 import { seriesConfig } from "../config";

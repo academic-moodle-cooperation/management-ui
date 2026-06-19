@@ -16,7 +16,7 @@ There are **six contracts**:
 
 Each contract has its own version. Breaking changes to any of them require a major version bump of `@<scope>/plugin-system`.
 
-The Manifest 1.1 and Runtime API 1.0 contracts are **mechanically verified** by the contract-test harness in [`@opencast-mui/plugin-testing`](../../packages/plugin-testing/README.md); see [`docs/operations/testing.md`](../operations/testing.md) for the test pyramid and harness usage.
+The Manifest 1.1 and Runtime API 1.0 contracts are **mechanically verified** by the contract-test harness in [`@oc-mui/plugin-testing`](../../packages/plugin-testing/README.md); see [`docs/operations/testing.md`](../operations/testing.md) for the test pyramid and harness usage.
 
 ## 1. Plugin Manifest Contract
 
@@ -129,7 +129,7 @@ What the core promises plugin authors and downstream apps:
   - `config.plugins[pluginId]` — opaque per-plugin section; plugins own the sub-shape.
 - **Stable runtime switch:** a plugin slice may carry `enabled?: boolean`. The shell loader reads this from the raw slice (before Zod validation) and skips a plugin when it is `=== false`.
 - **Stable layered merge order:** `app:config:defaults` ⊕ (`defaultConfig` ⊕ `config.json`) ⊕ `app:config`. Both the React hook and the sync snapshot apply the same order in dev and prod.
-- **Stable reader surface:** `definePluginConfig({ id, schema, defaults })` from `@opencast-mui/query` returns a reader with `{ id, schema, defaults, register, use, read }`. The reader signature is frozen for 1.x.
+- **Stable reader surface:** `definePluginConfig({ id, schema, defaults })` from `@oc-mui/query` returns a reader with `{ id, schema, defaults, register, use, read }`. The reader signature is frozen for 1.x.
 
 Breaking changes to any of these are **major**. Adding new optional top-level keys to `AppConfig.app` is **minor**. Adding new methods to the reader is **minor**. Removing or renaming anything is **major** and requires an ADR.
 
@@ -144,7 +144,7 @@ Breaking changes to any of these are **major**. Adding new optional top-level ke
 **Authoritative source:** [`packages/plugin-system/src/sharedRuntime.ts`](../../packages/plugin-system/src/sharedRuntime.ts) (`SHARED_RUNTIME_MAJORS`).
 **Contract version:** 1.0.
 
-The host loads exactly one copy of certain packages into the page and shares them with every plugin via `window.__SHARED_MODULES__`. Plugins must consume the host's copy — bundling a different major into the plugin's own `.mjs` causes two React contexts in the same tree, broken hooks, and mismatched `@opencast-mui/*` types.
+The host loads exactly one copy of certain packages into the page and shares them with every plugin via `window.__SHARED_MODULES__`. Plugins must consume the host's copy — bundling a different major into the plugin's own `.mjs` causes two React contexts in the same tree, broken hooks, and mismatched `@oc-mui/*` types.
 
 ### What the host promises
 
@@ -156,16 +156,16 @@ Each name below is shared at the specified major. Patches and minors of a shared
 | `react-dom` | 19 |
 | `react/jsx-runtime` | 19 |
 | `lucide-react` | 0 |
-| `@opencast-mui/plugin-system` | 1 |
-| `@opencast-mui/ui` | 1 |
-| `@opencast-mui/query` | 1 |
-| `@opencast-mui/router` | 1 |
-| `@opencast-mui/i18n` | 1 |
-| `@opencast-mui/utils` | 1 |
-| `@opencast-mui/store` | 1 |
-| `@opencast-mui/ui-config` | 1 |
+| `@oc-mui/plugin-system` | 1 |
+| `@oc-mui/ui` | 1 |
+| `@oc-mui/query` | 1 |
+| `@oc-mui/router` | 1 |
+| `@oc-mui/i18n` | 1 |
+| `@oc-mui/utils` | 1 |
+| `@oc-mui/store` | 1 |
+| `@oc-mui/ui-config` | 1 |
 
-The runtime list is exported as `SHARED_RUNTIME_MAJORS` from `@opencast-mui/plugin-system`, kept in sync with `SHARED_MODULE_NAMES` in [`@opencast-mui/remote-plugin-loader`](../../packages/remote-plugin-loader/src/transform.ts).
+The runtime list is exported as `SHARED_RUNTIME_MAJORS` from `@oc-mui/plugin-system`, kept in sync with `SHARED_MODULE_NAMES` in [`@oc-mui/remote-plugin-loader`](../../packages/remote-plugin-loader/src/transform.ts).
 
 ### What plugins must do
 
@@ -175,18 +175,18 @@ Declare every shared dep the plugin actually imports in `workspaceDependencies` 
 {
   "workspaceDependencies": {
     "react": "^19.0.0",
-    "@opencast-mui/plugin-system": "^1.0.0",
-    "@opencast-mui/ui": "^1.0.0"
+    "@oc-mui/plugin-system": "^1.0.0",
+    "@oc-mui/ui": "^1.0.0"
   }
 }
 ```
 
-Compatibility is checked at load time by `checkSharedDependencyCompatibility` (exported from `@opencast-mui/plugin-system`). A plugin whose declared major doesn't match the host's is rejected by the loader with a clear `"Plugin requires <name> major X, host provides Y"` error. All three loader paths funnel through this one function: the **marketplace** (via `securityService.checkVersionCompatibility`, which now delegates to it), the **`.local-plugins/` dev** path, and the **JAR** path (both via the shell's `passesSharedDependencyGate` in `PluginInitializer`). A plugin that declares no `workspaceDependencies` is not gated.
+Compatibility is checked at load time by `checkSharedDependencyCompatibility` (exported from `@oc-mui/plugin-system`). A plugin whose declared major doesn't match the host's is rejected by the loader with a clear `"Plugin requires <name> major X, host provides Y"` error. All three loader paths funnel through this one function: the **marketplace** (via `securityService.checkVersionCompatibility`, which now delegates to it), the **`.local-plugins/` dev** path, and the **JAR** path (both via the shell's `passesSharedDependencyGate` in `PluginInitializer`). A plugin that declares no `workspaceDependencies` is not gated.
 
 ### Versioning rules
 
-- **Minor** of `@opencast-mui/plugin-system`: adding a new name to `SHARED_RUNTIME_MAJORS`. Existing plugins keep working — they just opted out of the new shared dep and continue to bundle it themselves.
-- **Major** of `@opencast-mui/plugin-system`: bumping any entry's major (e.g. host adopts React 20), or removing a name. Plugins compiled against the old major are cleanly rejected by the loader.
+- **Minor** of `@oc-mui/plugin-system`: adding a new name to `SHARED_RUNTIME_MAJORS`. Existing plugins keep working — they just opted out of the new shared dep and continue to bundle it themselves.
+- **Major** of `@oc-mui/plugin-system`: bumping any entry's major (e.g. host adopts React 20), or removing a name. Plugins compiled against the old major are cleanly rejected by the loader.
 
 Removing a name has the same effect as bumping its major from the plugin's perspective — the dep stops being host-provided.
 
@@ -207,7 +207,7 @@ All loader paths now share the canonical `checkSharedDependencyCompatibility`:
 
 **Contract version:** 1.0.
 
-GraphQL operations and fragments declared in a plugin (or in `@opencast-mui/query` for shared core operations) must be prefixed with the plugin's namespace, converted to PascalCase. The rule keeps plugin authors from accidentally colliding on operation/fragment names — and gives operators a way to attribute backend load and errors per plugin.
+GraphQL operations and fragments declared in a plugin (or in `@oc-mui/query` for shared core operations) must be prefixed with the plugin's namespace, converted to PascalCase. The rule keeps plugin authors from accidentally colliding on operation/fragment names — and gives operators a way to attribute backend load and errors per plugin.
 
 ### The rule
 
@@ -217,7 +217,7 @@ For every `query`, `mutation`, `subscription`, and `fragment` you declare in a `
 <PascalCaseNamespace><OperationName>
 ```
 
-The PascalCase namespace is mechanically derived from the kebab-case `namespace` field in `plugin.json` (or in the `createPlugin({ namespace })` call). For shared operations that live in `@opencast-mui/query` itself (not in any one plugin), the prefix is `Mui`.
+The PascalCase namespace is mechanically derived from the kebab-case `namespace` field in `plugin.json` (or in the `createPlugin({ namespace })` call). For shared operations that live in `@oc-mui/query` itself (not in any one plugin), the prefix is `Mui`.
 
 | Plugin `namespace` | Prefix | Example operation | Example fragment |
 |--------------------|--------|-------------------|------------------|
@@ -227,9 +227,9 @@ The PascalCase namespace is mechanically derived from the kebab-case `namespace`
 | `upload` | `Upload` | `UploadGetWorkflows` | `UploadWorkflowFields` |
 | `org-a` | `OrgA` | `OrgAGetCourseList` | `OrgACourseListEntry` |
 | `my-plugin` | `MyPlugin` | `MyPluginGetSomething` | `MyPluginThingFields` |
-| `@opencast-mui/query` (shared) | `Mui` | `MuiGetMyEvents` | `MuiCurrentUserFields` |
+| `@oc-mui/query` (shared) | `Mui` | `MuiGetMyEvents` | `MuiCurrentUserFields` |
 
-**Note** on the `core` namespace: there is no single `plugins/core*/` plugin that owns "everything shared". Each core plugin (`episodes`, `series`, `upload`, `admin-marketplace`, …) uses its own namespace. Operations that genuinely live in shared infrastructure (the `@opencast-mui/query` package) use `Mui`. Reserve `Core` for the `plugin-core` plugin itself.
+**Note** on the `core` namespace: there is no single `plugins/core*/` plugin that owns "everything shared". Each core plugin (`episodes`, `series`, `upload`, `admin-marketplace`, …) uses its own namespace. Operations that genuinely live in shared infrastructure (the `@oc-mui/query` package) use `Mui`. Reserve `Core` for the `plugin-core` plugin itself.
 
 ### What this enforces
 
@@ -246,9 +246,9 @@ The PascalCase namespace is mechanically derived from the kebab-case `namespace`
 
 ### Enforcement
 
-**Mechanical: an ESLint rule** (`local/graphql-operation-naming` in [`@opencast-mui/eslint-config`](../../packages/eslint-config/rules/graphql-operation-naming.js)) parses every `.graphql` file and every `gql\`\`` template literal inside `.ts` / `.tsx`, walks up to find the owning plugin's `plugin.json` (or detects shared-core via the `packages/query/` path → `Mui` prefix), and fails the lint pass on any operation or fragment that doesn't start with the expected prefix.
+**Mechanical: an ESLint rule** (`local/graphql-operation-naming` in [`@oc-mui/eslint-config`](../../packages/eslint-config/rules/graphql-operation-naming.js)) parses every `.graphql` file and every `gql\`\`` template literal inside `.ts` / `.tsx`, walks up to find the owning plugin's `plugin.json` (or detects shared-core via the `packages/query/` path → `Mui` prefix), and fails the lint pass on any operation or fragment that doesn't start with the expected prefix.
 
-Every operation and fragment in [`packages/query/src/queries.graphql`](../../packages/query/src/queries.graphql) now carries the `Mui` prefix. Two inline `gql\`\`` operations elsewhere were renamed in the same migration: `MuiGetCurrentUser` in `packages/query/src/hooks/useGetCurrentUser.ts`, and `plugins/core-upload/` deleted its duplicate inline query and now consumes the central `MuiGetMySeriesNameAndIdDocument` from `@opencast-mui/query`. No grandfathered disables remain — `git grep "eslint-disable-next-line local/graphql-operation-naming"` returns zero hits in source.
+Every operation and fragment in [`packages/query/src/queries.graphql`](../../packages/query/src/queries.graphql) now carries the `Mui` prefix. Two inline `gql\`\`` operations elsewhere were renamed in the same migration: `MuiGetCurrentUser` in `packages/query/src/hooks/useGetCurrentUser.ts`, and `plugins/core-upload/` deleted its duplicate inline query and now consumes the central `MuiGetMySeriesNameAndIdDocument` from `@oc-mui/query`. No grandfathered disables remain — `git grep "eslint-disable-next-line local/graphql-operation-naming"` returns zero hits in source.
 
 ### Versioning rules
 
@@ -272,12 +272,12 @@ No contract change is allowed without the changeset - plugins cannot cope with s
 
 - **2026-04-16:** Initial freeze. Manifest 1.0, Runtime API 1.0, Theme 2.0, Config 0.9 (pre-stable).
 - **2026-04-17:** Config Contract promoted to 1.0. Stable keys: `app.theme`, `app.locale`, `app.enabledPlugins`, `config.plugins[pluginId]`, `config.plugins[pluginId].enabled`. Layered merge order (`app:config:defaults` ⊕ base ⊕ `app:config`) and the `definePluginConfig` reader API are now frozen for 1.x. See [`CONFIGURATION.md`](./CONFIGURATION.md).
-- **2026-04-17:** Manifest Contract bumped to 1.1 (minor). New optional field `extensionPoints: string[]` on the top-level manifest, consumed by the contract-test harness in `@opencast-mui/plugin-testing` and reserved for marketplace tooling. Runtime loader behaviour is unchanged, so existing 1.0 manifests remain valid. Host `PLUGIN_API_VERSION` bumped from `1.0.0` to `1.1.0` accordingly. Plugin-system now also exports `validatePluginMetadata` and the `PluginContext` React context so that tooling can validate manifests and inject a pre-configured `PluginManager` without reaching into `src/`.
-- **2026-05-13:** Shared Runtime Dependencies Contract 1.0 added. New section [§5](#5-shared-runtime-dependencies) formalises the list of host-provided packages (`SHARED_RUNTIME_MAJORS` in `@opencast-mui/plugin-system`) and the rule that a plugin's `workspaceDependencies` lower-bound major must match the host's. New helpers `checkSharedDependencyCompatibility` and `parseRangeMajor` are exported from `@opencast-mui/plugin-system`. The runtime check is **not yet wired** into the JAR loader or `.local-plugins/` discovery path — those follow-ups are tracked in [`operations/open-followups.md`](../operations/open-followups.md#53-shared-npm-deps-version-locking). Existing plugins are unaffected; the contract is additive.
-- **2026-05-14:** GraphQL Operation Naming Contract 1.0 added. New section [§6](#6-graphql-operation-naming) mandates that every `query`/`mutation`/`subscription`/`fragment` declared in a plugin (or in `@opencast-mui/query` for shared core operations) be prefixed with the plugin's namespace in PascalCase (`MuiGetMyEvents`, `EpisodesEpisodeFields`, …). Shipping with documentation + manual review only; an ESLint rule that fails CI on violations is the next planned follow-up. Existing operations in `packages/query/src/queries.graphql` are grandfathered and will be renamed in a follow-up batch — see [`operations/open-followups.md`](../operations/open-followups.md#51-graphql-operation-naming-final-migration-of-legacy-operations).
-- **2026-05-15:** Enforcement for the GraphQL Operation Naming Contract is now mechanical. `@opencast-mui/eslint-config` ships a new custom rule (`local/graphql-operation-naming`) that parses `.graphql` files and `gql\`\`` template literals inside `.ts` / `.tsx`, walks up to the nearest `plugin.json` (or detects `packages/query/` for shared-core), and fails the lint pass on any operation or fragment that doesn't carry the right PascalCase prefix. Legacy operations grandfathered with `# eslint-disable-next-line` comments which double as the migration tracker — final rename batch follows in 5.1c.
+- **2026-04-17:** Manifest Contract bumped to 1.1 (minor). New optional field `extensionPoints: string[]` on the top-level manifest, consumed by the contract-test harness in `@oc-mui/plugin-testing` and reserved for marketplace tooling. Runtime loader behaviour is unchanged, so existing 1.0 manifests remain valid. Host `PLUGIN_API_VERSION` bumped from `1.0.0` to `1.1.0` accordingly. Plugin-system now also exports `validatePluginMetadata` and the `PluginContext` React context so that tooling can validate manifests and inject a pre-configured `PluginManager` without reaching into `src/`.
+- **2026-05-13:** Shared Runtime Dependencies Contract 1.0 added. New section [§5](#5-shared-runtime-dependencies) formalises the list of host-provided packages (`SHARED_RUNTIME_MAJORS` in `@oc-mui/plugin-system`) and the rule that a plugin's `workspaceDependencies` lower-bound major must match the host's. New helpers `checkSharedDependencyCompatibility` and `parseRangeMajor` are exported from `@oc-mui/plugin-system`. The runtime check is **not yet wired** into the JAR loader or `.local-plugins/` discovery path — those follow-ups are tracked in [`operations/open-followups.md`](../operations/open-followups.md#53-shared-npm-deps-version-locking). Existing plugins are unaffected; the contract is additive.
+- **2026-05-14:** GraphQL Operation Naming Contract 1.0 added. New section [§6](#6-graphql-operation-naming) mandates that every `query`/`mutation`/`subscription`/`fragment` declared in a plugin (or in `@oc-mui/query` for shared core operations) be prefixed with the plugin's namespace in PascalCase (`MuiGetMyEvents`, `EpisodesEpisodeFields`, …). Shipping with documentation + manual review only; an ESLint rule that fails CI on violations is the next planned follow-up. Existing operations in `packages/query/src/queries.graphql` are grandfathered and will be renamed in a follow-up batch — see [`operations/open-followups.md`](../operations/open-followups.md#51-graphql-operation-naming-final-migration-of-legacy-operations).
+- **2026-05-15:** Enforcement for the GraphQL Operation Naming Contract is now mechanical. `@oc-mui/eslint-config` ships a new custom rule (`local/graphql-operation-naming`) that parses `.graphql` files and `gql\`\`` template literals inside `.ts` / `.tsx`, walks up to the nearest `plugin.json` (or detects `packages/query/` for shared-core), and fails the lint pass on any operation or fragment that doesn't carry the right PascalCase prefix. Legacy operations grandfathered with `# eslint-disable-next-line` comments which double as the migration tracker — final rename batch follows in 5.1c.
 - **2026-05-15:** Legacy GraphQL operations renamed (5.1c). All 33 operations and fragments in `packages/query/src/queries.graphql` now carry the `Mui` prefix (`MuiGetMyEvents`, `MuiCurrentUserFields`, etc.); the 2 inline `gql\`\`` operations in `packages/query/src/hooks/useGetCurrentUser.ts` and `plugins/core-upload/src/App.tsx` are likewise renamed (the latter now consumes the central `MuiGetMySeriesNameAndIdDocument` rather than defining a duplicate inline). Every `# eslint-disable-next-line local/graphql-operation-naming` grandfather comment is removed; the rule fires on every operation in the workspace without exception. 24 call-site files updated to use the renamed hooks / types.
 - **2026-05-28:** `AppConfig` dead-field prune (OSS cleanup, pre-1.0). Removed `app.title`, `app.appTitle`, `app.version`, `app.organizationUrls`, `auth.tokenRefreshUrl`, and `api.timeout` from the type and `defaultConfig` — none had any reader in the workspace. **Not a Config Contract change:** the stable-key list in [§4](#4-config-contract) never included these fields, so the prune touches nothing frozen. The `[key: string]: unknown` index on `AppConfig` means a deployment `config.json` may still carry them without failing validation; they're simply ignored. A committed default `config.json` now lives at `apps/shell/public/ui/config/management-ui/config.json` (served locally in dev when no backend is configured, and shipped in the JAR), which is also what the [release test protocol §6](../operations/test-protocol.md) edits.
-- **2026-05-28:** Dark mode wired up + appearance axis formalised in the Theme Contract [§3](#3-theme-contract). The complete `.dark` token block in `globals.css` was previously unreachable; the shell now mounts a `next-themes` provider (`ThemeModeProvider`, exported from `@opencast-mui/ui`) defaulting to the OS preference, with a Light/Dark/System header toggle (`ThemeModeToggle`), applying a `.dark` class on `<html>`. Appearance (light/dark/system) is **orthogonal** to the `app.theme` org branding; a theme should ship both `:root` and `.dark`. Additive to the Theme Contract (no token removed/renamed), so it stays 2.0. Plugin guidance in [`plugins/styling.md`](../plugins/styling.md#dark-mode).
+- **2026-05-28:** Dark mode wired up + appearance axis formalised in the Theme Contract [§3](#3-theme-contract). The complete `.dark` token block in `globals.css` was previously unreachable; the shell now mounts a `next-themes` provider (`ThemeModeProvider`, exported from `@oc-mui/ui`) defaulting to the OS preference, with a Light/Dark/System header toggle (`ThemeModeToggle`), applying a `.dark` class on `<html>`. Appearance (light/dark/system) is **orthogonal** to the `app.theme` org branding; a theme should ship both `:root` and `.dark`. Additive to the Theme Contract (no token removed/renamed), so it stays 2.0. Plugin guidance in [`plugins/styling.md`](../plugins/styling.md#dark-mode).
 - **2026-05-28:** Shipped showcase themes added (Oxford Navy, Modern Slate & Teal, Heritage Burgundy, Forest Sage). Each is a full design language — color, typography, radius, shadows, spacing — overriding only standard tokens, with light + dark, **system fonts only** (no web fonts, for GDPR/offline). They live at `apps/shell/public/plugins/themes/*.css`, served as raw CSS so both the marketplace and `app.theme` apply them in dev and the production build. The marketplace registry was pruned of the six dev-only `.local-plugins` entries.
 - **2026-06-01:** Two more showcase themes added — **Aurora** (modern, vivid indigo, large radius, soft shadows, rounded geometric sans, relaxed spacing) and **Press** (editorial, high-contrast monochrome, zero radius, no shadows, bold borders, grotesque sans). Adapted from external design concepts; the concepts' Google-Fonts `@import`s were dropped in favour of GDPR-safe system stacks (SF Pro Rounded / Avenir for Aurora, Helvetica Neue / Arial for Press), keeping the **system-fonts-only** rule intact. Both ship light + dark and override only standard tokens (the concepts' non-contract `--heading-weight`/`--heading-spacing`/`--press-border-strong` tokens were removed as no reader exists). Same `apps/shell/public/plugins/themes/*.css` location and raw-CSS serving; no contract change (still Theme Contract 2.0).

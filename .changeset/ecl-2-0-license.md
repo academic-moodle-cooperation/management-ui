@@ -1,26 +1,26 @@
 ---
-"@opencast-mui/app-runtime": patch
-"@opencast-mui/eslint-config": patch
-"@opencast-mui/i18n": patch
-"@opencast-mui/plugin-admin-marketplace": patch
-"@opencast-mui/plugin-core-episodes": patch
-"@opencast-mui/plugin-core-series": patch
-"@opencast-mui/plugin-core-upload": patch
-"@opencast-mui/plugin-example": patch
-"@opencast-mui/plugin-system": patch
-"@opencast-mui/plugin-testing": patch
-"@opencast-mui/plugins": patch
-"@opencast-mui/providers": patch
-"@opencast-mui/query": patch
-"@opencast-mui/remote-plugin-loader": patch
-"@opencast-mui/router": patch
-"@opencast-mui/store": patch
-"@opencast-mui/tailwind-config": patch
-"@opencast-mui/typescript-config": patch
-"@opencast-mui/ui": patch
-"@opencast-mui/ui-config": patch
-"@opencast-mui/utils": patch
-"@opencast-mui/vite-config": patch
+"@oc-mui/app-runtime": patch
+"@oc-mui/eslint-config": patch
+"@oc-mui/i18n": patch
+"@oc-mui/plugin-admin-marketplace": patch
+"@oc-mui/plugin-core-episodes": patch
+"@oc-mui/plugin-core-series": patch
+"@oc-mui/plugin-core-upload": patch
+"@oc-mui/plugin-example": patch
+"@oc-mui/plugin-system": patch
+"@oc-mui/plugin-testing": patch
+"@oc-mui/plugins": patch
+"@oc-mui/providers": patch
+"@oc-mui/query": patch
+"@oc-mui/remote-plugin-loader": patch
+"@oc-mui/router": patch
+"@oc-mui/store": patch
+"@oc-mui/tailwind-config": patch
+"@oc-mui/typescript-config": patch
+"@oc-mui/ui": patch
+"@oc-mui/ui-config": patch
+"@oc-mui/utils": patch
+"@oc-mui/vite-config": patch
 ---
 
 Re-license every workspace package from MIT to the **Educational Community

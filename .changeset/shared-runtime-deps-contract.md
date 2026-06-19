@@ -1,5 +1,5 @@
 ---
-"@opencast-mui/plugin-system": minor
+"@oc-mui/plugin-system": minor
 ---
 
 Phase 8.5.3 — Shared Runtime Dependencies Contract 1.0.
@@ -8,7 +8,7 @@ New public exports:
 
 - `SHARED_RUNTIME_MAJORS` — frozen `Record<string, number>` of the major
   versions the host provides for `react`, `react-dom`, `react/jsx-runtime`,
-  `lucide-react`, and the contract-stable `@opencast-mui/*` packages.
+  `lucide-react`, and the contract-stable `@oc-mui/*` packages.
 - `checkSharedDependencyCompatibility(required, hostMajors?)` — pure
   compatibility check that takes a plugin's `workspaceDependencies` object
   and the host's majors, returning `{ compatible, incompatibilities?,

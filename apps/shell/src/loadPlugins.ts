@@ -1,7 +1,7 @@
-import type { Plugin } from "@opencast-mui/plugin-system";
-import * as AllPlugins from "@opencast-mui/plugins";
-import type { AppConfig } from "@opencast-mui/query";
-import { logger } from "@opencast-mui/utils";
+import type { Plugin } from "@oc-mui/plugin-system";
+import * as AllPlugins from "@oc-mui/plugins";
+import type { AppConfig } from "@oc-mui/query";
+import { logger } from "@oc-mui/utils";
 
 const isPlugin = (module: unknown): module is Plugin =>
   module !== null &&

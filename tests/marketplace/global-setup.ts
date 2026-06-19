@@ -13,7 +13,7 @@ export default function globalSetup(): void {
   execFileSync("pnpm", ["create-plugin", NAME, "--no-pom"], {
     stdio: ["ignore", "ignore", "inherit"],
   });
-  execFileSync("pnpm", ["--filter", `@opencast-mui/plugin-${NAME}`, "build"], {
+  execFileSync("pnpm", ["--filter", `@oc-mui/plugin-${NAME}`, "build"], {
     stdio: ["ignore", "ignore", "inherit"],
   });
   if (!existsSync(`.local-plugins/${NAME}/dist/${NAME}.mjs`)) {

@@ -8,10 +8,10 @@ Every workspace package is versioned **independently** following Semver. The fou
 
 | Contract | Frozen at | Owner |
 |----------|-----------|-------|
-| Manifest | 1.1 | `@opencast-mui/plugin-system` |
-| Runtime API | 1.0 | `@opencast-mui/plugin-system` |
-| Theme | 2.0 | `@opencast-mui/ui` + plugin consumers |
-| Config | 1.0 | `@opencast-mui/query` (`definePluginConfig`) |
+| Manifest | 1.1 | `@oc-mui/plugin-system` |
+| Runtime API | 1.0 | `@oc-mui/plugin-system` |
+| Theme | 2.0 | `@oc-mui/ui` + plugin consumers |
+| Config | 1.0 | `@oc-mui/query` (`definePluginConfig`) |
 
 A change observable to a plugin author through any of these surfaces is **always a major bump** of the affected package — even if Semver alone would say otherwise.
 
