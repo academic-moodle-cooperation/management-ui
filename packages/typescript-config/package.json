@@ -19,7 +19,6 @@
     "tsconfig"
   ],
   "license": "ECL-2.0",
-  "private": true,
   "publishConfig": {
     "access": "public"
   },

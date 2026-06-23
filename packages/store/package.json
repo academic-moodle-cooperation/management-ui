@@ -43,7 +43,6 @@
   },
   "license": "ECL-2.0",
   "type": "module",
-  "private": true,
   "exports": {
     ".": {
       "types": "./dist-types/index.d.ts",
