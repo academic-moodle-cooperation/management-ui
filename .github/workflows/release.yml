@@ -18,9 +18,18 @@ name: Release
 # Required before this can actually publish:
 #   - Repo setting: Settings -> Actions -> General -> "Allow GitHub Actions to
 #     create and approve pull requests" must be ON (for the Version PR).
-#   - Secret NPM_TOKEN: an npm automation token with publish rights to the
-#     @oc-mui scope (only consumed once packages go public).
-#   - The @oc-mui npm org exists and the token owner can publish to it.
+#   - Authentication is tokenless via npm Trusted Publishing (OIDC) - there is
+#     NO NPM_TOKEN secret. Each @oc-mui/* package needs a Trusted Publisher
+#     configured on npmjs.com (Package -> Settings -> Trusted Publisher ->
+#     GitHub Actions) naming this repo + this workflow file. OIDC needs npm
+#     >= 11.5.1 and Node >= 22.14.0 (the Setup Node + npm-upgrade steps below).
+#   - FIRST-PUBLISH BOOTSTRAP: OIDC cannot publish a package that does not yet
+#     exist on the registry (npm/cli#8544, still open). Each @oc-mui/* package
+#     must be published once by other means first - e.g. a local `npm publish`
+#     while signed in (`npm login`; no CI token) - and only then can its
+#     Trusted Publisher be configured. Every release after that flows through
+#     this workflow tokenlessly, with provenance attestations generated
+#     automatically.
 
 on:
   workflow_dispatch:
@@ -60,9 +69,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          # >= 22.14.0 is required for npm Trusted Publishing (OIDC).
+          node-version: "22"
           cache: "pnpm"
           registry-url: "https://registry.npmjs.org"
+
+      - name: Upgrade npm for OIDC trusted publishing
+        # Trusted publishing needs npm >= 11.5.1; Node 22 ships npm 10.x, so the
+        # `changeset publish` step (which shells out to `npm publish`) would
+        # otherwise use too old an npm to exchange the OIDC token.
+        run: npm install -g npm@latest
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -89,6 +105,7 @@ jobs:
           commit: "chore(release): version packages"
           title: "chore(release): version packages"
         env:
+          # GITHUB_TOKEN is for the changesets action (push the Version branch +
+          # open its PR). Publishing itself is tokenless: npm authenticates to
+          # the registry via the OIDC `id-token` granted above - no NPM_TOKEN.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

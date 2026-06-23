@@ -175,15 +175,17 @@ There is no manual `pnpm publish` step. If a release goes sideways, deprecate th
 > - **The `@oc-mui` npm org** exists and the publisher can publish to it.
 > - **npm authentication** — see below.
 
-### npm authentication: token to bootstrap, Trusted Publishing afterwards
+### npm authentication: tokenless via Trusted Publishing (OIDC)
 
-Only the release workflow publishes — never a laptop. It authenticates in two phases:
+There is **no `NPM_TOKEN` secret**. The release workflow authenticates to npm with a short-lived [OIDC](https://docs.npmjs.com/trusted-publishers) identity token (it has `id-token: write`), so there is no long-lived credential to leak or rotate, and provenance attestations are generated automatically.
 
-1. **Bootstrap (first publish only).** A brand-new package can't have a trusted publisher configured yet, so the *first* release of the 15 SDK packages uses a **granular npm token** scoped to the `@oc-mui` packages with the shortest workable expiry, stored as the `NPM_TOKEN` repo secret (*Settings → Secrets and variables → Actions*).
-2. **Switch to [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers) (OIDC).** After the first publish, configure each package on npmjs.com to trust this repo + `.github/workflows/release.yml`. GitHub then issues a short-lived identity token per run (the workflow already has `id-token: write`), npm accepts the publish without any stored secret, and provenance attestations come for free.
-3. **Delete the token** — from npm *and* from the repo secrets. There is nothing left to leak or rotate. (npm has been tightening token lifetimes since the 2025 supply-chain attacks, so a long-lived automation token isn't a sustainable alternative anyway.)
+The one wrinkle is the **first publish of each package** — OIDC can't create a package that doesn't exist yet, and a package can't have a trusted publisher configured until it exists ([npm/cli#8544](https://github.com/npm/cli/issues/8544), still open):
 
-> Check npm's current trusted-publishing docs at flip time — if new packages can by then be pre-registered with a trusted publisher, the token bootstrap can be skipped entirely.
+1. **Bootstrap (first publish only, from a maintainer's machine).** Publish each of the 15 SDK packages once by hand: `npm login` (interactive, with 2FA — nothing stored, no CI token), then `pnpm changeset:publish`. This is the *only* publish that happens off-CI.
+2. **Configure Trusted Publishing per package.** On npmjs.com, set each package's *Trusted Publisher* to this repo + `.github/workflows/release.yml`. OIDC publishing needs **npm ≥ 11.5.1 and Node ≥ 22.14.0** on the runner — the workflow's Setup Node (`node-version: 22`) + `npm install -g npm@latest` steps guarantee this.
+3. **Every release after that is workflow-only and tokenless.** Merging the Version Packages PR triggers `changeset publish`; npm accepts it via the run's OIDC token, no secret involved.
+
+> Recheck npm's trusted-publishing docs at flip time: if new packages can by then be pre-registered with a trusted publisher ([npm/cli#8544](https://github.com/npm/cli/issues/8544)), even the one-time local bootstrap can be skipped and publishing is 100% CI from day one.
 
 ## See also
 
