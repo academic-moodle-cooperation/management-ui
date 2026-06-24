@@ -186,27 +186,22 @@ export async function loadAndRegister(
             ? new URL(url, window.location.href).href
             : url;
         const cssUrl = new URL(cssPath, baseUrl).href;
-        const linkId = `plugin-css-${remotePlugin.name.replace(/[^a-z0-9]/gi, "-")}`;
-        const existingLink = document.getElementById(linkId);
-        if (existingLink) existingLink.remove();
-        const link = document.createElement("link");
-        link.id = linkId;
-        link.rel = "stylesheet";
-        link.href = cssUrl;
-        link.onerror = () =>
-          remoteLoaderLogger.warn(`Failed to load CSS for plugin "${remotePlugin.name}" from ${cssUrl}`);
-        link.onload = () =>
-          remoteLoaderLogger.debug(`Loaded CSS for plugin "${remotePlugin.name}" from ${cssUrl}`);
-        // In Vite dev, host CSS is injected as <style> tags rather than stylesheet links.
-        // Insert plugin CSS before the first stylesheet node so host utilities keep precedence.
-        const firstStylesheetNode = document.head.querySelector(
-          'style, link[rel="stylesheet"]',
+        const styleId = `plugin-css-${remotePlugin.name.replace(/[^a-z0-9]/gi, "-")}`;
+        document.getElementById(styleId)?.remove();
+        // Load the plugin's stylesheet into the `plugins` cascade layer, which
+        // the host declares AFTER Tailwind's `utilities` (see @oc-mui/ui's
+        // globals.css). This lets the plugin's own utilities win on its own DOM
+        // instead of losing to host base utilities by load order, while keeping
+        // every plugin's CSS in one predictable layer so it can't reorder host
+        // chrome. The `layer` attribute on <link> isn't shipped in browsers yet,
+        // so we use a <style> with `@import … layer()`, which is widely supported.
+        const style = document.createElement("style");
+        style.id = styleId;
+        style.textContent = `@import url(${JSON.stringify(cssUrl)}) layer(plugins);`;
+        document.head.appendChild(style);
+        remoteLoaderLogger.debug(
+          `Loaded CSS for plugin "${remotePlugin.name}" into @layer plugins from ${cssUrl}`,
         );
-        if (firstStylesheetNode) {
-          document.head.insertBefore(link, firstStylesheetNode);
-        } else {
-          document.head.appendChild(link);
-        }
       }
     } catch (cssError) {
       const err = cssError instanceof Error ? cssError : new Error(String(cssError));
