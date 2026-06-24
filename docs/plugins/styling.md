@@ -114,7 +114,9 @@ Defined in [`packages/ui/src/styles/globals.css`](../../packages/ui/src/styles/g
 
 ## Load order
 
-Remote/JAR plugin CSS is inserted **before** the host shell stylesheets. This prevents plugin utilities (`.flex`, `.p-0`, …) from overriding host UI when several plugins ship their own Tailwind builds.
+Remote/JAR plugin CSS is loaded into the **`plugins` cascade layer**, which the host declares *after* Tailwind's `utilities` layer (in `@oc-mui/ui`'s `globals.css`). So a plugin's own utilities win on the plugin's own DOM — a normal responsive heading like `text-4xl sm:text-6xl` renders as authored — instead of losing to the host's base utilities by load order. Because every plugin ships into this one layer, and utility definitions are deterministic, plugins still can't reorder host chrome.
+
+This is automatic; you don't do anything. The `@layer plugin-overrides` block below is only for the rarer case of restyling a *host or shared* component from your plugin.
 
 The implied entry point for plugin CSS:
 
