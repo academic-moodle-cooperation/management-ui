@@ -76,7 +76,13 @@ const Dropzone: FC<DropzoneProps> = ({
     // can't slot props onto — it warned about className on React.Fragment and
     // silently dropped the wrapper's classes. The visible dashed border comes
     // from the inner Label.)
-    <Container className="flex flex-col items-center justify-center">
+    //
+    // `w-full` is load-bearing: the parent column uses `items-center`, so without
+    // it this wrapper shrinks to its content width and the `w-2/3` Card below
+    // collapses into a narrow box instead of filling the column. (When the
+    // wrapper's classes were dropped via the old asChild/Fragment, the Card sat
+    // directly in the full-width column, so the dropzone stayed wide.)
+    <Container className="flex flex-col items-center justify-center w-full">
       <Card className="py-0 w-2/3">
         <Label
           htmlFor="dropzone-file"
