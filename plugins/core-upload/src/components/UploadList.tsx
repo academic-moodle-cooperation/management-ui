@@ -80,7 +80,7 @@ export const UploadList = ({
                     </span>
                     {selectedFile.status === "waiting" && !isLoading && (
                       <div onClick={() => editUploadName(selectedFile)} aria-label="edit">
-                        <PencilIcon className="w-5 h-5 ml-2 space-x-2 group-hover:inline text-slate-500 hover:text-slate-900 hover:cursor-pointer" />
+                        <PencilIcon className="w-5 h-5 ml-2 space-x-2 group-hover:inline text-muted-foreground hover:text-foreground hover:cursor-pointer" />
                       </div>
                     )}
                   </div>
@@ -88,22 +88,22 @@ export const UploadList = ({
                     <div className="flex items-end space-x-4">
                       <span className="relative text-sm font-medium text-muted-foreground hover:text-foreground">
                         {selectedFile.status === "completed" && (
-                          <CheckCircle2 className="w-5 h-5 text-green-500" />
+                          <CheckCircle2 className="w-5 h-5 text-ok" />
                         )}
                         {selectedFile.status === "aborted" && (
-                          <XCircle className="w-5 h-5 text-red-500" />
+                          <XCircle className="w-5 h-5 text-error" />
                         )}
                         {selectedFile.status === "error" && (
-                          <XCircle className="w-5 h-5 text-red-500" />
+                          <XCircle className="w-5 h-5 text-error" />
                         )}
                         {selectedFile.status === "waiting" && (
-                          <Clock className="w-5 h-5 text-indigo-500" />
+                          <Clock className="w-5 h-5 text-info" />
                         )}
                       </span>
                       <button
                         type="button"
                         className={cn(
-                          "relative focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
+                          "relative focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
                           (selectedFile.status === "completed" ||
                             selectedFile.status === "aborted") &&
                             "hidden",

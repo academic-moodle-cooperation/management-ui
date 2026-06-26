@@ -629,7 +629,7 @@ export const App = () => {
             )}
           </Container>
         )}
-        <Toaster closeButton richColors toastOptions={{}} theme="light" />
+        <Toaster closeButton richColors toastOptions={{}} />
 
         {/* TODO: Make Option for "No Series available" */}
       </Container>
