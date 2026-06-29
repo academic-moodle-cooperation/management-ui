@@ -1,4 +1,4 @@
-import { createRef, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useI18n } from "@oc-mui/i18n";
 import { uploadExtensionPoints } from "@oc-mui/plugin-core";
@@ -41,7 +41,7 @@ import { useFileHandler } from "./uploadservice/fileHandler";
 import { initializeProgressInterval } from "./uploadservice/onProgress";
 import { opencastUpload } from "./uploadservice/opencastUpload";
 
-import type { DragEvent, KeyboardEvent, RefObject, SetStateAction } from "react";
+import type { DragEvent, KeyboardEvent, SetStateAction } from "react";
 
 export const App = () => {
   const [fileWaitingList, setFileWaitingList] = useState<UploadFileBlob[]>([]);
@@ -156,14 +156,6 @@ export const App = () => {
       return lastPageParam + 100;
     },
   });
-
-  const refsById = useMemo(() => {
-    const uploadFileEditNameRefs: RefObject<HTMLSpanElement>[] = [];
-    fileWaitingList.forEach((item) => {
-      uploadFileEditNameRefs[item.id] = createRef<HTMLSpanElement>() as RefObject<HTMLSpanElement>;
-    });
-    return uploadFileEditNameRefs;
-  }, [fileWaitingList]);
 
   useEffect(() => {
     const navSeries = seriesList?.find((data) => data.id === routeSubPath) || null;
@@ -506,7 +498,6 @@ export const App = () => {
                             editUploadName={editUploadName}
                             editUploadNameEnd={editUploadNameEnd}
                             updateEditFileName={updateEditFileName}
-                            refsById={refsById}
                             abortUpload={abortUpload}
                             isLoading={isLoading}
                             className={"rounded-t-none"}
@@ -554,7 +545,6 @@ export const App = () => {
                           editUploadName={editUploadName}
                           editUploadNameEnd={editUploadNameEnd}
                           updateEditFileName={updateEditFileName}
-                          refsById={refsById}
                           abortUpload={abortUpload}
                           isLoading={isLoading}
                           className={
@@ -629,7 +619,7 @@ export const App = () => {
             )}
           </Container>
         )}
-        <Toaster closeButton richColors toastOptions={{}} theme="light" />
+        <Toaster closeButton richColors toastOptions={{}} />
 
         {/* TODO: Make Option for "No Series available" */}
       </Container>

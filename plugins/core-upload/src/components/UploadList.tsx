@@ -13,7 +13,6 @@ export const UploadList = ({
   editUploadName,
   editUploadNameEnd,
   updateEditFileName,
-  refsById,
   abortUpload,
   isLoading,
   className,
@@ -31,7 +30,6 @@ export const UploadList = ({
   editUploadName: (selectedFile: UploadFileBlob) => void;
   editUploadNameEnd: (uploadName: string) => void;
   updateEditFileName: (fileName: string) => void;
-  refsById: React.RefObject<HTMLSpanElement>[];
   abortUpload: (selectedFile: UploadFileBlob) => void;
   isLoading: boolean;
   className: string;
@@ -54,9 +52,17 @@ export const UploadList = ({
                 <div className="flex justify-between mb-1">
                   <div className="flex">
                     {editFile && editFile.index === selectedFile.id ? (
+                      // Size to content with CSS `field-sizing-content` (Chromium) instead of
+                      // measuring a hidden mirror span's offsetWidth during render. The old
+                      // approach baked in a pixel width from a cold-load measurement against
+                      // the fallback font, so it latched too-narrow once the web font swapped
+                      // in. Where `field-sizing` is unsupported (Safari/Firefox) a length-based
+                      // `size` gives approximate auto-grow; `min-w`/`max-w` bound it. No
+                      // measurement anywhere, so no font-swap latch in any browser.
                       <input
                         id="editfilename"
-                        className="text-center"
+                        className="text-sm font-semibold text-left bg-background text-foreground border border-input rounded-md px-2 field-sizing-content min-w-[16ch] max-w-full"
+                        size={Math.max(16, editFile.name.length)}
                         autoFocus
                         onKeyDown={handleEditUploadName}
                         value={editFile.name}
@@ -64,23 +70,15 @@ export const UploadList = ({
                           updateEditFileName(e.target.value);
                         }}
                         onBlur={() => editUploadNameEnd(editFile.name)}
-                        style={{
-                          width: `${(refsById[selectedFile.id]?.current?.offsetWidth || 0) + 20}px`,
-                        }}
                       />
                     ) : (
-                      <>
-                        <span className="text-sm font-semibold text-foreground">
-                          {selectedFile?.uploadName || selectedFile?.name}
-                        </span>
-                      </>
+                      <span className="text-sm font-semibold text-foreground">
+                        {selectedFile?.uploadName || selectedFile?.name}
+                      </span>
                     )}
-                    <span className="absolute h-0 overflow-hidden" ref={refsById[selectedFile.id]}>
-                      {editFile?.name || selectedFile?.uploadName}
-                    </span>
                     {selectedFile.status === "waiting" && !isLoading && (
                       <div onClick={() => editUploadName(selectedFile)} aria-label="edit">
-                        <PencilIcon className="w-5 h-5 ml-2 space-x-2 group-hover:inline text-slate-500 hover:text-slate-900 hover:cursor-pointer" />
+                        <PencilIcon className="w-5 h-5 ml-2 space-x-2 group-hover:inline text-muted-foreground hover:text-foreground hover:cursor-pointer" />
                       </div>
                     )}
                   </div>
@@ -88,22 +86,22 @@ export const UploadList = ({
                     <div className="flex items-end space-x-4">
                       <span className="relative text-sm font-medium text-muted-foreground hover:text-foreground">
                         {selectedFile.status === "completed" && (
-                          <CheckCircle2 className="w-5 h-5 text-green-500" />
+                          <CheckCircle2 className="w-5 h-5 text-ok" />
                         )}
                         {selectedFile.status === "aborted" && (
-                          <XCircle className="w-5 h-5 text-red-500" />
+                          <XCircle className="w-5 h-5 text-error" />
                         )}
                         {selectedFile.status === "error" && (
-                          <XCircle className="w-5 h-5 text-red-500" />
+                          <XCircle className="w-5 h-5 text-error" />
                         )}
                         {selectedFile.status === "waiting" && (
-                          <Clock className="w-5 h-5 text-indigo-500" />
+                          <Clock className="w-5 h-5 text-info" />
                         )}
                       </span>
                       <button
                         type="button"
                         className={cn(
-                          "relative focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
+                          "relative focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
                           (selectedFile.status === "completed" ||
                             selectedFile.status === "aborted") &&
                             "hidden",
