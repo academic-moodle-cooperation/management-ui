@@ -4,13 +4,13 @@
 
   <parent>
     <groupId>org.amc.management</groupId>
-    <artifactId>management-tool</artifactId>
+    <artifactId>management-ui</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>management-backend</artifactId>
 
-  <name>Opencast Management Tool :: Backend</name>
+  <name>Opencast Management UI :: Backend</name>
   <packaging>pom</packaging>
 
   <properties>

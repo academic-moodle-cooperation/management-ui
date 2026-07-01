@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.6.0" name="management-ui-feature">
-    <feature name="opencast-management-ui" description="Opencast Management Tool :: UI Feature" version="1.0.0">
-        <details>The Opencast Management Tool is an additional module for Opencast to allow video management related tasks.</details>
+    <feature name="opencast-management-ui" description="Opencast Management UI :: UI Feature" version="1.0.0">
+        <details>The Opencast Management UI is an additional module for Opencast to allow video management related tasks.</details>
         <bundle>mvn:org.amc.management/management-ui-config/${project.version}</bundle>
         <bundle>mvn:org.amc.management/management-ui-graphql/${project.version}</bundle>
         <bundle>mvn:org.amc.management/management-ui-core/${project.version}</bundle>

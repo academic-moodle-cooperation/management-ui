@@ -17,7 +17,7 @@
   </properties>
 
 
-  <name>Opencast Management Tool :: UI CONFIG</name>
+  <name>Opencast Management UI :: UI CONFIG</name>
  
   <build>
     <plugins>

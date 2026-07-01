@@ -11,12 +11,12 @@
   </parent>
 
   <groupId>org.amc.management</groupId>
-  <artifactId>management-tool</artifactId>
+  <artifactId>management-ui</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
 
-  <name>Opencast Management Tool</name>
-  <description>The Opencast Management Tool is an additional module for Opencast to allow video management related tasks.</description>
+  <name>Opencast Management UI</name>
+  <description>The Opencast Management UI is an additional module for Opencast to allow video management related tasks.</description>
   <inceptionYear>2021</inceptionYear>
 
   <properties>
