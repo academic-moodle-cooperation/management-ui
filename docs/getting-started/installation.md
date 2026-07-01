@@ -12,7 +12,7 @@ Getting Management UI running locally.
 
 ```bash
 git clone https://github.com/academic-moodle-cooperation/management-ui.git
-cd management-tool
+cd management-ui
 pnpm install
 pnpm build         # one-time — builds dist-types/ for upstream workspace packages
 ```

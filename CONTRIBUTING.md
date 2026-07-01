@@ -23,7 +23,7 @@ If your contribution is a **plugin that's specific to your organisation**, it sh
 
 ```bash
 git clone https://github.com/academic-moodle-cooperation/management-ui.git
-cd management-tool
+cd management-ui
 pnpm install
 pnpm build              # one-time: populates dist-types/ for upstream packages
 pnpm dev                # http://127.0.0.1:3000/management-ui/

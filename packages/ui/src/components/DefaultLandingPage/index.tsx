@@ -45,8 +45,8 @@ const REPO_URL = "https://github.com/academic-moodle-cooperation/management-ui";
 const REPO_BLOB = `${REPO_URL}/blob/HEAD`;
 const GITHUB_REPO = "academic-moodle-cooperation/management-ui"; // owner/repo for the Releases API
 const REPO_ORG = "academic-moodle-cooperation";
-const REPO_NAME = "management-tool";
-const DOCS_URL = "https://academic-moodle-cooperation.github.io/management-tool";
+const REPO_NAME = "management-ui";
+const DOCS_URL = "https://academic-moodle-cooperation.github.io/management-ui";
 const CLONE_LABEL = "github.com/academic-moodle-cooperation/management-ui";
 
 // The landing wears its own brand skin regardless of the active app theme — an

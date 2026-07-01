@@ -16,7 +16,7 @@ The four contracts (Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0) are fr
 
 ```bash
 git clone https://github.com/academic-moodle-cooperation/management-ui.git
-cd management-tool
+cd management-ui
 pnpm install
 pnpm build         # one-time — builds dist-types/ for upstream packages
 pnpm dev           # http://127.0.0.1:3000/management-ui/
