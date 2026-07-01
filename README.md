@@ -15,7 +15,7 @@ The four contracts (Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0) are fr
 ## Quick start
 
 ```bash
-git clone https://github.com/academic-moodle-cooperation/management-tool.git
+git clone https://github.com/academic-moodle-cooperation/management-ui.git
 cd management-tool
 pnpm install
 pnpm build         # one-time — builds dist-types/ for upstream packages
@@ -94,7 +94,7 @@ pnpm docs:build             # build the static docs site to docs/.vitepress/dist
 
 Read [`CONTRIBUTING.md`](CONTRIBUTING.md). New contributors should also read [`AGENTS.md`](AGENTS.md) (the operational pre-flight checklist — written for AI agents but useful as a human checklist too) and [`docs/architecture/overview.md`](docs/architecture/overview.md).
 
-Issue templates: [bug report](https://github.com/academic-moodle-cooperation/management-tool/issues/new?template=bug_report.yml), [feature request](https://github.com/academic-moodle-cooperation/management-tool/issues/new?template=feature_request.yml). Plugin-authoring questions go in [Discussions](https://github.com/academic-moodle-cooperation/management-tool/discussions).
+Issue templates: [bug report](https://github.com/academic-moodle-cooperation/management-ui/issues/new?template=bug_report.yml), [feature request](https://github.com/academic-moodle-cooperation/management-ui/issues/new?template=feature_request.yml). Plugin-authoring questions go in [Discussions](https://github.com/academic-moodle-cooperation/management-ui/discussions).
 
 ## Status
 

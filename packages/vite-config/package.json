@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "Shared Vite build configuration for the Opencast Management UI and standalone community plugins.",
   "author": "Academic Moodle Cooperation",
-  "homepage": "https://github.com/academic-moodle-cooperation/management-tool/tree/HEAD/packages/vite-config#readme",
+  "homepage": "https://github.com/academic-moodle-cooperation/management-ui/tree/HEAD/packages/vite-config#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/academic-moodle-cooperation/management-tool.git",
+    "url": "git+https://github.com/academic-moodle-cooperation/management-ui.git",
     "directory": "packages/vite-config"
   },
-  "bugs": "https://github.com/academic-moodle-cooperation/management-tool/issues",
+  "bugs": "https://github.com/academic-moodle-cooperation/management-ui/issues",
   "keywords": [
     "opencast",
     "management-ui",

@@ -54,7 +54,7 @@ You need:
 
 ```bash
 # From a fresh dir
-git clone https://github.com/academic-moodle-cooperation/management-tool.git
+git clone https://github.com/academic-moodle-cooperation/management-ui.git
 cd management-tool
 git checkout <release-branch>
 pnpm install

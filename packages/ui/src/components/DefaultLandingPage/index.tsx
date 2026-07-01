@@ -41,13 +41,13 @@ declare const __APP_VERSION__: string;
 const APP_VERSION = typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "1.0.0";
 
 // External destinations. Adjust REPO_URL / DOCS_URL if the canonical homes move.
-const REPO_URL = "https://github.com/academic-moodle-cooperation/management-tool";
+const REPO_URL = "https://github.com/academic-moodle-cooperation/management-ui";
 const REPO_BLOB = `${REPO_URL}/blob/HEAD`;
-const GITHUB_REPO = "academic-moodle-cooperation/management-tool"; // owner/repo for the Releases API
+const GITHUB_REPO = "academic-moodle-cooperation/management-ui"; // owner/repo for the Releases API
 const REPO_ORG = "academic-moodle-cooperation";
 const REPO_NAME = "management-tool";
 const DOCS_URL = "https://academic-moodle-cooperation.github.io/management-tool";
-const CLONE_LABEL = "github.com/academic-moodle-cooperation/management-tool";
+const CLONE_LABEL = "github.com/academic-moodle-cooperation/management-ui";
 
 // The landing wears its own brand skin regardless of the active app theme — an
 // indigo accent plus self-hosted Geist / Geist Mono (defined in globals.css).

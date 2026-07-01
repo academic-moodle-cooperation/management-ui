@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/academic-moodle-cooperation/management-tool/HEAD/packages/plugin-system/src/schemas/plugin.schema.json",
+  "$schema": "https://raw.githubusercontent.com/academic-moodle-cooperation/management-ui/HEAD/packages/plugin-system/src/schemas/plugin.schema.json",
   "id": "__PLUGIN_NAME__",
   "name": "__PLUGIN_NAME__",
   "version": "1.0.0",

@@ -10,7 +10,7 @@ body:
         faster we can reproduce and fix it.
 
         If this is a **security issue**, do not file it here — use
-        [private vulnerability reporting](https://github.com/academic-moodle-cooperation/management-tool/security/advisories)
+        [private vulnerability reporting](https://github.com/academic-moodle-cooperation/management-ui/security/advisories)
         instead.
 
   - type: input

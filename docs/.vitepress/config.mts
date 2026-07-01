@@ -1,6 +1,6 @@
 import { defineConfig } from "vitepress";
 
-const REPO_URL = "https://github.com/academic-moodle-cooperation/management-tool";
+const REPO_URL = "https://github.com/academic-moodle-cooperation/management-ui";
 const REPO_BLOB = `${REPO_URL}/blob/HEAD`;
 
 // Files under docs/ that should NOT be built into the public site.

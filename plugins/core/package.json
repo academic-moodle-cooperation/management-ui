@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "Core infrastructure plugin: shared extension-point identifiers and defaults that every Opencast Management UI plugin may import.",
   "author": "Academic Moodle Cooperation",
-  "homepage": "https://github.com/academic-moodle-cooperation/management-tool/tree/HEAD/plugins/core#readme",
+  "homepage": "https://github.com/academic-moodle-cooperation/management-ui/tree/HEAD/plugins/core#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/academic-moodle-cooperation/management-tool.git",
+    "url": "git+https://github.com/academic-moodle-cooperation/management-ui.git",
     "directory": "plugins/core"
   },
-  "bugs": "https://github.com/academic-moodle-cooperation/management-tool/issues",
+  "bugs": "https://github.com/academic-moodle-cooperation/management-ui/issues",
   "keywords": [
     "opencast",
     "management-ui",

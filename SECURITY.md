@@ -15,7 +15,7 @@ Until the first public 1.0 release of Management UI, only the latest commit on t
 
 Report security issues privately by either of:
 
-- Using GitHub's [private vulnerability reporting](https://github.com/academic-moodle-cooperation/management-tool/security/advisories) (preferred) — opens a private advisory on this repo that the maintainers see immediately and that we use to coordinate the fix and the eventual public CVE.
+- Using GitHub's [private vulnerability reporting](https://github.com/academic-moodle-cooperation/management-ui/security/advisories) (preferred) — opens a private advisory on this repo that the maintainers see immediately and that we use to coordinate the fix and the eventual public CVE.
 - Emailing **security@academic-moodle-cooperation.at** with a description, reproduction steps, affected version (a commit SHA on the default branch is fine), and your assessment of impact.
 
 What happens next:
