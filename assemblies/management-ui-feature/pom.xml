@@ -12,7 +12,7 @@
   <artifactId>management-ui-feature</artifactId>
   <packaging>feature</packaging>
 
-  <name>Opencast Management Tool :: UI Feature</name>
+  <name>Opencast Management UI :: UI Feature</name>
 
   <properties>
     <opencast.basedir>${project.basedir}/../..</opencast.basedir>

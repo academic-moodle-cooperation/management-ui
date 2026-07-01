@@ -40,7 +40,7 @@ import javax.ws.rs.core.Response;
 @Path("/management-tool/ui/config")
 @Component(immediate = true, service = PluginEndpoint.class,
         property = {
-            "service.description=Management-Tool Plugin Endpoint",
+            "service.description=Management-UI Plugin Endpoint",
             "opencast.service.type=org.opencastproject.management.ui.PluginEndpoint",
             "opencast.service.path=/management-tool/ui/config",
             })
