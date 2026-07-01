@@ -1,6 +1,6 @@
 import { defineConfig } from "vitepress";
 
-const REPO_URL = "https://github.com/academic-moodle-cooperation/management-tool";
+const REPO_URL = "https://github.com/academic-moodle-cooperation/management-ui";
 const REPO_BLOB = `${REPO_URL}/blob/HEAD`;
 
 // Files under docs/ that should NOT be built into the public site.
@@ -26,10 +26,10 @@ const srcExclude = [
 ];
 
 // Base path defaults to the AMC public URL
-// (https://academic-moodle-cooperation.github.io/management-tool/). Override
+// (https://academic-moodle-cooperation.github.io/management-ui/). Override
 // via `DOCS_BASE=/<repo-name>/` in the build environment when deploying to a
 // different GitHub Pages target.
-const DOCS_BASE = process.env.DOCS_BASE ?? "/management-tool/";
+const DOCS_BASE = process.env.DOCS_BASE ?? "/management-ui/";
 
 export default defineConfig({
   title: "Management UI",

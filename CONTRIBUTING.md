@@ -22,8 +22,8 @@ If your contribution is a **plugin that's specific to your organisation**, it sh
 ### Initial setup
 
 ```bash
-git clone https://github.com/academic-moodle-cooperation/management-tool.git
-cd management-tool
+git clone https://github.com/academic-moodle-cooperation/management-ui.git
+cd management-ui
 pnpm install
 pnpm build              # one-time: populates dist-types/ for upstream packages
 pnpm dev                # http://127.0.0.1:3000/management-ui/
@@ -215,9 +215,9 @@ Instrumented packages: `@oc-mui/plugin-system`, `@oc-mui/router`, `@oc-mui/query
 
 ## Filing a bug or feature request
 
-Use the templates: [**File a bug**](https://github.com/academic-moodle-cooperation/management-tool/issues/new?template=bug_report.yml) or [**Request a feature**](https://github.com/academic-moodle-cooperation/management-tool/issues/new?template=feature_request.yml). Both templates ask for the structured information that lets us triage quickly (version/commit, repro steps, affected scope dropdown).
+Use the templates: [**File a bug**](https://github.com/academic-moodle-cooperation/management-ui/issues/new?template=bug_report.yml) or [**Request a feature**](https://github.com/academic-moodle-cooperation/management-ui/issues/new?template=feature_request.yml). Both templates ask for the structured information that lets us triage quickly (version/commit, repro steps, affected scope dropdown).
 
-Blank issues are disabled. If your topic doesn't fit the bug or feature template — for example, a plugin-authoring question or a design discussion — open a thread in [Discussions](https://github.com/academic-moodle-cooperation/management-tool/discussions) instead.
+Blank issues are disabled. If your topic doesn't fit the bug or feature template — for example, a plugin-authoring question or a design discussion — open a thread in [Discussions](https://github.com/academic-moodle-cooperation/management-ui/discussions) instead.
 
 **Security vulnerabilities go through a separate channel.** Do **not** file a public issue; see [`SECURITY.md`](SECURITY.md) for private vulnerability reporting.
 

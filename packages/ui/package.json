@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "React UI component library (shadcn/ui + Tailwind) for the Opencast Management UI and its plugins.",
   "author": "Academic Moodle Cooperation",
-  "homepage": "https://github.com/academic-moodle-cooperation/management-tool/tree/HEAD/packages/ui#readme",
+  "homepage": "https://github.com/academic-moodle-cooperation/management-ui/tree/HEAD/packages/ui#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/academic-moodle-cooperation/management-tool.git",
+    "url": "git+https://github.com/academic-moodle-cooperation/management-ui.git",
     "directory": "packages/ui"
   },
-  "bugs": "https://github.com/academic-moodle-cooperation/management-tool/issues",
+  "bugs": "https://github.com/academic-moodle-cooperation/management-ui/issues",
   "keywords": [
     "opencast",
     "management-ui",

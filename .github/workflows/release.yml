@@ -55,7 +55,7 @@ jobs:
     name: Version or publish
     runs-on: ubuntu-latest
     # Never run from a fork.
-    if: github.repository == 'academic-moodle-cooperation/management-tool'
+    if: github.repository == 'academic-moodle-cooperation/management-ui'
 
     steps:
       - uses: actions/checkout@v6

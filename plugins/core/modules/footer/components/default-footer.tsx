@@ -9,7 +9,7 @@ declare const __APP_VERSION__: string;
 declare const __GIT_COMMIT__: string;
 const APP_VERSION = typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "1.0.0";
 const GIT_COMMIT = typeof __GIT_COMMIT__ !== "undefined" ? __GIT_COMMIT__ : "";
-const REPO_URL = "https://github.com/academic-moodle-cooperation/management-tool";
+const REPO_URL = "https://github.com/academic-moodle-cooperation/management-ui";
 
 /**
  * Default Footer Component

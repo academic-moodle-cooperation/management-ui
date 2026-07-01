@@ -67,8 +67,8 @@ jobs:
       - name: Build docs site
         env:
           # Override the VitePress base path here when the deploy target's
-          # URL prefix differs from the default (/management-tool/).
-          DOCS_BASE: ${{ vars.DOCS_BASE || '/management-tool/' }}
+          # URL prefix differs from the default (/management-ui/).
+          DOCS_BASE: ${{ vars.DOCS_BASE || '/management-ui/' }}
         run: pnpm docs:build
 
       - name: Upload artifact
