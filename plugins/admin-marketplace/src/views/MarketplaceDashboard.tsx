@@ -797,12 +797,30 @@ const DeveloperSection: React.FC<{
 }> = ({ section, loading, onTryCustomUrl, onInstallCustomUrl }) => {
   const [customUrl, setCustomUrl] = useState("");
   const [forceReload, setForceReload] = useState(false);
+  // Loading code from an arbitrary URL runs untrusted third-party JavaScript in
+  // the admin session. Require an explicit, per-visit acknowledgement before the
+  // Try/Install actions are usable — this is not persisted, so it must be
+  // re-confirmed each time the section is opened.
+  const [riskAcknowledged, setRiskAcknowledged] = useState(false);
+
+  const actionsDisabled = loading !== null || !customUrl.trim() || !riskAcknowledged;
 
   return (
     <section>
       <SectionHeader section={section} count={0} />
       <Card>
         <CardContent className="space-y-4 pt-5">
+          <div className="flex gap-3 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <div className="space-y-1">
+              <p className="font-medium">High risk — developer use only</p>
+              <p className="text-xs leading-relaxed text-destructive/90">
+                A plugin loaded from a URL runs untrusted third-party code with your full
+                administrator session: it can read and modify any data you can, act on your behalf,
+                and persist itself. Only load URLs you have personally reviewed and trust.
+              </p>
+            </div>
+          </div>
           <div className="space-y-2">
             <Label htmlFor="dev-url" className="text-xs font-medium">
               Plugin URL
@@ -826,13 +844,25 @@ const DeveloperSection: React.FC<{
               Force reload (bypass cache)
             </Label>
           </div>
+          <div className="flex items-start gap-2">
+            <Checkbox
+              id="dev-risk-ack"
+              checked={riskAcknowledged}
+              onCheckedChange={(checked) => setRiskAcknowledged(checked === true)}
+              className="mt-0.5"
+            />
+            <Label htmlFor="dev-risk-ack" className="cursor-pointer text-xs leading-relaxed">
+              I understand this executes untrusted code with my administrator privileges and I trust
+              this URL.
+            </Label>
+          </div>
           <div className="flex gap-2">
             <Button
               variant="outline"
               size="sm"
               className="h-8"
               onClick={() => onTryCustomUrl(customUrl.trim(), forceReload)}
-              disabled={loading !== null || !customUrl.trim()}
+              disabled={actionsDisabled}
             >
               {loading === customUrl ? (
                 <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
@@ -843,7 +873,7 @@ const DeveloperSection: React.FC<{
               size="sm"
               className="h-8"
               onClick={() => onInstallCustomUrl(customUrl.trim(), forceReload)}
-              disabled={loading !== null || !customUrl.trim()}
+              disabled={actionsDisabled}
             >
               {loading === customUrl ? (
                 <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useAppConfig, useGetCurrentUser } from "@oc-mui/query";
+import { useAppConfig, useGetCurrentUser, useGetUserInfo } from "@oc-mui/query";
 
 import { useAuth } from "../auth/AuthContext";
 import { isAuthenticationError } from "../auth/isAuthenticationError";
@@ -8,7 +8,26 @@ import { isAuthenticationError } from "../auth/isAuthenticationError";
 interface AppProtectionProps {
   appName: string;
   children: React.ReactNode;
+  /**
+   * Roles allowed to open this app. When set (non-empty), an authenticated user
+   * is let through only if they hold at least one of these roles. This is
+   * checked against the user's granted roles (Opencast's `/info/me.json`
+   * `roles`), NOT the per-user `userRole` (which is the individual
+   * `ROLE_USER_<username>` identity role and cannot express a privilege level).
+   * The default Opencast admin role is `ROLE_ADMIN`; a deployment with a
+   * different admin role can override via
+   * `config.plugins[appName].protection.requiredRoles`. Omit to allow any
+   * authenticated user.
+   */
+  requiredRoles?: string[] | undefined;
   loadingComponent?: React.ComponentType<{ children?: React.ReactNode }>;
+  /**
+   * Rendered when the user is authenticated but lacks a required role. Injected
+   * by the shell so this package needn't import `@oc-mui/ui`. Receives the roles
+   * that would grant access and the user's granted roles. Optional — falls back
+   * to a minimal inline message.
+   */
+  accessDeniedComponent?: React.ComponentType<{ requiredRoles: string[]; userRoles: string[] }>;
   /**
    * Rendered while the auth state is still being resolved *and* while the
    * redirect to the login route is in flight. Lets the consumer inject a
@@ -65,9 +84,11 @@ const buildLoginRedirectUrl = (): string => {
 export const AppProtection: React.FC<AppProtectionProps> = ({
   appName,
   children,
+  requiredRoles,
   loadingComponent: LoadingComponent,
   redirectingComponent,
   errorComponent: ErrorComponent,
+  accessDeniedComponent: AccessDeniedComponent,
 }) => {
   const { config } = useAppConfig();
   const { user, isAuthenticated } = useAuth();
@@ -75,10 +96,16 @@ export const AppProtection: React.FC<AppProtectionProps> = ({
   // dedupes by queryKey — no extra request) so we can tell "still loading" from
   // "errored with no user" and avoid an indefinite spinner on a backend outage.
   const { isError, error, refetch } = useGetCurrentUser();
+  // The user's granted roles (from /info/me.json). Only consulted when the app
+  // declares required roles; deduped by queryKey so it costs nothing otherwise.
+  const { data: userInfo, isPending: isUserInfoPending } = useGetUserInfo();
 
   // Get app protection config
-  const appProtection = (config?.plugins?.[appName] as { protection?: { public?: boolean } })
-    ?.protection;
+  const appProtection = (
+    config?.plugins?.[appName] as {
+      protection?: { public?: boolean; requiredRoles?: string[] };
+    }
+  )?.protection;
 
   // If marked as public, allow access
   if (appProtection?.public === true) {
@@ -137,6 +164,40 @@ export const AppProtection: React.FC<AppProtectionProps> = ({
     );
   }
 
-  // User is authenticated - allow access
+  // Authenticated — now enforce role requirements, if any. A deployment override
+  // in config wins over the app's own declaration so operators can adjust the
+  // gate (e.g. a non-default admin role) without a code change.
+  const effectiveRequiredRoles = appProtection?.requiredRoles ?? requiredRoles ?? [];
+
+  if (effectiveRequiredRoles.length > 0) {
+    // Wait for the granted roles to load before deciding, so an admin doesn't
+    // flash the access-denied screen on first paint.
+    if (isUserInfoPending) {
+      const checkingMessage = (
+        <div className="p-8 text-center text-muted-foreground">Checking permissions…</div>
+      );
+      return LoadingComponent ? <LoadingComponent>{checkingMessage}</LoadingComponent> : checkingMessage;
+    }
+
+    // Authorize against the user's *granted* roles, not the per-user identity
+    // role: Opencast's `userRole` is `ROLE_USER_<username>`, so a privilege gate
+    // has to look at the `roles` array (which carries `ROLE_ADMIN` etc.).
+    const userRoles = userInfo?.roles ?? [];
+    const isAuthorized = effectiveRequiredRoles.some((role) => userRoles.includes(role));
+
+    if (!isAuthorized) {
+      if (AccessDeniedComponent) {
+        return <AccessDeniedComponent requiredRoles={effectiveRequiredRoles} userRoles={userRoles} />;
+      }
+      return (
+        <div className="p-8 text-center text-muted-foreground space-y-2">
+          <p>You don&rsquo;t have permission to view this page.</p>
+          <p className="text-sm">It requires the role {effectiveRequiredRoles.join(" or ")}.</p>
+        </div>
+      );
+    }
+  }
+
+  // Authenticated and authorized - allow access
   return <>{children}</>;
 };

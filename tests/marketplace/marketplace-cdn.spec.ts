@@ -90,6 +90,9 @@ async function openDevTools(page: Page) {
 test("§11.3–11.4 Try loads temporarily and does NOT persist", async ({ page }) => {
   const input = await openDevTools(page);
   await input.fill(PLUGIN_URL);
+  // Loading untrusted code requires an explicit risk acknowledgement, which
+  // gates the Try/Install buttons.
+  await devCard(page).locator("#dev-risk-ack").click();
   await devCard(page).getByRole("button", { name: "Try", exact: true }).click();
   await page.waitForTimeout(2_000);
   expect(await lsHasPlugin(page), "Try should not persist the plugin").toBe(false);
@@ -98,6 +101,9 @@ test("§11.3–11.4 Try loads temporarily and does NOT persist", async ({ page }
 test("§11.5–11.7 Install persists across reload; Uninstall removes it", async ({ page }) => {
   const input = await openDevTools(page);
   await input.fill(PLUGIN_URL);
+  // Loading untrusted code requires an explicit risk acknowledgement, which
+  // gates the Try/Install buttons.
+  await devCard(page).locator("#dev-risk-ack").click();
   await devCard(page).getByRole("button", { name: "Install", exact: true }).click();
 
   // Persisted to localStorage…

@@ -28,6 +28,7 @@ export interface AppDefinition {
         order?: number;
         permissions?: string[];
     };
+    requiredRoles?: string[];
     routePath: string;
     version?: string;
 }

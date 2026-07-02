@@ -78,6 +78,7 @@ const createRoutesFromApps = (apps: AppDefinition[]): AnyRoute[] => {
     const renderApp = () => (
       <AppProtection
         appName={appDef.id}
+        requiredRoles={appDef.requiredRoles}
         loadingComponent={AppLoader}
         redirectingComponent={<AppLoader>Redirecting to login…</AppLoader>}
         errorComponent={AuthCheckError}

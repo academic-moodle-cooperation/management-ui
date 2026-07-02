@@ -25,6 +25,17 @@ export interface AppDefinition {
   };
   /** Optional loader function for app-specific data */
   loader?: () => Promise<unknown>;
+  /**
+   * Roles required to access this app's route. When set, the shell only mounts
+   * the app for a user who holds one of these roles; every other user (including
+   * other authenticated users) gets an access-denied screen. Omit for an app any
+   * authenticated user may open. Matched against the user's *granted* roles (the
+   * `roles` array from Opencast's `/info/me.json`), not the per-user
+   * `ROLE_USER_<username>` identity role. The default Opencast admin role is
+   * `ROLE_ADMIN`; a deployment with a different admin role can override per app
+   * via `config.plugins[<id>].protection.requiredRoles`.
+   */
+  requiredRoles?: string[];
   /** App version */
   version?: string;
   /** App description */
