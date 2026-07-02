@@ -340,9 +340,14 @@ const DeleteDialogContent: React.FC<{
       <DialogTitle>{i18next.t("episodes:episodesTable.deleteDialogue.heading")}</DialogTitle>
       <DialogDescription
         dangerouslySetInnerHTML={{
+          // The translation carries trusted static <strong> markup, so it is
+          // rendered as HTML. `event.title` is user-controlled, so escape the
+          // interpolated value here (i18n runs with escapeValue:false globally)
+          // to prevent stored XSS via a crafted event title.
           __html: i18next.t("episodesTable.deleteDialogue.text", {
             title: event.title || "",
             ns: "episodes",
+            interpolation: { escapeValue: true },
           }),
         }}
       />
