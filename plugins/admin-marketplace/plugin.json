@@ -12,6 +12,7 @@
   "category": "feature",
   "extensionPoints": [
     "apps:definitions",
-    "sidebar:nav-items"
+    "sidebar:nav-items",
+    "app:config:defaults"
   ]
 }

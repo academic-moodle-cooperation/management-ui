@@ -59,6 +59,19 @@ export const RemoteLoader = {
   ): Promise<LoadResult> {
     const warnings: string[] = [];
 
+    // Fail-closed choke point: every remote plugin load (community, developer
+    // URL, and the boot-time auto-load) routes through here. Refuse before any
+    // fetch/execute unless a deployment has explicitly enabled remote loading.
+    if (!securityService.isRemotePluginsEnabled()) {
+      return {
+        success: false,
+        error:
+          "Remote plugin loading is disabled. An administrator can enable it by setting " +
+          "plugins.admin-marketplace.remotePlugins.enabled to true in config.json.",
+        warnings,
+      };
+    }
+
     const securityResult = validatePluginUrl(url);
     if (!securityResult.valid) {
       return {

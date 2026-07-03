@@ -41,6 +41,7 @@ import { PluginDetailView } from "../components/PluginDetailView";
 import { CommunityPluginGridCard, PluginGridCard } from "../components/PluginListItem";
 import { ThemeListItem } from "../components/ThemeListItem";
 import { ThemeModal } from "../components/ThemeModal";
+import { adminMarketplaceConfig } from "../config";
 import { useMarketplace } from "../hooks/useMarketplace";
 import { getPluginMetadataOrDefault } from "../services/plugin-metadata";
 
@@ -112,6 +113,7 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
   view: initialView = "plugins",
 }) => {
   const m = useMarketplace(manager);
+  const remoteLoadingEnabled = adminMarketplaceConfig.use().remotePlugins.enabled;
 
   const [activeView, setActiveView] = useState<"plugins" | "themes">(initialView);
   const [searchQuery, setSearchQuery] = useState("");
@@ -380,6 +382,7 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
       )       : (
         <PluginsView
           sources={filteredSources}
+          remoteLoadingEnabled={remoteLoadingEnabled}
           jarPlugins={m.jarPlugins}
           communityPlugins={filteredCommunity}
           communityPluginsLoading={m.communityPluginsLoading}
@@ -542,6 +545,7 @@ type DiscoveredPlugin = ReturnType<typeof useMarketplace>["bundledPlugins"] exte
 
 const PluginsView: React.FC<{
   sources: Record<string, DiscoveredPlugin[]>;
+  remoteLoadingEnabled: boolean;
   jarPlugins: MarketplaceHook["jarPlugins"];
   communityPlugins: MarketplaceHook["communityPlugins"];
   communityPluginsLoading: boolean;
@@ -558,6 +562,7 @@ const PluginsView: React.FC<{
   onUninstallPlugin: (urlOrId: string) => void;
 }> = ({
   sources,
+  remoteLoadingEnabled,
   jarPlugins,
   communityPlugins,
   communityPluginsLoading,
@@ -579,6 +584,7 @@ const PluginsView: React.FC<{
 
   return (
     <div className="space-y-8">
+      {!remoteLoadingEnabled && <RemoteLoadingDisabledBanner />}
       {PLUGIN_SECTIONS.map((section) => {
         if (section.key === "community") {
           return (
@@ -603,6 +609,7 @@ const PluginsView: React.FC<{
               key={section.key}
               section={section}
               loading={loading}
+              disabled={!remoteLoadingEnabled}
               onTryCustomUrl={onTryCustomUrl}
               onInstallCustomUrl={onInstallCustomUrl}
             />
@@ -792,9 +799,10 @@ const CommunitySection: React.FC<{
 const DeveloperSection: React.FC<{
   section: Section;
   loading: string | null;
+  disabled: boolean;
   onTryCustomUrl: (url: string, force: boolean) => void;
   onInstallCustomUrl: (url: string, force: boolean) => void;
-}> = ({ section, loading, onTryCustomUrl, onInstallCustomUrl }) => {
+}> = ({ section, loading, disabled, onTryCustomUrl, onInstallCustomUrl }) => {
   const [customUrl, setCustomUrl] = useState("");
   const [forceReload, setForceReload] = useState(false);
   // Loading code from an arbitrary URL runs untrusted third-party JavaScript in
@@ -803,7 +811,9 @@ const DeveloperSection: React.FC<{
   // re-confirmed each time the section is opened.
   const [riskAcknowledged, setRiskAcknowledged] = useState(false);
 
-  const actionsDisabled = loading !== null || !customUrl.trim() || !riskAcknowledged;
+  // Buttons are usable only when remote loading is enabled, a URL is entered,
+  // nothing is in flight, and the risk has been acknowledged for this visit.
+  const actionsDisabled = disabled || loading !== null || !customUrl.trim() || !riskAcknowledged;
 
   return (
     <section>
@@ -831,6 +841,7 @@ const DeveloperSection: React.FC<{
               placeholder="http://127.0.0.1:5173/dist/my-plugin.mjs"
               value={customUrl}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomUrl(e.target.value)}
+              disabled={disabled}
               className="h-9 font-mono text-sm"
             />
           </div>
@@ -838,6 +849,7 @@ const DeveloperSection: React.FC<{
             <Checkbox
               id="dev-force"
               checked={forceReload}
+              disabled={disabled}
               onCheckedChange={(checked) => setForceReload(checked === true)}
             />
             <Label htmlFor="dev-force" className="cursor-pointer text-xs">
@@ -848,6 +860,7 @@ const DeveloperSection: React.FC<{
             <Checkbox
               id="dev-risk-ack"
               checked={riskAcknowledged}
+              disabled={disabled}
               onCheckedChange={(checked) => setRiskAcknowledged(checked === true)}
               className="mt-0.5"
             />
@@ -886,6 +899,30 @@ const DeveloperSection: React.FC<{
     </section>
   );
 };
+
+/**
+ * Shown at the top of the plugins view when a deployment has not enabled remote
+ * plugin loading. Explains the state and exactly how an administrator turns it
+ * on, so the capability is discoverable rather than silently missing.
+ */
+const RemoteLoadingDisabledBanner: React.FC = () => (
+  <div className="flex gap-3 rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+    <div className="space-y-1">
+      <p className="font-medium">Remote plugin loading is disabled</p>
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        Installing community plugins and loading plugins from a URL run untrusted third-party code,
+        so they are off by default. An administrator can enable them by setting{" "}
+        <code className="rounded bg-muted px-1 py-0.5 text-[11px]">
+          plugins.admin-marketplace.remotePlugins.enabled
+        </code>{" "}
+        to <code className="rounded bg-muted px-1 py-0.5 text-[11px]">true</code> in{" "}
+        <code className="rounded bg-muted px-1 py-0.5 text-[11px]">config.json</code>. Bundled,
+        organization (JAR), and local plugins are unaffected.
+      </p>
+    </div>
+  </div>
+);
 
 // ---------------------------------------------------------------------------
 // Shared Primitives

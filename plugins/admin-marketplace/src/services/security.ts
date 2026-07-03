@@ -43,6 +43,14 @@ export interface SecurityValidationResult {
  * Configuration for the security service
  */
 export interface SecurityConfig {
+  /**
+   * Whether loading and executing remote plugin code is permitted at all.
+   * Off by default — a deployment must opt in via
+   * `plugins.admin-marketplace.remotePlugins.enabled` in config.json. When
+   * false, every remote plugin load (community, developer URL, and the
+   * boot-time auto-load of persisted plugins) is refused.
+   */
+  remotePluginsEnabled: boolean;
   /** List of allowed domains (hostname only, no protocol) */
   allowedDomains: string[];
   /** Whether to enforce HTTPS in production */
@@ -54,9 +62,10 @@ export interface SecurityConfig {
 }
 
 /**
- * Default allowed domains for community plugins
+ * Default allowed domains for community plugins. Exported so the plugin's
+ * config slice can seed the same defaults a deployment may override.
  */
-const DEFAULT_ALLOWED_DOMAINS = [
+export const DEFAULT_ALLOWED_DOMAINS = [
   // jsDelivr CDN - primary hosting for community plugins
   "cdn.jsdelivr.net",
   // GitHub raw content (for development/testing)
@@ -78,6 +87,7 @@ const DEV_ONLY_DOMAINS = [
  * Default security configuration
  */
 const DEFAULT_CONFIG: SecurityConfig = {
+  remotePluginsEnabled: false,
   allowedDomains: DEFAULT_ALLOWED_DOMAINS,
   enforceHttpsInProduction: true,
   allowLocalhostInDev: true,
@@ -183,8 +193,10 @@ class SecurityService {
       this.config.enforceHttpsInProduction &&
       parsedUrl.protocol === "http:"
     ) {
-      // Allow localhost even in production for edge cases
-      if (!DEV_ONLY_DOMAINS.includes(parsedUrl.hostname)) {
+      // Allow plaintext HTTP only for localhost hosts AND only in development.
+      // In a production build even localhost must use HTTPS, so a process bound
+      // to localhost can't serve plaintext plugin code past this gate.
+      if (!(this.isDevelopment() && DEV_ONLY_DOMAINS.includes(parsedUrl.hostname))) {
         return {
           valid: false,
           error: "HTTPS is required in production. HTTP URLs are not allowed.",
@@ -297,6 +309,16 @@ class SecurityService {
    */
   getConfig(): Readonly<SecurityConfig> {
     return { ...this.config };
+  }
+
+  /**
+   * Whether remote plugin loading is currently permitted. Off unless a
+   * deployment opts in (see {@link SecurityConfig.remotePluginsEnabled}). The
+   * marketplace's loader checks this before fetching or executing any remote
+   * plugin, so the whole feature is fail-closed by default.
+   */
+  isRemotePluginsEnabled(): boolean {
+    return this.config.remotePluginsEnabled;
   }
 }
 
