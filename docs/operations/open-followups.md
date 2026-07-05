@@ -235,3 +235,71 @@ After the first full pass, decide:
 
 - **When to revisit**: immediately after the first full pass against staging. The protocol's author should write a one-line decision on each section while the experience is fresh: "still relevant", "could be automated", "covers something CI already does", etc.
 - **Suggested form**: a short follow-up PR after the 1.0 release that either trims, generalizes, or retires the doc based on what the first run taught.
+
+---
+
+## 9. Pre-open-source audit follow-ups
+
+A code-first security/packaging/dependency audit (2026-07) produced a set of
+fixes and a set of deferred items. The full findings were captured in a
+`PRE-OSS-AUDIT.md` working doc (not committed). Shipped fixes are noted for
+context; the open items below are the ones deliberately not done yet.
+
+**Shipped:** marketplace admin gate + episode XSS (PR #222), `pnpm audit`
+cleanup + override pruning (PR #223), GitHub Actions SHA-pinning + Dependabot
+(PR #224), marketplace remote-loading opt-in (PR #225), dist-canonical package
+exports (this PR).
+
+### 9.1 Before the first npm publish
+
+- **peerDependencies shape.** Move the wrapped libraries in the facades to
+  `peerDependencies` (`@oc-mui/query` → `@tanstack/react-query`, `@oc-mui/router`
+  → `@tanstack/react-router`, `@oc-mui/store` → `jotai`/`zustand`) and
+  `react`/`react-dom` from `dependencies` → `peerDependencies` in the four in-tree
+  plugins (`admin-marketplace`, `core-episodes`, `core-series`, `core-upload`;
+  `plugins/core` is the correct template). Also reconcile `@oc-mui/ui`'s react
+  peer (`^19` only vs the siblings' `^18 || ^19`). Prevents duplicate-instance
+  bugs for consumers. Likely a major bump.
+- **`sideEffects`.** Add `"sideEffects": false` to the pure packages for
+  tree-shaking; `@oc-mui/ui` needs an array (it ships `globals.css`), not `false`.
+- **api-extractor coverage.** Add `.api.md` tracking + an `api-check` script to
+  `@oc-mui/ui`, `app-runtime`, `utils`, `plugin-testing` (6/16 have it today).
+- **npm org bootstrap (manual, on npmjs.com).** First-publish each `@oc-mui/*`
+  package via `pnpm publish` while logged in, then configure per-package Trusted
+  Publishers. See [`release.yml`](../../.github/workflows/release.yml).
+
+### 9.2 Wave 2 — cleanup / quality
+
+- **`crypto-js` → Web Crypto** in `@oc-mui/utils` (single `sha256` use; the dep is
+  unmaintained and ships to consumers). Arguably a §9.1 item since it's runtime.
+- **Dead-code deletion:** `packages/ui/src/components/datetime-picker.tsx` (unused;
+  removing it drops `react-aria`/`react-stately`/`@react-stately/datepicker`/
+  `@internationalized/date`), the `@headlessui/react` dead re-export, the unused
+  marketplace registry/security mutators, the `extension-points:documentation`
+  extension point (registered, never read), `AppRuntimeProvider.registerApp/getApps`,
+  `useGenericQuery`, and the dead GraphQL client singleton in `packages/query`.
+- **Real license check in CI** (`scripts/check-licenses.js` is currently a stub).
+- **Major-version migrations** (each its own PR): `i18next` 23→26 + `react-i18next`
+  (also clears the last *runtime* `pnpm audit` item, `i18next-http-backend`),
+  `zustand` 4→5, `react-day-picker` 8→10, `lucide-react` 0.417→1.x, and the app's
+  `vite` 6→7 (clears the residual `vite` audit highs).
+
+### 9.3 Deferred marketplace hardening
+
+Opt-in remote loading (PR #225) neutralised the default-on risk; these harden the
+feature for deployments that enable it.
+
+- **Integrity: SRI / signature verification** of fetched plugin (and theme) code.
+  The domain allowlist authenticates the *host*, not the code's author (a shared
+  CDN serves anyone), so it is necessary-but-not-sufficient. See
+  `packages/remote-plugin-loader/src/loadAndRegister.ts`.
+- **Namespace enforcement** so a loaded remote plugin can only register under its
+  own declared namespace (can't hijack another plugin's routes/extension points).
+
+### 9.4 Open decision (no code)
+
+- **Git history internal hostnames.** The working tree is scrubbed, but history
+  still contains internal hosts (`*.univie.ac.at`, `hinkelstein`, university Maven
+  registry URLs). No secrets. Decide before going public: **accept** (they're
+  hostnames, not secrets) or publish from squashed history. A full `filter-repo`
+  rewrite is not worth it for hostnames.

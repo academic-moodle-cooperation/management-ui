@@ -25,11 +25,13 @@ name: Release
 #     >= 11.5.1 and Node >= 22.14.0 (the Setup Node + npm-upgrade steps below).
 #   - FIRST-PUBLISH BOOTSTRAP: OIDC cannot publish a package that does not yet
 #     exist on the registry (npm/cli#8544, still open). Each @oc-mui/* package
-#     must be published once by other means first - e.g. a local `npm publish`
-#     while signed in (`npm login`; no CI token) - and only then can its
-#     Trusted Publisher be configured. Every release after that flows through
-#     this workflow tokenlessly, with provenance attestations generated
-#     automatically.
+#     must be published once by other means first - use a local `pnpm publish -r`
+#     while signed in (`npm login`; no CI token), NOT `npm publish`: pnpm rewrites
+#     the `workspace:*` deps to real version ranges, which plain npm does not.
+#     (The published entry points are dist-canonical, so that half is fine either
+#     way.) Only then can each Trusted Publisher be configured. Every release
+#     after that flows through this workflow tokenlessly, with provenance
+#     attestations generated automatically.
 
 on:
   workflow_dispatch:

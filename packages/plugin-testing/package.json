@@ -1,7 +1,7 @@
 {
   "name": "@oc-mui/plugin-testing",
   "version": "1.0.0",
-  "description": "Test harness for Opencast Management UI plugins — load a plugin in isolation and assert its manifest and runtime contracts.",
+  "description": "Test harness for Opencast Management UI plugins \u2014 load a plugin in isolation and assert its manifest and runtime contracts.",
   "author": "Academic Moodle Cooperation",
   "homepage": "https://github.com/academic-moodle-cooperation/management-ui/tree/HEAD/packages/plugin-testing#readme",
   "repository": {
@@ -19,20 +19,18 @@
     "vitest"
   ],
   "publishConfig": {
-    "access": "public",
-    "main": "./dist/index.js",
-    "types": "./dist-types/index.d.ts",
-    "exports": {
-      ".": {
-        "types": "./dist-types/index.d.ts",
-        "import": "./dist/index.js"
-      }
-    }
+    "access": "public"
   },
   "license": "ECL-2.0",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist-types/index.d.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist-types/index.d.ts",
+      "development": "./src/index.ts",
+      "import": "./dist/index.js"
+    }
   },
   "files": [
     "dist",

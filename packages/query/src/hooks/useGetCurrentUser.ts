@@ -1,9 +1,9 @@
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import { gql } from "graphql-request";
 
-import { useAppConfig } from "@oc-mui/query";
-
 import { createGraphQLClient } from "../client";
+
+import { useAppConfig } from "./useAppConfig";
 
 import type { MuiUserQuery } from "../gql-generated";
 
