@@ -46,11 +46,9 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "crypto-js": "^4.2.0",
     "tinyduration": "^3.3.0"
   },
   "devDependencies": {
-    "@types/crypto-js": "^4.2.2",
     "@oc-mui/eslint-config": "workspace:*",
     "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.9.0",
