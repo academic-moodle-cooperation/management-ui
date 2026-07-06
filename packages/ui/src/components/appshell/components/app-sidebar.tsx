@@ -43,15 +43,24 @@ const useSidebarNavItems = () => {
   // hidden (fail closed).
   const { data: userInfo } = useGetUserInfo();
   const userRoles = userInfo?.roles;
+  // The org's configured admin role is treated as equivalent to the canonical
+  // ROLE_ADMIN, mirroring the route gate (AppProtection), so an org-admin whose
+  // role is renamed still sees admin nav entries instead of a dead-end where the
+  // route is reachable but the link is hidden.
+  const orgAdminRole = userInfo?.org?.adminRole;
 
   const visibleNavItems = React.useMemo(() => {
+    const holdsRole = (role: string) =>
+      userRoles !== undefined &&
+      (userRoles.includes(role) ||
+        (role === "ROLE_ADMIN" && orgAdminRole !== undefined && userRoles.includes(orgAdminRole)));
     return items.filter(
       (item) =>
         !item.requiredRoles ||
         item.requiredRoles.length === 0 ||
-        (userRoles !== undefined && item.requiredRoles.some((role) => userRoles.includes(role))),
+        item.requiredRoles.some(holdsRole),
     );
-  }, [items, userRoles]);
+  }, [items, userRoles, orgAdminRole]);
 
   // Sort nav items by order (lower numbers first)
   const sortedNavItems = React.useMemo(() => {

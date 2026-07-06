@@ -183,7 +183,16 @@ export const AppProtection: React.FC<AppProtectionProps> = ({
     // role: Opencast's `userRole` is `ROLE_USER_<username>`, so a privilege gate
     // has to look at the `roles` array (which carries `ROLE_ADMIN` etc.).
     const userRoles = userInfo?.roles ?? [];
-    const isAuthorized = effectiveRequiredRoles.some((role) => userRoles.includes(role));
+    // A deployment can rename its admin role, so `/info/me.json` reports the
+    // organization's configured `org.adminRole`. Treat holding that role as
+    // equivalent to the canonical `ROLE_ADMIN`, so an app that requires
+    // `ROLE_ADMIN` also admits an admin whose role is named differently — no
+    // config override needed for the common "admins only" case.
+    const orgAdminRole = userInfo?.org?.adminRole;
+    const holdsOrgAdmin = orgAdminRole !== undefined && userRoles.includes(orgAdminRole);
+    const isAuthorized = effectiveRequiredRoles.some(
+      (role) => userRoles.includes(role) || (role === "ROLE_ADMIN" && holdsOrgAdmin),
+    );
 
     if (!isAuthorized) {
       if (AccessDeniedComponent) {

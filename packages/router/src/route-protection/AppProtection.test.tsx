@@ -28,12 +28,15 @@ vi.mock("../auth/AuthContext", () => ({
 describe("AppProtection role gate", () => {
   const child = <div>secret content</div>;
 
-  const setUser = (roles: string[], userRole = "ROLE_USER_MMUSTER") => {
+  const setUser = (roles: string[], userRole = "ROLE_USER_MMUSTER", orgAdminRole = "ROLE_ADMIN") => {
     vi.mocked(useAuth).mockReturnValue({
       user: { currentUser: { userRole } },
       isAuthenticated: true,
     } as never);
-    vi.mocked(useGetUserInfo).mockReturnValue({ data: { roles }, isPending: false } as never);
+    vi.mocked(useGetUserInfo).mockReturnValue({
+      data: { roles, org: { adminRole: orgAdminRole } },
+      isPending: false,
+    } as never);
   };
 
   beforeEach(() => {
@@ -51,6 +54,19 @@ describe("AppProtection role gate", () => {
   afterEach(() => vi.clearAllMocks());
 
   it("renders the app for a user who holds the required role", () => {
+    render(
+      <AppProtection appName="marketplace-plugins" requiredRoles={["ROLE_ADMIN"]}>
+        {child}
+      </AppProtection>,
+    );
+    expect(screen.queryByText("secret content")).not.toBeNull();
+  });
+
+  it("admits an org admin whose role is renamed via org.adminRole (not literal ROLE_ADMIN)", () => {
+    // Deployment renamed its admin role: the user holds ROLE_ORG_ADMIN, which
+    // /info/me.json reports as org.adminRole. A ROLE_ADMIN-gated app must admit
+    // them without a config override.
+    setUser(["ROLE_ORG_ADMIN", "ROLE_USER"], "ROLE_USER_MMUSTER", "ROLE_ORG_ADMIN");
     render(
       <AppProtection appName="marketplace-plugins" requiredRoles={["ROLE_ADMIN"]}>
         {child}
