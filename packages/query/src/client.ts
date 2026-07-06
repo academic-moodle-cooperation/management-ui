@@ -7,22 +7,6 @@ import { fetchWithTimeout } from "./timeoutFetch";
 // fails promptly instead of leaving queries pending forever (see timeoutFetch).
 const clientConfig = { fetch: fetchWithTimeout } as const;
 
-let graphQLClient: GraphQLClient | null = null;
-
-export const initializeGraphQLClient = (url: string): GraphQLClient => {
-  if (!graphQLClient) {
-    graphQLClient = new GraphQLClient(url, clientConfig);
-  }
-  return graphQLClient;
-};
-
-export const getGraphQLClient = (): GraphQLClient => {
-  if (!graphQLClient) {
-    throw new Error("GraphQL client not initialized. Call initializeGraphQLClient first.");
-  }
-  return graphQLClient;
-};
-
 // Export a factory function instead of a singleton
 export const createQueryClient = () =>
   new QueryClient({

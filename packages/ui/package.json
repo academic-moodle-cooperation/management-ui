@@ -96,7 +96,6 @@
     "postcss.config.mjs"
   ],
   "dependencies": {
-    "@headlessui/react": "^2.2.4",
     "@internationalized/date": "^3.8.1",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",

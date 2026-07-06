@@ -24,8 +24,4 @@ export interface AppRuntimeConfig {
  */
 export interface AppRuntimeContext {
   config: AppRuntimeConfig;
-  /** Function to register an app (only available when running in core) */
-  registerApp?: (app: import("@oc-mui/plugin-system").AppDefinition) => void;
-  /** Function to get all registered apps */
-  getApps?: () => import("@oc-mui/plugin-system").AppDefinition[];
 }

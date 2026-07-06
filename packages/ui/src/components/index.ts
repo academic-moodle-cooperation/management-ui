@@ -19,7 +19,6 @@ export * from "./appLoader";
 export * from "./acl-editor";
 export * from "./theme-mode";
 
-export { Switch as SwitchHeadlessUI } from "@headlessui/react";
 
 // Explicitly re-export types for Vite/Rollup compatibility
 // when using 'import type' syntax
