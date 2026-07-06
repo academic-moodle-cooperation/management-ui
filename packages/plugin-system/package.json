@@ -25,6 +25,7 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist-types/index.d.ts",
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist-types/index.d.ts",
