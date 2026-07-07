@@ -40,11 +40,22 @@ export const adminMarketplacePlugin = createPlugin({
     // Load installed theme in background (do not block plugin init or router)
     void ThemeLoader.initialize();
 
+    // The marketplace loads and executes third-party code at runtime, so it is
+    // restricted to administrators. `requiredRoles` is enforced by the shell's
+    // route gate (AppProtection), matched against the user's granted roles from
+    // /info/me.json. `ROLE_ADMIN` is Opencast's default admin role; a deployment
+    // that uses a different admin role can override via
+    // `config.plugins[<id>].protection.requiredRoles`. Governance of *which*
+    // plugins may be listed/installed (approval by authorized members) is a
+    // separate, still-to-be-defined policy layered on top of this access gate.
+    const MARKETPLACE_ROLES = ["ROLE_ADMIN"];
+
     // Register the marketplace apps (separate routes for Plugins and Themes views)
     manager.registerObject("apps:definitions", "marketplace-plugins", {
       id: "marketplace-plugins",
       name: "Marketplace – Plugins",
       routePath: "/admin/marketplace/plugins",
+      requiredRoles: MARKETPLACE_ROLES,
       component: () => MarketplaceDashboard({ manager, view: "plugins" }),
     });
 
@@ -52,16 +63,20 @@ export const adminMarketplacePlugin = createPlugin({
       id: "marketplace-themes",
       name: "Marketplace – Themes",
       routePath: "/admin/marketplace/themes",
+      requiredRoles: MARKETPLACE_ROLES,
       component: () => MarketplaceDashboard({ manager, view: "themes" }),
     });
 
-    // Register sidebar navigation item with sub-entries for Plugins and Themes
+    // Register sidebar navigation item with sub-entries for Plugins and Themes.
+    // `requiredRoles` hides the entry for non-admins so there is no dead link to
+    // the role-gated route above.
     manager.registerObject("sidebar:nav-items", "marketplace", {
       title: "Marketplace",
       path: "/admin/marketplace/plugins",
       icon: ShoppingBag,
       order: 1000, // Place at the end of the sidebar
       permissions: ["admin.view"],
+      requiredRoles: MARKETPLACE_ROLES,
       featureFlags: [],
       category: "admin",
       items: [

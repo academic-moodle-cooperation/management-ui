@@ -40,6 +40,7 @@ export const AppProtection: React_2.FC<AppProtectionProps>;
 // @public
 export interface AppProtectionConfig {
     public?: boolean;
+    requiredRoles?: string[];
 }
 
 // @public (undocumented)

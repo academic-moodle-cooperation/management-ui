@@ -11,4 +11,13 @@ export interface AppProtectionConfig {
    * requires authentication.
    */
   public?: boolean;
+  /**
+   * Roles allowed to access the app. When set (non-empty), an authenticated
+   * user is granted access only if they hold one of these roles (matched
+   * against the granted `roles` from `/info/me.json`); everyone else gets an
+   * access-denied screen. Omit to allow any authenticated user. Overrides the
+   * app's own `requiredRoles` declaration, so a deployment can widen or restrict
+   * access (e.g. a non-default admin role) without a code change.
+   */
+  requiredRoles?: string[];
 }

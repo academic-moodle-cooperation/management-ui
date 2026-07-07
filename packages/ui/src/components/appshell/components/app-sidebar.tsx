@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { useRegistry, ComponentResolver } from "@oc-mui/plugin-system";
+import { useGetUserInfo } from "@oc-mui/query";
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, useSidebar } from "../../ui";
 
@@ -18,6 +19,14 @@ interface SidebarConfig {
   icon: LucideIcon;
   order?: number;
   permissions?: string[];
+  /**
+   * Roles allowed to see this entry. When set (non-empty), the item is shown
+   * only to a user who holds one of these roles (matched against the granted
+   * `roles` from `/info/me.json`) — keeping role-gated routes (e.g. the admin
+   * marketplace) out of the nav for everyone else. Omit to show the entry to any
+   * authenticated user.
+   */
+  requiredRoles?: string[];
   featureFlags?: string[];
   items?: {
     title: string;
@@ -28,11 +37,35 @@ interface SidebarConfig {
 
 const useSidebarNavItems = () => {
   const { items } = useRegistry<SidebarConfig>("sidebar:nav-items");
+  // The user's granted roles (from /info/me.json), used to hide role-gated
+  // entries. Matched against the `roles` array, not the per-user `userRole`
+  // identity role. While roles are still loading/unknown, gated items stay
+  // hidden (fail closed).
+  const { data: userInfo } = useGetUserInfo();
+  const userRoles = userInfo?.roles;
+  // The org's configured admin role is treated as equivalent to the canonical
+  // ROLE_ADMIN, mirroring the route gate (AppProtection), so an org-admin whose
+  // role is renamed still sees admin nav entries instead of a dead-end where the
+  // route is reachable but the link is hidden.
+  const orgAdminRole = userInfo?.org?.adminRole;
+
+  const visibleNavItems = React.useMemo(() => {
+    const holdsRole = (role: string) =>
+      userRoles !== undefined &&
+      (userRoles.includes(role) ||
+        (role === "ROLE_ADMIN" && orgAdminRole !== undefined && userRoles.includes(orgAdminRole)));
+    return items.filter(
+      (item) =>
+        !item.requiredRoles ||
+        item.requiredRoles.length === 0 ||
+        item.requiredRoles.some(holdsRole),
+    );
+  }, [items, userRoles, orgAdminRole]);
 
   // Sort nav items by order (lower numbers first)
   const sortedNavItems = React.useMemo(() => {
-    return [...items].sort((a, b) => (a.order || 100) - (b.order || 100));
-  }, [items]);
+    return [...visibleNavItems].sort((a, b) => (a.order || 100) - (b.order || 100));
+  }, [visibleNavItems]);
 
   return sortedNavItems;
 };
