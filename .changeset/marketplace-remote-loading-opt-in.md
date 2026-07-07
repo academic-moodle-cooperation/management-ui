@@ -17,7 +17,11 @@ slice gates it:
   routes through a single fail-closed choke point in `RemoteLoader` and is
   refused when disabled.
 - `remotePlugins.allowedDomains` is now deployment-configurable (previously a
-  hardcoded default with the config setter unused).
+  hardcoded default with the config setter unused). The default list is also
+  tightened: bare `github.io` was dropped — domain matching is suffix-based, so
+  it admitted every GitHub user's Pages site. Deployments hosting plugins on
+  GitHub Pages must allow their own subdomain (e.g. `my-org.github.io`)
+  explicitly.
 - When disabled, the marketplace's Community and Developer sections render a
   clear "how to enable" banner and the developer URL loader is visibly disabled;
   bundled, organization (JAR), and local plugins are unaffected.

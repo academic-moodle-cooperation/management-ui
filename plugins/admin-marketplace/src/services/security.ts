@@ -70,8 +70,11 @@ export const DEFAULT_ALLOWED_DOMAINS = [
   "cdn.jsdelivr.net",
   // GitHub raw content (for development/testing)
   "raw.githubusercontent.com",
-  // GitHub Pages
-  "github.io",
+  // NOTE: bare "github.io" is deliberately NOT a default. Domain matching is
+  // suffix-based, so it would admit *every* GitHub user's Pages site. A
+  // deployment that hosts plugins on GitHub Pages should allow its own
+  // subdomain explicitly, e.g. "my-org.github.io", via
+  // `plugins.admin-marketplace.remotePlugins.allowedDomains`.
 ];
 
 /**

@@ -225,7 +225,10 @@ For plugins distributed publicly:
 > the loader refuses every remote load (including previously-installed plugins).
 > Paths 1–3 (bundled, in-tree, JAR) are unaffected. The marketplace routes are
 > also admin-only. Note the allowlist authenticates the *host*, not the code's
-> author, so keep it to hosts you trust.
+> author, so keep it to hosts you trust. Matching is suffix-based (a domain
+> admits its subdomains), which is why bare `github.io` is not a default — it
+> would admit every GitHub user's Pages site. To serve plugins from your own
+> GitHub Pages, allow your subdomain explicitly (e.g. `"my-org.github.io"`).
 
 A first-party community registry is planned but not yet shipped.
 
