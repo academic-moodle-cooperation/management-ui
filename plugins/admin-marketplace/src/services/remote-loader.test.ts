@@ -1,10 +1,17 @@
-import { describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import type { PluginManager } from "@oc-mui/plugin-system";
 
 import { RemoteLoader } from "./remote-loader";
+import { securityService } from "./security";
 
 import type { RegistryPlugin } from "./registry-fetcher";
+
+// Remote loading is disabled by default (fail-closed). These tests exercise the
+// apiVersion / shared-dependency gates, which sit *after* that switch, so enable
+// remote loading for the suite and restore the default afterwards.
+beforeAll(() => securityService.updateConfig({ remotePluginsEnabled: true }));
+afterAll(() => securityService.updateConfig({ remotePluginsEnabled: false }));
 
 // We never reach the network call: `loadAndRegister` rejects on the
 // apiVersion gate before delegating to `@oc-mui/remote-plugin-loader`,
@@ -20,6 +27,20 @@ const baseMetadata: RegistryPlugin = {
   url: "https://cdn.jsdelivr.net/npm/rejected-plugin@1.0.0/dist/plugin.mjs",
   category: "feature",
 };
+
+describe("RemoteLoader.loadAndRegister remote-loading switch", () => {
+  it("refuses to load anything while remote loading is disabled", async () => {
+    securityService.updateConfig({ remotePluginsEnabled: false });
+    try {
+      const result = await RemoteLoader.loadAndRegister(baseMetadata.url, fakeManager, baseMetadata);
+      expect(result.success).toBe(false);
+      expect(result.error).toMatch(/disabled/i);
+    } finally {
+      // Restore the suite default (the file-level beforeAll enabled it).
+      securityService.updateConfig({ remotePluginsEnabled: true });
+    }
+  });
+});
 
 describe("RemoteLoader.loadAndRegister apiVersion gate", () => {
   it("rejects a plugin whose apiVersion declares an incompatible major", async () => {

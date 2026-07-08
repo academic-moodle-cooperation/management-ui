@@ -30,7 +30,15 @@ async function stubAdmin(page: Page): Promise<void> {
     r.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify(defaultConfig),
+      // Remote plugin loading is opt-in (off by default); enable it so the
+      // developer install flow below is permitted.
+      body: JSON.stringify({
+        ...defaultConfig,
+        plugins: {
+          ...(defaultConfig.plugins ?? {}),
+          "admin-marketplace": { remotePlugins: { enabled: true } },
+        },
+      }),
     }),
   );
   await page.route("**/management-tool/ui/config/plugins.json", (r) =>

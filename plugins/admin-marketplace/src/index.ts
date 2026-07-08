@@ -1,9 +1,12 @@
 import { ShoppingBag } from "lucide-react";
 
 import { createPlugin } from "@oc-mui/plugin-system";
+import { getCachedAppConfig } from "@oc-mui/query";
 import { logger } from "@oc-mui/utils";
 
+import { adminMarketplaceConfig } from "./config";
 import { RemoteLoader } from "./services/remote-loader";
+import { securityService } from "./services/security";
 import { ThemeLoader } from "./services/theme-loader";
 import { MarketplaceDashboard } from "./views/MarketplaceDashboard";
 
@@ -36,6 +39,31 @@ export const adminMarketplacePlugin = createPlugin({
 
   async initialize(manager) {
     log.debug("initializing");
+
+    // Contribute the config defaults (remote loading OFF unless a deployment
+    // opts in) and push the resolved slice into the security service so every
+    // load path is fail-closed by default. If config can't be read (e.g. the
+    // backend is down at boot), fall back to the defaults — which keep remote
+    // loading disabled.
+    adminMarketplaceConfig.register(manager);
+    let appConfig: Awaited<ReturnType<typeof getCachedAppConfig>> | undefined;
+    try {
+      appConfig = await getCachedAppConfig();
+    } catch (err) {
+      // Not an error condition: failing to read config just means we keep the
+      // safe default (remote loading disabled). Logged at debug so a clean boot
+      // without a backend (e.g. tests) doesn't emit warnings.
+      log.debug(
+        `could not read app config; remote plugin loading stays disabled: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+      );
+    }
+    const cfg = adminMarketplaceConfig.read(appConfig);
+    securityService.updateConfig({
+      remotePluginsEnabled: cfg.remotePlugins.enabled,
+      allowedDomains: cfg.remotePlugins.allowedDomains,
+    });
 
     // Load installed theme in background (do not block plugin init or router)
     void ThemeLoader.initialize();
@@ -91,9 +119,15 @@ export const adminMarketplacePlugin = createPlugin({
       ],
     });
 
-    // Load all persisted plugins from localStorage (validates URL + version before loading)
+    // Auto-load persisted plugins from localStorage — but only when remote
+    // loading is enabled, so a deployment that turns it off (or never turned it
+    // on) does not silently execute plugins a previous admin installed.
     const savedUrls = RemoteLoader.getInstalledUrls();
-    if (savedUrls.length > 0) {
+    if (savedUrls.length > 0 && !cfg.remotePlugins.enabled) {
+      log.info(
+        `remote plugin loading is disabled; skipping ${savedUrls.length} persisted plugin(s)`,
+      );
+    } else if (savedUrls.length > 0) {
       log.debug(`loading ${savedUrls.length} installed plugin(s)`);
 
       const loadResults = await Promise.allSettled(

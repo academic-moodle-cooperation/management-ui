@@ -1035,6 +1035,9 @@ importers:
       '@oc-mui/plugin-system':
         specifier: workspace:*
         version: link:../../packages/plugin-system
+      '@oc-mui/query':
+        specifier: workspace:*
+        version: link:../../packages/query
       '@oc-mui/remote-plugin-loader':
         specifier: workspace:*
         version: link:../../packages/remote-plugin-loader
@@ -1047,6 +1050,9 @@ importers:
       lucide-react:
         specifier: ^0.417.0
         version: 0.417.0(react@19.1.0)
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       '@oc-mui/eslint-config':
         specifier: workspace:*

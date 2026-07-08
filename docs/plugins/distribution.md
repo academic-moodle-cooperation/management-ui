@@ -207,6 +207,29 @@ For plugins distributed publicly:
    Or any CDN/object store that serves with correct CORS headers.
 3. **Install**: Inside the running shell, open the Marketplace → Developer Mode → paste the URL → "Install" persists it in `localStorage`. On reload the marketplace loads it through the same `remote-plugin-loader`.
 
+> **Remote loading is opt-in.** Because Path 4 fetches and executes third-party
+> code at runtime, it is **off by default**. An administrator must enable it in
+> `config.json`, and may restrict which hosts a plugin URL can be fetched from:
+>
+> ```json
+> {
+>   "plugins": {
+>     "admin-marketplace": {
+>       "remotePlugins": { "enabled": true, "allowedDomains": ["cdn.jsdelivr.net"] }
+>     }
+>   }
+> }
+> ```
+>
+> While disabled, the Community and Developer sections show how to turn it on and
+> the loader refuses every remote load (including previously-installed plugins).
+> Paths 1–3 (bundled, in-tree, JAR) are unaffected. The marketplace routes are
+> also admin-only. Note the allowlist authenticates the *host*, not the code's
+> author, so keep it to hosts you trust. Matching is suffix-based (a domain
+> admits its subdomains), which is why bare `github.io` is not a default — it
+> would admit every GitHub user's Pages site. To serve plugins from your own
+> GitHub Pages, allow your subdomain explicitly (e.g. `"my-org.github.io"`).
+
 A first-party community registry is planned but not yet shipped.
 
 ## Picking between JAR and CDN
