@@ -3,7 +3,7 @@ import React, { type ReactNode } from "react";
 import { PluginContext, type PluginManager } from "@oc-mui/plugin-system";
 
 /**
- * Thin provider that feeds an externally-managed {@link PluginManager} into
+ * Thin provider that feeds an externally-managed `PluginManager` into
  * the plugin-system React context. Mirrors what the production
  * `PluginProvider` sets up, but skips the implicit `createPluginManager()`
  * so the harness retains full control.

@@ -89,7 +89,7 @@ export interface TestHarness {
   /**
    * Assert that every extension point listed in `manifest.extensionPoints`
    * has at least one entry. Throws if the manifest is missing or has no
-   * `extensionPoints` field (callers can fall back to {@link expectRegistered}).
+   * `extensionPoints` field (callers can fall back to `expectRegistered`).
    */
   expectAllManifestRegistrationsSucceed(): void;
 

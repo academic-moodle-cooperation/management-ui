@@ -7,7 +7,7 @@ import type { PluginManifest } from "./types";
 
 /**
  * Read `<pluginDir>/plugin.json` from disk and run it through the shared
- * {@link validatePluginMetadata} runtime validator.
+ * `validatePluginMetadata` runtime validator.
  *
  * Contract-test harness entry point. Throws with a single, aggregated error
  * message if the manifest is malformed, so that test failures point directly

@@ -112,7 +112,7 @@ const diffKeySets = (a: Set<string>, b: Set<string>): string[] => {
  * Load a single plugin into a throw-away runtime and return assertion
  * helpers tailored for contract tests.
  *
- * Each call bootstraps a fresh {@link PluginManager} with the three built-in
+ * Each call bootstraps a fresh `PluginManager` with the three built-in
  * plugins registered, installs console capture, registers the plugin under
  * test (awaiting its `initialize(manager)` if async), and returns a handle
  * whose `expect*` methods throw an `Error` on failure so `vitest` reports
