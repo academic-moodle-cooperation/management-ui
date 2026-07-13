@@ -40,51 +40,41 @@
   "exports": {
     ".": {
       "types": "./dist-types/index.d.ts",
-      "development": "./src/index.ts",
       "import": "./dist/index.js"
     },
     "./components": {
       "types": "./dist-types/components/index.d.ts",
-      "development": "./src/components/index.ts",
       "import": "./dist/components/index.js"
     },
     "./components/*": {
       "types": "./dist-types/components/*.d.ts",
-      "development": "./src/components/*.tsx",
       "import": "./dist/components/*.js"
     },
     "./config-primitives": {
       "types": "./dist-types/config-primitives.d.ts",
-      "development": "./src/config-primitives.ts",
       "import": "./dist/config-primitives.js"
     },
     "./hooks": {
       "types": "./dist-types/hooks/index.d.ts",
-      "development": "./src/hooks/index.ts",
       "import": "./dist/hooks/index.js"
     },
     "./hooks/*": {
       "types": "./dist-types/hooks/*.d.ts",
-      "development": "./src/hooks/*.ts",
       "import": "./dist/hooks/*.js"
     },
     "./lib": {
       "types": "./dist-types/lib/index.d.ts",
-      "development": "./src/lib/index.ts",
       "import": "./dist/lib/index.js"
     },
     "./lib/utils": {
       "types": "./dist-types/lib/utils.d.ts",
-      "development": "./src/lib/utils.ts",
       "import": "./dist/lib/utils.js"
     },
     "./styles": {
       "types": "./dist-types/styles/index.d.ts",
-      "development": "./src/styles/index.ts",
       "import": "./dist/styles/index.js"
     },
     "./globals.css": {
-      "development": "./src/styles/globals.css",
       "default": "./dist/styles/globals.css"
     },
     "./postcss.config": "./postcss.config.mjs"

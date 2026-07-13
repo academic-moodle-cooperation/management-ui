@@ -28,22 +28,18 @@
   "exports": {
     ".": {
       "types": "./dist-types/index.d.ts",
-      "development": "./index.tsx",
       "import": "./dist/index.js"
     },
     "./atoms": {
       "types": "./dist-types/atoms.d.ts",
-      "development": "./atoms.ts",
       "import": "./dist/atoms.js"
     },
     "./useStore": {
       "types": "./dist-types/useStore.d.ts",
-      "development": "./useStore.ts",
       "import": "./dist/useStore.js"
     },
     "./useTableStore": {
       "types": "./dist-types/useTableStore.d.ts",
-      "development": "./useTableStore.ts",
       "import": "./dist/useTableStore.js"
     }
   },

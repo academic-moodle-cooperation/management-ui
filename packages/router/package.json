@@ -28,7 +28,6 @@
   "exports": {
     ".": {
       "types": "./dist-types/src/index.d.ts",
-      "development": "./src/index.ts",
       "import": "./dist/index.js"
     }
   },
