@@ -12,6 +12,14 @@
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "check-types": "tsc --noEmit"
   },
+  "dependencies": {
+    "@oc-mui/plugin-admin-marketplace": "workspace:*",
+    "@oc-mui/plugin-core": "workspace:*",
+    "@oc-mui/plugin-core-episodes": "workspace:*",
+    "@oc-mui/plugin-core-series": "workspace:*",
+    "@oc-mui/plugin-core-upload": "workspace:*",
+    "@oc-mui/plugin-example": "workspace:*"
+  },
   "devDependencies": {
     "@types/node": "^25.0.6",
     "@types/react": "^19.1.8",
