@@ -5,7 +5,6 @@
 ```ts
 
 import { serialize as serializeDuration } from 'tinyduration';
-import sha256 from 'crypto-js/sha256.js';
 
 // @public (undocumented)
 export const copyText: (text: string) => Promise<boolean>;
@@ -68,7 +67,8 @@ export function resolveFirstAssetUrl(candidates: Array<string | undefined>, fall
 
 export { serializeDuration }
 
-export { sha256 }
+// @public
+export const sha256: (input: string) => Promise<string>;
 
 // (No @packageDocumentation comment for this package)
 
