@@ -31,8 +31,6 @@ export interface AppRuntimeConfig {
 export interface AppRuntimeContext {
     // (undocumented)
     config: AppRuntimeConfig;
-    getApps?: () => AppDefinition[];
-    registerApp?: (app: AppDefinition) => void;
 }
 
 // Warning: (ae-forgotten-export) The symbol "AppRuntimeProviderProps" needs to be exported by the entry point index.d.ts
