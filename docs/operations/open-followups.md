@@ -252,18 +252,15 @@ exports (this PR).
 
 ### 9.1 Before the first npm publish
 
-- **peerDependencies shape.** Move the wrapped libraries in the facades to
-  `peerDependencies` (`@oc-mui/query` → `@tanstack/react-query`, `@oc-mui/router`
-  → `@tanstack/react-router`, `@oc-mui/store` → `jotai`/`zustand`) and
-  `react`/`react-dom` from `dependencies` → `peerDependencies` in the four in-tree
-  plugins (`admin-marketplace`, `core-episodes`, `core-series`, `core-upload`;
-  `plugins/core` is the correct template). Also reconcile `@oc-mui/ui`'s react
-  peer (`^19` only vs the siblings' `^18 || ^19`). Prevents duplicate-instance
-  bugs for consumers. Likely a major bump.
-- **`sideEffects`.** Add `"sideEffects": false` to the pure packages for
-  tree-shaking; `@oc-mui/ui` needs an array (it ships `globals.css`), not `false`.
-- **api-extractor coverage.** Add `.api.md` tracking + an `api-check` script to
-  `@oc-mui/ui`, `app-runtime`, `utils`, `plugin-testing` (6/16 have it today).
+- **peerDependencies shape.** ✅ Done in PR #227 — wrapped libraries in the
+  facades and `react`/`react-dom` in the four in-tree plugins are
+  `peerDependencies`; `@oc-mui/ui`'s react peer is reconciled.
+- **`sideEffects` + api-extractor coverage.** Mostly done in PR #228
+  (`sideEffects` declared; `.api.md` tracking + `api-check` added to
+  `app-runtime`, `utils`, `plugin-testing`). **Remaining: `@oc-mui/ui`** — its
+  ~9k-LOC export surface should get a curation pass first, and the PR #230
+  dead-code deletions should land before the initial snapshot so the report
+  doesn't enshrine exports that are about to be removed.
 - **npm org bootstrap (manual, on npmjs.com).** First-publish each `@oc-mui/*`
   package via `pnpm publish` while logged in, then configure per-package Trusted
   Publishers. See [`release.yml`](../../.github/workflows/release.yml).
