@@ -19,22 +19,16 @@
     "tanstack-router"
   ],
   "publishConfig": {
-    "access": "public",
-    "main": "./dist/index.js",
-    "types": "./dist-types/src/index.d.ts",
-    "exports": {
-      ".": {
-        "types": "./dist-types/src/index.d.ts",
-        "import": "./dist/index.js"
-      }
-    }
+    "access": "public"
   },
   "license": "ECL-2.0",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist-types/src/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist-types/src/index.d.ts",
-      "default": "./src/index.ts"
+      "import": "./dist/index.js"
     }
   },
   "files": [

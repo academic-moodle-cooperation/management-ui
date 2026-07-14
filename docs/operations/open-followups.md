@@ -235,3 +235,69 @@ After the first full pass, decide:
 
 - **When to revisit**: immediately after the first full pass against staging. The protocol's author should write a one-line decision on each section while the experience is fresh: "still relevant", "could be automated", "covers something CI already does", etc.
 - **Suggested form**: a short follow-up PR after the 1.0 release that either trims, generalizes, or retires the doc based on what the first run taught.
+
+---
+
+## 9. Pre-open-source audit follow-ups
+
+A code-first security/packaging/dependency audit (2026-07) produced a set of
+fixes and a set of deferred items. The full findings were captured in a
+`PRE-OSS-AUDIT.md` working doc (not committed). Shipped fixes are noted for
+context; the open items below are the ones deliberately not done yet.
+
+**Shipped:** marketplace admin gate + episode XSS (PR #222), `pnpm audit`
+cleanup + override pruning (PR #223), GitHub Actions SHA-pinning + Dependabot
+(PR #224), marketplace remote-loading opt-in (PR #225), dist-canonical package
+exports (this PR).
+
+### 9.1 Before the first npm publish
+
+- **peerDependencies shape.** ✅ Done in PR #227 — wrapped libraries in the
+  facades and `react`/`react-dom` in the four in-tree plugins are
+  `peerDependencies`; `@oc-mui/ui`'s react peer is reconciled.
+- **`sideEffects` + api-extractor coverage.** Mostly done in PR #228
+  (`sideEffects` declared; `.api.md` tracking + `api-check` added to
+  `app-runtime`, `utils`, `plugin-testing`). **Remaining: `@oc-mui/ui`** — its
+  ~9k-LOC export surface should get a curation pass first, and the PR #230
+  dead-code deletions should land before the initial snapshot so the report
+  doesn't enshrine exports that are about to be removed.
+- **npm org bootstrap (manual, on npmjs.com).** First-publish each `@oc-mui/*`
+  package via `pnpm publish` while logged in, then configure per-package Trusted
+  Publishers. See [`release.yml`](../../.github/workflows/release.yml).
+
+### 9.2 Wave 2 — cleanup / quality
+
+- **`crypto-js` → Web Crypto** in `@oc-mui/utils` — in flight as PR #229 (async
+  `sha256`; the univie SidebarFooter consumers are updated in lockstep in
+  management-ui-plugins).
+- **Dead-code deletion** — the verified-dead subset (`AppRuntimeProvider.registerApp/
+  getApps`, `useGenericQuery`, the dead GraphQL client singleton in `packages/query`)
+  is in flight as PR #230. Still open: the unused marketplace registry/security
+  mutators and the `extension-points:documentation` extension point (registered,
+  never read). **Not dead — earlier drafts of this list were wrong:**
+  `datetime-picker.tsx` is live (rendered by `MetadataUpdateField` for DURATION
+  fields), and the `SwitchHeadlessUI` re-export is consumed by tuwien (below).
+- **Migrate the tuwien language toggle off `@headlessui`.** tuwien's SidebarHeader
+  (management-ui-plugins) uses `SwitchHeadlessUI` re-exported from
+  `@oc-mui/ui/components` — the only consumer of `@headlessui/react`. Add a native
+  radix `Switch` to `@oc-mui/ui` (there is no `switch.tsx` today), migrate tuwien's
+  SidebarHeader to it, then drop the re-export + the `@headlessui/react` dependency.
+  Cross-repo: the plugin change ships in management-ui-plugins alongside the
+  `@oc-mui/ui` release that adds the native Switch.
+- **Real license check in CI** (`scripts/check-licenses.js` is currently a stub).
+- **Major-version migrations** (each its own PR): `i18next` 23→26 + `react-i18next`
+  (also clears the last *runtime* `pnpm audit` item, `i18next-http-backend`),
+  `zustand` 4→5, `react-day-picker` 8→10, `lucide-react` 0.417→1.x, and the app's
+  `vite` 6→7 (clears the residual `vite` audit highs).
+
+### 9.3 Deferred marketplace hardening
+
+Opt-in remote loading (PR #225) neutralised the default-on risk; these harden the
+feature for deployments that enable it.
+
+- **Integrity: SRI / signature verification** of fetched plugin (and theme) code.
+  The domain allowlist authenticates the *host*, not the code's author (a shared
+  CDN serves anyone), so it is necessary-but-not-sufficient. See
+  `packages/remote-plugin-loader/src/loadAndRegister.ts`.
+- **Namespace enforcement** so a loaded remote plugin can only register under its
+  own declared namespace (can't hijack another plugin's routes/extension points).

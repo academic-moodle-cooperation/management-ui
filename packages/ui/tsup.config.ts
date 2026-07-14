@@ -9,6 +9,12 @@ import { defineConfig } from "tsup";
 // CSS is not built: `globals.css` is a Tailwind-v4 entry the consumer/host
 // processes, so it (and the bundled fonts) are copied verbatim into dist/styles.
 export default defineConfig({
+  // shadcn components import shared helpers via this package's own subpaths
+  // (e.g. `@oc-mui/ui/lib/utils`). Externalise the self-name so the build leaves
+  // those imports in place — they resolve through this package's own dist subpath
+  // exports at consumer runtime — instead of trying to bundle `@oc-mui/ui` into
+  // itself (which fails now that the top-level exports point at dist).
+  external: [/^@oc-mui\/ui(\/|$)/],
   entry: [
     "src/index.ts",
     "src/components/**/*.{ts,tsx}",

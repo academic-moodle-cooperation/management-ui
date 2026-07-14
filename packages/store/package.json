@@ -19,46 +19,28 @@
     "jotai"
   ],
   "publishConfig": {
-    "access": "public",
-    "main": "./dist/index.js",
-    "types": "./dist-types/index.d.ts",
-    "exports": {
-      ".": {
-        "types": "./dist-types/index.d.ts",
-        "import": "./dist/index.js"
-      },
-      "./atoms": {
-        "types": "./dist-types/atoms.d.ts",
-        "import": "./dist/atoms.js"
-      },
-      "./useStore": {
-        "types": "./dist-types/useStore.d.ts",
-        "import": "./dist/useStore.js"
-      },
-      "./useTableStore": {
-        "types": "./dist-types/useTableStore.d.ts",
-        "import": "./dist/useTableStore.js"
-      }
-    }
+    "access": "public"
   },
   "license": "ECL-2.0",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist-types/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist-types/index.d.ts",
-      "default": "./index.tsx"
+      "import": "./dist/index.js"
     },
     "./atoms": {
       "types": "./dist-types/atoms.d.ts",
-      "default": "./atoms.ts"
+      "import": "./dist/atoms.js"
     },
     "./useStore": {
       "types": "./dist-types/useStore.d.ts",
-      "default": "./useStore.ts"
+      "import": "./dist/useStore.js"
     },
     "./useTableStore": {
       "types": "./dist-types/useTableStore.d.ts",
-      "default": "./useTableStore.ts"
+      "import": "./dist/useTableStore.js"
     }
   },
   "files": [

@@ -21,49 +21,7 @@
     "components"
   ],
   "publishConfig": {
-    "access": "public",
-    "main": "./dist/index.js",
-    "types": "./dist-types/index.d.ts",
-    "exports": {
-      ".": {
-        "types": "./dist-types/index.d.ts",
-        "import": "./dist/index.js"
-      },
-      "./components": {
-        "types": "./dist-types/components/index.d.ts",
-        "import": "./dist/components/index.js"
-      },
-      "./components/*": {
-        "types": "./dist-types/components/*.d.ts",
-        "import": "./dist/components/*.js"
-      },
-      "./config-primitives": {
-        "types": "./dist-types/config-primitives.d.ts",
-        "import": "./dist/config-primitives.js"
-      },
-      "./hooks": {
-        "types": "./dist-types/hooks/index.d.ts",
-        "import": "./dist/hooks/index.js"
-      },
-      "./hooks/*": {
-        "types": "./dist-types/hooks/*.d.ts",
-        "import": "./dist/hooks/*.js"
-      },
-      "./lib": {
-        "types": "./dist-types/lib/index.d.ts",
-        "import": "./dist/lib/index.js"
-      },
-      "./lib/utils": {
-        "types": "./dist-types/lib/utils.d.ts",
-        "import": "./dist/lib/utils.js"
-      },
-      "./styles": {
-        "types": "./dist-types/styles/index.d.ts",
-        "import": "./dist/styles/index.js"
-      },
-      "./globals.css": "./dist/styles/globals.css",
-      "./postcss.config": "./postcss.config.mjs"
-    }
+    "access": "public"
   },
   "license": "ECL-2.0",
   "type": "module",
@@ -77,17 +35,48 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
   },
+  "main": "./dist/index.js",
+  "types": "./dist-types/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./components": "./src/components/index.ts",
-    "./components/*": "./src/components/*.tsx",
-    "./config-primitives": "./src/config-primitives.ts",
-    "./hooks": "./src/hooks/index.ts",
-    "./hooks/*": "./src/hooks/*.ts",
-    "./lib": "./src/lib/index.ts",
-    "./lib/utils": "./src/lib/utils.ts",
-    "./styles": "./src/styles/index.ts",
-    "./globals.css": "./src/styles/globals.css",
+    ".": {
+      "types": "./dist-types/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./components": {
+      "types": "./dist-types/components/index.d.ts",
+      "import": "./dist/components/index.js"
+    },
+    "./components/*": {
+      "types": "./dist-types/components/*.d.ts",
+      "import": "./dist/components/*.js"
+    },
+    "./config-primitives": {
+      "types": "./dist-types/config-primitives.d.ts",
+      "import": "./dist/config-primitives.js"
+    },
+    "./hooks": {
+      "types": "./dist-types/hooks/index.d.ts",
+      "import": "./dist/hooks/index.js"
+    },
+    "./hooks/*": {
+      "types": "./dist-types/hooks/*.d.ts",
+      "import": "./dist/hooks/*.js"
+    },
+    "./lib": {
+      "types": "./dist-types/lib/index.d.ts",
+      "import": "./dist/lib/index.js"
+    },
+    "./lib/utils": {
+      "types": "./dist-types/lib/utils.d.ts",
+      "import": "./dist/lib/utils.js"
+    },
+    "./styles": {
+      "types": "./dist-types/styles/index.d.ts",
+      "import": "./dist/styles/index.js"
+    },
+    "./globals.css": {
+      "default": "./dist/styles/globals.css"
+    },
     "./postcss.config": "./postcss.config.mjs"
   },
   "files": [

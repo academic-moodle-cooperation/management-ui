@@ -19,22 +19,16 @@
     "extension-points"
   ],
   "publishConfig": {
-    "access": "public",
-    "main": "./dist/index.js",
-    "types": "./dist-types/index.d.ts",
-    "exports": {
-      ".": {
-        "types": "./dist-types/index.d.ts",
-        "import": "./dist/index.js"
-      }
-    }
+    "access": "public"
   },
   "license": "ECL-2.0",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist-types/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist-types/index.d.ts",
-      "default": "./index.ts"
+      "import": "./dist/index.js"
     }
   },
   "files": [
