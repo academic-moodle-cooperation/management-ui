@@ -1,7 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
-
-import type { AppDefinition } from "@oc-mui/plugin-system";
-import { logger } from "@oc-mui/utils";
+import React, { createContext, useContext } from "react";
 
 import type { AppRuntimeContext, AppRuntimeConfig } from "./types";
 import type { ReactNode } from "react";
@@ -14,31 +11,12 @@ interface AppRuntimeProviderProps {
 }
 
 /**
- * Provider for app runtime context
- * Manages app registration and provides runtime configuration
+ * Provider for app runtime context. Exposes the runtime configuration; app
+ * registration flows through the plugin manager (`apps:definitions`), not this
+ * context.
  */
 export const AppRuntimeProvider: React.FC<AppRuntimeProviderProps> = ({ children, config }) => {
-  const [registeredApps, setRegisteredApps] = useState<AppDefinition[]>([]);
-
-  const registerApp = (app: AppDefinition) => {
-    setRegisteredApps((prev) => {
-      const existing = prev.find((a) => a.id === app.id);
-      if (existing) {
-        logger.warn(`App with id "${app.id}" is already registered. Replacing...`, {
-          appId: app.id,
-        });
-        return prev.map((a) => (a.id === app.id ? app : a));
-      }
-      return [...prev, app];
-    });
-  };
-
-  const getApps = () => registeredApps;
-
-  const contextValue: AppRuntimeContext = {
-    config,
-    ...(config.isStandalone ? {} : { registerApp, getApps }),
-  };
+  const contextValue: AppRuntimeContext = { config };
 
   return (
     <AppRuntimeContextProvider.Provider value={contextValue}>

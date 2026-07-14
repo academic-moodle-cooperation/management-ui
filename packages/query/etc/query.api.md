@@ -16,7 +16,6 @@ import { PluginManager } from '@oc-mui/plugin-system';
 import { PluginsConfig } from '@oc-mui/ui-config';
 import { QueryClient } from '@tanstack/react-query';
 import { QueryClientConfig } from '@tanstack/react-query';
-import { QueryKey } from '@tanstack/react-query';
 import { QueryObserverResult } from '@tanstack/react-query';
 import { default as React_2 } from 'react';
 import { RefetchOptions } from '@tanstack/react-query';
@@ -355,9 +354,6 @@ export function getAppConfigSync(pluginManager?: PluginManager, baseConfig?: App
 // @public
 export const getCachedAppConfig: () => Promise<AppConfig>;
 
-// @public (undocumented)
-export const getGraphQLClient: () => GraphQLClient;
-
 export { gql }
 
 // @public (undocumented)
@@ -368,9 +364,6 @@ export type Incremental<T> = T | {
 export { InfiniteData }
 
 export { InfiniteQueryObserverResult }
-
-// @public (undocumented)
-export const initializeGraphQLClient: (url: string) => GraphQLClient;
 
 // @public (undocumented)
 export type InputMaybe<T> = Maybe<T>;
@@ -1828,8 +1821,6 @@ export type QueryEventByIdArgs = {
     id: Scalars['String']['input'];
 };
 
-export { QueryKey }
-
 // @public (undocumented)
 export type QueryListProviderArgs = {
     filter?: InputMaybe<Scalars['String']['input']>;
@@ -2042,9 +2033,6 @@ export function useConfig<T extends z.ZodTypeAny>(reader: PluginConfigReader<T>)
 
 // @public
 export function useEventTitlesMap(eventIds: string[]): Map<string, string>;
-
-// @public (undocumented)
-export function useGenericQuery<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>): UseQueryResult<TData, TError>;
 
 // @public (undocumented)
 export function useGetCurrentUser(): UseQueryResult<MuiUserQuery, Error>;
