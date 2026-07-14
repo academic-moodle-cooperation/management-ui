@@ -28,13 +28,17 @@ export default defineConfig({
     },
   ],
   webServer: {
-    // Cold-start CI was budgeted at 120s when the comment near `timeout`
-    // above was written. The lockfile has grown since, and runs against
-    // GitHub-hosted runners have started exhausting the 120s ceiling
-    // (see #140's two consecutive failures with `pnpm --filter shell dev`
-    // never reaching "ready"). Bump to 180s to restore margin without
-    // leaning on a retry.
-    command: "pnpm --filter shell dev",
+    // CI runs against the production build via `vite preview` (the E2E job
+    // builds the SDK + shell first): it serves prebuilt assets, so there is no
+    // dev-mode on-demand transform. The dev-server path had a long history of
+    // cold-start timeouts on 2-core runners (#140's 120s→180s bump; with dist
+    // as the canonical entry point, "ready" grew to ~170s and the first
+    // page.goto exceeded the 60s test timeout), and preview also exercises
+    // what actually ships. Locally the dev server is used (and reused if
+    // already running) so the iterate loop keeps HMR and needs no build.
+    command: process.env["CI"]
+      ? "pnpm --filter shell preview -- --port 3000 --strictPort"
+      : "pnpm --filter shell dev",
     url: BASE_URL,
     timeout: 180_000,
     reuseExistingServer: !process.env["CI"],
