@@ -267,14 +267,23 @@ exports (this PR).
 
 ### 9.2 Wave 2 — cleanup / quality
 
-- **`crypto-js` → Web Crypto** in `@oc-mui/utils` (single `sha256` use; the dep is
-  unmaintained and ships to consumers). Arguably a §9.1 item since it's runtime.
-- **Dead-code deletion:** `packages/ui/src/components/datetime-picker.tsx` (unused;
-  removing it drops `react-aria`/`react-stately`/`@react-stately/datepicker`/
-  `@internationalized/date`), the `@headlessui/react` dead re-export, the unused
-  marketplace registry/security mutators, the `extension-points:documentation`
-  extension point (registered, never read), `AppRuntimeProvider.registerApp/getApps`,
-  `useGenericQuery`, and the dead GraphQL client singleton in `packages/query`.
+- **`crypto-js` → Web Crypto** in `@oc-mui/utils` — in flight as PR #229 (async
+  `sha256`; the univie SidebarFooter consumers are updated in lockstep in
+  management-ui-plugins).
+- **Dead-code deletion** — the verified-dead subset (`AppRuntimeProvider.registerApp/
+  getApps`, `useGenericQuery`, the dead GraphQL client singleton in `packages/query`)
+  is in flight as PR #230. Still open: the unused marketplace registry/security
+  mutators and the `extension-points:documentation` extension point (registered,
+  never read). **Not dead — earlier drafts of this list were wrong:**
+  `datetime-picker.tsx` is live (rendered by `MetadataUpdateField` for DURATION
+  fields), and the `SwitchHeadlessUI` re-export is consumed by tuwien (below).
+- **Migrate the tuwien language toggle off `@headlessui`.** tuwien's SidebarHeader
+  (management-ui-plugins) uses `SwitchHeadlessUI` re-exported from
+  `@oc-mui/ui/components` — the only consumer of `@headlessui/react`. Add a native
+  radix `Switch` to `@oc-mui/ui` (there is no `switch.tsx` today), migrate tuwien's
+  SidebarHeader to it, then drop the re-export + the `@headlessui/react` dependency.
+  Cross-repo: the plugin change ships in management-ui-plugins alongside the
+  `@oc-mui/ui` release that adds the native Switch.
 - **Real license check in CI** (`scripts/check-licenses.js` is currently a stub).
 - **Major-version migrations** (each its own PR): `i18next` 23→26 + `react-i18next`
   (also clears the last *runtime* `pnpm audit` item, `i18next-http-backend`),
