@@ -301,11 +301,3 @@ feature for deployments that enable it.
   `packages/remote-plugin-loader/src/loadAndRegister.ts`.
 - **Namespace enforcement** so a loaded remote plugin can only register under its
   own declared namespace (can't hijack another plugin's routes/extension points).
-
-### 9.4 Open decision (no code)
-
-- **Git history internal hostnames.** The working tree is scrubbed, but history
-  still contains internal hosts (`*.univie.ac.at`, `hinkelstein`, university Maven
-  registry URLs). No secrets. Decide before going public: **accept** (they're
-  hostnames, not secrets) or publish from squashed history. A full `filter-repo`
-  rewrite is not worth it for hostnames.
