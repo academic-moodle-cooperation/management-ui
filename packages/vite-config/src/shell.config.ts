@@ -155,6 +155,21 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
       "@oc-mui/ui": path.resolve(monorepoRootPath, "packages/ui/src"),
       "@oc-mui/query": path.resolve(monorepoRootPath, "packages/query/src"),
       "@oc-mui/providers": path.resolve(monorepoRootPath, "packages/providers/src"),
+      "@oc-mui/app-runtime": path.resolve(monorepoRootPath, "packages/app-runtime/src"),
+      // store keeps its sources at the package root (not src/), with subpath
+      // entries — exact-file aliases, most-specific first (same pattern as
+      // ui/globals.css above).
+      "@oc-mui/store/atoms": path.resolve(monorepoRootPath, "packages/store/atoms.ts"),
+      "@oc-mui/store/useStore": path.resolve(monorepoRootPath, "packages/store/useStore.ts"),
+      "@oc-mui/store/useTableStore": path.resolve(
+        monorepoRootPath,
+        "packages/store/useTableStore.ts",
+      ),
+      "@oc-mui/store": path.resolve(monorepoRootPath, "packages/store/index.tsx"),
+      // plugin-core's entry also lives at the package root. Listed before the
+      // "@oc-mui/plugins" dir alias only for readability — alias keys match on
+      // exact-or-"key/" boundaries, so the two never collide.
+      "@oc-mui/plugin-core": path.resolve(monorepoRootPath, "plugins/core/index.ts"),
       "@oc-mui/plugins": path.resolve(monorepoRootPath, "plugins"),
     },
     serverOptions: {

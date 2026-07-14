@@ -183,12 +183,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build vite-config
+      - name: Build the SDK (dist + dist-types)
         run: |
-          # Shell dev needs vite-config built; the Playwright webServer starts the
-          # shell in dev mode, which imports @oc-mui/vite-config from dist/.
+          # The Playwright webServer starts the shell in dev mode. Since dist is
+          # the canonical entry point, any @oc-mui/* import not covered by the
+          # shell's dev src-aliases resolves to dist/ — so the SDK must be built;
+          # dev no longer works on a fully unbuilt tree. vite-config first as
+          # the ordering guard, then the full build.
           pnpm turbo run build --force --filter=@oc-mui/vite-config
           test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
+          pnpm turbo run build build:types
 
       - name: Ensure .local-plugins exists
         run: mkdir -p .local-plugins
