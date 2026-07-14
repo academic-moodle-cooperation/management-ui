@@ -25,6 +25,7 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist-types/index.d.ts",
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist-types/index.d.ts",
@@ -39,6 +40,8 @@
     "clean": "rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo",
     "build": "tsup",
     "build:types": "tsc -p tsconfig.build.json",
+    "api-check": "pnpm build:types && api-extractor run --local --verbose",
+    "api-check:ci": "pnpm build:types && api-extractor run --verbose",
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "check-types": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
