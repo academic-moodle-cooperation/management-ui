@@ -3,7 +3,6 @@
 // export * from './array-utils';
 // export * from './string-utils';
 
-import sha256 from "crypto-js/sha256.js";
 import { parse, serialize } from "tinyduration";
 
 import type { Duration } from "tinyduration";
@@ -19,7 +18,22 @@ const parseDuration = (duration: string | undefined) => {
 };
 
 export { parseDuration, serialize as serializeDuration };
-export { sha256 };
+
+/**
+ * SHA-256 hash of a string, returned as lowercase hex. Uses the platform Web
+ * Crypto API (no dependency) — which is async and only available in a secure
+ * context (HTTPS or localhost). Intended for non-cryptographic hashing
+ * (cache keys, stable ids), not password/secret handling.
+ *
+ * @example const id = await sha256("some-key");
+ */
+export const sha256 = async (input: string): Promise<string> => {
+  const bytes = new TextEncoder().encode(input);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+};
 
 export const copyText = async (text: string) => {
   const permissionName = "clipboard-write" as PermissionName;

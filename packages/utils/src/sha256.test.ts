@@ -3,37 +3,33 @@ import { describe, it, expect } from "vitest";
 import { sha256 } from "./index";
 
 describe("sha256", () => {
-  it("should hash a string", () => {
-    const input = "test string";
-    const hash = sha256(input);
-    expect(hash).toBeDefined();
-    expect(typeof hash).toBe("object");
-    expect(hash.toString()).toMatch(/^[a-f0-9]{64}$/i);
+  it("matches the known SHA-256 vector for the empty string", async () => {
+    expect(await sha256("")).toBe(
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    );
   });
 
-  it("should produce consistent hashes for the same input", () => {
-    const input = "consistent input";
-    const hash1 = sha256(input);
-    const hash2 = sha256(input);
-    expect(hash1.toString()).toBe(hash2.toString());
+  it("matches the known SHA-256 vector for 'abc'", async () => {
+    expect(await sha256("abc")).toBe(
+      "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+    );
   });
 
-  it("should produce different hashes for different inputs", () => {
-    const hash1 = sha256("input 1");
-    const hash2 = sha256("input 2");
-    expect(hash1.toString()).not.toBe(hash2.toString());
+  it("returns lowercase hex of the right length", async () => {
+    const hash = await sha256("test string");
+    expect(hash).toMatch(/^[a-f0-9]{64}$/);
   });
 
-  it("should handle empty string", () => {
-    const hash = sha256("");
-    expect(hash).toBeDefined();
-    expect(hash.toString()).toMatch(/^[a-f0-9]{64}$/i);
+  it("is deterministic for the same input", async () => {
+    expect(await sha256("consistent input")).toBe(await sha256("consistent input"));
   });
 
-  it("should handle special characters", () => {
-    const input = "test@#$%^&*()_+-=[]{}|;':\",./<>?";
-    const hash = sha256(input);
-    expect(hash).toBeDefined();
-    expect(hash.toString()).toMatch(/^[a-f0-9]{64}$/i);
+  it("produces different hashes for different inputs", async () => {
+    expect(await sha256("input 1")).not.toBe(await sha256("input 2"));
+  });
+
+  it("handles special characters", async () => {
+    const hash = await sha256("test@#$%^&*()_+-=[]{}|;':\",./<>?");
+    expect(hash).toMatch(/^[a-f0-9]{64}$/);
   });
 });
