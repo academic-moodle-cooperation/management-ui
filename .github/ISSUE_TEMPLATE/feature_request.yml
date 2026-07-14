@@ -31,12 +31,46 @@ body:
       required: true
 
   - type: textarea
+    id: acceptance
+    attributes:
+      label: How would we know it's done?
+      description: |
+        If you can, sketch what "working" looks like from a user's side — the
+        behaviour you'd expect to see. This becomes the acceptance criteria when
+        the work is picked up. Rough bullets are fine; leave blank if unsure.
+      placeholder: |
+        - A deployment can set an admin role in config.json and the marketplace
+          respects it.
+        - Non-admins don't see the marketplace nav entry at all.
+
+  - type: textarea
     id: alternatives
     attributes:
       label: Alternatives considered
       description: |
         Other approaches you thought about and why you didn't pick them.
         "I tried doing this as a plugin and ran into …" is a great answer.
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Which area would this touch? (if you know)
+      description: Best guess is fine — it just helps us route and label. Leave blank if unsure.
+      multiple: true
+      options:
+        - Shell (apps/shell)
+        - A shared package (packages/*)
+        - Core plugin — core-episodes
+        - Core plugin — core-series
+        - Core plugin — core-upload
+        - Admin Marketplace
+        - Plugin extensibility (new extension point / contract)
+        - Plugin runtime / loader
+        - GraphQL / data layer
+        - Routing / authentication
+        - Build / CI / tooling
+        - Docs
+        - Not sure
 
   - type: dropdown
     id: would-author

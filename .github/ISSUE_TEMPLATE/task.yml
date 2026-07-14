@@ -1,0 +1,118 @@
+name: 🛠 Task / work item
+description: A planned, actionable piece of work (not a user-reported bug). Written to be self-contained.
+title: "[Task]: "
+labels: ["task", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for planned work — a refactor, a cleanup, an audit follow-up, a
+        chore. **Write it self-contained**: enough context that someone who has
+        never seen the code — a new contributor *or* an AI agent — could pick it
+        up and finish it without asking a follow-up question. If context only
+        lives in one person's head, it isn't in the issue yet.
+
+        A user-facing bug goes in [🐛 Bug report](?template=bug_report.yml);
+        a new capability goes in [✨ Feature request](?template=feature_request.yml).
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context — what & why
+      description: |
+        What needs to happen and *why now*. State the problem or the outcome,
+        not just the task. Link the finding, the audit item, or the discussion
+        that prompted it.
+      placeholder: |
+        The published `exports` still carry a `development` condition that points
+        at `src/`, which isn't in the tarball. Consumers running vitest/vite
+        resolve into a non-existent path. Prompted by the SDK publish smoke-test
+        (#226 CI). Needs to be gone before the first npm publish.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: |
+        The checklist that defines "done" — the shared yardstick for the PR and
+        its review. Prefer observable, testable statements over vague goals.
+      value: |
+        - [ ] …
+        - [ ] …
+        - [ ] Covered by a test (unit / contract / E2E as appropriate)
+    validations:
+      required: true
+
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope / non-goals
+      description: |
+        What this task deliberately does **not** include. This is the single
+        most effective field against scope creep — and it tells an agent where
+        to stop.
+      placeholder: |
+        - Not migrating the other packages' export shape (separate task).
+        - Not touching the plugin repos — coordinated release, tracked in #229.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Affected areas
+      description: Where the work lands. Helps triage, labeling, and picking a reviewer.
+      multiple: true
+      options:
+        - Shell (apps/shell)
+        - A shared package (packages/*)
+        - Core plugin — core-episodes
+        - Core plugin — core-series
+        - Core plugin — core-upload
+        - Admin Marketplace
+        - Plugin runtime / loader
+        - GraphQL / data layer
+        - Routing / authentication
+        - Build / CI / tooling
+        - Docs
+        - Cross-repo (also touches the plugin repos)
+        - Other (describe in Context)
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References — files, PRs, docs
+      description: |
+        The pointers needed to act without a chat: exact file paths, related
+        PRs/issues, the relevant `docs/` page, the `AGENTS.md` rule. Treat this
+        as the context an agent would otherwise have to hunt for.
+      placeholder: |
+        - `packages/vite-config/src/shell.config.ts` (alias map)
+        - AGENTS.md → "Versioning — changesets"
+        - docs/operations/open-followups.md §9.1
+        - Related: #226, #228
+
+  - type: checkboxes
+    id: definition-of-done
+    attributes:
+      label: Definition of done (repo gates)
+      description: |
+        The project's pre-flight, so it's visible on the ticket, not just at
+        merge time. Not all apply to every task — leave what doesn't.
+      options:
+        - label: "`pnpm verify` green (lint, types, build, unit, contract, api-check, E2E)"
+        - label: "Changeset added if a versioned package changed (`pnpm changeset`)"
+        - label: "`pnpm api-check` regenerated if a public `@oc-mui/*` surface changed"
+        - label: "Docs updated in the same PR if this makes any doc stale"
+
+  - type: checkboxes
+    id: self-contained
+    attributes:
+      label: Readiness check
+      options:
+        - label: "This issue is self-contained — a new contributor or an AI agent could act on it without further context."
+          required: true
