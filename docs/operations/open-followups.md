@@ -289,6 +289,13 @@ exports (this PR).
   (also clears the last *runtime* `pnpm audit` item, `i18next-http-backend`),
   `zustand` 4→5, `react-day-picker` 8→10, `lucide-react` 0.417→1.x, and the app's
   `vite` 6→7 (clears the residual `vite` audit highs).
+- **Retarget the backend to a released Opencast.** The `backend/` bundles build
+  against `org.opencastproject:base:19-SNAPSHOT`, so external contributors must
+  compile Opencast `develop` from source before they can build or deploy them
+  (see [getting-started/local-backend.md](../getting-started/local-backend.md)).
+  Once the parent targets a released Opencast (≥ 17 ships the GraphQL module),
+  prebuilt container images become viable for the full-stack dev setup and the
+  guide gets dramatically shorter.
 
 ### 9.3 Deferred marketplace hardening
 
