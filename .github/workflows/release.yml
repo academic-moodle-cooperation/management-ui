@@ -2,18 +2,22 @@ name: Release
 
 # Changesets release automation (see docs/operations/release.md -> "Cutting a release").
 #
-# On every push to the release branch this job either:
-#   1. opens/updates a "Version Packages" PR that aggregates the pending
-#      .changeset/*.md files into version bumps + changelog edits, OR
+# Branching model (Opencast-style, no `main`): development lands on `develop`;
+# releases happen on `r/NN.x` release lines named after the Opencast major the
+# line targets (e.g. r/19.x). Cutting a release = pushing the release line (new
+# or updated). On every push to `r/**` this job either:
+#   1. opens/updates a "Version Packages" PR (against that r/ branch) that
+#      aggregates the pending .changeset/*.md files into version bumps +
+#      changelog edits, OR
 #   2. (once that PR is merged and no changesets remain) runs
-#      `pnpm changeset:publish` to publish the bumped packages and push tags.
+#      `pnpm changeset:publish` to publish the bumped packages, push the
+#      per-package tags, and create the product tag `v$(cat VERSION)` + a
+#      GitHub Release.
 #
-# NOTE - pre-1.0 state: `.changeset/config.json` has `access: "restricted"`
-# and every @oc-mui/* package is still `"private": true`. `changeset publish`
-# skips private packages, so the publish half is intentionally a no-op until
-# the Phase 6d public flip (drop `private`, set access to "public"). The
-# version/changelog half (the "Version Packages" PR) works today and is the
-# reason to wire this now.
+# npm dist-tags: `changeset publish` tags `latest`. That is correct for the
+# newest release line. When patching an OLD line while a newer one exists,
+# manually repoint afterwards (documented in release.md):
+#   npm dist-tag add @oc-mui/<pkg>@<newest-version> latest
 #
 # Required before this can actually publish:
 #   - Repo setting: Settings -> Actions -> General -> "Allow GitHub Actions to
@@ -36,7 +40,7 @@ name: Release
 on:
   workflow_dispatch:
   push:
-    branches: ["main"]
+    branches: ["r/**"]
 
 # Let the action push the Version Packages branch and open its PR.
 # id-token lets npm Trusted Publishing (OIDC) authenticate the publish once
@@ -98,11 +102,11 @@ jobs:
           pnpm turbo run build build:types
 
       - name: Create Version PR or publish
+        id: changesets
         uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
         with:
           version: pnpm changeset:version
-          # Runs on the merged Version PR when no changesets remain. No-op
-          # while packages are private; publishes once they go public.
+          # Runs on the merged Version PR when no changesets remain.
           publish: pnpm changeset:publish
           commit: "chore(release): version packages"
           title: "chore(release): version packages"
@@ -111,3 +115,26 @@ jobs:
           # open its PR). Publishing itself is tokenless: npm authenticates to
           # the registry via the OIDC `id-token` granted above - no NPM_TOKEN.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Product tag + GitHub Release
+        # Runs only when the step above actually published to npm. Creates the
+        # ops-facing product tag (v<VERSION file>, e.g. v19.0.0) alongside the
+        # per-package npm tags, plus a GitHub Release with generated notes.
+        # Deployments (sources.yml etc.) pin this tag. Idempotent: skips if the
+        # tag already exists (e.g. a re-run).
+        if: steps.changesets.outputs.published == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PRODUCT_TAG="v$(cat VERSION)"
+          if git rev-parse -q --verify "refs/tags/${PRODUCT_TAG}" >/dev/null || \
+             git ls-remote --exit-code --tags origin "${PRODUCT_TAG}" >/dev/null 2>&1; then
+            echo "Tag ${PRODUCT_TAG} already exists - skipping."
+            exit 0
+          fi
+          git tag "${PRODUCT_TAG}"
+          git push origin "${PRODUCT_TAG}"
+          gh release create "${PRODUCT_TAG}" \
+            --title "Management UI ${PRODUCT_TAG}" \
+            --generate-notes \
+            --verify-tag

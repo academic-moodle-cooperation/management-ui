@@ -2,9 +2,9 @@ name: Test
 
 on:
   push:
-    branches: [main, develop, "release/**"]
+    branches: [develop, "r/**"]
   pull_request:
-    branches: [main, develop, "release/**"]
+    branches: [develop, "r/**"]
 
 jobs:
   lint-types:
