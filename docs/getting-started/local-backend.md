@@ -22,20 +22,37 @@ don't need any of this: see the lighter options in
 | The UI itself | `http://127.0.0.1:3000/management-ui/` | `pnpm dev` in this repo |
 
 > **Version note.** The backend bundles currently build against
-> `org.opencastproject:base:19-SNAPSHOT` — i.e. **Opencast `develop`**. That
-> parent POM is not on Maven Central, so building Opencast from source first
-> (which installs it into your local `~/.m2`) is a hard prerequisite. Once the
-> backend targets a released Opencast, prebuilt container images become an
-> option; that switch is tracked in
+> `org.opencastproject:base:19-SNAPSHOT`, so the branch you need is Opencast
+> **`r/19.x`** — not `develop`, which has already moved on to the next major
+> version. That parent POM is not on Maven Central, so building Opencast from
+> source first (which installs it into your local `~/.m2`) is a hard
+> prerequisite. Once the backend targets a released Opencast, prebuilt
+> container images become an option; that switch is tracked in
 > [operations/open-followups.md](../operations/open-followups.md).
 
 ## Prerequisites (Linux)
 
-- git, **JDK 17**, **Maven ≥ 3.6**
+- git, **JDK 21**, **Maven ≥ 3.6** — `mvn -version` must report Java 21
 - **Node ≥ 20**, **pnpm ≥ 10** (`corepack enable`)
 - **podman** (for OpenSearch)
-- ffmpeg (Opencast runtime dependency; from your distro's repos)
+- ffmpeg (Opencast runtime dependency), netcat (`bin/stop-opencast` needs `nc`)
 - ~8 GB free RAM, ~15 GB disk (the Opencast build is large)
+
+Opencast's own developer docs still name JDK 17; use **21** here, since the
+Management UI backend bundles compile against Java 21 and one JDK has to serve
+both builds.
+
+On a fresh Ubuntu:
+
+```bash
+sudo apt update
+sudo apt install -y git curl ffmpeg netcat-openbsd openjdk-21-jdk maven podman
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install -y nodejs
+sudo corepack enable      # plain `corepack enable` fails with EACCES on a system-wide Node
+```
+
+Then check `mvn -version` (Java 21), `node -v` and `pnpm -v` before continuing.
 
 ## 1. OpenSearch via podman
 
@@ -49,25 +66,42 @@ podman run -d --name opensearch \
   -v opensearch-data:/usr/share/opensearch/data:Z \
   docker.io/opensearchproject/opensearch:1.3.20
 
+# Opencast's index mappings use the icu_folding filter, which the stock
+# image does not ship — without it, index creation fails and half of
+# Opencast (including /graphql) silently stays down. Not optional:
+podman exec opensearch bin/opensearch-plugin install analysis-icu
+podman restart opensearch
+
 curl -s http://localhost:9200 | head -3   # should answer with version JSON
 ```
 
-(The `:Z` volume label matters on SELinux distros like Fedora. Opencast also
-needs the `analysis-icu` plugin for some setups — see the Opencast admin docs
-if indexing errors mention it.)
+(The `:Z` volume label matters on SELinux distros like Fedora.)
 
-## 2. Build and start Opencast (develop)
+## 2. Build and start Opencast 19
 
 ```bash
-git clone https://github.com/opencast/opencast.git
-cd opencast                      # develop branch = 19-SNAPSHOT
+git clone --branch r/19.x --recurse-submodules \
+  https://github.com/opencast/opencast.git
+cd opencast
 mvn clean install -DskipTests    # long: 30–60 min on first run
 cd build
-tar xf opencast-dist-allinone-*.tar.gz && cd opencast-dist-allinone-*
+tar xf opencast-dist-allinone-*.tar.gz
+cd opencast-dist-allinone
 ```
 
-Enable the GraphQL plugin (off by default) — in
-`etc/org.opencastproject.plugin.impl.PluginManagerImpl.cfg`:
+`--recurse-submodules` is not optional: `modules/admin`, `modules/editor` and
+`modules/studio` are git submodules, and the build fails without them. `mvn
+install` (rather than `package`) is what puts the `19-SNAPSHOT` artifacts into
+`~/.m2` for step 3.
+
+Enable the GraphQL plugin — in
+`etc/org.opencastproject.plugin.impl.PluginManagerImpl.cfg`, change the line
+
+```properties
+opencast-plugin-graphql = off
+```
+
+to
 
 ```properties
 opencast-plugin-graphql = on
@@ -88,23 +122,41 @@ curl -s -u admin:opencast -X POST http://localhost:8080/graphql \
 
 Default credentials: `admin` / `opencast`.
 
+That last call must print a `{"data":…}` object. A body of exactly `null` —
+with HTTP 200 — means Opencast built no GraphQL schema for the organization;
+see the troubleshooting table.
+
 ## 3. Build + deploy the Management UI backend bundles
 
-From your management-ui clone (the Opencast build above already put the
-`19-SNAPSHOT` parent into `~/.m2`):
+Clone this repository if you haven't yet (skip if you already followed
+[Installation](./installation.md)):
 
 ```bash
+git clone https://github.com/academic-moodle-cooperation/management-ui.git
+```
+
+Then build the backend bundles (the Opencast build above already put the
+`19-SNAPSHOT` parent into `~/.m2`). `OPENCAST_DIST` is the directory you
+unpacked in step 2 — with the clone layout used above, that is
+`~/opencast/build/opencast-dist-allinone`:
+
+```bash
+export OPENCAST_DIST=~/opencast/build/opencast-dist-allinone
+
 cd management-ui
 mvn install -DskipTests
 cp backend/management-config/target/management-ui-config-*.jar \
    backend/management-graphql/target/management-ui-graphql-*.jar \
-   <opencast-dist-dir>/deploy/
+   "$OPENCAST_DIST/deploy/"
 ```
 
-Karaf hot-loads JARs dropped into `deploy/` — no restart needed. Verify:
+Karaf hot-loads JARs dropped into `deploy/` — no restart needed. Verify — an
+empty `plugins` array is the correct answer here, it only fills once you deploy
+plugin JARs in step 5:
 
 ```bash
-curl -s http://localhost:8080/management-tool/ui/config/plugins.json   # → {"plugins":[…]}
+curl -s -u admin:opencast \
+  http://localhost:8080/management-tool/ui/config/plugins.json   # → {"plugins":[]}
 ```
 
 ## 4. Run the UI
@@ -117,6 +169,10 @@ pnpm dev            # proxy target defaults to http://localhost:8080
 Open **http://127.0.0.1:3000/management-ui/**, log in as `admin` /
 `opencast`. Events, series, upload, and ACL editing now run against your real
 backend.
+
+The very first page load can take noticeably long while Vite pre-bundles the
+workspace's dependencies — inside a VM this is easily a minute. That is a
+one-time cost, not a hang; subsequent loads are fast.
 
 ## 5. Plugins
 
@@ -134,8 +190,33 @@ backend.
 | Symptom | Cause / fix |
 |---|---|
 | `/graphql` returns 404 | GraphQL plugin not enabled — step 2's `PluginManagerImpl.cfg` line, then restart Opencast |
+| `/graphql` answers HTTP 200 with a body of exactly `null`, GraphiQL says "Error fetching schema" | No schema was built for the organization. Opencast reports this as an error result whose `toSpecification()` returns `null`, so the endpoint swallows the message — the real cause is only in the log: `grep -i "GraphQL schema" data/log/opencast.log`, then read the stack trace after `Error building GraphQL schema` |
+| Log: `"Query" must define one or more fields` when building the GraphQL schema | The schema's fields come from Opencast's `IndexService`-backed provider — this error means the index services never came up. Look **earlier** in the log for the root cause; the usual one is the `icu_folding` failure below |
+| Log: `Custom Analyzer [autocomplete_analyzer] failed to find filter under name [icu_folding]`, `_cat/indices` empty, services `assetmanager`/`search`/`ingest`/`workflow` marked offline | `analysis-icu` missing from OpenSearch (step 1's `opensearch-plugin install`). Install it, restart OpenSearch, then restart Opencast — the offline services do not recover on their own |
 | Event/series lists error, other screens fine | `management-ui-graphql` JAR missing from `deploy/` (the UI queries `muiEventInfo`/`muiSeriesInfo`) |
+| `plugins.json` returns HTTP 403 "Access Denied" | Unauthenticated request — Opencast's security config rejects anonymous access to this path. Pass `-u admin:opencast` when checking with `curl`; the browser uses its login session |
 | Terminal shows a friendly 502 notice | Nothing listening on the proxy target — Opencast down or wrong `VITE_PROXY_TARGET` |
 | Login loops back to the form | Host-header mismatch: access Opencast via exactly the host in `org.opencastproject.server.url` |
 | Opencast startup errors about the index | OpenSearch not reachable on `:9200`, or volume permissions (rootless podman: keep the `:Z` label) |
-| `mvn install` in management-ui fails resolving `base:19-SNAPSHOT` | Opencast build (step 2) not completed on this machine — it installs the parent POM locally |
+| `mvn install` in management-ui fails resolving `base:19-SNAPSHOT` | Opencast build (step 2) not completed on this machine — it installs the parent POM locally, and only `r/19.x` has that version |
+| Opencast build fails in `modules/admin`, `modules/editor` or `modules/studio` with missing sources | Cloned without `--recurse-submodules` — run `git submodule update --init --recursive` and resume |
+| Opencast build fails during `npm ci` with `ETIMEDOUT` | Registry timeouts, not a code problem — raise npm's retry limits (below) and resume |
+| `npm WARN EBADENGINE` during the Opencast build | Warning only: the frontend submodules pin older Node ranges. Only `npm ERR!` and Maven's final `BUILD FAILURE` mean the build failed |
+
+A failed Maven module does not mean starting over: Maven prints a `-rf` resume
+command at the end of the error output, e.g.
+
+```bash
+mvn install -DskipTests -rf :opencast-lti
+```
+
+For repeated registry timeouts during the Opencast build, raise npm's retry and
+timeout settings in `~/.npmrc` first:
+
+```ini
+fetch-retries=10
+fetch-retry-factor=2
+fetch-retry-mintimeout=20000
+fetch-retry-maxtimeout=180000
+fetch-timeout=600000
+```
