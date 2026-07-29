@@ -1,6 +1,6 @@
 {
   "name": "@oc-mui/store",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "State-management facade (Jotai) for the Opencast Management UI and its plugins.",
   "author": "Academic Moodle Cooperation",
   "homepage": "https://github.com/academic-moodle-cooperation/management-ui/tree/HEAD/packages/store#readme",

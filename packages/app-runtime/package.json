@@ -1,6 +1,6 @@
 {
   "name": "@oc-mui/app-runtime",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Plugin runtime context and standalone-app bootstrap (AppRuntimeProvider, useAppRuntime, StandaloneAppWrapper) for the Opencast Management UI and its plugins.",
   "author": "Academic Moodle Cooperation",
   "homepage": "https://github.com/academic-moodle-cooperation/management-ui/tree/HEAD/packages/app-runtime#readme",
