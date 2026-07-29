@@ -1,8 +1,8 @@
 # Full local setup (UI + backend + plugins)
 
-The complete development stack on one Linux machine: the Management UI dev
-server talking to a **real Opencast** with the Management UI backend bundles
-deployed, plugins included. This is the setup you want for working on anything
+The complete development stack on one Linux or macOS machine: the Management
+UI dev server talking to a **real Opencast** with the Management UI backend
+bundles deployed, plugins included. This is the setup you want for working on anything
 that touches live data (events/series lists, ACLs, uploads, auth).
 
 If you only need the shell and mocked data — plugin authoring, UI work — you
@@ -30,7 +30,7 @@ don't need any of this: see the lighter options in
 > container images become an option; that switch is tracked in
 > [operations/open-followups.md](../operations/open-followups.md).
 
-## Prerequisites (Linux)
+## Prerequisites
 
 - git, **JDK 21**, **Maven ≥ 3.6** — `mvn -version` must report Java 21
 - **Node ≥ 20**, **pnpm ≥ 10** (`corepack enable`)
@@ -53,6 +53,27 @@ sudo corepack enable      # plain `corepack enable` fails with EACCES on a syste
 ```
 
 Then check `mvn -version` (Java 21), `node -v` and `pnpm -v` before continuing.
+
+On macOS (Apple Silicon, Homebrew) — git and `nc` already ship with macOS:
+
+```bash
+brew install openjdk@21 maven podman ffmpeg node pnpm
+```
+
+`openjdk@21` is keg-only: it lands outside the PATH, and
+`/usr/libexec/java_home -v 21` does **not** find it either (that would need the
+`sudo ln -sfn …` symlink from Homebrew's caveats). The sudo-free route is to
+export `JAVA_HOME` in the shell that runs the builds:
+
+```bash
+export JAVA_HOME="$(brew --prefix openjdk@21)/libexec/openjdk.jdk/Contents/Home"
+export PATH="$JAVA_HOME/bin:$PATH"
+```
+
+Homebrew's Maven follows `JAVA_HOME`, so after this the same `mvn -version` →
+Java 21 check applies. Homebrew's `node` formula is the current major (26 at
+the time of writing), not the LTS the Ubuntu instructions install — that works,
+including a harmless deprecation warning it triggers (see troubleshooting).
 
 ## 1. OpenSearch via podman
 
