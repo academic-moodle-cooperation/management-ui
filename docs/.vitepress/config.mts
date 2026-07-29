@@ -103,6 +103,7 @@ export default defineConfig({
           items: [
             { text: "What is Management UI?", link: "/getting-started/what-is-management-ui" },
             { text: "Installation", link: "/getting-started/installation" },
+            { text: "Full local setup (backend)", link: "/getting-started/local-backend" },
             { text: "Configuration", link: "/getting-started/configuration" },
             { text: "Upgrading", link: "/getting-started/upgrading" },
           ],

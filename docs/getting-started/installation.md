@@ -41,7 +41,7 @@ You have three options, in increasing order of effort:
 
    The shell talks to that backend; no local Opencast needed. Reload after starting.
 
-2. **Run Opencast locally** and let the default proxy target (`http://localhost:8080`) reach it. See the Opencast docs for setup; the proxy paths the shell needs are listed in [`packages/vite-config/src/proxy.ts`](../../packages/vite-config/src/proxy.ts).
+2. **Run Opencast locally** and let the default proxy target (`http://localhost:8080`) reach it. The complete walkthrough — Opencast build, GraphQL plugin, the Management UI backend bundles, OpenSearch via podman — is in [Full local setup](./local-backend.md); the proxy paths the shell needs are listed in [`packages/vite-config/src/proxy.ts`](../../packages/vite-config/src/proxy.ts).
 
 3. **Skip the backend entirely** for pure plugin-authoring work that doesn't depend on live data. Stub the four endpoints the shell needs at boot — the Playwright smoke test in [`tests/e2e/smoke.spec.ts`](../../tests/e2e/smoke.spec.ts) shows the minimal set (`/ui/config/management-ui/config.json`, `/management-tool/ui/config/plugins.json`, `/info/me.json`, `/graphql`). You can do this with any local HTTP server that serves four static JSON files, then point `VITE_PROXY_TARGET` at it.
 
