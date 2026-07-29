@@ -27,7 +27,7 @@ name: Preview packages (pkg.pr.new)
 on:
   workflow_dispatch:
   pull_request:
-    branches: [main, develop, "release/**"]
+    branches: [develop, "r/**"]
     paths:
       - "packages/**"
       - "plugins/**"

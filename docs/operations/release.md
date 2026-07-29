@@ -35,7 +35,7 @@ The set is decided **forward-looking**: it covers what a plugin author can legit
 | `@oc-mui/remote-plugin-loader` | host-side mechanism for loading remote plugins; an author writes a plugin, the host loads it |
 | `@oc-mui/providers` | app-level provider composition; authors reach the same wiring through `@oc-mui/app-runtime`'s standalone wrappers. Promote it only if we commit to authors composing providers by hand. |
 
-> The SDK packages carry full npm metadata (`description`, `repository`, `author`, `keywords`, `publishConfig.access = public`) and a per-package `LICENSE`, but they remain `private: true` until the Phase 6d flip.
+> The SDK packages carry full npm metadata (`description`, `repository`, `author`, `keywords`, `publishConfig.access = public`) and a per-package `LICENSE`, and are publishable: the `private` flags were dropped in the publish flip (PR #210). The only remaining one-time step is the first-release bootstrap (see “Cutting a release”).
 
 ### Publish-readiness checklist (the work before the flip)
 
@@ -43,9 +43,9 @@ The packages are not yet npm-installable; getting there is tracked as:
 
 - [x] **Metadata + per-package `LICENSE`** on the 15 SDK packages.
 - [x] **React → `peerDependencies`** on `plugin-system`, `app-runtime`, `plugin-testing` (avoids duplicate-React in a consumer install).
-- [x] **`exports` → built `dist/` + `files` allowlist** for every SDK package, so consumers get compiled JS, not raw `.ts`/`.tsx`. Pattern: tsup builds ESM JS → `dist/`; `tsc` emits `.d.ts` → `dist-types/` (also feeds api-extractor); package `exports` stay on `src` for in-repo dev/HMR while a **`publishConfig.exports`** swaps to `dist` at pack/publish time. All 15 SDK packages now ship `dist` (the 3 config packages ship source intentionally with a `files` allowlist). _Styling for external consumers works out of the box: `@oc-mui/ui`'s `globals.css` self-scans its own dist (so component classes are generated) and ships the design tokens + fonts, and Tailwind v4 auto-scans the consumer's project — so a plugin author just needs `@import "@oc-mui/ui/globals.css"`. The previous monorepo-specific `@source` globs (apps/plugins/.local-plugins) were moved out of the shared stylesheet into the shell's own Tailwind entry ([`apps/shell/src/app.css`](../../apps/shell/src/app.css)); verified against the visual-regression baselines (pixel-identical) and a real external Tailwind build._
+- [x] **`exports` → built `dist/` + `files` allowlist** for every SDK package, so consumers get compiled JS, not raw `.ts`/`.tsx`. Pattern: tsup builds ESM JS → `dist/`; `tsc` emits `.d.ts` → `dist-types/` (also feeds api-extractor); package `exports` point **directly at `dist`** (dist-canonical; the former src/`publishConfig` indirection and the `development` condition were removed so published and local resolution can never diverge — the shell dev server resolves workspace sources via its own Vite aliases instead). All 15 SDK packages now ship `dist` (the 3 config packages ship source intentionally with a `files` allowlist). _Styling for external consumers works out of the box: `@oc-mui/ui`'s `globals.css` self-scans its own dist (so component classes are generated) and ships the design tokens + fonts, and Tailwind v4 auto-scans the consumer's project — so a plugin author just needs `@import "@oc-mui/ui/globals.css"`. The previous monorepo-specific `@source` globs (apps/plugins/.local-plugins) were moved out of the shared stylesheet into the shell's own Tailwind entry ([`apps/shell/src/app.css`](../../apps/shell/src/app.css)); verified against the visual-regression baselines (pixel-identical) and a real external Tailwind build._
 - [x] **Verdaccio publish-smoke-test (the acceptance gate).** [`scripts/verify-sdk-publish.sh`](../../scripts/verify-sdk-publish.sh) (run via `pnpm test:sdk-publish`, CI: [`.github/workflows/sdk-publish.yml`](../../.github/workflows/sdk-publish.yml)) builds the SDK, strips `private`, publishes all 15 packages to a throwaway Verdaccio registry, then in a consumer project **outside the workspace** installs the SDK from that registry and runs a type-check (against the shipped `.d.ts`) + a runtime smoke test (against the shipped JS) of a real `createPlugin` plugin. This is the real proof that "a plugin can install and build against our packages without the monorepo." Everything is torn down on exit and the `private` flags restored from git.
-- [x] **`pkg.pr.new` per-PR preview packages.** [`.github/workflows/preview-packages.yml`](../../.github/workflows/preview-packages.yml) publishes preview builds of the 15 SDK packages to the [pkg.pr.new](https://pkg.pr.new) CDN on each PR, and comments the install URLs, so anyone (e.g. a backend/plugin author) can `pnpm add https://pkg.pr.new/@oc-mui/<pkg>@<sha>` and test the exact artifacts from a branch before a permanent npm publish. It packs with `pnpm` (so `publishConfig.exports` → `dist` is applied) and rewrites workspace deps to sibling preview URLs, so the whole `@oc-mui` graph resolves from the CDN. pkg.pr.new **skips `private: true` packages**, so the workflow strips `private` in a dedicated step before publishing (the runner checkout is throwaway). **One-time setup (maintainer):** install the [pkg.pr.new GitHub App](https://github.com/apps/pkg-pr-new) on the repo running the workflow — pkg.pr.new checks the App against `$GITHUB_REPOSITORY`, so install it wherever you want previews. Until it's installed the publish step is rejected, but it's `continue-on-error` so it never fails the PR. (No npm token; pkg.pr.new is a preview CDN, not npm.)
+- [x] **`pkg.pr.new` per-PR preview packages.** [`.github/workflows/preview-packages.yml`](../../.github/workflows/preview-packages.yml) publishes preview builds of the 15 SDK packages to the [pkg.pr.new](https://pkg.pr.new) CDN on each PR, and comments the install URLs, so anyone (e.g. a backend/plugin author) can `pnpm add https://pkg.pr.new/@oc-mui/<pkg>@<sha>` and test the exact artifacts from a branch before a permanent npm publish. It packs with `pnpm` (same pack path as a real publish) and rewrites workspace deps to sibling preview URLs, so the whole `@oc-mui` graph resolves from the CDN. pkg.pr.new **skips `private: true` packages**, so the workflow strips `private` in a dedicated step before publishing (the runner checkout is throwaway). **One-time setup (maintainer):** install the [pkg.pr.new GitHub App](https://github.com/apps/pkg-pr-new) on the repo running the workflow — pkg.pr.new checks the App against `$GITHUB_REPOSITORY`, so install it wherever you want previews. Until it's installed the publish step is rejected, but it's `continue-on-error` so it never fails the PR. (No npm token; pkg.pr.new is a preview CDN, not npm.)
 
 Both closing tasks of the exports→dist effort are now in place — Verdaccio for the all-in-one acceptance gate, pkg.pr.new for low-friction per-branch testing. Together they are the standing answer to "can we test against staged packages before publishing?" — **yes**.
 
@@ -140,40 +140,23 @@ Modeled on the Opencast project's GitFlow-style branching. Three branch roles ma
 | Branch | Role |
 |---|---|
 | **`develop`** | Integration. Feature branches are cut from here and their PRs merge back here, each with a changeset. The latest integrated code — not yet released. `.changeset/config.json`'s `baseBranch` is `develop`. |
-| **`main`** | Released, stable code. A merge into `main` **is** a release — it triggers [`release.yml`](../../.github/workflows/release.yml). Nothing lands here except releases (and hotfixes). |
-| **`r/NN.x`** | Maintenance branches for already-shipped majors (e.g. `r/19.x`). Used only to patch an old release in isolation, without pulling in newer `develop` work. Not part of the routine release flow. |
-
-### The everyday loop
-
-1. Branch a feature off `develop`; open a PR back into `develop` **with a changeset** (CI enforces it).
-2. Features accumulate on `develop` along with their changesets.
-3. To release, merge `develop` → `main`.
-4. On `main`, the changesets action opens a **"Version Packages" PR** (version bumps + changelog).
-5. Merge that PR → the action publishes the bumped packages to npm and tags them.
-6. Back-merge `main` → `develop` once, so `develop` also carries the new version numbers.
-
-So: **`develop` collects, `main` ships.** There is never a manual `npm publish`.
-
-The npm SDK packages are versioned independently of Opencast's `r/NN.x` majors, so they publish from `main` — you'd only publish the SDK from an `r/NN.x` branch to patch an old shipped major in isolation.
+| **`r/NN.x`** | Release lines, named after the Opencast major they target (e.g. `r/19.x` ↔ Opencast 19). Releasing happens **here**: every
 
 ## Cutting a release
 
-> **Note:** During the OSS-readiness phases, the workspace is still configured with `access: "restricted"` in `.changeset/config.json`. The first public publish happens in Phase 6d, after every other phase is finished and the build has been verified on the test server.
+> **Note:** `.changeset/config.json` is set to `access: "public"` and the packages carry no `private` flag — they are publishable as-is. The only special case is the very first publish of each package (bootstrap, below).
 
 Before any release — and especially before the first public 1.0 cut or any major bump of a contract-stable package — run the [release test protocol](./test-protocol.md). It's the integration-level gate that complements `pnpm verify`'s mechanical checks.
 
-The automation lives in [`.github/workflows/release.yml`](../../.github/workflows/release.yml), which runs the [`changesets/action`](https://github.com/changesets/action) on every push to **`main`** (see [Branching model](#branching-model)). The release flow:
+The automation lives in [`.github/workflows/release.yml`](../../.github/workflows/release.yml), which runs the [`changesets/action`](https://github.com/changesets/action) on every push to an **`r/**`** release line (see [Branching model](#branching-model)). The release flow:
 
-1. **Merge `develop` → `main`.** On the resulting push, the action opens (or updates) a **"Version Packages" PR** that aggregates the pending `.changeset/*.md` files into version bumps and changelog updates.
+1. **Push the release line `r/NN.x`** (branch from `develop`, or update an existing line). On the push, the action opens (or updates) a **"Version Packages" PR** against that line that aggregates the pending `.changeset/*.md` files into version bumps and changelog updates.
 2. **Review and merge the Version Packages PR.** This commits the version bumps, regenerated changelogs, and consumes the `.changeset/*.md` files.
-3. **The action publishes.** When that merge lands and no changesets remain, the same workflow runs `pnpm changeset:publish`, which calls `npm publish` for every bumped package and creates matching git tags. Then back-merge `main` → `develop` so the version bumps flow back.
+3. **The action publishes.** When that merge lands and no changesets remain, the same workflow runs `pnpm changeset:publish`, which calls `npm publish` for every bumped package and creates matching per-package git tags, plus the product tag `vNN.x.y` and a GitHub Release. Then forward-merge the release line back toward `develop`.
 
 There is no manual `pnpm publish` step. If a release goes sideways, deprecate the bad version with `npm deprecate` rather than unpublishing.
 
-> **Pre-1.0 reality check.** Until the Phase 6d public flip, `access` is `"restricted"` *and* every `@oc-mui/*` package is still `"private": true`, so step 3's `changeset publish` is a deliberate **no-op** — it skips private packages. The version/changelog half (steps 1–2) works today; the publish half activates once the packages drop `private` and `access` becomes `"public"`. Prerequisites for that flip:
-> - **Repo setting:** *Settings → Actions → General →* enable **"Allow GitHub Actions to create and approve pull requests"** so the action can open the Version Packages PR.
-> - **The `@oc-mui` npm org** exists and the publisher can publish to it.
-> - **npm authentication** — see below.
+> **First-release bootstrap.** npm's OIDC trusted publishing cannot create a package that does not exist yet ([npm/cli#8544](https://github.com/npm/cli/issues/8544)). The very first publish of each package is therefore manual: `npm login`, then `pnpm publish -r --access public` from the release line (pnpm, not plain npm — it rewrites `workspace:*` deps). Afterwards configure each package's Trusted Publisher on npmjs.com (repo + `release.yml`); every later release flows through this workflow tokenlessly.
 
 ### npm authentication: tokenless via Trusted Publishing (OIDC)
 
