@@ -77,6 +77,18 @@ including a harmless deprecation warning it triggers (see troubleshooting).
 
 ## 1. OpenSearch via podman
 
+On macOS, podman runs containers inside a Linux VM that does not exist until
+you create it — once, before the first `podman run`:
+
+```bash
+podman machine init
+podman machine start
+```
+
+After that the commands below work as written: the VM forwards `:9200` to
+localhost, and the `:Z` label is fine there too (the VM is Fedora CoreOS,
+which runs SELinux).
+
 ```bash
 podman volume create opensearch-data
 podman run -d --name opensearch \
