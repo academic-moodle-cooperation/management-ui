@@ -30,3 +30,4 @@ export {
   localConfigDevPlugin,
   type LocalConfigDevPluginOptions,
 } from "./plugins/local-config-dev.js";
+export { coldStartHintPlugin } from "./plugins/cold-start-hint.js";

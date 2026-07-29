@@ -4,6 +4,7 @@ import path from "node:path";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
 import { createBaseConfig, type CreateBaseConfigOptions } from "./base.config.js";
+import { coldStartHintPlugin } from "./plugins/cold-start-hint.js";
 import { getAppBasePath, DEFAULT_SHELL_APP_PORT } from "./ports.js";
 import { createProxyConfig } from "./proxy.js";
 
@@ -139,7 +140,7 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
 
   const baseConfigOptions: CreateBaseConfigOptions = {
     isProduction,
-    plugins: [staticAssetsCopyPlugin], // Add static assets copying plugin
+    plugins: [staticAssetsCopyPlugin, coldStartHintPlugin()], // Static assets + cold-start feedback
     resolveAliases: {
       "@": path.resolve(invokerDir, "src"),
       // Minimal generic roots for workspace packages used in plugin code
