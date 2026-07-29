@@ -1,6 +1,6 @@
 {
   "name": "@oc-mui/vite-config",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Shared Vite build configuration for the Opencast Management UI and standalone community plugins.",
   "author": "Academic Moodle Cooperation",
   "homepage": "https://github.com/academic-moodle-cooperation/management-ui/tree/HEAD/packages/vite-config#readme",

@@ -1,6 +1,6 @@
 {
   "name": "@oc-mui/i18n",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Internationalization facade (i18next) for the Opencast Management UI and its plugins.",
   "author": "Academic Moodle Cooperation",
   "homepage": "https://github.com/academic-moodle-cooperation/management-ui/tree/HEAD/packages/i18n#readme",
