@@ -17,7 +17,7 @@ don't need any of this: see the lighter options in
 | `opencast-plugin-graphql` | The `/graphql` endpoint | Ships **with** Opencast ≥ 17, **disabled by default** |
 | `management-ui-config` (JAR) | `/management-tool/ui/config/plugins.json` + plugin discovery | Built from this repo's `backend/` |
 | `management-ui-graphql` (JAR) | The `mui*` GraphQL extensions | Built from this repo's `backend/` — **required**: the event/series screens query `muiEventInfo`/`muiSeriesInfo` and all mutations go through `mui { … }` |
-| `management-ui-core` (JAR) | Serves the built SPA at `/management-ui/ui/` | Optional in dev (Vite serves the UI); needed for prod-style serving |
+| `management-ui-core` (JAR) | Serves the built SPA at `/management-ui/` (`Http-Alias`; the JAR-internal `/ui` classpath is not part of the URL) | Optional in dev (Vite serves the UI); needed for prod-style serving |
 | OpenSearch 1.x | Opencast's search index | Container (podman) |
 | The UI itself | `http://127.0.0.1:3000/management-ui/` | `pnpm dev` in this repo |
 
