@@ -155,6 +155,21 @@ curl -s -u admin:opencast -X POST http://localhost:8080/graphql \
 
 Default credentials: `admin` / `opencast`.
 
+`./bin/start-opencast` starts an **interactive Karaf console** and expects to
+keep a terminal. If you background it instead (`nohup … &`, a CI job, any
+detached stdin), the console immediately reads EOF — which Karaf treats as
+`<ctrl-d>`, i.e. shutdown — and Opencast dies seconds after starting, leaving
+a misleading `Invalid BundleContext` stack trace as the last log entry. For a
+backgrounded or scripted start, use server mode, which starts no local
+console:
+
+```bash
+./bin/start-opencast server
+```
+
+Stopping works the same either way: `./bin/stop-opencast` (or `<ctrl-d>` in
+the interactive console).
+
 That last call must print a `{"data":…}` object. A body of exactly `null` —
 with HTTP 200 — means Opencast built no GraphQL schema for the organization;
 see the troubleshooting table.
@@ -233,6 +248,8 @@ one-time costs per cache; subsequent starts and loads are fast.
 | `plugins.json` returns HTTP 403 "Access Denied" | Unauthenticated request — Opencast's security config rejects anonymous access to this path. Pass `-u admin:opencast` when checking with `curl`; the browser uses its login session |
 | Terminal shows a friendly 502 notice | Nothing listening on the proxy target — Opencast down or wrong `VITE_PROXY_TARGET` |
 | Login loops back to the form | Host-header mismatch: access Opencast via exactly the host in `org.opencastproject.server.url` |
+| Opencast dies seconds after a backgrounded start; last log entry is an `IllegalStateException: Invalid BundleContext` stack trace | The interactive Karaf console read EOF from its detached stdin and shut Opencast down again. Start with `./bin/start-opencast server` instead (step 2) |
+| `pnpm dev` prints ``DeprecationWarning: `module.register()` is deprecated`` (`DEP0205`) | Warning from the dev tooling's TypeScript loader on current (non-LTS) Node majors, e.g. Homebrew's Node 26 — harmless, the dev server works normally |
 | Opencast startup errors about the index | OpenSearch not reachable on `:9200`, or volume permissions (rootless podman: keep the `:Z` label) |
 | `mvn install` in management-ui fails resolving `base:19-SNAPSHOT` | Opencast build (step 2) not completed on this machine — it installs the parent POM locally, and only `r/19.x` has that version |
 | Opencast build fails in `modules/admin`, `modules/editor` or `modules/studio` with missing sources | Cloned without `--recurse-submodules` — run `git submodule update --init --recursive` and resume |
