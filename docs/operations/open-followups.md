@@ -291,11 +291,18 @@ exports (this PR).
   `vite` 6→7 (clears the residual `vite` audit highs).
 - **Retarget the backend to a released Opencast.** The `backend/` bundles build
   against `org.opencastproject:base:19-SNAPSHOT`, so external contributors must
-  compile Opencast `develop` from source before they can build or deploy them
+  compile Opencast `r/19.x` from source before they can build or deploy them
   (see [getting-started/local-backend.md](../getting-started/local-backend.md)).
   Once the parent targets a released Opencast (≥ 17 ships the GraphQL module),
   prebuilt container images become viable for the full-stack dev setup and the
   guide gets dramatically shorter.
+  **Currently blocked upstream** (checked 2026-07-29): no released
+  `org.opencastproject:base:19.x` exists in any public Maven repository —
+  Maven Central stops at `18.5` (the 17.x series is missing entirely), and
+  `mvn.opencast.org` is Opencast's third-party mirror, not its own artifacts.
+  `18.5` being on Central proves the upstream publishing pipeline works, so
+  the actionable step is asking the Opencast project to publish the 19.x
+  artifacts; retarget once they exist.
 
 ### 9.3 Deferred marketplace hardening
 
