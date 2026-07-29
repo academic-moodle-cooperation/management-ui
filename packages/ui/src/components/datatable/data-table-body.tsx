@@ -56,7 +56,9 @@ function DataTableBody<TData extends Record<string, unknown>, TValue>({
         ))
       ) : (
         <TableRow>
-          <TableCell colSpan={columns.length} className="h-24 text-center">
+          {/* whitespace-normal: TableCell defaults to nowrap, which plugin-provided
+              empty states would inherit and render as one overflowing line. */}
+          <TableCell colSpan={columns.length} className="h-24 text-center whitespace-normal">
             <EmptyStateContent
               {...(queryFilter !== undefined && { queryFilter })}
               {...(emptyState !== undefined && { emptyState })}
