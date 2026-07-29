@@ -170,9 +170,12 @@ Open **http://127.0.0.1:3000/management-ui/**, log in as `admin` /
 `opencast`. Events, series, upload, and ACL editing now run against your real
 backend.
 
-The very first page load can take noticeably long while Vite pre-bundles the
-workspace's dependencies — inside a VM this is easily a minute. That is a
-one-time cost, not a hang; subsequent loads are fast.
+Two things look broken on first run but aren't. The dev server itself can sit
+for a minute or two **with no terminal output** before printing its
+`ready in … ms` line — Vite is pre-bundling the workspace's dependencies, and
+inside a VM that silence is easily 1–2 minutes. And the first page load is
+slow and heavy (10 MB+): dev serves unbundled, unminified ES modules. Both are
+one-time costs per cache; subsequent starts and loads are fast.
 
 ## 5. Plugins
 
