@@ -1,6 +1,6 @@
 {
   "name": "@oc-mui/plugin-example",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "ECL-2.0",
   "type": "module",
   "private": true,
