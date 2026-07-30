@@ -1,8 +1,8 @@
 # Full local setup (UI + backend + plugins)
 
-The complete development stack on one Linux machine: the Management UI dev
-server talking to a **real Opencast** with the Management UI backend bundles
-deployed, plugins included. This is the setup you want for working on anything
+The complete development stack on one Linux or macOS machine: the Management
+UI dev server talking to a **real Opencast** with the Management UI backend
+bundles deployed, plugins included. This is the setup you want for working on anything
 that touches live data (events/series lists, ACLs, uploads, auth).
 
 If you only need the shell and mocked data — plugin authoring, UI work — you
@@ -30,7 +30,7 @@ don't need any of this: see the lighter options in
 > container images become an option; that switch is tracked in
 > [operations/open-followups.md](../operations/open-followups.md).
 
-## Prerequisites (Linux)
+## Prerequisites
 
 - git, **JDK 21**, **Maven ≥ 3.6** — `mvn -version` must report Java 21
 - **Node ≥ 20**, **pnpm ≥ 10** (`corepack enable`)
@@ -54,7 +54,40 @@ sudo corepack enable      # plain `corepack enable` fails with EACCES on a syste
 
 Then check `mvn -version` (Java 21), `node -v` and `pnpm -v` before continuing.
 
+On macOS (Apple Silicon, Homebrew) — git and `nc` already ship with macOS:
+
+```bash
+brew install openjdk@21 maven podman ffmpeg node pnpm
+```
+
+`openjdk@21` is keg-only: it lands outside the PATH, and
+`/usr/libexec/java_home -v 21` does **not** find it either (that would need the
+`sudo ln -sfn …` symlink from Homebrew's caveats). The sudo-free route is to
+export `JAVA_HOME` in the shell that runs the builds:
+
+```bash
+export JAVA_HOME="$(brew --prefix openjdk@21)/libexec/openjdk.jdk/Contents/Home"
+export PATH="$JAVA_HOME/bin:$PATH"
+```
+
+Homebrew's Maven follows `JAVA_HOME`, so after this the same `mvn -version` →
+Java 21 check applies. Homebrew's `node` formula is the current major (26 at
+the time of writing), not the LTS the Ubuntu instructions install — that works,
+including a harmless deprecation warning it triggers (see troubleshooting).
+
 ## 1. OpenSearch via podman
+
+On macOS, podman runs containers inside a Linux VM that does not exist until
+you create it — once, before the first `podman run`:
+
+```bash
+podman machine init
+podman machine start
+```
+
+After that the commands below work as written: the VM forwards `:9200` to
+localhost, and the `:Z` label is fine there too (the VM is Fedora CoreOS,
+which runs SELinux).
 
 ```bash
 podman volume create opensearch-data
@@ -121,6 +154,21 @@ curl -s -u admin:opencast -X POST http://localhost:8080/graphql \
 ```
 
 Default credentials: `admin` / `opencast`.
+
+`./bin/start-opencast` starts an **interactive Karaf console** and expects to
+keep a terminal. If you background it instead (`nohup … &`, a CI job, any
+detached stdin), the console immediately reads EOF — which Karaf treats as
+`<ctrl-d>`, i.e. shutdown — and Opencast dies seconds after starting, leaving
+a misleading `Invalid BundleContext` stack trace as the last log entry. For a
+backgrounded or scripted start, use server mode, which starts no local
+console:
+
+```bash
+./bin/start-opencast server
+```
+
+Stopping works the same either way: `./bin/stop-opencast` (or `<ctrl-d>` in
+the interactive console).
 
 That last call must print a `{"data":…}` object. A body of exactly `null` —
 with HTTP 200 — means Opencast built no GraphQL schema for the organization;
@@ -200,6 +248,8 @@ one-time costs per cache; subsequent starts and loads are fast.
 | `plugins.json` returns HTTP 403 "Access Denied" | Unauthenticated request — Opencast's security config rejects anonymous access to this path. Pass `-u admin:opencast` when checking with `curl`; the browser uses its login session |
 | Terminal shows a friendly 502 notice | Nothing listening on the proxy target — Opencast down or wrong `VITE_PROXY_TARGET` |
 | Login loops back to the form | Host-header mismatch: access Opencast via exactly the host in `org.opencastproject.server.url` |
+| Opencast dies seconds after a backgrounded start; last log entry is an `IllegalStateException: Invalid BundleContext` stack trace | The interactive Karaf console read EOF from its detached stdin and shut Opencast down again. Start with `./bin/start-opencast server` instead (step 2) |
+| `pnpm dev` prints ``DeprecationWarning: `module.register()` is deprecated`` (`DEP0205`) | Warning from the dev tooling's TypeScript loader on current (non-LTS) Node majors, e.g. Homebrew's Node 26 — harmless, the dev server works normally |
 | Opencast startup errors about the index | OpenSearch not reachable on `:9200`, or volume permissions (rootless podman: keep the `:Z` label) |
 | `mvn install` in management-ui fails resolving `base:19-SNAPSHOT` | Opencast build (step 2) not completed on this machine — it installs the parent POM locally, and only `r/19.x` has that version |
 | Opencast build fails in `modules/admin`, `modules/editor` or `modules/studio` with missing sources | Cloned without `--recurse-submodules` — run `git submodule update --init --recursive` and resume |
