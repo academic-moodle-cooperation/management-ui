@@ -156,6 +156,19 @@ The automation lives in [`.github/workflows/release.yml`](../../.github/workflow
 
 There is no manual `pnpm publish` step. If a release goes sideways, deprecate the bad version with `npm deprecate` rather than unpublishing.
 
+## Bugfixes across multiple release lines
+
+Like Opencast, we support the newest release lines in parallel (Opencast itself supports three majors, e.g. 18/19/20). `release.yml` triggers on every `r/**` push with a per-branch concurrency group, so **each line is an independent release machine** — the Opencast flow ("fix the oldest affected line, forward-merge upward") maps directly:
+
+1. **Fix the oldest affected line.** PR (fix + changeset, usually `patch`) against e.g. `r/18.x`, merge it there.
+2. **Forward-merge immediately, before releasing** — `r/18.x → r/19.x → r/20.x → develop`, one PR each, merged as **merge commits** (never squash — squash diverges the histories permanently). The order matters: forward-merging *before* any line's Version PR is merged carries the **changeset file** to every line, so each line's own Version PR consumes its own copy and produces that line's patch release (e.g. `1.0.3` on the 18-line and `2.1.1` on the 19-line, each with the fix in its changelog).
+   *If you released the old line first*, the forward-merge carries the changeset **deletion** and the old line's version bumps instead — then cherry-pick or re-create the changeset on the newer line. It works, but it's the manual path; prefer forward-merge-first.
+3. **Resolve version metadata toward the newer line.** Forward merges conflict in `package.json` versions, `CHANGELOG.md`s, and `VERSION`: always keep the **target (newer) line's** values and take only the fix itself. `VERSION` is per-line by design (`18.5.1` on `r/18.x`, `19.2.0` on `r/19.x`).
+4. **Release each line independently** by merging its Version PR whenever that line wants to ship. There is no required ordering between lines.
+5. **Repoint npm `latest` when an old line publishes.** `changeset publish` tags every publish `latest`; that is only correct for the newest line. After a patch release on an older line, repoint each affected package: `npm dist-tag add @oc-mui/<pkg>@<newest-version> latest`.
+
+**Alternative (cherry-pick/backport):** land the fix on `develop` first and cherry-pick it (with its changeset) onto each supported line. Changesets handles this equally well, and it avoids the version-metadata conflicts of step 3 — at the price of one backport PR per line and no shared history. Use it as the fallback when a forward-merge would drag along commits a line must not receive; the default remains the Opencast-style flow above (decided in #236).
+
 > **First-release bootstrap.** npm's OIDC trusted publishing cannot create a package that does not exist yet ([npm/cli#8544](https://github.com/npm/cli/issues/8544)). The very first publish of each package is therefore manual: `npm login`, then `pnpm publish -r --access public` from the release line (pnpm, not plain npm — it rewrites `workspace:*` deps). Afterwards configure each package's Trusted Publisher on npmjs.com (repo + `release.yml`); every later release flows through this workflow tokenlessly.
 
 ### npm authentication: tokenless via Trusted Publishing (OIDC)
