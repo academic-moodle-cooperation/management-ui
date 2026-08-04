@@ -22,9 +22,11 @@ don't need any of this: see the lighter options in
 | The UI itself | `http://127.0.0.1:3000/management-ui/` | `pnpm dev` in this repo |
 
 > **Version note.** The backend bundles currently build against
-> `org.opencastproject:base:19-SNAPSHOT`, so the branch you need is Opencast
-> **`r/19.x`** — not `develop`, which has already moved on to the next major
-> version. That parent POM is not on Maven Central, so building Opencast from
+> `org.opencastproject:base:20-SNAPSHOT`, so the branch you need is Opencast
+> **`r/20.x`** — not `develop`, which has already moved on to the next major
+> version. (Targeting an Opencast major is not cosmetic: the OSGi
+> `Import-Package` ranges are baked into the JARs at compile time, so a bundle
+> built against 19 refuses to start on 20 and vice versa.) That parent POM is not on Maven Central, so building Opencast from
 > source first (which installs it into your local `~/.m2`) is a hard
 > prerequisite. Once the backend targets a released Opencast, prebuilt
 > container images become an option; that switch is tracked in
@@ -75,6 +77,13 @@ Java 21 check applies. Homebrew's `node` formula is the current major (26 at
 the time of writing), not the LTS the Ubuntu instructions install — that works,
 including a harmless deprecation warning it triggers (see troubleshooting).
 
+Export `JAVA_HOME` in the shell that starts Opencast too, not just the one that
+builds it. `bin/start-opencast` resolves its JVM through `JAVA_HOME` /
+`/usr/libexec/java_home` — **not** through your `PATH`. A stale JDK registered
+in `/Library/Java/JavaVirtualMachines` (check with `/usr/libexec/java_home -V`)
+therefore wins over the Java 21 that `java -version` reports, and Opencast dies
+during startup with an OSGi resolution error (see troubleshooting).
+
 ## 1. OpenSearch via podman
 
 On macOS, podman runs containers inside a Linux VM that does not exist until
@@ -110,10 +119,10 @@ curl -s http://localhost:9200 | head -3   # should answer with version JSON
 
 (The `:Z` volume label matters on SELinux distros like Fedora.)
 
-## 2. Build and start Opencast 19
+## 2. Build and start Opencast 20
 
 ```bash
-git clone --branch r/19.x --recurse-submodules \
+git clone --branch r/20.x --recurse-submodules \
   https://github.com/opencast/opencast.git
 cd opencast
 mvn clean install -DskipTests    # long: 30–60 min on first run
@@ -124,7 +133,7 @@ cd opencast-dist-allinone
 
 `--recurse-submodules` is not optional: `modules/admin`, `modules/editor` and
 `modules/studio` are git submodules, and the build fails without them. `mvn
-install` (rather than `package`) is what puts the `19-SNAPSHOT` artifacts into
+install` (rather than `package`) is what puts the `20-SNAPSHOT` artifacts into
 `~/.m2` for step 3.
 
 Enable the GraphQL plugin — in
@@ -184,7 +193,7 @@ git clone https://github.com/academic-moodle-cooperation/management-ui.git
 ```
 
 Then build the backend bundles (the Opencast build above already put the
-`19-SNAPSHOT` parent into `~/.m2`). `OPENCAST_DIST` is the directory you
+`20-SNAPSHOT` parent into `~/.m2`). `OPENCAST_DIST` is the directory you
 unpacked in step 2 — with the clone layout used above, that is
 `~/opencast/build/opencast-dist-allinone`:
 
@@ -251,7 +260,9 @@ one-time costs per cache; subsequent starts and loads are fast.
 | Opencast dies seconds after a backgrounded start; last log entry is an `IllegalStateException: Invalid BundleContext` stack trace | The interactive Karaf console read EOF from its detached stdin and shut Opencast down again. Start with `./bin/start-opencast server` instead (step 2) |
 | `pnpm dev` prints ``DeprecationWarning: `module.register()` is deprecated`` (`DEP0205`) | Warning from the dev tooling's TypeScript loader on current (non-LTS) Node majors, e.g. Homebrew's Node 26 — harmless, the dev server works normally |
 | Opencast startup errors about the index | OpenSearch not reachable on `:9200`, or volume permissions (rootless podman: keep the `:Z` label) |
-| `mvn install` in management-ui fails resolving `base:19-SNAPSHOT` | Opencast build (step 2) not completed on this machine — it installs the parent POM locally, and only `r/19.x` has that version |
+| `mvn install` in management-ui fails resolving `base:20-SNAPSHOT` | Opencast build (step 2) not completed on this machine — it installs the parent POM locally, and only `r/20.x` has that version |
+| Opencast dies at startup with `Unable to resolve root: missing requirement … osgi.identity=opencast-security-jwt`, root-caused by `osgi.ee; filter:="(&(osgi.ee=JavaSE)(version=21))"` | Karaf started on a JDK older than 21. It resolves its JVM via `JAVA_HOME` / `/usr/libexec/java_home`, **not** your `PATH` — so a stale JDK registered on the system wins over the Java 21 that `java -version` prints. Export `JAVA_HOME` in the shell that runs `bin/start-opencast` |
+| A deployed `management-ui-*` bundle stays unresolved: `missing requirement … osgi.wiring.package=org.opencastproject.assetmanager.api version>=19.0.0 !(>=20.0.0)` | The JAR was built against a different Opencast major than the one it is deployed on. The OSGi import ranges are fixed at compile time — rebuild the bundles against the target major |
 | Opencast build fails in `modules/admin`, `modules/editor` or `modules/studio` with missing sources | Cloned without `--recurse-submodules` — run `git submodule update --init --recursive` and resume |
 | Opencast build fails during `npm ci` with `ETIMEDOUT` | Registry timeouts, not a code problem — raise npm's retry limits (below) and resume |
 | `npm WARN EBADENGINE` during the Opencast build | Warning only: the frontend submodules pin older Node ranges. Only `npm ERR!` and Maven's final `BUILD FAILURE` mean the build failed |

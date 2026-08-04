@@ -181,7 +181,7 @@ See [`architecture/CONFIGURATION.md`](../architecture/CONFIGURATION.md) for the 
 
 ### What the POM does (and doesn't)
 
-The scaffolded POM inherits from `org.opencastproject:base:19-SNAPSHOT` directly. This matches what the Management UI itself does (`apps/shell/pom.xml`). External plugin authors need Opencast's Maven repository reachable from their build environment.
+The scaffolded POM inherits from `org.opencastproject:base:20-SNAPSHOT` directly. This matches what the Management UI itself does (`apps/shell/pom.xml`). External plugin authors need Opencast's Maven repository reachable from their build environment.
 
 The POM:
 
