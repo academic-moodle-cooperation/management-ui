@@ -135,12 +135,23 @@ Plugin authors get a one-major-cycle grace window: when the host bumps `PLUGIN_A
 
 ## Branching model
 
-Modeled on the Opencast project's GitFlow-style branching. Three branch roles matter for releases:
+Modeled on the Opencast project's GitFlow-style branching. Two branch roles matter for releases:
 
 | Branch | Role |
 |---|---|
 | **`develop`** | Integration. Feature branches are cut from here and their PRs merge back here, each with a changeset. The latest integrated code — not yet released. `.changeset/config.json`'s `baseBranch` is `develop`. |
-| **`r/NN.x`** | Release lines, named after the Opencast major they target (e.g. `r/19.x` ↔ Opencast 19). Releasing happens **here**: every
+| **`r/NN.x`** | Release lines, named after the Opencast major they target (e.g. `r/19.x` ↔ Opencast 19). Releasing happens **here**: every push runs [`release.yml`](../../.github/workflows/release.yml), which opens a "Version Packages" PR — merging that PR *is* the release. A line is cut from `develop` when its major is ready to ship, and the newest lines are then maintained in parallel (see [Bugfixes across multiple release lines](#bugfixes-across-multiple-release-lines)). |
+
+There is no `main` branch: `develop` collects, the `r/NN.x` lines ship.
+
+### The everyday loop
+
+1. Branch a feature off `develop`; open a PR back into `develop` **with a changeset** (CI enforces it).
+2. Features accumulate on `develop` along with their changesets.
+3. To release, push the release line — branch `r/NN.x` from `develop` for a new major, or merge `develop` into the existing line.
+4. On that line, the changesets action opens a **"Version Packages" PR** (version bumps + changelog).
+5. Merge that PR → the action publishes the bumped packages to npm, creates the per-package tags plus the product tag `vNN.x.y`, and cuts a GitHub Release.
+6. Forward-merge the line back toward `develop` so the version bumps flow back.
 
 ## Cutting a release
 
