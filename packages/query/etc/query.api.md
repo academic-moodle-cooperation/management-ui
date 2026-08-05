@@ -231,6 +231,15 @@ export type DeleteEventPayload = {
     status?: Maybe<EventRemovalResult>;
 };
 
+// @public
+export interface DeleteEventPermanentlyResult {
+    // (undocumented)
+    deleteEvent?: {
+        id?: string | null;
+        status?: string | null;
+    } | null;
+}
+
 // @public (undocumented)
 export type DurationMetadataField = MetadataFieldInterface & {
     collection?: Maybe<Scalars['JSON']['output']>;
@@ -2030,6 +2039,11 @@ export function useAppConfig(): {
 
 // @public
 export function useConfig<T extends z.ZodTypeAny>(reader: PluginConfigReader<T>): z.infer<T>;
+
+// @public (undocumented)
+export function useDeleteEventPermanentlyMutation(): UseMutationResult<DeleteEventPermanentlyResult, Error, {
+    eventId: string;
+}>;
 
 // @public
 export function useEventTitlesMap(eventIds: string[]): Map<string, string>;
