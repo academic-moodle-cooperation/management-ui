@@ -65,6 +65,37 @@ The `api-check` job fails when the committed snapshot disagrees with what API Ex
 
 See [`release.md` → API surface drift detection](./release.md#api-surface-drift-detection) for the full model.
 
+## Workflows outside the PR gate
+
+Two tiers are too slow or too environment-dependent to run on every PR. Both are
+also available on demand (`workflow_dispatch`).
+
+### `Integration (real backend)` ([`.github/workflows/integration.yml`](../../.github/workflows/integration.yml))
+
+`pnpm test:integration` against a live Opencast — 03:00 UTC. Catches schema
+drift, auth and real-data regressions that a mocked suite cannot see.
+
+### `Browser matrix (E2E)` ([`.github/workflows/matrix.yml`](../../.github/workflows/matrix.yml))
+
+The same `tests/e2e/` specs the PR gate runs on chromium, executed on Firefox,
+WebKit and two tablet emulations — see
+[`playwright.matrix.config.ts`](../../playwright.matrix.config.ts). Those
+projects are the manual test protocol's per-browser result columns, which a
+human used to walk one at a time.
+
+**Not scheduled.** It runs on push to `develop`, `main` and `release/**`, and on
+demand. These specs break when code changes, not when time passes, so a nightly
+run would mostly re-test an unchanged tree — merge into a long-lived branch is
+the moment a cross-browser regression can actually enter.
+
+It is also a single job running the projects sequentially, and it skips chromium
+(test.yml already covers every one of these specs there for each PR). Both
+choices are about runner minutes: one workspace build instead of five, and no
+duplicated engine. Locally, `pnpm test:matrix` still runs all five projects.
+
+A manual dispatch takes an optional `projects` input — space-separated
+`--project` arguments — to narrow the run.
+
 ## Changes that skip CI gates
 
 Doc-only and workflow-only changes still run the full suite — there's no skip. The `Changeset` gate is the only one that conditionally exempts: changes under `apps/`, root config, docs, or `.github/` don't need a changeset because those packages are in `.changeset/config.json`'s `ignore` list.

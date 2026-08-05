@@ -124,6 +124,68 @@ pnpm test:e2e:ui
 
 Drop a new `*.spec.ts` next to `smoke.spec.ts`. The base URL is `http://127.0.0.1:3000/management-ui/`, so use relative `page.goto("...")` paths or absolute paths starting with `/management-ui/`. If your test exercises a feature that talks to the backend, mirror the route-mocking pattern from [smoke.spec.ts](../../tests/e2e/smoke.spec.ts) — one `page.route("**/<endpoint>", ...)` per call site.
 
+## The two hand-fed tiers
+
+Every tier above runs against something we control: the default config, a
+scaffolded plugin, a vanilla podman Opencast. A **real deployment** — an org's
+`config.json`, its JAR-deployed plugin, its theme, its data shapes — is
+covered by two further tiers, both gated on an input a developer can't produce
+alone. They skip silently when unfed, so they're safe to run anywhere.
+
+| Tier | Command | Input | Covers |
+|---|---|---|---|
+| [HAR replay](../../tests/har-replay/README.md) | `pnpm test:har-replay` | A tester's sanitized recording in `tests/har-replay/recordings/` | Boots the shell against the recorded backend; asserts every recorded GraphQL exchange is `Mui`-named and error-free. |
+| [Org plugin](../../tests/org-plugin/README.md) | `ORG_PLUGIN=<name> pnpm test:org-plugin` | A plugin in `.local-plugins/<name>/` | Manifest ↔ bundles, i18n namespace discovery + key parity, theme rules, boot-with-plugin, plus visual baselines. |
+
+The org-plugin tier exists because `.local-plugins/` is excluded from every
+other gate: it's gitignored, and `pnpm verify` runs with
+`--filter='!./.local-plugins/*'`. Without this tier, the org-specific surface —
+the part a manual tester actually looks at — has no automated coverage at all.
+
+Recordings and org baselines are gitignored: the machinery is shared, the
+org-specific data stays with the org. The tester-facing workflow for producing
+them is [`manual-test-recording.md`](./manual-test-recording.md).
+
+### The browser matrix
+
+A manual protocol usually has one result column per browser and device, and a
+human walks every step in each of them. Those columns are a Playwright
+`projects` array:
+
+```bash
+pnpm test:matrix:install   # one-time: chromium + firefox + webkit
+pnpm test:matrix           # every tests/e2e/ spec across all five projects
+```
+
+[`playwright.matrix.config.ts`](../../playwright.matrix.config.ts) maps
+chromium / firefox / webkit / Android tablet / iOS tablet onto the protocol's
+columns. `pnpm test:e2e` stays single-browser so `pnpm verify` remains a fast
+pre-push gate; the matrix runs in CI on merge into `develop`/`main`
+([`matrix.yml`](../../.github/workflows/matrix.yml)) and on demand before a
+release. CI skips the chromium project there — the PR gate already covers it.
+
+Two honest limits, both documented in the config: Playwright cannot emulate
+Firefox on Android, and emulation is not a real device — the input-stack defects
+the protocol actually found on tablets (search losing focus after a few
+keystrokes, hover-only tooltips) do not reproduce in an emulator. Those rows
+stay manual.
+
+### Measuring the shrink
+
+An org's manual protocol usually lives in a wiki, with no ids on its rows — so
+nobody can say which rows are already automated, and the list only grows.
+[`tests/protocol/`](../../tests/protocol/README.md) fixes that:
+
+```bash
+pnpm protocol:import <exported.json> -o tests/protocol/<org>.yaml
+pnpm protocol:coverage tests/protocol/<org>.yaml
+```
+
+The import assigns a permanent id per step; a test claims one by putting it in
+its title (`test("[SER-04] …")`), and the coverage report says how many steps
+are still hand-run. It also sorts the backlog by steps that have already failed
+at least once — which is the order worth automating in.
+
 ## CI layout
 
 The test workflow ([.github/workflows/test.yml](../../.github/workflows/test.yml)) splits into four jobs that run in dependency order:
@@ -179,6 +241,12 @@ When a release-protocol run finds a bug, the bug is telling you which automated 
 - **Only-a-real-backend bug** → add/refine an **integration-E2E** spec in [`tests/integration/`](../../tests/integration/) and/or a row in [`test-protocol.md`](./test-protocol.md).
 
 The rule: every protocol run either converts a found bug into a permanent automated test, or adds/refines a checklist row — so the manual protocol shrinks every release instead of being a recurring slog.
+
+Better still, don't wait for a bug: have the tester **record** the run. A
+sanitized HAR turns the whole session into a replayable fixture, whether or not
+it found anything — see [`manual-test-recording.md`](./manual-test-recording.md)
+for the two-clicks-per-section workflow and
+[`tests/har-replay/`](../../tests/har-replay/README.md) for what it buys.
 
 ## See also
 

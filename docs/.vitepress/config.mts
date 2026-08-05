@@ -159,6 +159,7 @@ export default defineConfig({
           items: [
             { text: "Release & versioning", link: "/operations/release" },
             { text: "Release test protocol", link: "/operations/test-protocol" },
+            { text: "Recording a manual test run", link: "/operations/manual-test-recording" },
             { text: "Extending the workspace", link: "/operations/extending-the-workspace" },
             { text: "CI", link: "/operations/ci" },
             { text: "Testing", link: "/operations/testing" },

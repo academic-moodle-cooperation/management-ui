@@ -1,0 +1,87 @@
+name: Browser matrix (E2E)
+
+# The cross-browser tier. Per-PR CI runs the same specs on chromium only
+# (test.yml) so the gate stays fast; this workflow adds the other engines.
+#
+# Those engines are the manual test protocol's per-browser result columns, which
+# a human used to walk one at a time. See docs/operations/testing.md and
+# tests/protocol/README.md.
+#
+# Runner-minute budget drove three decisions:
+#
+#  * **No schedule.** These specs break when code changes, not when time passes,
+#    so a nightly run mostly re-tests an unchanged tree. It runs on merge into a
+#    long-lived branch instead — the moment a cross-browser regression can
+#    actually enter — and on demand before a release.
+#  * **One job, not one per engine.** Five jobs meant five full workspace builds.
+#    Sequential projects in a single job cost roughly one build instead of five;
+#    the wall clock is longer, but nothing is waiting on this.
+#  * **No chromium project here.** test.yml already runs every one of these specs
+#    on chromium for each PR. Repeating it would be a fifth of the bill for zero
+#    new information. `pnpm test:matrix` locally still runs all five.
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+      - "release/**"
+  workflow_dispatch:
+    inputs:
+      projects:
+        description: "Projects to run (space-separated --project args). Default: every non-chromium project."
+        required: false
+
+concurrency:
+  group: matrix-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  matrix:
+    name: Firefox / WebKit / tablets
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the SDK (dist + dist-types)
+        run: |
+          # Same ordering guard as the e2e job in test.yml: dist is the canonical
+          # entry point, so vite-config must build before the rest.
+          pnpm turbo run build --force --filter=@oc-mui/vite-config
+          test -f packages/vite-config/dist/plugin.config.js || (echo "❌ vite-config dist files missing" && exit 1)
+          pnpm turbo run build build:types
+
+      - name: Ensure .local-plugins exists
+        run: mkdir -p .local-plugins
+
+      - name: Install Playwright browsers
+        # The tablet projects are device emulations on top of these two engines,
+        # not separate browsers.
+        run: pnpm exec playwright install --with-deps firefox webkit
+
+      - name: Run the browser matrix
+        run: |
+          pnpm test:matrix ${PROJECTS:---project=firefox --project=webkit --project=tablet-android --project=tablet-ios}
+        env:
+          PROJECTS: ${{ github.event.inputs.projects }}
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-report-matrix
+          path: playwright-report-matrix/
+          retention-days: 7
