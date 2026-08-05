@@ -127,8 +127,14 @@ This is automatic; you don't do anything. The `@layer plugin-overrides` block be
 > the later one wins and `flex-col md:flex-row` silently stays a column at every
 > width. The shell therefore imports `@oc-mui/ui/globals.css` explicitly before
 > its own `app.css` and scans `packages/ui` as well, so the last sheet is always
-> a superset. If you ship your own Tailwind build, keep it ahead of the host's,
-> and don't assume your responsive variants can override host base utilities.
+> a superset.
+>
+> That ordering rule governs the **host's own** stylesheets among themselves.
+> Your plugin's build is exempt from it: the loader wraps your CSS in `@layer
+> plugins`, and the host declares that layer after Tailwind's `utilities`. Layer
+> order is resolved before load order, so your utilities win on your own DOM no
+> matter which sheet lands first — you do not need to position your build
+> relative to the host's.
 
 The implied entry point for plugin CSS:
 
