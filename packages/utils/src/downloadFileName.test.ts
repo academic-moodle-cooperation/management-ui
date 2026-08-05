@@ -59,6 +59,28 @@ describe("buildDownloadFileName", () => {
     );
   });
 
+  it("should use the MIME subtype directly when it is a plausible extension", () => {
+    expect(buildDownloadFileName({ title: "Vorlesung", mimeType: "audio/aac" })).toBe(
+      "Vorlesung.aac",
+    );
+  });
+
+  it("should ignore a MIME subtype that is not a plausible extension", () => {
+    expect(
+      buildDownloadFileName({ title: "Vorlesung", mimeType: "application/vnd.apple.mpegurl" }),
+    ).toBe("Vorlesung");
+  });
+
+  it("should survive a malformed URL in the source", () => {
+    expect(buildDownloadFileName({ title: "Vorlesung", source: "http://[" })).toBe("Vorlesung");
+  });
+
+  it("should survive a malformed percent-escape in the source", () => {
+    expect(buildDownloadFileName({ title: "Vorlesung", source: "/media/%E0%A4%A.mp4" })).toBe(
+      "Vorlesung.mp4",
+    );
+  });
+
   it("should ignore MIME type parameters", () => {
     expect(buildDownloadFileName({ title: "Vorlesung", mimeType: "video/mp4; codecs=avc1" })).toBe(
       "Vorlesung.mp4",
