@@ -1,7 +1,7 @@
 import { Trash2 } from "lucide-react";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 
-import { useI18n, loadNamespace } from "@oc-mui/i18n";
+import { useI18n } from "@oc-mui/i18n";
 import {
   useMuiGetAllManagedAclsQuery,
   useMuiUpdateEventAclMutation,
@@ -45,30 +45,44 @@ import type { AclData, ACLEntry, ACLEntryInput, SelectedElement } from "./types"
 
 type UserSearchResult = NonNullable<NonNullable<MuiSearchUserQuery["searchUser"]>["nodes"]>[number];
 
-interface AclEditorProps {
+/**
+ * Exported so the API report records the actual prop surface. Left
+ * unexported, the report only says `AclEditor: React.FC<AclEditorProps>` and a
+ * change to any prop — required becoming optional, a callback signature
+ * changing — slips through unnoticed.
+ */
+export interface AclEditorProps {
   selectedElement?: SelectedElement | null | undefined;
   aclEntries: ACLEntry[];
   managedAclId?: string | undefined;
-  hasChanges: boolean;
-  refetch: () => void;
-  onClose?: (() => void) | undefined;
-  showUpdateButton?: boolean | undefined;
   onAclChange: (entries: ACLEntry[]) => void;
   onManagedAclChange: (managedAclId: string) => void;
-  onHasChangesChange: (hasChanges: boolean) => void;
+  onClose?: (() => void) | undefined;
   disabled?: boolean | undefined;
+
+  /**
+   * The three below drive the "edit an existing entity, then press Update"
+   * flow. They are optional because the other caller shape — collecting an ACL
+   * for something that does not exist yet, such as an upload — has no entity
+   * to refetch, no Update button, and no dirty state to report. Requiring them
+   * only forced those callers to pass no-ops.
+   */
+  hasChanges?: boolean | undefined;
+  refetch?: (() => void) | undefined;
+  onHasChangesChange?: ((hasChanges: boolean) => void) | undefined;
+  showUpdateButton?: boolean | undefined;
 }
 
 export const AclEditor: React.FC<AclEditorProps> = ({
   selectedElement,
   aclEntries,
   managedAclId,
-  hasChanges,
+  hasChanges = false,
   refetch = () => {},
   showUpdateButton = true,
   onAclChange,
   onManagedAclChange,
-  onHasChangesChange,
+  onHasChangesChange = () => {},
   disabled = false,
 }) => {
   // Only UI state is local
@@ -76,15 +90,15 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const updateEventAcl = useMuiUpdateEventAclMutation();
   const updateSeriesAcl = useMuiUpdateSeriesAclMutation();
-  const { t, i18n } = useI18n();
+  // Every label in here comes from `muitable-sidebar`, so the component has to
+  // be *subscribed* to that namespace, not merely trigger its download. It
+  // previously called `loadNamespace` from an effect while binding `useI18n()`
+  // to the default namespace: react-i18next then had no reason to re-render
+  // when the bundle arrived, so the first render in any context that hadn't
+  // already loaded it showed bare keys ("accessPolicy", "addUser", …).
+  // Naming the namespace here makes react-i18next load it and re-render.
+  const { t } = useI18n("muitable-sidebar");
   const queryClient = useQueryClient();
-
-  useEffect(() => {
-    const loadTranslations = async () => {
-      await loadNamespace("muitable-sidebar", i18n.language);
-    };
-    loadTranslations();
-  }, [i18n.language]);
 
   const { data, isLoading, isError } = useMuiSearchUserQuery({
     query: searchQuery,
