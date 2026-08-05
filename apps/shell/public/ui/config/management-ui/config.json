@@ -8,7 +8,7 @@
     "logoUrl": "assets/default/logo.svg",
     "faviconUrl": "assets/favicon/favicon.svg",
     "orgLogoUrl": "",
-    "enabledPlugins": ["core", "episodes", "series", "upload", "admin", "config"]
+    "enabledPlugins": ["core", "episodes", "series", "upload", "upload-v2", "admin", "config"]
   },
   "auth": {
     "loginUrl": "/Shibboleth.sso/Login?target=/management-ui/",

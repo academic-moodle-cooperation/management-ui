@@ -1,0 +1,124 @@
+{
+  "title": "Upload",
+  "dropzone": {
+    "headline": "Dateien hierher ziehen oder klicken zum Auswählen",
+    "hint": "Große Dateien sind kein Problem — die Übertragung startet sofort und läuft weiter, während Sie die Angaben ausfüllen.",
+    "compactHint": "Weitere Dateien einfach irgendwo auf die Seite ziehen",
+    "addMore": "Dateien hinzufügen"
+  },
+  "series": {
+    "label": "Serie",
+    "placeholder": "Serie auswählen…",
+    "searchPlaceholder": "Serie suchen…",
+    "empty": "Keine Serien gefunden.",
+    "loadMore": "Mehr laden…"
+  },
+  "queue": {
+    "label": "Upload-Warteschlange",
+    "selectAll": "Alle auswählen",
+    "selectRow": "{{title}} auswählen",
+    "summary": "{{count}} Dateien",
+    "summaryActive": "{{active}} von {{total}} noch in Vorbereitung",
+    "selectedCount": "{{count}} ausgewählt"
+  },
+  "inspector": {
+    "label": "Details",
+    "emptyTitle": "Nichts ausgewählt",
+    "emptyHint": "Eine Datei anklicken, um ihre Angaben zu bearbeiten — oder mehrere auswählen und gemeinsam bearbeiten.",
+    "multi": "{{count}} Dateien ausgewählt",
+    "singleHint": "Änderungen gelten für diese Datei.",
+    "multiHint": "Änderungen gelten für alle ausgewählten Dateien."
+  },
+  "field": {
+    "mixed": "Verschieden",
+    "title": "Titel",
+    "titleMulti": "Mehrere Titel",
+    "language": "Gesprochene Sprache",
+    "languageHint": "Auf der Vorgabe der Serie lassen, sofern diese Aufnahme nicht abweicht.",
+    "languageInherit": "Aus der Serie",
+    "stt": "Sprache zu Text",
+    "transcribe": "Untertitel erzeugen",
+    "translate": "Ins Englische übersetzen",
+    "translateDisabled": "(bereits Englisch)",
+    "processing": "Verarbeitung",
+    "processing_publish": "Sofort veröffentlichen",
+    "processing_publish_hint": "Lässt den vollständigen Workflow laufen und veröffentlicht am Ende.",
+    "processing_prepare": "Für Bearbeitung vorbereiten",
+    "processing_prepare_hint": "Stoppt vor der Veröffentlichung, damit Sie im Editor schneiden und Untertitel prüfen können.",
+    "preview": "Vorschaubild",
+    "previewHint": "Optional. Ersetzt das Bild, das der Player vor dem Abspielen zeigt.",
+    "previewPick": "Bild auswählen",
+    "previewClear": "Vorschaubild entfernen",
+    "recordedAt": "Aufnahmedatum",
+    "recordedAtHint": "Aus der Datei übernommen. Korrigieren, wenn die Aufnahme älter ist als die Datei.",
+    "presenters": "Vortragende",
+    "presentersHint": "Mehrere Namen durch Komma trennen.",
+    "presentersEmpty": "Hochladende Person",
+    "description": "Beschreibung",
+    "subject": "Thema",
+    "license": "Lizenz",
+    "licenseHint": "Freitext — die erlaubten Werte sind vor dem Anlegen des Events nicht abrufbar.",
+    "rightsHolder": "Rechteinhaber",
+    "contributors": "Mitwirkende"
+  },
+  "state": {
+    "queued": "Wartet",
+    "preparing": "Wird vorbereitet…",
+    "paused": "Pausiert",
+    "prepared": "Bereit",
+    "submitting": "Wird veröffentlicht…",
+    "done": "Veröffentlicht",
+    "failed": "Fehlgeschlagen",
+    "discarded": "Verworfen"
+  },
+  "row": {
+    "tracks": "{{count}} Spuren"
+  },
+  "action": {
+    "discard": "Entfernen",
+    "publish": "Veröffentlichen",
+    "publishMany": "{{count}} Dateien veröffentlichen"
+  },
+  "footer": {
+    "selectSeries": "Zum Veröffentlichen eine Serie auswählen."
+  },
+  "toast": {
+    "rejected": "{{count}} Datei(en) übersprungen — Dateityp wird nicht unterstützt."
+  },
+  "tracks": {
+    "label": "Spuren",
+    "dual": "Dual-Stream",
+    "presenter": "Vortragende",
+    "presentation": "Bildschirm / Folien",
+    "audio": "Audio",
+    "swap": "Vortragende und Bildschirm tauschen",
+    "remove": "Spur entfernen",
+    "add_presenter": "Spur mit Vortragenden hinzufügen",
+    "add_presentation": "Bildschirmspur hinzufügen"
+  },
+  "dual": {
+    "modeSingle": "Einzeldatei",
+    "modeDual": "Dual-Stream",
+    "backToSingle": "Zurück zu Einzeldateien",
+    "choose": "Datei auswählen",
+    "clear": "Ersetzen",
+    "hint_presenter": "Kamera- oder Personenaufnahme",
+    "hint_presentation": "Bildschirmaufnahme oder Folien",
+    "explain": "Beide Seiten füllen — das Paar wird als eine Aufnahme übernommen."
+  },
+  "acl": {
+    "label": "Zugriffsrechte",
+    "hint": "Leer lassen, um die Vorgabe der Serie bzw. des Workflows zu übernehmen.",
+    "inherited": "Aus Serie / Workflow",
+    "summary": "{{count}} Regel(n)",
+    "edit": "Bearbeiten",
+    "title": "Zugriffsrechte",
+    "description": "Wer diese Aufnahmen sehen und bearbeiten darf. Gilt für alle ausgewählten Dateien.",
+    "cancel": "Abbrechen",
+    "apply": "Übernehmen"
+  },
+  "workflow": {
+    "label": "Workflow",
+    "pick": "Workflow auswählen…"
+  }
+}

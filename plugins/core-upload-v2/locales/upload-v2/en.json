@@ -1,0 +1,124 @@
+{
+  "title": "Upload",
+  "dropzone": {
+    "headline": "Drop files here or click to choose",
+    "hint": "Large files are fine — transfer starts immediately and keeps running while you fill in the details.",
+    "compactHint": "Drop more files anywhere on this page",
+    "addMore": "Add files"
+  },
+  "series": {
+    "label": "Series",
+    "placeholder": "Select a series…",
+    "searchPlaceholder": "Search series…",
+    "empty": "No series found.",
+    "loadMore": "Load more…"
+  },
+  "queue": {
+    "label": "Upload queue",
+    "selectAll": "Select all",
+    "selectRow": "Select {{title}}",
+    "summary": "{{count}} files",
+    "summaryActive": "{{active}} of {{total}} still preparing",
+    "selectedCount": "{{count}} selected"
+  },
+  "inspector": {
+    "label": "Details",
+    "emptyTitle": "Nothing selected",
+    "emptyHint": "Pick a file to edit its details, or select several to edit them together.",
+    "multi": "{{count}} files selected",
+    "singleHint": "Changes apply to this file.",
+    "multiHint": "Changes apply to all selected files."
+  },
+  "field": {
+    "mixed": "Mixed",
+    "title": "Title",
+    "titleMulti": "Multiple titles",
+    "language": "Spoken language",
+    "languageHint": "Leave on the series default unless this recording differs.",
+    "languageInherit": "From series",
+    "stt": "Speech to text",
+    "transcribe": "Generate subtitles",
+    "translate": "Translate to English",
+    "translateDisabled": "(already English)",
+    "processing": "Processing",
+    "processing_publish": "Publish right away",
+    "processing_publish_hint": "Runs the full workflow and publishes when it finishes.",
+    "processing_prepare": "Prepare for editing",
+    "processing_prepare_hint": "Stops before publishing so you can cut and check subtitles in the editor.",
+    "preview": "Preview image",
+    "previewHint": "Optional. Replaces the frame the player shows before playback.",
+    "previewPick": "Choose image",
+    "previewClear": "Remove preview image",
+    "recordedAt": "Recording date",
+    "recordedAtHint": "Taken from the file. Correct it if the recording is older than the file.",
+    "presenters": "Presenters",
+    "presentersHint": "Several names separated by commas.",
+    "presentersEmpty": "Uploading user",
+    "description": "Description",
+    "subject": "Subject",
+    "license": "License",
+    "licenseHint": "Free text — the allowed values are not readable before the event exists.",
+    "rightsHolder": "Rights holder",
+    "contributors": "Contributors"
+  },
+  "state": {
+    "queued": "Waiting",
+    "preparing": "Preparing…",
+    "paused": "Paused",
+    "prepared": "Ready",
+    "submitting": "Publishing…",
+    "done": "Published",
+    "failed": "Failed",
+    "discarded": "Discarded"
+  },
+  "row": {
+    "tracks": "{{count}} tracks"
+  },
+  "action": {
+    "discard": "Remove",
+    "publish": "Publish",
+    "publishMany": "Publish {{count}} files"
+  },
+  "footer": {
+    "selectSeries": "Select a series to publish."
+  },
+  "toast": {
+    "rejected": "{{count}} file(s) skipped — file type not supported."
+  },
+  "tracks": {
+    "label": "Tracks",
+    "dual": "Dual stream",
+    "presenter": "Speaker",
+    "presentation": "Screen / slides",
+    "audio": "Audio",
+    "swap": "Swap speaker and screen",
+    "remove": "Remove track",
+    "add_presenter": "Add speaker track",
+    "add_presentation": "Add screen track"
+  },
+  "dual": {
+    "modeSingle": "Single file",
+    "modeDual": "Dual stream",
+    "backToSingle": "Back to single files",
+    "choose": "Choose file",
+    "clear": "Replace",
+    "hint_presenter": "Camera or speaker recording",
+    "hint_presentation": "Screen capture or slides",
+    "explain": "Fill both sides and the pair is added as one recording."
+  },
+  "acl": {
+    "label": "Access rights",
+    "hint": "Leave empty to use the series or workflow default.",
+    "inherited": "From series / workflow",
+    "summary": "{{count}} rule(s)",
+    "edit": "Edit",
+    "title": "Access rights",
+    "description": "Who may see and edit these recordings. Applies to every selected file.",
+    "cancel": "Cancel",
+    "apply": "Apply"
+  },
+  "workflow": {
+    "label": "Workflow",
+    "pick": "Choose a workflow…"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/academic-moodle-cooperation/management-ui/HEAD/packages/plugin-system/src/schemas/plugin.schema.json",
+  "id": "upload-v2",
+  "name": "Upload (v2)",
+  "version": "1.0.0",
+  "description": "Next-generation upload: files are ingested in the background while the user still edits metadata, transport sits behind a swappable adapter, and cancelling discards the media package server-side.",
+  "author": {
+    "name": "Management UI Core"
+  },
+  "namespace": "upload-v2",
+  "type": "app",
+  "category": "feature",
+  "apiVersion": "1.0.0",
+  "workspaceDependencies": {
+    "react": "^19.0.0",
+    "@oc-mui/i18n": "^1.0.0",
+    "@oc-mui/plugin-system": "^1.0.0",
+    "@oc-mui/query": "^1.0.0",
+    "@oc-mui/ui": "^1.0.0",
+    "@oc-mui/utils": "^1.0.0"
+  },
+  "i18nNamespaces": ["upload-v2"],
+  "extensionPoints": ["apps:definitions", "sidebar:nav-items", "app:config:defaults"]
+}

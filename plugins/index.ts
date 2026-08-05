@@ -27,6 +27,9 @@ export * from "./core";
 export * from "./core-episodes";
 export * from "./core-series";
 export * from "./core-upload";
+// Runs alongside core-upload during the v2 test phase; enable per installation
+// via `app.enabledPlugins`. core-upload is removed once v2 is signed off.
+export * from "./core-upload-v2";
 export * from "./example";
 export * from "./admin-marketplace";
 // export * from "./my-org-plugin"; // Example org plugin; use .local-plugins/ or Marketplace to load
