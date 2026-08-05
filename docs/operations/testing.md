@@ -160,7 +160,7 @@ pnpm test:matrix           # every tests/e2e/ spec across all five projects
 [`playwright.matrix.config.ts`](../../playwright.matrix.config.ts) maps
 chromium / firefox / webkit / Android tablet / iOS tablet onto the protocol's
 columns. `pnpm test:e2e` stays single-browser so `pnpm verify` remains a fast
-pre-push gate; the matrix runs in CI on merge into `develop`/`main`
+pre-push gate; the matrix runs in CI on merge into `develop` or an `r/NN.x` line
 ([`matrix.yml`](../../.github/workflows/matrix.yml)) and on demand before a
 release. CI skips the chromium project there — the PR gate already covers it.
 

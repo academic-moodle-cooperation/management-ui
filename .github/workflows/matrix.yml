@@ -23,9 +23,11 @@ name: Browser matrix (E2E)
 on:
   push:
     branches:
+      # The long-lived branches of the Opencast-style model (release.md ->
+      # "Branching model"): `develop` integrates, the `r/NN.x` lines ship.
+      # There is no `main`.
       - develop
-      - main
-      - "release/**"
+      - "r/**"
   workflow_dispatch:
     inputs:
       projects:

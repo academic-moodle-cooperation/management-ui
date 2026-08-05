@@ -83,7 +83,7 @@ WebKit and two tablet emulations — see
 projects are the manual test protocol's per-browser result columns, which a
 human used to walk one at a time.
 
-**Not scheduled.** It runs on push to `develop`, `main` and `release/**`, and on
+**Not scheduled.** It runs on push to `develop` and the `r/NN.x` release lines, and on
 demand. These specs break when code changes, not when time passes, so a nightly
 run would mostly re-test an unchanged tree — merge into a long-lived branch is
 the moment a cross-browser regression can actually enter.
