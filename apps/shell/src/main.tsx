@@ -1,6 +1,12 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 
+// Order matters and is load-bearing: the library stylesheet ships its own
+// Tailwind build (scanning only `packages/ui`), this app's ships another
+// (scanning apps and plugins). Whichever lands last wins ties, so the broader
+// build has to come second — otherwise a base utility from the library beats a
+// responsive variant only the app generated. See the note in `app.css`.
+import "@oc-mui/ui/globals.css";
 import "./app.css";
 import "./themes/default.css";
 import { loadNamespace, useTranslation } from "@oc-mui/i18n";
