@@ -6,6 +6,31 @@ This is **not** the same as `pnpm verify`. The verify gate runs lint, types, uni
 
 Mark each item ✅ / ❌ / ➖ (skipped, justified). Any ❌ blocks the release.
 
+## Record while you test
+
+Sections marked **⏺ REC** below should be recorded. It costs two clicks per
+section and converts your run into permanent automated tests — the recording
+becomes a fixture in [`tests/har-replay/`](../../tests/har-replay/README.md),
+which is the only tier that ever sees a real deployment's config, JAR plugins
+and data.
+
+Set up once, before Section 2:
+
+- DevTools → **Network** tab → tick **Preserve log**.
+- DevTools → `⋮` → More tools → **Recorder** (optional, captures the click path).
+
+Then per ⏺ REC section: **Clear** the network log at the start, and at the end
+right-click → **Save all as HAR with content**.
+
+> ⚠️ A raw HAR contains your session cookies and the backend's personal data.
+> Never post one anywhere; hand it over like a password and let a developer run
+> `pnpm har:sanitize` on it first.
+
+The full workflow — including what else to capture and how to write findings so
+they convert straight into tests — is in
+[`manual-test-recording.md`](./manual-test-recording.md). **Read that page
+before your first recorded run.**
+
 ## When to run
 
 - Before the first public 1.0 cut (Phase 6d's npm `restricted → public` flip).
@@ -42,6 +67,31 @@ section now has automated coverage.** What still benefits from a human pass:
 first-time confirmation when new test infra is wired, genuine "does it feel
 right" UX judgment, and per-screen visual diffs against real data (today's
 visual tier snapshots the landing on a mocked backend).
+
+### Two tiers that only your run can feed
+
+Every command above runs against the *default* config with no org plugins, or a
+vanilla local Opencast. A real deployment — its `config.json`, its JAR-deployed
+org plugin, its theme, its data — is covered by exactly two tiers, and both are
+fed by hand:
+
+| Tier | Command | Fed by |
+|---|---|---|
+| HAR replay | `pnpm test:har-replay` | A tester's sanitized recording (⏺ REC sections). Boots the shell against the recorded backend; asserts §4 GraphQL naming + error-free responses over real traffic. |
+| Org plugin | `ORG_PLUGIN=<name> pnpm test:org-plugin` | The plugin in `.local-plugins/<name>/`. Contract + visual coverage for a surface that `pnpm verify` explicitly filters out (`--filter='!./.local-plugins/*'`). |
+| Protocol coverage | `pnpm protocol:coverage <protocol.yaml>` | An org's imported wiki protocol. Reports how many of its steps are automated, and sorts the rest by "already failed at least once". |
+
+### Cross-browser
+
+`pnpm test:matrix` runs every `tests/e2e/` spec across chromium, firefox,
+webkit and two tablet emulations — the same axis a manual protocol covers with
+one result column per browser. `pnpm test:e2e` stays single-browser so the
+pre-push gate stays fast. See [`playwright.matrix.config.ts`](../../playwright.matrix.config.ts)
+for what emulation does and does not cover.
+
+Both skip silently when unfed, so they're safe in CI. Neither can be automated
+away from the developer side — the input has to come from someone with access to
+the deployment.
 
 ## Setup
 
@@ -80,7 +130,7 @@ Pre-flight. If any of these fail, stop. The release is broken in a way that does
 | 1.3 | `pnpm verify` | 88+ turbo tasks pass + Playwright smoke green. | Read the failing job's log. Usually deterministic. |
 | 1.4 | `pnpm api-check` | API Extractor snapshots match committed `etc/<pkg>.api.md`. | A real API surface drifted. Regenerate + add changeset, or revert the offending PR. |
 
-## Section 2 — Shell boots cleanly
+## Section 2 — Shell boots cleanly  ⏺ REC
 
 ```bash
 pnpm dev
@@ -97,7 +147,7 @@ Open `http://127.0.0.1:3000/management-ui/` in the browser.
 | 2.5 | Footer renders | Default core footer present. |
 | 2.6 | Logo renders | The `app:header-logo` registration resolves. |
 
-## Section 3 — Built-in plugin features
+## Section 3 — Built-in plugin features  ⏺ REC
 
 Each core plugin's route should mount, render, and react to user input. Backend calls hit the staging Opencast.
 
@@ -108,7 +158,7 @@ Each core plugin's route should mount, render, and react to user input. Backend 
 | 3.3 | Upload | `/upload` | Upload-file UI renders. Drag-drop or browse-pick works. Workflow selection shows configured options. |
 | 3.4 | Marketplace | `/admin/marketplace` | Lists registered plugins. Developer Mode section visible (admin role). |
 
-## Section 4 — GraphQL data flow
+## Section 4 — GraphQL data flow  ⏺ REC
 
 Verifies the `@oc-mui/query` layer and the GraphQL Operation Naming Contract (`Mui`-prefixed operations — see [`docs/architecture/CONTRACTS.md`](../architecture/CONTRACTS.md)).
 
@@ -140,7 +190,7 @@ Cache defaults that these checks assume (`packages/query/src/QueryProvider.tsx`)
 | 4.7 | Auth query revalidates on focus | Switch to another window/tab, then back to the shell; watch Network. | `MuiGetCurrentUser` refetches on focus. This is the **one** query that opts into `refetchOnWindowFocus: true` (plus `staleTime: 0`, `refetchOnMount: "always"`) — confirms auth state re-checks without a full reload. |
 | 4.8 | Server-side attribution (optional) | If your staging Opencast logs GraphQL operation names, grep the Karaf log after the steps above. | Operation names appear `Mui`-prefixed, making them traceable to this UI. ➖ if the backend isn't configured to log operation names — not a release blocker. |
 
-## Section 5 — i18n
+## Section 5 — i18n  ⏺ REC
 
 | # | Test | Expected |
 |---|------|----------|
@@ -149,7 +199,7 @@ Cache defaults that these checks assume (`packages/query/src/QueryProvider.tsx`)
 | 5.3 | Plugin-specific namespace loads | A plugin-owned key (e.g. `episodes:title`) renders translated. |
 | 5.4 | Missing key falls back | Keys without a translation render the English source (or the key itself with a warning), don't crash the page. |
 
-## Section 6 — Configuration
+## Section 6 — Configuration  ⏺ REC
 
 `config.json` is the deployment-time source of truth. Verify it's actually consumed.
 
@@ -163,7 +213,7 @@ The file the shell fetches is `apps/shell/public/ui/config/management-ui/config.
 | 6.4 | Change a plugin's config slice value (e.g. `config.plugins.upload.workflows`) | Plugin reads new value via `definePluginConfig().use()`. |
 | 6.5 | Add an unknown top-level key (e.g. `"legacyThing": 1`) and reload | Shell still boots; the unknown key is ignored, not a crash. (Confirms the `[key: string]: unknown` passthrough.) |
 
-## Section 7 — Theming
+## Section 7 — Theming  ⏺ REC
 
 | # | Test | Expected |
 |---|------|----------|
@@ -214,7 +264,7 @@ This is the big one. The whole point of Maven scaffolding.
 | 10.7 | `mvn install -DdeployTo=$OPENCAST_HOME` | The convenience copy-to-deploy path works. |
 | 10.8 | `mvn package -Dskip.frontend.build=true` (after a manual `pnpm build`) | JAR still produced; frontend not rebuilt. |
 
-## Section 11 — Marketplace (CDN-distributed plugin)
+## Section 11 — Marketplace (CDN-distributed plugin)  ⏺ REC
 
 Verifies the dynamic-load path used for community plugins.
 
@@ -266,7 +316,7 @@ Push your working branch to GitHub (any branch name works for this check).
 | 14.10 | View-source on any built page | `<meta name="robots" content="noindex, nofollow">` is present. (Pre-1.0 guard. Goes away in Phase 6d.) |
 | 14.11 | `curl https://academic-moodle-cooperation.github.io/management-ui/robots.txt` | Returns `Disallow: /`. (Pre-1.0 guard.) |
 
-## Section 15 — Authentication (depends on backend)
+## Section 15 — Authentication (depends on backend)  ⏺ REC
 
 | # | Test | Expected |
 |---|------|----------|
