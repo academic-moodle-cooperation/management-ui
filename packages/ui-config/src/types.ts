@@ -57,7 +57,16 @@ export interface AppConfig {
   downloadBaseUrl?: string | undefined;
   matomo: MatomoConfig;
   app: {
-    /** Product name shown in chrome (header, etc.). */
+    /**
+     * Product name for the deployment.
+     *
+     * **Currently unrendered.** No component reads this — the header shows the
+     * logo (`logoUrl` / `orgLogoUrl`, or an `app:header-logo` registration) and
+     * the browser tab uses {@link AppConfig.app.HtmlDocumentTitle}. Setting it
+     * changes nothing visible today; it is kept because it is the natural place
+     * for a deployment's product name and is a candidate for a text fallback
+     * where no logo is configured.
+     */
     appName: string;
     locale: string;
     /** `<title>` of the HTML document. */
