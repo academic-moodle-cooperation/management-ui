@@ -11,7 +11,7 @@ export * from "./metadata-fields";
 export * from "./errors";
 export * from "./select-series-combobox";
 export * from "./datepicker";
-export * from "./icons";
+export { Icons } from "./icons";
 export * from "./datetime-picker";
 export * from "./infinite-scroll";
 export * from "./overflow-tooltip";

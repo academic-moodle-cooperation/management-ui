@@ -5,24 +5,12 @@
 ```ts
 
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
-import { AlertCircle } from 'lucide-react';
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
-import { Archive } from 'lucide-react';
 import { AriaTimeFieldProps } from 'react-aria';
-import { ArrowRight } from 'lucide-react';
-import { ArrowUpRight } from 'lucide-react';
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
-import { Bell } from 'lucide-react';
-import { BookOpen } from 'lucide-react';
-import { Building2 } from 'lucide-react';
 import { CellContext } from '@tanstack/react-table';
-import { Check } from 'lucide-react';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
-import { ChevronDown } from 'lucide-react';
-import { ChevronRight } from 'lucide-react';
-import { ChevronsRight } from 'lucide-react';
 import { ClassProp } from 'class-variance-authority/types';
-import { Code2 } from 'lucide-react';
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
 import { Column } from '@tanstack/react-table';
 import { ColumnDef } from '@tanstack/react-table';
@@ -31,7 +19,6 @@ import { ColumnSort } from '@tanstack/react-table';
 import { Command as Command_2 } from 'cmdk';
 import { Component } from 'react';
 import { ComponentType } from 'react';
-import { CopyIcon } from 'lucide-react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { DatePickerState } from 'react-stately';
 import { DatePickerStateOptions } from 'react-stately';
@@ -42,32 +29,17 @@ import { Dispatch } from 'react';
 import { Drawer as Drawer_2 } from 'vaul';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { ErrorInfo } from 'react';
-import { ExternalLink } from 'lucide-react';
 import { FC } from 'react';
 import type { FetchNextPageOptions } from '@oc-mui/query';
-import { FileCheck } from 'lucide-react';
-import { FileText } from 'lucide-react';
-import { Film } from 'lucide-react';
-import { History as History_2 } from 'lucide-react';
-import { Home } from 'lucide-react';
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
 import type { InfiniteData } from '@oc-mui/query';
 import type { InfiniteQueryObserverResult } from '@oc-mui/query';
-import { Info } from 'lucide-react';
 import { InputHTMLAttributes } from 'react';
 import { JSX } from 'react/jsx-runtime';
 import * as LabelPrimitive from '@radix-ui/react-label';
-import { LifeBuoy } from 'lucide-react';
-import { ListVideo } from 'lucide-react';
-import { LogIn } from 'lucide-react';
-import { LogOut } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
-import { Menu } from 'lucide-react';
 import { MetadataFieldType } from '@oc-mui/query';
-import { MonitorPlay } from 'lucide-react';
 import { OnChangeFn } from '@tanstack/react-table';
-import { Pencil } from 'lucide-react';
-import { PencilIcon } from 'lucide-react';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 import * as React_2 from 'react';
 import { default as React_3 } from 'react';
@@ -77,24 +49,16 @@ import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import * as SelectPrimitive from '@radix-ui/react-select';
 import type { SelectSingleEventHandler } from 'react-day-picker';
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
-import { Server } from 'lucide-react';
 import { SetStateAction } from 'react';
-import { Settings } from 'lucide-react';
-import { Share2 } from 'lucide-react';
 import { SortingState } from '@tanstack/react-table';
-import { Sparkles } from 'lucide-react';
-import { Star } from 'lucide-react';
 import { Switch as SwitchHeadlessUI } from '@headlessui/react';
 import type { Table as Table_2 } from '@tanstack/react-table';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
-import { Terminal } from 'lucide-react';
 import { TimeValue } from 'react-aria';
 import { toast } from 'sonner';
 import { ToasterProps } from 'sonner';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
-import { UploadCloud } from 'lucide-react';
 import { VariantProps } from 'class-variance-authority';
-import { Video } from 'lucide-react';
 import { VisibilityState } from '@tanstack/react-table';
 
 // @public (undocumented)
@@ -167,8 +131,6 @@ export interface ACLEntryInput {
     role: string;
 }
 
-export { AlertCircle }
-
 // @public (undocumented)
 export function AlertDialog(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Root>): JSX.Element;
 
@@ -218,12 +180,6 @@ export function Appshell(input: {
     children: React.ReactNode;
 }): JSX.Element;
 
-export { Archive }
-
-export { ArrowRight }
-
-export { ArrowUpRight }
-
 // @public (undocumented)
 export function Avatar(input: React_2.ComponentProps<typeof AvatarPrimitive.Root>): JSX.Element;
 
@@ -242,10 +198,6 @@ export function Badge(input: React_2.ComponentProps<"span"> & VariantProps<typeo
 export const badgeVariants: (props?: ({
     variant?: "default" | "destructive" | "outline" | "secondary" | null | undefined;
 } & ClassProp) | undefined) => string;
-
-export { Bell }
-
-export { BookOpen }
 
 // @public (undocumented)
 export function Breadcrumb(input: React_2.ComponentProps<"nav">): JSX.Element;
@@ -269,8 +221,6 @@ export function BreadcrumbPage(input: React_2.ComponentProps<"span">): JSX.Eleme
 
 // @public (undocumented)
 export function BreadcrumbSeparator(input: React_2.ComponentProps<"li">): JSX.Element;
-
-export { Building2 }
 
 // @public (undocumented)
 export function Button(input: React_2.ComponentProps<"button"> & VariantProps<typeof buttonVariants> & {
@@ -309,18 +259,8 @@ export function CardTitle(input: React_2.ComponentProps<"div">): JSX.Element;
 
 export { CellContext }
 
-export { Check }
-
 // @public (undocumented)
 export function Checkbox(input: React_2.ComponentProps<typeof CheckboxPrimitive.Root>): JSX.Element;
-
-export { ChevronDown }
-
-export { ChevronRight }
-
-export { ChevronsRight }
-
-export { Code2 }
 
 // @public (undocumented)
 export function Collapsible(input: React.ComponentProps<typeof CollapsiblePrimitive.Root>): JSX.Element;
@@ -385,8 +325,6 @@ export const containerVariants: (props?: ({
     variant?: "default" | null | undefined;
     size?: "default" | null | undefined;
 } & ClassProp) | undefined) => string;
-
-export { CopyIcon }
 
 export { createColumnHelper }
 
@@ -611,14 +549,6 @@ export interface ErrorPageProps extends Omit<React.HTMLAttributes<HTMLDivElement
     title: ReactNode;
 }
 
-export { ExternalLink }
-
-export { FileCheck }
-
-export { FileText }
-
-export { Film }
-
 // @public (undocumented)
 export function ForbiddenError(input: {
     onHomeClick?: () => void;
@@ -629,10 +559,6 @@ export function ForbiddenError(input: {
 //
 // @public (undocumented)
 export function GeneralError(input: GeneralErrorProps): JSX.Element;
-
-export { History_2 as History }
-
-export { Home }
 
 // @public (undocumented)
 export function HoverCard(input: React_2.ComponentProps<typeof HoverCardPrimitive.Root>): JSX.Element;
@@ -666,28 +592,16 @@ export const Icons: {
 // @public (undocumented)
 export function InfiniteScroll(input: InfiniteScrollProps): JSX.Element;
 
-export { Info }
-
 // @public (undocumented)
 export function Input(input: React_2.ComponentProps<"input">): JSX.Element;
 
 // @public (undocumented)
 export function Label(input: React_2.ComponentProps<typeof LabelPrimitive.Root>): JSX.Element;
 
-export { LifeBuoy }
-
-export { ListVideo }
-
 // Warning: (ae-forgotten-export) The symbol "LoadingProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
 export function Loading(input: LoadingProps): JSX.Element;
-
-export { LogIn }
-
-export { LogOut }
-
-export { LucideIcon }
 
 // @public (undocumented)
 export function MaintenanceError(input?: {
@@ -701,8 +615,6 @@ export interface ManagedACLEntry {
     // (undocumented)
     role: string | null;
 }
-
-export { Menu }
 
 // @public (undocumented)
 export const MetadataField: (input: MetadataFieldType) => JSX.Element;
@@ -719,8 +631,6 @@ export interface MetadataHelpers {
 //
 // @public (undocumented)
 export const MetadataUpdateField: (input: MetadataUpdateFieldProps) => JSX.Element;
-
-export { MonitorPlay }
 
 // Warning: (ae-forgotten-export) The symbol "MUITableProps" needs to be exported by the entry point index.d.ts
 //
@@ -768,10 +678,6 @@ export { OnChangeFn }
 //
 // @public (undocumented)
 export const OverflowTooltip: FC<OverflowTooltipProps>;
-
-export { Pencil }
-
-export { PencilIcon }
 
 // @public (undocumented)
 export function Popover(input: React_2.ComponentProps<typeof PopoverPrimitive.Root>): JSX.Element;
@@ -866,12 +772,6 @@ export function SelectValue(input: React_2.ComponentProps<typeof SelectPrimitive
 
 // @public (undocumented)
 export function Separator(input: React_2.ComponentProps<typeof SeparatorPrimitive.Root>): JSX.Element;
-
-export { Server }
-
-export { Settings }
-
-export { Share2 }
 
 // @public (undocumented)
 export function Sheet(input: React_2.ComponentProps<typeof DialogPrimitive.Root>): JSX.Element;
@@ -1000,10 +900,6 @@ export function Skeleton(input: React.ComponentProps<"div">): JSX.Element;
 
 export { SortingState }
 
-export { Sparkles }
-
-export { Star }
-
 export { SwitchHeadlessUI }
 
 // @public (undocumented)
@@ -1058,8 +954,6 @@ export function TabsList(input: React_2.ComponentProps<typeof TabsPrimitive.List
 
 // @public (undocumented)
 export function TabsTrigger(input: React_2.ComponentProps<typeof TabsPrimitive.Trigger>): JSX.Element;
-
-export { Terminal }
 
 // @public (undocumented)
 export function Textarea(input: React_2.ComponentProps<"textarea">): JSX.Element;
@@ -1131,8 +1025,6 @@ export function UnauthorisedError(input: {
     onHomeClick?: () => void;
 }): JSX.Element;
 
-export { UploadCloud }
-
 // @public (undocumented)
 export function useIsMobile(): boolean;
 
@@ -1152,13 +1044,11 @@ export function useSidebarContent(): {
 // @public
 export function useUiRouter(): UiRouterPrimitives;
 
-export { Video }
-
 export { VisibilityState }
 
 // Warnings were encountered during analysis:
 //
-// src/components/icons.tsx:43:19 - (ae-forgotten-export) The symbol "IconProps" needs to be exported by the entry point index.d.ts
+// src/components/icons.tsx:15:19 - (ae-forgotten-export) The symbol "IconProps" needs to be exported by the entry point index.d.ts
 // src/components/select-series-combobox/SelectSeriesCombobox.tsx:39:3 - (ae-forgotten-export) The symbol "Series" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)

@@ -1,3 +1,5 @@
+import { CopyIcon, PencilIcon } from "lucide-react";
+
 import { useI18n } from "@oc-mui/i18n";
 import type {
   MuiGetSeriesByIdInputFieldsQuery,
@@ -9,8 +11,6 @@ import {
   MetadataField,
   MetadataUpdateField,
   createMetadataHelpers,
-  CopyIcon,
-  PencilIcon,
 } from "@oc-mui/ui/components";
 import type { MetadataItem } from "@oc-mui/ui/config-primitives";
 import { cn } from "@oc-mui/ui/lib/utils";

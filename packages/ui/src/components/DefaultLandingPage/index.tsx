@@ -1,27 +1,28 @@
+import {
+  AlertCircle,
+  ArrowRight,
+  BookOpen,
+  Check,
+  ChevronRight,
+  Code2,
+  FileText,
+  History,
+  Info,
+  LifeBuoy,
+  Server,
+  Settings,
+  Sparkles,
+  Star,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { useTranslation } from "@oc-mui/i18n";
 
-import {
-  Icons,
-  ArrowRight,
-  ChevronRight,
-  Info,
-  Server,
-  Code2,
-  Star,
-  Check,
-  BookOpen,
-  LifeBuoy,
-  Sparkles,
-  Settings,
-  History,
-  FileText,
-  AlertCircle,
-} from "../icons";
+
+import { Icons } from "../icons";
 import { Button, Tabs, TabsList, TabsTrigger } from "../ui";
 
-import type { LucideIcon } from "../icons";
+import type { LucideIcon } from "lucide-react";
 import type { CSSProperties, FC, ReactNode } from "react";
 
 /**

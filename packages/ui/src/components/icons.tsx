@@ -1,42 +1,14 @@
-export {
-  ChevronDown,
-  ArrowRight,
-  LogIn,
-  LogOut,
-  Pencil,
-  Film,
-  UploadCloud,
-  Info,
-  CopyIcon,
-  PencilIcon,
-  Home,
-  ListVideo,
-  ChevronRight,
-  ChevronsRight,
-  Menu,
-  FileCheck,
-  Share2,
-  Archive,
-  Bell,
-  MonitorPlay,
-  Video,
-  ExternalLink,
-  ArrowUpRight,
-  Terminal,
-  Building2,
-  Server,
-  Code2,
-  Star,
-  Check,
-  BookOpen,
-  LifeBuoy,
-  Sparkles,
-  Settings,
-  History,
-  FileText,
-  AlertCircle,
-  type LucideIcon,
-} from "lucide-react";
+/**
+ * This module owns @oc-mui/ui's *own* icons — hand-drawn SVGs that have no
+ * lucide equivalent.
+ *
+ * It used to also re-export 32 hand-picked lucide icons. That barrel was
+ * removed: it was an arbitrary subset of ~1500, `docs/plugins/styling.md`
+ * already prescribes importing `lucide-react` directly, and the host shares
+ * the *complete* lucide module with remote plugins anyway
+ * (`apps/shell/src/shared/sharedModules.ts`), so nothing was gained by
+ * routing a subset through here.
+ */
 
 type IconProps = React.HTMLAttributes<SVGElement>;
 
