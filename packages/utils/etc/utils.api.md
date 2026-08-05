@@ -6,6 +6,11 @@
 
 import { serialize as serializeDuration } from 'tinyduration';
 
+// Warning: (ae-forgotten-export) The symbol "BuildDownloadFileNameOptions" needs to be exported by the entry point index.d.ts
+//
+// @public
+export function buildDownloadFileName(input: BuildDownloadFileNameOptions): string;
+
 // @public (undocumented)
 export const copyText: (text: string) => Promise<boolean>;
 
