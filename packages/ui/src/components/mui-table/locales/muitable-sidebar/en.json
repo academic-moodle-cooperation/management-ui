@@ -4,6 +4,7 @@
   "accessPolicy": "Access Policy",
   "addUser": "Add User",
   "accessList": "Access List",
+  "user": "User",
   "read": "Read",
   "write": "Write",
   "actions": "Actions",
@@ -15,6 +16,7 @@
   "noEntries": "No entries.",
   "changesSaved": "Changes have been saved!",
   "changesFailed": "Changes could not be saved.",
+  "readAlwaysGranted": "Everyone on this list has read access. Remove the row to revoke access.",
   "cannotEdit": "This video is currently being processed and cannot be edited.",
   "noPolicy": "No Policy",
   "acls": {
