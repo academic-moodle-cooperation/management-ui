@@ -19,20 +19,17 @@ test.beforeEach(() => resetSeeds());
 /**
  * Toggle a column through the "View" menu.
  *
- * Closing it needs the pointer moved away first. DataTableViewOptions keeps a
- * `preventEditClose` flag that is set on the content's onMouseEnter/onClick and
- * only cleared on onMouseLeave, and `onOpenChange` is ignored while it is set —
- * so with the pointer resting inside, the menu cannot be closed at all, Escape
- * included. Its overlay then swallows every later click, which is why the first
- * draft of these specs failed on the pagination button rather than on the
- * toggle. Moving the mouse out fires onMouseLeave and restores normal closing.
+ * The menu deliberately stays open across toggles so several columns can be
+ * switched in one go (DataTableCheckboxItem's `onSelect` preventDefault), so it
+ * needs an explicit Escape afterwards. Before #252 was fixed the menu suppressed
+ * `onOpenChange` outright and could not be closed at all while the pointer was
+ * inside it; the workaround that used to be here is no longer needed.
  */
 async function toggleColumn(page: Page, name: RegExp): Promise<void> {
   await page.getByRole("button", { name: /^view$/i }).click();
   const menu = page.locator('[role="menu"]');
   await expect(menu).toBeVisible();
   await page.getByRole("menuitemcheckbox", { name }).click();
-  await page.mouse.move(0, 0);
   await menu.press("Escape");
   await expect(menu).toBeHidden();
 }
@@ -253,7 +250,6 @@ test("[SER-05] sorting by a column asks the backend to sort, across all pages", 
     .first()
     .click();
   await page.getByRole("menuitem", { name: /^ascending$/i }).click();
-  await page.mouse.move(0, 0);
 
   await expect
     .poll(orderBy, {

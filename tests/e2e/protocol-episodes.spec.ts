@@ -14,13 +14,12 @@ import type { Page } from "@playwright/test";
 
 test.beforeEach(() => resetSeeds());
 
-/** See protocol-series.spec.ts — the pointer has to leave before the menu closes. */
+/** See protocol-series.spec.ts — the menu stays open across toggles by design. */
 async function toggleColumn(page: Page, name: RegExp): Promise<void> {
   await page.getByRole("button", { name: /^view$/i }).click();
   const menu = page.locator('[role="menu"]');
   await expect(menu).toBeVisible();
   await page.getByRole("menuitemcheckbox", { name }).click();
-  await page.mouse.move(0, 0);
   await menu.press("Escape");
   await expect(menu).toBeHidden();
 }
@@ -329,14 +328,12 @@ test("[VID-05] [VID-14] the column header menu sorts and hides", async ({ page }
 
   await openTitleMenu();
   await page.getByRole("menuitem", { name: /^ascending$/i }).click();
-  await page.mouse.move(0, 0);
   await expect
     .poll(orderBy, { message: "sorting never reached the backend", timeout: 10_000 })
     .not.toBe(initialOrderBy);
 
   await openTitleMenu();
   await page.getByRole("menuitem", { name: /^hide$/i }).click();
-  await page.mouse.move(0, 0);
   await expect(page.getByRole("columnheader", { name: /^title$/i })).toHaveCount(0);
 });
 
@@ -530,7 +527,6 @@ test("[VID-33] [VID-34] [VID-36] the actions menu and the direct actions work", 
   // VID-33: the overflow menu lists what didn't fit — here, Delete.
   await row.getByRole("button", { name: "More actions", exact: true }).click();
   await expect(page.getByRole("menuitem", { name: /^delete$/i })).toBeVisible();
-  await page.mouse.move(0, 0);
   await page.keyboard.press("Escape");
 
   // VID-34: Edit Data opens the metadata mask.
