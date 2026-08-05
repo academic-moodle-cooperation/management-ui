@@ -33,9 +33,6 @@
       },
       "ae-forgotten-export": {
         "logLevel": "none"
-      },
-      "ae-wrong-input-file-type": {
-        "logLevel": "warning"
       }
     },
     "tsdocMessageReporting": {
@@ -43,5 +40,8 @@
         "logLevel": "none"
       }
     }
+  },
+  "compiler": {
+    "tsconfigFilePath": "<projectFolder>/tsconfig.api-extractor.json"
   }
 }

@@ -40,5 +40,8 @@
         "logLevel": "none"
       }
     }
+  },
+  "compiler": {
+    "tsconfigFilePath": "<projectFolder>/tsconfig.api-extractor.json"
   }
 }

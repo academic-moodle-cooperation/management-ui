@@ -342,10 +342,8 @@ export { ColumnSort }
 // @public (undocumented)
 export function Command(input: React_2.ComponentProps<typeof Command_2>): JSX.Element;
 
-// Warning: (ae-forgotten-export) The symbol "Dialog_2" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
-export function CommandDialog(input: React_2.ComponentProps<typeof Dialog_2> & {
+export function CommandDialog(input: React_2.ComponentProps<typeof Dialog> & {
     title?: string;
     description?: string;
     className?: string;
@@ -933,10 +931,8 @@ export function SidebarGroupLabel(input: React_2.ComponentProps<"div"> & {
 // @public (undocumented)
 export function SidebarHeader(input: React_2.ComponentProps<"div">): JSX.Element;
 
-// Warning: (ae-forgotten-export) The symbol "Input_2" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
-export function SidebarInput(input: React_2.ComponentProps<typeof Input_2>): JSX.Element;
+export function SidebarInput(input: React_2.ComponentProps<typeof Input>): JSX.Element;
 
 // @public (undocumented)
 export function SidebarInset(input: React_2.ComponentProps<"main">): JSX.Element;
@@ -959,7 +955,7 @@ export function SidebarMenuBadge(input: React_2.ComponentProps<"div">): JSX.Elem
 export function SidebarMenuButton(input: React_2.ComponentProps<"button"> & {
     asChild?: boolean;
     isActive?: boolean;
-    tooltip?: string | React_2.ComponentProps<typeof TooltipContent_2>;
+    tooltip?: string | React_2.ComponentProps<typeof TooltipContent>;
 } & VariantProps<typeof sidebarMenuButtonVariants>): JSX.Element;
 
 // @public (undocumented)
@@ -993,15 +989,11 @@ export function SidebarProvider(input: React_2.ComponentProps<"div"> & {
 // @public (undocumented)
 export function SidebarRail(input: React_2.ComponentProps<"button">): JSX.Element;
 
-// Warning: (ae-forgotten-export) The symbol "Separator_2" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
-export function SidebarSeparator(input: React_2.ComponentProps<typeof Separator_2>): JSX.Element;
+export function SidebarSeparator(input: React_2.ComponentProps<typeof Separator>): JSX.Element;
 
-// Warning: (ae-forgotten-export) The symbol "Button_2" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
-export function SidebarTrigger(input: React_2.ComponentProps<typeof Button_2>): JSX.Element;
+export function SidebarTrigger(input: React_2.ComponentProps<typeof Button>): JSX.Element;
 
 // @public (undocumented)
 export function Skeleton(input: React.ComponentProps<"div">): JSX.Element;
@@ -1168,7 +1160,6 @@ export { VisibilityState }
 //
 // src/components/icons.tsx:43:19 - (ae-forgotten-export) The symbol "IconProps" needs to be exported by the entry point index.d.ts
 // src/components/select-series-combobox/SelectSeriesCombobox.tsx:39:3 - (ae-forgotten-export) The symbol "Series" needs to be exported by the entry point index.d.ts
-// src/components/ui/sidebar.tsx:497:3 - (ae-forgotten-export) The symbol "TooltipContent_2" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
