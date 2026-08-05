@@ -114,7 +114,21 @@ Defined in [`packages/ui/src/styles/globals.css`](../../packages/ui/src/styles/g
 
 ## Load order
 
-Remote/JAR plugin CSS is inserted **before** the host shell stylesheets. This prevents plugin utilities (`.flex`, `.p-0`, …) from overriding host UI when several plugins ship their own Tailwind builds.
+Remote/JAR plugin CSS is loaded into the **`plugins` cascade layer**, which the host declares *after* Tailwind's `utilities` layer (in `@oc-mui/ui`'s `globals.css`). So a plugin's own utilities win on the plugin's own DOM — a normal responsive heading like `text-4xl sm:text-6xl` renders as authored — instead of losing to the host's base utilities by load order. Because every plugin ships into this one layer, and utility definitions are deterministic, plugins still can't reorder host chrome.
+
+This is automatic; you don't do anything. The `@layer plugin-overrides` block below is only for the rarer case of restyling a *host or shared* component from your plugin.
+
+> **Why the order matters more than it looks.** Several complete Tailwind builds
+> reach the page — the `@oc-mui/ui` stylesheet ships one scanning `packages/ui`,
+> the shell ships another scanning the apps and plugins, and each remote plugin
+> may add its own. Utilities that appear in more than one are identical and
+> harmless. The trap is a *base* utility in a later sheet beating a *responsive
+> variant* that only an earlier sheet generated: they have equal specificity, so
+> the later one wins and `flex-col md:flex-row` silently stays a column at every
+> width. The shell therefore imports `@oc-mui/ui/globals.css` explicitly before
+> its own `app.css` and scans `packages/ui` as well, so the last sheet is always
+> a superset. If you ship your own Tailwind build, keep it ahead of the host's,
+> and don't assume your responsive variants can override host base utilities.
 
 The implied entry point for plugin CSS:
 

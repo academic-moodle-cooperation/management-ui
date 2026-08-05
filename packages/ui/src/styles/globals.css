@@ -1,3 +1,17 @@
+/* Cascade layer order. `plugins` sits AFTER Tailwind's `utilities` so that a
+   remote/JAR plugin's stylesheet — which @oc-mui/remote-plugin-loader loads
+   into `@layer plugins` — wins over the host's base utilities on the plugin's
+   own DOM, instead of losing to them by raw load order. Host chrome is
+   unaffected (utility definitions are deterministic), and plugins still can't
+   reorder the host because everything they ship lives in this single layer.
+
+   INVARIANT: the host's own design tokens (`--font-sans`, `--primary`, …) MUST
+   stay in an unlayered `:root {}` below — unlayered declarations beat every
+   cascade layer, so the host theme survives even though a plugin ships its own
+   default Tailwind theme into `@layer plugins`. Move them into `@theme`/a layer
+   and a plugin's defaults would start overriding the host's. */
+@layer theme, base, components, utilities, plugins;
+
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 

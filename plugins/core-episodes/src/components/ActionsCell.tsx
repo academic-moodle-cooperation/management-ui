@@ -29,7 +29,7 @@ import {
   DropdownMenuTrigger,
   toast,
 } from "@oc-mui/ui/components";
-import { resolveDownloadUrl } from "@oc-mui/utils";
+import { buildDownloadFileName, resolveDownloadUrl } from "@oc-mui/utils";
 
 import { useSidebarStore } from "../stores/sidebarStore";
 
@@ -460,13 +460,19 @@ const renderDownloadMenuItems = (event: MuiEventsDataFragment, downloadBaseUrl?:
 
       if (!downloadUrl) return null;
 
+      const fileName = buildDownloadFileName({
+        title: event.title,
+        source: track?.logicalName ?? track?.uri,
+        mimeType: track?.mimeType,
+      });
+
       return (
         <DropdownMenuItem key={index} asChild className="gap-2 cursor-pointer">
           <a
             href={addDownloadParam(downloadUrl)}
             target="_blank"
             rel="noreferrer"
-            download={event.title}
+            download={fileName}
             onClick={(e: React.MouseEvent) => e.stopPropagation()}
             className="flex items-center gap-2"
           >
