@@ -14,6 +14,7 @@
   "noUsersFound": "No users found.",
   "noEntries": "No entries.",
   "changesSaved": "Changes have been saved!",
+  "changesFailed": "Changes could not be saved.",
   "cannotEdit": "This video is currently being processed and cannot be edited.",
   "noPolicy": "No Policy",
   "acls": {

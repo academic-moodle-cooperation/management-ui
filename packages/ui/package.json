@@ -36,7 +36,9 @@
     "check-types": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "api-check": "pnpm build:types && api-extractor run --local --verbose && api-extractor run --local --verbose -c api-extractor.components.json",
+    "api-check:ci": "pnpm build:types && api-extractor run --verbose && api-extractor run --verbose -c api-extractor.components.json"
   },
   "main": "./dist/index.js",
   "types": "./dist-types/index.d.ts",
