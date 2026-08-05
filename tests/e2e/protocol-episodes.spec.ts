@@ -189,9 +189,17 @@ test("[VID-32] the action icons are present and point at the right targets", asy
   await expect(page.getByRole("button", { name: /^save$/i })).toBeVisible({ timeout: 10_000 });
 });
 
-test("[VID-38] deleting asks first, and Cancel really cancels", async ({ page }) => {
+test("[VID-38] the default delete is a soft delete, and Cancel really cancels", async ({
+  page,
+}) => {
   // Findings 018 and 029: "Bei Klick auf den Delete Button passiert nichts" and
   // "Buttons die hinter den 3 Punkten versteckt sind funktionieren nicht".
+  //
+  // The protocol's expectation is a *recycle bin*: "wird das Video in der
+  // Admin-ui in die Papierkorbserie gelegt. Für den User sieht es so aus, als
+  // wäre es wirklich gelöscht." That is `mui.deleteEvent` (MuiDeleteEvent), not
+  // the index-level removal — so this asserts which mutation the UI picks, not
+  // just that the row disappears.
   const backend = await installMockBackend(page, {
     events: [makeEvent({ title: "Zu löschen" }), makeEvent({ title: "Bleibt" })],
   });
@@ -199,33 +207,98 @@ test("[VID-38] deleting asks first, and Cancel really cancels", async ({ page })
   await expect(page.getByRole("cell", { name: "Zu löschen" })).toBeVisible({ timeout: 15_000 });
 
   const row = page.getByRole("row").nth(1);
-  const openDeleteDialog = async () => {
+  const openTrashDialog = async () => {
     await row.getByRole("button", { name: "More actions", exact: true }).click();
-    // The menu item renders `common:delete` ("Delete"), not the action's own
-    // "Delete Video" label — that string is defined but never used.
-    await page.getByRole("menuitem", { name: /^delete$/i }).click();
+    await page.getByRole("menuitem", { name: /move to trash/i }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
   };
 
-  // Rejecting must leave everything alone — the protocol is explicit: "bei
-  // Ablehnung darf nichts passieren."
-  await openDeleteDialog();
-  await expect(page.getByRole("heading", { name: /delete video\?/i })).toBeVisible();
+  // Rejecting must leave everything alone — "bei Ablehnung darf nichts passieren."
+  await openTrashDialog();
+  await expect(page.getByRole("heading", { name: /move video to trash\?/i })).toBeVisible();
   await page.getByRole("button", { name: /^cancel$/i }).click();
   await expect(page.getByRole("dialog")).toBeHidden();
   expect(backend.callsTo("MuiDeleteEvent")).toHaveLength(0);
   await expect(page.getByRole("cell", { name: "Zu löschen" })).toBeVisible();
 
-  // Confirming deletes exactly the one event.
-  await openDeleteDialog();
+  // Confirming soft-deletes exactly the one event.
+  await openTrashDialog();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: /move to trash/i })
+    .click();
+
+  await expect.poll(() => backend.callsTo("MuiDeleteEvent").length, { timeout: 10_000 }).toBe(1);
+  expect(
+    backend.callsTo("MuiDeleteEventPermanently"),
+    "the default action must not remove the event from the index",
+  ).toHaveLength(0);
+  await expect(page.getByRole("cell", { name: "Zu löschen" })).toHaveCount(0, { timeout: 10_000 });
+  await expect(page.getByRole("cell", { name: "Bleibt" })).toBeVisible();
+});
+
+test("[VID-38] an admin can delete permanently, with its own confirmation", async ({ page }) => {
+  const backend = await installMockBackend(page, {
+    events: [makeEvent({ title: "Endgültig weg" })],
+    user: {
+      username: "admin",
+      name: "Admin User",
+      email: "admin@example.invalid",
+      roles: ["ROLE_ADMIN"],
+    },
+  });
+  await page.goto("/management-ui/episodes");
+  await expect(page.getByRole("cell", { name: "Endgültig weg" })).toBeVisible({ timeout: 15_000 });
+
+  await page
+    .getByRole("row")
+    .nth(1)
+    .getByRole("button", { name: "More actions", exact: true })
+    .click();
+  await page.getByRole("menuitem", { name: /delete permanently/i }).click();
+
+  // A distinct dialog, so the irreversible action cannot be confused with the
+  // recoverable one — the heading says "permanently", the body says
+  // "permanently and irreversibly".
+  await expect(page.getByRole("heading", { name: /delete video permanently\?/i })).toBeVisible();
+  await expect(page.getByRole("dialog")).toContainText(/permanently and irreversibly/i);
   await page
     .getByRole("dialog")
     .getByRole("button", { name: /^delete$/i })
     .click();
 
-  await expect.poll(() => backend.callsTo("MuiDeleteEvent").length, { timeout: 10_000 }).toBe(1);
-  await expect(page.getByRole("cell", { name: "Zu löschen" })).toHaveCount(0, { timeout: 10_000 });
-  await expect(page.getByRole("cell", { name: "Bleibt" })).toBeVisible();
+  await expect
+    .poll(() => backend.callsTo("MuiDeleteEventPermanently").length, { timeout: 10_000 })
+    .toBe(1);
+  expect(backend.callsTo("MuiDeleteEvent")).toHaveLength(0);
+});
+
+test("[VID-38] a non-admin is not offered permanent deletion", async ({ page }) => {
+  // The gate authorizes against the granted roles array; a plain user holds
+  // neither ROLE_ADMIN nor the organization's configured admin role.
+  await installMockBackend(page, {
+    events: [makeEvent({ title: "Nur Papierkorb" })],
+    user: {
+      username: "tester",
+      name: "Test User",
+      email: "tester@example.invalid",
+      roles: ["ROLE_USER"],
+    },
+  });
+  await page.goto("/management-ui/episodes");
+  await expect(page.getByRole("cell", { name: "Nur Papierkorb" })).toBeVisible({ timeout: 15_000 });
+
+  await page
+    .getByRole("row")
+    .nth(1)
+    .getByRole("button", { name: "More actions", exact: true })
+    .click();
+
+  await expect(page.getByRole("menuitem", { name: /move to trash/i })).toBeVisible();
+  await expect(
+    page.getByRole("menuitem", { name: /delete permanently/i }),
+    "permanent deletion must stay admin-only",
+  ).toHaveCount(0);
 });
 
 test("[VID-09] the gallery view shows a preview image", async ({ page }) => {
@@ -257,10 +330,10 @@ test("[VID-11] the action buttons still work in the gallery view", async ({ page
 
   // …and still be wired up: deleting from the gallery hits the backend.
   await page.getByRole("button", { name: "More actions", exact: true }).click();
-  await page.getByRole("menuitem", { name: /^delete$/i }).click();
+  await page.getByRole("menuitem", { name: /move to trash/i }).click();
   await page
     .getByRole("dialog")
-    .getByRole("button", { name: /^delete$/i })
+    .getByRole("button", { name: /move to trash/i })
     .click();
   await expect.poll(() => backend.callsTo("MuiDeleteEvent").length, { timeout: 10_000 }).toBe(1);
 });
@@ -524,9 +597,11 @@ test("[VID-33] [VID-34] [VID-36] the actions menu and the direct actions work", 
   // VID-36: Play is a link that opens in a new tab.
   await expect(row.locator('a[href*="/play/"]')).toHaveAttribute("target", "_blank");
 
-  // VID-33: the overflow menu lists what didn't fit — here, Delete.
+  // VID-33: the overflow menu lists what didn't fit — here, the trash action.
+  // Whether "Delete permanently" joins it is role-dependent; that is asserted in
+  // the VID-38 tests rather than mixed in here.
   await row.getByRole("button", { name: "More actions", exact: true }).click();
-  await expect(page.getByRole("menuitem", { name: /^delete$/i })).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: /move to trash/i })).toBeVisible();
   await page.keyboard.press("Escape");
 
   // VID-34: Edit Data opens the metadata mask.

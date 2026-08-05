@@ -496,6 +496,15 @@ export async function installMockBackend(
         return respond({ mui: { updateEvent: target ? eventNode(target) : null } });
       }
 
+      // Soft delete (mui.deleteEvent) vs. permanent delete (top-level
+      // deleteEvent). The store drops the row either way — what the specs assert
+      // is *which* mutation the UI chose.
+      case "MuiDeleteEventPermanently": {
+        const index = backend.events.findIndex((e) => e.id === variables["eventId"]);
+        const removed = index >= 0 ? backend.events.splice(index, 1)[0] : undefined;
+        return respond({ deleteEvent: removed ? { id: removed.id, status: "OK" } : null });
+      }
+
       case "MuiDeleteEvent": {
         const index = backend.events.findIndex((e) => e.id === variables["eventId"]);
         const removed = index >= 0 ? backend.events.splice(index, 1)[0] : undefined;
