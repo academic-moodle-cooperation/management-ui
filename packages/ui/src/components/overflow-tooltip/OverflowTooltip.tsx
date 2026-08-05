@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useRef, useState, type FC } from "react";
 
+/**
+ * Vertical overflow has to exceed this many pixels to count. Font metrics alone
+ * routinely produce a 1–2px difference between scrollHeight and clientHeight on
+ * text that fits; a genuinely clamped cell overflows by a full line.
+ */
+const VERTICAL_OVERFLOW_SLACK_PX = 4;
+
 import { cn } from "../../lib";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui";
 
@@ -19,7 +26,12 @@ const OverflowTooltip: FC<OverflowTooltipProps> = ({ className, children, text, 
     if (!el) {
       return;
     }
-    const isOverflowingVertical = el.clientHeight < el.scrollHeight;
+    // Tolerance, not `<`: a font whose ascenders/descenders are taller than the
+    // line box makes scrollHeight exceed clientHeight by a pixel on content that
+    // visibly fits on one line. Org themes swap in corporate fonts with exactly
+    // such metrics, which underlined *every* cell in a `truncate` (nowrap)
+    // column. Only a real clamped overflow crosses a whole line.
+    const isOverflowingVertical = el.scrollHeight - el.clientHeight > VERTICAL_OVERFLOW_SLACK_PX;
     const isOverflowing = el.clientWidth < el.scrollWidth || isOverflowingVertical;
     // Assign both flags on every measurement. The first measure runs in the ref
     // callback on mount, which can happen while a fallback font is still in place
@@ -50,6 +62,21 @@ const OverflowTooltip: FC<OverflowTooltipProps> = ({ className, children, text, 
       cancelled = true;
     };
   }, [checkOverflow]);
+
+  // `fonts.ready` fires once, when the fonts pending *at that moment* have
+  // settled. A plugin theme loaded at runtime (org branding via `app.theme`)
+  // registers its @font-face rules afterwards, so its swap never re-triggers the
+  // effect above. Observing the element covers that, plus column resizes and
+  // zoom changes.
+  useEffect(() => {
+    const el = elRef.current;
+    if (!el || typeof ResizeObserver === "undefined") {
+      return;
+    }
+    const observer = new ResizeObserver(() => checkOverflow(elRef.current));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [checkOverflow, needsTooltip, overflowingVertical]);
 
   if (!children) {
     return null;

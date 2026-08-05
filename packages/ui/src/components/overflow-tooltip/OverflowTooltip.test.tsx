@@ -47,6 +47,26 @@ describe("OverflowTooltip", () => {
     expect(screen.getByText("Fits fine").classList.contains("underline")).toBe(false);
   });
 
+  it("ignores a font-metric sized vertical difference", () => {
+    // A corporate font whose ascenders/descenders are taller than the line box
+    // makes scrollHeight exceed clientHeight by a pixel or two on a single line
+    // that visibly fits. That used to underline every cell of a `truncate`
+    // column once an org theme swapped the font in.
+    metrics.scrollHeight = metrics.clientHeight + 2;
+    render(<OverflowTooltip>Tall font, one line</OverflowTooltip>);
+    expect(
+      screen.getByText("Tall font, one line").classList.contains("underline"),
+    ).toBe(false);
+  });
+
+  it("still underlines a genuinely clamped cell", () => {
+    metrics.scrollHeight = metrics.clientHeight * 2;
+    render(<OverflowTooltip>Two lines clamped to one</OverflowTooltip>);
+    expect(
+      screen.getByText("Two lines clamped to one").classList.contains("underline"),
+    ).toBe(true);
+  });
+
   it("clears a false vertical-overflow underline once web fonts finish loading", async () => {
     // First measurement runs against a fallback font: a clamped cell reports a
     // vertical overflow it would not have once the real font is applied.
