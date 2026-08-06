@@ -167,9 +167,14 @@ export const AclEditor: React.FC<AclEditorProps> = ({
           updatedEntries[index].action.push(permission);
         }
       } else {
-        updatedEntries[index].action = updatedEntries[index].action.filter(
-          (act) => act !== permission,
-        );
+        const remaining = updatedEntries[index].action.filter((act) => act !== permission);
+        // Never let a row end up granting nothing. Normally read holds the
+        // floor, but a backend-supplied entry can carry write without read —
+        // unchecking write there would leave an entry for a user with no
+        // permission at all, which reads as "has access" in the list while
+        // granting none. Revoking access is what the row's delete button is for.
+        if (remaining.length === 0) return;
+        updatedEntries[index].action = remaining;
       }
       onAclChange(updatedEntries);
       onHasChangesChange(true);
@@ -323,14 +328,17 @@ export const AclEditor: React.FC<AclEditorProps> = ({
             <Table className="w-full table-fixed">
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-1/2 px-0">User</TableHead>
-                  <TableHead className="w-1/4 px-0 text-center">
+                  {/* Widths must total 100%: `table-fixed` normalises anything
+                      else proportionally, so declared and rendered proportions
+                      drift apart and editing one column moves the others. */}
+                  <TableHead className="w-1/2 px-0">{t("muitable-sidebar:user")}</TableHead>
+                  <TableHead className="w-1/6 px-0 text-center">
                     {t("muitable-sidebar:read")}
                   </TableHead>
-                  <TableHead className="w-1/4 px-0 text-center">
+                  <TableHead className="w-1/6 px-0 text-center">
                     {t("muitable-sidebar:write")}
                   </TableHead>
-                  <TableHead className="w-1/3 px-0 text-center">
+                  <TableHead className="w-1/6 px-0 text-center">
                     {t("muitable-sidebar:actions")}
                   </TableHead>
                 </TableRow>
@@ -344,10 +352,23 @@ export const AclEditor: React.FC<AclEditorProps> = ({
                       </OverflowTooltip>
                     </TableCell>
                     <TableCell className="text-center py-2 px-0">
+                      {/*
+                        Read is deliberately not togglable: being listed here IS
+                        read access. New entries are created with `["read"]`, and
+                        access is revoked by deleting the row, not by unchecking
+                        this. So there is no change handler — an entry that could
+                        lose its last permission would be a row granting nothing.
+
+                        A backend-supplied entry with write but no read renders
+                        unchecked and stays that way; we deliberately do not add
+                        `read` on load, since that would be an unrequested
+                        permission change written back on the next save.
+                      */}
                       <Checkbox
                         checked={entry.action.includes("read")}
                         disabled
-                        onCheckedChange={(value) => handlePermissionChange(index, "read", value)}
+                        aria-label={t("muitable-sidebar:readAlwaysGranted")}
+                        title={t("muitable-sidebar:readAlwaysGranted")}
                       />
                     </TableCell>
                     <TableCell className="text-center py-2 px-0">
