@@ -21,6 +21,9 @@ A loaded plugin runs inside the host page and **shares modules** with it. You ca
 - `lucide-react`
 - `@oc-mui/plugin-system`
 - `@oc-mui/ui/components`, `@oc-mui/ui/components/icons`, `@oc-mui/ui/lib`, `@oc-mui/ui/lib/utils`
+  — note that `@oc-mui/ui/components/icons` carries only `@oc-mui/ui`'s own
+  hand-drawn `Icons`. For lucide icons import `lucide-react` directly: the host
+  shares the complete module, so you get every icon, not a curated subset.
 - `@oc-mui/query`, `@oc-mui/router`, `@oc-mui/utils`, `@oc-mui/i18n`
 
 Authoritative source: [`packages/remote-plugin-loader/src/transform.ts`](../../packages/remote-plugin-loader/src/transform.ts) (`SHARED_MODULE_NAMES`). Adding a name there is a public-API change and needs a changeset.
