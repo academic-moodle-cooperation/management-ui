@@ -1,7 +1,7 @@
 name: 🛠 Task / work item
 description: A planned, actionable piece of work (not a user-reported bug). Written to be self-contained.
 title: "[Task]: "
-labels: ["task", "triage"]
+labels: ["task"]
 body:
   - type: markdown
     attributes:
