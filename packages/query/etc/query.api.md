@@ -392,6 +392,16 @@ export type IntMetadataField = MetadataFieldInterface & {
 };
 
 // @public (undocumented)
+export interface IntrospectInputFieldsResult {
+    // (undocumented)
+    __type?: {
+        inputFields?: Array<{
+            name: string;
+        }> | null;
+    } | null;
+}
+
+// @public (undocumented)
 export type JsonMetadataField = MetadataFieldInterface & {
     collection?: Maybe<Scalars['JSON']['output']>;
     collectionId?: Maybe<Scalars['String']['output']>;
@@ -1761,6 +1771,9 @@ export type PageInfo = {
 };
 
 // @public
+export function pickAcceptedFields<T extends Record<string, unknown>>(metadata: T, accepted: ReadonlySet<string> | undefined): T;
+
+// @public
 export interface PluginConfigReader<T extends z.ZodTypeAny> {
     // (undocumented)
     readonly defaults: z.infer<T>;
@@ -1998,6 +2011,9 @@ export enum Type {
     Text = "TEXT",
     TextLong = "TEXT_LONG"
 }
+
+// @public
+export function useAcceptedInputFields(typeName: string): ReadonlySet<string> | undefined;
 
 // @public (undocumented)
 export function useAppConfig(): {
