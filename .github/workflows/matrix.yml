@@ -16,9 +16,11 @@ name: Browser matrix (E2E)
 #  * **One job, not one per engine.** Five jobs meant five full workspace builds.
 #    Sequential projects in a single job cost roughly one build instead of five;
 #    the wall clock is longer, but nothing is waiting on this.
-#  * **No chromium project here.** test.yml already runs every one of these specs
-#    on chromium for each PR. Repeating it would be a fifth of the bill for zero
-#    new information. `pnpm test:matrix` locally still runs all five.
+#  * **No desktop-chromium project here.** test.yml already runs every one of
+#    these specs on chromium for each PR. Repeating it would be a fifth of the
+#    bill for zero new information. `pnpm test:matrix` locally still runs all
+#    five. Note this is about the *project*, not the *binary*: tablet-android is
+#    a Chromium device descriptor, so the chromium browser still gets installed.
 
 on:
   push:
@@ -28,6 +30,15 @@ on:
       # There is no `main`.
       - develop
       - "r/**"
+    paths-ignore:
+      # A push that only touches prose cannot change how a browser renders the
+      # app, and this run costs ~16 minutes. GitHub skips the workflow only when
+      # *every* changed path matches, so a mixed docs+code merge still runs.
+      - "docs/**"
+      - "**/*.md"
+      - ".changeset/**"
+      - ".github/ISSUE_TEMPLATE/**"
+      - LICENSE
   workflow_dispatch:
     inputs:
       projects:
@@ -70,9 +81,15 @@ jobs:
         run: mkdir -p .local-plugins
 
       - name: Install Playwright browsers
-        # The tablet projects are device emulations on top of these two engines,
-        # not separate browsers.
-        run: pnpm exec playwright install --with-deps firefox webkit
+        # Via the package.json script, so this can't drift from what a local
+        # `pnpm test:matrix` needs.
+        #
+        # It installs chromium too, and that is NOT redundant with "no chromium
+        # project here": `tablet-ios` emulates an iPad on WebKit, but
+        # `tablet-android` is a Galaxy Tab S4 — a *Chromium* device descriptor.
+        # Without the chromium binary every tablet-android spec dies on browser
+        # launch, ~4 ms in, which is what had this workflow red on develop.
+        run: pnpm test:matrix:install
 
       - name: Run the browser matrix
         run: |
