@@ -86,6 +86,7 @@ Defined in [`packages/ui/src/styles/globals.css`](../../packages/ui/src/styles/g
 **Don't**
 
 - Hardcode hex/rgb/hsl/oklch colors.
+- Use Tailwind's raw palette classes (`text-gray-900`, `bg-amber-50`, `focus:ring-indigo-600`, …) — they ignore the theme tokens and break in dark mode and under org themes. **Lint-enforced** since #297 (`local/no-palette-classes`); genuinely intentional fixed colors need an `eslint-disable-next-line` with a reason.
 - Hardcode font families — use `font-sans`, `font-heading`, `font-mono`.
 - Bundle your own copy of shadcn/ui.
 - Apply global styles that escape your plugin's DOM.

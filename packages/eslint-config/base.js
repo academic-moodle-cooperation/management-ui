@@ -297,6 +297,23 @@ export const config = [
       "local/graphql-operation-naming": "error",
     },
   },
+  // Theme rule, made mechanical (#297): raw Tailwind palette classes are how
+  // #279 (unreadable dark-mode inputs) happened. The shadcn layer
+  // (packages/ui/src/components/ui/**) is exempt via that package's own
+  // eslint ignores; everything else uses semantic tokens. Intentional fixed
+  // colors get an eslint-disable-next-line with a reason.
+  {
+    files: ["**/*.ts", "**/*.tsx", "**/*.jsx"],
+    // The rule's own implementation + tests legitimately contain palette
+    // strings as examples/fixtures.
+    ignores: ["**/rules/no-palette-classes*.js"],
+    plugins: {
+      local: localPlugin,
+    },
+    rules: {
+      "local/no-palette-classes": "error",
+    },
+  },
   {
     ignores: ["dist/**"],
   },

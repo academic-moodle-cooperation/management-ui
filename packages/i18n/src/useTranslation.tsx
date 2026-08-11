@@ -66,7 +66,7 @@ export const LinkText = (props: { to: string; title: string; children?: React.Re
       target="_blank"
       rel="noreferrer"
       title={props.title || ""}
-      className="text-indigo-600 hover:text-indigo-500"
+      className="text-primary hover:text-primary/80"
     >
       {props.children}
     </a>

@@ -306,7 +306,7 @@ export const createColumns = (
           <Tooltip delayDuration={300}>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" className="w-4 h-4">
-                <Info className="w-4 h-4 ml-1 hover:text-gray-900" />
+                <Info className="w-4 h-4 ml-1 hover:text-foreground" />
                 <span className="sr-only">
                   {i18next.t("episodes:episodesTable.heading.actions.info")}
                 </span>

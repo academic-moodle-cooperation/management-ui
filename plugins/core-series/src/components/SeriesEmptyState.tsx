@@ -5,7 +5,7 @@ import { ComponentResolver } from "@oc-mui/plugin-system";
 const NoSeriesAvailable = () => (
   <div className="text-center my-16 flex flex-col items-center">
     <svg
-      className="w-12 h-12 mx-auto text-gray-400"
+      className="w-12 h-12 mx-auto text-muted-foreground"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
