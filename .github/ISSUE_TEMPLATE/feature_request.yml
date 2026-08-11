@@ -73,6 +73,19 @@ body:
         - Not sure
 
   - type: dropdown
+    id: oldest-affected-major
+    attributes:
+      label: Oldest affected Opencast major (if you know)
+      description: |
+        The oldest Opencast major that needs this. It determines which release
+        line (`r/NN.x`) the feature lands on. Best guess is fine — leave blank
+        if unsure; most new features simply target the next major (`develop`).
+      options:
+        - "19 — needed on all supported majors"
+        - "20 — OC 20 and newer only"
+        - "Unsure"
+
+  - type: dropdown
     id: would-author
     attributes:
       label: Would you be willing to author this?

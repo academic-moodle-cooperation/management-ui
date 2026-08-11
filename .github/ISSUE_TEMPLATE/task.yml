@@ -56,8 +56,6 @@ body:
       placeholder: |
         - Not migrating the other packages' export shape (separate task).
         - Not touching the plugin repos — coordinated release, tracked in #229.
-    validations:
-      required: true
 
   - type: dropdown
     id: scope
@@ -79,8 +77,19 @@ body:
         - Docs
         - Cross-repo (also touches the plugin repos)
         - Other (describe in Context)
-    validations:
-      required: true
+
+  - type: dropdown
+    id: oldest-affected-major
+    attributes:
+      label: Oldest affected Opencast major
+      description: |
+        The oldest Opencast major this work applies to. It determines which
+        release line (`r/NN.x`) the change lands on — the PR targets the line
+        of the oldest affected major. Leave blank if unsure or not applicable.
+      options:
+        - "19 — applies to all supported majors"
+        - "20 — OC 20 and newer only"
+        - "Unsure"
 
   - type: textarea
     id: references

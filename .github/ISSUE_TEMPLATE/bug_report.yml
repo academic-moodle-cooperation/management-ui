@@ -72,6 +72,21 @@ body:
     validations:
       required: true
 
+  - type: dropdown
+    id: oldest-affected-major
+    attributes:
+      label: Oldest affected Opencast major
+      description: |
+        The oldest Opencast major this bug affects. This determines which release
+        line (`r/NN.x`) the fix has to land on — fixes target the line of the
+        oldest affected major and roll forward from there.
+      options:
+        - "19 — affects all supported majors"
+        - "20 — OC 20 and newer only"
+        - "Unsure"
+    validations:
+      required: true
+
   - type: textarea
     id: console
     attributes:
