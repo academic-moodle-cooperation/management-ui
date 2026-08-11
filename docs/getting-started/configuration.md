@@ -135,6 +135,67 @@ manager.registerObject("app:config:defaults", "my-plugin", {
 
 The Zod schema is used at runtime to validate the merged slice. Invalid values are rejected with a clear error.
 
+## Metadata fields: which ones show, which ones save
+
+Two independent layers decide what happens to a metadata field (event or series), and they answer **different questions**:
+
+| Layer | Question it answers | Where it is configured |
+| --- | --- | --- |
+| **UI config** (`plugins.episodes.episodeInfo.metadata`, `plugins.series.seriesInfo.metadata`) | *Should this deployment display/edit the field in the UI?* | `config.json` — a display preference per field |
+| **Opencast catalog policy** (`etc/org.opencastproject.ui.metadata.CatalogUIAdapterFactory-*.cfg`, per organization) | *Does the backend accept this field as input at all?* | The Opencast host — **not** part of this repo |
+
+### The UI-config layer
+
+Each entry pairs a field id with `show` and `readonly`:
+
+```jsonc
+"plugins": {
+  "episodes": {
+    "episodeInfo": {
+      "metadata": [
+        { "title":    { "show": true, "readonly": false } },
+        { "location": { "show": true, "readonly": true  } },  // display, never edit
+        { "source":   { "show": false }  }                    // hide entirely
+      ]
+    }
+  }
+}
+```
+
+- **`show: false`** removes the field from the info panel.
+- **`readonly: true`** displays the field but disables editing.
+- Fields you omit fall back to the plugin's defaults (see
+  [`plugins/core-episodes/src/config.ts`](../../plugins/core-episodes/src/config.ts) /
+  [`core-series/src/config.ts`](../../plugins/core-series/src/config.ts) for the full
+  field list and default flags).
+
+### The catalog-policy layer
+
+Opencast derives its GraphQL metadata **input types per organization** from the
+catalog UI adapter config: a property with `property.<x>.readOnly=true` there is
+**excluded from the input type** (`CommonEventMetadataInput` /
+`CommonSeriesMetadataInput`), and GraphQL rejects unknown input fields hard. This is
+the *enforcing* layer — typical use: an org pins `creator` (legal requirement) or
+`location` (set automatically by the capture pipeline).
+
+**The UI adapts to this automatically.** The edit forms read each field's per-org
+`readOnly` flag from the backend and additionally introspect the input type once per
+session, so fields the org has made read-only are displayed but never submitted, and
+the create-series dialog hides fields the org does not accept. You do **not** have to
+mirror the catalog policy in the UI config — before this behaviour existed, a
+mismatch between the two layers made every metadata save fail with a
+`ValidationError` (#278/#280).
+
+So in practice:
+
+- To hide or lock a field **for one deployment's UI** → UI config.
+- To make a field **non-writable, org-wide, enforced by the backend** → catalog
+  config on the Opencast host. The UI follows along; adding the UI-config
+  `readonly` on top is optional and purely cosmetic.
+- On a multi-tenant server the catalog config is **per organization** — the same
+  field can be writable for one org and locked for another, and the UI resolves
+  this at runtime per session.
+
 ## Where the host's `config.json` comes from
 
 The shell fetches it on boot from `productionConfigUrl` (default `/ui/config/management-ui/config.json`). What answers that request depends on where you're running:
