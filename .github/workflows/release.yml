@@ -14,10 +14,13 @@ name: Release
 #      per-package tags, and create the product tag `v$(cat VERSION)` + a
 #      GitHub Release.
 #
-# npm dist-tags: `changeset publish` tags `latest`. That is correct for the
-# newest release line. When patching an OLD line while a newer one exists,
-# manually repoint afterwards (documented in release.md):
-#   npm dist-tag add @oc-mui/<pkg>@<newest-version> latest
+# Two JAR streams, ONE npm stream (issue #236): only the NEWEST r/NN.x line
+# publishes the @oc-mui/* packages. The TypeScript is identical across lines
+# (they differ only in build metadata), so letting every line publish would
+# race the same package versions onto npm. Older lines still get their
+# Version PR, per-package git tags (`changeset tag`), the product tag and a
+# GitHub Release — they ship as JARs, not through npm. The "which line am I"
+# check is computed below from the live list of r/* branches.
 #
 # Required before this can actually publish:
 #   - Repo setting: Settings -> Actions -> General -> "Allow GitHub Actions to
@@ -86,6 +89,35 @@ jobs:
         # otherwise use too old an npm to exchange the OIDC token.
         run: npm install -g npm@latest
 
+      - name: Determine release-line role
+        id: line
+        # newest=true  -> this line publishes npm (plus tags + release)
+        # newest=false -> JAR-only line: version + git tags + release, NO npm
+        # Also records whether changesets are pending at the start of the run:
+        # "none pending" means this run is the post-Version-PR release leg.
+        run: |
+          BRANCH="${GITHUB_REF_NAME}"
+          THIS_MAJOR="$(echo "${BRANCH}" | sed -n 's|^r/\([0-9]\{1,\}\)\.x$|\1|p')"
+          if [ -z "${THIS_MAJOR}" ]; then
+            echo "Not an r/NN.x branch (${BRANCH}) — treating as newest." >&2
+            echo "newest=true" >> "$GITHUB_OUTPUT"
+          else
+            NEWEST_MAJOR="$(git ls-remote --heads origin 'r/*' \
+              | sed -n 's|.*refs/heads/r/\([0-9]\{1,\}\)\.x$|\1|p' \
+              | sort -n | tail -1)"
+            if [ "${THIS_MAJOR}" -ge "${NEWEST_MAJOR:-0}" ]; then
+              echo "newest=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "newest=false" >> "$GITHUB_OUTPUT"
+            fi
+            echo "This line: r/${THIS_MAJOR}.x — newest existing: r/${NEWEST_MAJOR}.x"
+          fi
+          if ls .changeset/*.md 2>/dev/null | grep -qv README; then
+            echo "pending=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "pending=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -106,8 +138,10 @@ jobs:
         uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
         with:
           version: pnpm changeset:version
-          # Runs on the merged Version PR when no changesets remain.
-          publish: pnpm changeset:publish
+          # Runs on the merged Version PR when no changesets remain. On the
+          # newest line this publishes to npm; on an older line it only creates
+          # the per-package git tags (`changeset tag`) — JAR-only stream.
+          publish: ${{ steps.line.outputs.newest == 'true' && 'pnpm changeset:publish' || 'pnpm changeset:tag' }}
           commit: "chore(release): version packages"
           title: "chore(release): version packages"
         env:
@@ -117,12 +151,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Product tag + GitHub Release
-        # Runs only when the step above actually published to npm. Creates the
-        # ops-facing product tag (v<VERSION file>, e.g. v19.0.0) alongside the
-        # per-package npm tags, plus a GitHub Release with generated notes.
-        # Deployments (sources.yml etc.) pin this tag. Idempotent: skips if the
-        # tag already exists (e.g. a re-run).
-        if: steps.changesets.outputs.published == 'true'
+        # Creates the ops-facing product tag (v<VERSION file>, e.g. v19.0.0)
+        # plus a GitHub Release with generated notes. Deployments (sources.yml
+        # etc.) pin this tag. Runs on the release leg of BOTH kinds of line:
+        # the newest line reports `published` from the npm publish; an older
+        # (JAR-only) line never publishes npm, so its release leg is detected
+        # as "no changesets were pending when this run started". Idempotent:
+        # skips if the tag already exists (e.g. a re-run).
+        if: steps.changesets.outputs.published == 'true' || (steps.line.outputs.newest == 'false' && steps.line.outputs.pending == 'false')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
