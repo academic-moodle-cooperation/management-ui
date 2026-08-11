@@ -179,7 +179,14 @@ jobs:
           fi
           git tag "${PRODUCT_TAG}"
           git push origin "${PRODUCT_TAG}"
+          # The product version's MAJOR names the targeted Opencast major (the
+          # JAR is major-bound via OSGi import ranges), but WHICH exact
+          # Opencast the bundles were compiled against is a per-build fact —
+          # stamp it into the release notes instead of the version number.
+          OPENCAST_VERSION="$(sed -n 's|.*<opencast.version>\(.*\)</opencast.version>.*|\1|p' pom.xml | head -1)"
+          PRODUCT_MAJOR="${PRODUCT_TAG#v}"; PRODUCT_MAJOR="${PRODUCT_MAJOR%%.*}"
           gh release create "${PRODUCT_TAG}" \
             --title "Management UI ${PRODUCT_TAG}" \
+            --notes "Built against Opencast \`${OPENCAST_VERSION:-unknown}\` (runs on any Opencast ${PRODUCT_MAJOR} minor — the backend bundles are bound to the major, not a specific minor)." \
             --generate-notes \
             --verify-tag
