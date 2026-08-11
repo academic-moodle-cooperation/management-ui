@@ -138,10 +138,14 @@ jobs:
         uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
         with:
           version: pnpm changeset:version
-          # Runs on the merged Version PR when no changesets remain. On the
-          # newest line this publishes to npm; on an older line it only creates
-          # the per-package git tags (`changeset tag`) — JAR-only stream.
-          publish: ${{ steps.line.outputs.newest == 'true' && 'pnpm changeset:publish' || 'pnpm changeset:tag' }}
+          # Runs on the merged Version PR when no changesets remain. Only the
+          # newest line publishes npm (which also creates the per-package git
+          # tags). An older line must NOT run `changeset tag` either: both
+          # lines carry the SAME package versions (the TS is identical), and a
+          # git tag name can exist only once — whichever line released second
+          # would fail pushing colliding tags. Older lines therefore get only
+          # their product tag + GitHub Release (next step).
+          publish: ${{ steps.line.outputs.newest == 'true' && 'pnpm changeset:publish' || 'node -e "console.log(String.raw`JAR-only line - npm publish and package tags are the newest line s job.`)"' }}
           commit: "chore(release): version packages"
           title: "chore(release): version packages"
         env:
