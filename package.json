@@ -43,7 +43,7 @@
     "test:visual:update": "playwright test --config=playwright.visual.config.ts --update-snapshots",
     "changeset": "changeset",
     "changeset:status": "changeset status",
-    "changeset:version": "changeset version && node scripts/bump-product-version.mjs",
+    "changeset:version": "changeset version && node scripts/bump-product-version.mjs && node scripts/update-maven-versions.mjs",
     "changeset:publish": "changeset publish",
     "api-check": "turbo run api-check",
     "api-check:ci": "turbo run api-check:ci",
