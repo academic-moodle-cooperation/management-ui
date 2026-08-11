@@ -21,7 +21,6 @@ export const defaultConfig: AppConfig = {
     includeSearch: true,
   },
   app: {
-    appName: "Video Management Platform",
     locale: "en",
     HtmlDocumentTitle: "Management UI",
     logoUrl: "assets/default/logo.svg",
