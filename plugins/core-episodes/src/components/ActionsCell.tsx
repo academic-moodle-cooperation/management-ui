@@ -485,6 +485,7 @@ const DeleteAction: React.FC<{
         }}
       >
         <Trash2 />
+        <span className="sr-only">{i18next.t("episodes:episodesTable.action.moveToTrash")}</span>
       </Button>
     </TooltipTrigger>
     <TooltipContent>{i18next.t("episodes:episodesTable.action.moveToTrash")}</TooltipContent>
@@ -525,6 +526,9 @@ const DeletePermanentlyAction: React.FC<{
         }}
       >
         <Trash2 />
+        <span className="sr-only">
+          {i18next.t("episodes:episodesTable.action.deletePermanently")}
+        </span>
       </Button>
     </TooltipTrigger>
     <TooltipContent>{i18next.t("episodes:episodesTable.action.deletePermanently")}</TooltipContent>

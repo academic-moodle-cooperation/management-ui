@@ -155,12 +155,12 @@ test("[VID-04] typing in the search box sends the term to the backend", async ({
 });
 
 /**
- * The layout toggle ("die 4 Quadrate") has no accessible name — no aria-label,
- * no sr-only text, no title, just a lucide icon. There is therefore no
- * role-based locator for it and we have to reach for the icon class. Tracked as
- * an accessibility defect; when it gets a name, replace this with getByRole.
+ * The layout toggle's accessible name reflects the TARGET state (#254):
+ * "Switch to gallery view" while the list is showing, "Switch to list view"
+ * in the gallery — the same information a screen reader announces.
  */
-const layoutToggle = (page: Page) => page.locator("button:has(svg.lucide-layout-grid)").first();
+const layoutToggle = (page: Page) =>
+  page.getByRole("button", { name: /switch to gallery view/i });
 
 test("[VID-32] the action icons are present and point at the right targets", async ({ page }) => {
   // Finding 028 ("kein Hinweistext über Download-Button") and 014 (the editor
@@ -559,8 +559,8 @@ test("[VID-08] [VID-15] the layout toggle switches to gallery and back", async (
   await layoutToggle(page).click();
   await expect(page.locator('img[src*="thumb"]').first()).toBeVisible({ timeout: 10_000 });
 
-  // Back to the table view — the toggle now carries the list icon.
-  await page.locator("button:has(svg.lucide-list)").first().click();
+  // Back to the table view — the toggle's name now announces the list target.
+  await page.getByRole("button", { name: /switch to list view/i }).click();
   await expect(page.getByRole("columnheader", { name: /^title$/i })).toBeVisible({
     timeout: 10_000,
   });
