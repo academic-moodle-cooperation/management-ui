@@ -52,6 +52,10 @@
       "public": "Öffentlicher Zugriff",
       "private": "Beschränkter Zugriff"
     },
+    "layoutToggle": {
+      "toGallery": "Zur Galerieansicht wechseln",
+      "toList": "Zur Listenansicht wechseln"
+    },
     "action": {
       "editData": "Daten bearbeiten",
       "editVideo": "Video bearbeiten",

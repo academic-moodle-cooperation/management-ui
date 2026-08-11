@@ -52,6 +52,10 @@
       "public": "Public access",
       "private": "Restricted access"
     },
+    "layoutToggle": {
+      "toGallery": "Switch to gallery view",
+      "toList": "Switch to list view"
+    },
     "action": {
       "editData": "Edit Data",
       "editVideo": "Edit Video",
