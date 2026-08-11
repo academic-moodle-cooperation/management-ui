@@ -20,17 +20,17 @@ const packageName = process.env["npm_package_name"] || "shell";
 function resolveAppVersion(): string {
   const explicit = process.env["VITE_APP_VERSION"];
   if (explicit) return explicit.replace(/^v/i, "");
+  // The product VERSION file at the repo root is the canonical app version:
+  // its major names the targeted Opencast major, and the release machinery
+  // bumps it inside every Version PR. The footer showed a meaningless
+  // hardcoded "1.0.0" before (#299).
   try {
-    const pkg = JSON.parse(
-      fs.readFileSync(path.resolve(__dirname, "package.json"), "utf8"),
-    ) as { version?: string };
-    // package.json is still the 0.0.0 dev placeholder pre-release; fall back to
-    // the 1.x baseline so the UI shows a meaningful version until a release sets
-    // VITE_APP_VERSION.
-    return pkg.version && pkg.version !== "0.0.0" ? pkg.version : "1.0.0";
+    const version = fs.readFileSync(path.resolve(__dirname, "../../VERSION"), "utf8").trim();
+    if (/^\d+\.\d+\.\d+$/.test(version)) return version;
   } catch {
-    return "1.0.0";
+    // fall through
   }
+  return "dev";
 }
 
 /**
