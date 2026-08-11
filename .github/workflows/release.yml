@@ -64,7 +64,12 @@ jobs:
     name: Version or publish
     runs-on: ubuntu-latest
     # Never run from a fork.
-    if: github.repository == 'academic-moodle-cooperation/management-ui'
+    # Fork guard + branch guard: releases only ever run on r/NN.x lines. The
+    # branch condition matters for `workflow_dispatch`, which can be started
+    # from ANY branch — dispatched on develop, the "not an r-branch" path would
+    # otherwise treat develop as the newest line and, in a changeset-free
+    # moment, publish from it.
+    if: github.repository == 'academic-moodle-cooperation/management-ui' && startsWith(github.ref, 'refs/heads/r/')
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
