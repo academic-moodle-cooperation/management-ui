@@ -21,7 +21,8 @@
   "tasks": {
     "build": {
       "dependsOn": [
-        "^build"
+        "^build",
+        "build:types"
       ],
       "inputs": [
         "$TURBO_DEFAULT$",
@@ -32,6 +33,9 @@
       ]
     },
     "@oc-mui/utils#build": {
+      "dependsOn": [
+        "build:types"
+      ],
       "outputs": [
         "dist/**"
       ]
