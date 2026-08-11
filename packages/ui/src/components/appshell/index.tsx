@@ -34,13 +34,14 @@ export function Appshell({ children }: { children: React.ReactNode }) {
             {/* Default footer content that can be replaced by plugins */}
             <ComponentResolver
               componentType="appshell:footer"
+              // Bare fallback — only visible when no plugin provides a
+              // footer. No fake links, no hardcoded year (#299).
               defaultComponent={() => (
                 <div className="flex w-full justify-between">
-                  <span className="text-sm text-muted-foreground flex flex-start">
-                    Version: X.X.X
+                  <span className="text-sm text-muted-foreground">Management UI</span>
+                  <span className="text-sm text-muted-foreground">
+                    © {new Date().getFullYear()}
                   </span>
-                  <span className="text-sm text-muted-foreground">2025</span>
-                  <span className="text-sm text-muted-foreground">About Management UI</span>
                 </div>
               )}
               componentProps={{}}
