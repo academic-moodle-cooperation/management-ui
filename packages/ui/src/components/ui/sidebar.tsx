@@ -4,25 +4,25 @@ import { PanelLeftIcon } from "lucide-react";
 import * as React from "react";
 
 import { useTranslation } from "@oc-mui/i18n";
-import { Button } from "@oc-mui/ui/components/ui/button";
-import { Input } from "@oc-mui/ui/components/ui/input";
-import { Separator } from "@oc-mui/ui/components/ui/separator";
+import { Button } from "./button";
+import { Input } from "./input";
+import { Separator } from "./separator";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@oc-mui/ui/components/ui/sheet";
-import { Skeleton } from "@oc-mui/ui/components/ui/skeleton";
+} from "./sheet";
+import { Skeleton } from "./skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@oc-mui/ui/components/ui/tooltip";
-import { useIsMobile } from "@oc-mui/ui/hooks/use-mobile";
-import { cn } from "@oc-mui/ui/lib/utils";
+} from "./tooltip";
+import { useIsMobile } from "../../hooks/use-mobile";
+import { cn } from "../../lib/utils";
 
 import type { VariantProps } from "class-variance-authority";
 
