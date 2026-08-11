@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import type { PluginManager } from "@oc-mui/plugin-system";
 import type { AppConfig } from "@oc-mui/ui-config";
-import { logger } from "@oc-mui/utils";
+import { deepMerge, logger } from "@oc-mui/utils";
 
 import { useAppConfig } from "../hooks/useAppConfig";
 
@@ -54,6 +54,15 @@ export interface DefinePluginConfigInput<T extends z.ZodTypeAny> {
  * Validate a slice against its schema, returning the parsed value on
  * success and the plugin's defaults on failure. Keeps all warning
  * formatting in one place so dev tooling can grep for `plugin:<id>`.
+ *
+ * The raw slice is deep-merged ON TOP of the plugin's defaults before
+ * validation. Operators set only the keys they want to change; schemas
+ * declare fields as required. Validating the raw slice alone therefore
+ * failed for every partial override and silently returned ALL defaults
+ * (#256) — the one-key override in `config.json` did nothing. Merging
+ * first makes a partial slice mean "override these keys", which is what
+ * every layer above (defaultConfig ⊕ config.json ⊕ overlays) already
+ * does. deepMerge semantics apply: objects merge, arrays replace.
  */
 function validateOrFallback<T extends z.ZodTypeAny>(
   id: string,
@@ -62,7 +71,13 @@ function validateOrFallback<T extends z.ZodTypeAny>(
   slice: unknown,
 ): z.infer<T> {
   if (slice === undefined || slice === null) return defaults;
-  const parsed = schema.safeParse(slice);
+  const isMergeableObject = (v: unknown): v is Record<string, unknown> =>
+    typeof v === "object" && v !== null && !Array.isArray(v);
+  const candidate =
+    isMergeableObject(slice) && isMergeableObject(defaults)
+      ? deepMerge(defaults, slice)
+      : slice;
+  const parsed = schema.safeParse(candidate);
   if (parsed.success) return parsed.data;
   logger.warn(`plugin:${id} config validation failed; falling back to defaults`, {
     issues: parsed.error.issues,

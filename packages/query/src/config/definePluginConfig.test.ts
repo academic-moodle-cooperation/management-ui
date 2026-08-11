@@ -87,4 +87,90 @@ describe("definePluginConfig", () => {
     expect(reader.schema).toBe(sampleSchema);
     expect(reader.defaults).toEqual(defaults);
   });
+
+  // #256 — the operator experience: config.json sets ONE key, everything
+  // else keeps its default. Before the fix the partial slice failed the
+  // required-fields validation and the override silently did nothing.
+  describe("partial slices (#256)", () => {
+    const nestedSchema = z.object({
+      workflows: z.object({
+        publish: z.string(),
+        unpublish: z.string(),
+      }),
+      upload: z.object({
+        extensions: z.array(z.string()),
+        chunked: z.boolean(),
+      }),
+    });
+    const nestedDefaults: z.infer<typeof nestedSchema> = {
+      workflows: { publish: "default-publish", unpublish: "default-unpublish" },
+      upload: { extensions: [".mp4", ".mov"], chunked: true },
+    };
+
+    it("a one-key override merges over the defaults instead of falling back", () => {
+      const reader = definePluginConfig({
+        id: "upload-v2",
+        schema: nestedSchema,
+        defaults: nestedDefaults,
+      });
+      const config = {
+        plugins: { "upload-v2": { workflows: { publish: "my-wf" } } },
+      } as unknown as AppConfig;
+
+      expect(reader.read(config)).toEqual({
+        workflows: { publish: "my-wf", unpublish: "default-unpublish" },
+        upload: { extensions: [".mp4", ".mov"], chunked: true },
+      });
+      expect(warnSpy).not.toHaveBeenCalled();
+    });
+
+    it("arrays replace rather than merge, matching the app-level semantics", () => {
+      const reader = definePluginConfig({
+        id: "upload-v2",
+        schema: nestedSchema,
+        defaults: nestedDefaults,
+      });
+      const config = {
+        plugins: { "upload-v2": { upload: { extensions: [".mkv"] } } },
+      } as unknown as AppConfig;
+
+      expect(reader.read(config).upload).toEqual({ extensions: [".mkv"], chunked: true });
+    });
+
+    it("an invalid value inside a partial slice still falls back and warns", () => {
+      const reader = definePluginConfig({
+        id: "upload-v2",
+        schema: nestedSchema,
+        defaults: nestedDefaults,
+      });
+      const config = {
+        plugins: { "upload-v2": { workflows: { publish: 42 } } },
+      } as unknown as AppConfig;
+
+      expect(reader.read(config)).toEqual(nestedDefaults);
+      expect(warnSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("a non-object slice falls back and warns instead of being merged", () => {
+      const reader = definePluginConfig({ id: "sample", schema: sampleSchema, defaults });
+      const config = { plugins: { sample: "oops" } } as unknown as AppConfig;
+
+      expect(reader.read(config)).toEqual(defaults);
+      expect(warnSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not mutate the shared defaults object when merging", () => {
+      const reader = definePluginConfig({
+        id: "upload-v2",
+        schema: nestedSchema,
+        defaults: nestedDefaults,
+      });
+      const config = {
+        plugins: { "upload-v2": { workflows: { publish: "my-wf" } } },
+      } as unknown as AppConfig;
+
+      reader.read(config);
+      expect(nestedDefaults.workflows.publish).toBe("default-publish");
+    });
+  });
 });

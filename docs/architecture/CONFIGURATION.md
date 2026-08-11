@@ -164,10 +164,17 @@ Or imperatively (outside React):
 const cfg = episodesConfig.read(config);  // same validation, same fallback
 ```
 
-If a slice fails schema validation the reader logs a single
-`plugin:<id> config validation failed` warning (with the Zod issues
-attached) and returns the plugin's defaults. The shell keeps rendering
-— a bad `config.json` key never crashes the app.
+Before validating, the reader deep-merges the raw slice **on top of the
+plugin's registered defaults** (objects merge, arrays replace — the same
+semantics as every other config layer). A deployment therefore only sets
+the keys it wants to change; required fields it omits are satisfied by
+the defaults. Without this, a partial override would fail the schema's
+required-field checks and silently do nothing (#256).
+
+If the merged slice still fails schema validation the reader logs a
+single `plugin:<id> config validation failed` warning (with the Zod
+issues attached) and returns the plugin's defaults. The shell keeps
+rendering — a bad `config.json` key never crashes the app.
 
 ### Why not access `config.plugins[id]` directly?
 
