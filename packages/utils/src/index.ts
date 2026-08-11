@@ -7,8 +7,18 @@ import { parse, serialize } from "tinyduration";
 
 import type { Duration } from "tinyduration";
 
-const parseDuration = (duration: string | undefined) => {
-  const durationObj: Duration | undefined = duration ? parse(duration) : undefined;
+const parseDuration = (duration: string | undefined): string => {
+  let durationObj: Duration | undefined;
+  if (duration) {
+    try {
+      durationObj = parse(duration);
+    } catch {
+      // Not ISO 8601 — tinyduration throws, and a throw inside a table cell
+      // renderer unmounts the whole module via the nearest error boundary
+      // (#253). Return the raw value instead: one odd cell, page intact.
+      return duration;
+    }
+  }
 
   return `${(durationObj?.hours || "00").toString().padStart(2, "0")}:${(durationObj?.minutes || 0).toString().padStart(2, "0")}:${Math.round(
     durationObj?.seconds || 0,
