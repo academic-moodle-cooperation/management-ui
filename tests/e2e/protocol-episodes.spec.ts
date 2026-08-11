@@ -172,9 +172,15 @@ test("[VID-32] the action icons are present and point at the right targets", asy
   await expect(page.getByRole("cell", { name: "Mit Aktionen" })).toBeVisible({ timeout: 15_000 });
 
   const row = page.getByRole("row").nth(1);
-  for (const name of ["Edit Data", "Edit Video", "Play Video", "Download", "More actions"]) {
+  // #42: both views show the same three direct actions; Download and the
+  // delete actions live behind "More actions".
+  for (const name of ["Edit Data", "Edit Video", "Play Video", "More actions"]) {
     await expect(row.getByRole("button", { name, exact: true }), `${name} missing`).toBeVisible();
   }
+  await expect(row.getByRole("button", { name: "Download", exact: true })).toHaveCount(0);
+  await row.getByRole("button", { name: "More actions", exact: true }).click();
+  await expect(page.getByRole("menuitem", { name: /download/i })).toBeVisible();
+  await page.keyboard.press("Escape");
 
   // Editor and player are plain links, so their href is assertable even though
   // the destinations are other applications.
@@ -597,10 +603,12 @@ test("[VID-33] [VID-34] [VID-36] the actions menu and the direct actions work", 
   // VID-36: Play is a link that opens in a new tab.
   await expect(row.locator('a[href*="/play/"]')).toHaveAttribute("target", "_blank");
 
-  // VID-33: the overflow menu lists what didn't fit — here, the trash action.
-  // Whether "Delete permanently" joins it is role-dependent; that is asserted in
-  // the VID-38 tests rather than mixed in here.
+  // VID-33: the overflow menu lists what didn't fit — download and the trash
+  // action (#42 unified both views on three direct actions). Whether "Delete
+  // permanently" joins it is role-dependent; that is asserted in the VID-38
+  // tests rather than mixed in here.
   await row.getByRole("button", { name: "More actions", exact: true }).click();
+  await expect(page.getByRole("menuitem", { name: /download/i })).toBeVisible();
   await expect(page.getByRole("menuitem", { name: /move to trash/i })).toBeVisible();
   await page.keyboard.press("Escape");
 

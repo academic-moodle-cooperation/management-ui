@@ -318,8 +318,11 @@ export const createColumns = (
           </Tooltip>
         </span>
       ),
+      // 3 direct actions in BOTH views (#42): edit-data, edit-video, play.
+      // Download and the delete actions live in the overflow menu, matching
+      // the gallery view.
       cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => (
-        <ActionsCell event={row.original} refetch={refetch} maxVisibleActions={4} />
+        <ActionsCell event={row.original} refetch={refetch} maxVisibleActions={3} />
       ),
       meta: getMeta("actions", "episodes:episodesTable.heading.actions.title"),
     }),
