@@ -37,8 +37,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "api-check": "pnpm build:types && api-extractor run --local --verbose && api-extractor run --local --verbose -c api-extractor.components.json",
-    "api-check:ci": "pnpm build:types && api-extractor run --verbose && api-extractor run --verbose -c api-extractor.components.json"
+    "api-check": "pnpm build:types && api-extractor run --local --verbose && api-extractor run --local --verbose -c api-extractor.components.json && api-extractor run --local --verbose -c api-extractor.hooks.json",
+    "api-check:ci": "pnpm build:types && api-extractor run --verbose && api-extractor run --verbose -c api-extractor.components.json && api-extractor run --verbose -c api-extractor.hooks.json"
   },
   "main": "./dist/index.js",
   "types": "./dist-types/index.d.ts",

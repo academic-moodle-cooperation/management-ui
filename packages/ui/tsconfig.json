@@ -3,12 +3,7 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "rootDir": "src",
-    "baseUrl": ".",
-    "skipLibCheck": true,
-    "paths": {
-      "@/*": ["./src/*"],
-      "@oc-mui/ui/*": ["./src/*"]
-    }
+    "skipLibCheck": true
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "vite-env.d.ts"],
   "exclude": ["node_modules", "dist", ".turbo"]

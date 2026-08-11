@@ -1,10 +1,10 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
-  "mainEntryPointFilePath": "<projectFolder>/dist-types/components/index.d.ts",
+  "mainEntryPointFilePath": "<projectFolder>/dist-types/hooks/index.d.ts",
   "apiReport": {
     "enabled": true,
     "reportFolder": "<projectFolder>/etc/",
-    "reportFileName": "ui-components.api.md"
+    "reportFileName": "ui-hooks.api.md"
   },
   "docModel": {
     "enabled": false
