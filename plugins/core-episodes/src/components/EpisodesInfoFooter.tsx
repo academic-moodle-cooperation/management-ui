@@ -191,11 +191,15 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
             toast.success(t("episodes:episodesTable.notification.changesSaved"));
             refetch();
             refetchMetadata();
+            // Close only on success — closing unconditionally made a failed
+            // save look identical to a successful one and dropped the edits (#287).
+            onEditClose();
+          },
+          onError: () => {
+            toast.error(t("episodes:episodesTable.notification.changesFailed"));
           },
         },
       );
-
-      onEditClose();
     }
   };
 
@@ -213,7 +217,7 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
             size={"sm"}
             className={!hasDataChanged ? "cursor-not-allowed" : "cursor-pointer"}
             onClick={onSave}
-            disabled={!hasDataChanged}
+            disabled={!hasDataChanged || saveEpisodeUpdate.isPending}
           >
             {t("common:save")}
           </Button>
