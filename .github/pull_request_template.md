@@ -14,9 +14,11 @@
 ## Before-merge checklist
 
 - [ ] `pnpm verify` passes locally (lint + check-types + build + unit + contract + api-check + Playwright smoke).
+- [ ] If *any* versioned package changed (all of `packages/*` and `plugins/*`, private ones included): a [Changeset](https://github.com/changesets/changesets) is **committed** (`pnpm changeset`). Only `.github/`/doc-only or shell/playground-only changes can skip this; CI's `Changeset` job tells you which.
 - [ ] If a `@oc-mui/*` package's public API surface changed: `pnpm api-check` regenerated, the diff in `etc/<pkg>.api.md` is intentional and committed.
-- [ ] If a versioned package changed user-facing behaviour: a [Changeset](https://github.com/changesets/changesets) is included (`pnpm changeset`). Doc-only or shell/playground-only changes can skip this; CI's `Changeset` job tells you which.
+- [ ] Docs this PR makes stale are updated in the same PR.
 - [ ] [`AGENTS.md`](../AGENTS.md) rules followed for any plugin work (extension points in `plugin.json`, contract test up to date, no cross-plugin or cross-app imports).
+- [ ] **Reviewer:** base branch matches the oldest affected Opencast major (`r/NN.x` for released-line fixes, `develop` for next-major work).
 
 ## Stacked / linked PRs
 
