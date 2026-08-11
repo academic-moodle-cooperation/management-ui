@@ -298,7 +298,6 @@ export const MetadataUpdateField = ({
       metadataElement = (
         <Input
           type="text"
-          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           value={value || ""}
           onChange={(e) => {
             onUpdate(e.target.value);
@@ -310,7 +309,6 @@ export const MetadataUpdateField = ({
       metadataElement = (
         <Textarea
           rows={3}
-          className="block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           value={value || ""}
           onChange={(e) => {
             onUpdate(e.target.value);
@@ -323,13 +321,12 @@ export const MetadataUpdateField = ({
         <>
           <Textarea
             rows={3}
-            className="block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             value={value || []}
             onChange={(e) => {
               onUpdate(e.target.value);
             }}
           />
-          <span className="text-xs text-gray-400">{t(`sepatateValues`)}</span>
+          <span className="text-xs text-muted-foreground">{t(`sepatateValues`)}</span>
         </>
       );
       break;
@@ -362,7 +359,6 @@ export const MetadataUpdateField = ({
     case "DURATION":
       metadataElement = (
         <TimePicker
-          className="ring-1 ring-inset ring-gray-300"
           granularity="second"
           shouldForceLeadingZeros
           hourCycle={24}
@@ -381,7 +377,6 @@ export const MetadataUpdateField = ({
       metadataElement = (
         <Input
           type="text"
-          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           value={value || ""}
           onChange={(e) => onUpdate(e.target.value)}
         />
