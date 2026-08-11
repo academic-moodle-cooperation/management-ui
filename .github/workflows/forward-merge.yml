@@ -1,0 +1,75 @@
+name: Forward-merge reminder
+
+# Keeps the forward-merge chain visible instead of memorized (issue #236):
+# every push to a release line opens (or refreshes) the PR that carries the
+# line's new commits to the NEXT line up — r/19.x -> r/20.x -> ... -> develop.
+#
+# The PR is a plain merge PR; merge it with a MERGE COMMIT (never squash — a
+# squashed forward-merge diverges the histories permanently). Conflicts only
+# ever touch version metadata (pom, VERSION, package.json, CHANGELOGs) and are
+# resolved toward the newer target line.
+#
+# When there is nothing to carry (the target already contains every commit),
+# no PR is opened. Forward merges can be batched: the PR simply accumulates
+# until someone merges it — but it MUST be merged before the target's or this
+# line's Version PR (the Version PR guard enforces the dangerous half).
+
+on:
+  push:
+    branches: ["r/**"]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  forward-merge-pr:
+    name: Open or update the forward-merge PR
+    runs-on: ubuntu-latest
+    if: github.repository == 'academic-moodle-cooperation/management-ui'
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Determine the next line up and open the PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="${GITHUB_REF_NAME}"
+          THIS_MAJOR="$(echo "${BRANCH}" | sed -n 's|^r/\([0-9]\{1,\}\)\.x$|\1|p')"
+          if [ -z "${THIS_MAJOR}" ]; then
+            echo "Push to ${BRANCH} is not an r/NN.x line — nothing to do."
+            exit 0
+          fi
+
+          # Next existing line with a higher major; develop if this is the newest.
+          TARGET="$(git ls-remote --heads origin 'r/*' \
+            | sed -n 's|.*refs/heads/\(r/[0-9]\{1,\}\.x\)$|\1|p' \
+            | awk -F'[/.]' -v m="${THIS_MAJOR}" '$2 > m {print $2}' \
+            | sort -n | head -1)"
+          if [ -n "${TARGET}" ]; then
+            TARGET="r/${TARGET}.x"
+          else
+            TARGET="develop"
+          fi
+
+          git fetch origin "${TARGET}" --quiet
+          AHEAD="$(git rev-list --count "origin/${TARGET}..origin/${BRANCH}")"
+          if [ "${AHEAD}" -eq 0 ]; then
+            echo "${TARGET} already contains everything on ${BRANCH} — no PR needed."
+            exit 0
+          fi
+
+          EXISTING="$(gh pr list --head "${BRANCH}" --base "${TARGET}" --state open --json number --jq '.[0].number' || true)"
+          if [ -n "${EXISTING}" ]; then
+            echo "Forward-merge PR #${EXISTING} (${BRANCH} -> ${TARGET}) already open — it now carries ${AHEAD} commit(s)."
+            exit 0
+          fi
+
+          gh pr create \
+            --head "${BRANCH}" \
+            --base "${TARGET}" \
+            --title "chore(release): forward-merge ${BRANCH} into ${TARGET}" \
+            --body "$(printf 'Automated forward-merge PR: carries %s commit(s) from `%s` up to `%s` (oldest line upward, issue #236).\n\n**Merge with a merge commit — never squash.** Conflicts, if any, only touch version metadata (pom.xml, VERSION, package.json, CHANGELOG.md); resolve them toward `%s`.\n\nThis PR must be merged before either line'\''s Version PR — the Version PR guard blocks the dangerous half of that rule automatically.' "${AHEAD}" "${BRANCH}" "${TARGET}" "${TARGET}")"
