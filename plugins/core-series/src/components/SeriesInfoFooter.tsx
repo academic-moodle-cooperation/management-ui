@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useI18n } from "@oc-mui/i18n";
-import { useMuiUpdateSeriesMutation } from "@oc-mui/query";
+import { useMuiUpdateSeriesMutation, useAcceptedInputFields, pickAcceptedFields } from "@oc-mui/query";
 import type { MuiGetSeriesByIdInputFieldsQuery } from "@oc-mui/query";
 import { Button, toast } from "@oc-mui/ui/components";
 import { normalizeMetadataObject } from "@oc-mui/utils";
@@ -34,6 +34,11 @@ const SeriesInfoFooter = ({
   setEditSeries,
 }: SeriesInfoFooterProps) => {
   const { t } = useI18n();
+
+  // The org's input type may accept fewer fields than our types know (a
+  // catalog-config readOnly field is absent from it, and sending it is a hard
+  // ValidationError — #278). Introspected once, cached; undefined fails open.
+  const acceptedFields = useAcceptedInputFields("CommonSeriesMetadataInput");
 
   const checkIfRequiredFieldsAreFilled = (metadata: Record<string, unknown>) => {
     const requiredFields = Object.values(seriesInputFields?.seriesById?.commonMetadataV2 || {})
@@ -154,10 +159,11 @@ const SeriesInfoFooter = ({
     // Remove identifier if it exists (we don't want to update it)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { identifier, ...restMetadata } = metadataWithTitle as Record<string, unknown>;
-    // Ensure title is always present (required by CommonSeriesMetadataInput)
+    // Last line of defence: only submit fields the org's input type accepts —
+    // then re-add title, which is always present (required by CommonSeriesMetadataInput).
     const finalMetadata = {
       title: metadataWithTitle.title || "",
-      ...restMetadata,
+      ...pickAcceptedFields(restMetadata, acceptedFields),
     };
 
     // IMPORTANT: Validate the merged metadata BEFORE normalization, because normalizeMetadataObject removes empty values

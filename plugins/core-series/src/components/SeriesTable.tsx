@@ -98,7 +98,12 @@ const SeriesTable = () => {
               "value" in field &&
               field.value !== undefined &&
               field.id &&
-              !isReadOnly(field.id)
+              !isReadOnly(field.id) &&
+              // The server's own flag, distinct from the config helper above:
+              // the org's catalog config can make a field read-only, and such
+              // fields are absent from the mutation's input type — sending
+              // them is a hard ValidationError (#278).
+              !("readOnly" in field && field.readOnly === true)
             ) {
               // Type assertion: field.value can be string | (string | null)[] | null
               // but SeriesUpdateData expects string | string[]

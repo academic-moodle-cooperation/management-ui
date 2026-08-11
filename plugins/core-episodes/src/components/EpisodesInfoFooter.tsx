@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useI18n } from "@oc-mui/i18n";
-import { useMuiUpdateEventMutation } from "@oc-mui/query";
+import { useMuiUpdateEventMutation, useAcceptedInputFields, pickAcceptedFields } from "@oc-mui/query";
 import type { MuiGetEventByIdInputFieldsQuery, MuiEventsDataFragment } from "@oc-mui/query";
 import { Button, toast } from "@oc-mui/ui/components";
 import { normalizeMetadataObject, logger } from "@oc-mui/utils";
@@ -39,6 +39,11 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
   currentEpisode,
 }) => {
   const { t } = useI18n();
+
+  // The org's input type may accept fewer fields than our types know (a
+  // catalog-config readOnly field is absent from it, and sending it is a hard
+  // ValidationError — #280). Introspected once, cached; undefined fails open.
+  const acceptedFields = useAcceptedInputFields("CommonEventMetadataInput");
 
   const checkIfRequiredFieldsAreFilled = (metadata: Record<string, unknown>) => {
     const requiredFields = Object.values(episodesInputFields?.eventById?.commonMetadataV2 || {})
@@ -166,7 +171,10 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
 
     // Remove identifier if it exists (we don't want to update it)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { identifier, ...finalMetadata } = metadataWithTitle as Record<string, unknown>;
+    const { identifier, ...strippedMetadata } = metadataWithTitle as Record<string, unknown>;
+
+    // Last line of defence: only submit fields the org's input type accepts.
+    const finalMetadata = pickAcceptedFields(strippedMetadata, acceptedFields);
 
     // IMPORTANT: Validate the merged metadata BEFORE normalization, because normalizeMetadataObject removes empty values
     // but we need to validate that required fields are not empty
