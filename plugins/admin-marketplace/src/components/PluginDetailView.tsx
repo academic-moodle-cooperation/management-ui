@@ -27,13 +27,13 @@ const PendingChangesNotice: React.FC<{
   <div
     role="status"
     aria-live="polite"
-    className="flex flex-col gap-3 rounded-lg border border-amber-500/50 bg-amber-50 px-4 py-3 dark:bg-amber-950/20 sm:flex-row sm:items-center"
+    className="flex flex-col gap-3 rounded-lg border border-warning/50 bg-warning/10 px-4 py-3 sm:flex-row sm:items-center"
   >
     <div className="flex flex-1 items-start gap-2">
-      <RefreshCw className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" aria-hidden />
+      <RefreshCw className="mt-0.5 h-4 w-4 shrink-0 text-warning" aria-hidden />
       <div>
-        <p className="text-sm font-medium text-amber-900 dark:text-amber-100">Change saved</p>
-        <p className="text-xs text-amber-800/90 dark:text-amber-200/90">
+        <p className="text-sm font-medium text-warning-foreground">Change saved</p>
+        <p className="text-xs text-warning-foreground/90">
           Reload the page for enable/disable to take effect.
         </p>
       </div>
@@ -44,7 +44,7 @@ const PendingChangesNotice: React.FC<{
       </Button>
       <Button
         size="sm"
-        className="h-8 bg-amber-600 text-xs text-white hover:bg-amber-700"
+        className="h-8 bg-warning text-xs text-white hover:bg-warning/80"
         onClick={onReload}
       >
         Reload
@@ -165,7 +165,7 @@ export const PluginDetailView: React.FC<PluginDetailViewProps> = ({
 
       <div className="flex flex-wrap items-center gap-2">
         {isLoaded && (
-          <Badge className="border-0 bg-emerald-600 text-white hover:bg-emerald-600">
+          <Badge className="border-0 bg-ok text-white hover:bg-ok">
             <Check className="mr-1 h-3 w-3" aria-hidden />
             Active
           </Badge>
@@ -173,7 +173,7 @@ export const PluginDetailView: React.FC<PluginDetailViewProps> = ({
         {isOverridden && (
           <Badge
             variant="outline"
-            className="border-amber-400/60 bg-amber-500/10 text-amber-800 dark:text-amber-200"
+            className="border-warning/60 bg-warning/10 text-warning-foreground"
           >
             Overridden
           </Badge>

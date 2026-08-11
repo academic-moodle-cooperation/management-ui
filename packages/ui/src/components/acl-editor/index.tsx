@@ -384,7 +384,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
                         disabled={disabled}
                         onClick={() => handleRemoveEntry(index)}
                       >
-                        <Trash2 className="w-4 h-4 text-red-500" />
+                        <Trash2 className="w-4 h-4 text-error" />
                       </Button>
                     </TableCell>
                   </TableRow>

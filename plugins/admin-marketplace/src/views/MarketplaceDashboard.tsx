@@ -417,9 +417,9 @@ const StatusBanners: React.FC<{
 }> = ({ pendingChanges, conflicts, error, onReload, onDiscardChanges, onClearError }) => (
   <>
     {pendingChanges && (
-      <div className="flex items-center gap-3 rounded-lg border border-amber-500/50 bg-amber-50 px-4 py-3 dark:bg-amber-950/20">
-        <RefreshCw className="h-4 w-4 shrink-0 text-amber-600" />
-        <p className="flex-1 text-sm text-amber-800 dark:text-amber-200">
+      <div className="flex items-center gap-3 rounded-lg border border-warning/50 bg-warning/10 px-4 py-3">
+        <RefreshCw className="h-4 w-4 shrink-0 text-warning" />
+        <p className="flex-1 text-sm text-warning-foreground">
           Plugin changes require a reload to take effect.
         </p>
         <div className="flex gap-2">
@@ -428,7 +428,7 @@ const StatusBanners: React.FC<{
           </Button>
           <Button
             size="sm"
-            className="h-7 bg-amber-600 text-xs text-white hover:bg-amber-700"
+            className="h-7 bg-warning text-xs text-white hover:bg-warning/80"
             onClick={onReload}
           >
             Reload
@@ -906,8 +906,8 @@ const DeveloperSection: React.FC<{
  * on, so the capability is discoverable rather than silently missing.
  */
 const RemoteLoadingDisabledBanner: React.FC = () => (
-  <div className="flex gap-3 rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
-    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+  <div className="flex gap-3 rounded-md border border-warning/40 bg-warning/10 p-3 text-sm">
+    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
     <div className="space-y-1">
       <p className="font-medium">Remote plugin loading is disabled</p>
       <p className="text-xs leading-relaxed text-muted-foreground">

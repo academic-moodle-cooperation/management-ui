@@ -85,7 +85,7 @@ const SeriesInfoContent = ({
                   {t(`series:seriesInfo.${field?.id}`)} {field?.required && "*"}
                   {editSeries && !field?.readOnly && field?.id && !isReadOnly(field.id) && (
                     <Button variant="ghost" size="icon" className="w-4 h-4 ml-2">
-                      <PencilIcon className="inline-flex group-hover:text-slate-700 text-slate-400" />
+                      <PencilIcon className="inline-flex group-hover:text-foreground text-muted-foreground" />
                       <span className="sr-only">{t(`common:edit`)}</span>
                     </Button>
                   )}
@@ -121,7 +121,7 @@ const SeriesInfoContent = ({
                       </>
                     </div>
                     {textCopied && (
-                      <p className="text-green-500 text-sm">
+                      <p className="text-ok text-sm">
                         {t(`series:seriesInfo.identifierCopied`)}
                       </p>
                     )}

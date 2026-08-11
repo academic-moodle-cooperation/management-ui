@@ -11,6 +11,7 @@
  */
 
 import { graphqlOperationNaming, ruleName as graphqlOperationNamingRuleName } from "./graphql-operation-naming.js";
+import { noPaletteClasses, ruleName as noPaletteClassesRuleName } from "./no-palette-classes.js";
 
 export const localPlugin = {
   meta: {
@@ -19,5 +20,6 @@ export const localPlugin = {
   },
   rules: {
     [graphqlOperationNamingRuleName]: graphqlOperationNaming,
+    [noPaletteClassesRuleName]: noPaletteClasses,
   },
 };

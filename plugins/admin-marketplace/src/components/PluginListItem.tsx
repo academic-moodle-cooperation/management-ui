@@ -33,9 +33,9 @@ export const PluginListItem: React.FC<PluginListItemProps> = ({
   onClick,
 }) => {
   const dotClass = isOverridden
-    ? "bg-amber-500"
+    ? "bg-warning"
     : isLoaded
-      ? "bg-emerald-500"
+      ? "bg-ok"
       : "bg-muted-foreground/40";
 
   const canDisable = isLoaded && !isCore;
@@ -73,7 +73,7 @@ export const PluginListItem: React.FC<PluginListItemProps> = ({
 
       <div className="flex shrink-0 items-center gap-1 text-muted-foreground">
         {!isLoaded && <CirclePlus className="h-4 w-4" aria-hidden />}
-        {isLoaded && <Check className="h-4 w-4 text-emerald-600" aria-hidden />}
+        {isLoaded && <Check className="h-4 w-4 text-ok" aria-hidden />}
         {canDisable && <PowerOff className="h-4 w-4" aria-hidden />}
       </div>
     </div>
@@ -96,9 +96,9 @@ export const PluginGridCard: React.FC<PluginListItemProps> = ({
   onClick,
 }) => {
   const dotClass = isOverridden
-    ? "bg-amber-500"
+    ? "bg-warning"
     : isLoaded
-      ? "bg-emerald-500"
+      ? "bg-ok"
       : "bg-muted-foreground/40";
   const initial = displayName.trim().charAt(0).toUpperCase() || "?";
 
@@ -127,7 +127,7 @@ export const PluginGridCard: React.FC<PluginListItemProps> = ({
         </span>
         <div className="flex items-center gap-0.5 text-muted-foreground">
           {!isLoaded && <CirclePlus className="h-4 w-4" aria-hidden />}
-          {isLoaded && <Check className="h-4 w-4 text-emerald-600" aria-hidden />}
+          {isLoaded && <Check className="h-4 w-4 text-ok" aria-hidden />}
           {isLoaded && !isCore && <PowerOff className="h-3.5 w-3.5 opacity-40" aria-hidden />}
         </div>
       </div>
@@ -181,7 +181,7 @@ export const CommunityPluginListItem: React.FC<CommunityPluginListItemProps> = (
     >
       <span className="relative flex h-2 w-2 shrink-0" aria-hidden>
         <span
-          className={`h-2 w-2 rounded-full ${isInstalled ? "bg-emerald-500" : "bg-muted-foreground/40"}`}
+          className={`h-2 w-2 rounded-full ${isInstalled ? "bg-ok" : "bg-muted-foreground/40"}`}
         />
       </span>
 
@@ -189,7 +189,7 @@ export const CommunityPluginListItem: React.FC<CommunityPluginListItemProps> = (
         <div className="flex min-w-0 items-center gap-1.5">
           <span className="truncate font-medium text-sm">{name}</span>
           {isInstalled && (
-            <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-600/80" aria-hidden />
+            <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-ok/80" aria-hidden />
           )}
         </div>
         <p className="truncate text-xs text-muted-foreground">
@@ -223,7 +223,7 @@ export const CommunityPluginListItem: React.FC<CommunityPluginListItemProps> = (
         {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" aria-hidden />
         ) : isInstalled ? (
-          <Check className="h-4 w-4 text-emerald-600" aria-hidden />
+          <Check className="h-4 w-4 text-ok" aria-hidden />
         ) : (
           <Button
             type="button"
@@ -275,7 +275,7 @@ export const CommunityPluginGridCard: React.FC<CommunityPluginListItemProps> = (
           <div className="flex flex-wrap items-center gap-2">
             <span className="truncate text-sm font-medium">{name}</span>
             {isInstalled && (
-              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-600/80" aria-hidden />
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-ok/80" aria-hidden />
             )}
             <Badge variant="outline" className="h-5 shrink-0 px-1.5 text-[10px] font-normal capitalize">
               {category}
@@ -300,7 +300,7 @@ export const CommunityPluginGridCard: React.FC<CommunityPluginListItemProps> = (
         {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" aria-hidden />
         ) : isInstalled ? (
-          <Check className="h-4 w-4 text-emerald-600" aria-hidden />
+          <Check className="h-4 w-4 text-ok" aria-hidden />
         ) : (
           <Button
             type="button"

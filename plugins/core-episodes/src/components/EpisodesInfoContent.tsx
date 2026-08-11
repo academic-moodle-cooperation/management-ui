@@ -89,7 +89,7 @@ const EpisodesInfoContent = ({
                     {t(`episodes:episodesInfo.${field?.id}`)} {field?.required && "*"}
                     {editEpisode && !field?.readOnly && field?.id && !isReadOnly(field.id) && (
                       <Button variant="ghost" size="icon" className="w-4 h-4 ml-2">
-                        <PencilIcon className="inline-flex group-hover:text-slate-700 text-slate-400" />
+                        <PencilIcon className="inline-flex group-hover:text-foreground text-muted-foreground" />
                         <span className="sr-only">{t(`common:edit`)}</span>
                       </Button>
                     )}
@@ -125,7 +125,7 @@ const EpisodesInfoContent = ({
                         </>
                       </div>
                       {textCopied && (
-                        <p className="text-green-500 text-sm">
+                        <p className="text-ok text-sm">
                           {t(`episodes:episodesInfo.identifierCopied`)}
                         </p>
                       )}
