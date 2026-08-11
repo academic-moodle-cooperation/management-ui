@@ -2029,7 +2029,6 @@ export function useAppConfig(): {
     downloadBaseUrl?: string | undefined;
     matomo: MatomoConfig;
     app: {
-    appName: string;
     locale: string;
     HtmlDocumentTitle: string;
     logoUrl?: string;

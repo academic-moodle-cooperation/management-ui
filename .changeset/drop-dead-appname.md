@@ -1,5 +1,6 @@
 ---
 "@oc-mui/ui-config": major
+"@oc-mui/query": major
 ---
 
 Remove `app.appName` — it was never rendered anywhere
@@ -13,3 +14,7 @@ The document title continues to come from `app.HtmlDocumentTitle`, the header
 branding from `app.logoUrl` / `app.orgLogoUrl` and the theme. Deployment
 `config.json` files that still carry `appName` keep working — unknown keys are
 ignored by the config merge.
+
+`@oc-mui/query` is bumped alongside because its public surface re-exposes the
+`AppConfig` type (via `useAppConfig`), so the field removal is observable
+through it as well.
