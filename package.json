@@ -6,6 +6,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "create-plugin": "node ./scripts/create-plugin.mjs",
+    "maven:install": "node ./scripts/maven-pnpm-install.mjs",
     "clean": "turbo run clean && rm -rf .turbo && rm -rf dist && rm -rf dist-types && rm -rf target && rm -rf node_modules && rm -rf coverage && rm -f *.tsbuildinfo && rm -f tsconfig*.tsbuildinfo && find . -name '.eslintcache' -delete",
     "clean:plugins": "turbo run clean --filter=./plugins/* --filter=./.local-plugins/*",
     "preview": "turbo run preview",

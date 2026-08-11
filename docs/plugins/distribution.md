@@ -66,6 +66,30 @@ The shell fetches that manifest, filters by `app.enabledPlugins`, and loads each
 
 This path is **dev only**. Production never reads `.local-plugins/`.
 
+### Interaction with the Management UI's own Maven build
+
+`.local-plugins/` is gitignored, but `pnpm-workspace.yaml` includes it — so any
+checkout placed there joins the pnpm workspace while the committed
+`pnpm-lock.yaml` cannot know about it. A plain
+`pnpm install --frozen-lockfile` would therefore fail with
+`ERR_PNPM_OUTDATED_LOCKFILE` ([#255](https://github.com/academic-moodle-cooperation/management-ui/issues/255)).
+
+The Maven build (`./mvnw clean install` in the repo root) handles this via
+[`scripts/maven-pnpm-install.mjs`](../../scripts/maven-pnpm-install.mjs):
+
+- **`.local-plugins/` empty** (OSS checkout, CI, release builds): strict
+  `--frozen-lockfile` install — reproducibility is unchanged.
+- **`.local-plugins/` populated**: the install falls back to
+  `--no-frozen-lockfile` and prints a loud warning naming the local plugins.
+  pnpm still reuses the committed lockfile's resolutions for every package it
+  already knows, so the core dependency graph stays pinned; only the local
+  plugins' own dependencies are resolved fresh. The working-tree
+  `pnpm-lock.yaml` may be updated as a side effect — don't commit that.
+
+No manual ordering ("build first, add plugins after") is needed anymore. To
+force a mode explicitly, set `OC_MUI_LOCKFILE_MODE=frozen` (fail loudly instead
+of falling back) or `OC_MUI_LOCKFILE_MODE=no-frozen`.
+
 ### Developing a plugin that's also deployed as a JAR
 
 When you dev-mount a plugin under `.local-plugins/` **and** point the dev
