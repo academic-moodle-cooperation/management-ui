@@ -231,6 +231,15 @@ export type DeleteEventPayload = {
     status?: Maybe<EventRemovalResult>;
 };
 
+// @public
+export interface DeleteEventPermanentlyResult {
+    // (undocumented)
+    deleteEvent?: {
+        id?: string | null;
+        status?: string | null;
+    } | null;
+}
+
 // @public (undocumented)
 export type DurationMetadataField = MetadataFieldInterface & {
     collection?: Maybe<Scalars['JSON']['output']>;
@@ -381,6 +390,16 @@ export type IntMetadataField = MetadataFieldInterface & {
     type?: Maybe<Type>;
     value?: Maybe<Scalars['String']['output']>;
 };
+
+// @public (undocumented)
+export interface IntrospectInputFieldsResult {
+    // (undocumented)
+    __type?: {
+        inputFields?: Array<{
+            name: string;
+        }> | null;
+    } | null;
+}
 
 // @public (undocumented)
 export type JsonMetadataField = MetadataFieldInterface & {
@@ -1752,6 +1771,9 @@ export type PageInfo = {
 };
 
 // @public
+export function pickAcceptedFields<T extends Record<string, unknown>>(metadata: T, accepted: ReadonlySet<string> | undefined): T;
+
+// @public
 export interface PluginConfigReader<T extends z.ZodTypeAny> {
     // (undocumented)
     readonly defaults: z.infer<T>;
@@ -1990,6 +2012,9 @@ export enum Type {
     TextLong = "TEXT_LONG"
 }
 
+// @public
+export function useAcceptedInputFields(typeName: string): ReadonlySet<string> | undefined;
+
 // @public (undocumented)
 export function useAppConfig(): {
     config: AppConfig;
@@ -2004,7 +2029,6 @@ export function useAppConfig(): {
     downloadBaseUrl?: string | undefined;
     matomo: MatomoConfig;
     app: {
-    appName: string;
     locale: string;
     HtmlDocumentTitle: string;
     logoUrl?: string;
@@ -2030,6 +2054,11 @@ export function useAppConfig(): {
 
 // @public
 export function useConfig<T extends z.ZodTypeAny>(reader: PluginConfigReader<T>): z.infer<T>;
+
+// @public (undocumented)
+export function useDeleteEventPermanentlyMutation(): UseMutationResult<DeleteEventPermanentlyResult, Error, {
+    eventId: string;
+}>;
 
 // @public
 export function useEventTitlesMap(eventIds: string[]): Map<string, string>;

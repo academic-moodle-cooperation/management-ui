@@ -35,7 +35,7 @@ The set is decided **forward-looking**: it covers what a plugin author can legit
 | `@oc-mui/remote-plugin-loader` | host-side mechanism for loading remote plugins; an author writes a plugin, the host loads it |
 | `@oc-mui/providers` | app-level provider composition; authors reach the same wiring through `@oc-mui/app-runtime`'s standalone wrappers. Promote it only if we commit to authors composing providers by hand. |
 
-> The SDK packages carry full npm metadata (`description`, `repository`, `author`, `keywords`, `publishConfig.access = public`) and a per-package `LICENSE`, and are publishable: the `private` flags were dropped in the publish flip (PR #210). The only remaining one-time step is the first-release bootstrap (see “Cutting a release”).
+> The SDK packages carry full npm metadata (`description`, `repository`, `author`, `keywords`, `publishConfig.access = public`) and a per-package `LICENSE`, and are publishable: the `private` flags were dropped in the publish flip (PR #210). The only remaining one-time step is the [first-release bootstrap](#first-release-bootstrap--one-time-checklist).
 
 ### Publish-readiness checklist (the work before the flip)
 
@@ -135,16 +135,27 @@ Plugin authors get a one-major-cycle grace window: when the host bumps `PLUGIN_A
 
 ## Branching model
 
-Modeled on the Opencast project's GitFlow-style branching. Three branch roles matter for releases:
+Modeled on the Opencast project's GitFlow-style branching. Two branch roles matter for releases:
 
 | Branch | Role |
 |---|---|
 | **`develop`** | Integration. Feature branches are cut from here and their PRs merge back here, each with a changeset. The latest integrated code — not yet released. `.changeset/config.json`'s `baseBranch` is `develop`. |
-| **`r/NN.x`** | Release lines, named after the Opencast major they target (e.g. `r/19.x` ↔ Opencast 19). Releasing happens **here**: every
+| **`r/NN.x`** | Release lines, named after the Opencast major they target (e.g. `r/19.x` ↔ Opencast 19). Releasing happens **here**: every push runs [`release.yml`](../../.github/workflows/release.yml), which opens a "Version Packages" PR — merging that PR *is* the release. A line is cut from `develop` when its major is ready to ship, and the newest lines are then maintained in parallel (see [Bugfixes across multiple release lines](#bugfixes-across-multiple-release-lines)). |
+
+There is no `main` branch: `develop` collects, the `r/NN.x` lines ship.
+
+### The everyday loop
+
+1. Branch a feature off `develop`; open a PR back into `develop` **with a changeset** (CI enforces it).
+2. Features accumulate on `develop` along with their changesets.
+3. To release, push the release line — branch `r/NN.x` from `develop` for a new major, or merge `develop` into the existing line.
+4. On that line, the changesets action opens a **"Version Packages" PR** (version bumps + changelog).
+5. Merge that PR → the action publishes the bumped packages to npm, creates the per-package tags plus the product tag `vNN.x.y`, and cuts a GitHub Release.
+6. Forward-merge the line back toward `develop` so the version bumps flow back.
 
 ## Cutting a release
 
-> **Note:** `.changeset/config.json` is set to `access: "public"` and the packages carry no `private` flag — they are publishable as-is. The only special case is the very first publish of each package (bootstrap, below).
+> **Note:** `.changeset/config.json` is set to `access: "public"` and the SDK packages carry no `private` flag — they are publishable as-is. The only special case is the very first publish of each package, which is a one-time manual step: [First-release bootstrap](#first-release-bootstrap--one-time-checklist).
 
 Before any release — and especially before the first public 1.0 cut or any major bump of a contract-stable package — run the [release test protocol](./test-protocol.md). It's the integration-level gate that complements `pnpm verify`'s mechanical checks.
 
@@ -154,7 +165,7 @@ The automation lives in [`.github/workflows/release.yml`](../../.github/workflow
 2. **Review and merge the Version Packages PR.** This commits the version bumps, regenerated changelogs, and consumes the `.changeset/*.md` files.
 3. **The action publishes.** When that merge lands and no changesets remain, the same workflow runs `pnpm changeset:publish`, which calls `npm publish` for every bumped package and creates matching per-package git tags, plus the product tag `vNN.x.y` and a GitHub Release. Then forward-merge the release line back toward `develop`.
 
-There is no manual `pnpm publish` step. If a release goes sideways, deprecate the bad version with `npm deprecate` rather than unpublishing.
+There is no manual `pnpm publish` step — the single exception is the one-time [first-release bootstrap](#first-release-bootstrap--one-time-checklist), which has to run before the first release because OIDC cannot create a package that does not exist yet. If a release goes sideways, deprecate the bad version with `npm deprecate` rather than unpublishing.
 
 ## Bugfixes across multiple release lines
 
@@ -170,19 +181,58 @@ Like Opencast, we support the newest release lines in parallel (Opencast itself 
 
 **Alternative (cherry-pick/backport):** land the fix on `develop` first and cherry-pick it (with its changeset) onto each supported line. Changesets handles this equally well, and it avoids the version-metadata conflicts of step 3 — at the price of one backport PR per line and no shared history. Use it as the fallback when a forward-merge would drag along commits a line must not receive; the default remains the Opencast-style flow above (decided in #236).
 
-> **First-release bootstrap.** npm's OIDC trusted publishing cannot create a package that does not exist yet ([npm/cli#8544](https://github.com/npm/cli/issues/8544)). The very first publish of each package is therefore manual: `npm login`, then `pnpm publish -r --access public` from the release line (pnpm, not plain npm — it rewrites `workspace:*` deps). Afterwards configure each package's Trusted Publisher on npmjs.com (repo + `release.yml`); every later release flows through this workflow tokenlessly.
+## npm authentication: tokenless via Trusted Publishing (OIDC)
 
-### npm authentication: tokenless via Trusted Publishing (OIDC)
+There is **no `NPM_TOKEN` secret**. The release workflow authenticates to npm with a short-lived [OIDC](https://docs.npmjs.com/trusted-publishers) identity token (it has `id-token: write`), so there is no long-lived credential to leak or rotate, and provenance attestations are generated automatically. OIDC publishing needs **npm ≥ 11.5.1 and Node ≥ 22.14.0** on the runner — the workflow's Setup Node (`node-version: 22`) + `npm install -g npm@latest` steps guarantee this.
 
-There is **no `NPM_TOKEN` secret**. The release workflow authenticates to npm with a short-lived [OIDC](https://docs.npmjs.com/trusted-publishers) identity token (it has `id-token: write`), so there is no long-lived credential to leak or rotate, and provenance attestations are generated automatically.
+The one wrinkle is the **first publish of each package**: OIDC cannot create a package that does not exist yet, and a package cannot have a trusted publisher configured until it exists ([npm/cli#8544](https://github.com/npm/cli/issues/8544), still open). That makes the very first publish a one-time manual bootstrap — the checklist below. Every release after it is workflow-only and tokenless.
 
-The one wrinkle is the **first publish of each package** — OIDC can't create a package that doesn't exist yet, and a package can't have a trusted publisher configured until it exists ([npm/cli#8544](https://github.com/npm/cli/issues/8544), still open):
+## First-release bootstrap — one-time checklist
 
-1. **Bootstrap (first publish only, from a maintainer's machine).** Publish each of the 15 SDK packages once by hand: `npm login` (interactive, with 2FA — nothing stored, no CI token), then `pnpm changeset:publish`. This is the *only* publish that happens off-CI.
-2. **Configure Trusted Publishing per package.** On npmjs.com, set each package's *Trusted Publisher* to this repo + `.github/workflows/release.yml`. OIDC publishing needs **npm ≥ 11.5.1 and Node ≥ 22.14.0** on the runner — the workflow's Setup Node (`node-version: 22`) + `npm install -g npm@latest` steps guarantee this.
-3. **Every release after that is workflow-only and tokenless.** Merging the Version Packages PR triggers `changeset publish`; npm accepts it via the run's OIDC token, no secret involved.
+> Run this **once**, before the first release ever cut from a release line. Everything here is manual by necessity; after step 4 the repo never publishes off-CI again. Every step needs maintainer rights (npm account with publish access, GitHub repo admin) — none of it can be done from CI or by an agent.
 
-> Recheck npm's trusted-publishing docs at flip time: if new packages can by then be pre-registered with a trusted publisher ([npm/cli#8544](https://github.com/npm/cli/issues/8544)), even the one-time local bootstrap can be skipped and publishing is 100% CI from day one.
+**Preconditions**
+
+- [ ] You are a member of the [`@oc-mui` npm org](https://www.npmjs.com/org/oc-mui) with publish rights.
+- [ ] You have admin access to the GitHub repo (step 1 changes a repo setting).
+- [ ] `pnpm verify` is green on the release line you are bootstrapping from.
+- [ ] `pnpm test:sdk-publish` is green — the Verdaccio smoke test is the acceptance gate that the shipped artifacts actually install and type-check outside the workspace. Bootstrapping without it means the first thing on npm is unverified.
+
+**1. Repo setting — let the action open the Version PR**
+
+- [ ] *Settings → Actions → General → Workflow permissions*: **"Allow GitHub Actions to create and approve pull requests"** must be ON. Without it, `release.yml` fails when it tries to open the "Version Packages" PR.
+
+**2. Publish each SDK package once, by hand**
+
+- [ ] `npm login` — interactive, with 2FA. Nothing is stored in the repo; there is no CI token at any point.
+- [ ] From the **release line** (`r/NN.x`, not `develop`), with a clean tree and a fresh build:
+
+  ```bash
+  pnpm install --frozen-lockfile && pnpm turbo run build build:types && pnpm publish -r --access public --no-git-checks
+  ```
+
+  **Use `pnpm`, never plain `npm publish`.** pnpm rewrites the `workspace:*` dependency ranges to real versions at pack time; `npm publish` ships them verbatim and every install of the package then fails. `pnpm publish -r` skips `private: true` packages on its own, so the 7 host-internal packages stay unpublished.
+
+- [ ] Confirm all 15 SDK packages landed (14 under `packages/` plus `@oc-mui/plugin-core` from `plugins/core/`):
+
+  ```bash
+  for p in app-runtime eslint-config i18n plugin-core plugin-system plugin-testing query router store tailwind-config typescript-config ui ui-config utils vite-config; do printf '%-28s %s\n' "@oc-mui/$p" "$(npm view "@oc-mui/$p" version 2>/dev/null || echo 'MISSING')"; done
+  ```
+
+**3. Configure a Trusted Publisher per package**
+
+- [ ] For **each** published package on npmjs.com: *Package → Settings → Trusted Publisher → GitHub Actions*, naming this repo and `.github/workflows/release.yml`. A package without one falls back to token auth, which does not exist here — its next release fails.
+
+**4. Verify the tokenless path before relying on it**
+
+- [ ] Cut a throwaway patch release on the release line (an `--empty` changeset is enough) and confirm the workflow publishes without a token, and that the product tag `v$(cat VERSION)` + GitHub Release appear.
+
+**5. Afterwards**
+
+- [ ] Delete nothing and unpublish nothing — a bad version gets `npm deprecate`, not an unpublish.
+- [ ] Update this checklist's status in [#236](https://github.com/academic-moodle-cooperation/management-ui/issues/236) and close it.
+
+> Recheck npm's trusted-publishing docs at flip time: if new packages can by then be pre-registered with a trusted publisher ([npm/cli#8544](https://github.com/npm/cli/issues/8544)), steps 2–3 collapse into "configure the publisher, let CI publish" and publishing is 100% CI from day one.
 
 ## See also
 

@@ -15,7 +15,6 @@ export interface AppConfig {
     };
     // (undocumented)
     app: {
-        appName: string;
         locale: string;
         HtmlDocumentTitle: string;
         logoUrl?: string;

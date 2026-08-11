@@ -4,6 +4,7 @@
   "accessPolicy": "Zugriffsrichtlinie",
   "addUser": "Benutzer hinzufügen",
   "accessList": "Zugriffsliste",
+  "user": "Benutzer",
   "read": "Lesen",
   "write": "Schreiben",
   "actions": "Aktionen",
@@ -14,6 +15,8 @@
   "noUsersFound": "Keine Benutzer gefunden.",
   "noEntries": "Keine Einträge.",
   "changesSaved": "Änderungen wurden gespeichert!",
+  "changesFailed": "Änderungen konnten nicht gespeichert werden.",
+  "readAlwaysGranted": "Alle auf dieser Liste haben Leserecht. Zum Entziehen die Zeile löschen.",
   "cannotEdit": "Dieses Video wird derzeit verarbeitet und kann nicht bearbeitet werden.",
   "noPolicy": "Keine Richtlinie",
   "acls": {

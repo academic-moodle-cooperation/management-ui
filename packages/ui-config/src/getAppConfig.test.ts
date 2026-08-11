@@ -9,14 +9,12 @@ describe("getAppConfig", () => {
     const config = getAppConfig();
 
     expect(config.productionConfigUrl).toBe(defaultConfig.productionConfigUrl);
-    expect(config.app.appName).toBe(defaultConfig.app.appName);
     expect(config.app.theme).toBe(defaultConfig.app.theme);
   });
 
   it("should merge instance config with default config", () => {
     const instanceConfig: Partial<AppConfig> = {
       app: {
-        appName: "Custom App Name",
         theme: "custom-theme",
         locale: defaultConfig.app.locale,
         HtmlDocumentTitle: defaultConfig.app.HtmlDocumentTitle,
@@ -26,7 +24,6 @@ describe("getAppConfig", () => {
 
     const config = getAppConfig(instanceConfig);
 
-    expect(config.app.appName).toBe("Custom App Name");
     expect(config.app.theme).toBe("custom-theme");
     // Other defaults should still be present
     expect(config.app.locale).toBe(defaultConfig.app.locale);
@@ -169,7 +166,6 @@ describe("getAppConfig", () => {
 
     expect(config.app.logoUrl).toBe("/custom-logo.png");
     // Other app properties should still be from default
-    expect(config.app.appName).toBe(defaultConfig.app.appName);
     expect(config.app.faviconUrl).toBe(defaultConfig.app.faviconUrl);
   });
 });

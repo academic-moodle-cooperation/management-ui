@@ -11,7 +11,7 @@ vi.mock("@oc-mui/ui-config", () => ({
     app: {
       theme: "default",
       enabledPlugins: ["core"] as string[],
-      appName: "Mock App",
+      HtmlDocumentTitle: "Mock App",
     },
   },
   getAppConfig: (data: unknown) => data,
@@ -34,7 +34,7 @@ describe("getAppConfigSync", () => {
   it("returns a copy of the default config when no manager is supplied", () => {
     const result = getAppConfigSync();
     expect(result.app?.theme).toBe("default");
-    expect(result.app?.appName).toBe("Mock App");
+    expect(result.app?.HtmlDocumentTitle).toBe("Mock App");
   });
 
   it("prefers the explicit baseConfig over the default", () => {
@@ -51,13 +51,13 @@ describe("getAppConfigSync", () => {
   it("deep-merges plugin overlays into the base config", () => {
     const manager = makeManager([
       { app: { theme: "dark" } as AppConfig["app"] },
-      { app: { appName: "Overlay App" } as AppConfig["app"] },
+      { app: { HtmlDocumentTitle: "Overlay App" } as AppConfig["app"] },
     ]);
 
     const result = getAppConfigSync(manager);
     expect(result.app?.theme).toBe("dark");
     // Deep merge must preserve sibling keys from the base + earlier overlays.
-    expect(result.app?.appName).toBe("Overlay App");
+    expect(result.app?.HtmlDocumentTitle).toBe("Overlay App");
     expect(result.app?.enabledPlugins).toEqual(["core"]);
   });
 

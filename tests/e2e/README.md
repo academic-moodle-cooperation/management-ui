@@ -25,6 +25,39 @@ The `e2e` job in [.github/workflows/test.yml](../../.github/workflows/test.yml)
 runs the suite against a clean dev server on every push and pull request.
 Playwright reports are uploaded as an artifact when a test fails.
 
+## Protocol-driven specs
+
+[`protocol-series.spec.ts`](protocol-series.spec.ts) and
+[`protocol-episodes.spec.ts`](protocol-episodes.spec.ts) automate steps from an
+org's manual test protocol. Each test claims a step by putting its id in the
+title:
+
+```ts
+test("[SER-08] column visibility survives paging to the next page", …)
+```
+
+`pnpm protocol:coverage` reconciles those markers against the protocol —
+see [`tests/protocol/README.md`](../protocol/README.md).
+
+They run against [`_fixtures/mock-backend.ts`](_fixtures/mock-backend.ts), which
+keeps a mutable in-memory store, honours `query`/`orderBy`/`limit`/`offset`,
+applies mutations, and records every GraphQL operation. That last part matters:
+where the real behaviour lives server-side (search), the spec asserts on *what
+the frontend asked for* rather than on mocked results, which would only test the
+mock.
+
+## Browser matrix
+
+```bash
+pnpm test:matrix:install   # one-time: chromium + firefox + webkit
+pnpm test:matrix           # every spec here across 5 browser/device projects
+pnpm test:matrix --project=webkit
+```
+
+[`playwright.matrix.config.ts`](../../playwright.matrix.config.ts) turns the
+protocol's per-browser result columns into projects. `pnpm test:e2e` stays
+chromium-only so the pre-push gate stays fast.
+
 ## Adding a test
 
 Drop a new `*.spec.ts` next to [smoke.spec.ts](smoke.spec.ts). The test base

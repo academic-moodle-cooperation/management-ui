@@ -1,7 +1,7 @@
 import { Trash2 } from "lucide-react";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 
-import { useI18n, loadNamespace } from "@oc-mui/i18n";
+import { useI18n } from "@oc-mui/i18n";
 import {
   useMuiGetAllManagedAclsQuery,
   useMuiUpdateEventAclMutation,
@@ -45,30 +45,44 @@ import type { AclData, ACLEntry, ACLEntryInput, SelectedElement } from "./types"
 
 type UserSearchResult = NonNullable<NonNullable<MuiSearchUserQuery["searchUser"]>["nodes"]>[number];
 
-interface AclEditorProps {
+/**
+ * Exported so the API report records the actual prop surface. Left
+ * unexported, the report only says `AclEditor: React.FC<AclEditorProps>` and a
+ * change to any prop — required becoming optional, a callback signature
+ * changing — slips through unnoticed.
+ */
+export interface AclEditorProps {
   selectedElement?: SelectedElement | null | undefined;
   aclEntries: ACLEntry[];
   managedAclId?: string | undefined;
-  hasChanges: boolean;
-  refetch: () => void;
-  onClose?: (() => void) | undefined;
-  showUpdateButton?: boolean | undefined;
   onAclChange: (entries: ACLEntry[]) => void;
   onManagedAclChange: (managedAclId: string) => void;
-  onHasChangesChange: (hasChanges: boolean) => void;
+  onClose?: (() => void) | undefined;
   disabled?: boolean | undefined;
+
+  /**
+   * The three below drive the "edit an existing entity, then press Update"
+   * flow. They are optional because the other caller shape — collecting an ACL
+   * for something that does not exist yet, such as an upload — has no entity
+   * to refetch, no Update button, and no dirty state to report. Requiring them
+   * only forced those callers to pass no-ops.
+   */
+  hasChanges?: boolean | undefined;
+  refetch?: (() => void) | undefined;
+  onHasChangesChange?: ((hasChanges: boolean) => void) | undefined;
+  showUpdateButton?: boolean | undefined;
 }
 
 export const AclEditor: React.FC<AclEditorProps> = ({
   selectedElement,
   aclEntries,
   managedAclId,
-  hasChanges,
+  hasChanges = false,
   refetch = () => {},
   showUpdateButton = true,
   onAclChange,
   onManagedAclChange,
-  onHasChangesChange,
+  onHasChangesChange = () => {},
   disabled = false,
 }) => {
   // Only UI state is local
@@ -76,15 +90,15 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const updateEventAcl = useMuiUpdateEventAclMutation();
   const updateSeriesAcl = useMuiUpdateSeriesAclMutation();
-  const { t, i18n } = useI18n();
+  // Every label in here comes from `muitable-sidebar`, so the component has to
+  // be *subscribed* to that namespace, not merely trigger its download. It
+  // previously called `loadNamespace` from an effect while binding `useI18n()`
+  // to the default namespace: react-i18next then had no reason to re-render
+  // when the bundle arrived, so the first render in any context that hadn't
+  // already loaded it showed bare keys ("accessPolicy", "addUser", …).
+  // Naming the namespace here makes react-i18next load it and re-render.
+  const { t } = useI18n("muitable-sidebar");
   const queryClient = useQueryClient();
-
-  useEffect(() => {
-    const loadTranslations = async () => {
-      await loadNamespace("muitable-sidebar", i18n.language);
-    };
-    loadTranslations();
-  }, [i18n.language]);
 
   const { data, isLoading, isError } = useMuiSearchUserQuery({
     query: searchQuery,
@@ -153,9 +167,14 @@ export const AclEditor: React.FC<AclEditorProps> = ({
           updatedEntries[index].action.push(permission);
         }
       } else {
-        updatedEntries[index].action = updatedEntries[index].action.filter(
-          (act) => act !== permission,
-        );
+        const remaining = updatedEntries[index].action.filter((act) => act !== permission);
+        // Never let a row end up granting nothing. Normally read holds the
+        // floor, but a backend-supplied entry can carry write without read —
+        // unchecking write there would leave an entry for a user with no
+        // permission at all, which reads as "has access" in the list while
+        // granting none. Revoking access is what the row's delete button is for.
+        if (remaining.length === 0) return;
+        updatedEntries[index].action = remaining;
       }
       onAclChange(updatedEntries);
       onHasChangesChange(true);
@@ -309,14 +328,17 @@ export const AclEditor: React.FC<AclEditorProps> = ({
             <Table className="w-full table-fixed">
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-1/2 px-0">User</TableHead>
-                  <TableHead className="w-1/4 px-0 text-center">
+                  {/* Widths must total 100%: `table-fixed` normalises anything
+                      else proportionally, so declared and rendered proportions
+                      drift apart and editing one column moves the others. */}
+                  <TableHead className="w-1/2 px-0">{t("muitable-sidebar:user")}</TableHead>
+                  <TableHead className="w-1/6 px-0 text-center">
                     {t("muitable-sidebar:read")}
                   </TableHead>
-                  <TableHead className="w-1/4 px-0 text-center">
+                  <TableHead className="w-1/6 px-0 text-center">
                     {t("muitable-sidebar:write")}
                   </TableHead>
-                  <TableHead className="w-1/3 px-0 text-center">
+                  <TableHead className="w-1/6 px-0 text-center">
                     {t("muitable-sidebar:actions")}
                   </TableHead>
                 </TableRow>
@@ -330,10 +352,23 @@ export const AclEditor: React.FC<AclEditorProps> = ({
                       </OverflowTooltip>
                     </TableCell>
                     <TableCell className="text-center py-2 px-0">
+                      {/*
+                        Read is deliberately not togglable: being listed here IS
+                        read access. New entries are created with `["read"]`, and
+                        access is revoked by deleting the row, not by unchecking
+                        this. So there is no change handler — an entry that could
+                        lose its last permission would be a row granting nothing.
+
+                        A backend-supplied entry with write but no read renders
+                        unchecked and stays that way; we deliberately do not add
+                        `read` on load, since that would be an unrequested
+                        permission change written back on the next save.
+                      */}
                       <Checkbox
                         checked={entry.action.includes("read")}
                         disabled
-                        onCheckedChange={(value) => handlePermissionChange(index, "read", value)}
+                        aria-label={t("muitable-sidebar:readAlwaysGranted")}
+                        title={t("muitable-sidebar:readAlwaysGranted")}
                       />
                     </TableCell>
                     <TableCell className="text-center py-2 px-0">

@@ -257,10 +257,23 @@ exports (this PR).
   `peerDependencies`; `@oc-mui/ui`'s react peer is reconciled.
 - **`sideEffects` + api-extractor coverage.** Mostly done in PR #228
   (`sideEffects` declared; `.api.md` tracking + `api-check` added to
-  `app-runtime`, `utils`, `plugin-testing`). **Remaining: `@oc-mui/ui`** — its
-  ~9k-LOC export surface should get a curation pass first, and the PR #230
-  dead-code deletions should land before the initial snapshot so the report
-  doesn't enshrine exports that are about to be removed.
+  `app-runtime`, `utils`, `plugin-testing`). `@oc-mui/ui` followed in PR #268
+  (`./components`, 262 exports).
+
+  **The planned sequencing was skipped, deliberately.** The note here used to
+  say the curation pass should come *before* the initial snapshot, so the
+  report wouldn't enshrine exports about to be removed. The baseline landed
+  first anyway: nothing is published yet, so removing an export costs a
+  regenerated report and a changeset — not a major bump. The snapshot is not
+  the point of no return; the **first npm publish** is.
+
+  **Still open, and now deadline-bound:** curate `@oc-mui/ui`'s export surface
+  (which of the 262 are SDK, which are host internals) **before** step 2 of the
+  [first-release bootstrap](./release.md#first-release-bootstrap--one-time-checklist).
+  After that publish, every removal is a major bump plus a `@deprecated` cycle.
+  Also still uncovered: the `./hooks`, `./lib`, `./lib/utils` and
+  `./config-primitives` entry points (`etc/ui.api.md` exists but is empty —
+  `src/index.ts` exports nothing).
 - **npm org bootstrap (manual, on npmjs.com).** First-publish each `@oc-mui/*`
   package via `pnpm publish` while logged in, then configure per-package Trusted
   Publishers. See [`release.yml`](../../.github/workflows/release.yml).
@@ -296,6 +309,13 @@ exports (this PR).
   Once the parent targets a released Opencast (≥ 17 ships the GraphQL module),
   prebuilt container images become viable for the full-stack dev setup and the
   guide gets dramatically shorter.
+  **Currently blocked upstream** (checked 2026-07-29): no released
+  `org.opencastproject:base:19.x` exists in any public Maven repository —
+  Maven Central stops at `18.5` (the 17.x series is missing entirely), and
+  `mvn.opencast.org` is Opencast's third-party mirror, not its own artifacts.
+  `18.5` being on Central proves the upstream publishing pipeline works, so
+  the actionable step is asking the Opencast project to publish the 19.x
+  artifacts; retarget once they exist.
 
 ### 9.3 Deferred marketplace hardening
 

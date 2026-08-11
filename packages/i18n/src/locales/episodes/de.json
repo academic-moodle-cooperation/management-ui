@@ -58,6 +58,8 @@
       "play": "Video abspielen",
       "download": "Download",
       "delete": "Video löschen",
+      "moveToTrash": "In den Papierkorb",
+      "deletePermanently": "Endgültig löschen",
       "flavor": {
         "presentation": "Bildschirm",
         "presenter": "Kamera",
@@ -68,12 +70,18 @@
     "notification": {
       "changesSaved": "Änderungen wurden gespeichert",
       "changesFailed": "Änderungen konnten nicht gespeichert werden",
-      "deleteSuccess": "Video wurde gelöscht",
+      "trashSuccess": "Video wurde in den Papierkorb verschoben",
+      "trashError": "Video konnte nicht in den Papierkorb verschoben werden",
+      "deleteSuccess": "Video wurde endgültig gelöscht",
       "deleteError": "Video konnte nicht gelöscht werden",
       "fieldRequiredEmpty": "Leeres Pflichtfeld"
     },
+    "trashDialogue": {
+      "heading": "Video in den Papierkorb verschieben?",
+      "text": "Möchten Sie das Video {{title}} in den Papierkorb verschieben? Es wird für Nutzer:innen ausgeblendet und kann von Administrator:innen wiederhergestellt oder endgültig gelöscht werden."
+    },
     "deleteDialogue": {
-      "heading": "Video löschen?",
+      "heading": "Video endgültig löschen?",
       "text": "Wollen Sie das Video {{title}} wirklich <strong>dauerhaft</strong> und <strong>irreversibel</strong> löschen? Alle Veröffentlichungen dieses Videos werden dadurch ungültig.",
       "cancel": "Abbrechen",
       "delete": "Löschen"

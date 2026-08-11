@@ -16,8 +16,32 @@
  *
  * Paths are relative to this file (apps/shell/src/).
  */
+/*
+ * This `@import` is what pulls in Tailwind itself, the theme tokens and the
+ * fonts — it is inlined here, so the build below is complete.
+ *
+ * Vite *additionally* emits the imported package CSS as its own module, and
+ * that copy carries its own Tailwind build scanning only `packages/ui`. Two
+ * builds therefore reach the page. Utilities in both are identical and
+ * harmless, but a base utility from the *later* sheet beats a responsive
+ * variant only the earlier sheet generated, at equal specificity — which made
+ * `flex-col md:flex-row` stay a column at every width.
+ *
+ * `main.tsx` imports `@oc-mui/ui/globals.css` explicitly before this file to
+ * pin that duplicate ahead of this build, whose variants then win. Keep both
+ * the import there and this `@import`: dropping this one leaves the file
+ * without Tailwind and it generates nothing at all.
+ */
 @import "@oc-mui/ui/globals.css";
 
 @source "../../**/*.{ts,tsx,js,jsx}";
 @source "../../../plugins/**/*.{ts,tsx,js,jsx}";
 @source "../../../.local-plugins/**/*.{ts,tsx,js,jsx}";
+/*
+ * `packages/ui` is scanned here too, even though the library's own stylesheet
+ * already covers it. Being the *last* sheet, this build must be a superset of
+ * the earlier one: otherwise a utility only a UI component uses (say
+ * `lg:hidden`) exists solely in the earlier sheet, and a plain `block` from
+ * here would beat it — the same failure as before, just mirrored.
+ */
+@source "../../../packages/ui/src/**/*.{ts,tsx,js,jsx}";

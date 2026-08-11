@@ -266,6 +266,7 @@ one-time costs per cache; subsequent starts and loads are fast.
 | Opencast build fails in `modules/admin`, `modules/editor` or `modules/studio` with missing sources | Cloned without `--recurse-submodules` — run `git submodule update --init --recursive` and resume |
 | Opencast build fails during `npm ci` with `ETIMEDOUT` | Registry timeouts, not a code problem — raise npm's retry limits (below) and resume |
 | `npm WARN EBADENGINE` during the Opencast build | Warning only: the frontend submodules pin older Node ranges. Only `npm ERR!` and Maven's final `BUILD FAILURE` mean the build failed |
+| Opencast build fails in `engage-paella-player-8` with `Cannot find module '@rollup/rollup-darwin-arm64'` (macOS, Apple Silicon) | npm's known optional-dependency bug ([npm/cli#4828](https://github.com/npm/cli/issues/4828)) — the platform-specific rollup binary is not installed. Reinstall that module's dependencies once, then resume: `cd modules/engage-paella-player-8 && rm -rf node_modules package-lock.json && npm install`, then `mvn install -DskipTests -rf :opencast-engage-paella-player-8` from the Opencast root |
 
 A failed Maven module does not mean starting over: Maven prints a `-rf` resume
 command at the end of the error output, e.g.

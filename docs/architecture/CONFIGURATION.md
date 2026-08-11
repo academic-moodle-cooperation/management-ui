@@ -26,7 +26,6 @@ interface AppConfig {
   downloadBaseUrl?: string;
   matomo: MatomoConfig;
   app: {
-    appName: string;        // product name shown in chrome
     locale: string;
     HtmlDocumentTitle: string; // <title> of the document
     logoUrl?: string;

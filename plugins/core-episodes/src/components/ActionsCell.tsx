@@ -3,7 +3,12 @@ import React, { useState } from "react";
 
 import { i18next } from "@oc-mui/i18n";
 import { PluginComponent } from "@oc-mui/plugin-system";
-import { useAppConfig, useMuiDeleteEventMutation } from "@oc-mui/query";
+import {
+  useAppConfig,
+  useMuiDeleteEventMutation,
+  useDeleteEventPermanentlyMutation,
+  useGetUserInfo,
+} from "@oc-mui/query";
 import type { MuiEventsDataFragment } from "@oc-mui/query";
 import { Link } from "@oc-mui/router";
 import {
@@ -29,7 +34,7 @@ import {
   DropdownMenuTrigger,
   toast,
 } from "@oc-mui/ui/components";
-import { resolveDownloadUrl } from "@oc-mui/utils";
+import { buildDownloadFileName, resolveDownloadUrl } from "@oc-mui/utils";
 
 import { useSidebarStore } from "../stores/sidebarStore";
 
@@ -68,14 +73,49 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
   };
 
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [permanentDialogOpen, setPermanentDialogOpen] = useState(false);
   const deleteEvent = useMuiDeleteEventMutation();
+  const deleteEventPermanently = useDeleteEventPermanentlyMutation();
+  // Admin gate, matching AppProtection and the sidebar rather than inventing a
+  // third variant: authorize against the *granted* roles array (Opencast's
+  // `userRole` is the per-user `ROLE_USER_<name>` identity, not a privilege), and
+  // treat the organization's configured `org.adminRole` as equivalent to the
+  // canonical `ROLE_ADMIN` — a deployment that renamed its admin role must not
+  // silently lose the permanent-delete action.
+  const { data: userInfo } = useGetUserInfo();
+  const userRoles = userInfo?.roles ?? [];
+  const orgAdminRole = userInfo?.org?.adminRole;
+  const isAdmin =
+    userRoles.includes("ROLE_ADMIN") ||
+    (orgAdminRole !== undefined && userRoles.includes(orgAdminRole));
   const { config } = useAppConfig();
   const { openSidebarWithData } = useSidebarStore();
   const downloadBaseUrl =
     typeof config.downloadBaseUrl === "string" ? config.downloadBaseUrl : undefined;
 
+  // Default delete is a soft delete: the backend moves the event into the trash
+  // series (mui.deleteEvent → configured trash workflow), hiding it from regular
+  // users while keeping it recoverable.
   const onDelete = (id: string) => {
     deleteEvent.mutate(
+      { eventId: id },
+      {
+        onSuccess: () => {
+          toast.success(i18next.t("episodes:episodesTable.notification.trashSuccess"));
+          refetch();
+        },
+        onError: () => {
+          toast.error(i18next.t("episodes:episodesTable.notification.trashError"));
+        },
+      },
+    );
+    setDialogOpen(false);
+  };
+
+  // Permanent delete is admin-only: it removes the event from the index for good
+  // (top-level deleteEvent → IndexService.removeEvent). Irreversible.
+  const onDeletePermanently = (id: string) => {
+    deleteEventPermanently.mutate(
       { eventId: id },
       {
         onSuccess: () => {
@@ -87,7 +127,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
         },
       },
     );
-    setDialogOpen(false);
+    setPermanentDialogOpen(false);
   };
 
   // Define default actions
@@ -143,11 +183,21 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
     {
       id: "delete",
       icon: <Trash2 />,
-      label: i18next.t("common:delete"),
-      tooltip: i18next.t("common:delete"),
+      label: i18next.t("episodes:episodesTable.action.moveToTrash"),
+      tooltip: i18next.t("episodes:episodesTable.action.moveToTrash"),
       component: () => <DeleteAction onOpen={() => setDialogOpen(true)} />,
       menuItem: () => <DeleteMenuItem onOpen={() => setDialogOpen(true)} />,
       priority: 10, // Lower priority = shown later
+    },
+    {
+      id: "delete-permanently",
+      icon: <Trash2 />,
+      label: i18next.t("episodes:episodesTable.action.deletePermanently"),
+      tooltip: i18next.t("episodes:episodesTable.action.deletePermanently"),
+      component: () => <DeletePermanentlyAction onOpen={() => setPermanentDialogOpen(true)} />,
+      menuItem: () => <DeletePermanentlyMenuItem onOpen={() => setPermanentDialogOpen(true)} />,
+      condition: () => isAdmin, // admin-only, irreversible
+      priority: 5, // Lowest priority → overflow menu, after soft delete
     },
   ];
 
@@ -311,40 +361,75 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
       )}
       <DeleteDialog
         event={event}
-        onDelete={onDelete}
+        onConfirm={onDelete}
         dialogOpen={dialogOpen}
         setDialogOpen={setDialogOpen}
+        heading={i18next.t("episodes:episodesTable.trashDialogue.heading")}
+        bodyKey="episodesTable.trashDialogue.text"
+        confirmLabel={i18next.t("episodes:episodesTable.action.moveToTrash")}
       />
+      {isAdmin && (
+        <DeleteDialog
+          event={event}
+          onConfirm={onDeletePermanently}
+          dialogOpen={permanentDialogOpen}
+          setDialogOpen={setPermanentDialogOpen}
+          heading={i18next.t("episodes:episodesTable.deleteDialogue.heading")}
+          bodyKey="episodesTable.deleteDialogue.text"
+          confirmLabel={i18next.t("common:delete")}
+        />
+      )}
     </div>
   );
 };
 
 const DeleteDialog: React.FC<{
   event: MuiEventsDataFragment;
-  onDelete: (id: string) => void;
+  onConfirm: (id: string) => void;
   dialogOpen: boolean;
   setDialogOpen: (open: boolean) => void;
-}> = ({ event, onDelete, dialogOpen, setDialogOpen }) => (
+  heading: string;
+  /** i18n key inside the `episodes` namespace; interpolated with the title. */
+  bodyKey: string;
+  confirmLabel: string;
+}> = ({ event, onConfirm, dialogOpen, setDialogOpen, heading, bodyKey, confirmLabel }) => (
   <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
-    <DeleteDialogContent event={event} onDelete={onDelete} setDialogOpen={setDialogOpen} />
+    <DeleteDialogContent
+      event={event}
+      onConfirm={onConfirm}
+      setDialogOpen={setDialogOpen}
+      heading={heading}
+      bodyKey={bodyKey}
+      confirmLabel={confirmLabel}
+    />
   </Dialog>
 );
 
 const DeleteDialogContent: React.FC<{
   event: MuiEventsDataFragment;
-  onDelete: (id: string) => void;
+  onConfirm: (id: string) => void;
   setDialogOpen: (open: boolean) => void;
-}> = ({ event, onDelete, setDialogOpen }) => (
+  heading: string;
+  /** i18n key inside the `episodes` namespace; interpolated with the title. */
+  bodyKey: string;
+  confirmLabel: string;
+}> = ({ event, onConfirm, setDialogOpen, heading, bodyKey, confirmLabel }) => (
   <DialogContent onClick={(e: React.MouseEvent) => e.stopPropagation()}>
     <DialogHeader>
-      <DialogTitle>{i18next.t("episodes:episodesTable.deleteDialogue.heading")}</DialogTitle>
+      <DialogTitle>{heading}</DialogTitle>
       <DialogDescription
         dangerouslySetInnerHTML={{
-          // The translation carries trusted static <strong> markup, so it is
-          // rendered as HTML. `event.title` is user-controlled, so escape the
-          // interpolated value here (i18n runs with escapeValue:false globally)
-          // to prevent stored XSS via a crafted event title.
-          __html: i18next.t("episodesTable.deleteDialogue.text", {
+          // The translations carry trusted static <strong> markup, so they are
+          // rendered as HTML. `event.title` is user-controlled, so the
+          // interpolated value is escaped here — i18n runs with
+          // escapeValue:false globally, and this would otherwise be stored XSS
+          // via a crafted event title.
+          //
+          // Rendered from a key rather than a ready-made `bodyHtml` string on
+          // purpose: with two dialogs sharing this component, a caller passing
+          // pre-rendered text is one forgotten `escapeValue` away from
+          // reopening the hole. The invariant lives in one place instead.
+          __html: i18next.t(bodyKey, {
             title: event.title || "",
             ns: "episodes",
             interpolation: { escapeValue: true },
@@ -363,10 +448,10 @@ const DeleteDialogContent: React.FC<{
         variant="destructive"
         onClick={(e: React.MouseEvent) => {
           e.stopPropagation();
-          onDelete(event.id);
+          onConfirm(event.id);
         }}
       >
-        {i18next.t("common:delete")}
+        {confirmLabel}
       </Button>
       <DialogClose asChild>
         <Button
@@ -402,7 +487,7 @@ const DeleteAction: React.FC<{
         <Trash2 />
       </Button>
     </TooltipTrigger>
-    <TooltipContent>{i18next.t("common:delete")}</TooltipContent>
+    <TooltipContent>{i18next.t("episodes:episodesTable.action.moveToTrash")}</TooltipContent>
   </Tooltip>
 );
 
@@ -418,7 +503,47 @@ const DeleteMenuItem: React.FC<{
     className="gap-2 cursor-pointer"
   >
     <Trash2 className="w-4 h-4" />
-    <span>{i18next.t("common:delete")}</span>
+    <span>{i18next.t("episodes:episodesTable.action.moveToTrash")}</span>
+  </DropdownMenuItem>
+);
+
+// Admin-only permanent delete (irreversible). Styled destructive to distinguish
+// it from the default soft delete (move to trash).
+const DeletePermanentlyAction: React.FC<{
+  onOpen: () => void;
+  event?: MuiEventsDataFragment;
+}> = ({ onOpen }) => (
+  <Tooltip delayDuration={300}>
+    <TooltipTrigger asChild>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="w-4 h-4 text-destructive hover:text-destructive"
+        onClick={(e: React.MouseEvent) => {
+          e.stopPropagation();
+          onOpen();
+        }}
+      >
+        <Trash2 />
+      </Button>
+    </TooltipTrigger>
+    <TooltipContent>{i18next.t("episodes:episodesTable.action.deletePermanently")}</TooltipContent>
+  </Tooltip>
+);
+
+const DeletePermanentlyMenuItem: React.FC<{
+  onOpen: () => void;
+  event?: MuiEventsDataFragment;
+}> = ({ onOpen }) => (
+  <DropdownMenuItem
+    onSelect={(e) => {
+      e.stopPropagation();
+      onOpen();
+    }}
+    className="gap-2 cursor-pointer text-destructive focus:text-destructive"
+  >
+    <Trash2 className="w-4 h-4" />
+    <span>{i18next.t("episodes:episodesTable.action.deletePermanently")}</span>
   </DropdownMenuItem>
 );
 
@@ -460,13 +585,19 @@ const renderDownloadMenuItems = (event: MuiEventsDataFragment, downloadBaseUrl?:
 
       if (!downloadUrl) return null;
 
+      const fileName = buildDownloadFileName({
+        title: event.title,
+        source: track?.logicalName ?? track?.uri,
+        mimeType: track?.mimeType,
+      });
+
       return (
         <DropdownMenuItem key={index} asChild className="gap-2 cursor-pointer">
           <a
             href={addDownloadParam(downloadUrl)}
             target="_blank"
             rel="noreferrer"
-            download={event.title}
+            download={fileName}
             onClick={(e: React.MouseEvent) => e.stopPropagation()}
             className="flex items-center gap-2"
           >
