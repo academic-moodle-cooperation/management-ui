@@ -359,6 +359,16 @@ export async function installMockBackend(
     'id="mock-mediapackage" start="2026-01-01T00:00:00Z"></mediapackage>';
 
   await page.route("**/ingest/**", async (route: Route) => {
+    // Only intercept API traffic. The local E2E run uses the Vite dev server,
+    // which loads source modules as individual URLs — and core-upload-v2 has a
+    // `src/ingest/` directory, so its module requests match this glob too.
+    // Answering those with mediapackage XML kills the whole app at boot
+    // ("Failed to load module script ... MIME type text/xml").
+    const resourceType = route.request().resourceType();
+    if (resourceType !== "fetch" && resourceType !== "xhr") {
+      await route.fallback();
+      return;
+    }
     const url = new URL(route.request().url());
     const endpoint = url.pathname.split("/").pop() ?? "";
     backend.ingestCalls.push({ endpoint, body: route.request().postData() ?? "" });
