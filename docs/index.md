@@ -7,39 +7,34 @@ hero:
   tagline: A thin shell hosts routing, auth, and layout. Every visible feature ships as a plugin — with a frozen contract.
   actions:
     - theme: brand
-      text: Get started
-      link: /getting-started/what-is-management-ui
+      text: Deploy it
+      link: /getting-started/deployment
     - theme: alt
-      text: Write a plugin
-      link: /plugins/creating-a-plugin
+      text: Build a plugin
+      link: /plugins/first-plugin
     - theme: alt
-      text: View on GitHub
-      link: https://github.com/academic-moodle-cooperation/management-ui
+      text: Contribute
+      link: https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/CONTRIBUTING.md
 
 features:
-  - title: Plugin-first architecture
-    details: Routes, sidebar entries, themes, and config all come from plugins. The shell never has to know about your feature.
-  - title: Frozen contracts
-    details: Six contracts — manifest, runtime API, theme, config, shared runtime dependencies, GraphQL naming — stable for the 1.x line. Manifest and runtime API are mechanically verified (API Extractor + contract-test harness); theme and config are documented contracts, and GraphQL naming is lint-enforced.
-    link: /architecture/CONTRACTS
-    linkText: The contracts
-  - title: Four distribution paths
-    details: Ship plugins in-tree, mount them at dev time from .local-plugins/, deploy them as JARs alongside Opencast, or publish them to a CDN.
-  - title: Semantic theming
-    details: CSS-variable tokens, org themes override values without touching components. Plugins consume `bg-card`, `text-muted-foreground`, …
-  - title: Loose coupling
-    details: pnpm workspace with strict architectural boundaries enforced by eslint-plugin-boundaries. Lower layers never depend on higher ones.
-  - title: AI-friendly
-    details: Every doc is also legible to an LLM. `llms.txt` ships a machine-readable summary; `AGENTS.md` documents the operational rules.
+  - title: Deploy it
+    details: For Opencast admins. Afterwards you'll have Management UI running on your Opencast — three JARs deployed, one config.json in place, login working.
+    link: /getting-started/deployment
+    linkText: Deployment
+  - title: Build a plugin
+    details: For plugin developers. Afterwards you'll have a working plugin scaffolded, visible in the dev shell, with its contract test green — in about five minutes.
+    link: /plugins/first-plugin
+    linkText: Your first plugin
+  - title: Contribute
+    details: For contributors to this repo. Afterwards you'll know the dev loop, the changeset rule, and what CI will demand — everything to land your first PR.
+    link: https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/CONTRIBUTING.md
+    linkText: CONTRIBUTING.md
 ---
 
 ## What to read next
 
-Use the top navigation to find your audience:
+- **[Deploy it](/getting-started/deployment)** — run Management UI on your Opencast.
+- **[Build a plugin](/plugins/first-plugin)** — extend the UI without forking it.
+- **[Contribute](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/CONTRIBUTING.md)** — work on the shell, the shared packages, or the built-in plugins.
 
-- **[Getting started](/getting-started/what-is-management-ui)** — what it is, how to install it, how to configure it.
-- **[Plugins](/plugins/creating-a-plugin)** — the walkthrough, distribution paths, styling and i18n contracts.
-- **[Architecture](/architecture/overview)** — three pillars, dependency layers, contracts, ADRs.
-- **[Operations](/operations/release)** — releases, CI, the test pyramid.
-
-Contributing? Read [`CONTRIBUTING.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/CONTRIBUTING.md) and [`AGENTS.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/AGENTS.md) on GitHub.
+New here? [What is Management UI?](/getting-started/what-is-management-ui) is the one-screen tour. The frozen plugin contracts live in [Contracts](/architecture/CONTRACTS); AI agents start at [`AGENTS.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/AGENTS.md) and [`llms.txt`](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/llms.txt).

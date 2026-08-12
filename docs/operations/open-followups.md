@@ -188,7 +188,7 @@ PR-3a restructured `docs/` from 40 files to 20, rewrote the plugin-author and op
 
 ### 8.1 ✅ Done — workflow docs consolidated
 
-`docs/workflows/ADDING_APPS.md` + `ADDING_PACKAGES.md` (~1.4k lines, with dangling links to deleted docs — `COUPLING_ANALYSIS.md`, `PACKAGE_README_TEMPLATE.md`, `AI_DEVELOPMENT_GUIDE.md` — and stale paths like `apps/management-ui-core`) were replaced by a single concise [`extending-the-workspace.md`](extending-the-workspace.md), added to the Operations sidebar and dropped from `config.mts`'s `srcExclude`. The `docs/workflows/` directory is now gone.
+`ADDING_APPS.md` + `ADDING_PACKAGES.md` (formerly under a separate `workflows` directory in `docs/`; ~1.4k lines, with dangling links to deleted docs — `COUPLING_ANALYSIS.md`, `PACKAGE_README_TEMPLATE.md`, `AI_DEVELOPMENT_GUIDE.md` — and stale paths like `apps/management-ui-core`) were replaced by a single concise [`extending-the-workspace.md`](extending-the-workspace.md), added to the Operations sidebar and dropped from `config.mts`'s `srcExclude`. That directory is now gone.
 
 ### 8.3 Going public with the docs site
 

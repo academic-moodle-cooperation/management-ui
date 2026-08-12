@@ -22,7 +22,7 @@ pnpm build         # one-time — builds dist-types/ for upstream packages
 pnpm dev           # http://127.0.0.1:3000/management-ui/
 ```
 
-Full setup, including backend wiring: [`docs/getting-started/installation.md`](docs/getting-started/installation.md).
+Full run-from-source setup, including backend wiring: [`docs/getting-started/installation.md`](docs/getting-started/installation.md). Deploying onto an Opencast server instead: [`docs/getting-started/deployment.md`](docs/getting-started/deployment.md).
 
 ## Repo layout
 
@@ -41,7 +41,7 @@ Architectural tour: [`docs/architecture/overview.md`](docs/architecture/overview
 
 | If you want to… | Start at |
 |-----------------|----------|
-| **Use Management UI** | [`docs/getting-started/`](docs/getting-started/) |
+| **Deploy it on your Opencast** | [`docs/getting-started/deployment.md`](docs/getting-started/deployment.md) |
 | **Write a plugin** | [`docs/plugins/creating-a-plugin.md`](docs/plugins/creating-a-plugin.md) |
 | **Contribute to the core** | [`CONTRIBUTING.md`](CONTRIBUTING.md) |
 | **Understand the architecture** | [`docs/architecture/overview.md`](docs/architecture/overview.md) |

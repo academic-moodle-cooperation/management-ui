@@ -101,10 +101,11 @@ export default defineConfig({
           text: "Getting started",
           items: [
             { text: "What is Management UI?", link: "/getting-started/what-is-management-ui" },
-            { text: "Installation", link: "/getting-started/installation" },
-            { text: "Full local setup (backend)", link: "/getting-started/local-backend" },
+            { text: "Deployment", link: "/getting-started/deployment" },
             { text: "Configuration", link: "/getting-started/configuration" },
             { text: "Upgrading", link: "/getting-started/upgrading" },
+            { text: "Run from source", link: "/getting-started/installation" },
+            { text: "Full local setup (backend)", link: "/getting-started/local-backend" },
           ],
         },
       ],
@@ -170,7 +171,9 @@ export default defineConfig({
     socialLinks: [{ icon: "github", link: REPO_URL }],
 
     editLink: {
-      pattern: `${REPO_BLOB}/docs/:path`,
+      // edit/develop (not blob/HEAD): opens GitHub's editor directly on the
+      // PR-target branch, saving the blob-view click.
+      pattern: `${REPO_URL}/edit/develop/docs/:path`,
       text: "Edit this page on GitHub",
     },
 
@@ -201,8 +204,6 @@ const DOCS_SUBDIRS = new Set([
   "getting-started",
   "operations",
   "plugins",
-  "reference",
-  "workflows",
 ]);
 
 /**

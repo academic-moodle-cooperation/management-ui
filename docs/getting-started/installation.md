@@ -1,6 +1,8 @@
-# Installation
+# Run from source
 
-Getting Management UI running locally.
+For plugin developers and contributors. Afterwards you'll have the shell running locally from a source checkout, with hot reload and the full test gate available.
+
+Installing Management UI on an Opencast server? That's a different path — see [Deployment](./deployment.md). This page is the development setup.
 
 ## Prerequisites
 

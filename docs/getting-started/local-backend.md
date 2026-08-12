@@ -7,7 +7,7 @@ that touches live data (events/series lists, ACLs, uploads, auth).
 
 If you only need the shell and mocked data — plugin authoring, UI work — you
 don't need any of this: see the lighter options in
-[Installation → Configure the backend](./installation.md#configure-the-backend).
+[Run from source → Configure the backend](./installation.md#configure-the-backend).
 
 ## The moving parts
 
@@ -178,7 +178,7 @@ see the troubleshooting table.
 ## 3. Build + deploy the Management UI backend bundles
 
 Clone this repository if you haven't yet (skip if you already followed
-[Installation](./installation.md)):
+[Run from source](./installation.md)):
 
 ```bash
 git clone https://github.com/academic-moodle-cooperation/management-ui.git

@@ -42,7 +42,8 @@ Full details: [`plugins/distribution.md`](../plugins/distribution.md).
 
 ## Where to next
 
-- **Use it** — [`installation.md`](./installation.md) walks through getting it running.
+- **Deploy it** — [`deployment.md`](./deployment.md) walks through running it on your Opencast.
+- **Run it from source** — [`installation.md`](./installation.md), for plugin development and contributing.
 - **Configure it** — [`configuration.md`](./configuration.md) covers the config model.
 - **Write a plugin** — [`docs/plugins/creating-a-plugin.md`](../plugins/creating-a-plugin.md).
 - **Understand the architecture** — [`docs/architecture/overview.md`](../architecture/overview.md).
