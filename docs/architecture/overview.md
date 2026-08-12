@@ -34,7 +34,7 @@ The shell at `apps/shell/` is the only entry point. It boots `@oc-mui/plugin-sys
 └─────────────────────────────────────────┘
 ```
 
-**The rule:** lower layers never depend on higher layers. Cross-layer breaks are caught by `eslint-plugin-boundaries` configured in [`@oc-mui/eslint-config`](../../packages/eslint-config/base.js). The layer ordering inside `package → package` is enforced by convention today — see [`operations/open-followups.md`](../operations/open-followups.md#34-layer-ordering-inside-package--package).
+**The rule:** lower layers never depend on higher layers. Cross-layer breaks are caught by `eslint-plugin-boundaries` configured in [`@oc-mui/eslint-config`](../../packages/eslint-config/base.js). The layer ordering inside `package → package` is enforced by convention today — see [`operations/open-followups.md` §3.4](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/open-followups.md#34-layer-ordering-inside-package--package).
 
 ## Plugin boundaries
 
@@ -122,6 +122,6 @@ To customize an auto-generated shadcn component, copy it to `src/components/cust
 
 - [`CONTRACTS.md`](./CONTRACTS.md) — the six frozen contracts.
 - [`CONFIGURATION.md`](./CONFIGURATION.md) — the full config layer model.
-- [`decisions/`](./decisions/) — architecture decision records (ADRs).
-- [`../plugins/README.md`](../plugins/README.md) — the plugin-author entry point.
+- [`decisions/`](./decisions/001-plugin-system) — architecture decision records (ADRs).
+- [`../plugins/README.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/plugins/README.md) — the plugin-author entry point. (GitHub link — the page is deliberately excluded from the published docs site.)
 - [`../../AGENTS.md`](../../AGENTS.md) — operational rules for plugin work (the author-facing pre-flight checklist).
