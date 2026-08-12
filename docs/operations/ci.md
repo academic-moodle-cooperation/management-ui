@@ -34,7 +34,9 @@ lint-types
 | `unit` | `pnpm test`. Uploads coverage to Codecov. |
 | `contract` | `pnpm test:contract` across every plugin. |
 | `api-check` | `pnpm api-check:ci`. Fails the PR if any `packages/<pkg>/etc/<pkg>.api.md` snapshot differs from the regenerated output. |
-| `e2e` | `pnpm test:e2e` — Playwright smoke against the shell with mocked backend. Uploads `playwright-report` on failure. |
+| `e2e` | `pnpm test:e2e` — the Playwright suite against the shell with a mocked backend. Uploads `playwright-report` on failure. |
+
+One local-vs-CI difference worth knowing when an `e2e` failure won't reproduce: locally Playwright runs against the shell's Vite **dev server**, in CI against **`vite preview` serving the production build** (see [`playwright.config.ts`](../../playwright.config.ts) and [`testing.md` → Local vs. CI](./testing.md#local-vs-ci-the-web-server-differs)). Reproduce a CI-only failure with `pnpm --filter shell preview`.
 
 ### `Changeset` ([`.github/workflows/changeset.yml`](../../.github/workflows/changeset.yml))
 
@@ -102,10 +104,10 @@ Doc-only and workflow-only changes still run the full suite — there's no skip.
 
 ## Branch protection
 
-The branches `main`, `develop`, and `release/**` are configured to require the `Test` and `Changeset` workflows green before merging. Direct pushes are not blocked at the GitHub level today, but treat them as forbidden — all changes go through PR.
+The long-lived branches (`develop` and the `r/NN.x` release lines) require the `Test` and `Changeset` workflows green before merging. Direct pushes are not blocked at the GitHub level today, but treat them as forbidden — all changes go through PR.
 
 ## See also
 
 - [`release.md`](./release.md) — the publish flow on top of these gates.
 - [`testing.md`](./testing.md) — the test strategy the CI jobs enforce.
-- [`open-followups.md`](./open-followups.md) — known CI roughness and planned improvements.
+- [`open-followups.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/open-followups.md) — known CI roughness and planned improvements. (GitHub link — the page is deliberately excluded from the published docs site.)
