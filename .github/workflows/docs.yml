@@ -6,14 +6,15 @@ name: Deploy docs
 # - pull_request       — builds the site on every PR that touches docs/ or
 #                        package.json so reviewers know the build still passes.
 #                        Does NOT deploy.
-# - push to main       — currently disabled. Uncomment when you're ready
-#                        for the published site to update on every merge to
-#                        main.
+# - push to develop    — deploys the site on every merge to develop. (There is
+#                        no `main` branch in this repo; long-lived branches are
+#                        `develop` and the `r/NN.x` release lines.) While
+#                        Actions billing is unresolved this trigger is inert;
+#                        it starts working on its own once billing is restored.
 #
-# Pre-1.0 the site is also blocked from search indexing through two
+# Pre-1.0 the site is blocked from search indexing through two
 # belt-and-suspenders guards: docs/public/robots.txt + a noindex meta tag in
-# docs/.vitepress/config.mts. All three guards (this workflow, robots.txt,
-# meta tag) flip together when going public — see
+# docs/.vitepress/config.mts. Both flip together when going public — see
 # docs/operations/open-followups.md §8.3 for the checklist.
 
 on:
@@ -24,8 +25,8 @@ on:
       - "package.json"
       - "pnpm-lock.yaml"
       - ".github/workflows/docs.yml"
-  # push:
-  #   branches: [main]
+  push:
+    branches: [develop]
 
 permissions:
   contents: read
