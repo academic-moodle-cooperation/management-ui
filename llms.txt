@@ -10,9 +10,7 @@ Three-layer monorepo: apps (domain UIs), packages (shared infrastructure), plugi
 
 ### Apps (`apps/`)
 - `shell` — Main application shell (formerly `management-ui-core`), plugin orchestrator, layout
-- `management-ui-series` — Video series management
-- `management-ui-episodes` — Episode management
-- `management-ui-upload` — Content upload and processing
+- `playground` — Dev-only single-plugin sandbox
 
 ### Packages (`packages/`) — Dependency Layers
 ```
@@ -24,10 +22,13 @@ Layer 0 (Core):         utils, typescript-config, eslint-config, tailwind-config
 Lower layers NEVER depend on higher layers.
 
 ### Plugins (`plugins/`)
-- `plugins/core/` — Mandatory extension points and defaults (always loaded)
+- `plugins/core/` — Mandatory extension points and defaults (always loaded; infrastructure — no plugin.json, no contract test)
+- `plugins/core-episodes/` — Episode management app plugin
+- `plugins/core-series/` — Series management app plugin
+- `plugins/core-upload/` — Upload app plugin
 - `plugins/admin-marketplace/` — Optional shared plugin (marketplace UI)
 - `plugins/example/` — Minimal brand-neutral reference plugin
-- `examples/community-plugin-template/` — Starter template for new plugins (scheduled to move into a dedicated repo; see examples/community-plugin-template/EXTRACT_ME.md)
+- `plugins/assets/` — Shared static assets (fonts, favicon); asset directory, not a runtime plugin
 
 ### External Plugins (`.local-plugins/` or separate repos)
 Org-specific plugins live outside the core repo. In dev, they go in `.local-plugins/<name>/`.
@@ -149,8 +150,8 @@ Button, Card, Input, Select, Dialog, Table, Tabs, Badge, etc.
 
 ### Plugin CSS
 
-- Plugin CSS is loaded BEFORE host CSS (intentional, prevents override conflicts)
-- Use explicit Tailwind layers: `@layer theme, base, components, utilities, plugin-overrides`
+- The loader wraps plugin CSS in `@layer plugins` — cascade layers, not load order, decide precedence
+- Use explicit Tailwind layers: `@layer theme, base, components, utilities, plugins`
 - Scope overrides with plugin-specific selectors, not load-order tricks
 - For theming changes, override CSS custom properties, not component classes
 
@@ -162,8 +163,8 @@ Token reference: `packages/ui/src/styles/globals.css`
 Use GraphQL hooks from `@oc-mui/query`. Never mock data in production plugins.
 
 ```typescript
-import { useGetMyEventsQuery } from "@oc-mui/query";
-const { data, isLoading } = useGetMyEventsQuery({ limit: 20 });
+import { useMuiGetMyEventsQuery } from "@oc-mui/query";
+const { data, isLoading } = useMuiGetMyEventsQuery({ limit: 20 });
 const events = (data?.currentUser?.myEvents?.nodes || [])
   .filter((e): e is NonNullable<typeof e> => e !== null);
 ```
@@ -186,7 +187,7 @@ Use `useI18n()` from `@oc-mui/i18n` with namespaced keys: `t("my-plugin:title")`
 
 - `docs/README.md` — Audience-routed entry point (use Management UI / write a plugin / contribute to core).
 - `docs/architecture/overview.md` — Architectural tour: three pillars, package layers, plugin boundaries.
-- `docs/architecture/CONTRACTS.md` — Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0.
+- `docs/architecture/CONTRACTS.md` — The six frozen contracts (manifest, runtime API, theme, config, shared runtime dependencies, GraphQL naming).
 - `docs/architecture/CONFIGURATION.md` — Full config layer model and the `definePluginConfig` reader API.
 - `docs/architecture/decisions/` — ADRs (001 plugin system, 002 monorepo, 003 shell-plus-core-plugins).
 - `docs/plugins/creating-a-plugin.md` — Plugin authoring walkthrough.

@@ -20,7 +20,9 @@ features:
   - title: Plugin-first architecture
     details: Routes, sidebar entries, themes, and config all come from plugins. The shell never has to know about your feature.
   - title: Frozen contracts
-    details: Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0 — stable for the 1.x line, mechanically verified by API Extractor and a contract-test harness.
+    details: Six contracts — manifest, runtime API, theme, config, shared runtime dependencies, GraphQL naming — stable for the 1.x line. Manifest and runtime API are mechanically verified (API Extractor + contract-test harness); theme and config are documented contracts, and GraphQL naming is lint-enforced.
+    link: /architecture/CONTRACTS
+    linkText: The contracts
   - title: Four distribution paths
     details: Ship plugins in-tree, mount them at dev time from .local-plugins/, deploy them as JARs alongside Opencast, or publish them to a CDN.
   - title: Semantic theming

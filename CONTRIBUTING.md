@@ -16,7 +16,7 @@ If your contribution is a **plugin that's specific to your organisation**, it sh
 ### Prerequisites
 
 - **Node.js** ≥ 20 (Node 22 LTS recommended)
-- **pnpm** ≥ 10.4.1 (run `corepack enable` to install via Corepack)
+- **pnpm** — managed via Corepack (`corepack enable`); the exact version is pinned in `package.json`'s `packageManager` field
 - **Java** + **Maven** — only if you want to build the deployable JAR; pure frontend work doesn't need them
 
 ### Initial setup
@@ -41,7 +41,7 @@ You'll be working in `apps/shell`, `apps/playground`, `packages/*`, or one of th
 
 1. Read [`AGENTS.md`](AGENTS.md) for the operational rules (boundaries, extension points, contract tests).
 2. Make your change.
-3. Run `pnpm verify` locally — it runs the same gates CI runs, in order: lint → check-types → build → unit → contract → api-check → Playwright smoke. If `pnpm verify` is green locally, CI will be too (modulo cold-start E2E flakes that retry).
+3. Run `pnpm verify` locally — the canonical pre-push gate; [`AGENTS.md` → Pre-push gate](AGENTS.md#pre-push-gate--pnpm-verify) lists what it runs. If `pnpm verify` is green locally, CI will be too (modulo cold-start E2E flakes that retry).
 4. Add a changeset if you touched a versioned package — see [Versioning, changesets, and deprecations](#versioning-changesets-and-deprecations).
 5. Regenerate API reports if you changed a public surface — `pnpm api-check`, then commit the updated `packages/*/etc/*.api.md`.
 6. Open a PR using the [template](.github/pull_request_template.md). CI tells you what's missing.
@@ -88,7 +88,7 @@ Cross-plugin imports, app-imports-plugin, and plugin-imports-app are **not allow
 Deeper material:
 
 - [`docs/architecture/overview.md`](docs/architecture/overview.md) — package layers, plugin model, common pitfalls
-- [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) — the four frozen contracts (Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0)
+- [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) — the six frozen contracts
 - [`docs/architecture/decisions/`](docs/architecture/decisions/) — ADRs explaining why the architecture is the way it is
 - [`docs/operations/testing.md`](docs/operations/testing.md) — the test pyramid (unit / contract / E2E) and the harness API
 - [`docs/operations/open-followups.md`](docs/operations/open-followups.md) — committed index of every "we know about this but haven't done it yet" item
@@ -110,7 +110,7 @@ pnpm docs:dev                                           # VitePress docs site (h
 pnpm docs:build                                         # static build of the docs site
 ```
 
-`pnpm verify` runs `lint → check-types → build → test → test:contract → api-check → test:e2e` in dependency order. If it's green locally it's green in CI; the only flakes you'll see in CI that you don't see locally are cold-start E2E timeouts, which Playwright retries automatically.
+`pnpm verify` runs the same gates CI runs — the canonical step list lives in [`AGENTS.md` → Pre-push gate](AGENTS.md#pre-push-gate--pnpm-verify); turbo schedules the tasks by dependency graph, so the exact interleaving can vary. If it's green locally it's green in CI; the only flakes you'll see in CI that you don't see locally are cold-start E2E timeouts, which Playwright retries automatically.
 
 ### GraphQL code generation
 
@@ -144,14 +144,14 @@ Strict mode. Avoid `any`; if you genuinely need an escape hatch, document it in 
 Three layers, fully documented in [`docs/operations/testing.md`](docs/operations/testing.md):
 
 - **Unit** (Vitest) — every package
-- **Contract** (`@oc-mui/plugin-testing` harness) — every plugin under `plugins/` ships one `plugin.contract.test.ts`
+- **Contract** (`@oc-mui/plugin-testing` harness) — every plugin under `plugins/` (except `plugins/core`, the infrastructure plugin) ships one `plugin.contract.test.ts`
 - **E2E** (Playwright) — a smoke spec against `apps/shell` with stubbed backend endpoints
 
 ---
 
 ## Versioning, changesets, and deprecations
 
-Every workspace package under `packages/` and `plugins/` is **versioned independently** following [Semver 2.0](https://semver.org/). The ground rules below apply to every public package; the four contracts in [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) layer additional, contract-specific rules on top for the explicitly-frozen API surfaces (Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0).
+Every workspace package under `packages/` and `plugins/` is **versioned independently** following [Semver 2.0](https://semver.org/). The ground rules below apply to every public package; the six contracts in [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) layer additional, contract-specific rules on top for the explicitly-frozen API surfaces.
 
 ### What kind of bump?
 
@@ -181,7 +181,7 @@ pnpm changeset:status
 # Commit the .changeset/<slug>.md file alongside the rest of your PR.
 ```
 
-CI **rejects** any PR that touches a released package without an accompanying changeset. Changes scoped purely to `apps/shell` / `apps/playground`, root config, docs, or workflows do not need a changeset (those packages are listed under `ignore` in `.changeset/config.json`). For an intentionally release-noteless change to a versioned package — e.g. a typo fix in a JSDoc — use `pnpm changeset --empty` to record the deliberate decision.
+CI **rejects** any PR that touches a versioned package without an accompanying changeset. The canonical rule lives in [`AGENTS.md` → Versioning](AGENTS.md#versioning--changesets-every-versioned-package-and-public-api-changes): every touched package under `packages/*` and `plugins/*` needs a changeset, **including private (`"private": true`) ones** — the *only* package exemptions are those listed under `ignore` in `.changeset/config.json` (currently `shell` and `playground`). Root config, docs, and workflow changes touch no package and need none. For an intentionally release-noteless change to a versioned package — e.g. a typo fix in a JSDoc — use `pnpm changeset --empty` to record the deliberate decision.
 
 ### Deprecation policy
 
@@ -209,7 +209,7 @@ git diff packages/*/etc/*.api.md
 
 CI runs `pnpm api-check:ci` (note the `:ci` suffix) which compares the generated reports against the committed snapshots and **fails the PR** if they differ. Authors who intentionally change the surface regenerate, commit the diff, and ship a matching changeset; authors who didn't intend to change the surface get an immediate signal that they did.
 
-Instrumented packages: `@oc-mui/plugin-system`, `@oc-mui/router`, `@oc-mui/query`, `@oc-mui/i18n`, `@oc-mui/store`, `@oc-mui/ui-config` — the six contract-stable packages declared in [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md). The cross-package coupling visible in each report (e.g. `query`'s report imports types from `plugin-system` and `ui-config`) is intentional: when an upstream contract changes, every consumer's snapshot diff surfaces it.
+Instrumented packages: ten — `@oc-mui/app-runtime`, `@oc-mui/i18n`, `@oc-mui/plugin-system`, `@oc-mui/plugin-testing`, `@oc-mui/query`, `@oc-mui/router`, `@oc-mui/store`, `@oc-mui/ui`, `@oc-mui/ui-config`, and `@oc-mui/utils`. Most emit a single `etc/<pkg>.api.md`; `packages/ui` emits three reports (`ui.api.md`, `ui-components.api.md`, `ui-hooks.api.md`), so the `etc/<pkg>.api.md` naming is approximate there — twelve reports in total. The cross-package coupling visible in each report (e.g. `query`'s report imports types from `plugin-system` and `ui-config`) is intentional: when an upstream contract changes, every consumer's snapshot diff surfaces it.
 
 ---
 

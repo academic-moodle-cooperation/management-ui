@@ -10,7 +10,7 @@ A modular, plugin-first admin interface for [Opencast](https://opencast.org). A 
 - **For plugin authors** — a stable extension-point contract for adding routes, sidebar items, themes, and config without touching the shell.
 - **For contributors** — a pnpm + Turborepo monorepo with strict architectural boundaries and a frozen plugin contract.
 
-The four contracts (Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0) are frozen for the 1.x line — see [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md).
+The six plugin contracts are frozen for the 1.x line — see [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md).
 
 ## Quick start
 
@@ -52,7 +52,7 @@ For AI agents and tooling: [`llms.txt`](llms.txt) (machine-readable summary), [`
 
 ## Per-package READMEs
 
-Every package, app, and plugin ships its own README:
+Nearly every package, app, and plugin ships its own README:
 
 - [`apps/README.md`](apps/README.md) — applications (shell, playground).
 - [`packages/README.md`](packages/README.md) — shared infrastructure catalogued by layer.
@@ -78,7 +78,7 @@ pnpm create-plugin my-plugin --in-tree   # → plugins/my-plugin/
 
 ```bash
 pnpm dev                    # run the shell
-pnpm verify                 # the local pre-push gate (lint, types, build, unit, contract, api-check, e2e)
+pnpm verify                 # the local pre-push gate — see AGENTS.md § Pre-push gate
 pnpm test                   # unit tests
 pnpm test:contract          # plugin contract tests
 pnpm test:e2e               # Playwright smoke against the shell
@@ -88,7 +88,7 @@ pnpm docs:dev               # serve the VitePress docs site at http://localhost:
 pnpm docs:build             # build the static docs site to docs/.vitepress/dist
 ```
 
-`pnpm verify` mirrors CI exactly — if it's green locally, it's green in CI. See [`docs/operations/ci.md`](docs/operations/ci.md) for the CI graph.
+`pnpm verify` mirrors CI exactly — if it's green locally, it's green in CI. The canonical step list is in [`AGENTS.md` → Pre-push gate](AGENTS.md#pre-push-gate--pnpm-verify); see [`docs/operations/ci.md`](docs/operations/ci.md) for the CI graph.
 
 ## Contributing
 
@@ -98,7 +98,7 @@ Issue templates: [bug report](https://github.com/academic-moodle-cooperation/man
 
 ## Status
 
-Pre-1.0 — currently in OSS readiness phases. The four contracts are frozen, but the publishing target (`@oc-mui/*` on npm) flips from `restricted` to `public` only after every phase ships and the build is verified against a real Opencast test server. Track the work at [`docs/operations/open-followups.md`](docs/operations/open-followups.md).
+Pre-1.0 — currently in OSS readiness phases. The plugin contracts are frozen (see [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md)), and the `@oc-mui/*` packages publish to npm with public access. Track the remaining work at [`docs/operations/open-followups.md`](docs/operations/open-followups.md).
 
 ## License
 
