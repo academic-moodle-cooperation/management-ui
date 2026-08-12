@@ -3,7 +3,7 @@
 // release workflow's Version-PR step).
 //
 // Why: the JAR artifacts otherwise stay `1.0-SNAPSHOT` forever. With this,
-// tag = product version = JAR version (issue #236, geichelberger's point):
+// tag = product version = JAR version (issue #236):
 // v19.0.1 ships management-ui-graphql-19.0.1.jar.
 //
 // Why not `mvn versions:set`: resolving the `org.opencastproject:base` parent

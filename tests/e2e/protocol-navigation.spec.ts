@@ -88,9 +88,9 @@ test("[GEN-06] the browser back button returns to the previous screen", async ({
 });
 
 test("[GEN-08] every in-app link leads to a screen that renders", async ({ page }) => {
-  // Findings 005 and 012: "Information und Anleitung zu u:stream" was not
-  // clickable, and the footer's "Hilfe" link led to an error page. Dead or
-  // broken links are what this step is really about.
+  // Manual QA repeatedly found landing-page info links that were not clickable
+  // and footer links leading to error pages. Dead or broken links are what
+  // this step is really about.
   // No console-error assertion here on purpose: this spec issues a full page
   // load per link, and each one aborts the previous page's in-flight requests.
   // Firefox and WebKit surface those aborts as page errors ("due to access
