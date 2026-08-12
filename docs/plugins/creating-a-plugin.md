@@ -14,14 +14,21 @@ Both follow the same layout and contract. The decision is "do I want this in the
 ## Scaffold
 
 ```bash
+pnpm create-plugin <name> [--template <minimal|app>] [--in-tree] [--no-pom] [--no-install]
+```
+
+```bash
 # Org / community plugin (default — under .local-plugins/)
 pnpm create-plugin my-plugin
+
+# Visible starter: a real screen + sidebar entry instead of the placeholder
+pnpm create-plugin my-plugin --template app
 
 # Built-in plugin (under plugins/, ships with the repo)
 pnpm create-plugin my-plugin --in-tree
 ```
 
-The CLI writes the full layout plus a working `app:header-logo` placeholder so `pnpm test:contract` passes on first run. Replace the placeholder, update `plugin.json`'s `extensionPoints`, and you have a real plugin.
+The CLI ([`scripts/create-plugin.mjs`](../../scripts/create-plugin.mjs)) writes the full layout. The default `minimal` template registers a working `app:header-logo` placeholder so `pnpm test:contract` passes on first run; `--template app` scaffolds a visible screen plus sidebar entry instead (see [`first-plugin.md`](./first-plugin.md)). The default `.local-plugins/` scaffold also includes a `backend/` Maven layout so the plugin is JAR-ready — skip it with `--no-pom`; `--in-tree` scaffolds never include it. `--no-install` skips the automatic `pnpm install` that links the new package. Replace the placeholder, update `plugin.json`'s `extensionPoints`, and you have a real plugin.
 
 ## Anatomy
 
@@ -30,10 +37,15 @@ my-plugin/
 ├── plugin.json          # Manifest 1.1 (id, name, version, namespace, extensionPoints, ...)
 ├── package.json
 ├── tsconfig.json
+├── vite.config.ts       # builds dist/<name>.mjs; shared deps marked external
 ├── vitest.config.ts
+├── vitest.setup.ts
+├── eslint.config.js
+├── README.md
+├── backend/             # Maven/JAR layout (default scaffold; absent with --no-pom or --in-tree)
 └── src/
-    ├── index.ts                  # createPlugin({ ... })
-    ├── plugin.contract.test.ts   # the required contract test
+    ├── index.ts                  # createPlugin({ ... }) + default export
+    ├── plugin.contract.test.ts   # the required contract test (scaffolded)
     └── ...                       # your plugin code
 ```
 
@@ -134,30 +146,36 @@ Then declare both points in `plugin.json` so the contract test passes:
 ```
 
 `AppDefinition` (`apps:definitions`) requires `{ id, name, routePath, component }`
-and optionally takes `navigation`, `loader`, `version`, `description` — see
+and optionally takes `navigation`, `loader`, `version`, `description`, and
+`requiredRoles?: string[]` (when set, the shell only mounts the app for a
+user holding at least one of the listed roles; everyone else gets an
+access-denied screen) — see
 [`@oc-mui/plugin-system` `appTypes.ts`](../../packages/plugin-system/src/appTypes.ts).
 Nested routes like `/reports/:id` work automatically (the shell adds a
 `$routeSubPath` child route); read the param with `useParams({ strict: false })`.
 
 For the full list of slots you can register on — header actions, footer,
-table-row detail panels, the ACL/metadata editors, etc. — see
-[`plugins/core/README.md`](../../plugins/core/README.md), which lists every
-extension point, its owner, and what renders it.
+table-row detail panels, the ACL/metadata editors, etc. — see the
+extension-point reference in
+[`plugins/core/README.md`](../../plugins/core/README.md).
 
 ### The manifest (`plugin.json`)
 
-Every extension point your `initialize()` touches must also appear in `plugin.json`'s `extensionPoints` array. The contract test fails when an entry is declared but not populated. Lint fails when a key collides with another plugin's.
+Every extension point your `initialize()` touches must also appear in `plugin.json`'s `extensionPoints` array. The contract test fails when an entry is declared but not populated.
 
 See [`AGENTS.md` → Plugin layout](../../AGENTS.md#plugin-layout-canonical) for the full required-fields list.
 
 ### The contract test
 
-Required. Copy [`packages/plugin-testing/README.md`](../../packages/plugin-testing/README.md)'s template, change only the import line. The harness checks:
+Required. The scaffold writes the canonical version at `src/plugin.contract.test.ts` — copy it from a fresh scaffold (or a sibling plugin) and change only the import line and the `describe` label. Its five `it()` blocks check:
 
+- The plugin is exposed as the **default export** (the remote loader requires it — this assertion comes from the scaffolded test, not the harness).
 - The plugin activates cleanly.
 - Every extension point declared in `plugin.json` is actually populated.
 - No errors or warnings during activation.
 - `i18n` locales (if shipped) have matching key sets.
+
+The harness API behind these assertions is documented in [`packages/plugin-testing/README.md`](../../packages/plugin-testing/README.md).
 
 Run it with:
 
@@ -174,7 +192,7 @@ pnpm --filter @oc-mui/plugin-my-plugin test:contract
 | `app:config:defaults` | A `Partial<AppConfig>` slice merged below `config.json` | `plugins/core-*/src/config.ts` |
 | `app:header-logo` | An `{ src, alt, href, width, height }` object — **note:** declared but the default shell does not currently render it, so it has no visible effect on its own. It's the scaffold's contract-test placeholder; swap it for `apps:definitions` (above) for a visible feature. | `plugins/example/` |
 
-The full set — with owner and what renders each — is in [`plugins/core/README.md`](../../plugins/core/README.md), and at the registration sites in [`@oc-mui/plugin-system`](../../packages/plugin-system/README.md).
+The extension-point reference is [`plugins/core/README.md`](../../plugins/core/README.md); the registration sites live in [`@oc-mui/plugin-system`](../../packages/plugin-system/README.md).
 
 ## Configuration
 
@@ -196,7 +214,7 @@ export const myPluginConfig = definePluginConfig({
 });
 ```
 
-Use `myPluginConfig.use()` in components, `myPluginConfig.read()` in event handlers. Reading another plugin's slice is forbidden; lint catches it.
+Use `myPluginConfig.use()` in components, `myPluginConfig.read()` in event handlers. Reading another plugin's slice is forbidden — no lint rule enforces this yet (the rule was deferred), so treat any direct `config.plugins[...]` read as a review-time red flag.
 
 Full layer model and reader API: [`architecture/CONFIGURATION.md`](../architecture/CONFIGURATION.md).
 
@@ -208,7 +226,7 @@ Use semantic tokens — see [`plugins/styling.md`](./styling.md). No hardcoded c
 
 - Declare namespaces in `plugin.json`'s `i18nNamespaces` array.
 - Locale files at `<plugin>/locales/<namespace>/<locale>.json`.
-- Reference keys with `t("namespace:key")` via `useTranslation` from `@oc-mui/i18n`.
+- Reference keys with `t("namespace:key")` via `usePluginTranslation(["namespace"])` from `@oc-mui/i18n` — it auto-loads the namespace; plain `useTranslation` renders raw keys unless you load the namespace yourself. See [`i18n.md`](./i18n.md).
 
 The contract test's `expectI18nKeyParity` fails when locale files drift apart.
 
@@ -234,7 +252,7 @@ query MyPluginGetThings($limit: Int!) {
 
 This avoids collisions with other plugins' operations and fragments at the GraphQL Codegen step and the server logs. Full rules + examples: [`architecture/CONTRACTS.md` § 6](../architecture/CONTRACTS.md#6-graphql-operation-naming).
 
-A custom ESLint rule that flags violations is planned — until it ships, reviewers spot-check operation names manually.
+A custom ESLint rule enforces this mechanically: `local/graphql-operation-naming` ([`packages/eslint-config/rules/graphql-operation-naming.js`](../../packages/eslint-config/rules/graphql-operation-naming.js)) fails the lint pass on any operation or fragment without the expected prefix.
 
 ## Development loop
 
@@ -267,7 +285,7 @@ Before opening a PR (in-tree) or releasing (community):
 pnpm verify
 ```
 
-That runs lint, type-check, unit tests, contract tests, API check, and a Playwright smoke against the shell — about 90 turbo tasks. If it's red locally it'll be red in CI.
+That runs the canonical pre-push gate — the exact pipeline is documented once in [`AGENTS.md` → Pre-push gate](../../AGENTS.md#pre-push-gate--pnpm-verify). Note that `verify` excludes `.local-plugins/` (via a turbo `--filter`), so run your org plugin's own `test`/`test:contract` scripts separately. If it's green locally it'll be green in CI.
 
 If you changed a public `@oc-mui/*` API, also run `pnpm api-check` and commit the regenerated `etc/<pkg>.api.md` plus a changeset. See [`operations/release.md`](../operations/release.md).
 

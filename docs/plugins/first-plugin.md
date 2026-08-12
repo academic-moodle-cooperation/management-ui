@@ -20,6 +20,8 @@ It scaffolds under `.local-plugins/reports/` and runs `pnpm install` to link the
 .local-plugins/reports/
 ├── plugin.json              # type: "app", extensionPoints: apps:definitions + sidebar:nav-items
 ├── package.json
+├── tsconfig.json, vite.config.ts, vitest.config.ts, vitest.setup.ts, eslint.config.js, README.md
+├── backend/                 # Maven/JAR layout — ignore for now, used in step 5
 └── src/
     ├── index.ts             # the two registrations (see below)
     ├── ReportsPage.tsx      # the page mounted at /reports — edit this
@@ -69,7 +71,7 @@ Two things worth knowing:
 pnpm --filter @oc-mui/plugin-reports test:contract
 ```
 
-Passes out of the box: it checks the plugin activates, every `extensionPoints` entry in `plugin.json` is populated, there's a `default` export, no console errors, and i18n key parity.
+Passes out of the box: it checks the plugin activates, every `extensionPoints` entry in `plugin.json` is populated, there's a `default` export (this assertion is written into the scaffolded test itself — the harness doesn't check it), no console errors, and i18n key parity (a no-op until you ship `locales/` and declare `i18nNamespaces`).
 
 ## 5. Ship it — the four delivery paths
 

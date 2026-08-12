@@ -4,7 +4,7 @@ The full testing strategy — pyramid, unit/contract/E2E split, CI gates — liv
 
 ## The required test
 
-Every plugin ships **one contract test** at `src/plugin.contract.test.ts`. It is mechanical — `pnpm create-plugin` writes it for you, and the only line that changes between plugins is the import.
+Every plugin ships **one contract test** at `src/plugin.contract.test.ts`. It is mechanical — `pnpm create-plugin` writes it for you, and the only things that change between plugins are the import line and the `describe` label.
 
 ```bash
 pnpm --filter @oc-mui/plugin-my-plugin test:contract
@@ -16,6 +16,8 @@ The harness boots a minimal `PluginManager`, runs your plugin's `initialize()` a
 - Every extension point declared in `plugin.json`'s `extensionPoints` array is actually populated.
 - Activation produces no `console.error` or `console.warn`.
 - All declared i18n locales have matching key sets.
+
+The scaffolded test adds a fifth assertion of its own (not a harness check): the plugin must be the module's **default export**, because the remote loader registers via `module.default`.
 
 Drift between `plugin.json` and `initialize()` is caught here — the most common failure mode.
 
@@ -41,7 +43,7 @@ Run them with:
 pnpm --filter @oc-mui/plugin-my-plugin test
 ```
 
-The default environment is jsdom. Mock external services; don't hit a real backend from a unit test.
+The test environment is whatever your plugin's `vitest.config.ts` sets — the scaffold defaults to `node`; switch to `jsdom` (and add it as a dev dependency) for DOM-rendering component tests. Mock external services; don't hit a real backend from a unit test.
 
 ## What to test in a plugin
 
@@ -61,7 +63,7 @@ E2E specs live in `tests/e2e/` and run against the shell with a mocked backend. 
 
 ## CI
 
-Locally, `pnpm verify` runs the full suite (unit, contract, API check, Playwright smoke) — same as CI. Run it before pushing.
+Locally, `pnpm verify` runs the canonical pre-push gate — the pipeline is documented once in [`AGENTS.md` → Pre-push gate](../../AGENTS.md#pre-push-gate--pnpm-verify). Run it before pushing.
 
 ## See also
 
