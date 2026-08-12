@@ -17,8 +17,8 @@ import { DEFAULT_ALLOWED_DOMAINS } from "./services/security";
  *
  * Consume the validated slice through `adminMarketplaceConfig.use()` (React) or
  * `adminMarketplaceConfig.read(config)` (outside React) — never index
- * `config.plugins["admin-marketplace"]` directly (lint flags it, and it skips
- * validation + the security defaults below).
+ * `config.plugins["admin-marketplace"]` directly — it skips validation + the
+ * security defaults below. No lint rule catches this yet; reviews enforce it.
  */
 export const ADMIN_MARKETPLACE_PLUGIN_ID = "admin-marketplace";
 

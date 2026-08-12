@@ -103,8 +103,8 @@ export function useConfig<T extends z.ZodTypeAny>(reader: PluginConfigReader<T>)
  *
  * The returned object is intentionally the *only* surface plugin code
  * should use to access its own config. Direct reads via
- * `useAppConfig().config.plugins[id]` bypass validation and are
- * explicitly flagged by lint (see the Phase 2b master plan).
+ * `useAppConfig().config.plugins[id]` bypass validation — no lint rule
+ * catches this yet, so reviews enforce it.
  *
  * @example
  * ```ts
