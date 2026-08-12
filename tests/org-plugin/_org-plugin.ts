@@ -13,7 +13,7 @@ import type { Page } from "@playwright/test";
  * tracked; the plugin it points at is supplied per machine via `ORG_PLUGIN`.
  */
 
-/** Folder name under `.local-plugins/`, e.g. `ORG_PLUGIN=univie`. */
+/** Folder name under `.local-plugins/`, e.g. `ORG_PLUGIN=acme`. */
 export const ORG_PLUGIN = process.env["ORG_PLUGIN"] ?? "";
 
 export const PLUGIN_DIR = ORG_PLUGIN ? resolve(".local-plugins", ORG_PLUGIN) : "";
