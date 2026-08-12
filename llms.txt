@@ -1,214 +1,73 @@
 # Management UI
 
-> A modular, plugin-based video content management system for educational institutions.
-> Built with React, TypeScript, Tailwind CSS v4, and shadcn/ui.
-> Monorepo managed with pnpm + Turborepo.
+> A modular, plugin-first admin interface for Opencast. A thin shell hosts
+> routing, auth, and layout; every visible feature ships as a plugin.
+> Organisations customize by adding plugins and themes, not by forking.
+> pnpm + Turborepo monorepo; React, TypeScript, Tailwind CSS, shadcn/ui.
 
-## Architecture
+## Start here (by audience)
 
-Three-layer monorepo: apps (domain UIs), packages (shared infrastructure), plugins (extension system).
+- Run it on your Opencast → `docs/getting-started/deployment.md`
+- Build a plugin → `docs/plugins/first-plugin.md`
+- Contribute to this repo → `CONTRIBUTING.md`
 
-### Apps (`apps/`)
-- `shell` — Main application shell (formerly `management-ui-core`), plugin orchestrator, layout
-- `playground` — Dev-only single-plugin sandbox
+AI agents: `AGENTS.md` is the operational rulebook (pre-flight checklist,
+import boundaries, contract test, changeset rule, `pnpm verify` gate). Read
+it before changing anything under `plugins/` or `packages/`.
 
-### Packages (`packages/`) — Dependency Layers
-```
-Layer 3 (Application):  app-runtime, providers, vite-config, ui-config
-Layer 2 (Integration):  query, router, ui, remote-plugin-loader
-Layer 1 (Foundation):   plugin-system, store, i18n
-Layer 0 (Core):         utils, typescript-config, eslint-config, tailwind-config
-```
-Lower layers NEVER depend on higher layers.
+## Repo layout
 
-### Plugins (`plugins/`)
-- `plugins/core/` — Mandatory extension points and defaults (always loaded; infrastructure — no plugin.json, no contract test)
-- `plugins/core-episodes/` — Episode management app plugin
-- `plugins/core-series/` — Series management app plugin
-- `plugins/core-upload/` — Upload app plugin
-- `plugins/admin-marketplace/` — Optional shared plugin (marketplace UI)
-- `plugins/example/` — Minimal brand-neutral reference plugin
-- `plugins/assets/` — Shared static assets (fonts, favicon); asset directory, not a runtime plugin
+### Apps (`apps/`) — consume plugins, never the other way around
 
-### External Plugins (`.local-plugins/` or separate repos)
-Org-specific plugins live outside the core repo. In dev, they go in `.local-plugins/<name>/`.
-In production, they are deployed as OSGi JARs or loaded from a registry/CDN.
+- `shell` — the only entry point; boots the plugin system, owns routing/auth/layout
+- `playground` — dev-only single-plugin sandbox
 
-### Scaffold Commands
+### Packages (`packages/`) — layered; lower layers never depend on higher
 
-- `pnpm create-plugin <name>` — Scaffold a new org/community plugin under `.local-plugins/<name>/` (gitignored). Includes package.json, plugin.json, tsconfig, vitest, contract test, README, and a placeholder `app:header-logo` registration so the contract test passes on first run.
-- `pnpm create-plugin <name> --in-tree` — Same, but under `plugins/<name>/` for core contributors adding a built-in plugin.
-- `pnpm validate:plugins` — Validate all `plugin.json` manifests
+- Layer 3 (Application): `app-runtime`, `providers`, `vite-config`, `ui-config`
+- Layer 2 (Integration): `query`, `router`, `ui`, `remote-plugin-loader`, `plugin-testing`
+- Layer 1 (Foundation): `plugin-system`, `store`, `i18n`
+- Layer 0 (Core): `utils`, `typescript-config`, `eslint-config`, `tailwind-config`
 
-## Plugin System
+Published under the `@oc-mui/*` scope. Wrapped libraries are consumed via the
+facade only (`@oc-mui/router`, `@oc-mui/query`, `@oc-mui/i18n`, `@oc-mui/store`),
+never directly.
 
-### Creating a Plugin
+### Plugins (`plugins/`) — built-in, ship with the repo
 
-Every plugin is an ES module that default-exports a plugin object. Per-feature
-source is organized under `modules/<area>/` (not legacy `implementations/`).
+- `core` — mandatory infrastructure plugin: shared extension-point identifiers and defaults
+- `core-episodes`, `core-series`, `core-upload` — the built-in feature apps
+- `admin-marketplace` — optional marketplace UI for remote plugins
+- `example` — minimal brand-neutral reference plugin
+- `assets` — shared static assets; not a runtime plugin
 
-```typescript
-import { createPlugin } from "@oc-mui/plugin-system";
+Org or community plugins live outside the repo and mount at dev time under
+`.local-plugins/<name>/` (gitignored, same layout as in-tree plugins). See
+`docs/plugins/distribution.md` for how plugins ship in production.
 
-export default createPlugin({
-  namespace: "my-org", // WHO provides it: org or feature name
-  type: "app", // WHAT it is: role/slot, never mechanism
-  version: "1.0.0",
-  initialize(manager) {
-    manager.registerObject("apps:definitions", "my-org:my-app", {
-      id: "my-org-app",
-      name: "My App",
-      routePath: "/my-org",
-      component: MyAppComponent,
-    });
-    manager.registerObject("sidebar:nav-items", "my-org:nav", {
-      title: "My App",
-      path: "/my-org",
-      icon: LayoutDashboard,
-      order: 100,
-    });
-  },
-  activate() {},
-  deactivate() {},
-});
-```
+## The six contracts
 
-### Plugin Manifest (`plugin.json`)
+Manifest, Runtime API, Theme, Config, Shared Runtime Dependencies, GraphQL
+Operation Naming — all frozen and versioned in `docs/architecture/CONTRACTS.md`.
 
-Every plugin should have a `plugin.json` in its root. Schema at:
-`packages/plugin-system/src/schemas/plugin.schema.json`
+## Key commands
 
-Key fields: `id`, `name`, `version`, `namespace`, `type`, `apiVersion`,
-`entry`, `css`, `modules` (for multi-entry), `workspaceDependencies`.
+- `pnpm dev` — run the shell locally
+- `pnpm verify` — the canonical pre-push gate (lint, types, build, unit,
+  contract, api-check, E2E); rules and fast inner-loop variants in `AGENTS.md`
+- `pnpm create-plugin <name>` — scaffold a plugin under `.local-plugins/`
+  (`--in-tree` for a built-in one)
+- `pnpm changeset` — required for any change to a versioned package
 
-### Extension Points
+## Documentation map
 
-Registration pattern: `manager.registerObject(extensionPoint, uniqueId, value)`
-or `manager.registerComponent(extensionPoint, Component, options)`
-
-Core extension points:
-- `apps:definitions` — Register a routable app (id, name, routePath, component)
-- `sidebar:nav-items` — Register sidebar navigation (title, path, icon, order)
-- `component-override:landing-page` — Override the landing page
-- `component-override:appshell:header` — Override the app header
-- `component-override:appshell:footer` — Override the app footer
-- `app:config` — Register runtime config overlay (`app.enabledPlugins`, theme, branding)
-- `app:config:defaults` — Register plugin-owned defaults slice (via `definePluginConfig(...).register(manager)`)
-- `app:branding` — Register branding (logo, colors, favicon)
-
-### Two-Phase Loading
-
-The runtime loads plugins in two phases:
-1. Phase 1: Load `*:config` plugins first (they register `app:config`)
-2. Phase 2: Merge `app:config:defaults` ⊕ base ⊕ `app:config`, then load remaining plugins filtered by `app.enabledPlugins` (ship filter) and per-slice `config.plugins[<id>].enabled` (runtime switch). Full model: `docs/architecture/CONFIGURATION.md`.
-
-This allows a config plugin (e.g., `.local-plugins/config/`) to declare which
-namespaces to enable (e.g., `enabledPlugins: ["core", "admin", "episodes", "series", "upload", "config", "org-a"]`),
-and those plugins load in phase 2.
-
-### Loading Mechanisms
-
-1. Built-in — Exported from `plugins/index.ts`, bundled with core
-2. JAR — Backend scans OSGi bundles, exposes `plugins.json`, core loads them
-3. `.local-plugins` — Dev-only: Vite serves `dist/*.mjs` with manifest
-4. Marketplace/Registry — Community plugins loaded from CDN URLs
-5. localStorage — Developer mode: manually entered URLs
-
-### Multi-Entry Plugins
-
-One plugin package can contain multiple modules (e.g., app + sidebar + footer).
-In `plugin.json`, use the `modules` array. Each module has its own `type` and
-`entry`. A whole namespace is activated via `app.enabledPlugins`; to drop a
-single module without removing the namespace, set its slice's
-`config.plugins.<id>.enabled = false`.
-
-## Styling Contract
-
-Plugins MUST use semantic CSS tokens from the shared design system. This ensures
-plugins automatically match any org's theme without hardcoded colors.
-
-### Required: Use Semantic Tokens
-
-Use Tailwind classes that reference CSS custom properties:
-- `bg-background`, `text-foreground` — Page background/text
-- `bg-primary`, `text-primary-foreground` — Primary actions
-- `bg-secondary`, `text-secondary-foreground` — Secondary surfaces
-- `bg-muted`, `text-muted-foreground` — Subdued content
-- `bg-card`, `text-card-foreground` — Card surfaces
-- `bg-destructive` — Destructive actions
-- `border-border`, `ring-ring` — Borders and focus rings
-- `bg-sidebar`, `text-sidebar-foreground` — Sidebar-specific
-
-### Forbidden: Hardcoded Colors
-
-Never use hardcoded hex/rgb/oklch values in plugin code. Always use semantic tokens.
-
-### Use Shared UI Components
-
-Import from `@oc-mui/ui/components` (shadcn/ui based):
-Button, Card, Input, Select, Dialog, Table, Tabs, Badge, etc.
-
-### Plugin CSS
-
-- The loader wraps plugin CSS in `@layer plugins` — cascade layers, not load order, decide precedence
-- Use explicit Tailwind layers: `@layer theme, base, components, utilities, plugins`
-- Scope overrides with plugin-specific selectors, not load-order tricks
-- For theming changes, override CSS custom properties, not component classes
-
-Full contract: `docs/plugins/styling.md`
-Token reference: `packages/ui/src/styles/globals.css`
-
-## Data Fetching
-
-Use GraphQL hooks from `@oc-mui/query`. Never mock data in production plugins.
-
-```typescript
-import { useMuiGetMyEventsQuery } from "@oc-mui/query";
-const { data, isLoading } = useMuiGetMyEventsQuery({ limit: 20 });
-const events = (data?.currentUser?.myEvents?.nodes || [])
-  .filter((e): e is NonNullable<typeof e> => e !== null);
-```
-
-## i18n
-
-Plugins ship their own locale files under `locales/<namespace>/<lng>.json`.
-Use `useI18n()` from `@oc-mui/i18n` with namespaced keys: `t("my-plugin:title")`.
-
-## Common Mistakes
-
-1. Registering an app without a sidebar nav item (route exists but no navigation)
-2. Forgetting `activate()` and `deactivate()` methods (both required)
-3. Bundling React or @oc-mui/* packages (must be external)
-4. Using hardcoded colors instead of semantic tokens
-5. Naming a directory starting with `/api` (conflicts with Vite dev proxy)
-6. Not filtering null values from GraphQL arrays
-
-## Key Documentation
-
-- `docs/README.md` — Audience-routed entry point (use Management UI / write a plugin / contribute to core).
-- `docs/architecture/overview.md` — Architectural tour: three pillars, package layers, plugin boundaries.
-- `docs/architecture/CONTRACTS.md` — The six frozen contracts (manifest, runtime API, theme, config, shared runtime dependencies, GraphQL naming).
-- `docs/architecture/CONFIGURATION.md` — Full config layer model and the `definePluginConfig` reader API.
-- `docs/architecture/decisions/` — ADRs (001 plugin system, 002 monorepo, 003 shell-plus-core-plugins).
-- `docs/plugins/creating-a-plugin.md` — Plugin authoring walkthrough.
-- `docs/plugins/distribution.md` — In-tree, `.local-plugins/`, JAR, and CDN distribution paths.
-- `docs/plugins/styling.md` — CSS/theming rules for plugins.
-- `docs/plugins/testing.md` — Required contract test plus what else to cover.
-- `docs/plugins/i18n.md` — Translation namespaces and key parity.
-- `docs/operations/testing.md` — Canonical test pyramid + harness API.
-- `docs/operations/release.md` — Versioning, changesets, API surface drift, deprecation policy.
-- `docs/operations/ci.md` — CI graph and how to reproduce failures locally.
-- `docs/operations/open-followups.md` — Single committed index of every deferred / waiting item.
-- `packages/plugin-system/src/schemas/plugin.schema.json` — Plugin manifest schema.
-- `packages/ui/src/styles/globals.css` — All semantic CSS tokens.
-- `AGENTS.md` — Operational pre-flight checklist for plugin authoring (the rules in long form).
-
-## Tech Stack
-
-- React 19, TypeScript 5.5
-- Tailwind CSS v4 with oklch color space
-- shadcn/ui components
-- TanStack Query (GraphQL), TanStack Router
-- Vite 6, Turborepo
-- pnpm workspaces
-- Java/OSGi backend (Maven, Felix) for JAR plugin hosting
+- `docs/README.md` — docs entry point and audience routing
+- `docs/architecture/overview.md` — architecture tour: pillars, layers, plugin model
+- `docs/architecture/CONTRACTS.md` — the six contracts
+- `docs/architecture/CONFIGURATION.md` — config layer model, `definePluginConfig`
+- `docs/architecture/decisions/` — ADRs (why it is the way it is)
+- `docs/plugins/` — plugin authoring: first plugin, styling, testing, i18n, distribution
+- `docs/getting-started/` — deployment, installation, configuration, local backend
+- `docs/operations/` — testing, release, CI, open follow-ups
+- `AGENTS.md` — operational rules for AI agents
+- `CONTRIBUTING.md` — human contributor guide

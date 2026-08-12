@@ -193,16 +193,17 @@ PR-3a restructured `docs/` from 40 files to 20, rewrote the plugin-author and op
 
 ### 8.3 Going public with the docs site
 
-The doc site is built and **deploys on every push to `develop`** (plus manual `workflow_dispatch`) via [`.github/workflows/docs.yml`](../../.github/workflows/docs.yml) — there is no `main` branch in this repo. It remains **discouraged from indexing** until the project is ready for public traffic. Two guards are in place; both flip together when you announce the site.
+The deploy trigger is **already active**: [`.github/workflows/docs.yml`](../../.github/workflows/docs.yml) deploys the site on every push to `develop` (plus manual `workflow_dispatch`) — there is no `main` branch in this repo. **Current blocker: GitHub Actions billing** — while it's unresolved no workflow runs at all, so no deploy happens; the moment billing is restored the site starts updating on merge with zero further edits.
 
-| File | Current state | Change when going public |
-|------|---------------|--------------------------|
-| [`docs/public/robots.txt`](../../docs/public/robots.txt) | `Disallow: /` | Change to `Disallow:` (empty — allows everything). |
-| [`docs/.vitepress/config.mts`](../../docs/.vitepress/config.mts) | `<meta name="robots" content="noindex, nofollow">` in the `head` array | Remove that entry. |
+Until the project is ready for public traffic the site stays **discouraged from indexing**. Exactly three things remain for go-public:
 
-**When to revisit**: alongside the go-public flip (see [`test-protocol.md`](./test-protocol.md)'s closing section). Do both together — the combo is belt-and-suspenders (robots.txt is advisory; the meta tag is what most search engines actually obey, so flipping only one leaves the other gating).
+| # | What | Where | Change |
+|---|------|-------|--------|
+| 1 | Crawler block | [`docs/public/robots.txt`](../../docs/public/robots.txt) | `Disallow: /` → `Disallow:` (empty — allows everything). |
+| 2 | `noindex` meta tag | [`docs/.vitepress/config.mts`](../../docs/.vitepress/config.mts) | Remove the `<meta name="robots" content="noindex, nofollow">` entry from the `head` array. |
+| 3 | One-time GitHub setting | Repo **Settings → Pages** | Set source to **GitHub Actions** (not "Deploy from a branch"). The workflow's `actions/deploy-pages` step errors out until this is set. |
 
-**First-time enablement on GitHub**: when you're ready to ship even a manual deploy, enable GitHub Pages in the repo settings under **Settings → Pages**, source: **GitHub Actions** (not "Deploy from a branch"). The workflow's `actions/deploy-pages` step needs that to be set, otherwise it errors out. While the guards are in place, you can do a manual `workflow_dispatch` deploy any time — the URL exists, but search engines stay away.
+**When to revisit**: alongside the go-public flip (see [`test-protocol.md`](./test-protocol.md)'s closing section). Flip 1 and 2 together — the combo is belt-and-suspenders (robots.txt is advisory; the meta tag is what most search engines actually obey, so flipping only one leaves the other gating). Item 3 can be done earlier: with the guards in place, a manual `workflow_dispatch` deploy is safe any time — the URL exists, but search engines stay away.
 
 ### 8.4 Source-link rewriting is heuristic-based
 
