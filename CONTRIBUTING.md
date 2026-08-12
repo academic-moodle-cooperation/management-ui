@@ -12,6 +12,7 @@ Toolchain notes:
 
 - **Node and pnpm** versions are pinned in the root [`package.json`](package.json) (`engines` and `packageManager`); `corepack enable` picks the right pnpm automatically. Docs never restate the numbers — `package.json` is the single source.
 - **Java + Maven** are needed only to build the deployable JAR. Pure frontend work doesn't need them.
+- **Playwright browsers** — first time only, `pnpm test:e2e:install` downloads the Chromium build the E2E suite drives.
 
 New to the codebase? Read [`docs/architecture/overview.md`](docs/architecture/overview.md) (the tour) and [`AGENTS.md`](AGENTS.md) (the operational rules — written for AI agents, equally useful as a human pre-flight checklist).
 
@@ -28,7 +29,7 @@ There are two contribution paths — make sure you're on the right one:
 
 ## 3. Make the change
 
-Branch off `develop` with a descriptive name (`fix/sidebar-overlap`, `feat/upload-resume`, `docs/configuration-clarify`), then iterate:
+Branch off `develop` with a descriptive name (`fix/sidebar-overlap`, `feat/upload-resume`, `docs/configuration-clarify`); no push rights to this repo? Fork first, add this repo as the `upstream` remote, and self-check later with `--since=upstream/develop`. Then iterate:
 
 ```bash
 pnpm dev                                            # shell with hot reload
@@ -94,7 +95,7 @@ pnpm changeset status --since=origin/develop
 
 Three follow-on rules, each one sentence here and detailed in [Releases & versioning](docs/operations/release.md):
 
-- A deliberately release-noteless change to a versioned package still needs a changeset — record the decision with `pnpm changeset --empty`.
+- A deliberately release-noteless change to a versioned package still needs a changeset — record the decision with `pnpm changeset --empty`. The empty changeset satisfies both the CI check and the `changeset status` self-check, even though it names no package.
 - If you changed a public `@oc-mui/*` API surface, run `pnpm api-check` and commit the regenerated `etc/<pkg>.api.md` alongside the changeset ([API surface drift detection](docs/operations/release.md#api-surface-drift-detection)).
 - Removing or renaming a public symbol follows the [deprecation policy](docs/operations/release.md#deprecations): `@deprecated` in one major, removal only in the next.
 
