@@ -5,7 +5,7 @@ Getting Management UI running locally.
 ## Prerequisites
 
 - **Node.js** ≥ 20 (LTS recommended).
-- **pnpm** ≥ 10.4.1. Install with `npm install -g pnpm` or `corepack enable && corepack prepare pnpm@latest --activate`.
+- **pnpm** — run `corepack enable` once; corepack then uses the exact version pinned in the root `package.json`'s `packageManager` field automatically. (Alternatively `npm install -g pnpm`, matching that pin.)
 - A reachable **Opencast** instance (real or stubbed) if you want full functionality. For initial poking-around the shell boots fine with mocked endpoints.
 
 ## Clone & install
@@ -43,7 +43,7 @@ You have three options, in increasing order of effort:
 
 2. **Run Opencast locally** and let the default proxy target (`http://localhost:8080`) reach it. The complete walkthrough — Opencast build, GraphQL plugin, the Management UI backend bundles, OpenSearch via podman — is in [Full local setup](./local-backend.md); the proxy paths the shell needs are listed in [`packages/vite-config/src/proxy.ts`](../../packages/vite-config/src/proxy.ts).
 
-3. **Skip the backend entirely** for pure plugin-authoring work that doesn't depend on live data. Stub the four endpoints the shell needs at boot — the Playwright smoke test in [`tests/e2e/smoke.spec.ts`](../../tests/e2e/smoke.spec.ts) shows the minimal set (`/ui/config/management-ui/config.json`, `/management-tool/ui/config/plugins.json`, `/info/me.json`, `/graphql`). You can do this with any local HTTP server that serves four static JSON files, then point `VITE_PROXY_TARGET` at it.
+3. **Skip the backend entirely** for pure plugin-authoring work that doesn't depend on live data. Stub the endpoints the shell needs at boot — the Playwright smoke test in [`tests/e2e/smoke.spec.ts`](../../tests/e2e/smoke.spec.ts) shows the working set: `/ui/config/management-ui/config.json`, `/management-tool/ui/config/plugins.json`, `/info/me.json`, and `/graphql` (the smoke test additionally stubs `api.github.com` and Gravatar so no request leaves the machine). You can do this with any local HTTP server that serves static JSON files, then point `VITE_PROXY_TARGET` at it.
 
 Configuration model details: [`configuration.md`](./configuration.md).
 
@@ -53,7 +53,7 @@ Configuration model details: [`configuration.md`](./configuration.md).
 pnpm verify
 ```
 
-Runs the full local gate (lint → check-types → build → unit → contract → api-check → Playwright smoke). About 90 turbo tasks. If this passes you have a working tree.
+Runs the full local gate (lint → check-types → build → unit → contract → api-check → Playwright smoke). If this passes you have a working tree.
 
 ## Common commands
 
@@ -77,9 +77,9 @@ To mount one: `git clone <your-org-plugin> .local-plugins/<org-name>`, then `pnp
 
 ## Trouble?
 
-- **`pnpm install` fails complaining about workspace deps.** You're likely on an old pnpm. `corepack prepare pnpm@latest --activate` and retry.
+- **`pnpm install` fails complaining about workspace deps.** You're likely on an old pnpm. `corepack enable` (which activates the version pinned in `package.json`) and retry.
 - **Vite can't find `@oc-mui/...`.** Ensure `pnpm build` ran at least once.
-- **CI passes but local fails.** Run `pnpm verify` from a clean tree (`git clean -fdx node_modules dist dist-types .turbo`) then `pnpm install` then `pnpm verify` again.
+- **CI passes but local fails.** Run `pnpm clean` (removes build output, caches, and `node_modules` across the workspace), then `pnpm install`, then `pnpm verify` again.
 
 ## See also
 

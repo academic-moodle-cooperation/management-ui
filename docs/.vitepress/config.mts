@@ -165,13 +165,6 @@ export default defineConfig({
           ],
         },
       ],
-
-      "/reference/": [
-        {
-          text: "Reference",
-          items: [{ text: "Favicon configuration", link: "/reference/favicon-configuration" }],
-        },
-      ],
     },
 
     socialLinks: [{ icon: "github", link: REPO_URL }],
