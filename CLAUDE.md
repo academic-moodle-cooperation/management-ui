@@ -21,12 +21,17 @@ first; this file only documents the Claude Code-specific layer that sits on top.
 - `pre-flight-check` — walks the AGENTS.md pre-flight checklist before a
   plugin/package change is declared done.
 
-**Subagent**:
+**Subagents**:
 
 - `plugin-boundary-reviewer` — read-only reviewer enforcing the AGENTS.md import
   boundaries, the config-slice rule, the required contract test, and the
   changeset + `api-check` requirement for public-API changes. Runs proactively after
   plugin work; ask for it by name with "review plugin boundaries".
+- `docs-impact-reviewer` — read-only reviewer enforcing AGENTS.md pre-flight item 8
+  ("any doc your change makes stale is updated in the same PR"): given a diff, it
+  finds every doc page naming a touched identifier and flags the unupdated ones.
+  Runs proactively after code changes that touch public symbols, commands, or config
+  keys; ask for it by name with "review docs impact".
 
 **Hooks** (configured in `.claude/settings.json`, run automatically):
 
