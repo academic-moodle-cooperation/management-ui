@@ -61,7 +61,7 @@ A **Hello** entry appears in the sidebar, and the browser console logs `[hello] 
 
 Two things worth knowing:
 
-- **App routes are behind authentication.** Without a logged-in session, `/hello` shows the sign-in screen — even though the plugin loaded fine (the sidebar entry still shows). To see the page itself render, run against a backend and log in: `VITE_PROXY_TARGET=<backend-url> pnpm dev` (see [Run from source](../getting-started/installation.md) for the backend options, including a minimal stub).
+- **App routes are behind authentication.** Without a logged-in session, `/hello` shows the sign-in screen — even though the plugin loaded fine (the sidebar entry still shows). To see the page itself render, run against a backend and log in (`VITE_PROXY_TARGET=<backend-url> pnpm dev`) — or, without any backend, use the **logged-in stub** from [Run from source → Configure the backend](../getting-started/installation.md#configure-the-backend), option 3.
 - The `[hello] activated` console line is logged via `logger.info`, which is **dev-only** (suppressed in production builds). Don't rely on it at staging — the rendered nav entry is the durable signal.
 
 ## 4. Verify the contract

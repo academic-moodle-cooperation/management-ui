@@ -235,7 +235,11 @@ if (skipInstall) {
 }
 console.log(`  ${step++}. pnpm build                  # one-time, populates dist-types/ for upstream packages`);
 console.log(`  ${step++}. edit ${relativeTarget}/plugin.json   # fill in description, author, real extensionPoints`);
-console.log(`  ${step++}. edit ${relativeTarget}/src/index.ts  # replace the placeholder registration`);
+if (template === "app") {
+  console.log(`  ${step++}. edit ${relativeTarget}/src/index.ts  # swap the page, title, icon, and route for your own`);
+} else {
+  console.log(`  ${step++}. edit ${relativeTarget}/src/index.ts  # replace the placeholder registration`);
+}
 console.log(`  ${step++}. pnpm --filter @oc-mui/plugin-${pluginName} test:contract`);
 if (includeMaven) {
   console.log("");

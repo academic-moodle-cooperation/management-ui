@@ -73,6 +73,8 @@ Worth knowing about `apps:definitions` (`AppDefinition` in [`appTypes.ts`](../..
 
 The full list — header actions, footer slots, table-row detail panels, the ACL/metadata editors — is in [`plugins/core/README.md`](../../plugins/core/README.md).
 
+<a id="configuration"></a>
+
 ## A config slice your deployment can override
 
 Continuing the `hello` plugin from [first-plugin](./first-plugin.md). A plugin owns one slice of the app config at `config.plugins.<id>`, declared once with a Zod schema. Never read another plugin's slice, or your own via raw `config.plugins[...]` — always go through the reader.
