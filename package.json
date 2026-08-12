@@ -49,6 +49,7 @@
     "api-check": "turbo run api-check",
     "api-check:ci": "turbo run api-check:ci",
     "docs:dev": "vitepress dev docs",
+    "docs:lint": "pnpm dlx markdownlint-cli2@0.18.1",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
   },

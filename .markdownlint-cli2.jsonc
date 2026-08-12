@@ -1,0 +1,28 @@
+// markdownlint-cli2 runner configuration. Rule settings live in
+// .markdownlint.jsonc (picked up automatically); this file only decides WHICH
+// files get linted. Run locally with `pnpm docs:lint`.
+{
+  "globs": ["**/*.md"],
+  "ignores": [
+    // Dependencies and build output.
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/dist-types/**",
+    "**/target/**",
+    "coverage/**",
+    "playwright-report/**",
+    "docs/.vitepress/cache/**",
+    "docs/.vitepress/dist/**",
+    // Generated markdown — never hand-edited (see the generated-file guard in
+    // .claude/): api-extractor snapshots (committed in etc/, gitignored
+    // working copies in temp/) and changesets-generated changelogs.
+    "**/etc/*.api.md",
+    "**/temp/*.api.md",
+    "**/CHANGELOG.md",
+    // Changeset files are written by the `pnpm changeset` CLI in its own
+    // headingless format; linting them only punishes contributors.
+    ".changeset/**",
+    // Org/community plugin checkouts — gitignored, not part of the OSS tree.
+    ".local-plugins/**"
+  ]
+}

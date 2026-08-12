@@ -301,7 +301,7 @@ Push your working branch to GitHub (any branch name works for this check).
 |---|------|----------|
 | 13.1 | Push triggers the `Test` workflow | Five jobs run: lint-types, unit, contract, api-check, e2e. All green. |
 | 13.2 | Push triggers the `Changeset` workflow | Green if your branch touches a versioned package and includes a changeset; red otherwise. |
-| 13.3 | A PR touching `docs/**`, `package.json`, `pnpm-lock.yaml`, or `.github/workflows/docs.yml` triggers the `Deploy docs` workflow (build only on PRs — it deploys on push to `develop` and via `workflow_dispatch`) | Green. The doc-site build succeeds against the changes. |
+| 13.3 | A PR touching `docs/**`, any `**/*.md`, `package.json`, `pnpm-lock.yaml`, `.github/workflows/docs.yml`, or a lint/link-check config (`.markdownlint*.jsonc`, `lychee.toml`) triggers the `Deploy docs` workflow (build + markdownlint + offline link check on PRs — it deploys on push to `develop` and via `workflow_dispatch`) | Green. All three docs jobs succeed against the changes. |
 
 ## Section 14 — Documentation site
 
