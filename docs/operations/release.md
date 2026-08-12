@@ -39,13 +39,13 @@ The set is decided **forward-looking**: it covers what a plugin author can legit
 
 ### Publish-readiness checklist (the work before the flip)
 
-The packages are not yet npm-installable; getting there is tracked as:
+Making the packages npm-installable was tracked as the following list — all of it is done; only the [first-release bootstrap](#first-release-bootstrap--one-time-checklist) remains:
 
 - [x] **Metadata + per-package `LICENSE`** on the 15 SDK packages.
 - [x] **React → `peerDependencies`** on `plugin-system`, `app-runtime`, `plugin-testing` (avoids duplicate-React in a consumer install).
 - [x] **`exports` → built `dist/` + `files` allowlist** for every SDK package, so consumers get compiled JS, not raw `.ts`/`.tsx`. Pattern: tsup builds ESM JS → `dist/`; `tsc` emits `.d.ts` → `dist-types/` (also feeds api-extractor); package `exports` point **directly at `dist`** (dist-canonical; the former src/`publishConfig` indirection and the `development` condition were removed so published and local resolution can never diverge — the shell dev server resolves workspace sources via its own Vite aliases instead). All 15 SDK packages now ship `dist` (the 3 config packages ship source intentionally with a `files` allowlist). _Styling for external consumers works out of the box: `@oc-mui/ui`'s `globals.css` self-scans its own dist (so component classes are generated) and ships the design tokens + fonts, and Tailwind v4 auto-scans the consumer's project — so a plugin author just needs `@import "@oc-mui/ui/globals.css"`. The previous monorepo-specific `@source` globs (apps/plugins/.local-plugins) were moved out of the shared stylesheet into the shell's own Tailwind entry ([`apps/shell/src/app.css`](../../apps/shell/src/app.css)); verified against the visual-regression baselines (pixel-identical) and a real external Tailwind build._
 - [x] **Verdaccio publish-smoke-test (the acceptance gate).** [`scripts/verify-sdk-publish.sh`](../../scripts/verify-sdk-publish.sh) (run via `pnpm test:sdk-publish`, CI: [`.github/workflows/sdk-publish.yml`](../../.github/workflows/sdk-publish.yml)) builds the SDK, strips `private`, publishes all 15 packages to a throwaway Verdaccio registry, then in a consumer project **outside the workspace** installs the SDK from that registry and runs a type-check (against the shipped `.d.ts`) + a runtime smoke test (against the shipped JS) of a real `createPlugin` plugin. This is the real proof that "a plugin can install and build against our packages without the monorepo." Everything is torn down on exit and the `private` flags restored from git.
-- [x] **`pkg.pr.new` per-PR preview packages.** [`.github/workflows/preview-packages.yml`](../../.github/workflows/preview-packages.yml) publishes preview builds of the 15 SDK packages to the [pkg.pr.new](https://pkg.pr.new) CDN on each PR, and comments the install URLs, so anyone (e.g. a backend/plugin author) can `pnpm add https://pkg.pr.new/@oc-mui/<pkg>@<sha>` and test the exact artifacts from a branch before a permanent npm publish. It packs with `pnpm` (same pack path as a real publish) and rewrites workspace deps to sibling preview URLs, so the whole `@oc-mui` graph resolves from the CDN. pkg.pr.new **skips `private: true` packages**, so the workflow strips `private` in a dedicated step before publishing (the runner checkout is throwaway). **One-time setup (maintainer):** install the [pkg.pr.new GitHub App](https://github.com/apps/pkg-pr-new) on the repo running the workflow — pkg.pr.new checks the App against `$GITHUB_REPOSITORY`, so install it wherever you want previews. Until it's installed the publish step is rejected, but it's `continue-on-error` so it never fails the PR. (No npm token; pkg.pr.new is a preview CDN, not npm.)
+- [x] **`pkg.pr.new` per-PR preview packages.** [`.github/workflows/preview-packages.yml`](../../.github/workflows/preview-packages.yml) publishes preview builds of the 15 SDK packages to the [pkg.pr.new](https://pkg.pr.new) CDN on each PR, and comments the install URLs, so anyone (e.g. a backend/plugin author) can `pnpm add https://pkg.pr.new/@oc-mui/<pkg>@<sha>` and test the exact artifacts from a branch before a permanent npm publish. It packs with `pnpm` (same pack path as a real publish) and rewrites workspace deps to sibling preview URLs, so the whole `@oc-mui` graph resolves from the CDN. pkg.pr.new **skips `private: true` packages**; the workflow still carries a strip-`private` step from the pre-flip era, which is vestigial today (no SDK package carries `private` anymore — the step is a harmless no-op kept as a guard; the runner checkout is throwaway). **One-time setup (maintainer):** install the [pkg.pr.new GitHub App](https://github.com/apps/pkg-pr-new) on the repo running the workflow — pkg.pr.new checks the App against `$GITHUB_REPOSITORY`, so install it wherever you want previews. Until it's installed the publish step is rejected, but it's `continue-on-error` so it never fails the PR. (No npm token; pkg.pr.new is a preview CDN, not npm.)
 
 Both closing tasks of the exports→dist effort are now in place — Verdaccio for the all-in-one acceptance gate, pkg.pr.new for low-friction per-branch testing. Together they are the standing answer to "can we test against staged packages before publishing?" — **yes**.
 
@@ -53,14 +53,7 @@ Both closing tasks of the exports→dist effort are now in place — Verdaccio f
 
 Every workspace package under `packages/` and `plugins/` is **versioned independently** following [Semver 2.0](https://semver.org/). Apps under `apps/` (`shell`, `playground`) are not published and not versioned.
 
-The four contracts in [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md) layer additional rules on top of plain Semver for the frozen surfaces:
-
-- **Manifest 1.1** — `@oc-mui/plugin-system`
-- **Runtime API 1.0** — `@oc-mui/plugin-system`
-- **Theme 2.0** — `@oc-mui/ui` (tokens) + plugin authors (consumers)
-- **Config 1.0** — `@oc-mui/query` (`definePluginConfig`) + `@oc-mui/plugin-system` (loader)
-
-Any change observable to a plugin author through one of these surfaces is **always a major** bump of the affected package, even if Semver alone would say otherwise.
+The six frozen contracts in [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md) layer additional rules on top of plain Semver — that page owns the contract names, versions, and owning packages. Any change observable to a plugin author through one of those surfaces is **always a major** bump of the affected package, even if Semver alone would say otherwise.
 
 ## Picking the bump level
 
@@ -111,7 +104,7 @@ git diff packages/*/etc/*.api.md
 
 CI runs `pnpm api-check:ci`, which compares the generated reports against the committed snapshots and fails the PR if they differ. Intentional changes commit the regenerated `etc/<pkg>.api.md` + changeset; unintentional changes get an immediate signal.
 
-Instrumented packages — the six contract-stable ones:
+Ten packages are instrumented (they carry an `api-check` script):
 
 - `@oc-mui/plugin-system`
 - `@oc-mui/router`
@@ -119,6 +112,12 @@ Instrumented packages — the six contract-stable ones:
 - `@oc-mui/i18n`
 - `@oc-mui/store`
 - `@oc-mui/ui-config`
+- `@oc-mui/app-runtime`
+- `@oc-mui/utils`
+- `@oc-mui/plugin-testing`
+- `@oc-mui/ui`
+
+They produce twelve report files: one per package, except `@oc-mui/ui`, which reports three entry points (`ui.api.md`, `ui-components.api.md`, `ui-hooks.api.md`).
 
 Cross-package coupling visible in each report is intentional: when an upstream contract changes, every consumer's snapshot diff surfaces the break.
 
@@ -144,6 +143,16 @@ Modeled on the Opencast project's GitFlow-style branching. Two branch roles matt
 
 There is no `main` branch: `develop` collects, the `r/NN.x` lines ship.
 
+### Release lines and the product version
+
+The single home for the product-version model (PR/issue templates link here):
+
+- **[`VERSION`](../../VERSION)** at the repo root is the **product version** (e.g. `19.0.0`) — distinct from the independently-semver'd npm package versions. Its **major is pinned to the Opencast major the release line targets**: `r/19.x` ships `19.x.y`, `r/20.x` ships `20.x.y`.
+- **`r/NN.x`** are the long-lived release branches, one per supported Opencast major; **`develop`** is the integration branch every feature PR targets. A line is cut from `develop` when its major is ready.
+- **`VERSION` is bumped automatically inside the Version Packages PR**: `pnpm changeset:version` runs [`scripts/bump-product-version.mjs`](../../scripts/bump-product-version.mjs), which keeps the major pinned to the line's Opencast major and derives minor/patch from the npm bumps that PR contains (any minor/major package bump → product minor +1; only patches → product patch +1).
+- [`scripts/update-maven-versions.mjs`](../../scripts/update-maven-versions.mjs) then syncs the Maven project version to `VERSION` (a textual pom edit — the Opencast parent POM cannot be resolved on CI), so **the JAR artifacts carry the product version**: tag `v19.0.1` ships `management-ui-graphql-19.0.1.jar` (and the other `management-ui-*-19.0.1.jar` bundles).
+- Fixes flow **oldest affected line → newer lines → `develop`** via forward merges (merge commits, never squash) — the full flow is [Bugfixes across multiple release lines](#bugfixes-across-multiple-release-lines) below.
+
 ### The everyday loop
 
 1. Branch a feature off `develop`; open a PR back into `develop` **with a changeset** (CI enforces it).
@@ -159,7 +168,7 @@ There is no `main` branch: `develop` collects, the `r/NN.x` lines ship.
 
 Before any release — and especially before the first public 1.0 cut or any major bump of a contract-stable package — run the [release test protocol](./test-protocol.md). It's the integration-level gate that complements `pnpm verify`'s mechanical checks.
 
-The automation lives in [`.github/workflows/release.yml`](../../.github/workflows/release.yml), which runs the [`changesets/action`](https://github.com/changesets/action) on every push to an **`r/**`** release line (see [Branching model](#branching-model)). The release flow:
+The automation lives in [`.github/workflows/release.yml`](../../.github/workflows/release.yml), which runs the [`changesets/action`](https://github.com/changesets/action) on every push to an **`r/**`** release line (see [Branching model](#branching-model)). It can also be started manually via `workflow_dispatch`, but a branch guard in the workflow makes it a no-op unless it runs on an `r/` branch — dispatching it from `develop` does nothing. The release flow:
 
 1. **Push the release line `r/NN.x`** (branch from `develop`, or update an existing line). On the push, the action opens (or updates) a **"Version Packages" PR** against that line that aggregates the pending `.changeset/*.md` files into version bumps and changelog updates.
 2. **Review and merge the Version Packages PR.** This commits the version bumps, regenerated changelogs, and consumes the `.changeset/*.md` files.
@@ -176,7 +185,7 @@ Like Opencast, we support the newest release lines in parallel (Opencast itself 
    - `forward-merge.yml` opens (or refreshes) the PR to the next line up on every `r/**` push, so the pending chain is always visible.
    - `version-pr-guard.yml` blocks an older line's Version PR while any changeset it would consume is missing on a newer line — the failure mode it prevents is silent: releasing first carries the changeset **deletion** upward, and the fix ships on the newer line without a version bump or changelog entry.
    Forward-merging *before* any line's Version PR is merged carries the **changeset file** to every line, so each line's own Version PR consumes its own copy and produces that line's patch release (e.g. `1.0.3` on the 18-line and `2.1.1` on the 19-line, each with the fix in its changelog).
-3. **Resolve version metadata toward the newer line.** Forward merges conflict in `package.json` versions, `CHANGELOG.md`s, and `VERSION`: always keep the **target (newer) line's** values and take only the fix itself. `VERSION` is per-line by design (`18.5.1` on `r/18.x`, `19.2.0` on `r/19.x`) and is bumped **automatically** inside the Version PR: `pnpm changeset:version` runs `scripts/bump-product-version.mjs`, which keeps the major pinned to the line's Opencast major and derives minor/patch from the npm bumps the Version PR contains. `scripts/update-maven-versions.mjs` then syncs the Maven project version to it, so **the JAR artifacts carry the product version** — tag `v19.0.1` ships `management-ui-graphql-19.0.1.jar` (a textual pom edit, because the Opencast parent cannot be resolved on CI; see #242).
+3. **Resolve version metadata toward the newer line.** Forward merges conflict in `package.json` versions, `CHANGELOG.md`s, and `VERSION`: always keep the **target (newer) line's** values and take only the fix itself. `VERSION` is per-line by design (`18.5.1` on `r/18.x`, `19.2.0` on `r/19.x`) and is bumped **automatically** inside the Version PR, which also stamps the Maven/JAR versions — see [Release lines and the product version](#release-lines-and-the-product-version).
 4. **Release each line independently** by merging its Version PR whenever that line wants to ship. There is no required ordering between lines.
 5. **Only the newest line publishes npm — and only it creates package tags.** `release.yml` computes the newest existing `r/NN.x` at run time: the newest line runs `changeset publish` (npm + per-package git tags, npm-tagged `latest` — correct by construction). An **older line touches neither npm nor the package tags**: the lines carry identical package versions, and a git tag name can exist only once — so an older line's release leg produces only its product tag (`vNN.x.y`) and GitHub Release. Older lines ship as JARs. No manual `npm dist-tag` repointing exists anymore.
 
@@ -238,7 +247,7 @@ The one wrinkle is the **first publish of each package**: OIDC cannot create a p
 ## See also
 
 - [`CONTRIBUTING.md`](../../CONTRIBUTING.md#versioning-changesets-and-deprecations) — the day-to-day version of this page.
-- [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md) — the six frozen contracts.
+- [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md) — the frozen contracts.
 - [`.changeset/config.json`](../../.changeset/config.json) — current changesets configuration.
 - [`test-protocol.md`](./test-protocol.md) — end-to-end checklist to run before every release.
 - [`ci.md`](./ci.md) — what runs on every PR.

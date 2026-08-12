@@ -2,7 +2,7 @@
 
 A systematic walkthrough verifying every advertised feature actually works end-to-end before cutting a release. Run this in a fresh checkout against your staging Opencast backend.
 
-This is **not** the same as `pnpm verify`. The verify gate runs lint, types, unit tests, contract tests, an API-snapshot check, and a Playwright smoke against a mocked backend. It catches mechanical regressions. The protocol below catches **integration** regressions — things that pass in CI but fall over when a real backend, a real plugin JAR, a real org theme, or a real config drift hits them.
+This is **not** the same as `pnpm verify`. The verify gate runs lint, types, unit tests, contract tests, an API-snapshot check, and the Playwright E2E suite against a mocked backend. It catches mechanical regressions. The protocol below catches **integration** regressions — things that pass in CI but fall over when a real backend, a real plugin JAR, a real org theme, or a real config drift hits them.
 
 Mark each item ✅ / ❌ / ➖ (skipped, justified). Any ❌ blocks the release.
 
@@ -33,7 +33,7 @@ before your first recorded run.**
 
 ## When to run
 
-- Before the first public 1.0 cut (Phase 6d's npm `restricted → public` flip).
+- Before the first public 1.0 cut (the go-public flip in the closing section below).
 - Before any major bump of `@oc-mui/plugin-system` (the contract-stable core).
 - Before any release that touches the JAR-packaging pipeline (Maven POMs, `apps/shell/pom.xml`, the `PluginBundleTracker`).
 - Annually, as a calibration pass even if none of the above triggered.
@@ -72,14 +72,17 @@ visual tier snapshots the landing on a mocked backend).
 
 Every command above runs against the *default* config with no org plugins, or a
 vanilla local Opencast. A real deployment — its `config.json`, its JAR-deployed
-org plugin, its theme, its data — is covered by exactly two tiers, and both are
-fed by hand:
+org plugin, its theme, its data — is covered by two further tiers, both fed by
+hand:
 
 | Tier | Command | Fed by |
 |---|---|---|
 | HAR replay | `pnpm test:har-replay` | A tester's sanitized recording (⏺ REC sections). Boots the shell against the recorded backend; asserts §4 GraphQL naming + error-free responses over real traffic. |
 | Org plugin | `ORG_PLUGIN=<name> pnpm test:org-plugin` | The plugin in `.local-plugins/<name>/`. Contract + visual coverage for a surface that `pnpm verify` explicitly filters out (`--filter='!./.local-plugins/*'`). |
-| Protocol coverage | `pnpm protocol:coverage <protocol.yaml>` | An org's imported wiki protocol. Reports how many of its steps are automated, and sorts the rest by "already failed at least once". |
+
+A third hand-fed command measures rather than tests: `pnpm protocol:coverage
+<protocol.yaml>` takes an org's imported wiki protocol, reports how many of its
+steps are automated, and sorts the rest by "already failed at least once".
 
 ### Cross-browser
 
@@ -98,7 +101,7 @@ the deployment.
 You need:
 
 - A clean clone of the repo at the branch you're releasing.
-- Node ≥ 20, pnpm ≥ 10.4.1, Java 21 (for the JAR sections), Maven 3.9+.
+- Node ≥ 20 (the release path itself pins Node 22 — see [`release.yml`](../../.github/workflows/release.yml)), the pnpm version pinned in `package.json`'s `packageManager` field, Java 21 (for the JAR sections), Maven 3.9+.
 - A staging Opencast instance you can deploy to and break without consequence. `$OPENCAST_HOME` should be writable; you should be able to inspect logs.
 - A web browser with devtools.
 
@@ -127,7 +130,7 @@ Pre-flight. If any of these fail, stop. The release is broken in a way that does
 |---|------|----------|----------|
 | 1.1 | `pnpm install` | Completes; `node_modules/` populated. | Check lockfile + pnpm version. |
 | 1.2 | `pnpm build` | All packages compile; `dist/`, `dist-types/` populated. | TypeScript errors → real bug. |
-| 1.3 | `pnpm verify` | 88+ turbo tasks pass + Playwright smoke green. | Read the failing job's log. Usually deterministic. |
+| 1.3 | `pnpm verify` | All turbo tasks pass + Playwright E2E green. | Read the failing job's log. Usually deterministic. |
 | 1.4 | `pnpm api-check` | API Extractor snapshots match committed `etc/<pkg>.api.md`. | A real API surface drifted. Regenerate + add changeset, or revert the offending PR. |
 
 ## Section 2 — Shell boots cleanly  ⏺ REC
@@ -286,7 +289,7 @@ The mechanical safeguards we built for plugin authors.
 |---|------|----------|
 | 12.1 | Scaffold a plugin, add `query BrokenName { ... }` to its `gql\`\`` | `pnpm --filter @oc-mui/plugin-<name> lint` fails with `local/graphql-operation-naming` violation. |
 | 12.2 | Fix to `query PluginPascalNameBrokenName { ... }` | Lint passes. |
-| 12.3 | Scaffold a plugin, set `workspaceDependencies.react: "^18.0.0"` in its `plugin.json` | `checkSharedDependencyCompatibility` returns `compatible: false` (verify by importing the function in a quick scratch test, or by waiting for the load-time enforcement landing later — currently the function exists but is not wired into the loader; tracked in OPEN_FOLLOWUPS §5.3). |
+| 12.3 | Scaffold a plugin, set `workspaceDependencies.react: "^18.0.0"` in its `plugin.json` | `checkSharedDependencyCompatibility` returns `compatible: false`, and the load-time gate rejects the plugin — the check is wired into all three loader paths (marketplace, `.local-plugins/` dev, JAR; the JAR path is a no-op until the backend's `plugins.json` carries `workspaceDependencies` — see [`open-followups.md` §5.3](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/open-followups.md)). For `.local-plugins/`: add the plugin to `app.enabledPlugins` and watch the shell skip it with a shared-dependency warning. |
 | 12.4 | Add a new export to `@oc-mui/plugin-system` and run `pnpm api-check:ci` | Fails — snapshot drift. After regenerating + adding a changeset, passes. |
 | 12.5 | Touch a versioned package without adding a changeset | `pnpm changeset:status --since=origin/develop` fails. |
 
@@ -296,9 +299,9 @@ Push your working branch to GitHub (any branch name works for this check).
 
 | # | Test | Expected |
 |---|------|----------|
-| 13.1 | Push triggers the `Test` workflow | Four jobs run: lint-types, unit, contract, api-check, e2e. All green. |
+| 13.1 | Push triggers the `Test` workflow | Five jobs run: lint-types, unit, contract, api-check, e2e. All green. |
 | 13.2 | Push triggers the `Changeset` workflow | Green if your branch touches a versioned package and includes a changeset; red otherwise. |
-| 13.3 | A PR built via push triggers `Deploy docs` workflow (build only — deploy is `workflow_dispatch` until going public) | Green. The doc-site build succeeds against the changes. |
+| 13.3 | A PR touching `docs/**`, `package.json`, `pnpm-lock.yaml`, or `.github/workflows/docs.yml` triggers the `Deploy docs` workflow (build only on PRs — it deploys on push to `develop` and via `workflow_dispatch`) | Green. The doc-site build succeeds against the changes. |
 
 ## Section 14 — Documentation site
 
@@ -313,7 +316,7 @@ Push your working branch to GitHub (any branch name works for this check).
 | 14.7 | Source-file link (e.g. `[packages/plugin-system/](../../packages/plugin-system/)`) | Routes to the GitHub URL, opens in a new tab. |
 | 14.8 | `pnpm docs:build` | Builds without errors; `docs/.vitepress/dist/` populated. |
 | 14.9 | Run the **Deploy docs** workflow (Actions → Run workflow) | Pages site updates within ~3 min at `https://academic-moodle-cooperation.github.io/management-ui/`. |
-| 14.10 | View-source on any built page | `<meta name="robots" content="noindex, nofollow">` is present. (Pre-1.0 guard. Goes away in Phase 6d.) |
+| 14.10 | View-source on any built page | `<meta name="robots" content="noindex, nofollow">` is present. (Pre-1.0 guard. Goes away at the go-public flip.) |
 | 14.11 | `curl https://academic-moodle-cooperation.github.io/management-ui/robots.txt` | Returns `Disallow: /`. (Pre-1.0 guard.) |
 
 ## Section 15 — Authentication (depends on backend)  ⏺ REC
@@ -327,22 +330,20 @@ Push your working branch to GitHub (any branch name works for this check).
 
 ## When this protocol returns ✅ across the board
 
-You're cleared to flip Phase 6d:
+You're cleared to go public. Most of the former "Phase 6d flip" is already in its end state — `.changeset/config.json` has `"access": "public"`, the SDK packages carry no `private` flag, and the docs site deploys on push to `develop` — so what remains is:
 
-1. Open a PR that:
-   - Edits `.changeset/config.json` → `"access": "public"`.
+1. Open a PR that flips the two search-indexing guards:
    - Deletes `docs/public/robots.txt`'s `Disallow: /` (replace with empty `Disallow:`).
    - Removes the `noindex` meta entry from `docs/.vitepress/config.mts`.
-   - Uncomments the `push: branches: [main]` block in `.github/workflows/docs.yml`.
 2. Merge.
-3. The next `pnpm changeset version && pnpm changeset publish` cuts the first public release on npm.
+3. Cut the first release from the release line — the workflow-driven flow in [`release.md` → Cutting a release](./release.md#cutting-a-release) publishes to npm (after the one-time [first-release bootstrap](./release.md#first-release-bootstrap--one-time-checklist); there is no manual `changeset publish` step).
 4. Announce.
 
-After publishing, this protocol should run again before any **major** bump of the contract-stable packages (`@oc-mui/plugin-system`, `@oc-mui/router`, `@oc-mui/query`, `@oc-mui/i18n`, `@oc-mui/store`, `@oc-mui/ui-config`).
+After publishing, this protocol should run again before any **major** bump of an API-instrumented package (the ten packages listed in [`release.md` → API surface drift detection](./release.md#api-surface-drift-detection)).
 
 ## See also
 
 - [`CONTRIBUTING.md`](../../CONTRIBUTING.md) — the day-to-day dev loop.
 - [`docs/operations/ci.md`](./ci.md) — the CI graph this protocol assumes is green.
 - [`docs/operations/release.md`](./release.md) — versioning + the publish flow.
-- [`docs/operations/open-followups.md`](./open-followups.md) — every known deferred item; check this list as part of the release prep.
+- [`docs/operations/open-followups.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/open-followups.md) — every known deferred item; check this list as part of the release prep. (GitHub link — the page is deliberately excluded from the published docs site.)

@@ -1,4 +1,4 @@
-# Integration E2E (real podman Opencast)
+# Integration E2E (real Opencast backend)
 
 The real-backend tier of the test pyramid. Unlike the mocked smoke suite in
 [`tests/e2e/`](../e2e/README.md), these specs drive the shell against a **live
@@ -17,7 +17,7 @@ shell dev server  ── 127.0.0.1:3000/management-ui/
         │  Vite proxy forwards /graphql, /info/me.json,
         │  /j_spring_security_*, plugins.json …
         ▼
-podman Opencast   ── OPENCAST_BASE_URL  (default http://opencast-runtime:8080)
+local Opencast    ── OPENCAST_BASE_URL  (default http://opencast-runtime:8080)
 ```
 
 - `global-setup.ts` polls `${OPENCAST_BASE_URL}/info/me.json` until Opencast
@@ -30,13 +30,13 @@ podman Opencast   ── OPENCAST_BASE_URL  (default http://opencast-runtime:808
 
 ## Prerequisites
 
-1. **A running podman Opencast.** From your `opencast-podman` checkout:
-   ```bash
-   ./runtime.sh start <opencast-major-version>
-   ```
-2. **`/etc/hosts` entry** so the default base URL resolves (Opencast's own
-   `server.url` is `http://opencast-runtime:8080`, and it's picky about the host
-   header matching during auth):
+1. **A locally running Opencast** you can log into and break without
+   consequence — e.g. your own container setup, or a source checkout. Set
+   `OPENCAST_BASE_URL` (and the other `OPENCAST_*` env vars below) to reach it;
+   for a plain `http://localhost:8080` instance no further setup is needed.
+2. **`/etc/hosts` entry** — only if you keep the default base URL
+   `http://opencast-runtime:8080` (Opencast is picky about the host header
+   matching its `server.url` during auth):
    ```
    127.0.0.1 opencast-runtime
    ```
@@ -73,15 +73,15 @@ a running local podman stack. It's backend-mutating — local only, never shared
 ## Configuration (env vars)
 
 Everything is overridable — see [`opencast-env.ts`](opencast-env.ts) for the
-full list and defaults (taken from the `opencast-podman` compose/env files).
+full list and defaults.
 
 | Var | Default | Purpose |
 |---|---|---|
 | `OPENCAST_BASE_URL` | `http://opencast-runtime:8080` | Host-reachable Opencast URL the shell proxies to. Use `http://localhost:8080` to skip the `/etc/hosts` entry. |
 | `OPENCAST_USER` / `OPENCAST_PASS` | `admin` / `opencast` | Login seed (§15). |
 | `OPENCAST_HEALTH_PATH` | `/info/me.json` | Readiness probe. |
-| `OPENCAST_AUTOSTART` | _unset_ | If `1`, run `runtime.sh start` when Opencast is down. Needs the two vars below. |
-| `OPENCAST_PODMAN_DIR` | _unset_ | Path to your `opencast-podman` checkout (autostart only). |
+| `OPENCAST_AUTOSTART` | _unset_ | If `1`, start Opencast via the container setup in `OPENCAST_PODMAN_DIR` when it's down. Needs the two vars below. |
+| `OPENCAST_PODMAN_DIR` | _unset_ | Path to a local Opencast container setup exposing a `runtime.sh start <major>` entry point (autostart only — maintainer-local tooling, not shipped in this repo). |
 | `OPENCAST_VERSION` | _unset_ | Opencast major version for autostart / §10 JAR dir. |
 
 Example against a `localhost`-published Opencast you start yourself:
@@ -92,10 +92,14 @@ OPENCAST_BASE_URL=http://localhost:8080 pnpm test:integration
 
 ## Status
 
-Validated **green against a real Opencast backend** (all 6 specs pass: auth
-setup, §4 GraphQL data flow on episodes + series, §3 episodes table + sort). The
-infrastructure (health-check, proxy, form login → saved session) and the
-backend-specific assumptions are confirmed:
+Validated **green against a real Opencast backend**. The suite is
+[`auth.setup.ts`](auth.setup.ts) (login once, save the session) plus five specs:
+[`auth.spec.ts`](auth.spec.ts), [`create-series.spec.ts`](create-series.spec.ts)
+(mutation-gated, see above), [`episodes.spec.ts`](episodes.spec.ts),
+[`graphql.spec.ts`](graphql.spec.ts) and
+[`plugin-routes.spec.ts`](plugin-routes.spec.ts). The infrastructure
+(health-check, proxy, form login → saved session) and the backend-specific
+assumptions are confirmed:
 
 - Login uses Opencast's Spring Security defaults (`/j_spring_security_check`,
   `j_username` / `j_password`); the session authenticates through the proxy.
