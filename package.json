@@ -18,7 +18,7 @@
     "test:watch": "turbo run test:watch",
     "test:coverage": "turbo run test:coverage",
     "test:contract": "turbo run test:contract",
-    "verify": "mkdir -p .local-plugins && pnpm turbo run lint check-types build test test:contract api-check --filter='!./.local-plugins/*' && pnpm test:e2e",
+    "verify": "mkdir -p .local-plugins && pnpm turbo run lint check-types build test test:contract api-check --filter='!./.local-plugins/*' && pnpm test:docs && pnpm test:e2e",
     "validate:plugins": "node scripts/validate-plugins.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",

@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 #
 # verify-docs.sh — test-protocol.md §14 (documentation site), automated.
+# Wired up as `pnpm test:docs`.
 #
-# Builds the VitePress site (which fails on dead internal links, so a green
-# build doubles as a link check) and asserts the pre-1.0 crawler guards are
-# present in the output: the `noindex` meta on built pages and robots.txt's
-# `Disallow: /`. When the project goes public these guards are removed — at
-# which point this script's last two checks should be flipped/deleted.
+# Builds the VitePress site with dead-link checking enabled
+# (`ignoreDeadLinks: false` in docs/.vitepress/config.mts), so the build
+# fails on any dead internal link and a green build doubles as a link check.
+# Then asserts the pre-1.0 crawler guards are present in the output: the
+# `noindex` meta on built pages and robots.txt's `Disallow: /`. When the
+# project goes public these guards are removed — at which point this
+# script's last two checks should be flipped/deleted.
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
