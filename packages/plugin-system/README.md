@@ -2,7 +2,7 @@
 
 The runtime every plugin runs on. Provides `createPlugin()`, the `PluginManager`, extension-point resolution, and the React context that exposes them to components.
 
-**Contract**: Manifest 1.1 and Runtime API 1.0 are frozen for the 1.x line. See [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md). API surface is mechanically tracked in [`etc/plugin-system.api.md`](./etc/plugin-system.api.md).
+**Contract**: this package implements the Manifest and Runtime API contracts — current versions and freeze guarantees live in [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md). API surface is mechanically tracked in [`etc/plugin-system.api.md`](./etc/plugin-system.api.md).
 
 ## Usage
 
@@ -41,7 +41,8 @@ The full plugin-authoring walkthrough lives at [`docs/plugins/creating-a-plugin.
 | `getAllApps(manager)`, `getAppById(manager, id)` | Read helpers over the `apps:definitions` registry. |
 | `createAppRegistryPlugin()`, `createObjectRegistryPlugin()`, `createRendererPlugin()` | The three built-in plugins the shell wires up before any user plugins. |
 | `fragmentRegistry`, `FragmentRegistryService` | GraphQL fragment registry used by `@oc-mui/query`. |
-| `checkApiVersionCompatibility(required, host?)`, `parseSemver(input)` | Runtime checks for the host-vs-plugin API version handshake. |
+| `checkApiVersionCompatibility(required, host?)`, `parseSemver(input)`, `PLUGIN_API_VERSION` | Runtime checks for the host-vs-plugin API version handshake. |
+| `SHARED_RUNTIME_MAJORS`, `checkSharedDependencyCompatibility(deps, hostMajors?)`, `parseRangeMajor(range)` | The Shared Runtime Dependencies contract: which majors of `react`, `@oc-mui/*`, … the host provides, and the check a remote plugin's declared ranges run through before load. |
 | `validatePluginMetadata(json)` | Zod-backed runtime validation against the manifest schema. |
 
 For the exhaustive type-level signature, read [`etc/plugin-system.api.md`](./etc/plugin-system.api.md) — it's committed and CI-checked.

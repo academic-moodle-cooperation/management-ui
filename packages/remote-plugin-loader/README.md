@@ -17,11 +17,13 @@ Loads the plugin at `url`, transforms it, and registers it with `manager`.
 
 - **url** – URL to the plugin `.mjs` file.
 - **manager** – `PluginManager` from `@oc-mui/plugin-system`.
-- **options** – Optional:
+- **options** (`LoadOptions`) – Optional:
   - `forceReload` – Bypass HTTP and module cache.
+  - `cssUrl` – Explicit CSS URL when the stylesheet name does not match the module name.
   - `skipUrlValidation` – Caller has already validated the URL (e.g. core for JAR URLs). This package does not validate URLs; the flag is for API clarity.
+  - `skipPluginNames` – `Set` of plugin names to load but **not** register; the plugin object is still returned in `LoadResult.plugin` so the caller can keep it for discovery (e.g. the marketplace's "disabled" list).
 
-Returns a `Promise<LoadResult>` with `{ success, pluginId?, error?, warnings }`.
+Returns a `Promise<LoadResult>` with `{ success, pluginId?, error?, warnings, skipped?, plugin? }` — `skipped` is true when the name was in `skipPluginNames`, and `plugin` is the loaded `Plugin` object (always set on success, even when skipped).
 
 The host app must call `exposeSharedModules()` (e.g. in `main.tsx`) so `window.__SHARED_MODULES__` is set before loading remote plugins.
 

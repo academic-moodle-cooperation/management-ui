@@ -18,8 +18,10 @@ Reading values in a component:
 
 ```ts
 import { episodesConfig } from "./config";
-const { pageSize } = episodesConfig.use();
+const { episodesTable } = episodesConfig.use();
 ```
+
+The slice's top-level keys are `episodeInfo` (metadata field visibility), `episodesTable` (columns + list/gallery views), and `protection`.
 
 The full merge order (`app:config:defaults` ⊕ base ⊕ `app:config`) lives in [`docs/architecture/CONFIGURATION.md`](../../docs/architecture/CONFIGURATION.md).
 

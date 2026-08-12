@@ -26,7 +26,7 @@ Plugin authors import from the **subpath exports** — never the package root �
 | `@oc-mui/ui/components/icons` | `lucide-react` icons re-exported with a stable surface (Home, Video, ExternalLink, …). |
 | `@oc-mui/ui/lib` | Utility helpers (`resolveFirstAssetUrl`, …). |
 | `@oc-mui/ui/lib/utils` | The `cn()` class-merging helper. |
-| `@oc-mui/ui/hooks` | `useMobile`, `useClickOutside`, … |
+| `@oc-mui/ui/hooks` | `useIsMobile`, `useClickOutside`. |
 | `@oc-mui/ui/styles`, `@oc-mui/ui/globals.css` | The semantic-token CSS. Imported once by the shell. |
 | `@oc-mui/ui/config-primitives` | Building blocks for plugin config UIs. |
 | `@oc-mui/ui/postcss.config` | Shared PostCSS config — an app's `vite.config.ts` pulls it in. |
@@ -51,10 +51,11 @@ Components consume the semantic tokens from [`src/styles/globals.css`](./src/sty
 
 ## Layer
 
-Integration. Depends on `@oc-mui/utils`, `@oc-mui/plugin-system` (for components that integrate with extension points), `@oc-mui/router` (for components that render links).
+Integration. Depends on `@oc-mui/i18n`, `@oc-mui/plugin-system`, `@oc-mui/query`, `@oc-mui/ui-config`, `@oc-mui/utils`.
+
+Deliberately **not** a dependency: `@oc-mui/router`. Router-aware components (sidebar nav, data table) get their `Link`/`usePathname` primitives injected by the host via `UiRouterProvider` — importing the router here would invert the layering and create a dependency cycle. See [`src/components/router-context.tsx`](./src/components/router-context.tsx) for the full rationale.
 
 ## See also
 
-- [`docs/plugins/styling.md`](../../docs/plugins/styling.md) — Theme Contract 2.0.
+- [`docs/plugins/styling.md`](../../docs/plugins/styling.md) — the Theme Contract.
 - [`packages/tailwind-config/README.md`](../tailwind-config/README.md) — the shared Tailwind preset.
-- [`docs/operations/shadcn-typescript-errors.md`](../../docs/operations/shadcn-typescript-errors.md) — why CI filters certain TS errors in the shadcn-generated files.
