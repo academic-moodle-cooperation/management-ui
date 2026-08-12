@@ -209,13 +209,13 @@ For any versioned-package change:
 If the change *also* touches a `@oc-mui/*` package's public surface (anything reachable through its `exports` field), additionally:
 
 5. `pnpm api-check` regenerates the affected `etc/<pkg>.api.md`. Inspect the diff; commit it if the change was intentional.
-6. Major bumps require a `@deprecated` JSDoc tag on the previous version, kept for one full major cycle. See [`CONTRIBUTING.md`](CONTRIBUTING.md#versioning-changesets-and-deprecations) for the full rule.
+6. Major bumps require a `@deprecated` JSDoc tag on the previous version, kept for one full major cycle. See [`docs/operations/release.md` → Deprecations](docs/operations/release.md#deprecations) for the full rule.
 
 CI rejects PRs that change a versioned package without a changeset (`.github/workflows/changeset.yml`), and rejects PRs whose `.api.md` snapshots drift without an accompanying regeneration.
 
 ## Pre-push gate — `pnpm verify`
 
-This is the canonical command. It runs lint + type-check + build + unit tests + contract tests + api-check + Playwright smoke E2E in the same order CI does. If `pnpm verify` is green locally, CI will be too — modulo network-dependent E2E flakes (caught by retries).
+This is the canonical command. It runs lint + type-check + build + unit tests + contract tests + api-check + the Playwright E2E suite (incl. smoke) in the same order CI does. If `pnpm verify` is green locally, CI will be too — modulo network-dependent E2E flakes (caught by retries).
 
 If you only want a fast inner loop while iterating on one plugin:
 
@@ -230,7 +230,7 @@ If you only want a fast inner loop while iterating on one plugin:
 | Project tour, package layers, plugin model | [`docs/architecture/overview.md`](docs/architecture/overview.md) |
 | The six contracts | [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) |
 | Test pyramid + harness API reference | [`docs/operations/testing.md`](docs/operations/testing.md), [`packages/plugin-testing/README.md`](packages/plugin-testing/README.md) |
-| Versioning rules + changeset workflow | [`CONTRIBUTING.md`](CONTRIBUTING.md#versioning-changesets-and-deprecations), [`docs/operations/release.md`](docs/operations/release.md) |
+| Versioning rules + changeset workflow | [`docs/operations/release.md`](docs/operations/release.md); walkthrough in [`CONTRIBUTING.md`](CONTRIBUTING.md#5-add-a-changeset) |
 | Config layer model + reader API | [`docs/architecture/CONFIGURATION.md`](docs/architecture/CONFIGURATION.md) |
 | Theme tokens + CSS rules | [`docs/plugins/styling.md`](docs/plugins/styling.md) |
 | Why the architecture is the way it is | [`docs/architecture/decisions/`](docs/architecture/decisions/) |

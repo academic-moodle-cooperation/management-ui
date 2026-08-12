@@ -77,13 +77,13 @@ pnpm changeset
 # Pick affected package(s), pick the bump level, write a one-line summary.
 # The CLI writes a .changeset/<slug>.md file.
 
-# Verify what your changeset releases:
-pnpm changeset:status
+# Verify what your changeset releases — match --since to your PR's base branch:
+pnpm changeset status --since=origin/develop
 
 # Commit it alongside the rest of your PR.
 ```
 
-CI **rejects** any PR that touches a released package without a changeset. Changes scoped purely to `apps/shell`, `apps/playground`, root config, docs, or workflows do not need one (those packages are listed under `ignore` in `.changeset/config.json`).
+CI **rejects** any PR that touches a versioned package without a changeset. Only `shell` and `playground` are exempt (listed under `ignore` in `.changeset/config.json`); root config, docs, and workflow changes need none because they touch no package.
 
 For an intentionally release-noteless change to a versioned package (a JSDoc typo, an internal refactor that briefly touches a public file), record the deliberate decision:
 

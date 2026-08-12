@@ -21,6 +21,8 @@ pnpm build         # one-time — builds dist-types/ for upstream workspace pack
 
 The first build populates the `dist-types/` directories that downstream packages need for type-checking. After that, you can iterate without re-running `pnpm build`.
 
+First time only: `pnpm test:e2e:install` downloads the Chromium build Playwright drives for the E2E suite (CI runs the same step).
+
 ## Run the shell
 
 ```bash
@@ -55,7 +57,7 @@ Configuration model details: [`configuration.md`](./configuration.md).
 pnpm verify
 ```
 
-Runs the full local gate (lint → check-types → build → unit → contract → api-check → Playwright smoke). If this passes you have a working tree.
+Runs the full local gate (lint → check-types → build → unit → contract → api-check → Playwright E2E suite, incl. smoke). If this passes you have a working tree.
 
 ## Common commands
 
@@ -65,7 +67,7 @@ Runs the full local gate (lint → check-types → build → unit → contract �
 | `pnpm verify` | Full local pre-push gate. |
 | `pnpm test` | Unit tests across all packages. |
 | `pnpm test:contract` | Plugin contract tests. |
-| `pnpm test:e2e` | Playwright smoke against the shell. |
+| `pnpm test:e2e` | The Playwright E2E suite (incl. smoke) against the shell. |
 | `pnpm api-check` | Regenerate `etc/*.api.md` snapshots. |
 | `pnpm create-plugin <name>` | Scaffold an org/community plugin under `.local-plugins/<name>/`. |
 | `pnpm create-plugin <name> --in-tree` | Scaffold a built-in plugin under `plugins/<name>/`. |

@@ -1,16 +1,18 @@
 # Management UI
 
-A modular, plugin-first admin interface for [Opencast](https://opencast.org). A thin shell hosts routing, auth, and layout; every visible feature ships as a plugin.
+A modular, plugin-first admin interface for [Opencast](https://opencast.org). A thin shell hosts routing, auth, and layout; every visible feature — episodes, series, upload, marketplace — ships as a plugin. Organisations customize by adding plugins and themes, not by forking.
 
 [![License: ECL 2.0](https://img.shields.io/badge/License-ECL_2.0-blue.svg)](LICENSE)
 
-## What it is
+## Where to start
 
-- **For Opencast operators** — a modern admin UI you can deploy and configure per org without forking core.
-- **For plugin authors** — a stable extension-point contract for adding routes, sidebar items, themes, and config without touching the shell.
-- **For contributors** — a pnpm + Turborepo monorepo with strict architectural boundaries and a frozen plugin contract.
+| You want to… | Start at |
+|---|---|
+| **Run it on your Opencast** | [Deployment](docs/getting-started/deployment.md) — JARs deployed, `config.json` in place, login working. |
+| **Build a plugin** | [Your first plugin](docs/plugins/first-plugin.md) — scaffolded, visible in the dev shell, contract test green in about five minutes. |
+| **Contribute to this repo** | [`CONTRIBUTING.md`](CONTRIBUTING.md) — the dev loop, the changeset rule, and everything to land your first PR. |
 
-The six plugin contracts are frozen for the 1.x line — see [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md).
+Full documentation lives in [`docs/`](docs/README.md) and renders as the [docs site](https://academic-moodle-cooperation.github.io/management-ui/) (Pages deploys are currently dormant — browse `docs/` on GitHub meanwhile). Architecture tour: [`docs/architecture/overview.md`](docs/architecture/overview.md). For AI agents and tooling: [`AGENTS.md`](AGENTS.md) (operational rules) and [`llms.txt`](llms.txt).
 
 ## Quick start
 
@@ -22,92 +24,24 @@ pnpm build         # one-time — builds dist-types/ for upstream packages
 pnpm dev           # http://127.0.0.1:3000/management-ui/
 ```
 
-Full run-from-source setup, including backend wiring: [`docs/getting-started/installation.md`](docs/getting-started/installation.md). Deploying onto an Opencast server instead: [`docs/getting-started/deployment.md`](docs/getting-started/deployment.md).
+Node and pnpm versions are pinned in [`package.json`](package.json) (`engines` and `packageManager`) — `corepack enable` picks the right pnpm automatically. Full development setup, including backend wiring and troubleshooting: [Run from source](docs/getting-started/installation.md).
 
-## Repo layout
+## Everyday commands
 
-```
-apps/shell/          The deployable Vite app. Routing, auth, layout, plugin loader.
-apps/playground/     Dev-only single-plugin sandbox.
-packages/            Shared infrastructure (plugin-system, ui, query, router, i18n, …).
-plugins/             Built-in plugins (episodes, series, upload, marketplace, …).
-.local-plugins/      Org plugins (gitignored — each is its own git repo).
-docs/                Full documentation, audience-routed at docs/README.md.
-```
-
-Architectural tour: [`docs/architecture/overview.md`](docs/architecture/overview.md).
-
-## Documentation
-
-| If you want to… | Start at |
-|-----------------|----------|
-| **Deploy it on your Opencast** | [`docs/getting-started/deployment.md`](docs/getting-started/deployment.md) |
-| **Write a plugin** | [`docs/plugins/creating-a-plugin.md`](docs/plugins/creating-a-plugin.md) |
-| **Contribute to the core** | [`CONTRIBUTING.md`](CONTRIBUTING.md) |
-| **Understand the architecture** | [`docs/architecture/overview.md`](docs/architecture/overview.md) |
-| **See what's deferred** | [`docs/operations/open-followups.md`](docs/operations/open-followups.md) |
-| **Browse the full doc tree** | [`docs/README.md`](docs/README.md) |
-
-For AI agents and tooling: [`llms.txt`](llms.txt) (machine-readable summary), [`AGENTS.md`](AGENTS.md) (operational rules).
-
-## Per-package READMEs
-
-Nearly every package, app, and plugin ships its own README:
-
-- [`apps/README.md`](apps/README.md) — applications (shell, playground).
-- [`packages/README.md`](packages/README.md) — shared infrastructure catalogued by layer.
-- [`plugins/README.md`](plugins/README.md) — built-in plugins.
-
-## Customization
-
-Plugins register on **extension points** declared by [`@oc-mui/plugin-core`](plugins/core/). To customize the UI without forking:
-
-- **Routes and sidebar entries** — register on `apps:definitions` and `sidebar:nav-items`.
-- **Header, footer, branding** — register on `app:header-logo`, `app:footer`, `app:branding`.
-- **Theme** — ship a CSS file with token overrides; see [`docs/plugins/styling.md`](docs/plugins/styling.md).
-- **Config** — declare a Zod-typed slice with `definePluginConfig`; see [`docs/getting-started/configuration.md`](docs/getting-started/configuration.md).
-
-Scaffold a new plugin in one command:
-
-```bash
-pnpm create-plugin my-plugin             # → .local-plugins/my-plugin/
-pnpm create-plugin my-plugin --in-tree   # → plugins/my-plugin/
-```
-
-## Development
-
-```bash
-pnpm dev                    # run the shell
-pnpm verify                 # the local pre-push gate — see AGENTS.md § Pre-push gate
-pnpm test                   # unit tests
-pnpm test:contract          # plugin contract tests
-pnpm test:e2e               # Playwright smoke against the shell
-pnpm api-check              # regenerate API surface snapshots
-pnpm changeset              # add a release-note entry
-pnpm docs:dev               # serve the VitePress docs site at http://localhost:5173
-pnpm docs:build             # build the static docs site to docs/.vitepress/dist
-```
-
-`pnpm verify` mirrors CI exactly — if it's green locally, it's green in CI. The canonical step list is in [`AGENTS.md` → Pre-push gate](AGENTS.md#pre-push-gate--pnpm-verify); see [`docs/operations/ci.md`](docs/operations/ci.md) for the CI graph.
-
-## Contributing
-
-Read [`CONTRIBUTING.md`](CONTRIBUTING.md). New contributors should also read [`AGENTS.md`](AGENTS.md) (the operational pre-flight checklist — written for AI agents but useful as a human checklist too) and [`docs/architecture/overview.md`](docs/architecture/overview.md).
-
-Issue templates: [bug report](https://github.com/academic-moodle-cooperation/management-ui/issues/new?template=bug_report.yml), [feature request](https://github.com/academic-moodle-cooperation/management-ui/issues/new?template=feature_request.yml). Plugin-authoring questions go in [Discussions](https://github.com/academic-moodle-cooperation/management-ui/discussions).
+| Command | What it does |
+|---|---|
+| `pnpm dev` | Run the shell with hot reload. |
+| `pnpm verify` | The local pre-push gate — mirrors CI; step list in [AGENTS.md → Pre-push gate](AGENTS.md#pre-push-gate--pnpm-verify). |
+| `pnpm test` | Unit tests across all packages. |
+| `pnpm create-plugin <name>` | Scaffold a plugin (add `--in-tree` for a built-in one). |
+| `pnpm docs:dev` | Serve the docs site locally. |
 
 ## Status
 
-Pre-1.0 — currently in OSS readiness phases. The plugin contracts are frozen (see [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md)), and the `@oc-mui/*` packages publish to npm with public access. Track the remaining work at [`docs/operations/open-followups.md`](docs/operations/open-followups.md).
+Pre-1.0, in OSS-readiness phases. The six plugin contracts are frozen for the 1.x line — see [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) — and the `@oc-mui/*` packages publish to npm. Remaining work is tracked in [`docs/operations/open-followups.md`](docs/operations/open-followups.md).
 
-## License
+## License, security, conduct
 
-Educational Community License v2.0 (ECL 2.0). See [`LICENSE`](LICENSE).
-
-## Security
-
-Vulnerabilities go through [`SECURITY.md`](SECURITY.md), not public issues.
-
-## Code of conduct
-
-We follow the [Contributor Covenant](CODE_OF_CONDUCT.md).
+- Licensed under the [Educational Community License v2.0](LICENSE).
+- Vulnerabilities go through [`SECURITY.md`](SECURITY.md), never public issues.
+- We follow the [Contributor Covenant](CODE_OF_CONDUCT.md).
