@@ -18,8 +18,10 @@ Reading values in a component:
 
 ```ts
 import { uploadConfig } from "./config";
-const { workflows, ingestMode } = uploadConfig.use();
+const { workflowId } = uploadConfig.use();
 ```
+
+The slice's keys are `location`, `workflowId` (default `"ingest-upload"`), `whitelist` (accepted file types), and `protection`.
 
 Full merge order: [`docs/architecture/CONFIGURATION.md`](../../docs/architecture/CONFIGURATION.md).
 

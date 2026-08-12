@@ -20,20 +20,22 @@ The dependency layers are documented in [`docs/architecture/overview.md`](../doc
 
 | Package | Purpose | Contract |
 |---------|---------|----------|
-| [`@oc-mui/plugin-system`](./plugin-system/) | `createPlugin`, `PluginManager`, extension-point resolution. The runtime every plugin runs on. | Manifest 1.1 + Runtime API 1.0 |
-| [`@oc-mui/store`](./store/) | State facade over Zustand + Jotai. | 1.x |
-| [`@oc-mui/i18n`](./i18n/) | Translation layer over i18next + react-i18next. | 1.x |
-| [`@oc-mui/ui-config`](./ui-config/) | `AppConfig` type + `defaultConfig` baseline. | Config 1.0 (defines the shape) |
+| [`@oc-mui/plugin-system`](./plugin-system/) | `createPlugin`, `PluginManager`, extension-point resolution. The runtime every plugin runs on. | Manifest + Runtime API |
+| [`@oc-mui/store`](./store/) | State facade over Zustand + Jotai. | api-checked |
+| [`@oc-mui/i18n`](./i18n/) | Translation layer over i18next + react-i18next. | api-checked |
+| [`@oc-mui/ui-config`](./ui-config/) | `AppConfig` type + `defaultConfig` baseline. | Config (defines the shape) |
 
 ### Integration (depend on foundation + core)
 
 | Package | Purpose | Contract |
 |---------|---------|----------|
-| [`@oc-mui/query`](./query/) | Data fetching over TanStack Query + GraphQL. Owns `definePluginConfig`. | Config 1.0 reader API |
-| [`@oc-mui/router`](./router/) | Routing layer over TanStack Router + auth. | 1.x |
-| [`@oc-mui/ui`](./ui/) | Shared component library on Tailwind + shadcn/ui. | Theme 2.0 consumer |
-| [`@oc-mui/remote-plugin-loader`](./remote-plugin-loader/) | Loads `.mjs` plugins by URL — used by JAR loader and marketplace. | 1.x |
+| [`@oc-mui/query`](./query/) | Data fetching over TanStack Query + GraphQL. Owns `definePluginConfig`. | Config reader API |
+| [`@oc-mui/router`](./router/) | Routing layer over TanStack Router + auth. | api-checked |
+| [`@oc-mui/ui`](./ui/) | Shared component library on Tailwind + shadcn/ui. | Theme consumer |
+| [`@oc-mui/remote-plugin-loader`](./remote-plugin-loader/) | Loads `.mjs` plugins by URL — used by JAR loader and marketplace. | — |
 | [`@oc-mui/plugin-testing`](./plugin-testing/) | Contract-test harness. | Test-only |
+
+Contract names refer to the frozen surfaces in [`docs/architecture/CONTRACTS.md`](../docs/architecture/CONTRACTS.md) — current version numbers live there, not here. "api-checked" means the package's public surface is snapshotted in `etc/<pkg>.api.md` and drift-checked by `pnpm api-check`.
 
 ### Application (compose everything below)
 

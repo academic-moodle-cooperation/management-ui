@@ -31,7 +31,9 @@ apps/shell/
 │   │   └── ...
 │   ├── services/
 │   │   ├── jarPluginLoader.ts              Fetches plugins.json, loads each via remote-plugin-loader
-│   │   └── localPluginsManifest.ts         Fetches /local-plugins/manifest.json (dev)
+│   │   ├── localPluginsManifest.ts         Fetches /local-plugins/manifest.json (dev)
+│   │   ├── matomo.ts                       Optional Matomo analytics bootstrap (config-driven)
+│   │   └── sharedDepsGate.ts               Shared-dependency major check gating JAR/.local-plugins loads
 │   ├── shared/
 │   │   └── sharedModules.ts                window.__SHARED_MODULES__ wiring
 │   ├── loadPlugins.ts                      Built-in plugin loader + namespace filter
