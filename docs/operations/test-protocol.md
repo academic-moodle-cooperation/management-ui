@@ -335,7 +335,9 @@ You're cleared to go public. Most of the former "Phase 6d flip" is already in it
 1. Open a PR that flips the two search-indexing guards:
    - Deletes `docs/public/robots.txt`'s `Disallow: /` (replace with empty `Disallow:`).
    - Removes the `noindex` meta entry from `docs/.vitepress/config.mts`.
-2. Merge.
+2. Merge. One one-time repo setting accompanies this (not a PR): Settings →
+   Pages → Source must be "GitHub Actions", or the deploy job errors — the
+   full flip list lives in the go-public checklist (§8.3).
 3. Cut the first release from the release line — the workflow-driven flow in [`release.md` → Cutting a release](./release.md#cutting-a-release) publishes to npm (after the one-time [first-release bootstrap](./release.md#first-release-bootstrap--one-time-checklist); there is no manual `changeset publish` step).
 4. Announce.
 
