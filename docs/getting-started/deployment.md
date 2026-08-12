@@ -10,13 +10,13 @@ Throughout this page, `$OPENCAST_HOME` is your Opencast installation directory �
 
 On the Opencast host:
 
-- **Opencast 19.** The current release line targets Opencast 19; which Management UI version pairs with which Opencast is in [Upgrading](./upgrading.md#which-version-am-i-running).
+- **Opencast 20.** The current release line targets Opencast 20; which Management UI version pairs with which Opencast is in [Upgrading](./upgrading.md#which-version-am-i-running).
 - **The `opencast-plugin-graphql` plugin enabled.** It ships with Opencast but is off by default: in `$OPENCAST_HOME/etc/org.opencastproject.plugin.impl.PluginManagerImpl.cfg`, set `opencast-plugin-graphql = on`, then restart Opencast if it was already running.
 
 On the machine you build on (any machine — it does not have to be the Opencast host):
 
 - **JDK 21 or newer** (the build targets release 21) and **Maven** — or no Maven at all: the repo ships the `./mvnw` wrapper, so substitute `./mvnw` for `mvn` in every command below. `mvn -version` (or `./mvnw -version`) must report Java 21+. Node and pnpm are *not* prerequisites: the root `pom.xml` downloads pinned versions and builds the frontend itself.
-- **The Opencast `19-SNAPSHOT` parent POM in your local `~/.m2`.** It is not on Maven Central — build Opencast `r/19.x` from source once so the parent lands there. [Full local setup → Build and start Opencast 19](./local-backend.md#2-build-and-start-opencast-19) walks through that build.
+- **The Opencast `20-SNAPSHOT` parent POM in your local `~/.m2`.** It is not on Maven Central — build Opencast `r/20.x` from source once so the parent lands there. [Full local setup → Build and start Opencast 20](./local-backend.md#2-build-and-start-opencast-20) walks through that build.
 
 ## The artifacts
 
