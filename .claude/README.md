@@ -25,7 +25,8 @@ first line imports `AGENTS.md`.
 ├── skills/
 │   └── pre-flight-check/SKILL.md  Model-invoked AGENTS.md pre-flight checklist ("before done")
 ├── agents/
-│   └── plugin-boundary-reviewer.md  Read-only boundary/contract/changeset reviewer
+│   ├── plugin-boundary-reviewer.md  Read-only boundary/contract/changeset reviewer
+│   └── docs-impact-reviewer.md    Read-only stale-docs reviewer (AGENTS.md pre-flight item 8)
 └── README.md                      This file
 ```
 
@@ -47,13 +48,16 @@ uses `eslint-plugin-only-warn`, rule violations are warnings (exit 0), so in pra
 hook is a **silent auto-fixer** — the blocking lint gate stays `pnpm lint` / `pnpm verify`,
 which this hook deliberately does not duplicate.
 
-## Commands vs. skills vs. subagent
+## Commands vs. skills vs. subagents
 
 - **Commands** (`commands/*.md`) are **developer-typed**: `/verify`, `/new-plugin`.
 - **Skills** (`skills/*/SKILL.md`) are **model-invoked** — Claude runs `pre-flight-check`
   on its own when it's about to declare a plugin/package change done.
-- **Subagent** (`agents/*.md`) — `plugin-boundary-reviewer` is read-only (`Read`, `Grep`,
-  `Glob`) and runs proactively after plugin work or on request ("review plugin boundaries").
+- **Subagents** (`agents/*.md`) are read-only (`Read`, `Grep`, `Glob`) reviewers:
+  `plugin-boundary-reviewer` runs proactively after plugin work or on request ("review
+  plugin boundaries"); `docs-impact-reviewer` runs proactively after changes that touch
+  public symbols, commands, or config keys — it flags docs the diff made stale but did
+  not update (AGENTS.md pre-flight item 8) — or on request ("review docs impact").
 
 ## What is intentionally NOT here
 
