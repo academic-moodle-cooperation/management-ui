@@ -9,7 +9,7 @@ How plugins get from your editor to a running shell. Pick the path that matches 
 | **In-tree** | Core plugins shipped with this repo | `plugins/<name>/` | Bundled into `@oc-mui/plugins`, statically imported at app startup |
 | **`.local-plugins/` dev mount** | Dev-time iteration on an org plugin | `.local-plugins/<name>/` (gitignored) | Vite dev server serves the plugin's `dist/`; shell fetches `/local-plugins/manifest.json` |
 | **JAR** | Production deploy with an Opencast backend | One JAR per org plugin in `$OPENCAST_HOME/deploy/` | Backend exposes `/management-tool/ui/config/plugins.json` |
-| **CDN / community registry** | Plugins users install themselves at runtime | Any HTTPS URL serving an ESM bundle | Marketplace "Developer Mode" or the future registry |
+| **CDN / community registry** | Plugins users install themselves at runtime | Any HTTPS URL serving an ESM bundle | Marketplace "Developer Tools" or the future registry |
 
 All four paths end at the same place: `@oc-mui/remote-plugin-loader` fetches the `.mjs`, rewires its bare imports to shared modules, injects the CSS, and registers the plugin with `PluginManager`. The differences are only in **how the URL list is produced**.
 
@@ -24,7 +24,7 @@ A loaded plugin runs inside the host page and **shares modules** with it. You ca
   — note that `@oc-mui/ui/components/icons` carries only `@oc-mui/ui`'s own
   hand-drawn `Icons`. For lucide icons import `lucide-react` directly: the host
   shares the complete module, so you get every icon, not a curated subset.
-- `@oc-mui/query`, `@oc-mui/router`, `@oc-mui/utils`, `@oc-mui/i18n`
+- `@oc-mui/query`, `@oc-mui/router`, `@oc-mui/utils`, `@oc-mui/i18n`, `@oc-mui/app-runtime`
 
 Authoritative source: [`packages/remote-plugin-loader/src/transform.ts`](../../packages/remote-plugin-loader/src/transform.ts) (`SHARED_MODULE_NAMES`). Adding a name there is a public-API change and needs a changeset.
 
@@ -232,7 +232,7 @@ For plugins distributed publicly:
    https://cdn.jsdelivr.net/gh/<org>/<repo>@v1.0.0/dist/<name>.mjs
    ```
    Or any CDN/object store that serves with correct CORS headers.
-3. **Install**: Inside the running shell, open the Marketplace → Developer Mode → paste the URL → "Install" persists it in `localStorage`. On reload the marketplace loads it through the same `remote-plugin-loader`.
+3. **Install**: Inside the running shell, open the Marketplace → Developer Tools → paste the URL → "Install" persists it in `localStorage`. On reload the marketplace loads it through the same `remote-plugin-loader`.
 
 > **Remote loading is opt-in.** Because Path 4 fetches and executes third-party
 > code at runtime, it is **off by default**. An administrator must enable it in
@@ -275,7 +275,7 @@ Most production orgs ship JARs. CDN is the route when the plugin has no backend,
 
 ### CSS
 
-`@oc-mui/remote-plugin-loader` auto-requests `<module>.css` next to every loaded `<module>.mjs`. Build your CSS to the same stem as your bundle. Load order: plugin CSS is inserted **before** host CSS — see [`styling.md`](./styling.md).
+`@oc-mui/remote-plugin-loader` auto-requests `<module>.css` next to every loaded `<module>.mjs`. Build your CSS to the same stem as your bundle. Your CSS is imported into the **`plugins` cascade layer** (`@import … layer(plugins)`), so precedence is decided by layer order, not by when the stylesheet loads — see [`styling.md`](./styling.md#load-order).
 
 ### Versioning
 

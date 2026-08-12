@@ -1,7 +1,7 @@
 # Public Contracts
 
 **Status:** Frozen baseline for the 1.x plugin API.
-**Last Updated:** 2026-04-16
+**Last Updated:** 2026-08-12
 
 This document lists everything a third-party plugin author or downstream app may rely on. Anything not listed here is internal and may change without notice.
 
@@ -14,15 +14,15 @@ There are **six contracts**:
 5. [Shared Runtime Dependencies](#5-shared-runtime-dependencies) - which packages the host provides to every plugin, and which majors are in force.
 6. [GraphQL Operation Naming](#6-graphql-operation-naming) - how plugins name their GraphQL operations and fragments to avoid cross-plugin collisions.
 
-Each contract has its own version. Breaking changes to any of them require a major version bump of `@<scope>/plugin-system`.
+Each contract has its own version. Breaking changes to any of them require a major version bump of `@oc-mui/plugin-system`.
 
-The Manifest 1.1 and Runtime API 1.0 contracts are **mechanically verified** by the contract-test harness in [`@oc-mui/plugin-testing`](../../packages/plugin-testing/README.md); see [`docs/operations/testing.md`](../operations/testing.md) for the test pyramid and harness usage.
+The Manifest 1.1 and Runtime API 1.1 contracts are **mechanically verified** by the contract-test harness in [`@oc-mui/plugin-testing`](../../packages/plugin-testing/README.md); see [`docs/operations/testing.md`](../operations/testing.md) for the test pyramid and harness usage.
 
 ## 1. Plugin Manifest Contract
 
 **Authoritative schema:** [`packages/plugin-system/src/schemas/plugin.schema.json`](../../packages/plugin-system/src/schemas/plugin.schema.json)
 **Runtime validator:** [`packages/plugin-system/src/utils/pluginMetadataValidator.ts`](../../packages/plugin-system/src/utils/pluginMetadataValidator.ts)
-**Contract version:** 1.0
+**Contract version:** 1.1 (see the 2026-04-17 changelog entry; `PLUGIN_API_VERSION` in [`packages/plugin-system/src/apiVersion.ts`](../../packages/plugin-system/src/apiVersion.ts) is `"1.1.0"`)
 
 The JSON Schema at the path above is the single source of truth. The runtime validator enforces the subset needed for loading; the schema is what editors and the registry validate against.
 
@@ -36,8 +36,8 @@ The JSON Schema at the path above is the single source of truth. The runtime val
 
 ## 2. Plugin Runtime API Contract
 
-**Authoritative entry point:** `@<scope>/plugin-system` package's `"."` export.
-**Contract version (`apiVersion`):** 1.0
+**Authoritative entry point:** `@oc-mui/plugin-system` package's `"."` export.
+**Contract version (`apiVersion`):** 1.1 — the host constant `PLUGIN_API_VERSION` in [`packages/plugin-system/src/apiVersion.ts`](../../packages/plugin-system/src/apiVersion.ts) is the source of truth.
 
 ### Plugin interface
 
@@ -59,7 +59,7 @@ This interface is frozen for 1.x. Adding new optional members is minor; adding r
 
 ### `apiVersion` in `plugin.json`
 
-`apiVersion` declares the **minimum** plugin-runtime-API version the plugin requires. The host refuses to load a plugin whose `apiVersion` major is higher than the host's own runtime API major.
+`apiVersion` declares the **minimum** plugin-runtime-API version the plugin requires. The check (`checkApiVersionCompatibility` in [`packages/plugin-system/src/apiVersion.ts`](../../packages/plugin-system/src/apiVersion.ts)) refuses to load a plugin when the required **major differs from the host's major in either direction**, or when the required **minor is higher than the host's minor** (the plugin asks for features this host lacks).
 
 Examples:
 
@@ -67,37 +67,40 @@ Examples:
 |-----------------------|----------|-------|
 | `1.0.0`               | `1.3.0`  | yes   |
 | `1.2.0`               | `1.3.0`  | yes   |
-| `1.4.0`               | `1.3.0`  | no (plugin asks for a newer host) |
+| `1.4.0`               | `1.3.0`  | no (plugin asks for a newer minor than the host provides) |
 | `2.0.0`               | `1.3.0`  | no (major mismatch) |
-| (absent)              | any      | yes (plugin opts into "1.0.0 or later"; warn in dev) |
+| `0.9.0`               | `1.3.0`  | no (major mismatch — the major must match exactly, in both directions) |
+| (absent)              | `1.3.0`  | yes — treated as `"1.0.0"` and gated by the same rules as any explicit value |
 
-The host exposes its own API version via a constant `PLUGIN_API_VERSION` exported from `@<scope>/plugin-system`. Version bumps follow semver:
+The host exposes its own API version via a constant `PLUGIN_API_VERSION` exported from `@oc-mui/plugin-system`. Version bumps follow semver:
 
 - **Patch:** no behaviour change observable to plugins.
 - **Minor:** new capabilities, new optional inputs, new exports; existing plugins still work unchanged.
 - **Major:** a removal or a behaviour change that could break an existing plugin.
 
-Plugins should pin the minor they need (`">=1.2"`) in `workspaceDependencies` if they rely on features newer than 1.0.
+To rely on features newer than 1.0, declare the minor you need in `apiVersion` itself (e.g. `"1.1.0"`). `workspaceDependencies` is a different mechanism — it declares shared-runtime package majors ([§5](#5-shared-runtime-dependencies)) and is parsed major-only, so it cannot pin an API minor.
 
 ### Public API surface
 
-The `"."` export of `@<scope>/plugin-system` is the public surface. These members are **frozen** for 1.x:
+The `"."` export of `@oc-mui/plugin-system` is the public surface. These members are **frozen** for 1.x:
 
 | Member              | Kind                             |
 |---------------------|----------------------------------|
 | `Plugin`            | interface                        |
-| `PluginManager`     | class                            |
+| `PluginManager`     | interface                        |
+| `createPluginManager` | factory — the only public way to obtain a `PluginManager` |
 | `createPlugin`      | factory                          |
 | `PluginProvider`    | React component                  |
 | `PluginComponent`   | React component                  |
 | `ComponentResolver` | React component                  |
 | `useRegistry`       | React hook                       |
-| `objectRegistry`    | plugin module                    |
-| `appRegistry`       | plugin module                    |
-| `renderer`          | plugin module                    |
+| `createObjectRegistryPlugin` | factory (built-in infrastructure plugin) |
+| `createAppRegistryPlugin` | factory (built-in infrastructure plugin) |
+| `createRendererPlugin` | factory (built-in infrastructure plugin) |
 
-**Known debt (to fix in Phase 2):**
-The package currently also exposes `"./src/*": "./src/*"` in its `exports` field, which leaks all internals. This escape hatch will be removed before the 1.0 open-source release. Do not rely on imports that go through `/src/`.
+The complete export list is snapshotted in [`packages/plugin-system/etc/plugin-system.api.md`](../../packages/plugin-system/etc/plugin-system.api.md) (regenerated by `pnpm api-check`); the table above is the frozen subset.
+
+**Resolved (2026-08-12):** the `"./src/*": "./src/*"` escape hatch that used to leak internals has been removed — the package's `exports` field exposes only `"."`.
 
 Any other module path (subpath imports, deep imports into `src/`) is **not** public and may change.
 
@@ -109,8 +112,8 @@ Any other module path (subpath imports, deep imports into `src/`) is **not** pub
 ### Summary of guarantees
 
 - The **semantic CSS tokens** listed in the styling contract are stable across 1.x. Adding new tokens is **minor**; removing or renaming is **major**.
-- The **CSS layer order** (`theme, base, components, utilities, plugin-overrides`) is stable.
-- The **load order rule** (remote/JAR plugin CSS inserted before host shell CSS) is stable.
+- The **CSS layer order** (`theme, base, components, utilities, plugins`, declared in [`packages/ui/src/styles/globals.css`](../../packages/ui/src/styles/globals.css)) is stable.
+- The **plugin CSS layering rule** is stable: remote/JAR plugin stylesheets are loaded into the `plugins` cascade layer (`@import … layer(plugins)`, done by `@oc-mui/remote-plugin-loader`). Cascade-layer order — not stylesheet load order — determines precedence: plugin utilities win on the plugin's own DOM, while the host's design tokens stay unlayered and therefore always win. Full model: [`plugins/styling.md`](../plugins/styling.md#load-order).
 - Orgs provide themes by **overriding token values only** (via CSS custom properties under `:root` and `.dark`). They must not rely on targeting internal class names.
 - **Appearance axis (light/dark/system) is shell-provided and orthogonal to the org theme.** The shell mounts an appearance provider and a header toggle; it applies a `.dark` class on `<html>` that activates the dark token block. A theme should define **both** `:root` (light) and `.dark` (dark) so it looks right in either appearance — the `.dark` block is no longer optional in practice.
 - Plugins must not emit hardcoded color, font, or spacing literals. This will become lint-enforced in Phase 4.
@@ -157,6 +160,7 @@ Each name below is shared at the specified major. Patches and minors of a shared
 | `react/jsx-runtime` | 19 |
 | `lucide-react` | 0 |
 | `@oc-mui/plugin-system` | 1 |
+| `@oc-mui/app-runtime` | 1 |
 | `@oc-mui/ui` | 1 |
 | `@oc-mui/query` | 1 |
 | `@oc-mui/router` | 1 |
@@ -165,7 +169,7 @@ Each name below is shared at the specified major. Patches and minors of a shared
 | `@oc-mui/store` | 1 |
 | `@oc-mui/ui-config` | 1 |
 
-The runtime list is exported as `SHARED_RUNTIME_MAJORS` from `@oc-mui/plugin-system`, kept in sync with `SHARED_MODULE_NAMES` in [`@oc-mui/remote-plugin-loader`](../../packages/remote-plugin-loader/src/transform.ts).
+The runtime list is exported as `SHARED_RUNTIME_MAJORS` from `@oc-mui/plugin-system`. **Known gap:** it is *not* identical to `SHARED_MODULE_NAMES` in [`@oc-mui/remote-plugin-loader`](../../packages/remote-plugin-loader/src/transform.ts), the list of imports the loader actually rewires to `window.__SHARED_MODULES__`. Two entries — `@oc-mui/store` and `@oc-mui/ui-config` — pass the compatibility gate but are **not** rewired, so a plugin importing them ends up bundling its own copy; do not rely on them being host-provided. `@oc-mui/ui` is rewired only through its subpaths (`@oc-mui/ui/components`, `@oc-mui/ui/components/icons`, `@oc-mui/ui/lib`, `@oc-mui/ui/lib/utils`), never the bare specifier.
 
 ### What plugins must do
 
@@ -181,7 +185,7 @@ Declare every shared dep the plugin actually imports in `workspaceDependencies` 
 }
 ```
 
-Compatibility is checked at load time by `checkSharedDependencyCompatibility` (exported from `@oc-mui/plugin-system`). A plugin whose declared major doesn't match the host's is rejected by the loader with a clear `"Plugin requires <name> major X, host provides Y"` error. All three loader paths funnel through this one function: the **marketplace** (via `securityService.checkVersionCompatibility`, which now delegates to it), the **`.local-plugins/` dev** path, and the **JAR** path (both via the shell's `passesSharedDependencyGate` in `PluginInitializer`). A plugin that declares no `workspaceDependencies` is not gated.
+Compatibility is checked at load time by `checkSharedDependencyCompatibility` (exported from `@oc-mui/plugin-system`). A plugin whose declared major doesn't match the host's is rejected by the loader with a clear `"Plugin requires <name> major X, host provides Y"` error. All three loader paths funnel through this one function: the **marketplace** (via `securityService.checkVersionCompatibility`, which now delegates to it), the **`.local-plugins/` dev** path, and the **JAR** path (both via `passesSharedDependencyGate` in [`apps/shell/src/services/sharedDepsGate.ts`](../../apps/shell/src/services/sharedDepsGate.ts), called from the shell's `PluginInitializer`). A plugin that declares no `workspaceDependencies` is not gated.
 
 ### Versioning rules
 
@@ -273,11 +277,12 @@ No contract change is allowed without the changeset - plugins cannot cope with s
 - **2026-04-16:** Initial freeze. Manifest 1.0, Runtime API 1.0, Theme 2.0, Config 0.9 (pre-stable).
 - **2026-04-17:** Config Contract promoted to 1.0. Stable keys: `app.theme`, `app.locale`, `app.enabledPlugins`, `config.plugins[pluginId]`, `config.plugins[pluginId].enabled`. Layered merge order (`app:config:defaults` ⊕ base ⊕ `app:config`) and the `definePluginConfig` reader API are now frozen for 1.x. See [`CONFIGURATION.md`](./CONFIGURATION.md).
 - **2026-04-17:** Manifest Contract bumped to 1.1 (minor). New optional field `extensionPoints: string[]` on the top-level manifest, consumed by the contract-test harness in `@oc-mui/plugin-testing` and reserved for marketplace tooling. Runtime loader behaviour is unchanged, so existing 1.0 manifests remain valid. Host `PLUGIN_API_VERSION` bumped from `1.0.0` to `1.1.0` accordingly. Plugin-system now also exports `validatePluginMetadata` and the `PluginContext` React context so that tooling can validate manifests and inject a pre-configured `PluginManager` without reaching into `src/`.
-- **2026-05-13:** Shared Runtime Dependencies Contract 1.0 added. New section [§5](#5-shared-runtime-dependencies) formalises the list of host-provided packages (`SHARED_RUNTIME_MAJORS` in `@oc-mui/plugin-system`) and the rule that a plugin's `workspaceDependencies` lower-bound major must match the host's. New helpers `checkSharedDependencyCompatibility` and `parseRangeMajor` are exported from `@oc-mui/plugin-system`. The runtime check is **not yet wired** into the JAR loader or `.local-plugins/` discovery path — those follow-ups are tracked in [`operations/open-followups.md`](../operations/open-followups.md#53-shared-npm-deps-version-locking). Existing plugins are unaffected; the contract is additive.
-- **2026-05-14:** GraphQL Operation Naming Contract 1.0 added. New section [§6](#6-graphql-operation-naming) mandates that every `query`/`mutation`/`subscription`/`fragment` declared in a plugin (or in `@oc-mui/query` for shared core operations) be prefixed with the plugin's namespace in PascalCase (`MuiGetMyEvents`, `EpisodesEpisodeFields`, …). Shipping with documentation + manual review only; an ESLint rule that fails CI on violations is the next planned follow-up. Existing operations in `packages/query/src/queries.graphql` are grandfathered and will be renamed in a follow-up batch — see [`operations/open-followups.md`](../operations/open-followups.md#51-graphql-operation-naming-final-migration-of-legacy-operations).
-- **2026-05-15:** Enforcement for the GraphQL Operation Naming Contract is now mechanical. `@oc-mui/eslint-config` ships a new custom rule (`local/graphql-operation-naming`) that parses `.graphql` files and `gql\`\`` template literals inside `.ts` / `.tsx`, walks up to the nearest `plugin.json` (or detects `packages/query/` for shared-core), and fails the lint pass on any operation or fragment that doesn't carry the right PascalCase prefix. Legacy operations grandfathered with `# eslint-disable-next-line` comments which double as the migration tracker — final rename batch follows in 5.1c.
+- **2026-05-13:** Shared Runtime Dependencies Contract 1.0 added. New section [§5](#5-shared-runtime-dependencies) formalises the list of host-provided packages (`SHARED_RUNTIME_MAJORS` in `@oc-mui/plugin-system`) and the rule that a plugin's `workspaceDependencies` lower-bound major must match the host's. New helpers `checkSharedDependencyCompatibility` and `parseRangeMajor` are exported from `@oc-mui/plugin-system`. The runtime check is **not yet wired** into the JAR loader or `.local-plugins/` discovery path — those follow-ups are tracked in [`operations/open-followups.md`](../operations/open-followups.md#53-shared-npm-deps-version-locking). Existing plugins are unaffected; the contract is additive. *(Superseded: the check is now wired into all three loader paths — see [§5](#5-shared-runtime-dependencies).)*
+- **2026-05-14:** GraphQL Operation Naming Contract 1.0 added. New section [§6](#6-graphql-operation-naming) mandates that every `query`/`mutation`/`subscription`/`fragment` declared in a plugin (or in `@oc-mui/query` for shared core operations) be prefixed with the plugin's namespace in PascalCase (`MuiGetMyEvents`, `EpisodesEpisodeFields`, …). Shipping with documentation + manual review only; an ESLint rule that fails CI on violations is the next planned follow-up. Existing operations in `packages/query/src/queries.graphql` are grandfathered and will be renamed in a follow-up batch — see [`operations/open-followups.md`](../operations/open-followups.md#51-graphql-operation-naming-final-migration-of-legacy-operations). *(Superseded by the two 2026-05-15 entries below: the ESLint rule shipped and the legacy operations were renamed.)*
+- **2026-05-15:** Enforcement for the GraphQL Operation Naming Contract is now mechanical. `@oc-mui/eslint-config` ships a new custom rule (`local/graphql-operation-naming`) that parses `.graphql` files and `gql\`\`` template literals inside `.ts` / `.tsx`, walks up to the nearest `plugin.json` (or detects `packages/query/` for shared-core), and fails the lint pass on any operation or fragment that doesn't carry the right PascalCase prefix. Legacy operations grandfathered with `# eslint-disable-next-line` comments which double as the migration tracker — final rename batch follows in 5.1c. *(Superseded by the next entry: the grandfather comments are gone.)*
 - **2026-05-15:** Legacy GraphQL operations renamed (5.1c). All 33 operations and fragments in `packages/query/src/queries.graphql` now carry the `Mui` prefix (`MuiGetMyEvents`, `MuiCurrentUserFields`, etc.); the 2 inline `gql\`\`` operations in `packages/query/src/hooks/useGetCurrentUser.ts` and `plugins/core-upload/src/App.tsx` are likewise renamed (the latter now consumes the central `MuiGetMySeriesNameAndIdDocument` rather than defining a duplicate inline). Every `# eslint-disable-next-line local/graphql-operation-naming` grandfather comment is removed; the rule fires on every operation in the workspace without exception. 24 call-site files updated to use the renamed hooks / types.
 - **2026-05-28:** `AppConfig` dead-field prune (OSS cleanup, pre-1.0). Removed `app.title`, `app.appTitle`, `app.version`, `app.organizationUrls`, `auth.tokenRefreshUrl`, and `api.timeout` from the type and `defaultConfig` — none had any reader in the workspace. **Not a Config Contract change:** the stable-key list in [§4](#4-config-contract) never included these fields, so the prune touches nothing frozen. The `[key: string]: unknown` index on `AppConfig` means a deployment `config.json` may still carry them without failing validation; they're simply ignored. A committed default `config.json` now lives at `apps/shell/public/ui/config/management-ui/config.json` (served locally in dev when no backend is configured, and shipped in the JAR), which is also what the [release test protocol §6](../operations/test-protocol.md) edits.
 - **2026-05-28:** Dark mode wired up + appearance axis formalised in the Theme Contract [§3](#3-theme-contract). The complete `.dark` token block in `globals.css` was previously unreachable; the shell now mounts a `next-themes` provider (`ThemeModeProvider`, exported from `@oc-mui/ui`) defaulting to the OS preference, with a Light/Dark/System header toggle (`ThemeModeToggle`), applying a `.dark` class on `<html>`. Appearance (light/dark/system) is **orthogonal** to the `app.theme` org branding; a theme should ship both `:root` and `.dark`. Additive to the Theme Contract (no token removed/renamed), so it stays 2.0. Plugin guidance in [`plugins/styling.md`](../plugins/styling.md#dark-mode).
 - **2026-05-28:** Shipped showcase themes added (Oxford Navy, Modern Slate & Teal, Heritage Burgundy, Forest Sage). Each is a full design language — color, typography, radius, shadows, spacing — overriding only standard tokens, with light + dark, **system fonts only** (no web fonts, for GDPR/offline). They live at `apps/shell/public/plugins/themes/*.css`, served as raw CSS so both the marketplace and `app.theme` apply them in dev and the production build. The marketplace registry was pruned of the six dev-only `.local-plugins` entries.
 - **2026-06-01:** Two more showcase themes added — **Aurora** (modern, vivid indigo, large radius, soft shadows, rounded geometric sans, relaxed spacing) and **Press** (editorial, high-contrast monochrome, zero radius, no shadows, bold borders, grotesque sans). Adapted from external design concepts; the concepts' Google-Fonts `@import`s were dropped in favour of GDPR-safe system stacks (SF Pro Rounded / Avenir for Aurora, Helvetica Neue / Arial for Press), keeping the **system-fonts-only** rule intact. Both ship light + dark and override only standard tokens (the concepts' non-contract `--heading-weight`/`--heading-spacing`/`--press-border-strong` tokens were removed as no reader exists). Same `apps/shell/public/plugins/themes/*.css` location and raw-CSS serving; no contract change (still Theme Contract 2.0).
+- **2026-08-12:** Documentation errata — no contract change. Corrected this document against the code: Manifest and Runtime API contract versions read 1.1 (matching `PLUGIN_API_VERSION = "1.1.0"`); the frozen Runtime API table lists the real exports (`PluginManager` is an interface, `createPluginManager` obtains one, and the three built-ins are the `create*Plugin` factories — `objectRegistry`/`appRegistry`/`renderer` were never exported names); the `apiVersion` semantics match `checkApiVersionCompatibility` (major must match exactly, minor may not exceed the host's, absent = `"1.0.0"`); the `"./src/*"` export debt is marked resolved; the Theme Contract freezes the real `plugins` cascade layer (the previously documented `plugin-overrides` layer never existed) and the cascade-layer rule replaces the obsolete load-order rule; §5 lists `@oc-mui/app-runtime` and documents the `SHARED_RUNTIME_MAJORS` vs `SHARED_MODULE_NAMES` gap instead of claiming the lists are in sync. Superseded mid-list changelog entries are now marked as such.
