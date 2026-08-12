@@ -11,6 +11,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { discoverPluginLocaleNamespaceDirs } from "./local-plugin-locales.js";
+
 import type { Plugin } from "vite";
 
 const MANIFEST_PATH = "/local-plugins/manifest.json";
@@ -66,29 +68,13 @@ interface LocalPluginEntry {
 
 function discoverPluginLocaleNamespaces(pluginDir: string): string[] {
   const namespaces = new Set<string>();
-
-  const modulesDir = path.join(pluginDir, "modules");
-  if (!fs.existsSync(modulesDir) || !fs.statSync(modulesDir).isDirectory()) {
-    return [];
+  for (const entry of discoverPluginLocaleNamespaceDirs(pluginDir)) {
+    namespaces.add(entry.namespace);
   }
-
-  const types = fs.readdirSync(modulesDir, { withFileTypes: true });
-  for (const typeEnt of types) {
-    if (!typeEnt.isDirectory()) continue;
-    const localesDir = path.join(modulesDir, typeEnt.name, "locales");
-    if (!fs.existsSync(localesDir) || !fs.statSync(localesDir).isDirectory()) continue;
-
-    const localeEntries = fs.readdirSync(localesDir, { withFileTypes: true });
-    for (const localeEnt of localeEntries) {
-      if (!localeEnt.isDirectory()) continue;
-      namespaces.add(localeEnt.name);
-    }
-  }
-
   return [...namespaces];
 }
 
-function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPluginEntry[] {
+export function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPluginEntry[] {
   const localPluginsDir = path.join(monorepoRoot, ".local-plugins");
   const entries: LocalPluginEntry[] = [];
 
@@ -184,9 +170,13 @@ function discoverLocalPlugins(monorepoRoot: string, basePath: string): LocalPlug
 
 /**
  * Build a map: i18n namespace -> absolute path to that namespace's locale folder.
- * Scans .local-plugins/<name>/modules/<type>/locales/<namespace>/ for de.json, en.json, etc.
+ * Scans both supported layouts per plugin — the root-level
+ * `<plugin>/locales/<namespace>/` (relocatable via plugin.json's `locales`
+ * field) and `<plugin>/modules/<module>/locales/<namespace>/`. First
+ * registration wins: within a plugin the root-level layout, across plugins the
+ * first plugin that ships the namespace.
  */
-function discoverLocalPluginLocales(monorepoRoot: string): Map<string, string> {
+export function discoverLocalPluginLocales(monorepoRoot: string): Map<string, string> {
   const map = new Map<string, string>();
   const localPluginsDir = path.join(monorepoRoot, ".local-plugins");
   if (!fs.existsSync(localPluginsDir) || !fs.statSync(localPluginsDir).isDirectory()) {
@@ -196,20 +186,9 @@ function discoverLocalPluginLocales(monorepoRoot: string): Map<string, string> {
   for (const dirent of dirs) {
     if (!dirent.isDirectory()) continue;
     const pluginDir = path.join(localPluginsDir, dirent.name);
-    const modulesDir = path.join(pluginDir, "modules");
-    if (!fs.existsSync(modulesDir) || !fs.statSync(modulesDir).isDirectory()) continue;
-    const types = fs.readdirSync(modulesDir, { withFileTypes: true });
-    for (const typeEnt of types) {
-      if (!typeEnt.isDirectory()) continue;
-      const localesDir = path.join(modulesDir, typeEnt.name, "locales");
-      if (!fs.existsSync(localesDir) || !fs.statSync(localesDir).isDirectory()) continue;
-      const namespaces = fs.readdirSync(localesDir, { withFileTypes: true });
-      for (const nsEnt of namespaces) {
-        if (!nsEnt.isDirectory()) continue;
-        const nsPath = path.join(localesDir, nsEnt.name);
-        if (!map.has(nsEnt.name)) {
-          map.set(nsEnt.name, nsPath);
-        }
+    for (const entry of discoverPluginLocaleNamespaceDirs(pluginDir)) {
+      if (!map.has(entry.namespace)) {
+        map.set(entry.namespace, entry.dir);
       }
     }
   }
