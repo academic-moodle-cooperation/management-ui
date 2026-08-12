@@ -13,7 +13,6 @@ const srcExclude = [
 
   // Internal tracking docs — useful to contributors, not public pages.
   "operations/open-followups.md",
-  "operations/shadcn-typescript-errors.md",
 
   // Maven build-time config that lives under docs/ for legacy parent-POM
   // reasons. Not documentation. See open-followups.md §8.5.
