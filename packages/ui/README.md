@@ -57,6 +57,6 @@ Deliberately **not** a dependency: `@oc-mui/router`. Router-aware components (si
 
 ## See also
 
-- [`docs/plugins/styling.md`](../../docs/plugins/styling.md) — Theme Contract 2.0.
+- [`docs/plugins/styling.md`](../../docs/plugins/styling.md) — the Theme Contract.
 - [`packages/tailwind-config/README.md`](../tailwind-config/README.md) — the shared Tailwind preset.
 - [`docs/operations/shadcn-typescript-errors.md`](../../docs/operations/shadcn-typescript-errors.md) — why CI filters certain TS errors in the shadcn-generated files.
