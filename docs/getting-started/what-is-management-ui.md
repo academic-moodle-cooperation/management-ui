@@ -13,6 +13,7 @@ Management UI is a modular admin interface for [Opencast](https://opencast.org),
 ```
 This monorepo
 ├── apps/shell           The deployable Vite app. Routing, auth, layout, plugin loader.
+├── apps/playground      Dev-only single-plugin sandbox.
 ├── packages/            Shared infrastructure (plugin-system, ui, query, router, i18n, …).
 ├── plugins/             Built-in plugins (episodes, series, upload, marketplace, …).
 └── .local-plugins/      Org plugins (gitignored, each its own git repo).
@@ -22,9 +23,9 @@ The shell is unaware of any specific feature. It loads plugins, asks them what r
 
 ## How customization works
 
-Plugins register **on extension points**. The shell exposes ~15 extension points (`apps:definitions`, `sidebar:nav-items`, `app:header-logo`, `app:footer`, `app:config:defaults`, …). A plugin says "I provide a route at `/my-app`" or "I render this component in the header"; the shell wires it in at boot.
+Plugins register **on extension points**. The shell exposes about two dozen extension points (`apps:definitions`, `sidebar:nav-items`, `app:header-logo`, `app:footer`, `app:config:defaults`, …). A plugin says "I provide a route at `/my-app`" or "I render this component in the header"; the shell wires it in at boot.
 
-There's no hardcoded UI an org has to fork to change. Theme tokens are CSS variables overridden in a small CSS file. Routes come from plugins. Sidebar entries come from plugins. The host commits to **stability of the extension-point contracts** (Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0); orgs commit to staying inside those contracts.
+There's no hardcoded UI an org has to fork to change. Theme tokens are CSS variables overridden in a small CSS file. Routes come from plugins. Sidebar entries come from plugins. The host commits to **stability of the public contracts** — plugin manifest, runtime API, theme, config, and more, versioned in [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md); orgs commit to staying inside those contracts.
 
 ## How plugins are distributed
 

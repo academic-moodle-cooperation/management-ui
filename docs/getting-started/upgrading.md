@@ -4,16 +4,11 @@ How to move between Management UI versions without breaking your org plugins.
 
 ## Versioning model
 
-Every workspace package is versioned **independently** following Semver. The four contracts in [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md) layer additional rules:
-
-| Contract | Frozen at | Owner |
-|----------|-----------|-------|
-| Manifest | 1.1 | `@oc-mui/plugin-system` |
-| Runtime API | 1.0 | `@oc-mui/plugin-system` |
-| Theme | 2.0 | `@oc-mui/ui` + plugin consumers |
-| Config | 1.0 | `@oc-mui/query` (`definePluginConfig`) |
+Every workspace package is versioned **independently** following Semver. The public contracts (plugin manifest, runtime API, theme, config, shared runtime dependencies, GraphQL operation naming) layer additional rules on top — the authoritative list, including each contract's current version, is [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md).
 
 A change observable to a plugin author through any of these surfaces is **always a major bump** of the affected package — even if Semver alone would say otherwise.
+
+Alongside the per-package versions there is a **product version** (the `VERSION` file at the repo root): its major is pinned to the Opencast major the release line targets (e.g. `19.x.y` ↔ Opencast 19, maintained on branch `r/19.x`), and the released JAR artifacts carry it. The full model — release lines, the Version-Packages PR flow, forward merges — is in [`operations/release.md`](../operations/release.md).
 
 ## Patch and minor upgrades
 
@@ -37,7 +32,7 @@ Read the changelog first. Every breaking change ships with:
 
 Plugin authors get a **one-major-cycle grace window**: a symbol marked `@deprecated` in `1.x` can only be removed in `2.0.0`.
 
-When the host bumps `PLUGIN_API_VERSION` major, plugins compiled against the previous major are **cleanly rejected** by the loader with `"Plugin requires API major X, host provides Y"`. There's no silent break — your plugin either loads or fails loudly.
+When the host bumps `PLUGIN_API_VERSION` major, plugins compiled against the previous major are **cleanly rejected** by the loader with `"Plugin requires API major X, host provides Y"`. The loader also rejects a plugin whose declared `apiVersion` requires a **newer minor** than the host provides (a plugin built against `1.3` won't load on a `1.2` host). There's no silent break — your plugin either loads or fails loudly.
 
 ### Steps
 
@@ -66,12 +61,11 @@ A Config major bump changes what the reader API or the `AppConfig` shape exposes
 
 ## Upgrading the host (a deployment)
 
-For ops teams running Management UI against an Opencast backend:
+For ops teams running Management UI against an Opencast backend, the released artifacts are the three backend bundles — `management-ui-config`, `management-ui-graphql`, and `management-ui-core` (which serves the built SPA) — or the `management-ui-feature` Karaf feature that installs all three as one unit:
 
-1. Take the new shell build (`apps/shell/dist/`).
-2. Drop in the new JARs in `$OPENCAST_HOME/deploy/`.
-3. Confirm `app.enabledPlugins` in your `config.json` still names the right plugins.
-4. Restart.
+1. Drop the new JARs into `$OPENCAST_HOME/deploy/` (or update the Karaf feature).
+2. Confirm `app.enabledPlugins` in your `config.json` still names the right plugins. The file lives at `$OPENCAST_HOME/etc/ui-config/mh_default_org/management-ui/config.json` — see [Configuration](./configuration.md#where-the-host-config-file-comes-from).
+3. Restart.
 
 If the new shell bumped `PLUGIN_API_VERSION` major, deployed plugins compiled against the old version will refuse to load — rebuild them against the new host before deploying.
 
@@ -83,4 +77,4 @@ We don't `npm unpublish`. If a release goes sideways, deprecate the bad version 
 
 - [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md) — what's frozen and what isn't.
 - [`operations/release.md`](../operations/release.md) — how releases get cut.
-- [`operations/open-followups.md`](../operations/open-followups.md) — known issues and waiting-on-upstream items.
+- [`operations/open-followups.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/open-followups.md) — known issues and waiting-on-upstream items.
