@@ -2,7 +2,7 @@
 
 How plugin CSS interacts with the host. Follow this and your plugin looks native in every org's deployment without code changes.
 
-This is **Theme Contract 2.0** — frozen for the 1.x line. See [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md#3-theme-contract) for the stability guarantees.
+This is the **Theme Contract** — frozen for the 1.x line. See [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md#3-theme-contract) for the current version and the stability guarantees.
 
 ## The one rule
 

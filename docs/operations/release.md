@@ -83,7 +83,7 @@ pnpm changeset status --since=origin/develop
 # Commit it alongside the rest of your PR.
 ```
 
-CI **rejects** any PR that touches a versioned package without a changeset. Only `shell` and `playground` are exempt (listed under `ignore` in `.changeset/config.json`); root config, docs, and workflow changes need none because they touch no package.
+CI **rejects** any PR that touches a versioned package without a changeset. Root config, docs, and workflow changes need none because they touch no package; the authoritative rule and its only exemptions live in [AGENTS.md → Versioning](../../AGENTS.md#versioning--changesets-every-versioned-package-and-public-api-changes).
 
 For an intentionally release-noteless change to a versioned package (a JSDoc typo, an internal refactor that briefly touches a public file), record the deliberate decision:
 

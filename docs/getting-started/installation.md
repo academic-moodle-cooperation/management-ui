@@ -75,7 +75,7 @@ Configuration model details: [`configuration.md`](./configuration.md).
 pnpm verify
 ```
 
-Runs the full local gate (lint → check-types → build → unit → contract → api-check → Playwright E2E suite, incl. smoke). If this passes you have a working tree.
+Runs the full local gate — the same pipeline as CI; the step list is documented once in [AGENTS.md → Pre-push gate](../../AGENTS.md#pre-push-gate--pnpm-verify). If this passes you have a working tree.
 
 ## Common commands
 

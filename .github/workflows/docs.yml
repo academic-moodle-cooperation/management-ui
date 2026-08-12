@@ -65,6 +65,13 @@ jobs:
         with:
           globs: "**/*.md"
 
+      # Ownership check: single-source facts (verify-pipeline step list,
+      # contract versions, changeset exemptions, ...) must not be restated
+      # outside their home doc. Zero-dep node script, so no pnpm install
+      # needed here; reproduce locally with `pnpm docs:ownership`.
+      - name: Docs ownership check
+        run: node scripts/docs-ownership-check.mjs
+
   # Fast path job 2: offline link check. `--offline` restricts lychee to
   # repo-internal file links — exactly the ones that rot when files move and
   # that the VitePress build does NOT cover for GitHub-rendered markdown
