@@ -47,7 +47,25 @@ You have three options, in increasing order of effort:
 
 2. **Run Opencast locally** and let the default proxy target (`http://localhost:8080`) reach it. The complete walkthrough — Opencast build, GraphQL plugin, the Management UI backend bundles, OpenSearch via podman — is in [Full local setup](./local-backend.md); the proxy paths the shell needs are listed in [`packages/vite-config/src/proxy.ts`](../../packages/vite-config/src/proxy.ts).
 
-3. **Skip the backend entirely** for pure plugin-authoring work that doesn't depend on live data. Stub the endpoints the shell needs at boot — the Playwright smoke test in [`tests/e2e/smoke.spec.ts`](../../tests/e2e/smoke.spec.ts) shows the working set: `/ui/config/management-ui/config.json`, `/management-tool/ui/config/plugins.json`, `/info/me.json`, and `/graphql` (the smoke test additionally stubs `api.github.com` and Gravatar so no request leaves the machine). You can do this with any local HTTP server that serves static JSON files, then point `VITE_PROXY_TARGET` at it.
+3. **Skip the backend entirely** for pure plugin-authoring work that doesn't depend on live data. Stub the endpoints the shell needs at boot — the Playwright smoke test in [`tests/e2e/smoke.spec.ts`](../../tests/e2e/smoke.spec.ts) shows the working set: `/ui/config/management-ui/config.json`, `/management-tool/ui/config/plugins.json`, `/info/me.json`, and `/graphql` (the smoke test additionally stubs `api.github.com` and Gravatar so no request leaves the machine). You can do this with any local HTTP server that serves static JSON files, then point `VITE_PROXY_TARGET` at it (add `VITE_LOCAL_CONFIG=true` and the committed local `config.json` stays the one served, so your stub can skip that endpoint).
+
+   The smoke stubs answer as an **anonymous** session (`{ "user": null }` on `/info/me.json`, `{ "data": null }` on `/graphql`) — enough to boot the shell, but every app route stays behind the sign-in screen. **Session state is decided by the GraphQL `currentUser` query** (`MuiGetCurrentUser` in [`useGetCurrentUser.ts`](../../packages/query/src/hooks/useGetCurrentUser.ts)), not by `/info/me.json` (which supplies the granted roles for role-gated apps). To make the shell treat you as logged in, have the stub answer `POST /graphql` with:
+
+   ```json
+   {
+     "data": {
+       "currentUser": {
+         "__typename": "User",
+         "username": "admin",
+         "name": "Local Admin",
+         "email": "admin@example.org",
+         "userRole": "ROLE_USER_ADMIN"
+       }
+     }
+   }
+   ```
+
+   Any `userRole` other than `ROLE_USER_ANONYMOUS` counts as authenticated; app routes then render (data-driven pages will still show empty states, since every other query gets the null stub).
 
 Configuration model details: [`configuration.md`](./configuration.md).
 

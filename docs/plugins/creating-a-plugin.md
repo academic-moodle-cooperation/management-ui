@@ -1,302 +1,194 @@
 # Creating a plugin
 
-This is the walkthrough for plugin authors. For the canonical authoring rules — manifest fields, extension-point list, contract-test template — see [`AGENTS.md`](../../AGENTS.md). For stability guarantees see [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md).
+For plugin authors who have done [Your first plugin](./first-plugin.md) and want to build something real. Afterwards your plugin reads its own validated config slice, ships a translated string, and you know which reference to open for everything else.
 
-## Where plugins live
+The canonical authoring rules — manifest fields, registration rule, boundaries, pre-flight checklist — live in [`AGENTS.md`](../../AGENTS.md); stability guarantees in [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md). This page is the guided tour through them.
 
-| Location | When to use |
-|----------|-------------|
-| `plugins/<name>/` | A built-in plugin shipped with this repo. Reviewed in PR, lives in this monorepo, ships in releases. |
-| `.local-plugins/<name>/` | An org or community plugin. Its own git repo, mounted into this workspace at dev time. Gitignored from this repo. |
+## Where plugins live, and the scaffold
 
-Both follow the same layout and contract. The decision is "do I want this in the OSS release or do I own it elsewhere".
-
-## Scaffold
+| Location | When |
+|----------|------|
+| `.local-plugins/<name>/` | An org or community plugin. Its own git repo, mounted into this workspace at dev time. Gitignored. **Default.** |
+| `plugins/<name>/` | A built-in plugin shipped with this repo (`--in-tree`). |
 
 ```bash
 pnpm create-plugin <name> [--template <minimal|app>] [--in-tree] [--no-pom] [--no-install]
 ```
 
-```bash
-# Org / community plugin (default — under .local-plugins/)
-pnpm create-plugin my-plugin
+- `--template app` — a visible screen + sidebar entry (what [first-plugin](./first-plugin.md) uses); `minimal` (default) — an invisible `app:header-logo` placeholder that only exists so the contract test passes.
+- `--no-pom` — skip the `backend/` Maven layout (for CDN-only plugins; `--in-tree` never gets one).
+- `--no-install` — skip the automatic `pnpm install`.
 
-# Visible starter: a real screen + sidebar entry instead of the placeholder
-pnpm create-plugin my-plugin --template app
-
-# Built-in plugin (under plugins/, ships with the repo)
-pnpm create-plugin my-plugin --in-tree
-```
-
-The CLI ([`scripts/create-plugin.mjs`](../../scripts/create-plugin.mjs)) writes the full layout. The default `minimal` template registers a working `app:header-logo` placeholder so `pnpm test:contract` passes on first run; `--template app` scaffolds a visible screen plus sidebar entry instead (see [`first-plugin.md`](./first-plugin.md)). The default `.local-plugins/` scaffold also includes a `backend/` Maven layout so the plugin is JAR-ready — skip it with `--no-pom`; `--in-tree` scaffolds never include it. `--no-install` skips the automatic `pnpm install` that links the new package. Replace the placeholder, update `plugin.json`'s `extensionPoints`, and you have a real plugin.
-
-## Anatomy
+The scaffolded layout ([`scripts/create-plugin.mjs`](../../scripts/create-plugin.mjs)):
 
 ```
 my-plugin/
-├── plugin.json          # Manifest 1.1 (id, name, version, namespace, extensionPoints, ...)
+├── plugin.json          # Manifest 1.1 — id, namespace, extensionPoints, … (AGENTS.md has the field list)
 ├── package.json
-├── tsconfig.json
-├── vite.config.ts       # builds dist/<name>.mjs; shared deps marked external
-├── vitest.config.ts
-├── vitest.setup.ts
-├── eslint.config.js
-├── README.md
-├── backend/             # Maven/JAR layout (default scaffold; absent with --no-pom or --in-tree)
+├── tsconfig.json, vite.config.ts, vitest.config.ts, vitest.setup.ts, eslint.config.js, README.md
+├── backend/             # Maven/JAR layout (see distribution.md)
 └── src/
     ├── index.ts                  # createPlugin({ ... }) + default export
-    ├── plugin.contract.test.ts   # the required contract test (scaffolded)
-    └── ...                       # your plugin code
+    ├── plugin.contract.test.ts   # the required contract test (scaffolded — don't hand-write it)
+    └── ...
 ```
 
-### The entry point
+## The entry point — three rules
 
 ```ts
 import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
 
 export const myPlugin = createPlugin({
-  namespace: "my-namespace", // kebab-case, matches plugin.json
+  namespace: "my-plugin", // kebab-case, matches plugin.json's `namespace` + `id`
   type: "app",
   version: "1.0.0",
 
   initialize(manager: PluginManager) {
-    // Register everything here, NOT in activate().
-    manager.registerObject("apps:definitions", "my-app", {
-      // route + component
-    });
+    manager.registerObject("apps:definitions", "my-app", { /* route + component */ });
   },
 
-  activate() { /* one-time side effects */ },
-  deactivate() { /* clean up the side effects */ },
-});
-```
-
-**The registration rule:** every `manager.registerObject(...)` call goes in `initialize()`. `activate()` and `deactivate()` are for side effects only (logging, subscribing). The test harness re-registers between tests; registering in `activate()` means the second test sees nothing.
-
-> **`export default` is mandatory.** The remote loader (used for
-> `.local-plugins/` and JAR plugins) registers via `module.default`. A
-> named-only export builds and passes the contract test but is silently
-> never loaded at runtime. The scaffold does this for you; keep it.
-
-### Worked example: a screen with a sidebar entry
-
-This is the most common thing a plugin does — add a page and a left-nav
-link to it. It's modelled verbatim on `plugins/core-upload/src/index.ts`,
-so it's guaranteed to render (the "Upload" nav entry you see in the shell
-*is* this pattern). Unlike the scaffold's `app:header-logo` placeholder —
-which the core shell does not render, so it produces no visible result —
-a `sidebar:nav-items` + `apps:definitions` pair is visible in **both dev
-and production**.
-
-```tsx
-// src/ReportsPage.tsx — your screen (any React component)
-export function ReportsPage() {
-  return <div className="p-6">Reports go here.</div>;
-}
-```
-
-```ts
-// src/index.ts
-import { FileText } from "lucide-react"; // any lucide-react icon
-
-import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
-
-import { ReportsPage } from "./ReportsPage";
-
-export const reportsPlugin = createPlugin({
-  namespace: "reports", // matches plugin.json `namespace` + `id`
-  type: "app",
-  version: "1.0.0",
-
-  initialize(manager: PluginManager) {
-    // 1) The screen: a route + component the shell mounts at /reports.
-    manager.registerObject("apps:definitions", "reports", {
-      id: "reports",
-      name: "Reports",
-      routePath: "/reports",
-      component: ReportsPage,
-    });
-
-    // 2) The left-nav entry that links to it.
-    manager.registerObject("sidebar:nav-items", "reports", {
-      title: "Reports",
-      path: "/reports",
-      icon: FileText,      // an icon *component*, not a string
-      order: 50,           // lower numbers sort higher in the list
-      permissions: [],     // e.g. ["reports.view"] to gate visibility
-      featureFlags: [],
-      category: "content",
-    });
-  },
-
-  activate() {},
-  deactivate() {},
+  activate() { /* one-time side effects only */ },
+  deactivate() { /* clean them up */ },
 });
 
-export default reportsPlugin; // required — the loader reads module.default
+export default myPlugin;
 ```
 
-Then declare both points in `plugin.json` so the contract test passes:
+1. **All `registerObject` calls go in `initialize()`**, never `activate()` — the test harness re-registers between tests; registration in `activate()` makes the second test see nothing.
+2. **`export default` is mandatory.** The remote loader (`.local-plugins/` and JAR plugins) registers via `module.default`. A named-only export builds fine but is silently never loaded at runtime — the scaffolded contract test's default-export assertion is what catches it.
+3. **Every point you register on is declared in `plugin.json`'s `extensionPoints`.** The contract test fails on declared-but-unpopulated entries.
 
-```jsonc
-{
-  "type": "app",
-  "extensionPoints": ["apps:definitions", "sidebar:nav-items"]
-}
-```
+## Extension points
 
-`AppDefinition` (`apps:definitions`) requires `{ id, name, routePath, component }`
-and optionally takes `navigation`, `loader`, `version`, `description`, and
-`requiredRoles?: string[]` (when set, the shell only mounts the app for a
-user holding at least one of the listed roles; everyone else gets an
-access-denied screen) — see
-[`@oc-mui/plugin-system` `appTypes.ts`](../../packages/plugin-system/src/appTypes.ts).
-Nested routes like `/reports/:id` work automatically (the shell adds a
-`$routeSubPath` child route); read the param with `useParams({ strict: false })`.
-
-For the full list of slots you can register on — header actions, footer,
-table-row detail panels, the ACL/metadata editors, etc. — see the
-extension-point reference in
-[`plugins/core/README.md`](../../plugins/core/README.md).
-
-### The manifest (`plugin.json`)
-
-Every extension point your `initialize()` touches must also appear in `plugin.json`'s `extensionPoints` array. The contract test fails when an entry is declared but not populated.
-
-See [`AGENTS.md` → Plugin layout](../../AGENTS.md#plugin-layout-canonical) for the full required-fields list.
-
-### The contract test
-
-Required. The scaffold writes the canonical version at `src/plugin.contract.test.ts` — copy it from a fresh scaffold (or a sibling plugin) and change only the import line and the `describe` label. Its five `it()` blocks check:
-
-- The plugin is exposed as the **default export** (the remote loader requires it — this assertion comes from the scaffolded test, not the harness).
-- The plugin activates cleanly.
-- Every extension point declared in `plugin.json` is actually populated.
-- No errors or warnings during activation.
-- `i18n` locales (if shipped) have matching key sets.
-
-The harness API behind these assertions is documented in [`packages/plugin-testing/README.md`](../../packages/plugin-testing/README.md).
-
-Run it with:
-
-```bash
-pnpm --filter @oc-mui/plugin-my-plugin test:contract
-```
-
-## Extension points you'll touch most
+The four you'll touch most:
 
 | Point | What you register | Example |
 |-------|-------------------|---------|
 | `apps:definitions` | A route + component the shell mounts under `/<routePath>` | `plugins/core-upload/src/index.ts` |
-| `sidebar:nav-items` | Left-nav entry | same file |
-| `app:config:defaults` | A `Partial<AppConfig>` slice merged below `config.json` | `plugins/core-*/src/config.ts` |
-| `app:header-logo` | An `{ src, alt, href, width, height }` object — **note:** declared but the default shell does not currently render it, so it has no visible effect on its own. It's the scaffold's contract-test placeholder; swap it for `apps:definitions` (above) for a visible feature. | `plugins/example/` |
+| `sidebar:nav-items` | Left-nav entry linking to it | same file |
+| `app:config:defaults` | Your config slice's defaults (registered via `definePluginConfig` — next section) | `plugins/core-*/src/config.ts` |
+| `app:header-logo` | `{ src, alt, href, width, height }` — the minimal scaffold's placeholder; **not rendered by the default shell**, so swap it for `apps:definitions` for anything visible | `plugins/example/` |
 
-The extension-point reference is [`plugins/core/README.md`](../../plugins/core/README.md); the registration sites live in [`@oc-mui/plugin-system`](../../packages/plugin-system/README.md).
+Worth knowing about `apps:definitions` (`AppDefinition` in [`appTypes.ts`](../../packages/plugin-system/src/appTypes.ts)): besides the required `{ id, name, routePath, component }` it takes `requiredRoles?: string[]` — when set, the shell mounts the app only for users holding at least one listed role, everyone else gets an access-denied screen. Nested routes like `/reports/:id` work automatically (the shell adds a `$routeSubPath` child route); read the param with `useParams({ strict: false })`.
 
-## Configuration
+The full list — header actions, footer slots, table-row detail panels, the ACL/metadata editors — is in [`plugins/core/README.md`](../../plugins/core/README.md).
 
-A plugin gets its own slice of `AppConfig` at `config.plugins[id]`. Declare the slice with a Zod schema:
+<a id="configuration"></a>
+
+## A config slice your deployment can override
+
+Continuing the `hello` plugin from [first-plugin](./first-plugin.md). A plugin owns one slice of the app config at `config.plugins.<id>`, declared once with a Zod schema. Never read another plugin's slice, or your own via raw `config.plugins[...]` — always go through the reader.
+
+The scaffold doesn't include the config dependencies; add them first:
+
+```bash
+pnpm --filter @oc-mui/plugin-hello add zod "@oc-mui/query@workspace:*"
+```
+
+Declare the slice:
 
 ```ts
+// src/config.ts
 import { z } from "zod";
 import { definePluginConfig } from "@oc-mui/query";
 
 const schema = z.object({
-  apiEndpoint: z.string().url(),
-  pageSize: z.number().int().positive().default(20),
+  greeting: z.string().optional(),
 });
 
-export const myPluginConfig = definePluginConfig({
-  id: "my-plugin",     // matches plugin.json `id`
+export const helloConfig = definePluginConfig({
+  id: "hello", // matches plugin.json `id`
   schema,
-  defaults: { pageSize: 20 },
+  defaults: { greeting: "Hello from the defaults" },
 });
 ```
 
-Use `myPluginConfig.use()` in components, `myPluginConfig.read()` in event handlers. Reading another plugin's slice is forbidden — no lint rule enforces this yet (the rule was deferred), so treat any direct `config.plugins[...]` read as a review-time red flag.
+Register its defaults in `initialize()` and declare the point in `plugin.json`:
 
-Full layer model and reader API: [`architecture/CONFIGURATION.md`](../architecture/CONFIGURATION.md).
+```ts
+// src/index.ts, inside initialize(manager):
+helloConfig.register(manager); // populates app:config:defaults
+```
 
-## Styling
+```jsonc
+// plugin.json
+"extensionPoints": ["apps:definitions", "sidebar:nav-items", "app:config:defaults"]
+```
 
-Use semantic tokens — see [`plugins/styling.md`](./styling.md). No hardcoded colors. No `!important`.
+Read it in the component — `use()` in React, `read(config)` outside:
 
-## i18n
+```tsx
+// src/HelloPage.tsx
+import { helloConfig } from "./config";
 
-- Declare namespaces in `plugin.json`'s `i18nNamespaces` array.
-- Locale files at `<plugin>/locales/<namespace>/<locale>.json`.
-- Reference keys with `t("namespace:key")` via `usePluginTranslation(["namespace"])` from `@oc-mui/i18n` — it auto-loads the namespace; plain `useTranslation` renders raw keys unless you load the namespace yourself. See [`i18n.md`](./i18n.md).
-
-The contract test's `expectI18nKeyParity` fails when locale files drift apart.
-
-## GraphQL operations
-
-Every `query`/`mutation`/`subscription`/`fragment` your plugin declares must be **prefixed with your plugin's namespace in PascalCase**:
-
-```graphql
-# plugins/my-plugin/src/queries.graphql
-# namespace in plugin.json: "my-plugin"
-
-fragment MyPluginThingFields on Thing {
-  id
-  name
-}
-
-query MyPluginGetThings($limit: Int!) {
-  things(limit: $limit) {
-    ...MyPluginThingFields
-  }
+export function HelloPage() {
+  const cfg = helloConfig.use();
+  return <h1 className="text-2xl font-semibold text-foreground">{cfg.greeting}</h1>;
 }
 ```
 
-This avoids collisions with other plugins' operations and fragments at the GraphQL Codegen step and the server logs. Full rules + examples: [`architecture/CONTRACTS.md` § 6](../architecture/CONTRACTS.md#6-graphql-operation-naming).
+Rebuild (`pnpm --filter @oc-mui/plugin-hello build`), reload: the page shows *"Hello from the defaults"*. Now put a deployment override in the served `config.json` (same file where you enabled the plugin):
 
-A custom ESLint rule enforces this mechanically: `local/graphql-operation-naming` ([`packages/eslint-config/rules/graphql-operation-naming.js`](../../packages/eslint-config/rules/graphql-operation-naming.js)) fails the lint pass on any operation or fragment without the expected prefix.
-
-## Development loop
-
-For an in-tree plugin (`plugins/<name>/`), the shell's Vite build picks it up automatically:
-
-```bash
-pnpm --filter @oc-mui/shell dev
+```jsonc
+// apps/shell/public/ui/config/management-ui/config.json (top-level "plugins" key)
+"plugins": { "hello": { "greeting": "Hello from config.json" } }
 ```
 
-Add your plugin's id to `app.enabledPlugins` in your config and visit the route you registered on `apps:definitions`.
+Reload — the heading changes. That's the whole model: defaults from the plugin, overrides from the deployment, validated by your schema (invalid values log a warning and fall back to defaults). Full layer model: [`architecture/CONFIGURATION.md`](../architecture/CONFIGURATION.md).
 
-For a `.local-plugins/` plugin, build the plugin once so the loader can find its `dist/`:
+## A translated string
 
-```bash
-pnpm --filter @oc-mui/plugin-my-plugin build
-pnpm --filter @oc-mui/shell dev
-```
-
-Iterate on the plugin in watch mode:
+Locale files live per namespace; the namespace is declared in the manifest and referenced through `usePluginTranslation`:
 
 ```bash
-pnpm --filter @oc-mui/plugin-my-plugin dev
+pnpm --filter @oc-mui/plugin-hello add "@oc-mui/i18n@workspace:*"
+mkdir -p .local-plugins/hello/locales/hello
 ```
 
-## Pre-flight check
+```jsonc
+// locales/hello/en.json
+{ "subtitle": "This line is translated." }
+```
 
-Before opening a PR (in-tree) or releasing (community):
+```jsonc
+// locales/hello/de.json
+{ "subtitle": "Diese Zeile ist übersetzt." }
+```
+
+```jsonc
+// plugin.json
+"i18nNamespaces": ["hello"],
+```
+
+```tsx
+// in HelloPage.tsx
+import { usePluginTranslation } from "@oc-mui/i18n";
+const { t } = usePluginTranslation(["hello"]); // auto-loads the namespace
+// …
+<p className="text-muted-foreground">{t("hello:subtitle")}</p>
+```
+
+Run the contract test — the key-parity check now covers your locales (delete the key from `de.json` and it fails, naming the namespace and the missing key).
+
+Two dev-loop notes, both covered in depth in [i18n](./i18n.md): the `.local-plugins` dev server currently serves locale files only from the org-plugin `modules/<module>/locales/` layout — root-level `locales/` is the canonical layout (contract test, JAR build) but renders raw keys in the dev shell until you mirror it there; and i18next loads namespaces once, so **restart `pnpm dev` after adding or renaming keys**.
+
+## Styling, testing, GraphQL — the reference pages
+
+- **Styling**: semantic tokens and shared `@oc-mui/ui` components only — no hardcoded colors (lint-enforced), no `!important`, dark mode comes free if you comply. Rules + full token table: [styling.md](./styling.md).
+- **Testing**: the contract test is required and mechanical; unit tests go next to the code. What to cover and how to run it: [testing.md](./testing.md).
+- **GraphQL**: every operation and fragment is prefixed with your namespace in PascalCase (`MyPluginGetThings`) — enforced by the `local/graphql-operation-naming` lint rule. Rules + examples: [`CONTRACTS.md` § 6](../architecture/CONTRACTS.md#6-graphql-operation-naming).
+
+## The dev loop, compressed
 
 ```bash
-pnpm verify
+pnpm --filter @oc-mui/plugin-hello dev    # rebuild the bundle on change (watch mode)
+pnpm dev                                  # the shell — serves + loads .local-plugins/*/dist/
 ```
 
-That runs the canonical pre-push gate — the exact pipeline is documented once in [`AGENTS.md` → Pre-push gate](../../AGENTS.md#pre-push-gate--pnpm-verify). Note that `verify` excludes `.local-plugins/` (via a turbo `--filter`), so run your org plugin's own `test`/`test:contract` scripts separately. If it's green locally it'll be green in CI.
+In-tree plugins skip the plugin build — the shell's Vite build compiles them directly.
 
-If you changed a public `@oc-mui/*` API, also run `pnpm api-check` and commit the regenerated `etc/<pkg>.api.md` plus a changeset. See [`operations/release.md`](../operations/release.md).
+## Shipping
 
-## When the plugin grows up
+Before a PR (in-tree) or a release (org/community): work through the pre-flight checklist in [`AGENTS.md`](../../AGENTS.md#tldr--pre-flight-checklist) and run `pnpm verify`. Note that `verify` excludes `.local-plugins/` — run your org plugin's own `test` / `test:contract` scripts separately.
 
-If you started with an in-tree plugin and want to graduate it to its own repository (so an org can ship it independently), see [`distribution.md`](./distribution.md).
-
-## See also
-
-- [`AGENTS.md`](../../AGENTS.md) — canonical authoring rules and the pre-flight checklist.
-- [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md) — manifest, runtime API, theme, and config contracts with stability guarantees.
-- [`distribution.md`](./distribution.md) — packaging, publishing, JAR deployment.
-- [`testing.md`](./testing.md) — beyond the contract test.
-- [`packages/plugin-testing/README.md`](../../packages/plugin-testing/README.md) — full harness API.
+Then pick a delivery path — dev mount, in-tree, JAR next to Opencast, or CDN: [Distribution](./distribution.md).
