@@ -5,12 +5,13 @@ import { viteStaticCopy } from "vite-plugin-static-copy";
 
 import { createBaseConfig, type CreateBaseConfigOptions } from "./base.config.js";
 import { coldStartHintPlugin } from "./plugins/cold-start-hint.js";
+import { discoverLocalPluginRootLocaleTargets } from "./plugins/local-plugin-locales.js";
 import { getAppBasePath, DEFAULT_SHELL_APP_PORT } from "./ports.js";
 import { createProxyConfig } from "./proxy.js";
 
 import type { UserConfig, BuildOptions } from "vite";
 
-/** True if at least one JSON file exists under `.local-plugins/<plugin>/modules/<module>/locales/` (avoids empty glob for vite-plugin-static-copy). */
+/** True if at least one JSON file exists under `.local-plugins/<plugin>/modules/<module>/locales/` (avoids empty glob for vite-plugin-static-copy). Only gates the modules-layout glob; root-level `locales/` dirs get per-namespace targets from `discoverLocalPluginRootLocaleTargets`. */
 function hasLocalPluginLocaleFiles(monorepoRootPath: string): boolean {
   const localPluginsRoot = path.join(monorepoRootPath, ".local-plugins");
   if (!fs.existsSync(localPluginsRoot) || !fs.statSync(localPluginsRoot).isDirectory()) {
@@ -96,7 +97,8 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
     // Silently ignore
   }
 
-  // .local-plugins locales only when real files exist (missing dir, empty dir, or no locales → skip; avoids static-copy "no files" noise)
+  // .local-plugins locales, modules layout — only when real files exist
+  // (missing dir, empty dir, or no locales → skip; avoids static-copy "no files" noise)
   const localPluginsLocalesTarget = hasLocalPluginLocaleFiles(monorepoRootPath)
     ? [
       {
@@ -105,6 +107,10 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
       },
     ]
     : [];
+
+  // .local-plugins locales, root-level layout (`<plugin>/locales/<ns>/`, relocatable
+  // via plugin.json's `locales` field) — one target per namespace dir with files
+  const localPluginsRootLocalesTargets = discoverLocalPluginRootLocaleTargets(monorepoRootPath);
 
   // Create static assets copying plugin for i18n and custom assets support
   const staticAssetsCopyPlugin = viteStaticCopy({
@@ -126,6 +132,7 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
       },
       // .local-plugins locale namespaces (only when .local-plugins exists)
       ...localPluginsLocalesTarget,
+      ...localPluginsRootLocalesTargets,
       // Shared plugin assets (global)
       {
         src: path.resolve(monorepoRootPath, "plugins/assets/*"),

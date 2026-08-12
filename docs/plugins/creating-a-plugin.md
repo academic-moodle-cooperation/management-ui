@@ -170,7 +170,7 @@ const { t } = usePluginTranslation(["hello"]); // auto-loads the namespace
 
 Run the contract test — the key-parity check now covers your locales (delete the key from `de.json` and it fails, naming the namespace and the missing key).
 
-Two dev-loop notes, both covered in depth in [i18n](./i18n.md): the `.local-plugins` dev server currently serves locale files only from the org-plugin `modules/<module>/locales/` layout — root-level `locales/` is the canonical layout (contract test, JAR build) but renders raw keys in the dev shell until you mirror it there; and i18next loads namespaces once, so **restart `pnpm dev` after adding or renaming keys**.
+One dev-loop note, covered in depth in [i18n](./i18n.md): i18next loads namespaces once, so **restart `pnpm dev` after adding or renaming keys**.
 
 ## Styling, testing, GraphQL — the reference pages
 
