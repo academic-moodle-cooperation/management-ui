@@ -30,7 +30,7 @@ lint-types
 
 | Job | What it does |
 |-----|--------------|
-| `lint-types` | `pnpm install`, builds packages, runs `pnpm lint`, runs `pnpm check-types`. Filters out shadcn-generated TS errors — see [`shadcn-typescript-errors.md`](./shadcn-typescript-errors.md). |
+| `lint-types` | `pnpm install`, builds packages, runs `pnpm lint`, runs `pnpm check-types`. |
 | `unit` | `pnpm test`. Uploads coverage to Codecov. |
 | `contract` | `pnpm test:contract` across every plugin. |
 | `api-check` | `pnpm api-check:ci`. Fails the PR if any `packages/<pkg>/etc/<pkg>.api.md` snapshot differs from the regenerated output. |
@@ -108,5 +108,4 @@ The branches `main`, `develop`, and `release/**` are configured to require the `
 
 - [`release.md`](./release.md) — the publish flow on top of these gates.
 - [`testing.md`](./testing.md) — the test strategy the CI jobs enforce.
-- [`shadcn-typescript-errors.md`](./shadcn-typescript-errors.md) — why the type-check job filters certain errors.
 - [`open-followups.md`](./open-followups.md) — known CI roughness and planned improvements.

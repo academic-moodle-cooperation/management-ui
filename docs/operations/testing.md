@@ -199,7 +199,7 @@ flowchart LR
 
 | Job | What fails it |
 |---|---|
-| `lint-types` | ESLint warning, real TypeScript error (auto-generated shadcn errors are filtered). |
+| `lint-types` | ESLint warning, any TypeScript error. |
 | `unit` | Any `*.test.ts` in any package; Codecov upload is best-effort. |
 | `contract` | Any `*.contract.test.ts` in any plugin. |
 | `e2e` | Any spec in `tests/e2e/`. The Playwright HTML report is uploaded as an artifact (7-day retention) on failure. |

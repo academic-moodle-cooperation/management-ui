@@ -41,7 +41,6 @@ Routing by audience. Pick the path that matches what you're doing.
 ## I want to dig into specifics
 
 - [`reference/favicon-configuration.md`](./reference/favicon-configuration.md) — how the favicon override system works.
-- [`operations/shadcn-typescript-errors.md`](./operations/shadcn-typescript-errors.md) — why the type-check ignores certain shadcn files.
 
 ## I'm extending the workspace itself
 
