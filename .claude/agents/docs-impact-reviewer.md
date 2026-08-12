@@ -52,7 +52,7 @@ edit actually covers the identifier, not just an unrelated hunk.
   fact means exactly **one** doc should change, and any *other* doc restating it
   (rather than linking to it) is itself a finding:
   - verify pipeline (steps/order of `pnpm verify`) and the changeset rule → `AGENTS.md`
-  - the four contracts (manifest, runtime API, theme, config) → `docs/architecture/CONTRACTS.md`
+  - the six contracts (manifest, runtime API, theme, config, shared runtime deps, GraphQL operation naming) → `docs/architecture/CONTRACTS.md`
   - the config layer model → `docs/architecture/CONFIGURATION.md`
   - release lines / publish set / versioning mechanics → `docs/operations/release.md`
   - extension-point catalog → `plugins/core/README.md`
