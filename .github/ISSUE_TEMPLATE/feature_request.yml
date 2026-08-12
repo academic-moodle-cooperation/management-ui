@@ -11,8 +11,10 @@ body:
 
         If your proposal is about **plugin extensibility** (a new extension
         point, a contract change, a hook), please mention that explicitly —
-        contract changes need an ADR and a changeset (see
-        [CONTRIBUTING.md](../CONTRIBUTING.md#-versioning-changesets-and-deprecations)).
+        contract changes follow the
+        [Contract Change Process](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/architecture/CONTRACTS.md#contract-change-process)
+        (dated changelog entry + changeset; an ADR for major bumps — see
+        [CONTRIBUTING.md](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/CONTRIBUTING.md#versioning-changesets-and-deprecations)).
 
   - type: textarea
     id: problem
@@ -60,9 +62,11 @@ body:
       options:
         - Shell (apps/shell)
         - A shared package (packages/*)
+        - Core plugin infrastructure (plugins/core)
         - Core plugin — core-episodes
         - Core plugin — core-series
         - Core plugin — core-upload
+        - Example plugin (plugins/example)
         - Admin Marketplace
         - Plugin extensibility (new extension point / contract)
         - Plugin runtime / loader

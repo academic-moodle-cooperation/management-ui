@@ -58,9 +58,11 @@ body:
       multiple: true
       options:
         - Shell (apps/shell)
+        - Core plugin infrastructure (plugins/core)
         - Core plugin — core-episodes
         - Core plugin — core-series
         - Core plugin — core-upload
+        - Example plugin (plugins/example)
         - Admin Marketplace
         - A third-party / local plugin
         - Plugin runtime / loader

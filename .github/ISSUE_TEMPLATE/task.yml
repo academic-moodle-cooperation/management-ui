@@ -12,8 +12,8 @@ body:
         up and finish it without asking a follow-up question. If context only
         lives in one person's head, it isn't in the issue yet.
 
-        A user-facing bug goes in [🐛 Bug report](?template=bug_report.yml);
-        a new capability goes in [✨ Feature request](?template=feature_request.yml).
+        A user-facing bug goes in [🐛 Bug report](https://github.com/academic-moodle-cooperation/management-ui/issues/new?template=bug_report.yml);
+        a new capability goes in [✨ Feature request](https://github.com/academic-moodle-cooperation/management-ui/issues/new?template=feature_request.yml).
 
   - type: textarea
     id: context
@@ -27,7 +27,7 @@ body:
         The published `exports` still carry a `development` condition that points
         at `src/`, which isn't in the tarball. Consumers running vitest/vite
         resolve into a non-existent path. Prompted by the SDK publish smoke-test
-        (#226 CI). Needs to be gone before the first npm publish.
+        (#123 CI). Needs to be gone before the first npm publish.
     validations:
       required: true
 
@@ -55,7 +55,7 @@ body:
         to stop.
       placeholder: |
         - Not migrating the other packages' export shape (separate task).
-        - Not touching the plugin repos — coordinated release, tracked in #229.
+        - Not touching the plugin repos — coordinated release, tracked in #124.
 
   - type: dropdown
     id: scope
@@ -66,9 +66,11 @@ body:
       options:
         - Shell (apps/shell)
         - A shared package (packages/*)
+        - Core plugin infrastructure (plugins/core)
         - Core plugin — core-episodes
         - Core plugin — core-series
         - Core plugin — core-upload
+        - Example plugin (plugins/example)
         - Admin Marketplace
         - Plugin runtime / loader
         - GraphQL / data layer
@@ -85,7 +87,9 @@ body:
       description: |
         The oldest Opencast major this work applies to. It determines which
         release line (`r/NN.x`) the change lands on — the PR targets the line
-        of the oldest affected major. Leave blank if unsure or not applicable.
+        of the oldest affected major (see
+        [Releases & versioning](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/release.md)).
+        Leave blank if unsure or not applicable.
       options:
         - "19 — applies to all supported majors"
         - "20 — OC 20 and newer only"
@@ -103,7 +107,7 @@ body:
         - `packages/vite-config/src/shell.config.ts` (alias map)
         - AGENTS.md → "Versioning — changesets"
         - docs/operations/open-followups.md §9.1
-        - Related: #226, #228
+        - Related: #123, #124
 
   - type: checkboxes
     id: definition-of-done

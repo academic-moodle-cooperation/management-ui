@@ -17,8 +17,8 @@ const BASE_URL = `http://127.0.0.1:${PORT}/management-ui/`;
  * This tier closes that gap without pulling org code into the OSS repo: the
  * machinery is tracked, the plugin is supplied per machine.
  *
- *   ORG_PLUGIN=univie pnpm test:org-plugin
- *   ORG_PLUGIN=univie pnpm test:org-plugin:update   # (re)record visual baselines
+ *   ORG_PLUGIN=acme pnpm test:org-plugin
+ *   ORG_PLUGIN=acme pnpm test:org-plugin:update   # (re)record visual baselines
  *
  * With ORG_PLUGIN unset every spec skips and no dev server starts.
  *

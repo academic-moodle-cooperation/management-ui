@@ -14,11 +14,11 @@
 ## Before-merge checklist
 
 - [ ] `pnpm verify` passes locally (lint + check-types + build + unit + contract + api-check + Playwright smoke).
-- [ ] If *any* versioned package changed (all of `packages/*` and `plugins/*`, private ones included): a [Changeset](https://github.com/changesets/changesets) is **committed** (`pnpm changeset`). Only `.github/`/doc-only or shell/playground-only changes can skip this; CI's `Changeset` job tells you which.
+- [ ] If *any* versioned package changed (every package under `packages/*` and `plugins/*`, private ones included): a [Changeset](https://github.com/changesets/changesets) is **committed** (`pnpm changeset`). Only the packages in `.changeset/config.json`'s `ignore` list (`shell`, `playground`) are exempt; PRs touching only docs, `.github/`, or root config touch no package and need none. Authoritative wording: [AGENTS.md](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/AGENTS.md).
 - [ ] If a `@oc-mui/*` package's public API surface changed: `pnpm api-check` regenerated, the diff in `etc/<pkg>.api.md` is intentional and committed.
 - [ ] Docs this PR makes stale are updated in the same PR.
-- [ ] [`AGENTS.md`](../AGENTS.md) rules followed for any plugin work (extension points in `plugin.json`, contract test up to date, no cross-plugin or cross-app imports).
-- [ ] **Reviewer:** base branch matches the oldest affected Opencast major (`r/NN.x` for released-line fixes, `develop` for next-major work).
+- [ ] [AGENTS.md](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/AGENTS.md) rules followed for any plugin work (extension points in `plugin.json`, contract test up to date, no cross-plugin or cross-app imports).
+- [ ] **Reviewer:** base branch matches the oldest affected Opencast major (`r/NN.x` for released-line fixes, `develop` for next-major work — see [Releases & versioning](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/release.md)).
 
 ## Stacked / linked PRs
 

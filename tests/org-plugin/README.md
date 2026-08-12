@@ -23,8 +23,8 @@ server that serves the plugin, so it works even for a prebuilt plugin with no
 
 ```bash
 pnpm test:e2e:install                          # one-time: Chromium
-ORG_PLUGIN=univie pnpm test:org-plugin         # contract + visual compare
-ORG_PLUGIN=univie pnpm test:org-plugin:update  # (re)record visual baselines
+ORG_PLUGIN=acme pnpm test:org-plugin           # contract + visual compare
+ORG_PLUGIN=acme pnpm test:org-plugin:update    # (re)record visual baselines
 ```
 
 `ORG_PLUGIN` is the **folder name** under `.local-plugins/`. Unset, every spec
@@ -63,7 +63,7 @@ The dev server discovers a namespace only when it is a **directory** under
 `modules/<type>/locales/`:
 
 ```
-modules/footer/locales/univie-footer/de.json   ✅ namespace "univie-footer"
+modules/footer/locales/acme-footer/de.json     ✅ namespace "acme-footer"
 modules/empty-state/locales/de.json            ❌ no namespace dir — never loads
 ```
 
