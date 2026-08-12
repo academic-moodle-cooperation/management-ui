@@ -38,9 +38,13 @@
             <phase>install</phase>
             <configuration>
               <target if="deployTo">
-                <copy file="./src/config.json" 
+                <!-- The canonical deployment default lives in the shell app
+                     (single source of truth; see the $comment inside the file).
+                     failonerror is left at its default (true) so a missing or
+                     moved source file fails the build instead of silently
+                     deploying without a config. -->
+                <copy file="${opencast.basedir}/apps/shell/public/ui/config/management-ui/config.json"
                     todir="${deployTo}/etc/ui-config/mh_default_org/management-ui"
-                    failonerror="false"
                 />
               </target>
             </configuration>
