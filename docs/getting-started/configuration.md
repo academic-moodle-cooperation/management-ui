@@ -32,7 +32,7 @@ Goal: switch the deployment to the shipped `forest-sage` theme and disable the u
 }
 ```
 
-Save, reload the browser: the color scheme changes and Upload disappears from the sidebar.
+Save, reload the browser: the color scheme changes and Upload disappears from the sidebar. (This shows a file whose *only* customizations are these two — in a real deployment, keep whatever your file already carries, e.g. the `auth` overrides from [Deployment → Configure](./deployment.md#configure).)
 
 Why it looks like this:
 
@@ -101,7 +101,7 @@ The shell does **not** implement an identity provider. It only needs to know **w
 
 The `/login` route inspects the effective login URL and picks the UX automatically:
 
-- **Password backends (Spring form login).** If the URL targets `j_spring_security_*` (e.g. `loginUrl: "/j_spring_security_login"` — the right choice for a stock Opencast without an IdP), the shell renders its **own themed login form** and POSTs the credentials to `/j_spring_security_check`, then returns the user to wherever they were headed. This avoids Opencast's `/login.html` (whose post-login redirect lands on the role-based welcome page — the Opencast admin — rather than back in the management UI).
+- **Password backends (Spring form login).** If the URL targets `j_spring_security_*` (e.g. `loginUrl: "/j_spring_security_login"` — the right choice for a stock Opencast without an IdP), the shell renders its **own themed login form** and POSTs the credentials to `/j_spring_security_check`, then returns the user to wherever they were headed. The themed form only appears if the SPA can load anonymously, though: on a stock Opencast, `etc/security/mh_default_org.xml` lists `/management-ui/**` in its `redirectingPathPatterns`, so anonymous requests are 302-redirected to Opencast's `/login.html` before the shell ever boots. That also works — Opencast returns the user to `/management-ui` after login — it's just Opencast's stock login page instead of the themed one. To get the themed form, allow anonymous access to `/management-ui/**` in that security file.
 - **External IdP (SSO).** Any other URL (e.g. `loginUrl: "/Shibboleth.sso/Login?target=/management-ui/"`) is treated as an external IdP: the shell does a full-page redirect to it **verbatim**. Encode the post-login return target **inside** the URL using whatever param your IdP expects — Shibboleth's `target=`, OIDC's `redirect_uri`, CAS's `service=`, and so on. The shell does not append its own return param.
 
 > **Note:** After an SSO login the user returns to the static `target` you configured (typically the app root), not the exact deep route they first requested. Deep-link return after SSO would require per-IdP return-param support and is a tracked follow-up. Password-form login *does* return to the exact route.

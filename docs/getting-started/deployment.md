@@ -15,7 +15,7 @@ On the Opencast host:
 
 On the machine you build on (any machine — it does not have to be the Opencast host):
 
-- **JDK 21 and Maven.** `mvn -version` must report Java 21. Node and pnpm are *not* prerequisites: the root `pom.xml` downloads pinned versions and builds the frontend itself.
+- **JDK 21 or newer** (the build targets release 21) and **Maven** — or no Maven at all: the repo ships the `./mvnw` wrapper, so substitute `./mvnw` for `mvn` in every command below. `mvn -version` (or `./mvnw -version`) must report Java 21+. Node and pnpm are *not* prerequisites: the root `pom.xml` downloads pinned versions and builds the frontend itself.
 - **The Opencast `19-SNAPSHOT` parent POM in your local `~/.m2`.** It is not on Maven Central — build Opencast `r/19.x` from source once so the parent lands there. [Full local setup → Build and start Opencast 19](./local-backend.md#2-build-and-start-opencast-19) walks through that build.
 
 ## The artifacts
@@ -63,6 +63,8 @@ cp backend/management-config/target/management-ui-config-*.jar \
    "$OPENCAST_HOME/deploy/"
 ```
 
+When copying by hand, also create `$OPENCAST_HOME/etc/ui-config/mh_default_org/management-ui/config.json` — start from the minimal examples in [Configure](#configure) below, or copy the shipped default from [`apps/shell/public/ui/config/management-ui/config.json`](../../apps/shell/public/ui/config/management-ui/config.json). (`-DdeployTo` does this step for you.)
+
 ## Configure
 
 The UI reads one file on the Opencast host:
@@ -73,7 +75,7 @@ $OPENCAST_HOME/etc/ui-config/mh_default_org/management-ui/config.json
 
 Opencast serves it at `/ui/config/management-ui/config.json`; the shell fetches it at boot. Edit the file in place — no rebuild, no restart, just reload the browser. Every key (themes, locale, enabled plugins, auth URLs, per-plugin slices) is documented in [Configuration](./configuration.md).
 
-One edit you'll almost certainly need: the shipped default points login at Shibboleth. On a stock Opencast **without** an SSO IdP, point `auth.*` at the Spring form-login endpoints instead — the shell then renders its own themed login form:
+One edit you'll almost certainly need: the shipped default points login at Shibboleth. On a stock Opencast **without** an SSO IdP, point `auth.*` at the Spring form-login endpoints instead:
 
 ```json
 {
@@ -84,11 +86,13 @@ One edit you'll almost certainly need: the shipped default points login at Shibb
 }
 ```
 
+Note that on a stock Opencast, users will still see **Opencast's own login page** first: `etc/security/mh_default_org.xml` lists `/management-ui/**` in its `redirectingPathPatterns`, so anonymous requests are 302-redirected to Opencast's `/login.html` before the SPA can load. That works fine — after logging in there, the user lands back in `/management-ui`. If you want the shell's own **themed** login form instead, additionally allow anonymous access to `/management-ui/**` in that security file, so the SPA loads first and presents its form ([Configuration → Authentication](./configuration.md#authentication)).
+
 With an IdP (Shibboleth, OIDC, CAS, …), set `auth.loginUrl` to your IdP's entry URL instead — see [Configuration → Authentication](./configuration.md#authentication). Anything the file omits falls back to built-in defaults, so it only needs to carry what your deployment overrides.
 
 ## Verify it works
 
-1. Open `https://<your-opencast>/management-ui/` — the UI loads, and logging in (via the form or your IdP) lands you back in Management UI with the sidebar showing the enabled plugins (Episodes, Series, Upload with the defaults).
+1. Open `https://<your-opencast>/management-ui/` — the UI loads, and logging in (via Opencast's login page, the shell's themed form, or your IdP — see [Configure](#configure)) lands you back in Management UI with the sidebar showing the nav entries contributed by the enabled plugins (with the defaults: the episodes, series, and upload entries).
 2. The plugin endpoint answers (an empty list is correct until you deploy plugin JARs; anonymous requests get HTTP 403, so authenticate):
 
    ```bash

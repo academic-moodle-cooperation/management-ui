@@ -22,6 +22,8 @@ The product version's **major is pinned to the Opencast major it targets**: `19.
 4. **Check your config still fits.** Read the release's changelog for config-affecting changes, and confirm `app.enabledPlugins` still names the right namespaces. Then reload the UI with the browser console open and watch for `config validation failed` warnings — a slice that no longer validates silently reverts to defaults ([Configuration → When a change does not take](./configuration.md#when-a-change-does-not-take)).
 5. **Verify** as after a fresh deploy: the UI loads at `/management-ui/`, login works, and — if you run org plugins — `/management-tool/ui/config/plugins.json` still lists their JARs ([Deployment → Verify it works](./deployment.md#verify-it-works)).
 
+**Coming from a pre-1.0 deployment?** Two extra steps: remove **all** old `management-ui-*.jar` bundles — the per-plugin bundles (episodes, series, upload, test) no longer exist as separate JARs; those plugins now ship inside `management-ui-core` — and rewrite your `config.json` from scratch against today's shape ([Configuration → Key reference](./configuration.md#key-reference)): the legacy keys `app.pluginNamespace` and `plugins["management-ui-<id>"]` are no longer read.
+
 **Org plugins:** if the new host bumped the plugin runtime API **major**, deployed plugins compiled against the old version refuse to load with a clear loader error (`"Plugin requires API major X, host provides Y"`) — rebuild them against the new host before or right after the upgrade (see [below](#plugin-compatibility-for-plugin-authors)).
 
 **Rolling back:** put the previous JARs back into `$OPENCAST_HOME/deploy/` and restore the backed-up `config.json`.
@@ -69,4 +71,4 @@ We don't `npm unpublish`. If a release goes sideways, the bad version is depreca
 
 - [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md) — what's frozen and what isn't.
 - [`operations/release.md`](../operations/release.md) — release lines, how releases get cut.
-- [`operations/open-followups.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/open-followups.md) — known issues and waiting-on-upstream items.
+- [`operations/open-followups.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/open-followups.md) — known issues and waiting-on-upstream items. (GitHub link — the page is deliberately excluded from the published docs site.)
