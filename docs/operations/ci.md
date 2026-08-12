@@ -71,8 +71,9 @@ See [`release.md` → API surface drift detection](./release.md#api-surface-drif
 
 ## Workflows outside the PR gate
 
-Two tiers are too slow or too environment-dependent to run on every PR. Both are
-also available on demand (`workflow_dispatch`).
+These workflows run outside the PR gate — too slow or too environment-dependent
+for every PR, or post-merge by design. All are also available on demand
+(`workflow_dispatch`).
 
 ### `Integration (real backend)` ([`.github/workflows/integration.yml`](../../.github/workflows/integration.yml))
 
@@ -99,6 +100,13 @@ duplicated engine. Locally, `pnpm test:matrix` still runs all five projects.
 
 A manual dispatch takes an optional `projects` input — space-separated
 `--project` arguments — to narrow the run.
+
+### `Docs sync` ([`.github/workflows/docs-sync.yml`](../../.github/workflows/docs-sync.yml))
+
+Post-merge drift check: on every push to `develop` it rebuilds the docs site
+(plus the docs lint / link checks once those are adopted) and opens or updates
+a single tracking issue on failure. Dormant while Actions billing is
+unresolved; self-activates once restored.
 
 ## Changes that skip CI gates
 
