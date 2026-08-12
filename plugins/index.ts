@@ -17,10 +17,10 @@
  *   - JAR: core fetches backend /management-tool/ui/config/plugins.json and loads each plugin URL.
  *   - Registry and .local-plugins: discovered/installed via Admin Marketplace (registry API or dev manifest at /local-plugins/manifest.json).
  *
- * Dieses Barrel bleibt bewusst explizit:
- * - Neue Core-Plugins müssen hier manuell exportiert werden.
- * - Organisations-/Uniplugins gehören NICHT in dieses Repo, sondern
- *   werden als Community-Plugin oder JAR eingebunden.
+ * This barrel is deliberately explicit:
+ * - New core plugins must be exported here manually.
+ * - Organization-specific plugins do NOT belong in this repo; they are
+ *   integrated as community plugins or JARs instead.
  */
 
 export * from "./core";

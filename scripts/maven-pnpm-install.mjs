@@ -7,7 +7,7 @@
  * committed `pnpm-lock.yaml` can never cover it. A strict
  * `pnpm install --frozen-lockfile` therefore fails with ERR_PNPM_OUTDATED_LOCKFILE
  * the moment an org/community plugin checkout sits in `.local-plugins/`
- * (the Hinkelstein server build, or any org developing local plugins).
+ * (the server-side Maven build, or any org developing local plugins).
  *
  * There is no pnpm mechanism that keeps the frozen check for the committed
  * workspace while tolerating extra importers: `--filter` still validates the

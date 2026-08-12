@@ -59,11 +59,13 @@ which this hook deliberately does not duplicate.
 
 - **No `.mcp.json`** — no hosted/OAuth MCP server is in use by this project; headless CI
   sessions can't complete interactive logins, so none is committed.
-- **No changeset** for this config — `.claude/` and the root `CLAUDE.md` are root-level
-  tooling/docs, which `CONTRIBUTING.md` exempts from the changeset requirement.
-- **No new CI job** — the gates already run in GitHub Actions (`.github/workflows/`) and
-  the JAR build runs in GitLab CI; this layer mirrors `pnpm verify` locally rather than
-  adding a job that would double-run.
+- **No changeset** for this config — the changeset rule ([`AGENTS.md`](../AGENTS.md)) covers
+  versioned packages under `packages/*` and `plugins/*`; `.claude/` and the root
+  `CLAUDE.md` are not packages, so changes here need none.
+- **No new CI job** — the gates already run in GitHub Actions (`.github/workflows/`).
+  The JAR/Maven path is driven by `pom.xml` + `mvnw` and verified locally via
+  `scripts/verify-jar-deploy.sh`; GitHub CI does not build JARs. This layer mirrors
+  `pnpm verify` locally rather than adding a job that would double-run.
 
 ## Extending this
 
