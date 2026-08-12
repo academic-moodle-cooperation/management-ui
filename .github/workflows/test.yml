@@ -1,10 +1,31 @@
 name: Test
 
+# Docs-only changes skip this heavy gate entirely (path filters below): they
+# are covered by the docs fast path in docs.yml (site build + markdownlint +
+# offline link check) instead. The changeset gate is NOT affected —
+# changeset.yml has no path filter, so a PR that only touches a versioned
+# package's *.md files still gets its changeset requirement enforced.
+#
+# The filters use `paths` with negations (last matching pattern wins) instead
+# of `paths-ignore`, because one class of markdown must NEVER skip the gate:
+# packages/*/etc/*.api.md are generated API snapshots that api-check validates —
+# a hand-edited snapshot slipping through an "md-only" PR would poison the
+# baseline and fail the next unrelated code PR.
 on:
   push:
     branches: [develop, "r/**"]
+    paths:
+      - "**"
+      - "!docs/**"
+      - "!**/*.md"
+      - "packages/**/etc/*.api.md"
   pull_request:
     branches: [develop, "r/**"]
+    paths:
+      - "**"
+      - "!docs/**"
+      - "!**/*.md"
+      - "packages/**/etc/*.api.md"
 
 jobs:
   lint-types:

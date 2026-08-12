@@ -107,6 +107,16 @@ The [PR template](.github/pull_request_template.md) is the review checklist made
 
 In doubt about the bump level, the changeset wording, or whether a frozen contract changed? Open the PR as a **draft** and ask — the contracts in [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) are public commitments, so over-discussing beats a silent break. Stacking on another open PR is fine: link the parent, GitHub retargets when it merges.
 
+## Editing the docs
+
+Docs contributions are the lightest path into the repo — typo to merged PR without ever cloning:
+
+- **Where docs live.** [`docs/`](docs/README.md) is the source of the docs site; the sidebar in [`docs/.vitepress/config.mts`](docs/.vitepress/config.mts) is the *only* table of contents. Root files (this one, [`README.md`](README.md), [`AGENTS.md`](AGENTS.md), package READMEs) are GitHub-rendered markdown, not part of the site.
+- **The loop.** Every site page has an **Edit this page on GitHub** link that opens GitHub's editor directly on `develop`; GitHub forks and opens the PR for you. For anything bigger than a paragraph, a normal clone-and-branch works the same — target `develop` either way.
+- **What CI runs on a docs-only PR.** The fast path only ([`docs.yml`](.github/workflows/docs.yml)): site build, markdown lint (`pnpm docs:lint` locally; rules in [`.markdownlint.jsonc`](.markdownlint.jsonc)), and an offline check of repo-internal links ([`lychee`](lychee.toml) — a Rust binary, so CI-only unless you `brew install lychee`). The full `pnpm verify` gate does **not** run — [`test.yml`](.github/workflows/test.yml) skips PRs that touch only `docs/**` and `*.md` files.
+- **No changeset needed** — docs aren't a versioned package ([the rule and its scope](AGENTS.md#versioning--changesets-every-versioned-package-and-public-api-changes)). Exception: a README *inside* `packages/*` or `plugins/*` is part of a versioned package and does need one.
+- **Two conventions.** Pages open with a two-line header — `# Title`, then one paragraph: "For \<audience\>. Afterwards you'll know \<outcome\>." And facts live in exactly one place: link to the owning page (or file, like `package.json` for version numbers) instead of restating, so the copy can't drift.
+
 ---
 
 We follow the [Contributor Covenant](CODE_OF_CONDUCT.md). Vulnerabilities go through [`SECURITY.md`](SECURITY.md). Docs render as the [docs site](https://academic-moodle-cooperation.github.io/management-ui/), built from [`docs/`](docs/README.md).

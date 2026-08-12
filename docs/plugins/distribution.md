@@ -228,9 +228,11 @@ For plugins distributed publicly:
 
 1. **Build**: `pnpm build` in your plugin repo produces `dist/<name>.mjs` (+ `.mjs.map`, optional `.css`).
 2. **Host**: Push to a GitHub repo, tag a release, and serve via jsDelivr:
+
    ```
    https://cdn.jsdelivr.net/gh/<org>/<repo>@v1.0.0/dist/<name>.mjs
    ```
+
    Or any CDN/object store that serves with correct CORS headers.
 3. **Install**: Inside the running shell, open the Marketplace → Developer Tools → paste the URL → "Install" persists it in `localStorage`. On reload the marketplace loads it through the same `remote-plugin-loader`.
 

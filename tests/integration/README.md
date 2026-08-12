@@ -37,9 +37,11 @@ local Opencast    ── OPENCAST_BASE_URL  (default http://opencast-runtime:808
 2. **`/etc/hosts` entry** — only if you keep the default base URL
    `http://opencast-runtime:8080` (Opencast is picky about the host header
    matching its `server.url` during auth):
+
    ```
    127.0.0.1 opencast-runtime
    ```
+
 3. **Chromium for Playwright** (one-time): `pnpm test:e2e:install`.
 
 ## Run
