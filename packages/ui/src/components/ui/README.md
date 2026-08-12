@@ -35,4 +35,4 @@ Then add the export to [`index.tsx`](./index.tsx).
 
 ## TypeScript
 
-This folder is type-checked, but errors originating from generated files are tolerated — see [`docs/operations/shadcn-typescript-errors.md`](../../../../../docs/operations/shadcn-typescript-errors.md).
+This folder is type-checked, but errors originating from generated files are tolerated: consumer packages rely on `skipLibCheck`, and apps/plugins exclude this folder in their `tsconfig.json` where possible.
