@@ -8,13 +8,13 @@ What runs on every PR, in what order, and how to reproduce a failure locally.
 pnpm verify
 ```
 
-Runs `lint → check-types → build → test → test:contract → api-check → test:e2e` in dependency order. Same gates CI runs. If it's green locally, CI will be green; the only flakes you'll see in CI but not locally are cold-start Playwright timeouts, which retry automatically.
+Runs the canonical pre-push pipeline in dependency order — the step list is documented once in [AGENTS.md → Pre-push gate](../../AGENTS.md#pre-push-gate--pnpm-verify). Same gates CI runs. If it's green locally, CI will be green; the only flakes you'll see in CI but not locally are cold-start Playwright timeouts, which retry automatically.
 
 **Always run `pnpm verify` before pushing.** Failures caught locally cost a few minutes; failures caught in CI cost a round-trip plus reviewer attention.
 
 ## The CI graph
 
-Two workflows run on every PR.
+Two workflows run on every PR — except docs-only PRs, which skip `Test` and run the docs fast path instead ([below](#changes-that-skip-ci-gates)).
 
 ### `Test` ([`.github/workflows/test.yml`](../../.github/workflows/test.yml))
 
@@ -30,11 +30,13 @@ lint-types
 
 | Job | What it does |
 |-----|--------------|
-| `lint-types` | `pnpm install`, builds packages, runs `pnpm lint`, runs `pnpm check-types`. Filters out shadcn-generated TS errors — see [`shadcn-typescript-errors.md`](./shadcn-typescript-errors.md). |
+| `lint-types` | `pnpm install`, builds packages, runs `pnpm lint`, runs `pnpm check-types`. |
 | `unit` | `pnpm test`. Uploads coverage to Codecov. |
 | `contract` | `pnpm test:contract` across every plugin. |
 | `api-check` | `pnpm api-check:ci`. Fails the PR if any `packages/<pkg>/etc/<pkg>.api.md` snapshot differs from the regenerated output. |
-| `e2e` | `pnpm test:e2e` — Playwright smoke against the shell with mocked backend. Uploads `playwright-report` on failure. |
+| `e2e` | `pnpm test:e2e` — the Playwright suite against the shell with a mocked backend. Uploads `playwright-report` on failure. |
+
+One local-vs-CI difference worth knowing when an `e2e` failure won't reproduce: locally Playwright runs against the shell's Vite **dev server**, in CI against **`vite preview` serving the production build** (see [`playwright.config.ts`](../../playwright.config.ts) and [`testing.md` → Local vs. CI](./testing.md#local-vs-ci-the-web-server-differs)). Reproduce a CI-only failure with `pnpm --filter shell preview`.
 
 ### `Changeset` ([`.github/workflows/changeset.yml`](../../.github/workflows/changeset.yml))
 
@@ -56,19 +58,22 @@ lint-types
 The `api-check` job fails when the committed snapshot disagrees with what API Extractor regenerates from your changes. Two flavours:
 
 - **Intentional change**: regenerate, commit, add a changeset.
+
   ```bash
   pnpm api-check
   git add packages/*/etc/*.api.md
   pnpm changeset    # describe the bump
   ```
+
 - **Unintentional change**: something you didn't expect crossed a package boundary. Diff the report; usually the fix is to mark a symbol `@internal` or stop re-exporting it.
 
 See [`release.md` → API surface drift detection](./release.md#api-surface-drift-detection) for the full model.
 
 ## Workflows outside the PR gate
 
-Two tiers are too slow or too environment-dependent to run on every PR. Both are
-also available on demand (`workflow_dispatch`).
+These workflows run outside the PR gate — too slow or too environment-dependent
+for every PR, or post-merge by design. All are also available on demand
+(`workflow_dispatch`).
 
 ### `Integration (real backend)` ([`.github/workflows/integration.yml`](../../.github/workflows/integration.yml))
 
@@ -96,17 +101,27 @@ duplicated engine. Locally, `pnpm test:matrix` still runs all five projects.
 A manual dispatch takes an optional `projects` input — space-separated
 `--project` arguments — to narrow the run.
 
+### `Docs sync` ([`.github/workflows/docs-sync.yml`](../../.github/workflows/docs-sync.yml))
+
+Post-merge drift check: on every push to `develop` it rebuilds the docs site
+(plus the docs lint / link checks once those are adopted) and opens or updates
+a single tracking issue on failure. Dormant while Actions billing is
+unresolved; self-activates once restored.
+
 ## Changes that skip CI gates
 
-Doc-only and workflow-only changes still run the full suite — there's no skip. The `Changeset` gate is the only one that conditionally exempts: changes under `apps/`, root config, docs, or `.github/` don't need a changeset because those packages are in `.changeset/config.json`'s `ignore` list.
+**Docs-only changes take a fast path.** A PR that touches only `docs/**` and `*.md` files skips `Test` entirely (`paths-ignore` in [`test.yml`](../../.github/workflows/test.yml)) and instead runs the three docs jobs in [`docs.yml`](../../.github/workflows/docs.yml): VitePress site build, markdown lint (`pnpm docs:lint`, rules in [`.markdownlint.jsonc`](../../.markdownlint.jsonc)), and an offline repo-internal link check (lychee, config in [`lychee.toml`](../../lychee.toml)). `Changeset` still runs on every PR — it has no path filter, so a markdown-only change inside a versioned package keeps its changeset requirement.
+
+Workflow-only changes still run the full suite — there's no skip for `.github/`. The `Changeset` gate additionally exempts by content, not path — the authoritative rule and its exemptions live in [AGENTS.md → Versioning](../../AGENTS.md#versioning--changesets-every-versioned-package-and-public-api-changes).
 
 ## Branch protection
 
-The branches `main`, `develop`, and `release/**` are configured to require the `Test` and `Changeset` workflows green before merging. Direct pushes are not blocked at the GitHub level today, but treat them as forbidden — all changes go through PR.
+The long-lived branches (`develop` and the `r/NN.x` release lines) require the `Test` and `Changeset` workflows green before merging. Direct pushes are not blocked at the GitHub level today, but treat them as forbidden — all changes go through PR.
+
+Caution for whoever configures required status checks: `Test`'s jobs are path-filtered (docs-only PRs skip them), and GitHub leaves a required-but-skipped check stuck on "Expected". If `Test` jobs become required checks, docs-only PRs will never turn mergeable — require the `Changeset` job (it runs on every PR) and/or add a same-named no-op job for the ignored paths instead.
 
 ## See also
 
 - [`release.md`](./release.md) — the publish flow on top of these gates.
 - [`testing.md`](./testing.md) — the test strategy the CI jobs enforce.
-- [`shadcn-typescript-errors.md`](./shadcn-typescript-errors.md) — why the type-check job filters certain errors.
-- [`open-followups.md`](./open-followups.md) — known CI roughness and planned improvements.
+- [`open-followups.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/open-followups.md) — known CI roughness and planned improvements. (GitHub link — the page is deliberately excluded from the published docs site.)

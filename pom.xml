@@ -60,7 +60,15 @@
               <goal>pnpm</goal>
             </goals>
             <configuration>
-              <arguments>install --engine-strict --frozen-lockfile --prefer-offline --link-workspace-packages</arguments>
+              <!--
+                Lockfile-mode-aware install (issue #255): scripts/maven-pnpm-install.mjs
+                installs with a frozen lockfile when `.local-plugins/` is empty
+                (OSS/CI/release: reproducibility stays strict), and falls back to a
+                non-frozen install with a loud warning when `.local-plugins/` contains
+                plugin checkouts, because those gitignored workspace members can never
+                be covered by the committed pnpm-lock.yaml.
+              -->
+              <arguments>run maven:install</arguments>
               <workingDirectory>${maven.multiModuleProjectDirectory}</workingDirectory>
             </configuration>
           </execution>

@@ -4,7 +4,7 @@ Contract-test harness for plugins that target the `@oc-mui/plugin-system`
 runtime. Boots a minimal manager with the three built-in plugins
 (`objectRegistry`, `renderer`, `appRegistry`), registers the plugin under
 test, and returns a small set of `expect*` assertion helpers tailored to the
-Manifest 1.1 and Runtime API 1.0 contracts documented in
+manifest and runtime-API contracts documented in
 [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md).
 
 ## Public API

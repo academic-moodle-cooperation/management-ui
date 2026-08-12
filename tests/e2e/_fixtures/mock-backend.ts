@@ -67,6 +67,12 @@ export interface MockBackend {
   ingestCalls: IngestCall[];
   /** Delay applied to /ingest/addTrack, to keep an upload observably in flight. */
   trackUploadDelayMs: number;
+  /**
+   * Operation names that answer with a GraphQL `errors` payload instead of
+   * data (HTTP 200, like a real GraphQL failure). Mutable — specs add an
+   * operation mid-test to exercise the UI's error path (#287).
+   */
+  failOperations: Set<string>;
   /** Calls for one operation, most recent last. */
   callsTo(operationName: string): RecordedCall[];
   lastCallTo(operationName: string): RecordedCall | undefined;
@@ -248,6 +254,8 @@ export interface MockBackendOptions {
   user?: { username: string; name: string; email: string; roles: string[] } | null;
   /** Hold /ingest/addTrack open this long, so the progress UI stays observable. */
   trackUploadDelayMs?: number;
+  /** Operation names that answer with a GraphQL error from the start. */
+  failOperations?: string[];
 }
 
 /**
@@ -264,6 +272,7 @@ export async function installMockBackend(
     calls: [],
     ingestCalls: [],
     trackUploadDelayMs: options.trackUploadDelayMs ?? 0,
+    failOperations: new Set(options.failOperations ?? []),
     callsTo(operationName) {
       return backend.calls.filter((c) => c.operationName === operationName);
     },
@@ -359,6 +368,16 @@ export async function installMockBackend(
     'id="mock-mediapackage" start="2026-01-01T00:00:00Z"></mediapackage>';
 
   await page.route("**/ingest/**", async (route: Route) => {
+    // Only intercept API traffic. The local E2E run uses the Vite dev server,
+    // which loads source modules as individual URLs — and core-upload-v2 has a
+    // `src/ingest/` directory, so its module requests match this glob too.
+    // Answering those with mediapackage XML kills the whole app at boot
+    // ("Failed to load module script ... MIME type text/xml").
+    const resourceType = route.request().resourceType();
+    if (resourceType !== "fetch" && resourceType !== "xhr") {
+      await route.fallback();
+      return;
+    }
     const url = new URL(route.request().url());
     const endpoint = url.pathname.split("/").pop() ?? "";
     backend.ingestCalls.push({ endpoint, body: route.request().postData() ?? "" });
@@ -388,6 +407,21 @@ export async function installMockBackend(
     backend.calls.push({ operationName, variables });
 
     const respond = (data: unknown) => route.fulfill(json({ data }));
+
+    // Injected failure: HTTP 200 with an `errors` payload, exactly how a real
+    // GraphQL rejection arrives (validation errors, #280-style).
+    if (backend.failOperations.has(operationName)) {
+      return route.fulfill(
+        json({
+          errors: [
+            {
+              message: `mock: operation ${operationName} failed`,
+              extensions: { classification: "MockError" },
+            },
+          ],
+        }),
+      );
+    }
 
     switch (operationName) {
       case "MuiUser":

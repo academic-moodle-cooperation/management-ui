@@ -1,13 +1,11 @@
 # `apps/`
 
-**Last Updated:** 2026-04-16
-
 This directory contains the **deployable Vite applications** of the project. Since Phase 3 of the open-source cleanup (see [ADR-003](../docs/architecture/decisions/003-shell-plus-core-plugins.md)) there are only two, and both have a single, clearly scoped job:
 
 | Directory          | Purpose                                                        | Port | Ships in prod? |
 | ------------------ | -------------------------------------------------------------- | ---- | -------------- |
 | [`shell/`](./shell)           | The one and only production application. Owns routing, layout, auth, theme, i18n, plugin loader. Exposes zero feature code itself. | 3000 | Yes            |
-| [`playground/`](./playground) | Dev-only sandbox that boots a single plugin against the test harness, with no other plugins loaded. Used for plugin authoring and automated contract tests. | 3001 | No             |
+| [`playground/`](./playground) | Dev-only sandbox that boots a single plugin standalone, with no other plugins loaded. For plugin authoring; the automated contract tests run per-plugin via `pnpm test:contract`, not here. | 3001 | No             |
 
 All features (episodes, series, upload, the admin marketplace, and every organization-specific extension) are **core plugins** under [`plugins/core-*`](../plugins/README.md) or external plugins. The shell renders them by reading the `apps:definitions` extension point at runtime - there is no longer a `dynamic-modules.json` manifest, no `@monorepo-apps/*` Vite alias, and no `app-router.tsx`.
 
@@ -15,7 +13,7 @@ All features (episodes, series, upload, the admin marketplace, and every organiz
 
 ```bash
 # Shell (the actual app)
-pnpm --filter shell dev     # http://127.0.0.1:3000
+pnpm --filter shell dev     # http://127.0.0.1:3000/management-ui/
 
 # Playground (single-plugin dev sandbox)
 pnpm --filter playground dev

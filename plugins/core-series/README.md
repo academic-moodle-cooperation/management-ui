@@ -19,8 +19,10 @@ Reading values in a component:
 
 ```ts
 import { seriesConfig } from "./config";
-const { pageSize } = seriesConfig.use();
+const { seriesTable } = seriesConfig.use();
 ```
+
+The slice's top-level keys are `seriesInfo` (metadata field visibility), `seriesTable` (columns + `createSeries.enabled`), and `protection`.
 
 Full merge order: [`docs/architecture/CONFIGURATION.md`](../../docs/architecture/CONFIGURATION.md).
 

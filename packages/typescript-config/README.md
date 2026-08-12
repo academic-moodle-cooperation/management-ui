@@ -6,10 +6,10 @@ Shared TypeScript configurations. Every workspace package extends one of these s
 
 | File | Extends | Use it for |
 |------|---------|------------|
-| `base.json` | — | ES2022 target, DOM libs, strict mode, `module: ESNext`, bundler resolution. The foundation everything else builds on. |
-| `node-esm-library.json` | `base.json` | Node ESM packages (build tooling, scripts). Emits `.d.ts` to `./dist`. |
-| `react-library.json` | `base.json` | React libraries (`packages/ui`, plugins under `plugins/`). `react-jsx` transform, composite project, incremental compile, `.d.ts` + sourcemaps to `./dist`. |
-| `react-application.json` | `react-library.json` | The shell and the playground. `noEmit`, composite off — bundler emits, tsc only type-checks. |
+| `base.json` | — | ES2022 target, DOM libs, strict mode, `module: preserve`, bundler resolution. The foundation everything else builds on. |
+| `node-esm-library.json` | `base.json` | Node ESM packages (build tooling, scripts). `module: node16`, emits `.d.ts` to `./dist`. |
+| `react-library.json` | `base.json` | React libraries (`packages/ui`, plugins under `plugins/`). `react-jsx` transform, `module: ESNext`, composite project, incremental compile, `.d.ts` + sourcemaps to `./dist`. |
+| `react-application.json` | `base.json` | The shell and the playground. `react-jsx`, `module: ESNext`, `noEmit`, composite off — bundler emits, tsc only type-checks. |
 
 ## Usage
 

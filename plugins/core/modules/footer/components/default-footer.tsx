@@ -1,6 +1,7 @@
 import React from "react";
 
 import { usePluginTranslation } from "@oc-mui/i18n";
+import { Link } from "@oc-mui/router";
 
 // Injected at build time via Vite `define` (see apps/shell/vite.config.ts).
 // `typeof` guards keep this rendering sensibly when the define is absent
@@ -35,10 +36,13 @@ const DefaultFooter: React.FC = () => {
           </>
         ) : null}
       </span>
-      <span className="text-sm text-muted-foreground">© 2025</span>
-      <span className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+      <span className="text-sm text-muted-foreground">© {new Date().getFullYear()}</span>
+      <Link
+        to="/"
+        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+      >
         {t("core-footer:about")}
-      </span>
+      </Link>
     </div>
   );
 };

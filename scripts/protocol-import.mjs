@@ -13,7 +13,7 @@
  * tests/protocol/README.md (a grid-normalised dump of the wiki tables).
  *
  * Usage:
- *   node scripts/protocol-import.mjs raw.json -o tests/protocol/univie.yaml
+ *   node scripts/protocol-import.mjs raw.json -o tests/protocol/<org>.yaml
  *   node scripts/protocol-import.mjs raw.json --md          # printable checklist
  *
  * IDs are assigned per area in document order and are meant to be **permanent**:

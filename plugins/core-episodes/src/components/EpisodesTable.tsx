@@ -256,6 +256,11 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
       className="hidden h-8 ml-auto lg:flex"
       onClick={toggleLayout}
     >
+      <span className="sr-only">
+        {effectiveLayout === "list"
+          ? t("episodes:episodesTable.layoutToggle.toGallery")
+          : t("episodes:episodesTable.layoutToggle.toList")}
+      </span>
       {effectiveLayout === "list" ? (
         <LayoutGrid className="w-4 h-4" />
       ) : (

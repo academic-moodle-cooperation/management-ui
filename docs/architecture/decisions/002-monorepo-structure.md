@@ -254,6 +254,12 @@ management-ui/
 └── tsconfig.json            # Root TypeScript config
 ```
 
+> *2026-08 note:* this tree is the historical state at decision time and is
+> superseded — `apps/` now contains only `shell/` and `playground/`, and
+> `plugins/` contains `core`, `core-episodes`, `core-series`, `core-upload`,
+> `admin-marketplace`, and `example`. See
+> [ADR-003](./003-shell-plus-core-plugins.md) and the current tree.
+
 ### Workspace Configuration
 
 ```yaml
@@ -288,7 +294,7 @@ packages:
 
 Enforced through:
 
-1. **Documentation** - Clear rules in [COUPLING_ANALYSIS.md](/docs/COUPLING_ANALYSIS.md)
+1. **Documentation** - Clear layer rules in this ADR and the [architecture overview](../overview.md)
 2. **Code Review** - Check dependencies in PRs
 3. **Automated Tools** - (Future) dependency-cruiser for validation
 
@@ -351,13 +357,11 @@ If layer violations are found:
 ## Related Decisions
 
 - **ADR-001:** Plugin System - Plugins isolated in own directory
-- **ADR-003:** Standalone Apps - Apps can be independent
-- Coupling Analysis documents current state
+- **ADR-003:** Single App-Shell with Core Plugins - supersedes the standalone-apps model this ADR assumed
 
 ## References
 
-- [Package Ecosystem](/packages/README.md) - Package overview
-- [Coupling Analysis](/docs/COUPLING_ANALYSIS.md) - Current dependency state
+- [Package Ecosystem](../../../packages/README.md) - Package overview
 - [Turborepo Docs](https://turbo.build/repo/docs)
 - [pnpm Workspaces](https://pnpm.io/workspaces)
 
@@ -365,7 +369,7 @@ If layer violations are found:
 
 The boundary between core plugins and org plugins was tightened:
 
-- **`plugins/index.ts`** exports only core-shipped plugins (core, admin-marketplace, admin-dashboard, example-university). Org plugins are NEVER added here.
+- **`plugins/index.ts`** exports only core-shipped plugins (core, admin-marketplace, admin-dashboard, example-university). Org plugins are NEVER added here. *(2026-08 note: the exported set today is core, core-episodes, core-series, core-upload, example, admin-marketplace — see [`plugins/index.ts`](../../../plugins/index.ts).)*
 - **`.local-plugins/`** is a dev checkout location, not an architectural boundary. It can be a separate git repo containing org-specific plugins.
 - **Plugin manifest** (`plugin.json`) is the canonical metadata source. Convention-based filename discovery still works but is documented as a contract, not an accident.
 - **`packages/remote-plugin-loader`** added as a shared package for all dynamic loading paths (JAR, `.local-plugins`, marketplace, registry).

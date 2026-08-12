@@ -119,13 +119,16 @@ const tr = cva([], {
     color: {
       none: [],
       white: ["bg-white"],
-      blue: ["bg-blue-50", "text-blue-800"],
-      red: ["bg-red-50", "text-red-800"],
-      green: ["bg-green-50", "text-green-800"],
-      yellow: ["bg-yellow-50", "text-yellow-800"],
+      blue: ["bg-info/15", "text-info"],
+      red: ["bg-error/15", "text-error"],
+      green: ["bg-ok/15", "text-ok"],
+      yellow: ["bg-warning/15", "text-warning-foreground"],
+      // eslint-disable-next-line local/no-palette-classes -- variant is NAMED after a fixed color; no semantic token equivalent, removing it breaks the exported variant type. Revisit if a consumer appears (#297).
       purple: ["bg-purple-50", "text-purple-800"],
-      gray: ["bg-gray-50", "text-gray-800"],
+      gray: ["bg-muted", "text-foreground"],
+      // eslint-disable-next-line local/no-palette-classes -- variant is NAMED after a fixed color; no semantic token equivalent, removing it breaks the exported variant type. Revisit if a consumer appears (#297).
       dark: ["bg-gray-600", "text-white"],
+      // eslint-disable-next-line local/no-palette-classes -- variant is NAMED after a fixed color; no semantic token equivalent, removing it breaks the exported variant type. Revisit if a consumer appears (#297).
       black: ["bg-gray-900", "text-white"],
     },
   },
@@ -134,52 +137,54 @@ const tr = cva([], {
       color: "none",
       stripePosition: "even",
       striped: true,
-      className: ["even:bg-gray-50"],
+      className: ["even:bg-muted/50"],
     },
     {
       color: "none",
       stripePosition: "odd",
       striped: true,
-      className: ["odd:bg-gray-50"],
+      className: ["odd:bg-muted/50"],
     },
     {
       color: ["none", "white"],
       hoverable: true,
-      className: ["hover:bg-gray-100"],
+      className: ["hover:bg-accent"],
     },
     {
       color: "blue",
       hoverable: true,
-      className: ["hover:bg-blue-100"],
+      className: ["hover:bg-info/25"],
     },
     {
       color: "red",
       hoverable: true,
-      className: ["hover:bg-red-100"],
+      className: ["hover:bg-error/25"],
     },
     {
       color: "green",
       hoverable: true,
-      className: ["hover:bg-green-100"],
+      className: ["hover:bg-ok/25"],
     },
     {
       color: "yellow",
       hoverable: true,
-      className: ["hover:bg-yellow-100"],
+      className: ["hover:bg-warning/25"],
     },
     {
       color: "purple",
       hoverable: true,
+      // eslint-disable-next-line local/no-palette-classes -- variant is NAMED after a fixed color; no semantic token equivalent, removing it breaks the exported variant type. Revisit if a consumer appears (#297).
       className: ["hover:bg-purple-100"],
     },
     {
       color: "gray",
       hoverable: true,
-      className: ["hover:bg-gray-100"],
+      className: ["hover:bg-accent"],
     },
     {
       color: "dark",
       hoverable: true,
+      // eslint-disable-next-line local/no-palette-classes -- variant is NAMED after a fixed color; no semantic token equivalent, removing it breaks the exported variant type. Revisit if a consumer appears (#297).
       className: ["hover:bg-gray-700"],
     },
     {

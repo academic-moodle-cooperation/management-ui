@@ -35,12 +35,9 @@ Today the scaffolded plugin POM inherits from `org.opencastproject:base` directl
 
 ## 2. Versioning / configuration cutover
 
-### 2.1 Flip `llms.txt`'s legacy `pluginNamespace` references
+### 2.1 ✅ Done — `llms.txt`'s legacy `pluginNamespace` references dropped
 
-`llms.txt` deliberately retains four references to the pre-Phase-2b `pluginNamespace` key so that AI agents still understand the legacy name when they encounter a pre-1.0 config in the wild.
-
-- **When to revisit**: trigger is the 1.0 cut. After Phase 6 ships and the ecosystem has had a beat to migrate, drop them.
-- **Detail**: [`docs/architecture/CONFIGURATION.md` → "Follow-ups owned by this repo"](../architecture/CONFIGURATION.md#follow-ups-owned-by-this-repo).
+`llms.txt` deliberately retained references to the pre-Phase-2b `pluginNamespace` key so that AI agents would still understand the legacy name in pre-1.0 configs. Verified 2026-08-12: `llms.txt` contains zero `pluginNamespace` references — the cleanup already happened.
 
 ---
 
@@ -106,7 +103,7 @@ Three items added to the master plan after Phase 7. None has been started; all n
 
 ### 5.2 External plugin POM template + Maven parent
 
-See [1.2](#12-external-plugin-pom-template--maven-parent) above.
+See [1.2](#12--done--external-plugin-pom-template) above (done) and [1.3](#13-maybe-publish-a-management-ui-plugin-parent-pom) for the parent-POM option.
 
 ### 5.3 ✅ Shared-npm-deps version-locking — wired into the loaders (residual: backend `plugins.json`)
 
@@ -141,27 +138,27 @@ When the `currentUser` check failed against a 5xx/unreachable backend, [`apps/sh
 
 **Symptom.** Booting the shell against a live backend threw `TypeError: Cannot read properties of undefined (reading 'length')` from inside a remote-loaded plugin blob (a `<L>` component in the dev console), and the app rendered the error boundary instead of the UI. The console also showed `Warning: The following error wasn't caught by any route!` — so the failure was **not** contained to the offending plugin's route; it took down the boot.
 
-**Scope / not a regression.** Observed only in a checkout that carries org `.local-plugins/` plus bundled community example plugins (`poll-plugin`, `video-playlists-plugin`, `series-create-acl-editor-plugin`, …). These load against a real backend's `enabledPlugins` and one of them reads `.length` on an undefined value. A fresh clone that lacks those `.local-plugins/` boots fine — which is why it hasn't surfaced elsewhere.
+**Scope / not a regression.** Observed only in a checkout that carries org `.local-plugins/` plus three bundled org plugin fixtures. These load against a real backend's `enabledPlugins` and one of them reads `.length` on an undefined value. A fresh clone that lacks those `.local-plugins/` boots fine — which is why it hasn't surfaced elsewhere.
 
 **Two follow-up dimensions:**
-1. ⏳ **Find & fix the offending plugin** — *org/community concern, not in-repo.* Narrow it down by bisecting `enabledPlugins` (or watching which plugin's blob is in the `<L>` stack frame) — prime suspects are an org plugin and the community fixtures. Likely a data-shape assumption that holds offline but breaks against real backend data (an array that's `undefined` until loaded). This lives in the org's `.local-plugins/` ([out-of-scope-by-design](#7-out-of-scope-by-design)), not the OSS tree.
+
+1. ⏳ **Find & fix the offending plugin** — *org/community concern, not in-repo.* Narrow it down by bisecting `enabledPlugins` (or watching which plugin's blob is in the `<L>` stack frame) — prime suspects are an org plugin and the fixtures. Likely a data-shape assumption that holds offline but breaks against real backend data (an array that's `undefined` until loaded). This lives in the org's `.local-plugins/` ([out-of-scope-by-design](#7-out-of-scope-by-design)), not the OSS tree.
 2. ✅ **Robustness (the important one) — Done.** A single third-party plugin throwing during render is now *isolated*, not fatal to the shell. Two render paths are guarded: plugin-provided component overrides go through [`PluginErrorBoundary`](../../packages/plugin-system/src/PluginErrorBoundary.tsx) in [`component-resolver.tsx`](../../packages/plugin-system/src/component-resolver.tsx) (a throwing override degrades to the built-in default component), and each plugin **app route** is wrapped in an `ErrorBoundary` with a `ModuleErrorFallback` in [`DynamicRouterProvider.tsx`](../../apps/shell/src/components/DynamicRouterProvider.tsx) (a broken plugin renders a placeholder for its route instead of taking down the boot). The loader already logs `success:false` per plugin (PluginInitializer); rendering is now guarded the same way.
 
-- **When to revisit**: dimension 1 whenever the org/community fixtures are next touched. Repro: `VITE_PROXY_TARGET=<backend> pnpm --filter shell dev` in a checkout that has org `.local-plugins/`.
+- **When to revisit**: dimension 1 whenever the org fixtures are next touched. Repro: `VITE_PROXY_TARGET=<backend> pnpm --filter shell dev` in a checkout that has org `.local-plugins/`.
 
 ---
 
 ## 6. Testing
 
-Self-contained in [`testing.md` → Follow-ups](testing.md#follow-ups). Items there:
+Self-contained in [`testing.md` → Follow-ups](testing.md#follow-ups), which owns the list and its numbering. Items there (mirrored, not authoritative):
 
-1. Contract tests for the remaining plugins (✅ done in PR #114, list can be dropped from TESTING.md as part of Phase 3).
-2. E2E suites per feature (upload-flow, series-flow, episodes-flow, marketplace-activation).
-3. Coverage baseline + thresholds.
-4. Playground-as-isolated-plugin-runner.
-5. Marketplace metadata cleanup (move from hard-coded map to `extensionPoints` manifest).
-6. Visual regression (Phase 4b).
-7. Remote turbo cache to share artefacts across CI jobs.
+1. E2E suites per feature — residue only (the protocol-driven specs cover the main flows; convert the remaining hand-run protocol steps).
+2. Coverage gates — extend to the apps (seven packages already enforce thresholds).
+3. Playground-as-isolated-plugin-runner.
+4. Marketplace metadata cleanup (move from hard-coded map to `extensionPoints` manifest).
+5. Visual regression — data screens + promote to CI (default + alternate-theme baselines are committed).
+6. Remote turbo cache to share artefacts across CI jobs.
 
 ---
 
@@ -180,7 +177,7 @@ Both updates are explicitly out of scope for the main repo — each org owns the
 
 ### 7.2 `[boundaries][warning]` stderr lines
 
-Not eslint warnings, don't trip `--max-warnings 0`. Will disappear naturally when [3.2](#32-migrate-eslint-plugin-boundaries-v5--v6-selector-syntax) is resolved upstream.
+Not eslint warnings, don't trip `--max-warnings 0`. Will disappear naturally when [3.2](#32-c-migrate-eslint-plugin-boundaries-v5--v6-selector-syntax) is resolved upstream.
 
 ---
 
@@ -188,23 +185,25 @@ Not eslint warnings, don't trip `--max-warnings 0`. Will disappear naturally whe
 
 PR-3a restructured `docs/` from 40 files to 20, rewrote the plugin-author and operations docs, and replaced `AI_DEVELOPMENT_GUIDE.md` with `architecture/overview.md`. Two pockets weren't touched and still reference removed paths internally; the references are inside files that are themselves on a retirement path, so they were left for the dedicated follow-up rather than patched in place.
 
+*(Numbering note: §8.2 was resolved and its entry removed — the gap is intentional, per the delete-on-completion rule at the top of this file.)*
+
 ### 8.1 ✅ Done — workflow docs consolidated
 
-`docs/workflows/ADDING_APPS.md` + `ADDING_PACKAGES.md` (~1.4k lines, with dangling links to deleted docs — `COUPLING_ANALYSIS.md`, `PACKAGE_README_TEMPLATE.md`, `AI_DEVELOPMENT_GUIDE.md` — and stale paths like `apps/management-ui-core`) were replaced by a single concise [`extending-the-workspace.md`](extending-the-workspace.md), added to the Operations sidebar and dropped from `config.mts`'s `srcExclude`. The `docs/workflows/` directory is now gone.
+`ADDING_APPS.md` + `ADDING_PACKAGES.md` (formerly under a separate `workflows` directory in `docs/`; ~1.4k lines, with dangling links to deleted docs — `COUPLING_ANALYSIS.md`, `PACKAGE_README_TEMPLATE.md`, `AI_DEVELOPMENT_GUIDE.md` — and stale paths like `apps/management-ui-core`) were replaced by a single concise [`extending-the-workspace.md`](extending-the-workspace.md), added to the Operations sidebar and dropped from `config.mts`'s `srcExclude`. That directory is now gone.
 
 ### 8.3 Going public with the docs site
 
-The doc site is built and deployable but **discouraged from indexing** until the project is ready for public traffic. Three guards are in place; all three flip together when you announce the site.
+The deploy trigger is **already active**: [`.github/workflows/docs.yml`](../../.github/workflows/docs.yml) deploys the site on every push to `develop` (plus manual `workflow_dispatch`) — there is no `main` branch in this repo. **Current blocker: GitHub Actions billing** — while it's unresolved no workflow runs at all, so no deploy happens; the moment billing is restored the site starts updating on merge with zero further edits.
 
-| File | Current state | Change when going public |
-|------|---------------|--------------------------|
-| [`docs/public/robots.txt`](../../docs/public/robots.txt) | `Disallow: /` | Change to `Disallow:` (empty — allows everything). |
-| [`docs/.vitepress/config.mts`](../../docs/.vitepress/config.mts) | `<meta name="robots" content="noindex, nofollow">` in the `head` array | Remove that entry. |
-| [`.github/workflows/docs.yml`](../../.github/workflows/docs.yml) | `push:` trigger is commented out; deploys only via `workflow_dispatch` | Uncomment the `push: branches: [main]` block so merges keep the site fresh. |
+Until the project is ready for public traffic the site stays **discouraged from indexing**. Exactly three things remain for go-public:
 
-**When to revisit**: alongside Phase 6d (the `access: "restricted" → "public"` npm-publish flip). Once everything has been verified on the test server and the plan is finished, do all three together — the `robots.txt` + meta-tag combo is belt-and-suspenders (robots.txt is advisory; the meta tag is what most search engines actually obey, so flipping only one leaves the other gating).
+| # | What | Where | Change |
+|---|------|-------|--------|
+| 1 | Crawler block | [`docs/public/robots.txt`](../../docs/public/robots.txt) | `Disallow: /` → `Disallow:` (empty — allows everything). |
+| 2 | `noindex` meta tag | [`docs/.vitepress/config.mts`](../../docs/.vitepress/config.mts) | Remove the `<meta name="robots" content="noindex, nofollow">` entry from the `head` array. |
+| 3 | One-time GitHub setting | Repo **Settings → Pages** | Set source to **GitHub Actions** (not "Deploy from a branch"). The workflow's `actions/deploy-pages` step errors out until this is set. |
 
-**First-time enablement on GitHub**: when you're ready to ship even a manual deploy, enable GitHub Pages in the repo settings under **Settings → Pages**, source: **GitHub Actions** (not "Deploy from a branch"). The workflow's `actions/deploy-pages` step needs that to be set, otherwise it errors out. While the guards are in place, you can do a manual `workflow_dispatch` deploy any time — the URL exists, but search engines stay away.
+**When to revisit**: alongside the go-public flip (see [`test-protocol.md`](./test-protocol.md)'s closing section). Flip 1 and 2 together — the combo is belt-and-suspenders (robots.txt is advisory; the meta tag is what most search engines actually obey, so flipping only one leaves the other gating). Item 3 can be done earlier: with the guards in place, a manual `workflow_dispatch` deploy is safe any time — the URL exists, but search engines stay away.
 
 ### 8.4 Source-link rewriting is heuristic-based
 
@@ -229,12 +228,19 @@ The release test protocol was shipped to gate the first 1.0 public cut. It's wri
 
 After the first full pass, decide:
 
-- **Keep as-is**: re-run before every major bump of `@oc-mui/plugin-system` (or any of the six contract-stable packages). Treat it as the canonical pre-release gate.
+- **Keep as-is**: re-run before every major bump of `@oc-mui/plugin-system` (or any of the API-instrumented packages — see [`release.md` → API surface drift detection](release.md#api-surface-drift-detection)). Treat it as the canonical pre-release gate.
 - **Generalize**: drop the "1.0-flip-specific" framing in the closing section, lift any 1.0-only items, document a leaner version that focuses on the integration surfaces (the four loading paths, the six contracts, the Maven build) without the publishing-flip walkthrough.
 - **Retire**: if the protocol's content is redundant with something else (e.g. an external QA process, or if it turns out our automated tests cover everything that mattered), delete it and rely on the automation.
 
 - **When to revisit**: immediately after the first full pass against staging. The protocol's author should write a one-line decision on each section while the experience is fresh: "still relevant", "could be automated", "covers something CI already does", etc.
 - **Suggested form**: a short follow-up PR after the 1.0 release that either trims, generalizes, or retires the doc based on what the first run taught.
+
+### 8.7 Versioned docs site per `r/NN.x` release line
+
+Today the site deploys one version, built from `develop`. Once more than one `r/NN.x` release line is supported in parallel (see [`release.md` → Branching model](release.md#branching-model)), an admin on an older line reads docs describing a newer product. A versioned site (one build per supported line, plus a version switcher) would fix that.
+
+- **When to revisit**: when a second release line exists and the docs meaningfully diverge between lines. Not before — a single-line project doesn't need the machinery.
+- **Suggested form**: build `docs/` from each supported `r/NN.x` branch into a subpath (e.g. `/19.x/`), keep the `develop` build as the default, add a version selector to the VitePress theme config.
 
 ---
 
@@ -280,24 +286,27 @@ exports (this PR).
 
 ### 9.2 Wave 2 — cleanup / quality
 
-- **`crypto-js` → Web Crypto** in `@oc-mui/utils` — in flight as PR #229 (async
-  `sha256`; the univie SidebarFooter consumers are updated in lockstep in
-  management-ui-plugins).
-- **Dead-code deletion** — the verified-dead subset (`AppRuntimeProvider.registerApp/
+- ✅ **Done — `crypto-js` → Web Crypto** in `@oc-mui/utils` (PR #229; async
+  `sha256`, with a fallback when `crypto.subtle` is unavailable). The org-plugin
+  consumers were updated in lockstep in the private org-plugins repo; verified
+  2026-08-12 that no `crypto-js` reference remains in any manifest or source.
+- **Dead-code deletion** — ✅ the verified-dead subset (`AppRuntimeProvider.registerApp/
   getApps`, `useGenericQuery`, the dead GraphQL client singleton in `packages/query`)
-  is in flight as PR #230. Still open: the unused marketplace registry/security
+  shipped in PR #230. Still open: the unused marketplace registry/security
   mutators and the `extension-points:documentation` extension point (registered,
   never read). **Not dead — earlier drafts of this list were wrong:**
   `datetime-picker.tsx` is live (rendered by `MetadataUpdateField` for DURATION
-  fields), and the `SwitchHeadlessUI` re-export is consumed by tuwien (below).
-- **Migrate the tuwien language toggle off `@headlessui`.** tuwien's SidebarHeader
-  (management-ui-plugins) uses `SwitchHeadlessUI` re-exported from
-  `@oc-mui/ui/components` — the only consumer of `@headlessui/react`. Add a native
-  radix `Switch` to `@oc-mui/ui` (there is no `switch.tsx` today), migrate tuwien's
-  SidebarHeader to it, then drop the re-export + the `@headlessui/react` dependency.
-  Cross-repo: the plugin change ships in management-ui-plugins alongside the
-  `@oc-mui/ui` release that adds the native Switch.
-- **Real license check in CI** (`scripts/check-licenses.js` is currently a stub).
+  fields), and the `SwitchHeadlessUI` re-export is consumed by an org plugin (below).
+- **Migrate the org-plugin language toggle off `@headlessui`.** One org plugin's
+  SidebarHeader (in the private org-plugins repo) uses `SwitchHeadlessUI`
+  re-exported from `@oc-mui/ui/components` — the only consumer of
+  `@headlessui/react`. Add a native radix `Switch` to `@oc-mui/ui` (there is no
+  `switch.tsx` today), migrate that SidebarHeader to it, then drop the re-export +
+  the `@headlessui/react` dependency. Cross-repo: the plugin change ships in the
+  org-plugins repo alongside the `@oc-mui/ui` release that adds the native Switch.
+- **Real license check in CI** — [`scripts/check-licenses.js`](../../scripts/check-licenses.js)
+  is a basic allowlist script that is currently wired to no npm script and no CI
+  job; either wire it up or replace it with a maintained checker.
 - **Major-version migrations** (each its own PR): `i18next` 23→26 + `react-i18next`
   (also clears the last *runtime* `pnpm audit` item, `i18next-http-backend`),
   `zustand` 4→5, `react-day-picker` 8→10, `lucide-react` 0.417→1.x, and the app's

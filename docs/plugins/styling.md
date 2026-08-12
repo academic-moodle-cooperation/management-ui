@@ -2,7 +2,7 @@
 
 How plugin CSS interacts with the host. Follow this and your plugin looks native in every org's deployment without code changes.
 
-This is **Theme Contract 2.0** — frozen for the 1.x line. See [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md#3-theme-contract) for the stability guarantees.
+This is the **Theme Contract** — frozen for the 1.x line. See [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md#3-theme-contract) for the current version and the stability guarantees.
 
 ## The one rule
 
@@ -86,6 +86,7 @@ Defined in [`packages/ui/src/styles/globals.css`](../../packages/ui/src/styles/g
 **Don't**
 
 - Hardcode hex/rgb/hsl/oklch colors.
+- Use Tailwind's raw palette classes (`text-gray-900`, `bg-amber-50`, `focus:ring-indigo-600`, …) — they ignore the theme tokens and break in dark mode and under org themes. **Lint-enforced** since #297 (`local/no-palette-classes`); genuinely intentional fixed colors need an `eslint-disable-next-line` with a reason.
 - Hardcode font families — use `font-sans`, `font-heading`, `font-mono`.
 - Bundle your own copy of shadcn/ui.
 - Apply global styles that escape your plugin's DOM.
@@ -116,7 +117,7 @@ Defined in [`packages/ui/src/styles/globals.css`](../../packages/ui/src/styles/g
 
 Remote/JAR plugin CSS is loaded into the **`plugins` cascade layer**, which the host declares *after* Tailwind's `utilities` layer (in `@oc-mui/ui`'s `globals.css`). So a plugin's own utilities win on the plugin's own DOM — a normal responsive heading like `text-4xl sm:text-6xl` renders as authored — instead of losing to the host's base utilities by load order. Because every plugin ships into this one layer, and utility definitions are deterministic, plugins still can't reorder host chrome.
 
-This is automatic; you don't do anything. The `@layer plugin-overrides` block below is only for the rarer case of restyling a *host or shared* component from your plugin.
+This is automatic; you don't do anything. The `@layer plugins` block below is only for the rarer case of restyling a *host or shared* component from your plugin.
 
 > **Why the order matters more than it looks.** Several complete Tailwind builds
 > reach the page — the `@oc-mui/ui` stylesheet ships one scanning `packages/ui`,
@@ -136,15 +137,15 @@ This is automatic; you don't do anything. The `@layer plugin-overrides` block be
 > matter which sheet lands first — you do not need to position your build
 > relative to the host's.
 
-The implied entry point for plugin CSS:
+The implied entry point for plugin CSS (the layer names match the host's declaration in [`packages/ui/src/styles/globals.css`](../../packages/ui/src/styles/globals.css)):
 
 ```css
-@layer theme, base, components, utilities, plugin-overrides;
+@layer theme, base, components, utilities, plugins;
 
 @import "tailwindcss/theme" layer(theme);
 @import "tailwindcss/utilities" layer(utilities);
 
-@layer plugin-overrides {
+@layer plugins {
   /* Scoped overrides, see below */
 }
 ```
@@ -154,11 +155,11 @@ The implied entry point for plugin CSS:
 When you must restyle a host or shared component:
 
 1. Wrap the area in a plugin-specific root class or `data-` attribute.
-2. Put the override in a scoped rule inside `@layer plugin-overrides`.
+2. Put the override in a scoped rule inside `@layer plugins`.
 3. Prefer changing theme tokens over component-level CSS.
 
 ```css
-@layer plugin-overrides {
+@layer plugins {
   .my-plugin-sidebar [data-sidebar="menu-button"][data-active="true"] {
     background-color: var(--sidebar-primary);
     color: var(--sidebar-accent-foreground);
@@ -237,7 +238,7 @@ A plugin built in its own repo — installing `@oc-mui/ui` from the registry rat
 @import "@oc-mui/ui/globals.css";
 ```
 
-That one line pulls in Tailwind, the `tailwindcss-animate` plugin, the design tokens, the Geist fonts, and a scan of `@oc-mui/ui`'s own compiled classes — so the components you render are styled. Tailwind v4 additionally auto-scans your plugin's own project, so the utility classes in your markup are generated too; only content sources Tailwind can't auto-detect need an explicit `@source`. Override tokens exactly as in-repo (see [Overrides](#overrides)) — your theme CSS sets the same `--*` variables.
+That one line pulls in Tailwind, the `tailwindcss-animate` plugin, the design tokens, the Geist fonts (bundled as `@font-face` `woff2` files inside `@oc-mui/ui` — not an external web font, so the "no external web fonts" rule above is intact), and a scan of `@oc-mui/ui`'s own compiled classes — so the components you render are styled. Tailwind v4 additionally auto-scans your plugin's own project, so the utility classes in your markup are generated too; only content sources Tailwind can't auto-detect need an explicit `@source`. Override tokens exactly as in-repo (see [Overrides](#overrides)) — your theme CSS sets the same `--*` variables.
 
 > The host application (the shell) declares the *app's* content sources in its own entry, [`apps/shell/src/app.css`](../../apps/shell/src/app.css), not in `globals.css` — which is why the shared stylesheet stays free of monorepo-specific paths and works unchanged for external consumers.
 

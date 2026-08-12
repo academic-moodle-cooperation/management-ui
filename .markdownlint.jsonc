@@ -1,0 +1,41 @@
+// Markdown lint rules for the whole repo (hand-written prose only — generated
+// files are excluded in .markdownlint-cli2.jsonc). Runs in CI on every PR that
+// touches a *.md file (.github/workflows/docs.yml) and locally via
+// `pnpm docs:lint`.
+//
+// Philosophy: defaults on, style-war rules off. We keep the rules that catch
+// real defects (dead reference links, broken fragments, duplicate headings,
+// malformed lists/fences) and disable the ones that would force a repo-wide
+// reformat or fight legitimate authoring choices.
+{
+  "default": true,
+
+  // ---- Style rules disabled deliberately ------------------------------------
+  // Line length: docs use semantic line breaks or long prose lines; both fine.
+  "MD013": false,
+  // Ordered lists numbered 1..n across interleaved code blocks are intentional
+  // (e.g. AGENTS.md's changeset workflow continues 5./6. after a fence).
+  "MD029": false,
+  // Inline HTML is needed for VitePress features and named anchors.
+  "MD033": false,
+  // GFM autolinks bare URLs; flagging them is churn without benefit.
+  "MD034": false,
+  // Bold-line "headings" are used deliberately for sub-structure that must not
+  // appear in the sidebar/outline.
+  "MD036": false,
+  // Code spans documenting literal strings with leading/trailing spaces
+  // (e.g. the `[DEV] ` title prefix) are intentional.
+  "MD038": false,
+  // Fenced code without a language is common for plain-text output blocks.
+  "MD040": false,
+  // First line must be an H1: false-positives on Claude command/agent prompt
+  // files, the PR template, CLAUDE.md, and VitePress pages with frontmatter.
+  "MD041": false,
+  // Emphasis style (*/_) consistency: pure style, not worth the churn.
+  "MD049": false,
+
+  // ---- Kept, but tuned ------------------------------------------------------
+  // Duplicate headings are only a defect among siblings (same parent section);
+  // repeating e.g. "Versioning rules" under two different contracts is fine.
+  "MD024": { "siblings_only": true }
+}

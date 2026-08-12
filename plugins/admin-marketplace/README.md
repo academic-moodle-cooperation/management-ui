@@ -6,8 +6,13 @@ The marketplace UI. Lets administrators browse, try, and install remote plugins 
 
 | Extension point | What this plugin registers |
 |------|------|
-| `apps:definitions` | The marketplace app at `/admin/marketplace`. |
-| `sidebar:nav-items` | The "Marketplace" sidebar entry. |
+| `apps:definitions` | Two marketplace apps: `/admin/marketplace/plugins` and `/admin/marketplace/themes` (`src/index.ts`). |
+| `sidebar:nav-items` | The "Marketplace" sidebar entry with Plugins/Themes sub-entries (`permissions: ["admin.view"]`). |
+| `app:config:defaults` | The `config.plugins["admin-marketplace"]` slice defaults (`src/config.ts`) — including `remotePlugins.enabled` and `remotePlugins.allowedDomains`. |
+
+## Access model
+
+The marketplace loads and executes third-party code at runtime, so it is restricted to administrators: both routes and the sidebar entry carry `requiredRoles: ["ROLE_ADMIN"]`, enforced by the shell's route gate against the user's granted roles from `/info/me.json`. A deployment using a different admin role overrides it via `config.plugins["admin-marketplace"].protection.requiredRoles`.
 
 ## Features
 
@@ -23,6 +28,9 @@ The marketplace UI. Lets administrators browse, try, and install remote plugins 
 ```
 admin-marketplace/
 ├── src/
+│   ├── components/                     List items, detail view, theme modal
+│   ├── hooks/
+│   │   └── useMarketplace.ts           Dashboard state
 │   ├── services/
 │   │   ├── local-plugins-manifest.ts   Read /local-plugins/manifest.json (dev)
 │   │   ├── plugin-explorer.ts          Discover bundled plugins, enable/disable
@@ -35,6 +43,8 @@ admin-marketplace/
 │   │   └── view-preferences.ts         Persisted dashboard view mode
 │   ├── views/
 │   │   └── MarketplaceDashboard.tsx    The UI
+│   ├── config.ts                       Config slice (remotePlugins.enabled/allowedDomains)
+│   ├── plugin.contract.test.ts         Required contract test
 │   └── index.ts                        Plugin entry
 ├── plugin.json
 └── package.json

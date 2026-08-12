@@ -1,11 +1,13 @@
-# Installation
+# Run from source
 
-Getting Management UI running locally.
+For plugin developers and contributors. Afterwards you'll have the shell running locally from a source checkout, with hot reload and the full test gate available.
+
+Installing Management UI on an Opencast server? That's a different path — see [Deployment](./deployment.md). This page is the development setup.
 
 ## Prerequisites
 
 - **Node.js** ≥ 20 (LTS recommended).
-- **pnpm** ≥ 10.4.1. Install with `npm install -g pnpm` or `corepack enable && corepack prepare pnpm@latest --activate`.
+- **pnpm** — run `corepack enable` once; corepack then uses the exact version pinned in the root `package.json`'s `packageManager` field automatically. (Alternatively `npm install -g pnpm`, matching that pin.)
 - A reachable **Opencast** instance (real or stubbed) if you want full functionality. For initial poking-around the shell boots fine with mocked endpoints.
 
 ## Clone & install
@@ -18,6 +20,8 @@ pnpm build         # one-time — builds dist-types/ for upstream workspace pack
 ```
 
 The first build populates the `dist-types/` directories that downstream packages need for type-checking. After that, you can iterate without re-running `pnpm build`.
+
+First time only: `pnpm test:e2e:install` downloads the Chromium build Playwright drives for the E2E suite (CI runs the same step).
 
 ## Run the shell
 
@@ -43,7 +47,25 @@ You have three options, in increasing order of effort:
 
 2. **Run Opencast locally** and let the default proxy target (`http://localhost:8080`) reach it. The complete walkthrough — Opencast build, GraphQL plugin, the Management UI backend bundles, OpenSearch via podman — is in [Full local setup](./local-backend.md); the proxy paths the shell needs are listed in [`packages/vite-config/src/proxy.ts`](../../packages/vite-config/src/proxy.ts).
 
-3. **Skip the backend entirely** for pure plugin-authoring work that doesn't depend on live data. Stub the four endpoints the shell needs at boot — the Playwright smoke test in [`tests/e2e/smoke.spec.ts`](../../tests/e2e/smoke.spec.ts) shows the minimal set (`/ui/config/management-ui/config.json`, `/management-tool/ui/config/plugins.json`, `/info/me.json`, `/graphql`). You can do this with any local HTTP server that serves four static JSON files, then point `VITE_PROXY_TARGET` at it.
+3. **Skip the backend entirely** for pure plugin-authoring work that doesn't depend on live data. Stub the endpoints the shell needs at boot — the Playwright smoke test in [`tests/e2e/smoke.spec.ts`](../../tests/e2e/smoke.spec.ts) shows the working set: `/ui/config/management-ui/config.json`, `/management-tool/ui/config/plugins.json`, `/info/me.json`, and `/graphql` (the smoke test additionally stubs `api.github.com` and Gravatar so no request leaves the machine). You can do this with any local HTTP server that serves static JSON files, then point `VITE_PROXY_TARGET` at it (add `VITE_LOCAL_CONFIG=true` and the committed local `config.json` stays the one served, so your stub can skip that endpoint).
+
+   The smoke stubs answer as an **anonymous** session (`{ "user": null }` on `/info/me.json`, `{ "data": null }` on `/graphql`) — enough to boot the shell, but every app route stays behind the sign-in screen. **Session state is decided by the GraphQL `currentUser` query** (`MuiGetCurrentUser` in [`useGetCurrentUser.ts`](../../packages/query/src/hooks/useGetCurrentUser.ts)), not by `/info/me.json` (which supplies the granted roles for role-gated apps). To make the shell treat you as logged in, have the stub answer `POST /graphql` with:
+
+   ```json
+   {
+     "data": {
+       "currentUser": {
+         "__typename": "User",
+         "username": "admin",
+         "name": "Local Admin",
+         "email": "admin@example.org",
+         "userRole": "ROLE_USER_ADMIN"
+       }
+     }
+   }
+   ```
+
+   Any `userRole` other than `ROLE_USER_ANONYMOUS` counts as authenticated; app routes then render (data-driven pages will still show empty states, since every other query gets the null stub).
 
 Configuration model details: [`configuration.md`](./configuration.md).
 
@@ -53,7 +75,7 @@ Configuration model details: [`configuration.md`](./configuration.md).
 pnpm verify
 ```
 
-Runs the full local gate (lint → check-types → build → unit → contract → api-check → Playwright smoke). About 90 turbo tasks. If this passes you have a working tree.
+Runs the full local gate — the same pipeline as CI; the step list is documented once in [AGENTS.md → Pre-push gate](../../AGENTS.md#pre-push-gate--pnpm-verify). If this passes you have a working tree.
 
 ## Common commands
 
@@ -63,7 +85,7 @@ Runs the full local gate (lint → check-types → build → unit → contract �
 | `pnpm verify` | Full local pre-push gate. |
 | `pnpm test` | Unit tests across all packages. |
 | `pnpm test:contract` | Plugin contract tests. |
-| `pnpm test:e2e` | Playwright smoke against the shell. |
+| `pnpm test:e2e` | The Playwright E2E suite (incl. smoke) against the shell. |
 | `pnpm api-check` | Regenerate `etc/*.api.md` snapshots. |
 | `pnpm create-plugin <name>` | Scaffold an org/community plugin under `.local-plugins/<name>/`. |
 | `pnpm create-plugin <name> --in-tree` | Scaffold a built-in plugin under `plugins/<name>/`. |
@@ -77,9 +99,9 @@ To mount one: `git clone <your-org-plugin> .local-plugins/<org-name>`, then `pnp
 
 ## Trouble?
 
-- **`pnpm install` fails complaining about workspace deps.** You're likely on an old pnpm. `corepack prepare pnpm@latest --activate` and retry.
+- **`pnpm install` fails complaining about workspace deps.** You're likely on an old pnpm. `corepack enable` (which activates the version pinned in `package.json`) and retry.
 - **Vite can't find `@oc-mui/...`.** Ensure `pnpm build` ran at least once.
-- **CI passes but local fails.** Run `pnpm verify` from a clean tree (`git clean -fdx node_modules dist dist-types .turbo`) then `pnpm install` then `pnpm verify` again.
+- **CI passes but local fails.** Run `pnpm clean` (removes build output, caches, and `node_modules` across the workspace), then `pnpm install`, then `pnpm verify` again.
 
 ## See also
 

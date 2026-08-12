@@ -293,6 +293,9 @@ importers:
       eslint-config-prettier:
         specifier: ^10.1.1
         version: 10.1.5(eslint@9.30.1(jiti@2.4.2))
+      eslint-import-resolver-typescript:
+        specifier: ^4.4.4
+        version: 4.4.4(eslint-plugin-import@2.32.0)(eslint@9.30.1(jiti@2.4.2))
       eslint-plugin-boundaries:
         specifier: ^6.0.2
         version: 6.0.2(@typescript-eslint/parser@8.36.0(eslint@9.30.1(jiti@2.4.2))(typescript@5.9.3))(eslint-import-resolver-typescript@4.4.4)(eslint@9.30.1(jiti@2.4.2))
@@ -974,9 +977,6 @@ importers:
       '@vitejs/plugin-react-swc':
         specifier: ^3.9.0
         version: 3.10.2(@swc/helpers@0.5.17)(vite@6.4.3(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.9.0))
-      vite:
-        specifier: '>=6.4.3 <7.0.0'
-        version: 6.4.3(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.9.0)
       vite-plugin-static-copy:
         specifier: '>=2.3.2 <4.0.0'
         version: 3.4.0(vite@6.4.3(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.9.0))
@@ -996,6 +996,9 @@ importers:
       typescript:
         specifier: ~5.5.4
         version: 5.5.4
+      vite:
+        specifier: '>=6.4.3 <7.0.0'
+        version: 6.4.3(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.9.0)
       vitest:
         specifier: 4.1.9
         version: 4.1.9(@types/node@25.0.6)(@vitest/coverage-v8@4.1.9)(@vitest/ui@4.1.9)(jsdom@27.4.0)(vite@6.4.3(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.9.0))

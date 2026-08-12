@@ -1,0 +1,84 @@
+name: Version PR guard
+
+# Guards the one silent trap in the multi-line release flow (issue #236):
+# releasing an OLDER line before its changesets were forward-merged.
+#
+# The Version PR *deletes* the .changeset/*.md files it consumes. If an older
+# line releases first, the later forward-merge carries that DELETION to the
+# newer lines — which then see nothing to release, and the fix ships there
+# without a version bump or changelog entry. Nothing errors; it just quietly
+# doesn't happen.
+#
+# This check runs on every Version PR (head branch `changeset-release/*`) and
+# fails while any changeset the PR is about to consume is missing on a newer
+# r/NN.x line. Green means: forward-merges are caught up, releasing is safe.
+# On the newest line there is nothing newer to check — always green.
+#
+# (An "is the old line an ancestor of the new one" check would NOT work:
+# after the first version commit it never is again. File-level is the only
+# reliable signal.)
+
+on:
+  pull_request:
+    branches: ["r/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    name: Changesets forward-merged before release
+    runs-on: ubuntu-latest
+    if: startsWith(github.head_ref, 'changeset-release/')
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Check newer lines carry the consumed changesets
+        run: |
+          BASE="${{ github.base_ref }}"
+          THIS_MAJOR="$(echo "${BASE}" | sed -n 's|^r/\([0-9]\{1,\}\)\.x$|\1|p')"
+          if [ -z "${THIS_MAJOR}" ]; then
+            echo "Base ${BASE} is not an r/NN.x line — nothing to guard."
+            exit 0
+          fi
+
+          NEWER_LINES="$(git ls-remote --heads origin 'r/*' \
+            | sed -n 's|.*refs/heads/\(r/[0-9]\{1,\}\.x\)$|\1|p' \
+            | awk -F'[/.]' -v m="${THIS_MAJOR}" '$2 > m {print $0}')"
+          if [ -z "${NEWER_LINES}" ]; then
+            echo "r/${THIS_MAJOR}.x is the newest line — nothing to guard."
+            exit 0
+          fi
+
+          # The changesets this Version PR consumes = the .changeset/*.md files
+          # it deletes relative to its base.
+          git fetch origin "${BASE}" --quiet
+          CONSUMED="$(git diff --name-only --diff-filter=D "origin/${BASE}...HEAD" \
+            | grep '^\.changeset/.*\.md$' | grep -v README || true)"
+          if [ -z "${CONSUMED}" ]; then
+            echo "This Version PR consumes no changesets — nothing to guard."
+            exit 0
+          fi
+
+          MISSING=0
+          for line in ${NEWER_LINES}; do
+            git fetch origin "${line}" --quiet
+            for f in ${CONSUMED}; do
+              if ! git cat-file -e "origin/${line}:${f}" 2>/dev/null; then
+                echo "::error::${f} has not reached ${line} yet."
+                MISSING=1
+              fi
+            done
+          done
+
+          if [ "${MISSING}" -ne 0 ]; then
+            echo ""
+            echo "Releasing this line now would ship these changes on the newer"
+            echo "line(s) WITHOUT a version bump or changelog entry."
+            echo "Forward-merge first (oldest line upward), then re-run this check."
+            exit 1
+          fi
+          echo "All consumed changesets are present on every newer line — safe to release."

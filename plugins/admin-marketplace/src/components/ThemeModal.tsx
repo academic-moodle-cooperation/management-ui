@@ -65,7 +65,7 @@ export const ThemeModal: React.FC<ThemeModalProps> = ({
               <DialogTitle className="text-lg font-semibold leading-tight">{theme.name}</DialogTitle>
               <div
                 className={`flex h-6 w-11 shrink-0 items-center rounded-full border p-0.5 ${
-                  isInstalled ? "border-emerald-500/40 bg-emerald-500/20" : "border-transparent bg-muted"
+                  isInstalled ? "border-ok/40 bg-ok/20" : "border-transparent bg-muted"
                 }`}
                 aria-hidden
                 title={isInstalled ? "Theme active" : "Theme inactive"}
@@ -75,7 +75,7 @@ export const ThemeModal: React.FC<ThemeModalProps> = ({
                     isInstalled ? "ml-auto" : "mr-auto"
                   }`}
                 >
-                  {isInstalled ? <Check className="h-3 w-3 text-emerald-600" strokeWidth={2.5} /> : null}
+                  {isInstalled ? <Check className="h-3 w-3 text-ok" strokeWidth={2.5} /> : null}
                 </span>
               </div>
             </div>

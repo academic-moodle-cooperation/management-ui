@@ -2,7 +2,7 @@
 
 Translation layer. Wraps `i18next` and `react-i18next` behind a single workspace import, plus the plugin-aware `usePluginTranslation` hook that auto-loads namespaces.
 
-**Contract**: 1.x. Public API surface tracked in [`etc/i18n.api.md`](./etc/i18n.api.md).
+Public API surface tracked in [`etc/i18n.api.md`](./etc/i18n.api.md).
 
 ## The wrapper rule
 
@@ -23,16 +23,20 @@ export function MyView() {
 
 `usePluginTranslation` auto-loads the listed namespaces on first render and re-loads them when the language changes. Plain `useTranslation` works too, but the namespace must already be loaded.
 
-### Locale layout
+### Locale layout — the org-plugin i18n mechanism
+
+Externally distributed plugins ship their translations by declaring namespaces in `plugin.json` and laying out locale files **inside a namespace directory**:
 
 ```
 my-plugin/
-├── plugin.json           # i18nNamespaces: ["my-plugin"]
+├── plugin.json           # "i18nNamespaces": ["my-plugin"]
 └── locales/
-    └── my-plugin/
+    └── my-plugin/        # one directory per namespace — not flat under locales/
         ├── en.json
         └── de.json
 ```
+
+At load time the shell passes the manifest's `i18nNamespaces` plus the plugin's locales URL to `registerPluginI18nNamespaces`, and the HTTP backend fetches `<localesUrl>/<namespace>/<language>.json` on demand. This is the load-bearing path for org plugins distributed as JARs; in-tree plugins mostly ship their strings in the shell's base locales instead and rarely declare `i18nNamespaces` — that is fine, and it does not make the mechanism unused.
 
 Files are flat JSON, one key per phrase. The contract test's `expectI18nKeyParity()` fails when locale files for the same namespace drift apart.
 
@@ -43,8 +47,11 @@ Files are flat JSON, one key per phrase. The contract test's `expectI18nKeyParit
 | `usePluginTranslation(namespaces, autoLoad?)` | The hook plugins should use. Auto-loads namespaces; respects host locale switching. |
 | `useTranslation`, `useI18n` (alias) | Plain `react-i18next` hook, re-exported. Caller must load the namespace. |
 | `loadNamespace(namespace, language?)` | Imperative namespace loader. Idempotent. |
-| `i18next` | The configured singleton, for advanced callers. |
+| `registerPluginI18nNamespaces(namespaces, localesUrl)` | Maps a plugin's declared namespaces to its locales base URL so the HTTP backend can fetch them. Called by the shell's plugin initializer for JAR-distributed plugins. |
+| `i18next`, `i18nConfig` (alias) | The configured singleton, for advanced callers. |
 | `I18nextProvider`, `Trans` | Re-exports of the underlying React provider/component. |
+| `selectedLanguage` | The `{ code: label }` map of shipped UI languages (`de`, `en`) — drives the language switcher. |
+| `LinkText` | Tiny anchor component for use inside `<Trans>` interpolations. |
 | `createNamespacedKey`, `createOrganizationNamespace` | Helpers for building consistent namespace strings. |
 
 For the exhaustive surface, see [`etc/i18n.api.md`](./etc/i18n.api.md).

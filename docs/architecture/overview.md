@@ -23,7 +23,7 @@ The shell at `apps/shell/` is the only entry point. It boots `@oc-mui/plugin-sys
 ├─────────────────────────────────────────┤
 │ Layer 2 — Integration                   │
 │   query, router, ui,                    │
-│   remote-plugin-loader                  │
+│   remote-plugin-loader, plugin-testing  │
 ├─────────────────────────────────────────┤
 │ Layer 1 — Foundation                    │
 │   plugin-system, store, i18n            │
@@ -34,30 +34,32 @@ The shell at `apps/shell/` is the only entry point. It boots `@oc-mui/plugin-sys
 └─────────────────────────────────────────┘
 ```
 
-**The rule:** lower layers never depend on higher layers. Cross-layer breaks are caught by `eslint-plugin-boundaries` configured in [`@oc-mui/eslint-config`](../../packages/eslint-config/base.js). The layer ordering inside `package → package` is enforced by convention today — see [`operations/open-followups.md`](../operations/open-followups.md#34-layer-ordering-inside-package--package).
+**The rule:** lower layers never depend on higher layers. Cross-layer breaks are caught by `eslint-plugin-boundaries` configured in [`@oc-mui/eslint-config`](../../packages/eslint-config/base.js). The layer ordering inside `package → package` is enforced by convention today — see [`operations/open-followups.md` §3.4](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/open-followups.md#34-layer-ordering-inside-package--package).
 
 ## Plugin boundaries
 
 | Location | What goes there | Ships with core? |
 |----------|-----------------|------------------|
 | `plugins/core*/` | Mandatory extension points and defaults | Yes |
-| `plugins/admin-*/` | Optional shared plugins (marketplace, dashboard) | Yes |
+| `plugins/admin-*/` | Optional shared plugins (currently the marketplace) | Yes |
 | `plugins/example/` | Reference implementation for learning | Yes |
 | `.local-plugins/<org>/` | Org-specific or private plugins (dev checkout) | No |
 | External repos / JARs / CDN | Production org plugins and community plugins | No |
 
 `plugins/index.ts` exports **only** core-shipped plugins. Org plugins are never added to it.
 
-## The four contracts
+## The six contracts
 
-The plugin runtime is split into four orthogonal contracts, all versioned independently. Frozen surfaces are listed in [`CONTRACTS.md`](./CONTRACTS.md):
+The plugin runtime is split into six orthogonal contracts, all versioned independently. Frozen surfaces and the authoritative version numbers are listed in [`CONTRACTS.md`](./CONTRACTS.md):
 
 | Contract | Frozen at | What it specifies |
 |----------|-----------|-------------------|
 | Manifest | 1.1 | The fields in `plugin.json` |
-| Runtime API | 1.0 | The `createPlugin`/`PluginManager` surface |
+| Runtime API | 1.1 | The `createPlugin`/`PluginManager` surface |
 | Theme | 2.0 | Semantic CSS tokens, layer order |
 | Config | 1.0 | The `AppConfig` layer model + `definePluginConfig` reader |
+| Shared Runtime Dependencies | 1.0 | Which packages the host provides to plugins, at which majors |
+| GraphQL Operation Naming | 1.0 | Namespace-prefixed operation and fragment names |
 
 Any change observable to a plugin author through one of these contracts is **always major** for the affected package, even if Semver alone would say otherwise.
 
@@ -77,9 +79,9 @@ This is why a `.local-plugins/config/` plugin can declare `enabledPlugins: ["cor
 Plugins are identified by a `namespace:type` pair.
 
 - **`namespace`** — who provides the plugin. Lowercase kebab-case. Examples: `core`, `admin`, `episodes`, `org-a`, `org-b`, `my-org`.
-- **`type`** — the role the plugin fills. Lowercase kebab-case. Standard types: `app`, `config`, `navigation`, `sidebar`, `header`, `footer`, `landing-page`, `empty-state`, `layout`, `marketplace`, `dashboard`. Custom types are allowed for domain-specific plugins (`episodes-actions`, etc.).
+- **`type`** — the role the plugin fills. Lowercase kebab-case. The vocabulary is open: the authoritative description (with the common values like `app`, `sidebar`, `footer`, `config`, `theme`) is the `type` field in [`plugin.schema.json`](../../packages/plugin-system/src/schemas/plugin.schema.json); the `PLUGIN_TYPES` export of `@oc-mui/plugin-system` carries structured metadata (extension points, examples) for the types that have it. Custom types are allowed for domain-specific plugins.
 
-Both must match between `plugin.json` and the `createPlugin({ namespace, type, ... })` call. Examples:
+Keeping `namespace` and `type` identical between `plugin.json` and the `createPlugin({ namespace, type, ... })` call is a **convention, not an enforced rule** — `createPlugin` only rejects values containing colons, and the manifest validator does not cross-check against the code. Follow it anyway; tooling and humans assume it. Examples:
 
 ```
 core:layout            # core extension-point slots
@@ -118,8 +120,8 @@ To customize an auto-generated shadcn component, copy it to `src/components/cust
 
 ## See also
 
-- [`CONTRACTS.md`](./CONTRACTS.md) — the four frozen contracts.
+- [`CONTRACTS.md`](./CONTRACTS.md) — the six frozen contracts.
 - [`CONFIGURATION.md`](./CONFIGURATION.md) — the full config layer model.
-- [`decisions/`](./decisions/) — architecture decision records (ADRs).
-- [`../plugins/README.md`](../plugins/README.md) — the plugin-author entry point.
+- [`decisions/`](./decisions/001-plugin-system) — architecture decision records (ADRs).
+- [`../plugins/README.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/plugins/README.md) — the plugin-author entry point. (GitHub link — the page is deliberately excluded from the published docs site.)
 - [`../../AGENTS.md`](../../AGENTS.md) — operational rules for plugin work (the author-facing pre-flight checklist).

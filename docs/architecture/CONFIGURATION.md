@@ -2,7 +2,7 @@
 
 **Status:** Canonical. Supersedes the deleted `docs/CONFIG_ORDER.md` and
 `docs/CONFIG_GENERATION.md`.
-**Last updated:** 2026-04-17 (end of Phase 2b, Commit 6).
+**Last updated:** 2026-08-12.
 **Stability:** The layer model and the `definePluginConfig` API are
 stable for the 1.x host. Plugin-side slice shapes are owned by each
 plugin; see that plugin's `src/config.ts` for the Zod schema it commits
@@ -23,7 +23,7 @@ longer exists; see the [Migration notes](#migration-notes) below).
 interface AppConfig {
   productionConfigUrl: string;
   productionAppPluginUrl: string;
-  downloadBaseUrl?: string;
+  downloadBaseUrl?: string | undefined;
   matomo: MatomoConfig;
   app: {
     locale: string;
@@ -47,10 +47,12 @@ interface AppConfig {
     loginUrlDev?: string;
     logoutUrlDev?: string;
   };
-  api: { baseUrl: string; graphqlEndpoint: string };
 
-  // Opaque map of plugin-owned slices keyed by plugin id.
-  plugins: Record<string, unknown>;
+  // Opaque map of plugin-owned slices keyed by plugin id
+  // (PluginsConfig = Record<string, unknown>).
+  plugins: PluginsConfig;
+
+  api: { baseUrl: string; graphqlEndpoint: string };
 
   // Deployments may carry extra top-level keys we don't model; they pass
   // through untyped rather than failing validation.
@@ -164,10 +166,17 @@ Or imperatively (outside React):
 const cfg = episodesConfig.read(config);  // same validation, same fallback
 ```
 
-If a slice fails schema validation the reader logs a single
-`plugin:<id> config validation failed` warning (with the Zod issues
-attached) and returns the plugin's defaults. The shell keeps rendering
-— a bad `config.json` key never crashes the app.
+Before validating, the reader deep-merges the raw slice **on top of the
+plugin's registered defaults** (objects merge, arrays replace — the same
+semantics as every other config layer). A deployment therefore only sets
+the keys it wants to change; required fields it omits are satisfied by
+the defaults. Without this, a partial override would fail the schema's
+required-field checks and silently do nothing (#256).
+
+If the merged slice still fails schema validation the reader logs a
+single `plugin:<id> config validation failed` warning (with the Zod
+issues attached) and returns the plugin's defaults. The shell keeps
+rendering — a bad `config.json` key never crashes the app.
 
 ### Why not access `config.plugins[id]` directly?
 
@@ -295,11 +304,6 @@ Opencast config path.
 
 ### Follow-ups owned by this repo
 
-`llms.txt` keeps four references to the old `pluginNamespace` key
-deliberately, so agents still understand the legacy name when they
-encounter a pre-1.0 config. Flip once the ecosystem has caught up
-(e.g. when we cut 1.0).
-
 The two scaffolding scripts that also grepped for `"pluginNamespace"`
 (`scripts/export-plugin-to-local.js` and
 `scripts/extract-module-to-plugin.mjs`) were retired in the same drop
@@ -313,16 +317,10 @@ was a deliberate choice: adding a shim would freeze the transition
 half-done and guarantee that someone ends up with both fields set to
 different values.
 
-### Follow-ups owned by the `.local-plugins` submodule
+### Follow-ups owned by org plugins
 
-Out of scope for this repository but tracked here for visibility:
-
-- Each org's config plugin (`.local-plugins/<org>/src/config.ts`)
-  still registers `app.pluginNamespace: […]`. Rename to
-  `app.enabledPlugins: […]` the next time the submodule is touched.
-  Until then, orgs won't load on a freshly-pulled shell.
-- Rename any direct `config.plugins["management-ui-<feature>"]` access
-  in org overlays to `config.plugins["<feature>"]`.
+Follow-ups for organization-specific plugins are tracked in the private
+repository that hosts them, not here.
 
 ## See also
 

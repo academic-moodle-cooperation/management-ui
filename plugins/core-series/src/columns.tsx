@@ -138,7 +138,7 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => {
           <Tooltip delayDuration={300}>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" className="w-4 h-4">
-                <Info className="w-4 h-4 ml-1 hover:text-gray-900" />
+                <Info className="w-4 h-4 ml-1 hover:text-foreground" />
                 <span className="sr-only">
                   {i18next.t("series:seriesTable.heading.actions.info")}
                 </span>
@@ -176,10 +176,10 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => {
                   e.stopPropagation();
                 }}
               >
-                <span className="group-hover:underline group-hover:text-blue-600">
+                <span className="group-hover:underline group-hover:text-info">
                   {episodeCount}
                 </span>
-                <Film className="inline w-4 h-4 ml-2 group-hover:text-blue-600" />
+                <Film className="inline w-4 h-4 ml-2 group-hover:text-info" />
               </Link>
             </TooltipTrigger>
             <TooltipContent>{i18next.t("series:seriesTable.heading.episodes")}</TooltipContent>

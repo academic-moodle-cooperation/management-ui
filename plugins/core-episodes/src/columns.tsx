@@ -306,7 +306,7 @@ export const createColumns = (
           <Tooltip delayDuration={300}>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" className="w-4 h-4">
-                <Info className="w-4 h-4 ml-1 hover:text-gray-900" />
+                <Info className="w-4 h-4 ml-1 hover:text-foreground" />
                 <span className="sr-only">
                   {i18next.t("episodes:episodesTable.heading.actions.info")}
                 </span>
@@ -318,8 +318,11 @@ export const createColumns = (
           </Tooltip>
         </span>
       ),
+      // 3 direct actions in BOTH views (#42): edit-data, edit-video, play.
+      // Download and the delete actions live in the overflow menu, matching
+      // the gallery view.
       cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => (
-        <ActionsCell event={row.original} refetch={refetch} maxVisibleActions={4} />
+        <ActionsCell event={row.original} refetch={refetch} maxVisibleActions={3} />
       ),
       meta: getMeta("actions", "episodes:episodesTable.heading.actions.title"),
     }),

@@ -9,8 +9,11 @@ This plugin is intentionally tiny. It exists to:
   `deactivate`) as defined in `packages/plugin-system`.
 - Show one full example of registering data on an extension point
   (`app:header-logo`).
-- Show how a theme file (`example.css`) lives next to the plugin that
-  ships it.
+
+A matching example theme exists too, but it does **not** live in this
+folder: the marketplace's theme service points at
+[`apps/shell/public/plugins/themes/example.css`](../../apps/shell/public/plugins/themes/example.css),
+where all shipped theme CSS files live.
 
 If you need a richer example (sidebar items, settings pages, data
 integration, etc.), write it as a new, focused plugin rather than
@@ -21,14 +24,16 @@ stays under 100 lines of code.
 
 ```text
 plugins/example/
-├── example.css                       # Example theme (CSS variable overrides)
 ├── index.ts                          # Public barrel
 ├── modules/
 │   ├── header-logo-example.ts        # The reference plugin
 │   └── index.ts
 ├── package.json
+├── plugin.json                       # Manifest
+├── plugin.contract.test.ts           # Required contract test
 ├── tsconfig.json
-└── vite-env.d.ts
+├── vite-env.d.ts
+└── vitest.config.ts
 ```
 
 ## Using it as a template
@@ -39,10 +44,10 @@ If you copy this folder manually, rename the package in [`package.json`](./packa
 
 ## Contract
 
-Targets Plugin Runtime API **1.0** — see [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md). The exact host-API-version constant lives in [`packages/plugin-system/src/apiVersion.ts`](../../packages/plugin-system/src/apiVersion.ts).
+Targets the Plugin Runtime API — see [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md). The exact host-API-version constant lives in [`packages/plugin-system/src/apiVersion.ts`](../../packages/plugin-system/src/apiVersion.ts).
 
 ## See also
 
 - [`docs/plugins/creating-a-plugin.md`](../../docs/plugins/creating-a-plugin.md) — full walkthrough.
-- [`docs/plugins/styling.md`](../../docs/plugins/styling.md) — Theme Contract 2.0.
+- [`docs/plugins/styling.md`](../../docs/plugins/styling.md) — the Theme Contract.
 - [`plugins/core/README.md`](../core/README.md) — extension points you can register on.

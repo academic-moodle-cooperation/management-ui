@@ -19,7 +19,6 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@oc-mui/ui": path.resolve(__dirname, "./src"),
       "@workspace": path.resolve(__dirname, "../../packages"),
     },
   },

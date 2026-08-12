@@ -1,0 +1,143 @@
+name: Docs sync
+
+# How this workflow is gated:
+#
+# - workflow_dispatch  — always available; run the drift check manually from
+#                        the Actions tab.
+# - push to develop    — checks the docs site still builds after every merge
+#                        to develop. (There is no `main` branch in this repo;
+#                        long-lived branches are `develop` and the `r/NN.x`
+#                        release lines.) While Actions billing is unresolved
+#                        this trigger is inert; it starts working on its own
+#                        once billing is restored.
+#
+# What it does: rebuilds the VitePress site as a post-merge integrity check,
+# and runs the docs lint / link checks once those are adopted. The lint step
+# is guarded by a `.markdownlint.jsonc` existence check plus
+# `pnpm run --if-present docs:lint`; the link check mirrors docs.yml's
+# lychee-action job (lychee is a Rust binary with no npm distribution, so
+# there is deliberately no `docs:links` script) and is guarded by
+# `hashFiles('lychee.toml')`. Both guards keep the workflow green before and
+# after the PR that introduces the configs. On any failure it opens — or
+# comments on, never duplicates — a single open tracking issue titled
+# "docs-sync: drift detected on develop".
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop]
+
+permissions:
+  contents: read
+  issues: write
+
+# Only the latest merge matters for a drift check; cancel superseded runs.
+concurrency:
+  group: docs-sync
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Docs drift check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Full history for VitePress lastUpdated to populate correctly.
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Ensure .local-plugins exists
+        run: mkdir -p .local-plugins
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build docs site
+        id: build
+        env:
+          # Override the VitePress base path here when the deploy target's
+          # URL prefix differs from the default (/management-ui/).
+          DOCS_BASE: ${{ vars.DOCS_BASE || '/management-ui/' }}
+        run: pnpm docs:build
+
+      - name: Markdown lint (skipped until adopted)
+        id: lint
+        run: |
+          if [ -f .markdownlint.jsonc ]; then
+            pnpm run --if-present docs:lint
+          else
+            echo "No .markdownlint.jsonc in the repo yet — markdown lint not adopted; skipping."
+          fi
+
+      # Mirrors docs.yml's offline link-check job. `--offline` restricts
+      # lychee to repo-internal file links; remote URLs are deliberately not
+      # checked (no network flakes, no rate limits). Config: lychee.toml.
+      - name: Link check (skipped until adopted)
+        id: links
+        if: hashFiles('lychee.toml') != ''
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          # Pinned to the action's own default — kept explicit because
+          # lychee.toml's exclude_path patterns rely on >= v0.24 regex
+          # semantics; bump both together.
+          lycheeVersion: v0.24.2
+          # --hidden pulls .github/ and .claude/ markdown into scope (they
+          # are GitHub-rendered too); .changeset/ is excluded in lychee.toml.
+          args: --config lychee.toml --offline --no-progress --hidden "./**/*.md"
+          fail: true
+
+      - name: Open or update the tracking issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          LINT_OUTCOME: ${{ steps.lint.outcome }}
+          LINKS_OUTCOME: ${{ steps.links.outcome }}
+        run: |
+          title="docs-sync: drift detected on develop"
+
+          body=$(cat <<EOF
+          The post-merge docs check failed on \`develop\`.
+
+          | Step | Outcome |
+          |------|---------|
+          | Build docs site (\`pnpm docs:build\`) | $BUILD_OUTCOME |
+          | Markdown lint | $LINT_OUTCOME |
+          | Link check | $LINKS_OUTCOME |
+
+          - Commit: $COMMIT_SHA
+          - Run: $RUN_URL
+
+          Reproduce locally with \`pnpm docs:build\` (plus \`pnpm docs:lint\`,
+          and \`lychee --config lychee.toml --offline --no-progress --hidden "./**/*.md"\`
+          via a locally installed lychee, where those configs exist). Close
+          this issue once develop is green again; the workflow reuses one
+          open issue instead of opening duplicates.
+          EOF
+          )
+
+          # Dedup: comment on the existing open tracking issue if there is one.
+          existing=$(gh issue list --state open --search "\"$title\" in:title" \
+            --json number,title \
+            --jq ".[] | select(.title == \"$title\") | .number" | head -n 1)
+
+          if [ -n "$existing" ]; then
+            echo "Updating existing tracking issue #$existing"
+            gh issue comment "$existing" --body "$body"
+          else
+            echo "Opening new tracking issue"
+            gh issue create --title "$title" --body "$body"
+          fi

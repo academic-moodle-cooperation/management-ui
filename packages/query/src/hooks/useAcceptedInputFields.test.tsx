@@ -7,8 +7,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useAcceptedInputFields, pickAcceptedFields } from "./useAcceptedInputFields";
 
 // The org-trimmed shape from #278/#280: `creator` and `location` are readOnly
-// in the u_stream catalog config, so its CommonEventMetadataInput lacks them.
-const U_STREAM_EVENT_INPUT_FIELDS = [
+// in the org catalog config, so its CommonEventMetadataInput lacks them.
+const ORG_TRIMMED_EVENT_INPUT_FIELDS = [
   "contributor",
   "description",
   "duration",
@@ -53,7 +53,7 @@ describe("useAcceptedInputFields", () => {
 
   it("resolves to the set of input field names the server declares", async () => {
     mockRequest.mockResolvedValue({
-      __type: { inputFields: U_STREAM_EVENT_INPUT_FIELDS.map((name) => ({ name })) },
+      __type: { inputFields: ORG_TRIMMED_EVENT_INPUT_FIELDS.map((name) => ({ name })) },
     });
 
     const { result } = renderHook(() => useAcceptedInputFields("CommonEventMetadataInput"), {
@@ -102,7 +102,7 @@ describe("pickAcceptedFields", () => {
   };
 
   it("drops fields the input type does not accept — the #280 payload", () => {
-    const accepted = new Set(U_STREAM_EVENT_INPUT_FIELDS);
+    const accepted = new Set(ORG_TRIMMED_EVENT_INPUT_FIELDS);
     expect(pickAcceptedFields(metadata, accepted)).toEqual({
       title: "CAPTURE_SESSION_ID::x",
       contributor: ["Martin Schamberger"],

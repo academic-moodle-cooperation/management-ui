@@ -1,48 +1,31 @@
 # What is Management UI?
 
-Management UI is a modular admin interface for [Opencast](https://opencast.org), the open-source academic video platform. It is built around a plugin-first architecture: a thin shell hosts routing, auth, and layout, and every visible feature ships as a plugin — so orgs can customize the UI without forking core code.
+For anyone meeting the project for the first time — admin, plugin author, or contributor. Afterwards you'll know what Management UI is, whether it fits your case, and which page to read next.
 
-## Who it's for
+Management UI is a modular admin interface for [Opencast](https://opencast.org), the open-source academic video platform. A thin shell hosts routing, auth, and layout; every visible feature — the episode and series tables, upload, the admin screens — ships as a **plugin**. Organizations customize the UI by adding, removing, and configuring plugins, never by forking core code. It installs on a stock Opencast as additional OSGi bundles; the standard Opencast admin interface stays untouched beside it.
 
-- **Universities and orgs running Opencast** who want a modern admin UI and the ability to customize it without forking core.
-- **Plugin authors** who want to extend the admin UI without touching the host repo.
-- **Contributors** working on the shell, the shared packages, or the built-in plugins.
+## Pick your path
 
-## What's inside
+| You are… | Afterwards you'll have… | Start here |
+|---|---|---|
+| **An Opencast admin** | Management UI running on your Opencast: three JARs deployed, one `config.json` in place, login working | [Deployment](./deployment.md) |
+| **A plugin developer** | A working plugin scaffolded, visible in the dev shell, contract test green — in about five minutes | [Your first plugin](../plugins/first-plugin.md) |
+| **A contributor** | The dev loop, the changeset rule, and what CI will demand — everything to land your first PR | [CONTRIBUTING.md](../../CONTRIBUTING.md) |
 
-```
-This monorepo
-├── apps/shell           The deployable Vite app. Routing, auth, layout, plugin loader.
-├── packages/            Shared infrastructure (plugin-system, ui, query, router, i18n, …).
-├── plugins/             Built-in plugins (episodes, series, upload, marketplace, …).
-└── .local-plugins/      Org plugins (gitignored, each its own git repo).
-```
+## The one idea: everything is a plugin
 
-The shell is unaware of any specific feature. It loads plugins, asks them what routes they own, what sidebar items to render, what theme to apply — and renders accordingly.
+The shell is unaware of any specific feature. At boot it loads plugins and asks them what routes they own, what sidebar items to render, what config defaults they contribute — and renders accordingly. Plugins register on **extension points** (`apps:definitions`, `sidebar:nav-items`, `app:header-logo`, `app:config:defaults`, …); the shell wires them in.
 
-## How customization works
+What that buys each audience:
 
-Plugins register **on extension points**. The shell exposes ~15 extension points (`apps:definitions`, `sidebar:nav-items`, `app:header-logo`, `app:footer`, `app:config:defaults`, …). A plugin says "I provide a route at `/my-app`" or "I render this component in the header"; the shell wires it in at boot.
+- **Admins** turn features on and off per deployment with one config file — no build step, no restart ([Configuration](./configuration.md)).
+- **Plugin authors** add routes, sidebar entries, themes, and config against **frozen public contracts** — plugin manifest, runtime API, theme, config, and more, versioned in [Contracts](../architecture/CONTRACTS.md). The host commits to contract stability; plugins commit to staying inside the contracts.
+- **Contributors** get a shell that stays small: features land as plugins, and the same extension points the built-in plugins use are the ones org plugins use — there is no privileged internal API to drift away from.
 
-There's no hardcoded UI an org has to fork to change. Theme tokens are CSS variables overridden in a small CSS file. Routes come from plugins. Sidebar entries come from plugins. The host commits to **stability of the extension-point contracts** (Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0); orgs commit to staying inside those contracts.
+## How plugins reach a deployment
 
-## How plugins are distributed
+In-tree plugins ship with the repo; org plugins live in their own repositories (mounted under `.local-plugins/` at dev time) and deploy to production as JARs dropped next to the host bundles; marketplace plugins install at runtime. The four delivery paths are compared in [Distribution](../plugins/distribution.md).
 
-Four paths, depending on how the plugin is operated:
+## Where things are
 
-| Path | Used for |
-|------|----------|
-| **In-tree** (`plugins/<name>/`) | Plugins shipped with this OSS repo. Reviewed in PR. |
-| **`.local-plugins/<org>/`** | Org-specific plugins, mounted at dev time. Each is its own git repo, gitignored from this one. |
-| **JAR** | Production deploys with an Opencast backend. JARs ship a frontend + optional Java backend; Opencast serves them. |
-| **CDN / community registry** | Plugins users install at runtime through the admin marketplace. |
-
-Full details: [`plugins/distribution.md`](../plugins/distribution.md).
-
-## Where to next
-
-- **Use it** — [`installation.md`](./installation.md) walks through getting it running.
-- **Configure it** — [`configuration.md`](./configuration.md) covers the config model.
-- **Write a plugin** — [`docs/plugins/creating-a-plugin.md`](../plugins/creating-a-plugin.md).
-- **Understand the architecture** — [`docs/architecture/overview.md`](../architecture/overview.md).
-- **Contribute** — [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
+The repo layout is in the [README](../../README.md#repo-layout); the package layers and the plugin model are in the [architecture overview](../architecture/overview.md). Running the UI from a source checkout is [Run from source](./installation.md); the full contributor stack including a local Opencast is [Full local setup](./local-backend.md).

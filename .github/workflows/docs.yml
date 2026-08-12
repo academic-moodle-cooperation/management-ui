@@ -3,17 +3,24 @@ name: Deploy docs
 # How this workflow is gated:
 #
 # - workflow_dispatch  — always available; deploy manually from the Actions tab.
-# - pull_request       — builds the site on every PR that touches docs/ or
-#                        package.json so reviewers know the build still passes.
-#                        Does NOT deploy.
-# - push to main       — currently disabled. Uncomment when you're ready
-#                        for the published site to update on every merge to
-#                        main.
+# - pull_request       — the docs-only fast path: on every PR that touches
+#                        docs/, any *.md file, or package.json it builds the
+#                        site, lints the markdown (markdownlint-cli2 against
+#                        .markdownlint.jsonc), and checks repo-internal links
+#                        (lychee --offline) so reviewers know the docs still
+#                        hold together. Does NOT deploy. Docs-only PRs run
+#                        ONLY this workflow + the changeset check —
+#                        .github/workflows/test.yml skips them via
+#                        paths-ignore.
+# - push to develop    — deploys the site on every merge to develop. (There is
+#                        no `main` branch in this repo; long-lived branches are
+#                        `develop` and the `r/NN.x` release lines.) While
+#                        Actions billing is unresolved this trigger is inert;
+#                        it starts working on its own once billing is restored.
 #
-# Pre-1.0 the site is also blocked from search indexing through two
+# Pre-1.0 the site is blocked from search indexing through two
 # belt-and-suspenders guards: docs/public/robots.txt + a noindex meta tag in
-# docs/.vitepress/config.mts. All three guards (this workflow, robots.txt,
-# meta tag) flip together when going public — see
+# docs/.vitepress/config.mts. Both flip together when going public — see
 # docs/operations/open-followups.md §8.3 for the checklist.
 
 on:
@@ -21,11 +28,15 @@ on:
   pull_request:
     paths:
       - "docs/**"
+      - "**/*.md"
       - "package.json"
       - "pnpm-lock.yaml"
       - ".github/workflows/docs.yml"
-  # push:
-  #   branches: [main]
+      - ".markdownlint.jsonc"
+      - ".markdownlint-cli2.jsonc"
+      - "lychee.toml"
+  push:
+    branches: [develop]
 
 permissions:
   contents: read
@@ -39,6 +50,52 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Fast path job 1: markdown lint over every hand-written *.md in the repo.
+  # Rules live in .markdownlint.jsonc, the lint scope (globs + generated-file
+  # ignores) in .markdownlint-cli2.jsonc. Reproduce locally: `pnpm docs:lint`.
+  markdownlint:
+    name: Lint markdown
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Run markdownlint-cli2
+        uses: DavidAnson/markdownlint-cli2-action@4580e1612f6407034edd6c0e4e316d725920867b # v24.2.0
+        with:
+          globs: "**/*.md"
+
+      # Ownership check: single-source facts (verify-pipeline step list,
+      # contract versions, changeset exemptions, ...) must not be restated
+      # outside their home doc. Zero-dep node script, so no pnpm install
+      # needed here; reproduce locally with `pnpm docs:ownership`.
+      - name: Docs ownership check
+        run: node scripts/docs-ownership-check.mjs
+
+  # Fast path job 2: offline link check. `--offline` restricts lychee to
+  # repo-internal file links — exactly the ones that rot when files move and
+  # that the VitePress build does NOT cover for GitHub-rendered markdown
+  # (root files, .github/, package READMEs). Remote URLs are deliberately not
+  # checked here: no network flakes, no rate limits. Config: lychee.toml.
+  link-check:
+    name: Check repo-internal links (offline)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Run lychee (offline)
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          # Pinned to the action's own default — kept explicit because
+          # lychee.toml's exclude_path patterns rely on >= v0.24 regex
+          # semantics; bump both together.
+          lycheeVersion: v0.24.2
+          # --hidden pulls .github/ and .claude/ markdown into scope (they
+          # are GitHub-rendered too); .changeset/ is excluded in lychee.toml.
+          args: --config lychee.toml --offline --no-progress --hidden "./**/*.md"
+          fail: true
+
   build:
     name: Build VitePress site
     runs-on: ubuntu-latest

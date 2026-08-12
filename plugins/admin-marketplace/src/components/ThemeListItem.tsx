@@ -45,7 +45,7 @@ export const ThemeListItem: React.FC<ThemeListItemProps> = ({
       {isLoading ? (
         <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" aria-hidden />
       ) : isInstalled ? (
-        <Badge className="border-0 bg-emerald-600 text-white">
+        <Badge className="border-0 bg-ok text-white">
           <Check className="mr-1 h-3 w-3" />
           Active
         </Badge>

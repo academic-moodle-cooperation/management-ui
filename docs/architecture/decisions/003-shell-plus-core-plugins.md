@@ -25,7 +25,7 @@ Consequences observed in practice:
 - Theme compatibility is harder to guarantee across app boundaries.
 - The plugin API is under-tested because core teams never use it for core features.
 - External plugin authors face a different DX than internal developers.
-- Configuration used to be merged at two points (build-time in `management-ui-core/vite.config.ts` and runtime via `plugins/index.ts` exports), which routinely drifted. Phase 2b replaced that with a single layered runtime merge (`app:config:defaults` ⊕ base ⊕ `app:config`) documented in [`CONFIGURATION.md`](./CONFIGURATION.md).
+- Configuration used to be merged at two points (build-time in `management-ui-core/vite.config.ts` and runtime via `plugins/index.ts` exports), which routinely drifted. Phase 2b replaced that with a single layered runtime merge (`app:config:defaults` ⊕ base ⊕ `app:config`) documented in [`CONFIGURATION.md`](../CONFIGURATION.md).
 - Open-sourcing this model asks contributors to understand two architectures instead of one.
 
 This ADR decides the target architecture for the open-source release.
@@ -47,6 +47,10 @@ plugins/            # Only core plugins
 ├── core-upload/
 └── core-marketplace/   # Plugin + theme marketplace (activation UI)
 ```
+
+> *2026-08 note:* the marketplace plugin landed as
+> [`plugins/admin-marketplace/`](../../../plugins/admin-marketplace/), not
+> `core-marketplace/`. The rest of the structure shipped as written.
 
 The shell renders routes, layout, auth, and theme - nothing else. Features (episodes, series, upload, dashboard, marketplace) are plugins with identical loading semantics and API surface as any third-party plugin.
 

@@ -1,3 +1,4 @@
+import { posix } from "node:path";
 import { defineConfig } from "vitepress";
 
 const REPO_URL = "https://github.com/academic-moodle-cooperation/management-ui";
@@ -13,7 +14,6 @@ const srcExclude = [
 
   // Internal tracking docs — useful to contributors, not public pages.
   "operations/open-followups.md",
-  "operations/shadcn-typescript-errors.md",
 
   // Maven build-time config that lives under docs/ for legacy parent-POM
   // reasons. Not documentation. See open-followups.md §8.5.
@@ -45,11 +45,11 @@ export default defineConfig({
   // docs/operations/open-followups.md §8.3).
   head: [["meta", { name: "robots", content: "noindex, nofollow" }]],
 
-  // We link to source files (../packages/..., ../apps/..., etc.) from inside
-  // docs/. Those targets aren't built into the site, so the link checker would
-  // false-positive on every one. We rewrite them to GitHub permalinks in the
-  // markdown transformer below — keep this off to silence the surviving cases.
-  ignoreDeadLinks: true,
+  // Fail the build on dead internal links. Links to source files
+  // (../packages/..., ../apps/..., etc.) are rewritten to GitHub permalinks by
+  // the markdown transformer below, so they don't false-positive; anything the
+  // checker still flags is a genuinely broken link that must be fixed.
+  ignoreDeadLinks: false,
 
   markdown: {
     // Rewrite cross-repo links to GitHub permalinks at build time.
@@ -64,7 +64,10 @@ export default defineConfig({
         const hrefIndex = token.attrIndex("href");
         if (hrefIndex >= 0) {
           const href = token.attrs![hrefIndex][1];
-          const rewritten = rewriteRepoLink(href);
+          const rewritten = rewriteRepoLink(
+            href,
+            (env as { relativePath?: string }).relativePath,
+          );
           if (rewritten !== href) {
             token.attrs![hrefIndex][1] = rewritten;
             // External links open in a new tab for clarity.
@@ -102,10 +105,11 @@ export default defineConfig({
           text: "Getting started",
           items: [
             { text: "What is Management UI?", link: "/getting-started/what-is-management-ui" },
-            { text: "Installation", link: "/getting-started/installation" },
-            { text: "Full local setup (backend)", link: "/getting-started/local-backend" },
+            { text: "Deployment", link: "/getting-started/deployment" },
             { text: "Configuration", link: "/getting-started/configuration" },
             { text: "Upgrading", link: "/getting-started/upgrading" },
+            { text: "Run from source", link: "/getting-started/installation" },
+            { text: "Full local setup (backend)", link: "/getting-started/local-backend" },
           ],
         },
       ],
@@ -166,19 +170,14 @@ export default defineConfig({
           ],
         },
       ],
-
-      "/reference/": [
-        {
-          text: "Reference",
-          items: [{ text: "Favicon configuration", link: "/reference/favicon-configuration" }],
-        },
-      ],
     },
 
     socialLinks: [{ icon: "github", link: REPO_URL }],
 
     editLink: {
-      pattern: `${REPO_BLOB}/docs/:path`,
+      // edit/develop (not blob/HEAD): opens GitHub's editor directly on the
+      // PR-target branch, saving the blob-view click.
+      pattern: `${REPO_URL}/edit/develop/docs/:path`,
       text: "Edit this page on GitHub",
     },
 
@@ -201,23 +200,17 @@ export default defineConfig({
 // Cross-repo link rewriting
 // ---------------------------------------------------------------------------
 
-// First segment of a path that, after stripping leading "../", indicates the
-// link still resolves *inside* docs/. Anything else is repo-external and gets
-// rewritten to a GitHub permalink.
-const DOCS_SUBDIRS = new Set([
-  "architecture",
-  "getting-started",
-  "operations",
-  "plugins",
-  "reference",
-  "workflows",
-]);
-
 /**
  * Rewrite repo-internal links (../packages/..., ../apps/..., ../AGENTS.md, …)
  * to GitHub permalinks on the published site. The docs use relative paths so
  * GitHub renders them correctly; in the built HTML those paths don't exist as
  * pages, so we send the reader to GitHub instead.
+ *
+ * The decision is made by resolving the link against the linking file's
+ * location (`relativePath`, relative to docs/): if the target resolves to a
+ * path outside docs/, it gets a GitHub permalink. Guessing from the first
+ * path segment alone would be ambiguous — "plugins" can mean docs/plugins/
+ * (a site section) or the repo-root plugins/ directory (source code).
  *
  * Leaves intact:
  * - Same-section relative links (./foo, ../architecture/foo, …) that resolve
@@ -225,7 +218,7 @@ const DOCS_SUBDIRS = new Set([
  * - Absolute paths (/architecture/foo) — already site-internal.
  * - Anchors (#section) and external URLs (http(s)://, mailto:).
  */
-function rewriteRepoLink(href: string): string {
+function rewriteRepoLink(href: string, relativePath?: string): string {
   if (!href) return href;
   if (
     href.startsWith("http://") ||
@@ -241,16 +234,16 @@ function rewriteRepoLink(href: string): string {
   // bare-name) links stay inside the section.
   if (!href.startsWith("../")) return href;
 
-  // Strip leading "../" segments.
-  let path = href;
+  // Resolve against the linking file's directory ("." for docs-root pages).
+  const fromDir = relativePath ? posix.dirname(relativePath) : ".";
+  let path = posix.join(fromDir, href);
+
+  // Still inside docs/ after resolution — leave it for VitePress to handle.
+  if (!path.startsWith("../")) return href;
+
+  // It points outside docs/ — strip the "../" prefix that steps out of docs/
+  // (the remainder is a repo-root path) and send the reader to GitHub.
   while (path.startsWith("../")) path = path.slice(3);
-
-  // If what's left starts with a known docs subdirectory, this link still
-  // resolves inside the site — leave it alone for VitePress to handle.
-  const firstSegment = path.split(/[/#]/)[0] ?? "";
-  if (DOCS_SUBDIRS.has(firstSegment)) return href;
-
-  // Otherwise it points outside docs/ — send the reader to GitHub.
   path = path.replace(/\/$/, "");
   if (!path) return REPO_URL;
   return `${REPO_BLOB}/${path}`;

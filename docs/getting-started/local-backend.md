@@ -7,7 +7,7 @@ that touches live data (events/series lists, ACLs, uploads, auth).
 
 If you only need the shell and mocked data — plugin authoring, UI work — you
 don't need any of this: see the lighter options in
-[Installation → Configure the backend](./installation.md#configure-the-backend).
+[Run from source → Configure the backend](./installation.md#configure-the-backend).
 
 ## The moving parts
 
@@ -18,6 +18,7 @@ don't need any of this: see the lighter options in
 | `management-ui-config` (JAR) | `/management-tool/ui/config/plugins.json` + plugin discovery | Built from this repo's `backend/` |
 | `management-ui-graphql` (JAR) | The `mui*` GraphQL extensions | Built from this repo's `backend/` — **required**: the event/series screens query `muiEventInfo`/`muiSeriesInfo` and all mutations go through `mui { … }` |
 | `management-ui-core` (JAR) | Serves the built SPA at `/management-ui/` (`Http-Alias`; the JAR-internal `/ui` classpath is not part of the URL) | Optional in dev (Vite serves the UI); needed for prod-style serving |
+| `management-ui-feature` (Karaf feature) | Installs the three bundles above as one unit — how a real deployment gets them into Opencast | Built from this repo's `assemblies/management-ui-feature/`; not needed for the dev flow below, which hot-deploys the JARs directly |
 | OpenSearch 1.x | Opencast's search index | Container (podman) |
 | The UI itself | `http://127.0.0.1:3000/management-ui/` | `pnpm dev` in this repo |
 
@@ -30,12 +31,12 @@ don't need any of this: see the lighter options in
 > source first (which installs it into your local `~/.m2`) is a hard
 > prerequisite. Once the backend targets a released Opencast, prebuilt
 > container images become an option; that switch is tracked in
-> [operations/open-followups.md](../operations/open-followups.md).
+> [operations/open-followups.md](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/open-followups.md).
 
 ## Prerequisites
 
 - git, **JDK 21**, **Maven ≥ 3.6** — `mvn -version` must report Java 21
-- **Node ≥ 20**, **pnpm ≥ 10** (`corepack enable`)
+- **Node ≥ 20**, **pnpm** via `corepack enable` (activates the version pinned in the root `package.json`'s `packageManager` field)
 - **podman** (for OpenSearch)
 - ffmpeg (Opencast runtime dependency), netcat (`bin/stop-opencast` needs `nc`)
 - ~8 GB free RAM, ~15 GB disk (the Opencast build is large)
@@ -186,7 +187,7 @@ see the troubleshooting table.
 ## 3. Build + deploy the Management UI backend bundles
 
 Clone this repository if you haven't yet (skip if you already followed
-[Installation](./installation.md)):
+[Run from source](./installation.md)):
 
 ```bash
 git clone https://github.com/academic-moodle-cooperation/management-ui.git
@@ -201,6 +202,18 @@ unpacked in step 2 — with the clone layout used above, that is
 export OPENCAST_DIST=~/opencast/build/opencast-dist-allinone
 
 cd management-ui
+mvn install -DskipTests -DdeployTo="$OPENCAST_DIST"
+```
+
+`-DdeployTo` is built into the Maven build (an antrun step in the root
+`pom.xml`): each backend bundle's JAR is copied into `$OPENCAST_DIST/deploy/`.
+The same mechanism also targets the host config location — a default
+`config.json` under `$OPENCAST_DIST/etc/ui-config/mh_default_org/management-ui/`,
+the path Opencast serves the UI config from (see
+[Configuration](./configuration.md#the-file)).
+If you prefer to copy by hand, the equivalent is:
+
+```bash
 mvn install -DskipTests
 cp backend/management-config/target/management-ui-config-*.jar \
    backend/management-graphql/target/management-ui-graphql-*.jar \

@@ -1,0 +1,53 @@
+# lychee link-checker configuration — used by the docs fast path in
+# .github/workflows/docs.yml.
+#
+# The CI job runs lychee in OFFLINE mode (`--offline` on the command line):
+# only repo-internal file links are resolved; remote http(s) and mailto links
+# are skipped entirely. That keeps the check fast and flake-free and still
+# catches the failure mode that actually bites us — a file gets moved or
+# renamed and some GitHub-rendered markdown (root files, .github/, package
+# READMEs) still points at the old path. Links inside the VitePress site are
+# additionally covered by the site build's own dead-link check.
+#
+# Local reproduction needs the lychee binary (e.g. `brew install lychee` or
+# `cargo install lychee` — it is a Rust tool, not installable from npm):
+#
+#   lychee --config lychee.toml --offline --no-progress --hidden "./**/*.md"
+
+# Do not descend into dependencies, build output, or generated markdown.
+# lychee does NOT honor .gitignore, so a local run after `pnpm install` /
+# `pnpm build` sees far more than the clean CI checkout does — these patterns
+# (regexes, matched against the path) keep both runs equivalent.
+exclude_path = [
+  # Dependencies and org-plugin checkouts (absent in the CI checkout).
+  "node_modules",
+  "\\.local-plugins/",
+  # Build output and api-extractor working copies (absent in the CI checkout).
+  "/dist/",
+  "/dist-types/",
+  "/target/",
+  "/temp/",
+  "\\.vitepress/(cache|dist)/",
+  # Generated markdown that IS committed.
+  "CHANGELOG\\.md",
+  "\\.changeset/",
+  # The VitePress landing page links by SITE ROUTE (`/plugins/first-plugin`,
+  # no .md extension), which only resolves inside the built site — the site
+  # build validates those links; on the filesystem they look dead.
+  "docs/index\\.md",
+]
+
+# Anchor/fragment checking stays off (the default — `include_fragments` is
+# deliberately not set): VitePress validates fragments for the site, and
+# GitHub's heading-anchor slugging differs enough to make fragment checks
+# noisy for the rest.
+
+# Belt-and-suspenders for when someone runs lychee WITHOUT --offline:
+# never touch placeholder/example hosts or mail addresses.
+exclude = [
+  "^mailto:",
+  "^https?://(www\\.)?example\\.(org|com|net)",
+  "^https?://localhost",
+  "^https?://127\\.0\\.0\\.1",
+  "^https?://opencast-runtime",
+]

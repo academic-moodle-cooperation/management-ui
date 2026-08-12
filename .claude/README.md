@@ -25,7 +25,8 @@ first line imports `AGENTS.md`.
 ├── skills/
 │   └── pre-flight-check/SKILL.md  Model-invoked AGENTS.md pre-flight checklist ("before done")
 ├── agents/
-│   └── plugin-boundary-reviewer.md  Read-only boundary/contract/changeset reviewer
+│   ├── plugin-boundary-reviewer.md  Read-only boundary/contract/changeset reviewer
+│   └── docs-impact-reviewer.md    Read-only stale-docs reviewer (AGENTS.md pre-flight item 8)
 └── README.md                      This file
 ```
 
@@ -47,23 +48,28 @@ uses `eslint-plugin-only-warn`, rule violations are warnings (exit 0), so in pra
 hook is a **silent auto-fixer** — the blocking lint gate stays `pnpm lint` / `pnpm verify`,
 which this hook deliberately does not duplicate.
 
-## Commands vs. skills vs. subagent
+## Commands vs. skills vs. subagents
 
 - **Commands** (`commands/*.md`) are **developer-typed**: `/verify`, `/new-plugin`.
 - **Skills** (`skills/*/SKILL.md`) are **model-invoked** — Claude runs `pre-flight-check`
   on its own when it's about to declare a plugin/package change done.
-- **Subagent** (`agents/*.md`) — `plugin-boundary-reviewer` is read-only (`Read`, `Grep`,
-  `Glob`) and runs proactively after plugin work or on request ("review plugin boundaries").
+- **Subagents** (`agents/*.md`) are read-only (`Read`, `Grep`, `Glob`) reviewers:
+  `plugin-boundary-reviewer` runs proactively after plugin work or on request ("review
+  plugin boundaries"); `docs-impact-reviewer` runs proactively after changes that touch
+  public symbols, commands, or config keys — it flags docs the diff made stale but did
+  not update (AGENTS.md pre-flight item 8) — or on request ("review docs impact").
 
 ## What is intentionally NOT here
 
 - **No `.mcp.json`** — no hosted/OAuth MCP server is in use by this project; headless CI
   sessions can't complete interactive logins, so none is committed.
-- **No changeset** for this config — `.claude/` and the root `CLAUDE.md` are root-level
-  tooling/docs, which `CONTRIBUTING.md` exempts from the changeset requirement.
-- **No new CI job** — the gates already run in GitHub Actions (`.github/workflows/`) and
-  the JAR build runs in GitLab CI; this layer mirrors `pnpm verify` locally rather than
-  adding a job that would double-run.
+- **No changeset** for this config — the changeset rule ([`AGENTS.md`](../AGENTS.md)) covers
+  versioned packages under `packages/*` and `plugins/*`; `.claude/` and the root
+  `CLAUDE.md` are not packages, so changes here need none.
+- **No new CI job** — the gates already run in GitHub Actions (`.github/workflows/`).
+  The JAR/Maven path is driven by `pom.xml` + `mvnw` and verified locally via
+  `scripts/verify-jar-deploy.sh`; GitHub CI does not build JARs. This layer mirrors
+  `pnpm verify` locally rather than adding a job that would double-run.
 
 ## Extending this
 

@@ -155,12 +155,12 @@ test("[VID-04] typing in the search box sends the term to the backend", async ({
 });
 
 /**
- * The layout toggle ("die 4 Quadrate") has no accessible name — no aria-label,
- * no sr-only text, no title, just a lucide icon. There is therefore no
- * role-based locator for it and we have to reach for the icon class. Tracked as
- * an accessibility defect; when it gets a name, replace this with getByRole.
+ * The layout toggle's accessible name reflects the TARGET state (#254):
+ * "Switch to gallery view" while the list is showing, "Switch to list view"
+ * in the gallery — the same information a screen reader announces.
  */
-const layoutToggle = (page: Page) => page.locator("button:has(svg.lucide-layout-grid)").first();
+const layoutToggle = (page: Page) =>
+  page.getByRole("button", { name: /switch to gallery view/i });
 
 test("[VID-32] the action icons are present and point at the right targets", async ({ page }) => {
   // Finding 028 ("kein Hinweistext über Download-Button") and 014 (the editor
@@ -172,9 +172,15 @@ test("[VID-32] the action icons are present and point at the right targets", asy
   await expect(page.getByRole("cell", { name: "Mit Aktionen" })).toBeVisible({ timeout: 15_000 });
 
   const row = page.getByRole("row").nth(1);
-  for (const name of ["Edit Data", "Edit Video", "Play Video", "Download", "More actions"]) {
+  // #42: both views show the same three direct actions; Download and the
+  // delete actions live behind "More actions".
+  for (const name of ["Edit Data", "Edit Video", "Play Video", "More actions"]) {
     await expect(row.getByRole("button", { name, exact: true }), `${name} missing`).toBeVisible();
   }
+  await expect(row.getByRole("button", { name: "Download", exact: true })).toHaveCount(0);
+  await row.getByRole("button", { name: "More actions", exact: true }).click();
+  await expect(page.getByRole("menuitem", { name: /download/i })).toBeVisible();
+  await page.keyboard.press("Escape");
 
   // Editor and player are plain links, so their href is assertable even though
   // the destinations are other applications.
@@ -559,8 +565,8 @@ test("[VID-08] [VID-15] the layout toggle switches to gallery and back", async (
   await layoutToggle(page).click();
   await expect(page.locator('img[src*="thumb"]').first()).toBeVisible({ timeout: 10_000 });
 
-  // Back to the table view — the toggle now carries the list icon.
-  await page.locator("button:has(svg.lucide-list)").first().click();
+  // Back to the table view — the toggle's name now announces the list target.
+  await page.getByRole("button", { name: /switch to list view/i }).click();
   await expect(page.getByRole("columnheader", { name: /^title$/i })).toBeVisible({
     timeout: 10_000,
   });
@@ -597,10 +603,12 @@ test("[VID-33] [VID-34] [VID-36] the actions menu and the direct actions work", 
   // VID-36: Play is a link that opens in a new tab.
   await expect(row.locator('a[href*="/play/"]')).toHaveAttribute("target", "_blank");
 
-  // VID-33: the overflow menu lists what didn't fit — here, the trash action.
-  // Whether "Delete permanently" joins it is role-dependent; that is asserted in
-  // the VID-38 tests rather than mixed in here.
+  // VID-33: the overflow menu lists what didn't fit — download and the trash
+  // action (#42 unified both views on three direct actions). Whether "Delete
+  // permanently" joins it is role-dependent; that is asserted in the VID-38
+  // tests rather than mixed in here.
   await row.getByRole("button", { name: "More actions", exact: true }).click();
+  await expect(page.getByRole("menuitem", { name: /download/i })).toBeVisible();
   await expect(page.getByRole("menuitem", { name: /move to trash/i })).toBeVisible();
   await page.keyboard.press("Escape");
 

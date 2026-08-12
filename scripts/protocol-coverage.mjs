@@ -11,10 +11,10 @@
  * it is the only honest measure of whether manual testing is shrinking.
  *
  * Usage:
- *   node scripts/protocol-coverage.mjs tests/protocol/univie.yaml
- *   node scripts/protocol-coverage.mjs tests/protocol/univie.yaml --scan tests,plugins
- *   node scripts/protocol-coverage.mjs tests/protocol/univie.yaml --md > coverage.md
- *   node scripts/protocol-coverage.mjs tests/protocol/univie.yaml --strict   # CI: fail on unknown ids
+ *   node scripts/protocol-coverage.mjs tests/protocol/<org>.yaml
+ *   node scripts/protocol-coverage.mjs tests/protocol/<org>.yaml --scan tests,plugins
+ *   node scripts/protocol-coverage.mjs tests/protocol/<org>.yaml --md > coverage.md
+ *   node scripts/protocol-coverage.mjs tests/protocol/<org>.yaml --strict   # CI: fail on unknown ids
  */
 
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";

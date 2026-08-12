@@ -1,251 +1,124 @@
 # Contributing to Management UI
 
-Management UI is the plugin-based React/TypeScript management front-end for [Opencast](https://opencast.org/). It ships as a single Karaf-deployable JAR (frontend assets + a small backend bundle) and supports both built-in features and university- or organisation-specific extensions written as plugins.
+For contributors to this repo. Afterwards you'll know the dev loop, the changeset rule, and what CI will demand — everything to land your first PR.
 
-Two kinds of changes land in this repo:
+This page tells the contributor path in the order you'll walk it: set up → find work → make the change → pass the gate → add a changeset → open the PR.
 
-1. **Core changes** — work on the shell, the shared packages, or one of the built-in plugins under `plugins/`. These ship with every Management UI release.
-2. **Tooling and docs** — improvements to the developer experience (`AGENTS.md`, `docs/`, CI, scaffolding scripts, etc.).
+## 1. Set up
 
-If your contribution is a **plugin that's specific to your organisation**, it should *not* live in this repo. See [Path B](#path-b-write-an-organisation-or-community-plugin) below.
+Clone, install, and run the shell with the [README's Quick start](README.md#quick-start); the full development setup — backend wiring, stubbed endpoints, troubleshooting — is [Run from source](docs/getting-started/installation.md).
 
----
+Toolchain notes:
 
-## Getting started
+- **Node and pnpm** versions are pinned in the root [`package.json`](package.json) (`engines` and `packageManager`); `corepack enable` picks the right pnpm automatically. Docs never restate the numbers — `package.json` is the single source.
+- **Java + Maven** are needed only to build the deployable JAR. Pure frontend work doesn't need them.
+- **Playwright browsers** — first time only, `pnpm test:e2e:install` downloads the Chromium build the E2E suite drives.
 
-### Prerequisites
+New to the codebase? Read [`docs/architecture/overview.md`](docs/architecture/overview.md) (the tour) and [`AGENTS.md`](AGENTS.md) (the operational rules — written for AI agents, equally useful as a human pre-flight checklist).
 
-- **Node.js** ≥ 20 (Node 22 LTS recommended)
-- **pnpm** ≥ 10.4.1 (run `corepack enable` to install via Corepack)
-- **Java** + **Maven** — only if you want to build the deployable JAR; pure frontend work doesn't need them
+## 2. Find something to work on
 
-### Initial setup
+Bugs and features use the issue templates ([file a bug](https://github.com/academic-moodle-cooperation/management-ui/issues/new?template=bug_report.yml), [request a feature](https://github.com/academic-moodle-cooperation/management-ui/issues/new?template=feature_request.yml)); blank issues are disabled. Plugin-authoring questions and design discussions go to [Discussions](https://github.com/academic-moodle-cooperation/management-ui/discussions). Security vulnerabilities go through [`SECURITY.md`](SECURITY.md) — never a public issue.
 
-```bash
-git clone https://github.com/academic-moodle-cooperation/management-ui.git
-cd management-ui
-pnpm install
-pnpm build              # one-time: populates dist-types/ for upstream packages
-pnpm dev                # http://127.0.0.1:3000/management-ui/
-```
+There are two contribution paths — make sure you're on the right one:
 
-If you're new to the codebase, read [`AGENTS.md`](AGENTS.md) (operational rules for plugin work) and [`docs/architecture/overview.md`](docs/architecture/overview.md) (architecture + package layers) before opening your first PR.
-
----
-
-## Picking your contribution path
-
-### Path A: Fix a bug or add a feature to the core
-
-You'll be working in `apps/shell`, `apps/playground`, `packages/*`, or one of the in-repo plugins under `plugins/core-*`, `plugins/admin-marketplace`, or `plugins/example`.
-
-1. Read [`AGENTS.md`](AGENTS.md) for the operational rules (boundaries, extension points, contract tests).
-2. Make your change.
-3. Run `pnpm verify` locally — it runs the same gates CI runs, in order: lint → check-types → build → unit → contract → api-check → Playwright smoke. If `pnpm verify` is green locally, CI will be too (modulo cold-start E2E flakes that retry).
-4. Add a changeset if you touched a versioned package — see [Versioning, changesets, and deprecations](#versioning-changesets-and-deprecations).
-5. Regenerate API reports if you changed a public surface — `pnpm api-check`, then commit the updated `packages/*/etc/*.api.md`.
-6. Open a PR using the [template](.github/pull_request_template.md). CI tells you what's missing.
-
-### Path B: Write an organisation or community plugin
-
-If you're building something that's specific to your university or organisation (a custom upload flow, an institution-branded theme, an LMS integration), your plugin does **not** belong in this repo. Instead:
-
-1. Scaffold a fresh plugin: `pnpm create-plugin my-plugin` writes a fully-wired starter under `.local-plugins/my-plugin/` (gitignored from this repo, lives in your own git repo).
-2. Move it into your own organisation repo when ready.
-3. Distribute it as one of:
-   - A **JAR** dropped into the Karaf deploy folder (the same shape Management UI itself ships as), or
-   - A **remote ES module** loaded by the Admin Marketplace from a registry / CDN.
-
-[`AGENTS.md`](AGENTS.md) → "Boundaries" lists the contracts your plugin must obey (no cross-plugin imports, no `apps/*` imports, no direct use of wrapped libraries like `@tanstack/react-router`). [`docs/plugins/creating-a-plugin.md`](docs/plugins/creating-a-plugin.md) walks through the full plugin lifecycle; [`docs/plugins/distribution.md`](docs/plugins/distribution.md) covers in-tree, `.local-plugins/`, JAR, and CDN distribution paths.
-
-You generally don't open PRs against *this* repo for plugin work — but you're welcome to open issues for missing extension points, unclear contracts, or scaffolding bugs.
-
----
-
-## Architecture, in one screen
-
-```
-apps/
-├── shell/         Main Vite-built app: layout, routing, plugin loader, theme runtime
-└── playground/    Dev-only sandbox
-
-packages/          Shared infrastructure, layered (lower layer never depends on higher):
-├── plugin-system, store, i18n          Foundation
-├── query, router, ui, …                Integration
-└── app-runtime, providers, vite-config, ui-config    Application
-
-plugins/           Built-in plugins shipped with the repo
-├── core/                  Mandatory extension points + defaults
-├── core-{episodes,series,upload}/    Feature plugins per /<route>
-├── admin-marketplace/     Plugin + theme browser
-└── example/               Minimal reference plugin
-
-.local-plugins/    Org-specific plugin checkouts (gitignored, dev-only)
-```
-
-Cross-plugin imports, app-imports-plugin, and plugin-imports-app are **not allowed** and are enforced mechanically by `eslint-plugin-boundaries`. The single exception is `plugins/core` — every plugin may consume it because it owns the canonical extension-point identifiers (`uploadExtensionPoints`, `episodesExtensionPoints`, etc.).
-
-Deeper material:
-
-- [`docs/architecture/overview.md`](docs/architecture/overview.md) — package layers, plugin model, common pitfalls
-- [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) — the four frozen contracts (Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0)
-- [`docs/architecture/decisions/`](docs/architecture/decisions/) — ADRs explaining why the architecture is the way it is
-- [`docs/operations/testing.md`](docs/operations/testing.md) — the test pyramid (unit / contract / E2E) and the harness API
-- [`docs/operations/open-followups.md`](docs/operations/open-followups.md) — committed index of every "we know about this but haven't done it yet" item
-
----
-
-## The development loop
-
-```bash
-pnpm verify                                              # the pre-push gate (mirrors CI exactly)
-
-# Iterating on a single package or plugin
-pnpm --filter @oc-mui/plugin-system test                # unit tests for one package
-pnpm --filter @oc-mui/plugin-core-episodes test:contract # contract test for one plugin
-pnpm api-check                                          # regenerate API surface snapshots
-pnpm test:e2e:ui                                        # Playwright in interactive mode
-pnpm dev                                                # vite dev server
-pnpm docs:dev                                           # VitePress docs site (http://localhost:5173)
-pnpm docs:build                                         # static build of the docs site
-```
-
-`pnpm verify` runs `lint → check-types → build → test → test:contract → api-check → test:e2e` in dependency order. If it's green locally it's green in CI; the only flakes you'll see in CI that you don't see locally are cold-start E2E timeouts, which Playwright retries automatically.
-
-### GraphQL code generation
-
-`@oc-mui/query` generates TypeScript types, React Query hooks, and the
-backend-orderable field lists from the live GraphQL schema. The generated
-files are **committed**, so a fresh clone and `pnpm verify` work without a
-backend — you only run codegen when the **schema itself changes**:
-
-```bash
-GRAPHQL_ENDPOINT=https://your-opencast/graphql \
-  pnpm --filter @oc-mui/query codegen
-```
-
-Commit the regenerated `src/gql-generated.ts` and
-`src/schema-input-fields.generated.ts`. See
-[`packages/query/README.md` → Code generation](packages/query/README.md#code-generation)
-for the full story.
-
-### TypeScript
-
-Strict mode. Avoid `any`; if you genuinely need an escape hatch, document it in a comment at the call site.
-
-### Linting and formatting
-
-- `pnpm lint` — ESLint with the wrapper-library rules (`@oc-mui/router` not `@tanstack/react-router` directly, etc.) and the architectural boundaries plugin
-- `pnpm format` — Prettier write
-- `pnpm format:check` — Prettier check (CI)
-
-### Testing
-
-Three layers, fully documented in [`docs/operations/testing.md`](docs/operations/testing.md):
-
-- **Unit** (Vitest) — every package
-- **Contract** (`@oc-mui/plugin-testing` harness) — every plugin under `plugins/` ships one `plugin.contract.test.ts`
-- **E2E** (Playwright) — a smoke spec against `apps/shell` with stubbed backend endpoints
-
----
-
-## Versioning, changesets, and deprecations
-
-Every workspace package under `packages/` and `plugins/` is **versioned independently** following [Semver 2.0](https://semver.org/). The ground rules below apply to every public package; the four contracts in [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) layer additional, contract-specific rules on top for the explicitly-frozen API surfaces (Manifest 1.1, Runtime API 1.0, Theme 2.0, Config 1.0).
-
-### What kind of bump?
-
-Decide based on what the change does to the **package's public surface** — i.e. the symbols listed in its `package.json`'s `exports` field, the public types those exports re-export, and any documented runtime contract:
-
-| Bump type | When to use |
+| You want to… | Then |
 |---|---|
-| **Patch** | Internal-only refactors, performance work, doc/comment changes, bug fixes that keep the same public signature. No visible behaviour change for any consumer who treats the package as a black box. |
-| **Minor** | New exports, new optional parameters, a new method on a class, a new optional field on a public type. Existing consumers remain source- and binary-compatible. |
-| **Major** | A removed export, a renamed symbol, a changed signature (including a new required parameter), a behaviour change that an existing consumer would observe (e.g. an extension point's contract changes), or anything that breaks plugin-runtime API/manifest/theme/config compatibility. |
+| Fix or extend the core — shell, `packages/*`, a built-in plugin under `plugins/` | Keep reading; this page is your path. |
+| Build something specific to your organisation — a branded theme, an LMS integration, a custom upload flow | It doesn't belong in this repo. Start at [Your first plugin](docs/plugins/first-plugin.md); [Distribution](docs/plugins/distribution.md) covers shipping it as a JAR or remote module. Issues here about missing extension points or unclear contracts are very welcome. |
 
-Plugin runtime API contracts have a hard rule: **anything that changes the Plugin Runtime API observable to plugin authors → major bump of `@oc-mui/plugin-system`.** The host loader rejects plugins whose declared `apiVersion` major mismatches the host's `PLUGIN_API_VERSION`.
+## 3. Make the change
 
-### Adding a changeset
-
-We use [Changesets](https://github.com/changesets/changesets) to track every user-facing change and generate per-package changelogs. The workflow:
+Branch off `develop` with a descriptive name (`fix/sidebar-overlap`, `feat/upload-resume`, `docs/configuration-clarify`); no push rights to this repo? Fork first, add this repo as the `upstream` remote, and self-check later with `--since=upstream/develop`. Then iterate:
 
 ```bash
-# After making your changes, in the repo root:
-pnpm changeset
-# Pick the affected package(s), pick the bump level, write a one-line summary
-# of the change as a release-note. The CLI writes a Markdown file to .changeset/.
-
-# Verify what your changeset will release:
-pnpm changeset:status
-
-# Commit the .changeset/<slug>.md file alongside the rest of your PR.
+pnpm dev                                            # shell with hot reload
+pnpm --filter @oc-mui/<package> test                # unit tests for one package
+pnpm --filter @oc-mui/plugin-<name> test:contract   # one plugin's contract test
+pnpm test:e2e:ui                                    # Playwright in interactive mode
+pnpm lint && pnpm format                            # ESLint (incl. boundary rules) + Prettier
 ```
 
-CI **rejects** any PR that touches a released package without an accompanying changeset. Changes scoped purely to `apps/shell` / `apps/playground`, root config, docs, or workflows do not need a changeset (those packages are listed under `ignore` in `.changeset/config.json`). For an intentionally release-noteless change to a versioned package — e.g. a typo fix in a JSDoc — use `pnpm changeset --empty` to record the deliberate decision.
+Where the tests live and what each layer covers (unit / contract / E2E): [`docs/operations/testing.md`](docs/operations/testing.md). Anything touching a plugin follows the [AGENTS.md](AGENTS.md) rules — plugin layout, import boundaries, the required contract test. TypeScript is strict; avoid `any`, and document any genuine escape hatch in a comment at the call site.
 
-### Deprecation policy
+Generated files are committed — never hand-edit them, regenerate instead: GraphQL codegen output (see [`packages/query/README.md` → Code generation](packages/query/README.md#code-generation); only needed when the schema itself changes), `etc/*.api.md` API reports (`pnpm api-check`), and changelogs (owned by the release tooling).
 
-Removing a public symbol is a major bump and requires a deprecation warning in the previous major. Concretely:
-
-1.  **Mark it `@deprecated` in JSDoc** with a one-line reason and a pointer to the replacement.
-2.  **Keep the old symbol working for one full major cycle.** A symbol marked `@deprecated` in `1.x` may be removed only in `2.0.0`. Use a minor bump for the deprecation; the eventual removal is its own major changeset.
-3.  **Emit a runtime warning in dev** if the deprecated symbol is called. Use `logger.warn` (from `@oc-mui/utils`) so the message is captured by the same plumbing as other warnings; gate it behind `import.meta.env.DEV` so production callers don't pay the cost. This is encouraged, not mandatory — type-only deprecations (e.g. a renamed type) cannot warn.
-4.  **Document the deprecation** in the changeset body so it lands in the package's changelog.
-
-Plugin authors get a one-major-cycle grace window: when the host bumps `PLUGIN_API_VERSION` major, plugins compiled against the previous major will be cleanly rejected with a "Plugin requires API major X, host provides Y" error from the loader.
-
-### API surface drift detection (`pnpm api-check`)
-
-The semver rules above only work if we *notice* that an API has changed. To make the visible surface mechanically observable, every contract-stable package commits a per-package report under `packages/<pkg>/etc/<pkg>.api.md`. The reports are generated by [API Extractor](https://api-extractor.com/) and look like a flattened `.d.ts` of the package's public exports.
+## 4. Pass the gate
 
 ```bash
-# Regenerate reports locally after changing a public API
-pnpm api-check
-
-# Inspect what changed; if intentional, commit the updated etc/*.api.md
-# alongside the rest of your PR (and add a changeset describing the bump)
-git diff packages/*/etc/*.api.md
+pnpm verify
 ```
 
-CI runs `pnpm api-check:ci` (note the `:ci` suffix) which compares the generated reports against the committed snapshots and **fails the PR** if they differ. Authors who intentionally change the surface regenerate, commit the diff, and ship a matching changeset; authors who didn't intend to change the surface get an immediate signal that they did.
+That single command is the canonical pre-push gate and mirrors CI — the step list lives in [AGENTS.md → Pre-push gate](AGENTS.md#pre-push-gate--pnpm-verify). Green locally means green in CI, modulo cold-start E2E flakes that Playwright retries automatically.
 
-Instrumented packages: `@oc-mui/plugin-system`, `@oc-mui/router`, `@oc-mui/query`, `@oc-mui/i18n`, `@oc-mui/store`, `@oc-mui/ui-config` — the six contract-stable packages declared in [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md). The cross-package coupling visible in each report (e.g. `query`'s report imports types from `plugin-system` and `ui-config`) is intentional: when an upstream contract changes, every consumer's snapshot diff surfaces it.
+<a id="versioning-changesets-and-deprecations"></a>
+
+## 5. Add a changeset
+
+Any change to a versioned package — every package under `packages/*` and `plugins/*`, **private ones included** — needs a committed [changeset](https://github.com/changesets/changesets). The authoritative rule and its only exemptions live in [AGENTS.md → Versioning](AGENTS.md#versioning--changesets-every-versioned-package-and-public-api-changes); docs, `.github/`, and root-config changes touch no package and need none. Here is the whole workflow for a one-package bug fix:
+
+```console
+$ pnpm changeset
+🦋  Which packages would you like to include? · @oc-mui/utils
+🦋  Which packages should have a major bump? · No items were selected
+🦋  Which packages should have a minor bump? · No items were selected
+🦋  The following packages will be patch bumped:
+🦋  @oc-mui/utils
+🦋  Please enter a summary for this change (this will be in the changelogs).
+🦋  Summary · parseDuration no longer throws on non-ISO input
+🦋  Is this your desired changeset? (Y/n) · true
+🦋  Changeset added! - you can now commit it
+```
+
+Unsure whether that's a patch, minor, or major? [Picking the bump level](docs/operations/release.md#picking-the-bump-level) has the criteria. The CLI wrote a small Markdown file under `.changeset/` — the summary becomes the package's changelog entry, so write it for the consumer, not for the reviewer:
+
+```markdown
+---
+"@oc-mui/utils": patch
+---
+
+parseDuration no longer throws on non-ISO input
+```
+
+**Commit that file.** CI runs `changeset status` against the committed tree, so an uncommitted changeset does not count — the classic "I added it but CI still says no changesets found" trap:
+
+```bash
+git add .changeset/<slug>.md
+git commit -m "fix(utils): tolerate non-ISO durations"
+```
+
+Self-check before pushing — green output means every changed versioned package is covered (match `--since` to your PR's base branch):
+
+```bash
+pnpm changeset status --since=origin/develop
+```
+
+Three follow-on rules, each one sentence here and detailed in [Releases & versioning](docs/operations/release.md):
+
+- A deliberately release-noteless change to a versioned package still needs a changeset — record the decision with `pnpm changeset --empty`. The empty changeset satisfies both the CI check and the `changeset status` self-check, even though it names no package.
+- If you changed a public `@oc-mui/*` API surface, run `pnpm api-check` and commit the regenerated `etc/<pkg>.api.md` alongside the changeset ([API surface drift detection](docs/operations/release.md#api-surface-drift-detection)).
+- Removing or renaming a public symbol follows the [deprecation policy](docs/operations/release.md#deprecations): `@deprecated` in one major, removal only in the next.
+
+## 6. Open the PR
+
+Target **`develop`** — unless you're fixing a bug in a released line, in which case the PR targets the **oldest affected `r/NN.x` branch** and the fix is forward-merged toward `develop`. [Releases & versioning → Branching model](docs/operations/release.md#branching-model) explains the model behind that checkbox in the PR template.
+
+The [PR template](.github/pull_request_template.md) is the review checklist made explicit: `pnpm verify` green, changeset committed, API reports regenerated if a public surface changed, and **docs your change makes stale fixed in the same PR** (an [AGENTS.md](AGENTS.md) rule, not a nicety). Commits: short imperative first line; conventional-commit prefixes (`feat`, `fix`, `docs`, …) are encouraged, not enforced.
+
+In doubt about the bump level, the changeset wording, or whether a frozen contract changed? Open the PR as a **draft** and ask — the contracts in [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) are public commitments, so over-discussing beats a silent break. Stacking on another open PR is fine: link the parent, GitHub retargets when it merges.
+
+## Editing the docs
+
+Docs contributions are the lightest path into the repo — typo to merged PR without ever cloning:
+
+- **Where docs live.** [`docs/`](docs/README.md) is the source of the docs site; the sidebar in [`docs/.vitepress/config.mts`](docs/.vitepress/config.mts) is the *only* table of contents. Root files (this one, [`README.md`](README.md), [`AGENTS.md`](AGENTS.md), package READMEs) are GitHub-rendered markdown, not part of the site.
+- **The loop.** Every site page has an **Edit this page on GitHub** link that opens GitHub's editor directly on `develop`; GitHub forks and opens the PR for you. For anything bigger than a paragraph, a normal clone-and-branch works the same — target `develop` either way.
+- **What CI runs on a docs-only PR.** The fast path only ([`docs.yml`](.github/workflows/docs.yml)): site build, markdown lint (`pnpm docs:lint` locally; rules in [`.markdownlint.jsonc`](.markdownlint.jsonc)), and an offline check of repo-internal links ([`lychee`](lychee.toml) — a Rust binary, so CI-only unless you `brew install lychee`). The full `pnpm verify` gate does **not** run — [`test.yml`](.github/workflows/test.yml) skips PRs that touch only `docs/**` and `*.md` files.
+- **No changeset needed** — docs aren't a versioned package ([the rule and its scope](AGENTS.md#versioning--changesets-every-versioned-package-and-public-api-changes)). Exception: a README *inside* `packages/*` or `plugins/*` is part of a versioned package and does need one.
+- **Two conventions.** Pages open with a two-line header — `# Title`, then one paragraph: "For \<audience\>. Afterwards you'll know \<outcome\>." And facts live in exactly one place: link to the owning page (or file, like `package.json` for version numbers) instead of restating, so the copy can't drift — CI enforces this for the most drift-prone facts via `pnpm docs:ownership` ([`scripts/docs-ownership-check.mjs`](scripts/docs-ownership-check.mjs)).
 
 ---
 
-## Filing a bug or feature request
-
-Use the templates: [**File a bug**](https://github.com/academic-moodle-cooperation/management-ui/issues/new?template=bug_report.yml) or [**Request a feature**](https://github.com/academic-moodle-cooperation/management-ui/issues/new?template=feature_request.yml). Both templates ask for the structured information that lets us triage quickly (version/commit, repro steps, affected scope dropdown).
-
-Blank issues are disabled. If your topic doesn't fit the bug or feature template — for example, a plugin-authoring question or a design discussion — open a thread in [Discussions](https://github.com/academic-moodle-cooperation/management-ui/discussions) instead.
-
-**Security vulnerabilities go through a separate channel.** Do **not** file a public issue; see [`SECURITY.md`](SECURITY.md) for private vulnerability reporting.
-
----
-
-## Submitting a pull request
-
-1. **Branch name**: descriptive — `feat/upload-resume`, `fix/sidebar-overlap`, `docs/configuration-clarify`.
-2. **Commits**: short imperative summary in the first line. Conventional-commit prefixes (`feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `ci`) are encouraged but not enforced.
-3. **`pnpm verify`** passes locally — this is the canonical pre-push gate.
-4. **Changeset added** if your change touches a versioned package (see [Versioning](#versioning-changesets-and-deprecations) above). CI's `Changeset` job tells you which.
-5. **API reports regenerated** if you intentionally changed a public surface — `pnpm api-check`, commit the updated `etc/*.api.md`. CI's `api-check` job tells you which.
-6. **Docs updated in the same PR.** Any doc your change makes stale is fixed alongside the code. Renamed a public symbol? Grep `docs/` for it. Changed an extension point's contract? Fix `docs/plugins/` and `docs/architecture/CONTRACTS.md`. Changed how something is built or released? Fix `docs/operations/`. Docs that ship with the project are part of the project — leaving them stale is a regression.
-7. **Open the PR** using the [provided template](.github/pull_request_template.md). It maps to the checklist above and helps reviewers focus.
-8. **Stack on top of other open PRs** if your change depends on them; GitHub auto-rebases stacked PRs when the parent merges.
-
-If you're in doubt about the bump level, the changeset wording, or whether a contract changed: open the PR as a draft and ask. The contracts in `docs/architecture/CONTRACTS.md` are deliberately strict because they're public commitments — better to over-discuss than to ship a silent break.
-
----
-
-## Code of Conduct
-
-Be respectful. We follow the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
-
-## Security
-
-Vulnerabilities go through [`SECURITY.md`](SECURITY.md), not public issues.
-
----
+We follow the [Contributor Covenant](CODE_OF_CONDUCT.md). Vulnerabilities go through [`SECURITY.md`](SECURITY.md). Docs render as the [docs site](https://academic-moodle-cooperation.github.io/management-ui/), built from [`docs/`](docs/README.md).
 
 Thank you for contributing to Management UI.

@@ -1,7 +1,7 @@
 # Playground
 
 Isolated plugin development sandbox. Runs a single plugin against a minimal
-standalone shell, with no other plugins loaded and with services mocked.
+standalone shell, with no other plugins loaded.
 
 ## Status
 
