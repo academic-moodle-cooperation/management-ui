@@ -201,7 +201,7 @@ mvn install -DskipTests -DdeployTo="$OPENCAST_DIST"
 The same mechanism also targets the host config location — a default
 `config.json` under `$OPENCAST_DIST/etc/ui-config/mh_default_org/management-ui/`,
 the path Opencast serves the UI config from (see
-[Configuration](./configuration.md#where-the-host-config-file-comes-from)).
+[Configuration](./configuration.md#the-file)).
 If you prefer to copy by hand, the equivalent is:
 
 ```bash
