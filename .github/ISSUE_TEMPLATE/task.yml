@@ -117,7 +117,7 @@ body:
         The project's pre-flight, so it's visible on the ticket, not just at
         merge time. Not all apply to every task — leave what doesn't.
       options:
-        - label: "`pnpm verify` green (lint, types, build, unit, contract, api-check, E2E)"
+        - label: "`pnpm verify` green (the canonical gate — step list in AGENTS.md → Pre-push gate)"
         - label: "Changeset added if a versioned package changed (`pnpm changeset`)"
         - label: "`pnpm api-check` regenerated if a public `@oc-mui/*` surface changed"
         - label: "Docs updated in the same PR if this makes any doc stale"

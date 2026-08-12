@@ -5,8 +5,8 @@ allowed-tools: Bash(pnpm verify:*), Bash(pnpm exec turbo:*), Bash(pnpm exec play
 
 Run the project's canonical pre-push gate and report the result.
 
-Run `pnpm verify` from the repo root. It runs, in the same order as CI:
-**lint → check-types → build → unit tests → contract tests → api-check → Playwright E2E.**
+Run `pnpm verify` from the repo root. It runs the canonical pre-push pipeline in the
+same order as CI — the step list lives in AGENTS.md → "Pre-push gate — `pnpm verify`".
 
 - If it passes, say so plainly — CI will pass too (modulo cold-start E2E flakes that
   Playwright retries).

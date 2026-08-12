@@ -26,8 +26,8 @@ fi
 
 read -r -d '' cheatsheet <<'EOF'
 Management UI — Claude Code quick reference (rules live in AGENTS.md):
-  pnpm verify         Canonical pre-push gate: lint → check-types → build → unit
-                      → contract → api-check → Playwright E2E. Run before finishing.
+  pnpm verify         Canonical pre-push gate (step list: AGENTS.md → Pre-push gate).
+                      Run before finishing.
   pnpm lint           ESLint (wrapper-library + architectural boundary rules)
   pnpm check-types    Project-wide TypeScript
   pnpm test           Vitest unit tests

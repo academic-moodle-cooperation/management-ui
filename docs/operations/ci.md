@@ -8,7 +8,7 @@ What runs on every PR, in what order, and how to reproduce a failure locally.
 pnpm verify
 ```
 
-Runs `lint → check-types → build → test → test:contract → api-check → test:e2e` in dependency order. Same gates CI runs. If it's green locally, CI will be green; the only flakes you'll see in CI but not locally are cold-start Playwright timeouts, which retry automatically.
+Runs the canonical pre-push pipeline in dependency order — the step list is documented once in [AGENTS.md → Pre-push gate](../../AGENTS.md#pre-push-gate--pnpm-verify). Same gates CI runs. If it's green locally, CI will be green; the only flakes you'll see in CI but not locally are cold-start Playwright timeouts, which retry automatically.
 
 **Always run `pnpm verify` before pushing.** Failures caught locally cost a few minutes; failures caught in CI cost a round-trip plus reviewer attention.
 
@@ -104,7 +104,7 @@ A manual dispatch takes an optional `projects` input — space-separated
 
 **Docs-only changes take a fast path.** A PR that touches only `docs/**` and `*.md` files skips `Test` entirely (`paths-ignore` in [`test.yml`](../../.github/workflows/test.yml)) and instead runs the three docs jobs in [`docs.yml`](../../.github/workflows/docs.yml): VitePress site build, markdown lint (`pnpm docs:lint`, rules in [`.markdownlint.jsonc`](../../.markdownlint.jsonc)), and an offline repo-internal link check (lychee, config in [`lychee.toml`](../../lychee.toml)). `Changeset` still runs on every PR — it has no path filter, so a markdown-only change inside a versioned package keeps its changeset requirement.
 
-Workflow-only changes still run the full suite — there's no skip for `.github/`. The `Changeset` gate additionally exempts by content, not path: changes under `apps/`, root config, docs, or `.github/` don't need a changeset because those packages are in `.changeset/config.json`'s `ignore` list (or aren't packages at all).
+Workflow-only changes still run the full suite — there's no skip for `.github/`. The `Changeset` gate additionally exempts by content, not path — the authoritative rule and its exemptions live in [AGENTS.md → Versioning](../../AGENTS.md#versioning--changesets-every-versioned-package-and-public-api-changes).
 
 ## Branch protection
 

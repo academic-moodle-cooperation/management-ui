@@ -10,8 +10,8 @@ first; this file only documents the Claude Code-specific layer that sits on top.
 
 **Slash commands** (you type these):
 
-- `/verify` — run the canonical pre-push gate (`pnpm verify`: lint → check-types →
-  build → unit → contract → api-check → Playwright E2E).
+- `/verify` — run the canonical pre-push gate (`pnpm verify`; the step list lives in
+  [AGENTS.md → Pre-push gate](AGENTS.md#pre-push-gate--pnpm-verify)).
 - `/new-plugin <name> [--in-tree]` — scaffold a plugin with `pnpm create-plugin` and
   wire it to the AGENTS.md layout (`.local-plugins/` by default; `--in-tree` for a
   built-in plugin shipped with the repo).

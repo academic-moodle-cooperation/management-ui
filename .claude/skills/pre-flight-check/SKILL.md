@@ -18,7 +18,7 @@ contract test), and say why they're n/a.
    `@oc-mui/plugin-system`, and **every** `manager.registerObject(...)` call lives in
    `initialize()`, not `activate()`. (`activate`/`deactivate` are for side effects only;
    the test harness re-registers between tests.)
-2. **Manifest** — `plugin.json` exists at the plugin root with the Manifest 1.1 fields
+2. **Manifest** — `plugin.json` exists at the plugin root with the required manifest fields
    (`id`, `name`, `version`, `description`, `author`, `namespace`) and an
    `extensionPoints` array.
 3. **extensionPoints sync** — every extension point `initialize()` populates appears in

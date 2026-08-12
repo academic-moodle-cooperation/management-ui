@@ -7,7 +7,7 @@ Everything a plugin author needs. Start at **Your first plugin** if you're new; 
 | [Your first plugin](./first-plugin.md) | **Start here.** Scaffold a visible plugin, run it, ship it — about 5 minutes. |
 | [Creating a plugin](./creating-a-plugin.md) | Continues first-plugin: entry-point rules, extension points, a config slice, a translated string, shipping. |
 | [Distribution](./distribution.md) | In-tree, `.local-plugins/`, JAR, and CDN — the four ways plugins reach a shell. |
-| [Styling](./styling.md) | Theme Contract 2.0 — semantic tokens, layers, override rules. |
+| [Styling](./styling.md) | The Theme Contract — semantic tokens, layers, override rules. |
 | [i18n](./i18n.md) | Namespaces, locale layout, key parity. |
 | [Testing](./testing.md) | The required contract test plus what else to cover. |
 

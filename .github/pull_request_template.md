@@ -13,8 +13,8 @@
 
 ## Before-merge checklist
 
-- [ ] `pnpm verify` passes locally (lint + check-types + build + unit + contract + api-check + Playwright E2E, incl. smoke).
-- [ ] If *any* versioned package changed (every package under `packages/*` and `plugins/*`, private ones included): a [Changeset](https://github.com/changesets/changesets) is **committed** (`pnpm changeset`). Only the packages in `.changeset/config.json`'s `ignore` list (`shell`, `playground`) are exempt; PRs touching only docs, `.github/`, or root config touch no package and need none. Authoritative wording: [AGENTS.md](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/AGENTS.md).
+- [ ] `pnpm verify` passes locally — the canonical gate; the step list lives in [AGENTS.md → Pre-push gate](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/AGENTS.md#pre-push-gate--pnpm-verify).
+- [ ] If *any* versioned package changed (every package under `packages/*` and `plugins/*`, private ones included): a [Changeset](https://github.com/changesets/changesets) is **committed** (`pnpm changeset`). PRs touching only docs, `.github/`, or root config touch no package and need none. The authoritative rule and its only exemptions: [AGENTS.md → Versioning](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/AGENTS.md#versioning--changesets-every-versioned-package-and-public-api-changes).
 - [ ] If a `@oc-mui/*` package's public API surface changed: `pnpm api-check` regenerated, the diff in `etc/<pkg>.api.md` is intentional and committed.
 - [ ] Docs this PR makes stale are updated in the same PR.
 - [ ] [AGENTS.md](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/AGENTS.md) rules followed for any plugin work (extension points in `plugin.json`, contract test up to date, no cross-plugin or cross-app imports).
