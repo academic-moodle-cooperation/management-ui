@@ -1,0 +1,130 @@
+name: Docs sync
+
+# How this workflow is gated:
+#
+# - workflow_dispatch  — always available; run the drift check manually from
+#                        the Actions tab.
+# - push to develop    — checks the docs site still builds after every merge
+#                        to develop. (There is no `main` branch in this repo;
+#                        long-lived branches are `develop` and the `r/NN.x`
+#                        release lines.) While Actions billing is unresolved
+#                        this trigger is inert; it starts working on its own
+#                        once billing is restored.
+#
+# What it does: rebuilds the VitePress site as a post-merge integrity check,
+# and runs the docs lint / link-check scripts once those are adopted (each is
+# guarded by a config-file existence check plus `pnpm run --if-present`, so
+# the workflow is green both before and after the PR that introduces them).
+# On any failure it opens — or comments on, never duplicates — a single open
+# tracking issue titled "docs-sync: drift detected on develop".
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop]
+
+permissions:
+  contents: read
+  issues: write
+
+# Only the latest merge matters for a drift check; cancel superseded runs.
+concurrency:
+  group: docs-sync
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Docs drift check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Full history for VitePress lastUpdated to populate correctly.
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Ensure .local-plugins exists
+        run: mkdir -p .local-plugins
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build docs site
+        id: build
+        env:
+          # Override the VitePress base path here when the deploy target's
+          # URL prefix differs from the default (/management-ui/).
+          DOCS_BASE: ${{ vars.DOCS_BASE || '/management-ui/' }}
+        run: pnpm docs:build
+
+      - name: Markdown lint (skipped until adopted)
+        id: lint
+        run: |
+          if [ -f .markdownlint.jsonc ]; then
+            pnpm run --if-present docs:lint
+          else
+            echo "No .markdownlint.jsonc in the repo yet — markdown lint not adopted; skipping."
+          fi
+
+      - name: Link check (skipped until adopted)
+        id: links
+        run: |
+          if [ -f lychee.toml ] || [ -f .lycheeignore ]; then
+            pnpm run --if-present docs:links
+          else
+            echo "No lychee config in the repo yet — link check not adopted; skipping."
+          fi
+
+      - name: Open or update the tracking issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          LINT_OUTCOME: ${{ steps.lint.outcome }}
+          LINKS_OUTCOME: ${{ steps.links.outcome }}
+        run: |
+          title="docs-sync: drift detected on develop"
+
+          body=$(cat <<EOF
+          The post-merge docs check failed on \`develop\`.
+
+          | Step | Outcome |
+          |------|---------|
+          | Build docs site (\`pnpm docs:build\`) | $BUILD_OUTCOME |
+          | Markdown lint | $LINT_OUTCOME |
+          | Link check | $LINKS_OUTCOME |
+
+          - Commit: $COMMIT_SHA
+          - Run: $RUN_URL
+
+          Reproduce locally with \`pnpm docs:build\` (plus \`pnpm docs:lint\` /
+          \`pnpm docs:links\` where present). Close this issue once develop is
+          green again; the workflow reuses one open issue instead of opening
+          duplicates.
+          EOF
+          )
+
+          # Dedup: comment on the existing open tracking issue if there is one.
+          existing=$(gh issue list --state open --search "\"$title\" in:title" \
+            --json number,title \
+            --jq ".[] | select(.title == \"$title\") | .number" | head -n 1)
+
+          if [ -n "$existing" ]; then
+            echo "Updating existing tracking issue #$existing"
+            gh issue comment "$existing" --body "$body"
+          else
+            echo "Opening new tracking issue"
+            gh issue create --title "$title" --body "$body"
+          fi
