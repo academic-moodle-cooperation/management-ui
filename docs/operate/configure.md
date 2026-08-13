@@ -23,15 +23,15 @@ Switch the deployment to the shipped `forest-sage` theme and drop the upload fea
 
 Save, reload: the colours change and **Upload** disappears from the sidebar. Why it looks like this:
 
-- **`app.theme`** names a theme; the shell loads `<name>.css` on top of the always-present `default` baseline. Shipped: `aurora`, `forest-sage`, `heritage-burgundy`, `modern-slate`, `oxford-navy`, `press`. Light/dark is a separate toggle in the header, not a theme; an organization's own theme comes from a theme plugin.
-- **`app.enabledPlugins` replaces the default list wholesale** — arrays never merge item by item, so disabling one plugin means listing all the others. The default is `["core", "episodes", "series", "upload", "admin", "config"]`; this drops `upload`. Always keep `core` and `config`.
+- **`app.theme`** names a theme; the shell loads `<name>.css` on top of the always-present `default` baseline. Shipped in the core bundle: `aurora`, `forest-sage`, `heritage-burgundy`, `modern-slate`, `oxford-navy`, `press`, plus `example` — which is a sample, not a design. Light/dark is a separate toggle in the header, not a theme; an organization's own theme comes from a theme plugin.
+- **`app.enabledPlugins` replaces the default list wholesale** — arrays never merge item by item, so disabling one plugin means listing all the others. The default is `["core", "episodes", "series", "upload", "admin", "config"]`; this drops `upload`. Always keep `core` and `config`. **Mind the naming:** these are namespaces, not sidebar labels — the entry a user sees as **Videos** is the `episodes` namespace, and there is no `videos` key anywhere.
 - Everything unnamed — locale, auth, branding, plugin slices — is omitted and stays at its default. Keep whatever your file already carries; this shows a deployment whose *only* customizations are these two.
 
 ## When a change does not take
 
-**This is the trap that costs operators the most time.** A plugin's slice under `plugins[<id>]` is validated against that plugin's schema. On failure the shell does not error out: it logs `plugin:<id> config validation failed` to the browser console and silently uses the plugin's defaults — the *entire* slice, not just the offending key. One typo'd key or wrong type therefore makes a whole slice look ignored.
+**This is the trap that costs operators the most time.** A plugin's slice under `plugins[<id>]` is validated against that plugin's schema. On failure the shell does not error out: it logs `plugin:<id> config validation failed; falling back to defaults` to the browser console and silently uses the plugin's defaults — the *entire* slice, not just the offending key. One typo'd key or wrong type therefore makes a whole slice look ignored.
 
-So after every change to `config.json`: reload with the browser console open and look for that warning.
+**Checking for it takes two steps, not one.** Validation happens inside the React hook that reads the slice, so it only runs when a component using that slice mounts — *not* on page load. After every change: reload **and navigate to the screen the slice belongs to** (an `episodes` slice needs the Videos screen), with the console open the whole time. A clean console on the landing page proves nothing.
 
 ## Login
 
