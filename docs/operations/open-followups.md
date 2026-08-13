@@ -20,7 +20,7 @@ The directory was originally consumed by `scripts/export-plugin-to-local.js` and
 
 ### 1.2 ✅ Done — external plugin POM template
 
-Shipped in Phase 8.5.2. `pnpm create-plugin <name>` now scaffolds a `backend/pom.xml` by default (skip with `--no-pom`); the template inherits from `org.opencastproject:base:19-SNAPSHOT` and produces a deployable Opencast JAR via `mvn package`. Full how-to in [`docs/plugins/distribution.md`](../plugins/distribution.md#path-3--jar-production). The future option of publishing a dedicated `management-ui-plugin-parent` POM (Option B from the design discussion) is tracked in §1.3 below.
+Shipped in Phase 8.5.2. `pnpm create-plugin <name>` now scaffolds a `backend/pom.xml` by default (skip with `--no-pom`); the template inherits from `org.opencastproject:base:20-SNAPSHOT` and produces a deployable Opencast JAR via `mvn package`. Full how-to in [`docs/plugins/distribution.md`](../plugins/distribution.md#path-3--jar-production). The future option of publishing a dedicated `management-ui-plugin-parent` POM (Option B from the design discussion) is tracked in §1.3 below.
 
 ### 1.3 (Maybe) publish a `management-ui-plugin-parent` POM
 
@@ -312,8 +312,8 @@ exports (this PR).
   `zustand` 4→5, `react-day-picker` 8→10, `lucide-react` 0.417→1.x, and the app's
   `vite` 6→7 (clears the residual `vite` audit highs).
 - **Retarget the backend to a released Opencast.** The `backend/` bundles build
-  against `org.opencastproject:base:19-SNAPSHOT`, so external contributors must
-  compile Opencast `r/19.x` from source before they can build or deploy them
+  against `org.opencastproject:base:20-SNAPSHOT`, so external contributors must
+  compile Opencast `r/20.x` from source before they can build or deploy them
   (see [getting-started/local-backend.md](../getting-started/local-backend.md)).
   Once the parent targets a released Opencast (≥ 17 ships the GraphQL module),
   prebuilt container images become viable for the full-stack dev setup and the
