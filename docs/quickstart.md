@@ -2,7 +2,7 @@
 
 For anyone who wants to see Management UI before committing to it. Afterwards you'll have the UI open in your browser, showing the real content of an Opencast you already run.
 
-You need Node.js ≥ 20, pnpm (`corepack enable` picks the pinned version), and the URL of a reachable Opencast. Nothing is installed on that server: the UI runs on your machine and talks to it.
+You need Node.js and pnpm — both pinned in the root [`package.json`](../package.json) (`engines` and `packageManager`), so `corepack enable` gets you the right pnpm automatically — and the URL of a reachable Opencast. Nothing is installed on that server: the UI runs on your machine and talks to it.
 
 ::: warning You are pointing a dev server at a live system
 Browsing is read-only, but every edit, upload, and delete you perform in the UI happens on that Opencast for real. Point it at staging, not at production.
