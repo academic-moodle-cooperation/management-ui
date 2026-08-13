@@ -186,7 +186,24 @@ async function capture(page: Page, name: string): Promise<void> {
   await page.screenshot({ path: resolve(OUT_DIR, `${name}.png`), fullPage: true });
 }
 
-for (const scheme of ["light", "dark"] as const) {
+/**
+ * Light only — deliberately, and the loop stays a loop.
+ *
+ * VitePress 1.6 has no theme-conditional image support: its dark mode is a
+ * class on `<html>`, not a media query, so neither `<picture>` with
+ * `prefers-color-scheme` nor the `.light-only`/`.dark-only` classes some other
+ * generators ship would follow the site's own appearance toggle. Shipping both
+ * variants would therefore mean adding custom theme CSS and doubling the
+ * committed PNGs for an image that still cannot switch on its own.
+ *
+ * So the docs embed the light variant on a page that renders in either theme,
+ * and the dark captures are not taken. The loop is kept so re-adding them is a
+ * one-word change once VitePress supports it (docs/use/*.md would then need
+ * the second `<img>` per screenshot).
+ */
+const SCHEMES = ["light"] as const;
+
+for (const scheme of SCHEMES) {
   test.describe(`${scheme}`, () => {
     // The shell defaults to "System" appearance, so emulating the OS colour
     // scheme drives light/dark without touching app state.
