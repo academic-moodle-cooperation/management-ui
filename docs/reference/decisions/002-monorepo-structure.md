@@ -1,5 +1,7 @@
 # ADR-002: Monorepo Structure with Dependency Layers
 
+> **Reference — an architecture decision record.** A dated record of why a choice was made; it is not kept in sync with the code. What the code does *today* is [Architecture](../architecture.md) and [Contracts](../contracts.md).
+
 **Status:** Accepted  
 **Date:** 2025-11-12  
 **Deciders:** Architecture Team
@@ -294,7 +296,7 @@ packages:
 
 Enforced through:
 
-1. **Documentation** - Clear layer rules in this ADR and the [architecture overview](../overview.md)
+1. **Documentation** - Clear layer rules in this ADR and the [architecture overview](../architecture.md)
 2. **Code Review** - Check dependencies in PRs
 3. **Automated Tools** - (Future) dependency-cruiser for validation
 
@@ -374,7 +376,7 @@ The boundary between core plugins and org plugins was tightened:
 - **Plugin manifest** (`plugin.json`) is the canonical metadata source. Convention-based filename discovery still works but is documented as a contract, not an accident.
 - **`packages/remote-plugin-loader`** added as a shared package for all dynamic loading paths (JAR, `.local-plugins`, marketplace, registry).
 
-See [`docs/plugins/distribution.md`](../../plugins/distribution.md) for the complete loading model.
+See [`docs/extend/distribution.md`](../../extend/distribution.md) for the complete loading model.
 
 ## Review
 

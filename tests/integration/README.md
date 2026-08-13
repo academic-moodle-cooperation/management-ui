@@ -4,7 +4,7 @@ The real-backend tier of the test pyramid. Unlike the mocked smoke suite in
 [`tests/e2e/`](../e2e/README.md), these specs drive the shell against a **live
 Opencast** so they catch what mocks can't — GraphQL schema drift, real auth, JAR
 deploys. They implement parts of the manual
-[`docs/operations/test-protocol.md`](../../docs/operations/test-protocol.md)
+[`docs/contribute/test-protocol.md`](../../docs/contribute/test-protocol.md)
 (§3, §4, §15) automatically.
 
 ## How it's wired

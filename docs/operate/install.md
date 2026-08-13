@@ -14,7 +14,7 @@ On the Opencast host:
 On the machine you build on — it does not have to be the Opencast host:
 
 - **JDK 21 or newer and Maven.** `mvn -version` must report Java 21+. No Maven installed? The repo ships `./mvnw`; substitute it for `mvn` below. Node and pnpm are *not* prerequisites — the root `pom.xml` downloads pinned versions and builds the frontend itself.
-- **Opencast's own `NN-SNAPSHOT` parent POM in your local `~/.m2`**, for the same major. It is not on Maven Central, so build Opencast's matching `r/NN.x` branch from source once and it lands there ([Full local setup](../getting-started/local-backend.md#2-build-and-start-opencast-20) walks through it for 20).
+- **Opencast's own `NN-SNAPSHOT` parent POM in your local `~/.m2`**, for the same major. It is not on Maven Central, so build Opencast's matching `r/NN.x` branch from source once and it lands there ([Full local setup](../contribute/local-backend.md#2-build-and-start-opencast-20) walks through it for 20).
 
 ## The artifacts
 
@@ -40,7 +40,16 @@ mvn install -DskipTests -DdeployTo="$OPENCAST_HOME"
 - **Default config → `$OPENCAST_HOME/etc/ui-config/mh_default_org/management-ui/config.json`.** Careful on re-deploys: this copy replaces a `config.json` you have edited unless your file is newer than the one in the checkout. Keep your config in version control.
 - **Check that the copy landed.** The deploy step is deliberately non-fatal, so a mistyped `-DdeployTo` still ends in `BUILD SUCCESS` — with the JARs sitting in a directory tree it just created at whatever path you named. Confirm with `ls "$OPENCAST_HOME"/deploy/management-ui-*.jar`.
 
-Without `-DdeployTo` the JARs stay in each module's `target/`; copy the three into `deploy/` yourself and create the config file at the path above.
+Without `-DdeployTo` the JARs stay in each module's `target/` — `backend/management-config/target/`, `backend/management-graphql/target/`, and `apps/shell/target/`:
+
+```bash
+cp backend/management-config/target/management-ui-config-*.jar \
+   backend/management-graphql/target/management-ui-graphql-*.jar \
+   apps/shell/target/management-ui-core-*.jar \
+   "$OPENCAST_HOME/deploy/"
+```
+
+Then create the config file at the path above — start from the shipped default at [`apps/shell/public/ui/config/management-ui/config.json`](../../apps/shell/public/ui/config/management-ui/config.json).
 
 ## Point login at your backend
 

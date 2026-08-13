@@ -2,7 +2,7 @@
 
 For plugin developers past the scaffold. Afterwards your plugin reads its own validated config slice, ships a translated string, and you know which page to open for everything else.
 
-This is the guided tour. The canonical rules — manifest fields, boundaries, pre-flight checklist — live in [`AGENTS.md`](../../AGENTS.md), the stability guarantees in [`CONTRACTS.md`](../architecture/CONTRACTS.md).
+This is the guided tour. The canonical rules — manifest fields, boundaries, pre-flight checklist — live in [`AGENTS.md`](../../AGENTS.md), the stability guarantees in [Contracts](../reference/contracts.md).
 
 ## Scaffold
 
@@ -58,7 +58,7 @@ export const helloConfig = definePluginConfig({
 });
 ```
 
-Call `helloConfig.register(manager)` in `initialize()`, add `"app:config:defaults"` to `extensionPoints`, and read the slice with `helloConfig.use()` in a component (`read(config)` outside React). Rebuild and reload: the heading shows the default. Now put `"plugins": { "hello": { "greeting": "Hello from config.json" } }` in the served `config.json` and reload again — it changes. Defaults from the plugin, overrides from the deployment, validated by your schema. Layer model, merge semantics, and what an invalid value does: [`CONFIGURATION.md`](../architecture/CONFIGURATION.md).
+Call `helloConfig.register(manager)` in `initialize()`, add `"app:config:defaults"` to `extensionPoints`, and read the slice with `helloConfig.use()` in a component (`read(config)` outside React). Rebuild and reload: the heading shows the default. Now put `"plugins": { "hello": { "greeting": "Hello from config.json" } }` in the served `config.json` and reload again — it changes. Defaults from the plugin, overrides from the deployment, validated by your schema. Layer model, merge semantics, and what an invalid value does: [Configuration model](../reference/configuration.md).
 
 ## A translated string
 
@@ -76,7 +76,7 @@ Then add `"i18nNamespaces": ["hello"]` to `plugin.json`, put `locales/hello/en.j
 
 - [Styling](./styling.md) — semantic tokens and `@oc-mui/ui` components. No hardcoded colors (lint-enforced); dark mode comes free if you comply.
 - [Testing a plugin](./testing.md) — the required contract test, and what your unit tests should cover.
-- [Add a GraphQL field](./graphql-field.md) — when the data you need isn't in the schema yet. Operation names carry your namespace as a PascalCase prefix, lint-enforced: [`CONTRACTS.md` § GraphQL Operation Naming](../architecture/CONTRACTS.md#6-graphql-operation-naming).
+- [Add a GraphQL field](./graphql-field.md) — when the data you need isn't in the schema yet. Operation names carry your namespace as a PascalCase prefix, lint-enforced: [Contracts § GraphQL Operation Naming](../reference/contracts.md#6-graphql-operation-naming).
 - [Distribution](./distribution.md) — dev mount, in-tree, JAR, or CDN.
 
 Before a PR or a release, work through the pre-flight checklist in [`AGENTS.md`](../../AGENTS.md#tldr--pre-flight-checklist) and run `pnpm verify`.

@@ -1,5 +1,7 @@
 # ADR-003: Single App-Shell with Core Plugins
 
+> **Reference — an architecture decision record.** A dated record of why a choice was made; it is not kept in sync with the code. What the code does *today* is [Architecture](../architecture.md) and [Contracts](../contracts.md).
+
 **Status:** Accepted
 **Date:** 2026-04-16
 **Supersedes:** Parts of ADR-001 (multi-app loading) and ADR-002 (multiple apps in `apps/`)
@@ -25,7 +27,7 @@ Consequences observed in practice:
 - Theme compatibility is harder to guarantee across app boundaries.
 - The plugin API is under-tested because core teams never use it for core features.
 - External plugin authors face a different DX than internal developers.
-- Configuration used to be merged at two points (build-time in `management-ui-core/vite.config.ts` and runtime via `plugins/index.ts` exports), which routinely drifted. Phase 2b replaced that with a single layered runtime merge (`app:config:defaults` ⊕ base ⊕ `app:config`) documented in [`CONFIGURATION.md`](../CONFIGURATION.md).
+- Configuration used to be merged at two points (build-time in `management-ui-core/vite.config.ts` and runtime via `plugins/index.ts` exports), which routinely drifted. Phase 2b replaced that with a single layered runtime merge (`app:config:defaults` ⊕ base ⊕ `app:config`) documented in [Configuration model](../configuration.md).
 - Open-sourcing this model asks contributors to understand two architectures instead of one.
 
 This ADR decides the target architecture for the open-source release.

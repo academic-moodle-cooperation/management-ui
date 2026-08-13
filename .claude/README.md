@@ -6,7 +6,7 @@ so treat it like any other source: no secrets, and keep it in sync with the proj
 
 It deliberately does **not** restate the project conventions. The single source of truth
 for how to work in this repo is [`AGENTS.md`](../AGENTS.md) (agents) and
-[`CONTRIBUTING.md`](../CONTRIBUTING.md) (humans). Everything here either points at those or
+[`docs/contribute/`](../docs/contribute/index.md) (humans). Everything here either points at those or
 automates a step they describe. [`../CLAUDE.md`](../CLAUDE.md) is intentionally thin — its
 first line imports `AGENTS.md`.
 

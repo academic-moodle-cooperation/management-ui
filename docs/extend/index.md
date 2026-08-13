@@ -17,5 +17,10 @@ Everything visible in the UI is a plugin, so extending the frontend means writin
 
 - [Backend bundles](./backend-bundles.md) — what the server-side bundles do and how plugin JARs are discovered.
 - [Distribution](./distribution.md) — the delivery paths a plugin can take to a deployment.
+- [Upgrading against a new host](./host-upgrades.md) — what a host version bump breaks, and the fix per contract.
+- [Contracts](../reference/contracts.md) — everything a plugin may rely on, and what each contract freezes.
+- [Configuration model](../reference/configuration.md) — the full layer model behind a plugin's config slice.
+
+The runtime your plugin runs on is [`@oc-mui/plugin-system`](../../packages/plugin-system/README.md); its harness is [`@oc-mui/plugin-testing`](../../packages/plugin-testing/README.md).
 
 Working on the shell or the shared packages rather than on a plugin? That's [Contribute](../contribute/index.md).

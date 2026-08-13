@@ -5,7 +5,7 @@ runtime. Boots a minimal manager with the three built-in plugins
 (`objectRegistry`, `renderer`, `appRegistry`), registers the plugin under
 test, and returns a small set of `expect*` assertion helpers tailored to the
 manifest and runtime-API contracts documented in
-[`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md).
+[`docs/reference/contracts.md`](../../docs/reference/contracts.md).
 
 ## Public API
 
@@ -86,6 +86,6 @@ Integration. Depends on `@oc-mui/plugin-system` (the runtime under test) and `@o
 
 ## See also
 
-- [`docs/plugins/testing.md`](../../docs/plugins/testing.md) — plugin-author entry point.
-- [`docs/operations/testing.md`](../../docs/operations/testing.md) — full test strategy + follow-up list.
-- [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md) — the contracts this harness verifies.
+- [`docs/extend/testing.md`](../../docs/extend/testing.md) — plugin-author entry point.
+- [`docs/contribute/testing.md`](../../docs/contribute/testing.md) — full test strategy + follow-up list.
+- [`docs/reference/contracts.md`](../../docs/reference/contracts.md) — the contracts this harness verifies.

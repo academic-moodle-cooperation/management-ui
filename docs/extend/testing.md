@@ -2,7 +2,7 @@
 
 For plugin developers. Afterwards you'll have the required contract test and your own unit tests running for your plugin.
 
-This is the plugin author's slice. The full strategy — pyramid, unit/contract/E2E split, CI gates — lives in [`operations/testing.md`](../operations/testing.md).
+This is the plugin author's slice. The full strategy — pyramid, unit/contract/E2E split, CI gates — lives in [Testing](../contribute/testing.md).
 
 ## The required test
 
@@ -69,6 +69,6 @@ Locally, `pnpm verify` runs the canonical pre-push gate — the pipeline is docu
 
 ## See also
 
-- [`operations/testing.md`](../operations/testing.md) — the canonical test strategy.
+- [Testing](../contribute/testing.md) — the canonical test strategy.
 - [`packages/plugin-testing/README.md`](../../packages/plugin-testing/README.md) — full harness API reference.
 - [`AGENTS.md` → Contract test](../../AGENTS.md#contract-test--required-mechanical) — the canonical template.

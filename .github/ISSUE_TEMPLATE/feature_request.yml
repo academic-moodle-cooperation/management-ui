@@ -12,7 +12,7 @@ body:
         If your proposal is about **plugin extensibility** (a new extension
         point, a contract change, a hook), please mention that explicitly —
         contract changes follow the
-        [Contract Change Process](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/architecture/CONTRACTS.md#contract-change-process)
+        [Contract Change Process](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/reference/contracts.md#contract-change-process)
         (dated changelog entry + changeset; an ADR for major bumps — see
         [CONTRIBUTING.md](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/CONTRIBUTING.md#versioning-changesets-and-deprecations)).
 

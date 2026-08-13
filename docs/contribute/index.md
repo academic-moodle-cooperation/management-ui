@@ -17,5 +17,9 @@ Two pages, in this order:
 - [Testing](./testing.md) — the test tiers and how to run each one.
 - [CI](./ci.md) — what runs on your pull request and what makes it fail.
 - [Releases](./release.md) — how a version reaches npm, and which branch a fix targets.
+- [Adding a package or app](./extending-the-workspace.md) — the rarer case of a new top-level workspace member.
+- [Release test protocol](./test-protocol.md) and [Recording a manual test run](./manual-test-recording.md) — the pre-release walkthrough, and how to turn a run into fixtures.
+
+Deeper background, deliberately dense and meant for looking things up rather than reading through: [Architecture](../reference/architecture.md), [Contracts](../reference/contracts.md), [Configuration model](../reference/configuration.md), and the [architecture decision records](../reference/decisions/001-plugin-system.md).
 
 AI agents working in this repo follow [`AGENTS.md`](../../AGENTS.md); the community expectations are in [`CODE_OF_CONDUCT.md`](../../CODE_OF_CONDUCT.md), and vulnerabilities go through [`SECURITY.md`](../../SECURITY.md).

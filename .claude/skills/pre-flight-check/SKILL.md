@@ -34,7 +34,7 @@ contract test), and say why they're n/a.
 6. **Config slice** — the plugin declares its schema with `definePluginConfig` and reads
    only its own slice via `.use()`; it never reads another plugin's config slice.
 7. **Theme** — no hex colors, hardcoded font names, or raw spacing values in plugin code;
-   semantic tokens only (`docs/plugins/styling.md`).
+   semantic tokens only (`docs/extend/styling.md`).
 8. **Public-API change → api-check + changeset** — if any `@oc-mui/*` package's exported
    surface changed, you ran `pnpm api-check`, committed the regenerated
    `packages/*/etc/*.api.md`, **and** added a changeset (`pnpm changeset`) at the right

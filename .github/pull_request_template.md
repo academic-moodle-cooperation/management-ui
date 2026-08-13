@@ -14,11 +14,11 @@
 ## Before-merge checklist
 
 - [ ] `pnpm verify` passes locally — the canonical gate; the step list lives in [AGENTS.md → Pre-push gate](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/AGENTS.md#pre-push-gate--pnpm-verify).
-- [ ] If *any* versioned package changed (every package under `packages/*` and `plugins/*`, private ones included): a [Changeset](https://github.com/changesets/changesets) is **committed** (`pnpm changeset`). PRs touching only docs, `.github/`, or root config touch no package and need none. The authoritative rule and its only exemptions: [AGENTS.md → Versioning](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/AGENTS.md#versioning--changesets-every-versioned-package-and-public-api-changes).
+- [ ] If *any* versioned package changed (every package under `packages/*` and `plugins/*`, private ones included): a [Changeset](https://github.com/changesets/changesets) is **committed** (`pnpm changeset`). PRs touching only the top-level `docs/` tree, `.github/`, or root config touch no package and need none — but a `README.md` *inside* `packages/*` or `plugins/*` is part of that versioned package and does need one (`pnpm changeset --empty` if there is nothing to tell consumers). The authoritative rule and its only exemptions: [AGENTS.md → Versioning](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/AGENTS.md#versioning--changesets-every-versioned-package-and-public-api-changes).
 - [ ] If a `@oc-mui/*` package's public API surface changed: `pnpm api-check` regenerated, the diff in `etc/<pkg>.api.md` is intentional and committed.
 - [ ] Docs this PR makes stale are updated in the same PR.
 - [ ] [AGENTS.md](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/AGENTS.md) rules followed for any plugin work (extension points in `plugin.json`, contract test up to date, no cross-plugin or cross-app imports).
-- [ ] **Reviewer:** base branch matches the oldest affected Opencast major (`r/NN.x` for released-line fixes, `develop` for next-major work — see [Releases & versioning](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/release.md)).
+- [ ] **Reviewer:** base branch matches the oldest affected Opencast major (`r/NN.x` for released-line fixes, `develop` for next-major work — see [Releases & versioning](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/contribute/release.md)).
 
 ## Stacked / linked PRs
 

@@ -47,7 +47,7 @@ The library is split between **atomic shadcn components** (under `src/components
 
 ## Theme
 
-Components consume the semantic tokens from [`src/styles/globals.css`](./src/styles/globals.css). Org themes override the token values, not the class names. Full contract: [`docs/plugins/styling.md`](../../docs/plugins/styling.md).
+Components consume the semantic tokens from [`src/styles/globals.css`](./src/styles/globals.css). Org themes override the token values, not the class names. Full contract: [`docs/extend/styling.md`](../../docs/extend/styling.md).
 
 ## Layer
 
@@ -57,5 +57,5 @@ Deliberately **not** a dependency: `@oc-mui/router`. Router-aware components (si
 
 ## See also
 
-- [`docs/plugins/styling.md`](../../docs/plugins/styling.md) — the Theme Contract.
+- [`docs/extend/styling.md`](../../docs/extend/styling.md) — the Theme Contract.
 - [`packages/tailwind-config/README.md`](../tailwind-config/README.md) — the shared Tailwind preset.

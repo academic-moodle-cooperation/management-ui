@@ -289,7 +289,7 @@ const DefaultLandingPage: FC = () => {
 
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <PrimaryCta
-          href={`${DOCS_URL}/getting-started/what-is-management-ui`}
+          href={`${DOCS_URL}/what-is-management-ui`}
           label={t("landing.getStarted")}
         />
         <OutlineCta
@@ -343,7 +343,7 @@ const DefaultLandingPage: FC = () => {
       </p>
       <div className="mt-8 flex flex-wrap gap-3">
         <PrimaryCta
-          href={`${DOCS_URL}/getting-started/installation`}
+          href={`${DOCS_URL}/operate/install`}
           label={t("landing.getStarted")}
         />
         <OutlineCta href={`${DOCS_URL}/`} label={t("landing.operations.readDocs")} />
@@ -357,7 +357,7 @@ const DefaultLandingPage: FC = () => {
       <div className="flex flex-wrap items-center gap-1">
         <HelpLink href={`${DOCS_URL}/`} icon={BookOpen} label={t("landing.operations.links.docs")} />
         <HelpLink
-          href={`${DOCS_URL}/getting-started/configuration`}
+          href={`${DOCS_URL}/operate/configure`}
           icon={Settings}
           label={t("landing.operations.links.config")}
         />
@@ -395,7 +395,7 @@ const DefaultLandingPage: FC = () => {
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <PrimaryCta
-              href={`${DOCS_URL}/plugins/creating-a-plugin`}
+              href={`${DOCS_URL}/extend/first-plugin`}
               label={t("landing.getStarted")}
             />
             <OutlineCta

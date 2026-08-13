@@ -1,5 +1,7 @@
 # Architecture overview
 
+> **Reference — look it up, don't read it through.** This page is the whole-system map: layers, boundaries, and where code lives. Task-shaped guidance lives under [Extend](../extend/index.md) and [Contribute](../contribute/index.md).
+
 A pnpm + Turborepo monorepo with a plugin-first design. The shell is a thin runtime; everything users see comes from plugins.
 
 ## Three pillars
@@ -34,7 +36,7 @@ The shell at `apps/shell/` is the only entry point. It boots `@oc-mui/plugin-sys
 └─────────────────────────────────────────┘
 ```
 
-**The rule:** lower layers never depend on higher layers. Cross-layer breaks are caught by `eslint-plugin-boundaries` configured in [`@oc-mui/eslint-config`](../../packages/eslint-config/base.js). The layer ordering inside `package → package` is enforced by convention today — see [`operations/open-followups.md` §3.4](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/open-followups.md#34-layer-ordering-inside-package--package).
+**The rule:** lower layers never depend on higher layers. Cross-layer breaks are caught by `eslint-plugin-boundaries` configured in [`@oc-mui/eslint-config`](../../packages/eslint-config/base.js). The layer ordering inside `package → package` is enforced by convention today — see [`operations/open-followups.md` §3.4](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/reference/open-followups.md#34-layer-ordering-inside-package--package).
 
 ## Plugin boundaries
 
@@ -50,7 +52,7 @@ The shell at `apps/shell/` is the only entry point. It boots `@oc-mui/plugin-sys
 
 ## The six contracts
 
-The plugin runtime is split into six orthogonal contracts, all versioned independently. Frozen surfaces and the authoritative version numbers are listed in [`CONTRACTS.md`](./CONTRACTS.md):
+The plugin runtime is split into six orthogonal contracts, all versioned independently. Frozen surfaces and the authoritative version numbers are listed in [Contracts](./contracts.md):
 
 | Contract | Frozen at | What it specifies |
 |----------|-----------|-------------------|
@@ -70,7 +72,7 @@ The shell loads plugins in two phases to handle the chicken-and-egg of config-dr
 1. **Phase 1: load `*:config` plugins.** They register `app:config` slices that include `app.enabledPlugins`.
 2. **Phase 2: merge config and load the rest.** Merge order: `app:config:defaults` ⊕ base config ⊕ `app:config`. The merged `app.enabledPlugins` (ship filter) plus per-slice `config.plugins[id].enabled` (runtime switch) decide which remaining plugins activate.
 
-Full model: [`CONFIGURATION.md`](./CONFIGURATION.md).
+Full model: [Configuration model](./configuration.md).
 
 This is why a `.local-plugins/config/` plugin can declare `enabledPlugins: ["core", "admin", "org-a", ...]` and have org-a load even though core has never heard of it.
 
@@ -120,8 +122,8 @@ To customize an auto-generated shadcn component, copy it to `src/components/cust
 
 ## See also
 
-- [`CONTRACTS.md`](./CONTRACTS.md) — the six frozen contracts.
-- [`CONFIGURATION.md`](./CONFIGURATION.md) — the full config layer model.
+- [Contracts](./contracts.md) — the six frozen contracts.
+- [Configuration model](./configuration.md) — the full config layer model.
 - [`decisions/`](./decisions/001-plugin-system.md) — architecture decision records (ADRs).
-- [`../plugins/README.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/plugins/README.md) — the plugin-author entry point. (GitHub link — the page is deliberately excluded from the published docs site.)
+- [`../extend/index.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/extend/index.md) — the plugin-author entry point. (GitHub link — the page is deliberately excluded from the published docs site.)
 - [`../../AGENTS.md`](../../AGENTS.md) — operational rules for plugin work (the author-facing pre-flight checklist).

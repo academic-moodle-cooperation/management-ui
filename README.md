@@ -14,7 +14,7 @@ A modular, plugin-first admin interface for [Opencast](https://opencast.org). A 
 | **Build a plugin** | [Extend it](docs/extend/index.md) — your own screens in the shell, contract test green. |
 | **Contribute to this repo** | [Contribute](docs/contribute/index.md) — the dev loop, the gate, and everything to land your first PR. |
 
-Full documentation lives in [`docs/`](docs/README.md) and renders as the [docs site](https://academic-moodle-cooperation.github.io/management-ui/) (Pages deploys are currently dormant — browse `docs/` on GitHub meanwhile). Architecture tour: [`docs/architecture/overview.md`](docs/architecture/overview.md). For AI agents and tooling: [`AGENTS.md`](AGENTS.md) (operational rules) and [`llms.txt`](llms.txt).
+Full documentation lives in [`docs/`](docs/index.md) and renders as the [docs site](https://academic-moodle-cooperation.github.io/management-ui/) (Pages deploys are currently dormant — browse `docs/` on GitHub meanwhile). Architecture tour: [`docs/reference/architecture.md`](docs/reference/architecture.md). For AI agents and tooling: [`AGENTS.md`](AGENTS.md) (operational rules) and [`llms.txt`](llms.txt).
 
 ## Quick start
 
@@ -40,7 +40,7 @@ Node and pnpm versions are pinned in [`package.json`](package.json) (`engines` a
 
 ## Status
 
-Pre-1.0, in OSS-readiness phases. The six plugin contracts are frozen for the 1.x line — see [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) — and the `@oc-mui/*` packages publish to npm. Remaining work is tracked in [`docs/operations/open-followups.md`](docs/operations/open-followups.md).
+Pre-1.0, in OSS-readiness phases. The six plugin contracts are frozen for the 1.x line — see [`docs/reference/contracts.md`](docs/reference/contracts.md) — and the `@oc-mui/*` packages publish to npm. Remaining work is tracked in [`docs/reference/open-followups.md`](docs/reference/open-followups.md).
 
 ## License, security, conduct
 

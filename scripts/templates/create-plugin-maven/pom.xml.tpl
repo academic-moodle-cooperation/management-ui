@@ -23,7 +23,7 @@
 
       mvn install -DdeployTo=/path/to/opencast/home
 
-  See docs/plugins/distribution.md (Path 3 — JAR) for the full story.
+  See docs/extend/distribution.md (Path 3 — JAR) for the full story.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

@@ -2,7 +2,7 @@
 
 For plugin developers new to this project. Afterwards you'll have a plugin you can **actually see** — a page with a sidebar entry — loaded in the dev shell, with its contract test green. About five minutes.
 
-**Prerequisite:** the shell runs from source on your machine (`pnpm install`, `pnpm build`, `pnpm dev` works) — that's [Run from source](../getting-started/installation.md), one page, do it first.
+**Prerequisite:** the shell runs from source on your machine (`pnpm install`, `pnpm build`, `pnpm dev` works) — that's [Run from source](../contribute/setup.md), one page, do it first.
 
 ## 1. Scaffold with the `app` template
 
@@ -47,7 +47,7 @@ Keep the `export default` — the loader registers via `module.default`.
 pnpm --filter @oc-mui/plugin-hello build   # → dist/hello.mjs (the dev server serves this)
 ```
 
-Enable it in the **served** config — add `"hello"` to `app.enabledPlugins` in `apps/shell/public/ui/config/management-ui/config.json` — then start the shell so that file is the one served (no backend, or `VITE_LOCAL_CONFIG=true`; see [Configuration](../getting-started/configuration.md)):
+Enable it in the **served** config — add `"hello"` to `app.enabledPlugins` in `apps/shell/public/ui/config/management-ui/config.json` — then start the shell so that file is the one served (no backend, or `VITE_LOCAL_CONFIG=true`; see [Configuration](../operate/configure.md)):
 
 ```bash
 pnpm dev      # http://127.0.0.1:3000/management-ui/
@@ -57,7 +57,7 @@ A **Hello** entry appears in the sidebar, and the browser console logs `[hello] 
 
 Two things worth knowing:
 
-- **App routes are behind authentication.** Without a logged-in session, `/hello` shows the sign-in screen — even though the plugin loaded fine (the sidebar entry still shows). To see the page render, run against a backend and log in (`VITE_PROXY_TARGET=<backend-url> pnpm dev`) — or use the logged-in stub from [Run from source → Configure the backend](../getting-started/installation.md#configure-the-backend), option 3.
+- **App routes are behind authentication.** Without a logged-in session, `/hello` shows the sign-in screen — even though the plugin loaded fine (the sidebar entry still shows). To see the page render, run against a backend and log in (`VITE_PROXY_TARGET=<backend-url> pnpm dev`) — or use the logged-in stub from [Run from source → Configure the backend](../contribute/setup.md#pick-a-backend), option 3.
 - The `[hello] activated` line goes through `logger.info`, which is **dev-only** (suppressed in production builds). Don't rely on it at staging — the rendered nav entry is the durable signal.
 
 ## 4. Verify the contract

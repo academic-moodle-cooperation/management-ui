@@ -101,7 +101,7 @@ the deployment.
 You need:
 
 - A clean clone of the repo at the branch you're releasing.
-- Node ≥ 20 (the release path itself pins Node 22 — see [`release.yml`](../../.github/workflows/release.yml)), the pnpm version pinned in `package.json`'s `packageManager` field, Java 21 (for the JAR sections), Maven 3.9+.
+- Node and pnpm at the versions pinned in the root [`package.json`](../../package.json) (`engines` and `packageManager`); the release path pins its own Node major — see [`release.yml`](../../.github/workflows/release.yml). Java 21 (for the JAR sections), Maven 3.9+.
 - A staging Opencast instance you can deploy to and break without consequence. `$OPENCAST_HOME` should be writable; you should be able to inspect logs.
 - A web browser with devtools.
 
@@ -120,7 +120,7 @@ pnpm build
 export VITE_PROXY_TARGET=https://your-staging.example.org
 ```
 
-Without this, the Vite dev server will print a single "Backend not reachable" notice the first time the shell tries to fetch and then go quiet. Most of the protocol's checks won't pass; Sections 1, 8, 13, 14 are the only parts that don't need a backend. See [`docs/getting-started/installation.md` → Configure the backend](../getting-started/installation.md#configure-the-backend) for the three options (point at a real backend, run Opencast locally, or stub the four endpoints).
+Without this, the Vite dev server will print a single "Backend not reachable" notice the first time the shell tries to fetch and then go quiet. Most of the protocol's checks won't pass; Sections 1, 8, 13, 14 are the only parts that don't need a backend. See [`docs/contribute/setup.md` → Configure the backend](./setup.md#pick-a-backend) for the three options (point at a real backend, run Opencast locally, or stub the four endpoints).
 
 ## Section 1 — Workspace baseline
 
@@ -163,7 +163,7 @@ Each core plugin's route should mount, render, and react to user input. Backend 
 
 ## Section 4 — GraphQL data flow  ⏺ REC
 
-Verifies the `@oc-mui/query` layer and the GraphQL Operation Naming Contract (`Mui`-prefixed operations — see [`docs/architecture/CONTRACTS.md`](../architecture/CONTRACTS.md)).
+Verifies the `@oc-mui/query` layer and the GraphQL Operation Naming Contract (`Mui`-prefixed operations — see [`docs/reference/contracts.md`](../reference/contracts.md)).
 
 ### How to read GraphQL traffic
 
@@ -206,7 +206,7 @@ Cache defaults that these checks assume (`packages/query/src/QueryProvider.tsx`)
 
 `config.json` is the deployment-time source of truth. Verify it's actually consumed.
 
-The file the shell fetches is `apps/shell/public/ui/config/management-ui/config.json` (served at the origin-absolute path `/ui/config/management-ui/config.json`). For these checks, serve that local file by running either **without** a backend (`pnpm dev`, `VITE_PROXY_TARGET` unset) or **with** a backend plus `VITE_LOCAL_CONFIG=true` (`VITE_PROXY_TARGET=… VITE_LOCAL_CONFIG=true pnpm dev`) — the latter keeps real data/auth while letting you edit config locally. Edit the file and reload to see changes. With a backend and `VITE_LOCAL_CONFIG` unset, config is proxied to the backend and the local file is ignored; edit the backend's config instead. Restart the dev server after changing env vars. See [`docs/getting-started/configuration.md` → Where the host's config.json comes from](../getting-started/configuration.md#where-the-host-s-config-json-comes-from).
+The file the shell fetches is `apps/shell/public/ui/config/management-ui/config.json` (served at the origin-absolute path `/ui/config/management-ui/config.json`). For these checks, serve that local file by running either **without** a backend (`pnpm dev`, `VITE_PROXY_TARGET` unset) or **with** a backend plus `VITE_LOCAL_CONFIG=true` (`VITE_PROXY_TARGET=… VITE_LOCAL_CONFIG=true pnpm dev`) — the latter keeps real data/auth while letting you edit config locally. Edit the file and reload to see changes. With a backend and `VITE_LOCAL_CONFIG` unset, config is proxied to the backend and the local file is ignored; edit the backend's config instead. Restart the dev server after changing env vars. See [`docs/operate/configure.md` → Where the host's config.json comes from](../reference/configuration.md#configjson--where-it-comes-from).
 
 | # | Test | Expected |
 |---|------|----------|
@@ -230,7 +230,7 @@ The file the shell fetches is `apps/shell/public/ui/config/management-ui/config.
 
 ## Section 8 — Plugin scaffolding (`pnpm create-plugin`)
 
-The three modes documented in `docs/plugins/distribution.md`.
+The three modes documented in `docs/extend/distribution.md`.
 
 | # | Command | Expected |
 |---|---------|----------|
@@ -289,7 +289,7 @@ The mechanical safeguards we built for plugin authors.
 |---|------|----------|
 | 12.1 | Scaffold a plugin, add `query BrokenName { ... }` to its `gql\`\`` | `pnpm --filter @oc-mui/plugin-<name> lint` fails with `local/graphql-operation-naming` violation. |
 | 12.2 | Fix to `query PluginPascalNameBrokenName { ... }` | Lint passes. |
-| 12.3 | Scaffold a plugin, set `workspaceDependencies.react: "^18.0.0"` in its `plugin.json` | `checkSharedDependencyCompatibility` returns `compatible: false`, and the load-time gate rejects the plugin — the check is wired into all three loader paths (marketplace, `.local-plugins/` dev, JAR; the JAR path is a no-op until the backend's `plugins.json` carries `workspaceDependencies` — see [`open-followups.md` §5.3](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/open-followups.md)). For `.local-plugins/`: add the plugin to `app.enabledPlugins` and watch the shell skip it with a shared-dependency warning. |
+| 12.3 | Scaffold a plugin, set `workspaceDependencies.react: "^18.0.0"` in its `plugin.json` | `checkSharedDependencyCompatibility` returns `compatible: false`, and the load-time gate rejects the plugin — the check is wired into all three loader paths (marketplace, `.local-plugins/` dev, JAR; the JAR path is a no-op until the backend's `plugins.json` carries `workspaceDependencies` — see [`open-followups.md` §5.3](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/reference/open-followups.md)). For `.local-plugins/`: add the plugin to `app.enabledPlugins` and watch the shell skip it with a shared-dependency warning. |
 | 12.4 | Add a new export to `@oc-mui/plugin-system` and run `pnpm api-check:ci` | Fails — snapshot drift. After regenerating + adding a changeset, passes. |
 | 12.5 | Touch a versioned package without adding a changeset | `pnpm changeset:status --since=origin/develop` fails. |
 
@@ -312,7 +312,7 @@ Push your working branch to GitHub (any branch name works for this check).
 | 14.3 | Sidebar (per section) | All entries resolve. |
 | 14.4 | Local search | Returns hits for "createPlugin", "Mui", "JAR". |
 | 14.5 | Edit-on-GitHub footer link | Opens the source `.md` file on GitHub at the correct branch. |
-| 14.6 | Internal docs link (e.g. `[CONTRACTS.md](../architecture/CONTRACTS.md)`) | Routes correctly to `/architecture/contracts`. |
+| 14.6 | Internal docs link (e.g. `[Contracts](../reference/contracts.md)`) | Routes correctly to `/reference/contracts`. |
 | 14.7 | Source-file link (e.g. `[packages/plugin-system/](../../packages/plugin-system/)`) | Routes to the GitHub URL, opens in a new tab. |
 | 14.8 | `pnpm docs:build` | Builds without errors; `docs/.vitepress/dist/` populated. |
 | 14.9 | Run the **Deploy docs** workflow (Actions → Run workflow) | Pages site updates within ~3 min at `https://academic-moodle-cooperation.github.io/management-ui/`. |
@@ -345,7 +345,7 @@ After publishing, this protocol should run again before any **major** bump of an
 
 ## See also
 
-- [`CONTRIBUTING.md`](../../CONTRIBUTING.md) — the day-to-day dev loop.
-- [`docs/operations/ci.md`](./ci.md) — the CI graph this protocol assumes is green.
-- [`docs/operations/release.md`](./release.md) — versioning + the publish flow.
-- [`docs/operations/open-followups.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/open-followups.md) — every known deferred item; check this list as part of the release prep. (GitHub link — the page is deliberately excluded from the published docs site.)
+- [Your first pull request](./first-pr.md) — the day-to-day dev loop.
+- [`docs/contribute/ci.md`](./ci.md) — the CI graph this protocol assumes is green.
+- [`docs/contribute/release.md`](./release.md) — versioning + the publish flow.
+- [`docs/reference/open-followups.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/reference/open-followups.md) — every known deferred item; check this list as part of the release prep. (GitHub link — the page is deliberately excluded from the published docs site.)

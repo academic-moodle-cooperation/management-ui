@@ -13,7 +13,7 @@ import { listRecordings } from "./_recordings";
  * Net effect: the org-specific deployment the testers walk through by hand boots
  * locally and in CI, with its real config and real data shapes, without CI ever
  * touching that deployment. This is the tier that turns a manual pass into a
- * permanent regression test — see docs/operations/manual-test-recording.md.
+ * permanent regression test — see docs/contribute/manual-test-recording.md.
  */
 
 const recordings = listRecordings();
@@ -33,7 +33,7 @@ const IGNORED_CONSOLE = [
 test.describe("HAR replay", () => {
   // See contract.spec.ts — an empty recordings dir must skip, not fail the run.
   if (recordings.length === 0) {
-    test.skip("no recordings in tests/har-replay/recordings/ — see docs/operations/manual-test-recording.md", () => {});
+    test.skip("no recordings in tests/har-replay/recordings/ — see docs/contribute/manual-test-recording.md", () => {});
   }
 
   for (const recording of recordings) {

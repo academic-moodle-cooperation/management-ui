@@ -98,7 +98,7 @@ export const RemoteLoader = {
 
     // Plugin runtime API contract gate: refuse plugins whose declared
     // `apiVersion` does not match this host's PLUGIN_API_VERSION semantics
-    // (see docs/architecture/CONTRACTS.md and `@oc-mui/plugin-system`'s
+    // (see docs/reference/contracts.md and `@oc-mui/plugin-system`'s
     // `checkApiVersionCompatibility`). A missing `apiVersion` is treated as
     // "1.0.0" by the checker, so older registry entries continue to load.
     if (metadata?.apiVersion !== undefined) {

@@ -3,7 +3,7 @@
 The manual test protocol, captured once and replayed forever.
 
 A tester records their browser session while walking a section of
-[`docs/operations/test-protocol.md`](../../docs/operations/test-protocol.md),
+[`docs/contribute/test-protocol.md`](../../docs/contribute/test-protocol.md),
 sanitizes it, and drops the file here. From then on the run is a test.
 
 This is the only tier that sees a **real, org-specific deployment**: its
@@ -36,7 +36,7 @@ pnpm test:har-replay
 ```
 
 The full tester-facing workflow, including what else to capture alongside the
-HAR, is [`docs/operations/manual-test-recording.md`](../../docs/operations/manual-test-recording.md).
+HAR, is [`docs/contribute/manual-test-recording.md`](../../docs/contribute/manual-test-recording.md).
 
 ## What the specs assert
 

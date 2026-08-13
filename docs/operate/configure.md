@@ -40,7 +40,7 @@ Save, reload: the colours change and **Upload** disappears from the sidebar. Why
 - A `j_spring_security_*` URL — the right choice for a stock Opencast without an IdP — makes the shell render its own themed form, post the credentials, and return the user to the route they were headed for.
 - Any other URL is treated as an external IdP and redirected to **verbatim**. Encode the post-login return target inside the URL with the parameter your IdP expects (Shibboleth's `target=`, OIDC's `redirect_uri`, CAS's `service=`) — the shell appends nothing of its own, and after SSO the user lands on that target rather than the deep route they first asked for.
 
-Wiring this on a stock Opencast, including the redirect its security config performs first: [Install → Point login at your backend](./install.md#point-login-at-your-backend).
+Wiring this on a stock Opencast, including the redirect its security config performs first: [Install → Point login at your backend](./install.md#point-login-at-your-backend). Organizations that would rather not edit the bundled file at all typically ship these overrides in a small `.local-plugins/<org>-config/` plugin that registers an `app:config` overlay, which wins over `config.json` ([Configuration model → Layered merge](../reference/configuration.md#layered-merge)).
 
 ## Branding
 
@@ -53,6 +53,6 @@ All under `app.*` and applied at runtime once the config loads, so a deployment 
 
 ## Look it up
 
-- [`architecture/CONFIGURATION.md`](../architecture/CONFIGURATION.md) — the full key reference, the three-layer merge order, `enabledPlugins` vs. the per-plugin `enabled` switch, and what serves the file in each dev mode.
+- [Configuration model](../reference/configuration.md) — the full key reference, the three-layer merge order, `enabledPlugins` vs. the per-plugin `enabled` switch, and what serves the file in each dev mode.
 - [Troubleshooting](./troubleshooting.md) — a change that still does not take, and which metadata fields the backend accepts at all.
 - [Backend configuration](./backend-config.md) — the settings that live on the server rather than in this file.

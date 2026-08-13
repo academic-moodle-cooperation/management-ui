@@ -2,7 +2,7 @@
 
 Data-fetching layer. Wraps TanStack Query and `graphql-request` behind a single workspace import, exposes typed GraphQL hooks generated from `.graphql` files, and owns the `definePluginConfig` reader API.
 
-**Contract**: implements the Config Contract — see [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md#4-config-contract) and [`docs/architecture/CONFIGURATION.md`](../../docs/architecture/CONFIGURATION.md). Public API surface tracked in [`etc/query.api.md`](./etc/query.api.md).
+**Contract**: implements the Config Contract — see [`docs/reference/contracts.md`](../../docs/reference/contracts.md#4-config-contract) and [`docs/reference/configuration.md`](../../docs/reference/configuration.md). Public API surface tracked in [`etc/query.api.md`](./etc/query.api.md).
 
 ## The wrapper rule
 
@@ -88,6 +88,6 @@ Integration. Depends on `@oc-mui/plugin-system`, `@oc-mui/utils`. The Config Con
 
 ## See also
 
-- [`docs/architecture/CONFIGURATION.md`](../../docs/architecture/CONFIGURATION.md) — full Config layer model and the reader API.
-- [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md#4-config-contract) — what's frozen.
+- [`docs/reference/configuration.md`](../../docs/reference/configuration.md) — full Config layer model and the reader API.
+- [`docs/reference/contracts.md`](../../docs/reference/contracts.md#4-config-contract) — what's frozen.
 - [`etc/query.api.md`](./etc/query.api.md) — committed API surface.

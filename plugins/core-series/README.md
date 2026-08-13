@@ -24,7 +24,7 @@ const { seriesTable } = seriesConfig.use();
 
 The slice's top-level keys are `seriesInfo` (metadata field visibility), `seriesTable` (columns + `createSeries.enabled`), and `protection`.
 
-Full merge order: [`docs/architecture/CONFIGURATION.md`](../../docs/architecture/CONFIGURATION.md).
+Full merge order: [`docs/reference/configuration.md`](../../docs/reference/configuration.md).
 
 ## Development
 
@@ -35,6 +35,6 @@ pnpm --filter @oc-mui/plugin-core-series test
 
 ## See also
 
-- [`docs/plugins/creating-a-plugin.md`](../../docs/plugins/creating-a-plugin.md) — plugin-author walkthrough.
+- [`docs/extend/plugin-guide.md`](../../docs/extend/plugin-guide.md) — plugin-author walkthrough.
 - [`AGENTS.md`](../../AGENTS.md) — operational rules.
 - [`plugin.json`](./plugin.json) — manifest.

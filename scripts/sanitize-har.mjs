@@ -20,7 +20,7 @@
  *   node scripts/sanitize-har.mjs recording.har -o tests/har-replay/recordings/episodes.har
  *   node scripts/sanitize-har.mjs recording.har --dry-run
  *
- * See docs/operations/manual-test-recording.md for the tester-facing workflow.
+ * See docs/contribute/manual-test-recording.md for the tester-facing workflow.
  */
 
 import { Buffer } from "node:buffer";

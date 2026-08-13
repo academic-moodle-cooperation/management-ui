@@ -1,12 +1,14 @@
 # Open follow-ups
 
+> **Reference — look it up, don't read it through.** Deliberately excluded from the published site; it is a tracking index for contributors, read on GitHub.
+
 The single committed index of every "we know about this but we're not doing it now" item across the repo. Each entry says **what it is**, **when to revisit**, and **where the inline detail lives**.
 
 Three other tracking surfaces feed into this list — keep them all in sync if you delete or close an item:
 
-- **Per-area lists**: [`testing.md` → Follow-ups](testing.md#follow-ups) (testing-specific items).
+- **Per-area lists**: [`testing.md` → Follow-ups](../contribute/testing.md#follow-ups) (testing-specific items).
 - **Inline `TODO:` / `FIXME:` comments** in code and config files (linked from each entry below).
-- **`CONTRIBUTING.md` → Versioning** for the deprecation policy on items that need a changeset.
+- **[Releases & versioning → Deprecations](../contribute/release.md#deprecations)** for the deprecation policy on items that need a changeset.
 
 If you start work on a follow-up here, delete its entry in the PR that lands the fix; future archaeologists will find it via `git log`.
 
@@ -20,7 +22,7 @@ The directory was originally consumed by `scripts/export-plugin-to-local.js` and
 
 ### 1.2 ✅ Done — external plugin POM template
 
-Shipped in Phase 8.5.2. `pnpm create-plugin <name>` now scaffolds a `backend/pom.xml` by default (skip with `--no-pom`); the template inherits from `org.opencastproject:base:20-SNAPSHOT` and produces a deployable Opencast JAR via `mvn package`. Full how-to in [`docs/plugins/distribution.md`](../plugins/distribution.md#path-3--jar-production). The future option of publishing a dedicated `management-ui-plugin-parent` POM (Option B from the design discussion) is tracked in §1.3 below.
+Shipped in Phase 8.5.2. `pnpm create-plugin <name>` now scaffolds a `backend/pom.xml` by default (skip with `--no-pom`); the template inherits from `org.opencastproject:base:20-SNAPSHOT` and produces a deployable Opencast JAR via `mvn package`. Full how-to in [`docs/extend/distribution.md`](../extend/distribution.md#path-3--jar-production). The future option of publishing a dedicated `management-ui-plugin-parent` POM (Option B from the design discussion) is tracked in §1.3 below.
 
 ### 1.3 (Maybe) publish a `management-ui-plugin-parent` POM
 
@@ -69,7 +71,7 @@ v6 introduced object-shaped selectors (`from: { type: "app" }`, `{{from.plugin}}
 
 ### 3.4 Layer ordering inside `package → package`
 
-Today the boundaries rule allows any `package` to import from any other `package`. The intended layered dependency story (core → foundation → integration → application) per [`docs/architecture/overview.md`](../architecture/overview.md) is enforced by convention only.
+Today the boundaries rule allows any `package` to import from any other `package`. The intended layered dependency story (core → foundation → integration → application) per [`docs/reference/architecture.md`](./architecture.md) is enforced by convention only.
 
 - **When to revisit**: after Phase 6 namespace rename; mechanising this needs the same boundaries-elements infrastructure with `capture` rules to express layer order.
 - **Detail**: comment block in [`packages/eslint-config/base.js`](../../packages/eslint-config/base.js).
@@ -99,7 +101,7 @@ Three items added to the master plan after Phase 7. None has been started; all n
 
 ### 5.1 GraphQL operation naming
 
-✅ **Done.** Contract shipped in PR-5.1a, ESLint enforcement shipped in PR-5.1b, all 35 legacy operations renamed in PR-5.1c. Every `query`/`mutation`/`subscription`/`fragment` declared anywhere in the workspace now carries the right PascalCase prefix; `git grep "eslint-disable-next-line local/graphql-operation-naming"` returns zero hits in source. The full contract lives at [`architecture/CONTRACTS.md` § 6](../architecture/CONTRACTS.md#6-graphql-operation-naming).
+✅ **Done.** Contract shipped in PR-5.1a, ESLint enforcement shipped in PR-5.1b, all 35 legacy operations renamed in PR-5.1c. Every `query`/`mutation`/`subscription`/`fragment` declared anywhere in the workspace now carries the right PascalCase prefix; `git grep "eslint-disable-next-line local/graphql-operation-naming"` returns zero hits in source. The full contract lives at [Contracts § GraphQL Operation Naming](./contracts.md#6-graphql-operation-naming).
 
 ### 5.2 External plugin POM template + Maven parent
 
@@ -109,7 +111,7 @@ See [1.2](#12--done--external-plugin-pom-template) above (done) and [1.3](#13-ma
 
 **Status:** contract + check function shipped; loader-side enforcement now wired across all three paths. Only the JAR path's data source is residual (backend-owned).
 
-The Shared Runtime Dependencies contract (`@oc-mui/plugin-system`'s `SHARED_RUNTIME_MAJORS`, documented in [`architecture/CONTRACTS.md` §5](../architecture/CONTRACTS.md#5-shared-runtime-dependencies)) defines which packages the host provides and what major a plugin must declare in `workspaceDependencies`. `checkSharedDependencyCompatibility` is the single source of truth; all three loader paths now funnel through it:
+The Shared Runtime Dependencies contract (`@oc-mui/plugin-system`'s `SHARED_RUNTIME_MAJORS`, documented in [Contracts § Shared Runtime Dependencies](./contracts.md#5-shared-runtime-dependencies)) defines which packages the host provides and what major a plugin must declare in `workspaceDependencies`. `checkSharedDependencyCompatibility` is the single source of truth; all three loader paths now funnel through it:
 
 - ✅ **Marketplace** — `securityService.checkVersionCompatibility` ([`security.ts`](../../plugins/admin-marketplace/src/services/security.ts)) is now a thin adapter over the canonical function (the older exact-semver logic was removed). Both the install-time load gate (`remote-loader.ts`) and the UI compatibility badge (`useMarketplace`) now use canonical major-matching, so they can't diverge.
 - ✅ **`.local-plugins/` dev** — the dev server surfaces each plugin's `workspaceDependencies` (read from `plugin.json`) into `/local-plugins/manifest.json` ([`local-plugins-dev.ts`](../../packages/vite-config/src/plugins/local-plugins-dev.ts)); the shell gates each entry via `passesSharedDependencyGate` ([`sharedDepsGate.ts`](../../apps/shell/src/services/sharedDepsGate.ts)) in `PluginInitializer` before loading.
@@ -151,7 +153,7 @@ When the `currentUser` check failed against a 5xx/unreachable backend, [`apps/sh
 
 ## 6. Testing
 
-Self-contained in [`testing.md` → Follow-ups](testing.md#follow-ups), which owns the list and its numbering. Items there (mirrored, not authoritative):
+Self-contained in [`testing.md` → Follow-ups](../contribute/testing.md#follow-ups), which owns the list and its numbering. Items there (mirrored, not authoritative):
 
 1. E2E suites per feature — residue only (the protocol-driven specs cover the main flows; convert the remaining hand-run protocol steps).
 2. Coverage gates — extend to the apps (seven packages already enforce thresholds).
@@ -171,7 +173,7 @@ These showed up during phase work and are explicitly **not** going to be fixed i
 Each `.local-plugins/<org>/` is its own git repository (gitignored from this monorepo). Two repo-internal updates land on those repos as a consequence of work that's already merged here:
 
 - **Phase 6b namespace rename — urgent.** Every `package.json` `dependencies` / `devDependencies` entry that references `@workspace/<name>` must be rewritten to `@oc-mui/<name>`, plus every import statement. Once an org pulls Management UI past PR #130, `pnpm install` from inside their `.local-plugins/<org>/` repo will fail until they rename — the main repo no longer publishes `@workspace/*` workspace identifiers. The same rewrite the main repo took works there too: `rg --hidden -l "@workspace/" | xargs perl -pi -e 's|\@workspace/|\@oc-mui/|g'`.
-- **Phase 2b `pluginNamespace` cutover — graceful.** Older configs that still use the `pluginNamespace` key keep working only because the shell silently ignores the field; they're not surfacing as an error, but they're also not effective. Migrate at leisure to the `app.enabledPlugins` + `config.plugins[id].enabled` split documented in [`docs/architecture/CONFIGURATION.md`](../architecture/CONFIGURATION.md).
+- **Phase 2b `pluginNamespace` cutover — graceful.** Older configs that still use the `pluginNamespace` key keep working only because the shell silently ignores the field; they're not surfacing as an error, but they're also not effective. Migrate at leisure to the `app.enabledPlugins` + `config.plugins[id].enabled` split documented in [`docs/reference/configuration.md`](./configuration.md).
 
 Both updates are explicitly out of scope for the main repo — each org owns the rename in its own repo and on its own timeline.
 
@@ -189,7 +191,7 @@ PR-3a restructured `docs/` from 40 files to 20, rewrote the plugin-author and op
 
 ### 8.1 ✅ Done — workflow docs consolidated
 
-`ADDING_APPS.md` + `ADDING_PACKAGES.md` (formerly under a separate `workflows` directory in `docs/`; ~1.4k lines, with dangling links to deleted docs — `COUPLING_ANALYSIS.md`, `PACKAGE_README_TEMPLATE.md`, `AI_DEVELOPMENT_GUIDE.md` — and stale paths like `apps/management-ui-core`) were replaced by a single concise [`extending-the-workspace.md`](extending-the-workspace.md), added to the Operations sidebar and dropped from `config.mts`'s `srcExclude`. That directory is now gone.
+`ADDING_APPS.md` + `ADDING_PACKAGES.md` (formerly under a separate `workflows` directory in `docs/`; ~1.4k lines, with dangling links to deleted docs — `COUPLING_ANALYSIS.md`, `PACKAGE_README_TEMPLATE.md`, `AI_DEVELOPMENT_GUIDE.md` — and stale paths like `apps/management-ui-core`) were replaced by a single concise [`extending-the-workspace.md`](../contribute/extending-the-workspace.md), added to the Operations sidebar and dropped from `config.mts`'s `srcExclude`. That directory is now gone.
 
 ### 8.3 Going public with the docs site
 
@@ -203,7 +205,7 @@ Until the project is ready for public traffic the site stays **discouraged from 
 | 2 | `noindex` meta tag | [`docs/.vitepress/config.mts`](../../docs/.vitepress/config.mts) | Remove the `<meta name="robots" content="noindex, nofollow">` entry from the `head` array. |
 | 3 | One-time GitHub setting | Repo **Settings → Pages** | Set source to **GitHub Actions** (not "Deploy from a branch"). The workflow's `actions/deploy-pages` step errors out until this is set. |
 
-**When to revisit**: alongside the go-public flip (see [`test-protocol.md`](./test-protocol.md)'s closing section). Flip 1 and 2 together — the combo is belt-and-suspenders (robots.txt is advisory; the meta tag is what most search engines actually obey, so flipping only one leaves the other gating). Item 3 can be done earlier: with the guards in place, a manual `workflow_dispatch` deploy is safe any time — the URL exists, but search engines stay away.
+**When to revisit**: alongside the go-public flip (see [`test-protocol.md`](../contribute/test-protocol.md)'s closing section). Flip 1 and 2 together — the combo is belt-and-suspenders (robots.txt is advisory; the meta tag is what most search engines actually obey, so flipping only one leaves the other gating). Item 3 can be done earlier: with the guards in place, a manual `workflow_dispatch` deploy is safe any time — the URL exists, but search engines stay away.
 
 ### 8.4 Source-link rewriting is heuristic-based
 
@@ -222,13 +224,13 @@ This is a footgun: it looks like a docs subdirectory but isn't. The Phase 3a res
 - **Suggested form**: override `checkstyle.suppressions.file`, `checkstyle.config.location`, and `checkstyle.header.file` in the workspace `pom.xml` to point at a new location like `build-config/checkstyle/` (or `tooling/checkstyle/`). Move the files. Delete `docs/checkstyle/`. Make sure the JAR build still produces the same artifact.
 - **Detail**: the inline [`docs/checkstyle/README.md`](../../docs/checkstyle/README.md) explains what each file is and why the directory must not be touched lightly.
 
-### 8.6 Decide whether to keep `docs/operations/test-protocol.md` long-term
+### 8.6 Decide whether to keep `docs/contribute/test-protocol.md` long-term
 
 The release test protocol was shipped to gate the first 1.0 public cut. It's written generally enough to be re-run before any major release of a contract-stable package, but its real proof-of-value is the first run.
 
 After the first full pass, decide:
 
-- **Keep as-is**: re-run before every major bump of `@oc-mui/plugin-system` (or any of the API-instrumented packages — see [`release.md` → API surface drift detection](release.md#api-surface-drift-detection)). Treat it as the canonical pre-release gate.
+- **Keep as-is**: re-run before every major bump of `@oc-mui/plugin-system` (or any of the API-instrumented packages — see [`release.md` → API surface drift detection](../contribute/release.md#api-surface-drift-detection)). Treat it as the canonical pre-release gate.
 - **Generalize**: drop the "1.0-flip-specific" framing in the closing section, lift any 1.0-only items, document a leaner version that focuses on the integration surfaces (the four loading paths, the six contracts, the Maven build) without the publishing-flip walkthrough.
 - **Retire**: if the protocol's content is redundant with something else (e.g. an external QA process, or if it turns out our automated tests cover everything that mattered), delete it and rely on the automation.
 
@@ -237,7 +239,7 @@ After the first full pass, decide:
 
 ### 8.7 Versioned docs site per `r/NN.x` release line
 
-Today the site deploys one version, built from `develop`. Once more than one `r/NN.x` release line is supported in parallel (see [`release.md` → Branching model](release.md#branching-model)), an admin on an older line reads docs describing a newer product. A versioned site (one build per supported line, plus a version switcher) would fix that.
+Today the site deploys one version, built from `develop`. Once more than one `r/NN.x` release line is supported in parallel (see [`release.md` → Branching model](../contribute/release.md#branching-model)), an admin on an older line reads docs describing a newer product. A versioned site (one build per supported line, plus a version switcher) would fix that.
 
 - **When to revisit**: when a second release line exists and the docs meaningfully diverge between lines. Not before — a single-line project doesn't need the machinery.
 - **Suggested form**: build `docs/` from each supported `r/NN.x` branch into a subpath (e.g. `/19.x/`), keep the `develop` build as the default, add a version selector to the VitePress theme config.
@@ -275,7 +277,7 @@ exports (this PR).
 
   **Still open, and now deadline-bound:** curate `@oc-mui/ui`'s export surface
   (which of the 262 are SDK, which are host internals) **before** step 2 of the
-  [first-release bootstrap](./release.md#first-release-bootstrap--one-time-checklist).
+  [first-release bootstrap](../contribute/release.md#first-release-bootstrap--one-time-checklist).
   After that publish, every removal is a major bump plus a `@deprecated` cycle.
   Also still uncovered: the `./hooks`, `./lib`, `./lib/utils` and
   `./config-primitives` entry points (`etc/ui.api.md` exists but is empty —
@@ -314,7 +316,7 @@ exports (this PR).
 - **Retarget the backend to a released Opencast.** The `backend/` bundles build
   against `org.opencastproject:base:20-SNAPSHOT`, so external contributors must
   compile Opencast `r/20.x` from source before they can build or deploy them
-  (see [getting-started/local-backend.md](../getting-started/local-backend.md)).
+  (see [getting-started/local-backend.md](../contribute/local-backend.md)).
   Once the parent targets a released Opencast (≥ 17 ships the GraphQL module),
   prebuilt container images become viable for the full-stack dev setup and the
   guide gets dramatically shorter.

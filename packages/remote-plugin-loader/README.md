@@ -2,7 +2,7 @@
 
 Loads remote ES module plugins by URL: fetch, transform bare imports to `window.__SHARED_MODULES__`, import via blob URL, inject CSS, register GraphQL fragments, and register with the PluginManager.
 
-Plugin CSS is injected before the host shell stylesheets so generic plugin utilities do not accidentally override shared UI. If a plugin needs to intentionally restyle host components, follow the [Theme & styling contract](../../docs/plugins/styling.md).
+Plugin CSS is injected before the host shell stylesheets so generic plugin utilities do not accidentally override shared UI. If a plugin needs to intentionally restyle host components, follow the [Theme & styling contract](../../docs/extend/styling.md).
 
 ## Who uses it
 
@@ -33,7 +33,7 @@ Returns whether `url` is same-origin. Can be used by the core when trusting back
 
 ### `transformModuleSource(source)` / `SHARED_MODULE_NAMES`
 
-Exported for tests. Transform replaces bare imports of shared modules (react, @oc-mui/*) with references to the shim; `SHARED_MODULE_NAMES` in `src/transform.ts` is the list of those modules. For the full list of packages community plugins can import, see [docs/plugins/distribution.md](../../docs/plugins/distribution.md#available-packages-the-import-contract).
+Exported for tests. Transform replaces bare imports of shared modules (react, @oc-mui/*) with references to the shim; `SHARED_MODULE_NAMES` in `src/transform.ts` is the list of those modules. For the full list of packages community plugins can import, see [docs/extend/distribution.md](../../docs/extend/distribution.md#available-packages-the-import-contract).
 
 ## Security
 
@@ -46,7 +46,7 @@ Integration. Depends on `@oc-mui/plugin-system`, `@oc-mui/utils`.
 
 ## See also
 
-- [`docs/plugins/distribution.md`](../../docs/plugins/distribution.md) — the four distribution paths and how each uses this loader.
-- [`docs/plugins/styling.md`](../../docs/plugins/styling.md) — Theme Contract; explains the CSS load-order rule this loader enforces.
+- [`docs/extend/distribution.md`](../../docs/extend/distribution.md) — the four distribution paths and how each uses this loader.
+- [`docs/extend/styling.md`](../../docs/extend/styling.md) — Theme Contract; explains the CSS load-order rule this loader enforces.
 - [`apps/shell/src/services/jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts) — the shell's JAR-loading caller.
 - [`plugins/admin-marketplace/src/services/remote-loader.ts`](../../plugins/admin-marketplace/src/services/remote-loader.ts) — the marketplace's validating wrapper.
