@@ -21,7 +21,7 @@ test.describe("HAR contract checks", () => {
   // tests found" as a run failure. This keeps `pnpm test:har-replay` green in a
   // clone that has no recordings.
   if (recordings.length === 0) {
-    test.skip("no recordings in tests/har-replay/recordings/ — see docs/operations/manual-test-recording.md", () => {});
+    test.skip("no recordings in tests/har-replay/recordings/ — see docs/contribute/manual-test-recording.md", () => {});
   }
 
   for (const recording of recordings) {
@@ -34,7 +34,7 @@ test.describe("HAR contract checks", () => {
           .filter((name) => !name.startsWith("Mui"));
         expect(
           [...new Set(offenders)],
-          "operations must be Mui-prefixed (docs/architecture/CONTRACTS.md)",
+          "operations must be Mui-prefixed (docs/reference/contracts.md)",
         ).toEqual([]);
       });
 

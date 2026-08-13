@@ -21,7 +21,7 @@ name: Deploy docs
 # Pre-1.0 the site is blocked from search indexing through two
 # belt-and-suspenders guards: docs/public/robots.txt + a noindex meta tag in
 # docs/.vitepress/config.mts. Both flip together when going public — see
-# docs/operations/open-followups.md §8.3 for the checklist.
+# docs/reference/open-followups.md §8.3 for the checklist.
 
 on:
   workflow_dispatch:

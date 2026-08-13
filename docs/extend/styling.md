@@ -2,7 +2,7 @@
 
 For plugin developers writing UI. Afterwards you'll have styled a plugin with theme tokens instead of hardcoded colors, fonts, and spacing — so it looks native in every deployment without code changes.
 
-Reference — the token tables are for looking up, not for reading through. This is the **Theme Contract**; its current version and stability guarantees are in [`CONTRACTS.md`](../architecture/CONTRACTS.md#3-theme-contract).
+Reference — the token tables are for looking up, not for reading through. This is the **Theme Contract**; its current version and stability guarantees are in [Contracts → Theme](../reference/contracts.md#3-theme-contract).
 
 ## The one rule
 
@@ -244,7 +244,7 @@ That one line pulls in Tailwind, the `tailwindcss-animate` plugin, the design to
 
 ## See also
 
-- [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md#3-theme-contract) — stability guarantees and versioning.
+- [Contracts](../reference/contracts.md#3-theme-contract) — stability guarantees and versioning.
 - [`packages/ui/src/styles/globals.css`](../../packages/ui/src/styles/globals.css) — the source-of-truth token list.
 - [`apps/shell/public/plugins/themes/`](../../apps/shell/public/plugins/themes/) — the shipped showcase themes (worked examples of full design languages).
 - [`apps/shell/src/themes/default.css`](../../apps/shell/src/themes/default.css) — the always-loaded baseline.

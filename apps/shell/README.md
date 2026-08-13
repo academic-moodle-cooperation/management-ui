@@ -16,7 +16,7 @@ pnpm --filter shell preview      # serve the built bundle
 2. **Register built-in plugins** from `@oc-mui/plugins` (the `plugins/index.ts` barrel).
 3. **Load JAR plugins** from the backend's `/management-tool/ui/config/plugins.json` if present.
 4. **Load `.local-plugins/` (dev only)** by fetching `/local-plugins/manifest.json`.
-5. **Two-phase activation**: load `*:config` plugins first → merge config → load remaining plugins filtered by `app.enabledPlugins`. Full model in [`docs/architecture/CONFIGURATION.md`](../../docs/architecture/CONFIGURATION.md).
+5. **Two-phase activation**: load `*:config` plugins first → merge config → load remaining plugins filtered by `app.enabledPlugins`. Full model in [`docs/reference/configuration.md`](../../docs/reference/configuration.md).
 6. **Mount the router** with every route registered on `apps:definitions`.
 
 ## Layout
@@ -50,7 +50,7 @@ The Vite dev server proxies backend paths (`/admin-ng`, `/info`, `/graphql`, etc
 
 ## Configuration
 
-The shell reads `public/config.json` at boot. Production deployments mount their own `config.json` over the bundled default. Plugin slices live under `config.plugins[id]`. Full layer model: [`docs/architecture/CONFIGURATION.md`](../../docs/architecture/CONFIGURATION.md).
+The shell reads `public/config.json` at boot. Production deployments mount their own `config.json` over the bundled default. Plugin slices live under `config.plugins[id]`. Full layer model: [`docs/reference/configuration.md`](../../docs/reference/configuration.md).
 
 ## What it isn't
 
@@ -60,7 +60,7 @@ The shell reads `public/config.json` at boot. Production deployments mount their
 
 ## See also
 
-- [`docs/architecture/overview.md`](../../docs/architecture/overview.md) — three pillars.
-- [`docs/architecture/decisions/003-shell-plus-core-plugins.md`](../../docs/architecture/decisions/003-shell-plus-core-plugins.md) — why one shell instead of multiple top-level apps.
-- [`docs/plugins/distribution.md`](../../docs/plugins/distribution.md) — the four ways plugins reach the shell.
+- [`docs/reference/architecture.md`](../../docs/reference/architecture.md) — three pillars.
+- [`docs/reference/decisions/003-shell-plus-core-plugins.md`](../../docs/reference/decisions/003-shell-plus-core-plugins.md) — why one shell instead of multiple top-level apps.
+- [`docs/extend/distribution.md`](../../docs/extend/distribution.md) — the four ways plugins reach the shell.
 - [`packages/providers/`](../../packages/providers/) — the provider hierarchy this app mounts.

@@ -1,5 +1,7 @@
 # Configuration
 
+> **Reference — look it up, don't read it through.** This page is the complete configuration model, consulted a section at a time. Task-shaped guidance lives under [Extend](../extend/index.md) and [Contribute](../contribute/index.md).
+
 **Status:** Canonical. Supersedes the deleted `docs/CONFIG_ORDER.md` and
 `docs/CONFIG_GENERATION.md`.
 **Last updated:** 2026-08-12.
@@ -7,7 +9,7 @@
 stable for the 1.x host. Plugin-side slice shapes are owned by each
 plugin; see that plugin's `src/config.ts` for the Zod schema it commits
 to. The Config Contract in
-[`CONTRACTS.md`](./CONTRACTS.md#4-config-contract) lists what the core
+[Contracts](./contracts.md#4-config-contract) lists what the core
 guarantees.
 
 This document is the single source of truth for how configuration flows
@@ -63,12 +65,35 @@ interface AppConfig {
 > **Pruned in the OSS cleanup (pre-1.0):** `app.title`, `app.appTitle`,
 > `app.version`, `app.organizationUrls`, `auth.tokenRefreshUrl`, and
 > `api.timeout` were removed — none had any reader in the codebase. They
-> were never part of the [Config Contract](./CONTRACTS.md#4-config-contract)
+> were never part of the [Config Contract](./contracts.md#4-config-contract)
 > (which freezes only `app.theme`, `app.locale`, `app.enabledPlugins`,
 > `config.plugins[id]`, and the merge order/reader), so this is not a
 > contract break. A deployment `config.json` may still carry them — the
 > `[key: string]: unknown` index keeps them from failing validation; they
 > just aren't read.
+
+### What the top-level keys mean
+
+| Key | What it does |
+| --- | --- |
+| `productionConfigUrl` | Where the shell fetches `config.json` from. Default `/ui/config/management-ui/config.json`. Read from the **baked-in** `defaultConfig`, *not* from the fetched file — so a deployment cannot relocate its own config path via `config.json`. |
+| `productionAppPluginUrl` | Where the shell fetches the deployed-plugin manifest (`plugins.json`). |
+| `downloadBaseUrl` | Optional base URL for media downloads. |
+| `matomo` | Matomo analytics settings (`enabled: false` by default). |
+| `api` | API endpoints: `baseUrl`, `graphqlEndpoint`. |
+| `app.*` | Shell settings: `theme`, `locale`, the `enabledPlugins` ship filter, and the branding keys `HtmlDocumentTitle`, `logoUrl`, `orgLogoUrl`, `faviconUrl`. |
+| `auth.*` | Where the shell sends users to log in / out — see below. |
+| `plugins[id]` | A per-plugin slice, owned by that plugin. |
+
+`auth.loginUrl` / `auth.logoutUrl` apply in production; `auth.loginUrlDev` /
+`auth.logoutUrlDev` are optional overrides used when running `pnpm dev`, and
+**fall back to `loginUrl` / `logoutUrl` when unset**. The shipped defaults are
+`/Shibboleth.sso/Login?target=/management-ui/` and
+`/Shibboleth.sso/Logout?return=/management-ui/`. A `j_spring_security_*` URL
+makes the shell render its own themed form and POST the credentials to
+`/j_spring_security_check`; any other URL is redirected to verbatim. The
+admin-facing version of this, with the Opencast-side wiring, is
+[Configure → Login](../operate/configure.md#login).
 
 The core knows **nothing** about individual plugin slices. Each plugin
 owns the shape of `config.plugins[<id>]` and exposes a typed reader via
@@ -275,6 +300,10 @@ How it's served depends on context:
 | `VITE_PROXY_TARGET=… pnpm dev` | The config path is proxied to that backend; its real `config.json` wins and the local file is ignored. |
 | `VITE_PROXY_TARGET=… VITE_LOCAL_CONFIG=true pnpm dev` | `localConfigDevPlugin` serves the committed file for **config only**; all other endpoints (GraphQL, auth, …) still proxy to the backend. Override config locally against live data. `forceLocalConfig` (driven by `VITE_LOCAL_CONFIG`) tells `createProxyConfig` to skip proxying the config path. |
 
+> `VITE_LOCAL_CONFIG` only affects the config path; all other endpoints follow
+> `VITE_PROXY_TARGET`. **Restart the dev server after changing either** — the
+> environment is read once at startup.
+
 There is no build-time merge. The old `generateConfigPlugin`
 and `PLUGIN_CONFIGS` array were removed in Phase 2b Commit 1.
 Deployments produce a single `config.json` by hand or via CI (merging
@@ -324,7 +353,7 @@ repository that hosts them, not here.
 
 ## See also
 
-- [`CONTRACTS.md §4 Config Contract`](./CONTRACTS.md#4-config-contract)
+- [Contracts § Config Contract](./contracts.md#4-config-contract)
   — what the core promises to keep stable.
 - [`ADR-003 Shell + Core Plugins`](./decisions/003-shell-plus-core-plugins.md)
   — why the shell stays plugin-agnostic at the type level.

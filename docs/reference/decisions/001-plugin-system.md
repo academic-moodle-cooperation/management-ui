@@ -1,5 +1,7 @@
 # ADR-001: Plugin System Architecture
 
+> **Reference — an architecture decision record.** A dated record of why a choice was made; it is not kept in sync with the code. What the code does *today* is [Architecture](../architecture.md) and [Contracts](../contracts.md).
+
 **Status:** Accepted  
 **Date:** 2025-11-12  
 **Deciders:** Architecture Team
@@ -250,7 +252,7 @@ Convention: `category:specific-point`
 ## References
 
 - [Plugin System Documentation](../../../packages/plugin-system/README.md)
-- [Creating a plugin](../../plugins/creating-a-plugin.md)
+- [Creating a plugin](../../extend/plugin-guide.md)
 - [Example plugin](../../../plugins/example/)
 
 ## Evolution (2026-04)
@@ -260,8 +262,8 @@ The plugin architecture was refined based on production experience:
 - **Multi-entry JARs:** One deployed JAR can now expose multiple frontend modules (e.g., sidebar + footer + app), each independently listed as its own `plugins.json` entry so the shell can pick the subset a deployment wants.
 - **Unified loading:** Dev (`.local-plugins` manifest) and prod (JAR `plugins.json`) now use the same two-phase loading flow: config plugins first, then remaining plugins filtered by merged config.
 - **Canonical manifest:** `plugin.json` (schema at `packages/plugin-system/src/schemas/plugin.schema.json`) is the source of truth for plugin metadata, replacing ad-hoc filename conventions.
-- **Styling contract:** Plugins must use semantic CSS tokens from the shared design system. Hardcoded colors are forbidden. See [`docs/plugins/styling.md`](../../plugins/styling.md).
-- **Activation granularity:** Two orthogonal switches (Phase 2b, Commit 5). `config.app.enabledPlugins: string[]` is the flat ship filter — only those namespaces are allowed to load at all. `config.plugins[<id>].enabled?: boolean` is the per-slice runtime switch — set it to `false` to deactivate a single plugin without touching the namespace list. Full model in [`CONFIGURATION.md`](../CONFIGURATION.md).
+- **Styling contract:** Plugins must use semantic CSS tokens from the shared design system. Hardcoded colors are forbidden. See [`docs/extend/styling.md`](../../extend/styling.md).
+- **Activation granularity:** Two orthogonal switches (Phase 2b, Commit 5). `config.app.enabledPlugins: string[]` is the flat ship filter — only those namespaces are allowed to load at all. `config.plugins[<id>].enabled?: boolean` is the per-slice runtime switch — set it to `false` to deactivate a single plugin without touching the namespace list. Full model in [Configuration model](../configuration.md).
 
 These changes maintain backward compatibility with existing plugins while enabling finer-grained control and a clearer contract for external plugin authors.
 

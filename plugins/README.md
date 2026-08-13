@@ -14,7 +14,7 @@ plugins/
 └── index.ts               Exports the bundled plugins consumed by the shell
 ```
 
-See [ADR-003](../docs/architecture/decisions/003-shell-plus-core-plugins.md) for why feature code lives here instead of under `apps/`.
+See [ADR-003](../docs/reference/decisions/003-shell-plus-core-plugins.md) for why feature code lives here instead of under `apps/`.
 
 ## In-tree vs `.local-plugins/`
 
@@ -23,7 +23,7 @@ See [ADR-003](../docs/architecture/decisions/003-shell-plus-core-plugins.md) for
 | `plugins/<name>/` | Built-in plugins shipped with this repo. Bundled into `@oc-mui/plugins`, statically loaded at startup. |
 | `.local-plugins/<name>/` | Org or community plugins. Gitignored. Loaded at dev time through `/local-plugins/manifest.json`. Each is its own git repo. |
 
-Full path map: [`docs/plugins/distribution.md`](../docs/plugins/distribution.md).
+Full path map: [`docs/extend/distribution.md`](../docs/extend/distribution.md).
 
 ## Scaffolding
 
@@ -47,6 +47,6 @@ The shipped theme CSS files live in [`apps/shell/public/plugins/themes/`](../app
 
 ## See also
 
-- [`docs/plugins/creating-a-plugin.md`](../docs/plugins/creating-a-plugin.md) — full walkthrough.
-- [`docs/plugins/distribution.md`](../docs/plugins/distribution.md) — in-tree / `.local-plugins/` / JAR / CDN.
+- [`docs/extend/plugin-guide.md`](../docs/extend/plugin-guide.md) — full walkthrough.
+- [`docs/extend/distribution.md`](../docs/extend/distribution.md) — in-tree / `.local-plugins/` / JAR / CDN.
 - [`AGENTS.md`](../AGENTS.md) — operational pre-flight checklist.

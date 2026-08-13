@@ -27,7 +27,7 @@ The shell comes up at **<http://127.0.0.1:3000/management-ui/>**. Vite hot-reloa
 The shell needs a backend at boot for `config.json`, `plugins.json`, `/info/me.json`, and `/graphql`. The dev server proxies those paths to `http://localhost:8080` unless you override the target ([`packages/vite-config/src/proxy.ts`](../../packages/vite-config/src/proxy.ts) lists them). With nothing listening, the browser sees 502s and the terminal prints one friendly notice, then goes quiet.
 
 - **An Opencast you already run** — the [Quickstart](../quickstart.md) has that command line and what each variable does.
-- **A full local stack** — Opencast, the GraphQL plugin, the Management UI backend bundles, OpenSearch: [Full local setup](../getting-started/local-backend.md).
+- **A full local stack** — Opencast, the GraphQL plugin, the Management UI backend bundles, OpenSearch: [Full local setup](./local-backend.md).
 
 ### No backend at all
 
@@ -57,4 +57,4 @@ Any `userRole` other than `ROLE_USER_ANONYMOUS` counts as authenticated. App rou
 - **Vite can't resolve `@oc-mui/…`.** `pnpm build` never ran; see above.
 - **CI is green, your machine isn't.** `pnpm clean` (drops build output, caches, and `node_modules` across the workspace), then `pnpm install`, then `pnpm verify`.
 
-Next: [Your first pull request](./first-pr.md) — the loop from a change to an open PR. Mounting an org plugin under `.local-plugins/` instead: [Distribution](../plugins/distribution.md).
+Next: [Your first pull request](./first-pr.md) — the loop from a change to an open PR. Mounting an org plugin under `.local-plugins/` instead: [Distribution](../extend/distribution.md).

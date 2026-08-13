@@ -2,7 +2,7 @@
 
 For Opencast admins facing a deployment that misbehaves. Afterwards you'll have matched the symptom to its cause and its fix.
 
-This is a lookup page, not a walkthrough — find your symptom, apply the fix. Symptoms while *building* Opencast itself belong to [Full local setup](../getting-started/local-backend.md#troubleshooting); everything below is about a deployed Management UI.
+This is a lookup page, not a walkthrough — find your symptom, apply the fix. Symptoms while *building* Opencast itself belong to [Full local setup](../contribute/local-backend.md#troubleshooting); everything below is about a deployed Management UI.
 
 ## The UI does not load, or loads empty
 
@@ -25,7 +25,7 @@ This is a lookup page, not a walkthrough — find your symptom, apply the fix. S
 | Symptom | Cause and fix |
 |---|---|
 | A `config.json` edit looks ignored | Most likely the silent fallback: an invalid plugin slice reverts *wholesale* to that plugin's defaults and only logs `plugin:<id> config validation failed; falling back to defaults` to the browser console ([Configure](./configure.md#when-a-change-does-not-take)) |
-| A `config.json` edit looks ignored **and the console is clean** | Most often you simply never triggered the check. Validation runs inside the React hook that reads the slice, so it fires when a component using that slice mounts — not on reload. Navigate to the screen the slice belongs to (`episodes` → the Videos screen) with the console open, then judge. Only after that consider the other two causes: a cached `config.json`, or an organization config plugin's overlay winning over the file ([`architecture/CONFIGURATION.md`](../architecture/CONFIGURATION.md#layered-merge)) |
+| A `config.json` edit looks ignored **and the console is clean** | Most often you simply never triggered the check. Validation runs inside the React hook that reads the slice, so it fires when a component using that slice mounts — not on reload. Navigate to the screen the slice belongs to (`episodes` → the Videos screen) with the console open, then judge. Only after that consider the other two causes: a cached `config.json`, or an organization config plugin's overlay winning over the file ([Configuration model](../reference/configuration.md#layered-merge)) |
 | A feature disappeared after a re-deploy | `-DdeployTo` replaced your edited `config.json` with the shipped default ([Install](./install.md#build-and-deploy)). Restore your backup |
 | You re-deployed, the build said `BUILD SUCCESS`, and nothing about the deployment changed | Nothing arrived: the deploy copy is non-fatal, so a mistyped `-DdeployTo` path succeeds and creates that directory tree instead. `ls "$OPENCAST_HOME"/deploy/management-ui-*.jar` and compare the timestamps |
 | An `org.opencastproject.mui` change had no effect | The file name must match the PID exactly — `etc/org.opencastproject.mui.cfg`. A typo creates a second, unread configuration instead of an error ([Backend configuration](./backend-config.md#applying-a-change)) |

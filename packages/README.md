@@ -2,7 +2,7 @@
 
 Shared infrastructure for the Management UI. Apps and plugins consume these — never the other way around.
 
-The dependency layers are documented in [`docs/architecture/overview.md`](../docs/architecture/overview.md#package-layers). The rule: lower layers never depend on higher layers. The [`@oc-mui/eslint-config`](./eslint-config/) boundaries rule enforces it mechanically.
+The dependency layers are documented in [`docs/reference/architecture.md`](../docs/reference/architecture.md#package-layers). The rule: lower layers never depend on higher layers. The [`@oc-mui/eslint-config`](./eslint-config/) boundaries rule enforces it mechanically.
 
 ## Catalog
 
@@ -35,7 +35,7 @@ The dependency layers are documented in [`docs/architecture/overview.md`](../doc
 | [`@oc-mui/remote-plugin-loader`](./remote-plugin-loader/) | Loads `.mjs` plugins by URL — used by JAR loader and marketplace. | — |
 | [`@oc-mui/plugin-testing`](./plugin-testing/) | Contract-test harness. | Test-only |
 
-Contract names refer to the frozen surfaces in [`docs/architecture/CONTRACTS.md`](../docs/architecture/CONTRACTS.md) — current version numbers live there, not here. "api-checked" means the package's public surface is snapshotted in `etc/<pkg>.api.md` and drift-checked by `pnpm api-check`.
+Contract names refer to the frozen surfaces in [`docs/reference/contracts.md`](../docs/reference/contracts.md) — current version numbers live there, not here. "api-checked" means the package's public surface is snapshotted in `etc/<pkg>.api.md` and drift-checked by `pnpm api-check`.
 
 ### Application (compose everything below)
 
@@ -51,10 +51,10 @@ Contract names refer to the frozen surfaces in [`docs/architecture/CONTRACTS.md`
 3. Define a strict `exports` field — that's your public API surface.
 4. Write a README in the consistent shape (see any of the catalog entries above).
 5. Add it to the catalog here.
-6. If it crosses a contract boundary, add it to `api-check` (commit `etc/<pkg>.api.md`) and update [`docs/architecture/CONTRACTS.md`](../docs/architecture/CONTRACTS.md).
+6. If it crosses a contract boundary, add it to `api-check` (commit `etc/<pkg>.api.md`) and update [`docs/reference/contracts.md`](../docs/reference/contracts.md).
 
 ## See also
 
-- [`docs/architecture/overview.md`](../docs/architecture/overview.md) — the layer model.
-- [`docs/architecture/CONTRACTS.md`](../docs/architecture/CONTRACTS.md) — frozen surfaces.
-- [`docs/operations/release.md`](../docs/operations/release.md) — versioning and changesets.
+- [`docs/reference/architecture.md`](../docs/reference/architecture.md) — the layer model.
+- [`docs/reference/contracts.md`](../docs/reference/contracts.md) — frozen surfaces.
+- [`docs/contribute/release.md`](../docs/contribute/release.md) — versioning and changesets.

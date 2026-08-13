@@ -132,7 +132,7 @@ not zero.
 
 ## See also
 
-- [`docs/operations/test-protocol.md`](./test-protocol.md) — the protocol itself.
-- [`docs/operations/testing.md`](./testing.md) — the test pyramid these artifacts feed.
+- [`docs/contribute/test-protocol.md`](./test-protocol.md) — the protocol itself.
+- [`docs/contribute/testing.md`](./testing.md) — the test pyramid these artifacts feed.
 - [`tests/har-replay/README.md`](../../tests/har-replay/README.md) — the replay tier.
 - [`tests/org-plugin/README.md`](../../tests/org-plugin/README.md) — org-plugin coverage.

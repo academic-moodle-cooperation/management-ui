@@ -2,7 +2,7 @@
 
 The runtime every plugin runs on. Provides `createPlugin()`, the `PluginManager`, extension-point resolution, and the React context that exposes them to components.
 
-**Contract**: this package implements the Manifest and Runtime API contracts — current versions and freeze guarantees live in [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md). API surface is mechanically tracked in [`etc/plugin-system.api.md`](./etc/plugin-system.api.md).
+**Contract**: this package implements the Manifest and Runtime API contracts — current versions and freeze guarantees live in [`docs/reference/contracts.md`](../../docs/reference/contracts.md). API surface is mechanically tracked in [`etc/plugin-system.api.md`](./etc/plugin-system.api.md).
 
 ## Usage
 
@@ -28,7 +28,7 @@ export const myPlugin = createPlugin({
 });
 ```
 
-The full plugin-authoring walkthrough lives at [`docs/plugins/creating-a-plugin.md`](../../docs/plugins/creating-a-plugin.md).
+The full plugin-authoring walkthrough lives at [`docs/extend/plugin-guide.md`](../../docs/extend/plugin-guide.md).
 
 ## API
 
@@ -66,7 +66,7 @@ Foundation. Depends only on `@oc-mui/utils` and React. Higher-layer packages (`@
 
 ## See also
 
-- [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md) — Manifest and Runtime API contract guarantees.
-- [`docs/plugins/creating-a-plugin.md`](../../docs/plugins/creating-a-plugin.md) — plugin-author walkthrough.
+- [`docs/reference/contracts.md`](../../docs/reference/contracts.md) — Manifest and Runtime API contract guarantees.
+- [`docs/extend/plugin-guide.md`](../../docs/extend/plugin-guide.md) — plugin-author walkthrough.
 - [`AGENTS.md`](../../AGENTS.md) — operational rules for plugin work.
 - [`packages/plugin-testing/README.md`](../plugin-testing/README.md) — test harness built on top of this runtime.

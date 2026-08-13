@@ -30,7 +30,7 @@ export default {
 
 ## What's in the preset
 
-- **CSS-variable colour system** (`shadcn-plugin.ts`) — every colour class resolves to `hsl(var(--token))`. Org themes override the values in `:root`; the class names stay the same. Full token catalog: [`docs/plugins/styling.md`](../../docs/plugins/styling.md).
+- **CSS-variable colour system** (`shadcn-plugin.ts`) — every colour class resolves to `hsl(var(--token))`. Org themes override the values in `:root`; the class names stay the same. Full token catalog: [`docs/extend/styling.md`](../../docs/extend/styling.md).
 - **`darkMode: "class"`** and **animations** — `tailwindcss-animate` plus the `bouncing-loader` keyframe used by `@oc-mui/ui`'s loaders (`shadcn-preset.ts`).
 - **Container utilities** — centred, `2rem` padding, `2xl` breakpoint at 1400 px (`shadcn-plugin.ts`).
 
@@ -40,5 +40,5 @@ Core infrastructure. Depends only on `tailwindcss` and `tailwindcss-animate`.
 
 ## See also
 
-- [`docs/plugins/styling.md`](../../docs/plugins/styling.md) — Theme Contract, full token list, and the rules plugins must follow.
+- [`docs/extend/styling.md`](../../docs/extend/styling.md) — Theme Contract, full token list, and the rules plugins must follow.
 - [`packages/ui/src/styles/globals.css`](../ui/src/styles/globals.css) — the CSS-first pipeline that defines the token values in-tree.

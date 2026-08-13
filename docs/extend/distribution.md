@@ -212,7 +212,7 @@ The aggregated list is served at `GET /management-tool/ui/config/plugins.json`, 
 
 A single JAR can ship multiple `.mjs` entry modules (one folder, many bundles). Declare them in `plugin.json`'s `modules` array; the tracker will emit one entry per module.
 
-See [`architecture/CONFIGURATION.md`](../architecture/CONFIGURATION.md) for the full filtering model.
+See [Configuration model](../reference/configuration.md) for the full filtering model.
 
 ### What the POM does (and doesn't)
 
@@ -227,7 +227,7 @@ The POM:
 
 The POM does **not**:
 
-- Bundle React, `@oc-mui/*`, `lucide-react`, or any other shared runtime dep into the JAR. Those are provided by the host shell. See [`architecture/CONTRACTS.md` § 5](../architecture/CONTRACTS.md#5-shared-runtime-dependencies).
+- Bundle React, `@oc-mui/*`, `lucide-react`, or any other shared runtime dep into the JAR. Those are provided by the host shell. See [Contracts § Shared Runtime Dependencies](../reference/contracts.md#5-shared-runtime-dependencies).
 - Publish the plugin to a Maven repository. If you want a public Maven artifact, add `distributionManagement` and run `mvn deploy` yourself.
 
 ## Path 4 — CDN / community registry
@@ -298,7 +298,7 @@ CDN-served plugins need permissive CORS on the `.mjs` (and `.css`). jsDelivr doe
 ## See also
 
 - [Building a plugin](./plugin-guide.md) — the upstream of all four paths.
-- [`architecture/CONFIGURATION.md`](../architecture/CONFIGURATION.md) — `enabledPlugins` filtering and the layered config model.
+- [Configuration model](../reference/configuration.md) — `enabledPlugins` filtering and the layered config model.
 - [`packages/remote-plugin-loader/README.md`](../../packages/remote-plugin-loader/README.md) — the loader's public API.
 - [`apps/shell/src/services/jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts) — JAR loading source.
 - [`packages/vite-config/src/plugins/local-plugins-dev.ts`](../../packages/vite-config/src/plugins/local-plugins-dev.ts) — `.local-plugins/` dev mount.

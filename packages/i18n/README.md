@@ -64,6 +64,6 @@ Foundation. Depends on nothing in the workspace.
 
 ## See also
 
-- [`docs/plugins/i18n.md`](../../docs/plugins/i18n.md) — plugin-author guide.
+- [`docs/extend/i18n.md`](../../docs/extend/i18n.md) — plugin-author guide.
 - [`packages/plugin-testing/README.md`](../plugin-testing/README.md) — `expectI18nKeyParity` test assertion.
 - [`etc/i18n.api.md`](./etc/i18n.api.md) — committed API surface.

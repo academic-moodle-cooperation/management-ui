@@ -1,6 +1,6 @@
 # `apps/`
 
-This directory contains the **deployable Vite applications** of the project. Since Phase 3 of the open-source cleanup (see [ADR-003](../docs/architecture/decisions/003-shell-plus-core-plugins.md)) there are only two, and both have a single, clearly scoped job:
+This directory contains the **deployable Vite applications** of the project. Since Phase 3 of the open-source cleanup (see [ADR-003](../docs/reference/decisions/003-shell-plus-core-plugins.md)) there are only two, and both have a single, clearly scoped job:
 
 | Directory          | Purpose                                                        | Port | Ships in prod? |
 | ------------------ | -------------------------------------------------------------- | ---- | -------------- |
@@ -39,6 +39,6 @@ Almost everything new should be a **plugin**, not an app. Only create a new dire
 
 ## See also
 
-- [`docs/architecture/overview.md`](../docs/architecture/overview.md) — three-pillar architecture.
-- [`docs/architecture/decisions/003-shell-plus-core-plugins.md`](../docs/architecture/decisions/003-shell-plus-core-plugins.md) — the ADR that collapsed `apps/` to two entries.
+- [`docs/reference/architecture.md`](../docs/reference/architecture.md) — three-pillar architecture.
+- [`docs/reference/decisions/003-shell-plus-core-plugins.md`](../docs/reference/decisions/003-shell-plus-core-plugins.md) — the ADR that collapsed `apps/` to two entries.
 - [`plugins/README.md`](../plugins/README.md) — where feature code lives now.

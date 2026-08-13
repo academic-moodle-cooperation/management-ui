@@ -16,7 +16,7 @@ ls "$OPENCAST_HOME"/deploy/management-ui-*.jar
 
 Released artifacts carry the **product version** in the name: the `r/20.x` line's `VERSION` is `20.0.0`, so its bundles are `management-ui-core-20.0.0.jar` and its two siblings. A build from an unreleased checkout carries Maven's snapshot version (`1.0-SNAPSHOT`) instead — every JAR on such a server reads `1.0-SNAPSHOT` no matter which commit it came from, so the filenames stop being an answer and the footer is the only one left.
 
-The product version's major is pinned to the Opencast major it targets, and each release line is maintained on its own `r/NN.x` branch. Upgrading inside a line means following that line's newest tag; moving to a new Opencast major means switching lines and rebuilding the bundles, because a bundle built for one major refuses to start on another. The model — lines, the `VERSION` file, tags, forward merges — is [Releases & versioning → Release lines and the product version](../operations/release.md#release-lines-and-the-product-version).
+The product version's major is pinned to the Opencast major it targets, and each release line is maintained on its own `r/NN.x` branch. Upgrading inside a line means following that line's newest tag; moving to a new Opencast major means switching lines and rebuilding the bundles, because a bundle built for one major refuses to start on another. The model — lines, the `VERSION` file, tags, forward merges — is [Releases & versioning → Release lines and the product version](../contribute/release.md#release-lines-and-the-product-version).
 
 ## The upgrade
 
@@ -31,7 +31,7 @@ The product version's major is pinned to the Opencast major it targets, and each
 Two extra steps, both easy to miss:
 
 - **Remove *all* old `management-ui-*.jar` bundles**, not just the three named above. The per-feature bundles (episodes, series, upload, test) no longer exist separately — those plugins now ship inside `management-ui-core`, so anything left over is a stale bundle.
-- **Rewrite `config.json` against today's shape.** The legacy keys listed in [`architecture/CONFIGURATION.md` → Migration notes](../architecture/CONFIGURATION.md#for-deployments-that-still-use-legacy-keys) are simply not read anymore — no error, no warning, just no effect. [Configure](./configure.md) shows what a current file looks like.
+- **Rewrite `config.json` against today's shape.** The legacy keys listed in [Configuration model → Migration notes](../reference/configuration.md#for-deployments-that-still-use-legacy-keys) are simply not read anymore — no error, no warning, just no effect. [Configure](./configure.md) shows what a current file looks like.
 
 ## Rolling back
 
@@ -39,4 +39,4 @@ Put the previous JARs back into `$OPENCAST_HOME/deploy/` and restore the backed-
 
 ## Organization plugins
 
-If the new host raised the plugin runtime API's major version, plugins compiled against the old one refuse to load and say so (`"Plugin requires API major X, host provides Y"`). Rebuild them against the new host before or right after the upgrade; the compatibility rules are in [`architecture/CONTRACTS.md`](../architecture/CONTRACTS.md#2-plugin-runtime-api-contract).
+If the new host raised the plugin runtime API's major version, plugins compiled against the old one refuse to load and say so (`"Plugin requires API major X, host provides Y"`). Rebuild them against the new host before or right after the upgrade; the compatibility rules are in [Contracts](../reference/contracts.md#2-plugin-runtime-api-contract).

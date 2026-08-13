@@ -44,7 +44,7 @@ playwright/.auth/
 
 # Manual-test recordings, org-plugin baselines and the imported org protocol:
 # the machinery is tracked, the org-specific data is not.
-# See docs/operations/manual-test-recording.md.
+# See docs/contribute/manual-test-recording.md.
 tests/har-replay/recordings/*.har
 tests/org-plugin/__screenshots__/
 # Everything the protocol import produces is org content — only the machinery's

@@ -23,7 +23,7 @@ const { episodesTable } = episodesConfig.use();
 
 The slice's top-level keys are `episodeInfo` (metadata field visibility), `episodesTable` (columns + list/gallery views), and `protection`.
 
-The full merge order (`app:config:defaults` ⊕ base ⊕ `app:config`) lives in [`docs/architecture/CONFIGURATION.md`](../../docs/architecture/CONFIGURATION.md).
+The full merge order (`app:config:defaults` ⊕ base ⊕ `app:config`) lives in [`docs/reference/configuration.md`](../../docs/reference/configuration.md).
 
 ## Development
 
@@ -36,6 +36,6 @@ The contract test at [`src/plugin.contract.test.ts`](./src/plugin.contract.test.
 
 ## See also
 
-- [`docs/plugins/creating-a-plugin.md`](../../docs/plugins/creating-a-plugin.md) — plugin-author walkthrough.
+- [`docs/extend/plugin-guide.md`](../../docs/extend/plugin-guide.md) — plugin-author walkthrough.
 - [`AGENTS.md`](../../AGENTS.md) — operational rules.
 - [`plugin.json`](./plugin.json) — manifest.

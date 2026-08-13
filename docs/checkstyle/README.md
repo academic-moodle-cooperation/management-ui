@@ -26,4 +26,4 @@ The Opencast parent POM (`org.opencastproject:base`) declares the checkstyle plu
 
 ## Future direction
 
-A cleaner long-term answer would be to override `checkstyle.suppressions.file` and friends in the workspace `pom.xml` to point at a folder under, say, `build-config/` — but that's a Maven-side change that needs coordination with the Opencast upstream. Tracked in [`docs/operations/open-followups.md`](../operations/open-followups.md).
+A cleaner long-term answer would be to override `checkstyle.suppressions.file` and friends in the workspace `pom.xml` to point at a folder under, say, `build-config/` — but that's a Maven-side change that needs coordination with the Opencast upstream. Tracked in [`docs/reference/open-followups.md`](../reference/open-followups.md).

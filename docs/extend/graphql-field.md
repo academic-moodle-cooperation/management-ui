@@ -2,7 +2,7 @@
 
 For developers who need data the API does not expose yet. Afterwards you'll have a new field available end to end, from the Java type through the generated client to the mocked test tier.
 
-The chain has eight steps, and skipping any of the last three breaks something quietly. You need a local Opencast with the backend bundles deployed — [Full local setup](../getting-started/local-backend.md).
+The chain has eight steps, and skipping any of the last three breaks something quietly. You need a local Opencast with the backend bundles deployed — [Full local setup](../contribute/local-backend.md).
 
 ## 1. Extend the type in Java
 
@@ -62,7 +62,7 @@ HTTP 200 with a bare `null` body means Opencast built **no schema at all** for t
 
 ## 5. Declare the operation
 
-Shared operations live in [`packages/query/src/queries.graphql`](../../packages/query/src/queries.graphql); a plugin declares its own in its `.graphql` files. Either way the operation and fragment names carry a prefix: `Mui` for the shared package, your namespace in PascalCase for a plugin. An ESLint rule fails the build otherwise — the rule and its casing table are in [`CONTRACTS.md` § GraphQL Operation Naming](../architecture/CONTRACTS.md#6-graphql-operation-naming).
+Shared operations live in [`packages/query/src/queries.graphql`](../../packages/query/src/queries.graphql); a plugin declares its own in its `.graphql` files. Either way the operation and fragment names carry a prefix: `Mui` for the shared package, your namespace in PascalCase for a plugin. An ESLint rule fails the build otherwise — the rule and its casing table are in [Contracts § GraphQL Operation Naming](../reference/contracts.md#6-graphql-operation-naming).
 
 ## 6. Run codegen against a live backend
 

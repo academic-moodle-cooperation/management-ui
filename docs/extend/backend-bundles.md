@@ -96,4 +96,4 @@ Two details worth knowing before you edit either file. `trash_workflow_id()` is 
 
 - [Add a GraphQL field](./graphql-field.md) — the authoring path through this bundle, end to end.
 - [Distribution](./distribution.md) — building a plugin JAR with the headers above, and how the shell consumes `plugins.json`.
-- [Full local setup](../getting-started/local-backend.md) — deploying these bundles into a local Opencast.
+- [Full local setup](../contribute/local-backend.md) — deploying these bundles into a local Opencast.

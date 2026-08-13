@@ -81,6 +81,6 @@ In-tree plugin. Depends on `@oc-mui/i18n`, `@oc-mui/plugin-system`, `@oc-mui/que
 
 ## See also
 
-- [`docs/plugins/creating-a-plugin.md`](../../docs/plugins/creating-a-plugin.md) — how to register on these extension points.
-- [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md) — Manifest and Runtime API contract.
+- [`docs/extend/plugin-guide.md`](../../docs/extend/plugin-guide.md) — how to register on these extension points.
+- [`docs/reference/contracts.md`](../../docs/reference/contracts.md) — Manifest and Runtime API contract.
 - [`AGENTS.md`](../../AGENTS.md) — operational rules.

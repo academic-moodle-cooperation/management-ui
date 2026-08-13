@@ -23,7 +23,7 @@ const { workflowId } = uploadConfig.use();
 
 The slice's keys are `location`, `workflowId` (default `"ingest-upload"`), `whitelist` (accepted file types), and `protection`.
 
-Full merge order: [`docs/architecture/CONFIGURATION.md`](../../docs/architecture/CONFIGURATION.md).
+Full merge order: [`docs/reference/configuration.md`](../../docs/reference/configuration.md).
 
 ## Development
 
@@ -34,6 +34,6 @@ pnpm --filter @oc-mui/plugin-core-upload test
 
 ## See also
 
-- [`docs/plugins/creating-a-plugin.md`](../../docs/plugins/creating-a-plugin.md) — plugin-author walkthrough.
+- [`docs/extend/plugin-guide.md`](../../docs/extend/plugin-guide.md) — plugin-author walkthrough.
 - [`AGENTS.md`](../../AGENTS.md) — operational rules.
 - [`plugin.json`](./plugin.json) — manifest.

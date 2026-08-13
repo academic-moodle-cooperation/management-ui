@@ -7,13 +7,8 @@ const REPO_BLOB = `${REPO_URL}/blob/HEAD`;
 // Files under docs/ that should NOT be built into the public site.
 // They stay in the repo (linked from GitHub), but they aren't doc-site pages.
 const srcExclude = [
-  // README at section roots: VitePress would render it as a generated index; we
-  // use index.md instead so the URL stays at /<section>/ (not /<section>/readme).
-  "README.md",
-  "plugins/README.md",
-
   // Internal tracking docs — useful to contributors, not public pages.
-  "operations/open-followups.md",
+  "reference/open-followups.md",
 
   // Maven build-time config that lives under docs/ for legacy parent-POM
   // reasons. Not documentation. See open-followups.md §8.5.
@@ -42,7 +37,7 @@ export default defineConfig({
   // Pre-1.0 — the site is built but not publicly announced. Tell search
   // engines not to index any page. Belt-and-suspenders with
   // docs/public/robots.txt; remove both when going public (tracked in
-  // docs/operations/open-followups.md §8.3).
+  // docs/reference/open-followups.md §8.3).
   head: [["meta", { name: "robots", content: "noindex, nofollow" }]],
 
   // Fail the build on dead internal links. Links to source files
@@ -202,6 +197,9 @@ function sidebar() {
       [
         { text: "Backend bundles", link: "/extend/backend-bundles" },
         { text: "Distribution", link: "/extend/distribution" },
+        { text: "Upgrading against a new host", link: "/extend/host-upgrades" },
+        { text: "Contracts", link: "/reference/contracts" },
+        { text: "Configuration model", link: "/reference/configuration" },
       ],
     ),
 
@@ -217,8 +215,41 @@ function sidebar() {
         { text: "Testing", link: "/contribute/testing" },
         { text: "CI", link: "/contribute/ci" },
         { text: "Releases", link: "/contribute/release" },
+        { text: "Adding a package or app", link: "/contribute/extending-the-workspace" },
+        { text: "Release test protocol", link: "/contribute/test-protocol" },
+        { text: "Recording a manual test run", link: "/contribute/manual-test-recording" },
+        { text: "Architecture", link: "/reference/architecture" },
+        { text: "Contracts", link: "/reference/contracts" },
+        { text: "Configuration model", link: "/reference/configuration" },
+        { text: "Decisions (ADRs)", link: "/reference/decisions/001-plugin-system" },
       ],
     ),
+
+    // Reference is look-up material, not a role entry: it has no top-nav item
+    // and is reached from the "Look it up" groups above. Its own sidebar keeps
+    // a reader who landed here able to see the rest of the set.
+    "/reference/": [
+      startHere,
+      {
+        text: "Look it up",
+        items: [
+          { text: "Architecture", link: "/reference/architecture" },
+          { text: "Contracts", link: "/reference/contracts" },
+          { text: "Configuration model", link: "/reference/configuration" },
+        ],
+      },
+      {
+        text: "Decisions (ADRs)",
+        items: [
+          { text: "001 — Plugin system", link: "/reference/decisions/001-plugin-system" },
+          { text: "002 — Monorepo structure", link: "/reference/decisions/002-monorepo-structure" },
+          {
+            text: "003 — Shell plus core plugins",
+            link: "/reference/decisions/003-shell-plus-core-plugins",
+          },
+        ],
+      },
+    ],
 
     // Root-level pages (quickstart, what-is-…): show the map of all five
     // entries so the first click after the landing page is an informed one.
@@ -250,8 +281,9 @@ function sidebar() {
  * The decision is made by resolving the link against the linking file's
  * location (`relativePath`, relative to docs/): if the target resolves to a
  * path outside docs/, it gets a GitHub permalink. Guessing from the first
- * path segment alone would be ambiguous — "plugins" can mean docs/plugins/
- * (a site section) or the repo-root plugins/ directory (source code).
+ * path segment alone would be ambiguous — a link written as `../plugins/…`
+ * means the repo-root plugins/ directory from a docs section, but the same
+ * segment could equally name a site section.
  *
  * Leaves intact:
  * - Same-section relative links (./foo, ../architecture/foo, …) that resolve

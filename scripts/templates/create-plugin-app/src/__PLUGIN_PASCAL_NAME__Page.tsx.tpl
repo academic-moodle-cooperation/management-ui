@@ -2,7 +2,7 @@
  * The page mounted at /__PLUGIN_NAME__. Any React component works here.
  * Use semantic tokens (text-foreground, text-muted-foreground, …) so it
  * adapts to the active theme and dark mode automatically — no hardcoded
- * colors. See docs/plugins/styling.md.
+ * colors. See docs/extend/styling.md.
  */
 export function __PLUGIN_PASCAL_NAME__Page() {
   return (

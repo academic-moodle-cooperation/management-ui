@@ -29,7 +29,7 @@ What happens next:
 ## Our security process
 
 - **Supply-chain hygiene**: All GitHub Actions in `.github/workflows/` are pinned to immutable commit SHAs, and Dependabot (`.github/dependabot.yml`) opens a weekly grouped PR that bumps those pins when new action releases ship — so pinning does not mean going stale. npm dependency updates are reviewed manually as part of regular maintenance.
-- **Plugin contract boundaries**: Plugins run inside the host's React tree and share its capability set. The plugin API contract (see [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md)) treats every plugin's exposed surface as security-relevant; the contract-test harness ([`docs/operations/testing.md`](docs/operations/testing.md)) verifies that public surfaces don't drift silently.
+- **Plugin contract boundaries**: Plugins run inside the host's React tree and share its capability set. The plugin API contract (see [`docs/reference/contracts.md`](docs/reference/contracts.md)) treats every plugin's exposed surface as security-relevant; the contract-test harness ([`docs/contribute/testing.md`](docs/contribute/testing.md)) verifies that public surfaces don't drift silently.
 - **Coordinated disclosure**: We follow the responsible-disclosure timeline above and prefer to credit reporters in the published advisory.
 - **Secrets**:
   - Never commit secrets, API keys, or credentials.

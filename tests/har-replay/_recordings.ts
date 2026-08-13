@@ -4,7 +4,7 @@ import { join, resolve } from "node:path";
 /**
  * Where sanitized tester recordings live. Gitignored: a HAR captured against a
  * real deployment is org-specific data, so the machinery is tracked and the
- * recordings are not. See docs/operations/manual-test-recording.md.
+ * recordings are not. See docs/contribute/manual-test-recording.md.
  */
 export const RECORDINGS_DIR = resolve("tests/har-replay/recordings");
 
