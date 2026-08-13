@@ -192,6 +192,29 @@ its title (`test("[SER-04] …")`), and the coverage report says how many steps
 are still hand-run. It also sorts the backlog by steps that have already failed
 at least once — which is the order worth automating in.
 
+## Documentation screenshots — generated, not maintained
+
+The images in the documentation are produced by the same machinery, so they
+cannot drift into showing a UI that no longer exists:
+
+```bash
+pnpm docs:screenshots     # rewrites docs/public/screenshots/*.png
+```
+
+[`playwright.docs.config.ts`](../../playwright.docs.config.ts) boots a clean
+mocked-backend dev server (1280×800, reduced motion — the visual tier's
+settings) and [`tests/docs-screenshots/capture.spec.ts`](../../tests/docs-screenshots/capture.spec.ts)
+drives it through the documented screens, seeding a small English demo corpus
+through the stateful mock in `tests/e2e/_fixtures/mock-backend.ts`. The PNGs are
+committed and the pages embed them as `/screenshots/<name>.png`, which VitePress
+serves from `docs/public/`.
+
+Unlike the visual tier, these captures are **never diffed** — they are
+artefacts, not assertions — so nothing here is sensitive to the font rendering
+of the machine that produced them, and the tier is deliberately not part of
+`pnpm verify`. Re-run it when a UI change makes a shipped image wrong, and
+commit the result.
+
 ## CI layout
 
 The test workflow ([.github/workflows/test.yml](../../.github/workflows/test.yml)) splits into five jobs that run in dependency order:

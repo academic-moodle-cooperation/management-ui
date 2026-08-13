@@ -37,6 +37,7 @@ playwright-report-visual/
 playwright-report-har/
 playwright-report-org/
 playwright-report-matrix/
+playwright-report-docs/
 test-results/
 .playwright/
 playwright/.auth/

@@ -37,6 +37,20 @@ exclude_path = [
   "docs/index\\.md",
 ]
 
+# Root for ROOT-ABSOLUTE links in local files — the generated documentation
+# screenshots (`pnpm docs:screenshots`) live in `docs/public/screenshots/` and
+# the pages embed them as `/screenshots/<name>.png`, because VitePress serves
+# `docs/public/` at the site root (and prefixes the site `base` at build time).
+# On the filesystem that path is not resolvable, and without this lychee does
+# not merely skip it — it hard-fails with "Cannot resolve root-relative link".
+#
+# Deliberately a resolution rule, not an exclusion: pointing the root at
+# `docs/public` turns those links into a real check again, so deleting or
+# renaming a screenshot that a page still embeds fails the link job. (An
+# `exclude` regex cannot do this — exclusion is applied after resolution, so
+# the error fires first; verified with lychee 0.24.2, the pinned CI version.)
+root_dir = "docs/public"
+
 # Anchor/fragment checking stays off (the default — `include_fragments` is
 # deliberately not set): VitePress validates fragments for the site, and
 # GitHub's heading-anchor slugging differs enough to make fragment checks
