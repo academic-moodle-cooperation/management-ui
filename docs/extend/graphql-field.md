@@ -21,7 +21,7 @@ The series side mirrors it (`MuiSeriesExtension` → `MuiSeriesInfo`), and mutat
 ::: warning Mutation arguments are read by name, not through the parameter
 A `@GraphQLName`-annotated parameter on a `MuiMutation` method **declares** the argument in the schema; it does not necessarily carry the value into the command. The commands pull arguments straight out of the `DataFetchingEnvironment` by string key: `MuiUpdateEventCommand` and `MuiUpdateEventAclCommand` read `environment.getArgument("publishChanges")`, and the upstream `UpdateEventCommand` / `UpdateEventAclCommand` they extend read `"metadata"` and `"acl"` the same way.
 
-So a Java parameter that is never referenced in the method body is still load-bearing — `updateEvent`'s `acl` and `publishChanges` look dead and are not. Deleting the parameter removes the argument from the schema and the lookup then yields `null`; renaming its `@GraphQLName` breaks the lookup at runtime with **no compiler error**. Change the annotation and the `getArgument` key together, and grep the command classes for the key before touching either.
+So a Java parameter that is never referenced in the method body is still load-bearing. In `MuiMutation` that is every `acl` parameter — on `updateEvent`, `updateEventAcl`, and `updateSeries` alike — plus `publishChanges` on the first two. Deleting the parameter removes the argument from the schema and the lookup then yields `null`; renaming its `@GraphQLName` breaks the lookup at runtime with **no compiler error**. Change the annotation and the `getArgument` key together, and grep the command classes for the key before touching either.
 :::
 
 ## 2. Add a config key, if the field needs one
@@ -38,7 +38,15 @@ From the repo root, with `$OPENCAST_DIST` pointing at your Opencast install:
 mvn install -DskipTests -DdeployTo="$OPENCAST_DIST"
 ```
 
-Karaf hot-loads JARs dropped into `deploy/` — no restart needed.
+Near the end you will see, immediately before `BUILD SUCCESS`:
+
+```
+[ERROR] [copy] Warning: Could not find file …management-ui-feature-1.0-SNAPSHOT.jar to copy
+```
+
+**That is harmless.** The feature module is packaged as `feature`, not `jar`, so there is nothing for the deploy step to copy; the antrun task is `failonerror="false"` but Ant still logs the notice at `[ERROR]`. `BUILD SUCCESS` is the signal, not the absence of `[ERROR]` lines.
+
+Karaf hot-loads JARs dropped into `deploy/` — no restart needed. It is not instant, though: rebuilding the schema after the new bundle resolves took **12–24 seconds** in testing. Wait that long before the next step, or you will query the *old* schema, see your field missing, and go troubleshooting a problem you don't have.
 
 ## 4. Prove the schema actually changed
 
@@ -58,13 +66,22 @@ Shared operations live in [`packages/query/src/queries.graphql`](../../packages/
 
 ## 6. Run codegen against a live backend
 
+Codegen **introspects a running Opencast** — there is no schema file in the repo. It reads `GRAPHQL_ENDPOINT` (and optional `GRAPHQL_HEADERS`) from the repo-root `.env`, which is gitignored and therefore absent after a fresh clone:
+
 ```bash
+cp .env.example .env      # then set GRAPHQL_ENDPOINT to your backend
 pnpm --filter @oc-mui/query codegen
 ```
 
-Codegen **introspects a running Opencast** — there is no schema file in the repo. It reads `GRAPHQL_ENDPOINT` (and optional `GRAPHQL_HEADERS`) from the repo-root `.env`; see [`.env.example`](../../.env.example). Without a reachable backend it fails, and it fails on the *whole* schema, not just your field.
+Without a reachable backend it fails, and it fails on the *whole* schema, not just your field.
 
-Two files are rewritten, and both are **committed**: `src/gql-generated.ts` (types plus React Query hooks) and `src/schema-input-fields.generated.ts` (runtime arrays of orderable/filterable field names). Commit the diff. If the second file changed, `src/sortableFields.test.ts` may need its pinned expectations updated — that failure is the intended signal that the sortable set moved.
+::: danger Run codegen once before you touch `queries.graphql`
+Codegen rewrites the generated files from scratch, so its diff shows everything that has drifted since they were last committed — not just your change. Run it on a clean checkout **first** and confirm `git diff` is empty.
+
+If it isn't, the committed output has drifted from its committed inputs ([#355](https://github.com/academic-moodle-cooperation/management-ui/issues/355)) and the drift must be corrected in its own commit before you start. Otherwise your "add one field" PR silently carries unrelated public-API changes — today that includes renamed exported hooks such as `useSuspenseGetMyEventsQuery` → `useSuspenseMuiGetMyEventsQuery`, plus the matching api-check snapshot update.
+:::
+
+Two files are rewritten, and both are **committed**: `src/gql-generated.ts` (types plus React Query hooks) and `src/schema-input-fields.generated.ts` (runtime arrays of orderable/filterable field names). Once you have confirmed the baseline was clean, commit the diff — it is now yours alone. If the second file changed, `src/sortableFields.test.ts` may need its pinned expectations updated — that failure is the intended signal that the sortable set moved.
 
 ## 7. Changeset, and `api-check` if the surface moved
 
