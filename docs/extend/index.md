@@ -2,7 +2,7 @@
 
 For developers adding features to Management UI without forking it. Afterwards you'll know which page covers the extension you have in mind.
 
-Everything visible is a plugin, so "extending" means writing one — and occasionally teaching the backend a new field for it to query.
+Everything visible in the UI is a plugin, so extending the frontend means writing one. When the data your plugin needs isn't in the API yet, the extension continues on the server: the backend bundles are part of this repo too.
 
 ## Tasks
 
@@ -11,7 +11,7 @@ Everything visible is a plugin, so "extending" means writing one — and occasio
 - [Styling](./styling.md) — theme tokens instead of hardcoded colors and spacing.
 - [Translations](./i18n.md) — namespaces, locale files, key parity.
 - [Testing a plugin](./testing.md) — unit and contract tests for your plugin.
-- [Add a GraphQL field](./graphql-field.md) — new backend data, end to end.
+- [Add a GraphQL field](./graphql-field.md) — new backend data, end to end from Java to the generated client.
 
 ## Look it up
 

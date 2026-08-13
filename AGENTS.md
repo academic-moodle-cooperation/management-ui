@@ -86,6 +86,13 @@ export const myPlugin = createPlugin({
 
 For every extension point your plugin touches, add the string key to `plugin.json`'s `extensionPoints` array. The contract test fails when an entry is declared but not populated. Registration ids are namespaced by plugin name at registration time (`registerObject` prefixes un-namespaced ids with `<plugin>:`), which is what keeps ids from colliding across plugins — no lint rule checks for collisions.
 
+The full catalogue of declared points lives in [`plugins/core/README.md`](plugins/core/README.md).
+
+`apps:definitions` takes an `AppDefinition` ([`packages/plugin-system/src/appTypes.ts`](packages/plugin-system/src/appTypes.ts)). Beyond the required `{ id, name, routePath, component }`:
+
+- `requiredRoles?: string[]` — when set, the shell mounts the app only for users holding at least one listed role; everyone else gets an access-denied screen. A deployment overrides the list via `config.plugins[<id>].protection.requiredRoles`.
+- Nested routes such as `/reports/:id` need no extra registration — the shell adds a generic `$routeSubPath` child route. Read the segment with `useParams({ strict: false })`.
+
 ## Contract test — required, mechanical
 
 Every plugin under `plugins/` and `.local-plugins/` — except `plugins/core`, the infrastructure plugin — ships a `plugin.contract.test.ts`. The canonical template is the file `pnpm create-plugin` generates ([`scripts/templates/create-plugin/src/plugin.contract.test.ts.tpl`](scripts/templates/create-plugin/src/plugin.contract.test.ts.tpl)); only the import line and the `describe` label change. As generated, for a plugin exporting `myPlugin`:
@@ -222,6 +229,8 @@ If you only want a fast inner loop while iterating on one plugin:
 - `pnpm --filter @oc-mui/plugin-<name> test` — that plugin's unit tests
 - `pnpm --filter @oc-mui/plugin-<name> test:contract` — that plugin's contract test
 - `pnpm test:e2e:ui` — Playwright in interactive mode
+
+`pnpm verify` deliberately **excludes `.local-plugins/*`** (`--filter='!./.local-plugins/*'`), so a green gate says nothing about an org plugin mounted there — run that plugin's own `test` and `test:contract` scripts separately.
 
 ## Where to find things
 
