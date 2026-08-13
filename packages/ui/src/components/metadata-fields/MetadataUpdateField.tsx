@@ -54,6 +54,11 @@ export const MetadataUpdateField = ({
   collection,
   onUpdate,
 }: MetadataUpdateFieldProps) => {
+  // `collection` is `Maybe<JSON>` in the schema — a backend may omit the
+  // option list for a list-backed field. Every read below goes through this,
+  // so a missing list renders the "no options" branch instead of throwing.
+  const options: unknown[] = collection ? Object.values(collection) : [];
+
   const [openLangSelect, setOpenLangSelect] = useState(false);
   const [query, setQuery] = useState<string | undefined>(undefined);
   const { t } = useI18n();
@@ -174,8 +179,8 @@ export const MetadataUpdateField = ({
                   <CommandList>
                     <CommandEmpty>{t(`noOptionSelected`)}</CommandEmpty>
                     <CommandGroup>
-                      {Object.values(collection).length ? (
-                        Object.values(collection)
+                      {options.length ? (
+                        options
                           .sort((a, b) => t(`languages.${a}`).localeCompare(t(`languages.${b}`)))
                           .map((item) => (
                             <CommandItem
@@ -215,8 +220,8 @@ export const MetadataUpdateField = ({
               </SelectTrigger>
 
               <SelectContent className="sidebar-portal-inside">
-                {Object.values(collection).length ? (
-                  Object.values(collection).map((item, index) => (
+                {options.length ? (
+                  options.map((item, index) => (
                     <SelectItem key={index + (item as string)} value={item as string} tabIndex={0}>
                       {t(`licences.${item}`)}
                     </SelectItem>
