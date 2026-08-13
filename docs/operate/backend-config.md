@@ -23,16 +23,17 @@ The "default" column has two different sources, which is what makes the warning 
 
 ## Delete is reversible only if this key is set
 
-The `deleteEvent` mutation branches on exactly one value:
+The `deleteEvent` mutation branches on this one value, and there are **three** states — which look nothing alike to your users ([Delete a video](../use/delete-a-video.md) describes what they see):
 
-- **`trash.workflow.id` set** → deleting a video applies that workflow to the latest version of its media package. The video is not destroyed; what "trash" means is whatever that workflow does.
-- **`trash.workflow.id` unset (null)** → deleting a video runs Opencast's plain delete. It is **irreversible**, and the UI looks exactly the same either way.
+- **Set, and the named workflow exists** → deleting applies that workflow to the latest version of the media package. The video survives; what "trash" means is whatever that workflow does.
+- **Unset (null)** → deleting runs Opencast's plain delete. It is **irreversible**, and the UI looks exactly like the success above.
+- **Set to a name the server has no workflow for** (an empty value counts) → nothing is deleted at all. The lookup fails, the user gets a red *"The video could not be moved to the trash!"*, and GraphQL reports `Workflow definition '<org>/<id>' not found or inaccessible`.
 
-`trash.workflow.id` is the one key with **no default in the Java metatype**, so its `trash` value exists only because the configurator resource wrote it into the live configuration once, at install time. Any configuration that does not carry the key — a partial `.cfg`, or a deleted one — leaves it null, and the trash quietly becomes permanent deletion. (Blanking it is a *different* failure: an empty id is not null, so deletion takes the trash branch and then fails outright, because no workflow definition matches.) The asymmetry is tracked as [issue #342](https://github.com/academic-moodle-cooperation/management-ui/issues/342); what this page describes is the behaviour a deployment gets today.
+`trash.workflow.id` is the one key with **no default in the Java metatype**, so its `trash` value exists only because the configurator resource wrote it into the live configuration once, at install time. Any configuration that does not carry the key — a partial `.cfg`, or a deleted one — leaves it null, and the trash quietly becomes permanent deletion. The asymmetry is tracked as [issue #342](https://github.com/academic-moodle-cooperation/management-ui/issues/342); what this page describes is the behaviour a deployment gets today.
 
 ### Set it explicitly
 
-Write the whole dictionary, every time. This block is the copy-paste starting point — it reproduces the shipped values, so it changes nothing until you edit it:
+Write the whole dictionary, every time. This block is the copy-paste starting point — it reproduces the shipped values, so it changes nothing until you edit it. To make deletion permanent on purpose, omit the `trash.workflow.id` line and write that down in your own runbook, because the UI gives users no hint either way.
 
 ```properties
 # $OPENCAST_HOME/etc/org.opencastproject.mui.cfg
@@ -44,11 +45,7 @@ publication.channel.id=engage-player
 managed.acl.order=public,authenticated,private
 ```
 
-To make deletion permanent on purpose, omit the `trash.workflow.id` line from that block — and write it down in your own runbook, because the UI gives users no hint either way.
-
-### Verify it once, on a throwaway recording
-
-Upload a test video, delete it in the UI, then check whether your trash workflow ran and the media package still exists. That single test is the only reliable answer to "is delete reversible on this server?", and it is worth repeating after every upgrade.
+**Setting the key is necessary but not sufficient — the named workflow must exist.** The shipped value is `trash`, and a stock Opencast ships no workflow definition by that name, so an untouched install sits in the third state above until someone installs one. Check with `curl -s -u <admin-user> "https://opencast.example.org/workflow/definitions.json"` and look for `"id":"trash"`; no match means it is missing. Then prove it end to end: upload a throwaway recording, delete it in the UI, and confirm the workflow ran and the media package survived. That test is the only reliable answer to "is delete reversible on this server?", and it is worth repeating after every upgrade.
 
 ## Applying a change
 
