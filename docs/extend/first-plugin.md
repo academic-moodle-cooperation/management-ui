@@ -20,7 +20,7 @@ This scaffolds under `.local-plugins/hello/` (gitignored — where org and commu
 .local-plugins/hello/
 ├── plugin.json              # type: "app", extensionPoints: apps:definitions + sidebar:nav-items
 ├── backend/                 # Maven/JAR layout — ignore for now, used when you ship
-├── package.json, tsconfig.json, vite.config.ts, vitest.config.ts, eslint.config.js, README.md
+├── package.json, tsconfig.json, vite.config.ts, vitest.config.ts, vitest.setup.ts, eslint.config.js, README.md
 └── src/
     ├── index.ts             # the two registrations below, plus `export default helloPlugin`
     ├── HelloPage.tsx        # the page mounted at /hello — edit this

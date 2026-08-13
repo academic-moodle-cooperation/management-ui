@@ -40,10 +40,17 @@ Header actions, footer slots, table-row detail panels, and the upload and ACL ed
 
 ## A config slice your deployment can override
 
-A plugin owns exactly one slice at `config.plugins.<id>`, declared once with a Zod schema. Never read another plugin's slice, and never reach into your own via raw `config.plugins[...]` — always go through the reader. Continuing the `hello` plugin from [Your first plugin](./first-plugin.md), after adding `zod` and `@oc-mui/query`:
+A plugin owns exactly one slice at `config.plugins.<id>`, declared once with a Zod schema. Never read another plugin's slice, and never reach into your own via raw `config.plugins[...]` — always go through the reader. Continuing the `hello` plugin from [Your first plugin](./first-plugin.md). The scaffold ships neither dependency, so add them first:
+
+```bash
+pnpm --filter @oc-mui/plugin-hello add zod "@oc-mui/query@workspace:*"
+```
 
 ```ts
 // src/config.ts
+import { z } from "zod";
+import { definePluginConfig } from "@oc-mui/query";
+
 export const helloConfig = definePluginConfig({
   id: "hello",                                        // matches plugin.json `id`
   schema: z.object({ greeting: z.string().optional() }),
@@ -55,11 +62,17 @@ Call `helloConfig.register(manager)` in `initialize()`, add `"app:config:default
 
 ## A translated string
 
-Add `"i18nNamespaces": ["hello"]` to `plugin.json`, put `locales/hello/en.json` and `locales/hello/de.json` next to it, and read keys with `usePluginTranslation(["hello"])` from `@oc-mui/i18n`. The contract test's key-parity check now covers your locales. Multi-module layouts and the dev-loop quirks: [Translations](./i18n.md).
+`@oc-mui/i18n` is not in the scaffold either — add it the same way:
+
+```bash
+pnpm --filter @oc-mui/plugin-hello add "@oc-mui/i18n@workspace:*"
+```
+
+Then add `"i18nNamespaces": ["hello"]` to `plugin.json`, put `locales/hello/en.json` and `locales/hello/de.json` next to it, and read keys with `usePluginTranslation(["hello"])`. The contract test's key-parity check now covers your locales. Multi-module layouts and the dev-loop quirks: [Translations](./i18n.md).
 
 ## The dev loop, and then what
 
-Run `pnpm --filter @oc-mui/plugin-hello dev` to rebuild the bundle on change, and `pnpm dev` for the shell, which serves and loads `.local-plugins/*/dist/`. In-tree plugins skip the plugin build — the shell's Vite build compiles them directly.
+`pnpm dev` is the whole loop. It runs `turbo run dev`, which starts the shell **and** the watch build of every workspace package that has a `dev` script — including each `.local-plugins/*` plugin, whose bundle the shell then serves from `dist/`. Don't also run `pnpm --filter @oc-mui/plugin-hello dev` alongside it: that's a second watcher writing the same `dist/`. Use the filtered command only when you want the plugin watcher *without* the shell. In-tree plugins skip the plugin build — the shell's Vite build compiles them directly.
 
 - [Styling](./styling.md) — semantic tokens and `@oc-mui/ui` components. No hardcoded colors (lint-enforced); dark mode comes free if you comply.
 - [Testing a plugin](./testing.md) — the required contract test, and what your unit tests should cover.
