@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 import { defaultConfig } from "../../packages/ui-config/src";
+import { settle } from "../_shared/settle";
 
 /**
  * test-protocol.md §7 — Theming, as pixel diffs. Renders the shell against a
@@ -55,16 +56,6 @@ async function stubBackend(page: Page, config: AppConfig = defaultConfig): Promi
   await page.route("https://www.gravatar.com/**", (route) =>
     route.fulfill({ status: 200, contentType: "image/png", body: Buffer.from([]) }),
   );
-}
-
-// Kill anything that moves (caret, transitions, animations) and wait for web
-// fonts before snapshotting — the big sources of cross-run pixel noise.
-async function settle(page: Page): Promise<void> {
-  await page.addStyleTag({
-    content:
-      "*,*::before,*::after{transition:none!important;animation:none!important;caret-color:transparent!important;}",
-  });
-  await page.evaluate(() => document.fonts.ready);
 }
 
 const MASK = (page: Page) => ({ mask: [page.locator("footer")], fullPage: true as const });
