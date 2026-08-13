@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 import { defaultConfig } from "../../packages/ui-config/src";
+import { settle as sharedSettle } from "../_shared/settle";
 
 import type { Page } from "@playwright/test";
 
@@ -162,15 +163,11 @@ export async function stubBackend(page: Page, config: AppConfig): Promise<void> 
  * the TanStack Router/Query floating badges are always present — and the Query
  * badge sits right on top of the footer, which for an org plugin is exactly the
  * chrome we're trying to snapshot.
+ *
+ * The mechanics live in `tests/_shared/settle.ts` (shared with the visual and
+ * documentation tiers); re-exported here so this tier's specs keep importing
+ * everything they need from one module.
  */
 export async function settle(page: Page): Promise<void> {
-  await page.addStyleTag({
-    content: [
-      "*,*::before,*::after{transition:none!important;animation:none!important;caret-color:transparent!important;}",
-      ".TanStackRouterDevtoolsPanel,",
-      'button[aria-label="Open TanStack Router Devtools"],',
-      ".tsqd-open-btn-container{display:none!important;}",
-    ].join(""),
-  });
-  await page.evaluate(() => document.fonts.ready);
+  await sharedSettle(page, { hideDevtools: true });
 }
