@@ -18,7 +18,7 @@ pnpm build
 VITE_PROXY_TARGET=https://opencast.example.org VITE_LOCAL_CONFIG=true pnpm dev
 ```
 
-Open **<http://127.0.0.1:3000/management-ui/>**, click **Episodes** in the sidebar, and sign in with your Opencast credentials. The table fills with that Opencast's recordings.
+Open **<http://127.0.0.1:3000/management-ui/>**, click **Videos** in the sidebar, and sign in with your Opencast credentials. The table fills with that Opencast's recordings.
 
 Two things about that command line:
 
