@@ -5,12 +5,21 @@ import { parseDuration } from "@oc-mui/utils";
 export const MetadataField = ({ type, listProvider, collection, value }: MetadataFieldType) => {
   const { t } = useI18n();
 
-  function getKeyByValue(object: Record<string, string>, value: string) {
+  // `collection` is `Maybe<JSON>` in the schema: a backend can legitimately
+  // send a list-backed field without its option list (observed on a real
+  // deployment for a read-only series field). Reading it unguarded threw
+  // `Object.keys(undefined)` and took down the whole info panel.
+  function getKeyByValue(object: Record<string, string> | null | undefined, value: string) {
+    if (!object) return undefined;
     return Object.keys(object).find((key) => object[key] === value);
   }
 
   if (listProvider === "SERIES") {
-    return <div className="text-sm text-foreground">{getKeyByValue(collection, value)}</div>;
+    // Without the collection we cannot resolve the id to a title — show the
+    // raw value rather than an empty field.
+    return (
+      <div className="text-sm text-foreground">{getKeyByValue(collection, value) ?? value}</div>
+    );
   } else if (listProvider === "LANGUAGES") {
     return (
       <div className="text-sm text-foreground">
