@@ -16,11 +16,13 @@ Each file appears under **Uploadlist** with its name (the extension stripped) an
 
 - The **pencil** beside a name renames it. **That name becomes the video's title** — it is your only chance to set one.
 - The **×** takes a file back out of the list, or stops an upload already running.
-- **Delete list** clears everything, including the *Recently uploaded* entries below it.
+- **Delete list** clears everything, including the *Recently uploaded* entries above it.
 
 ## Pick the series, then upload
 
 The **Series** selector appears once at least one file is in the list. Choose one — **Upload stays disabled until you do** — then click **Upload**.
+
+When an upload finishes, the file list empties but **the series stays selected**. That is convenient for a second batch into the same series and easy to miss when the next batch belongs somewhere else, so check the selector before you click *Upload* again.
 
 ## What actually gets sent
 
