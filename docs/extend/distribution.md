@@ -139,7 +139,7 @@ marketplace's "Organization (JAR)" card.
 
 ## Path 3 — JAR (production)
 
-For deployments that already ship an Opencast backend, plugins are packaged as JARs and dropped into Opencast's `deploy/` directory. The backend's `PluginBundleTracker` discovers them automatically and exposes a `plugins.json` the shell fetches at boot. This is how the Management UI itself ships — it's an Opencast plugin too.
+For deployments that already ship an Opencast backend, plugins are packaged as JARs and dropped into Opencast's `deploy/` directory. The backend's `PluginBundleTracker` discovers them automatically and exposes a `plugins.json` the shell fetches at boot. Management UI itself reaches Opencast the same way — as OSGi bundles in `deploy/` — though the shell bundle carries no `Management-Plugin` header and so is served as static files rather than discovered as a plugin; see [Backend bundles](./backend-bundles.md).
 
 ### Scaffolding
 
