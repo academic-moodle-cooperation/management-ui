@@ -87,6 +87,73 @@ importers:
         specifier: ^4.1.9
         version: 4.1.9(@types/node@25.0.6)(@vitest/coverage-v8@4.1.9)(@vitest/ui@4.1.9)(jsdom@27.4.0)(vite@7.3.6(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.9.0))
 
+  .local-plugins/univie:
+    dependencies:
+      '@oc-mui/app-runtime':
+        specifier: ^1.0.0
+        version: link:../../packages/app-runtime
+      '@oc-mui/i18n':
+        specifier: ^1.0.0
+        version: link:../../packages/i18n
+      '@oc-mui/plugin-system':
+        specifier: ^1.0.0
+        version: link:../../packages/plugin-system
+      '@oc-mui/query':
+        specifier: ^1.0.0
+        version: link:../../packages/query
+      '@oc-mui/router':
+        specifier: ^1.0.0
+        version: link:../../packages/router
+      '@oc-mui/ui':
+        specifier: ^1.0.0
+        version: link:../../packages/ui
+      '@oc-mui/utils':
+        specifier: ^1.0.0
+        version: link:../../packages/utils
+      lucide-react:
+        specifier: ^0.417.0
+        version: 0.417.0(react@19.1.0)
+      react:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.0(react@19.1.0)
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
+      '@oc-mui/tailwind-config':
+        specifier: ^1.0.0
+        version: link:../../packages/tailwind-config
+      '@oc-mui/vite-config':
+        specifier: ^1.0.0
+        version: link:../../packages/vite-config
+      '@types/node':
+        specifier: ^25.0.6
+        version: 25.0.6
+      '@types/react':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.8
+      '@types/react-dom':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.6(@types/react@19.1.8)
+      '@vitejs/plugin-react-swc':
+        specifier: ^3.9.0
+        version: 3.10.2(@swc/helpers@0.5.17)(vite@6.4.3(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.9.0))
+      eslint:
+        specifier: ^9.9.0
+        version: 9.30.1(jiti@2.4.2)
+      tailwindcss:
+        specifier: ^4.1.7
+        version: 4.1.11
+      typescript:
+        specifier: ~5.5.4
+        version: 5.5.4
+      vite:
+        specifier: '>=6.4.3 <7.0.0'
+        version: 6.4.3(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.9.0)
+
   apps/playground:
     dependencies:
       '@oc-mui/app-runtime':
