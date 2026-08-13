@@ -38,7 +38,7 @@ $ pnpm changeset
 Patch, minor, or major? [Picking the bump level](../operations/release.md#picking-the-bump-level) has the criteria. The CLI writes a small Markdown file under `.changeset/` — package name, bump level, and that summary, which becomes the package's changelog entry, so write it for the consumer rather than for the reviewer. **Now commit that file.** CI runs `changeset status` against the committed tree, so an unstaged changeset does not count — the classic "I added it but CI still says none found" trap:
 
 ```bash
-git add .changeset/<slug>.md
+git add .changeset/<slug>.md <your changed files>   # the changeset AND the change
 git commit -m "fix(utils): tolerate non-ISO durations"
 pnpm changeset status --since=origin/develop   # green = every changed package covered
 ```
