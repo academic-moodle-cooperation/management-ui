@@ -8,13 +8,13 @@ Throughout this page, `$OPENCAST_HOME` is your Opencast installation directory �
 
 On the Opencast host:
 
-- **Opencast 20.** The backend bundles build against `org.opencastproject:base:20-SNAPSHOT`, and a bundle built for one Opencast major refuses to start on another — the OSGi import ranges are fixed at compile time. Which version pairs with which Opencast: [Upgrade](./upgrade.md#which-version-am-i-running).
+- **Opencast 19 or 20 — and you must build from the matching release line.** There is one line per supported Opencast major: `r/19.x` builds against `base:19-SNAPSHOT`, `r/20.x` against `base:20-SNAPSHOT`. A bundle built for one major refuses to start on another, because the OSGi import ranges are fixed at compile time. Note your major now; step one of the build checks that branch out. More on lines: [Upgrade](./upgrade.md#which-version-am-i-running).
 - **The `opencast-plugin-graphql` plugin enabled.** It ships with Opencast but is off by default: in `$OPENCAST_HOME/etc/org.opencastproject.plugin.impl.PluginManagerImpl.cfg` set `opencast-plugin-graphql = on`, then restart Opencast if it was already running.
 
 On the machine you build on — it does not have to be the Opencast host:
 
 - **JDK 21 or newer and Maven.** `mvn -version` must report Java 21+. No Maven installed? The repo ships `./mvnw`; substitute it for `mvn` below. Node and pnpm are *not* prerequisites — the root `pom.xml` downloads pinned versions and builds the frontend itself.
-- **Opencast's `20-SNAPSHOT` parent POM in your local `~/.m2`.** It is not on Maven Central, so build Opencast `r/20.x` from source once and it lands there ([Full local setup → Build and start Opencast 20](../getting-started/local-backend.md#2-build-and-start-opencast-20)).
+- **Opencast's own `NN-SNAPSHOT` parent POM in your local `~/.m2`**, for the same major. It is not on Maven Central, so build Opencast's matching `r/NN.x` branch from source once and it lands there ([Full local setup](../getting-started/local-backend.md#2-build-and-start-opencast-20) walks through it for 20).
 
 ## The artifacts
 
@@ -27,16 +27,18 @@ On the machine you build on — it does not have to be the Opencast host:
 
 ## Build and deploy
 
-There are **no prebuilt JAR downloads**: the release automation creates version tags and GitHub Releases, but attaches no JAR files. You build from source — and the build deploys for you when you pass `-DdeployTo`:
+There are **no prebuilt JAR downloads**: the release automation creates version tags and GitHub Releases, but attaches no JAR files. You build from source — and the build deploys for you when you pass `-DdeployTo`. Checking out the release line first is not optional: a fresh clone lands on the integration branch, which targets the newest major, and bundles built there install but never resolve on an older Opencast.
 
 ```bash
 git clone https://github.com/academic-moodle-cooperation/management-ui.git
 cd management-ui
+git checkout r/20.x          # ← the line matching YOUR Opencast major: r/19.x or r/20.x
 mvn install -DskipTests -DdeployTo="$OPENCAST_HOME"
 ```
 
 - **JARs → `$OPENCAST_HOME/deploy/`.** With Opencast running, Karaf hot-loads them — no restart. With Opencast stopped, they load on the next start.
 - **Default config → `$OPENCAST_HOME/etc/ui-config/mh_default_org/management-ui/config.json`.** Careful on re-deploys: this copy replaces a `config.json` you have edited unless your file is newer than the one in the checkout. Keep your config in version control.
+- **Check that the copy landed.** The deploy step is deliberately non-fatal, so a mistyped `-DdeployTo` still ends in `BUILD SUCCESS` — with the JARs sitting in a directory tree it just created at whatever path you named. Confirm with `ls "$OPENCAST_HOME"/deploy/management-ui-*.jar`.
 
 Without `-DdeployTo` the JARs stay in each module's `target/`; copy the three into `deploy/` yourself and create the config file at the path above.
 
