@@ -10,11 +10,17 @@ Available to everyone who may edit the recording, in every status.
 
 1. On **Videos**, choose **Move to trash** in the row's *Actions*.
 2. Confirm in **Move video to trash?** — *"It will be hidden from users and can be restored or permanently deleted by an administrator."*
-3. **The video has been moved to the trash!** confirms it, and the row leaves your list.
+3. **The video has been moved to the trash!** in green confirms it, and the row leaves your list. The recording is hidden, not destroyed, and an administrator can bring it back.
+4. **The video could not be moved to the trash!** in red means nothing was removed — see the caveat below.
 
-This is the reversible one: the recording is hidden, not destroyed, and an administrator can bring it back.
+## If the trash is not set up
 
-**One caveat worth knowing before you rely on it.** Whether a trash exists at all is decided by your Opencast, not by this interface — and the interface reports "moved to the trash" either way. On a deployment with no trash configured, the recording is simply gone. Ask whoever [runs the deployment](../operate/backend-config.md) which of the two you have.
+The trash is not part of this interface: it needs a workflow configured in your Opencast, and the interface cannot create one. That gives you two outcomes to recognize.
+
+- **Green toast, row gone.** The trash works. The recording is recoverable by an administrator.
+- **Red toast, nothing changes.** No trash workflow is available on this deployment. Reload the list and the recording is still there, exactly as before — this is a clean no-op, so nothing was deleted and nothing is at risk. It is a deployment problem, not a mistake on your side: ask whoever [runs the deployment](../operate/backend-config.md) to set the trash up.
+
+There is a third possibility the interface cannot show you: on a deployment that never enabled the trash at all, *Move to trash* reports success but removes the recording for good. If you are counting on being able to undo a removal, confirm once with your operator that a real trash is configured rather than inferring it from the green toast.
 
 ## Delete permanently
 
