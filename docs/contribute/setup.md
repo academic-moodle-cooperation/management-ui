@@ -13,13 +13,14 @@ For contributors to this repo. Afterwards you'll have the shell running from a s
 git clone https://github.com/academic-moodle-cooperation/management-ui.git
 cd management-ui
 pnpm install
-pnpm build      # required once — see below
+pnpm build              # required once — see below
+pnpm test:e2e:install   # one-time, before your first `pnpm verify`
 pnpm dev
 ```
 
-The shell comes up at **<http://127.0.0.1:3000/management-ui/>**. Vite hot-reloads the shell and the packages; the plugin loader picks up rebuilt bundles in `plugins/<name>/dist/` and `.local-plugins/<name>/dist/`.
+The shell comes up at **<http://127.0.0.1:3000/management-ui/>**. Vite hot-reloads the shell and the packages; the plugin loader picks up rebuilt bundles in `plugins/<name>/dist/` and `.local-plugins/<name>/dist/`. `pnpm test:e2e:install` downloads the Chromium build Playwright drives — needed by the E2E leg of the gate, not by `pnpm dev`.
 
-**`pnpm build` is required, not a one-time nicety.** `@oc-mui/vite-config` is consumed from its `dist/` and nothing builds it during install, so a bare `pnpm dev` on a fresh clone stops at `ERR_MODULE_NOT_FOUND`. The same build populates the `dist-types/` directories downstream packages type-check against. Afterwards you iterate without repeating it. One more one-time step, before your first `pnpm verify`: `pnpm test:e2e:install` downloads the Chromium build Playwright drives.
+**`pnpm build` is required, not a one-time nicety.** `@oc-mui/vite-config` is consumed from its `dist/` and nothing builds it during install, so a bare `pnpm dev` on a fresh clone stops at `ERR_MODULE_NOT_FOUND`. The same build populates the `dist-types/` directories downstream packages type-check against. Afterwards you iterate without repeating it.
 
 ## Pick a backend
 
@@ -27,11 +28,10 @@ The shell needs a backend at boot for `config.json`, `plugins.json`, `/info/me.j
 
 - **An Opencast you already run** — the [Quickstart](../quickstart.md) has that command line and what each variable does.
 - **A full local stack** — Opencast, the GraphQL plugin, the Management UI backend bundles, OpenSearch: [Full local setup](../getting-started/local-backend.md).
-- **No backend at all** — enough for plugin-authoring work that doesn't depend on live data. Read on.
 
-### Working without a backend
+### No backend at all
 
-Serve the four paths above as static JSON from any local HTTP server and point `VITE_PROXY_TARGET` at it; with `VITE_LOCAL_CONFIG=true` the committed local `config.json` stays the one served, so your stub can skip that endpoint. The smoke test in [`tests/e2e/smoke.spec.ts`](../../tests/e2e/smoke.spec.ts) is the working set of stubs, copy-pasteable.
+Enough for plugin-authoring work that doesn't depend on live data. Serve the four paths above as static JSON from any local HTTP server and point `VITE_PROXY_TARGET` at it; with `VITE_LOCAL_CONFIG=true` the committed local `config.json` stays the one served, so your stub can skip that endpoint. The smoke test in [`tests/e2e/smoke.spec.ts`](../../tests/e2e/smoke.spec.ts) is the working set of stubs, copy-pasteable.
 
 Those stubs answer as an **anonymous** session (`{ "user": null }` on `/info/me.json`, `{ "data": null }` on `/graphql`), which boots the shell but leaves every app route behind the sign-in screen. Session state is decided by the GraphQL `currentUser` query (`MuiGetCurrentUser` in [`useGetCurrentUser.ts`](../../packages/query/src/hooks/useGetCurrentUser.ts)), *not* by `/info/me.json` — which only supplies the roles that role-gated apps check. To be treated as logged in, answer `POST /graphql` with:
 
