@@ -84,10 +84,11 @@ export default defineConfig({
     siteTitle: "Management UI",
 
     nav: [
-      { text: "Get started", link: "/getting-started/what-is-management-ui" },
-      { text: "Plugins", link: "/plugins/creating-a-plugin" },
-      { text: "Architecture", link: "/architecture/overview" },
-      { text: "Operations", link: "/operations/release" },
+      { text: "Quickstart", link: "/quickstart" },
+      { text: "Use", link: "/use/" },
+      { text: "Operate", link: "/operate/" },
+      { text: "Extend", link: "/extend/" },
+      { text: "Contribute", link: "/contribute/" },
       {
         text: "GitHub",
         items: [
@@ -99,78 +100,7 @@ export default defineConfig({
       },
     ],
 
-    sidebar: {
-      "/getting-started/": [
-        {
-          text: "Getting started",
-          items: [
-            { text: "What is Management UI?", link: "/getting-started/what-is-management-ui" },
-            { text: "Deployment", link: "/getting-started/deployment" },
-            { text: "Configuration", link: "/getting-started/configuration" },
-            { text: "Upgrading", link: "/getting-started/upgrading" },
-            { text: "Run from source", link: "/getting-started/installation" },
-            { text: "Full local setup (backend)", link: "/getting-started/local-backend" },
-          ],
-        },
-      ],
-
-      "/plugins/": [
-        {
-          text: "Plugins",
-          items: [
-            { text: "Your first plugin", link: "/plugins/first-plugin" },
-            { text: "Creating a plugin", link: "/plugins/creating-a-plugin" },
-            { text: "Distribution", link: "/plugins/distribution" },
-            { text: "Styling", link: "/plugins/styling" },
-            { text: "i18n", link: "/plugins/i18n" },
-            { text: "Testing", link: "/plugins/testing" },
-          ],
-        },
-      ],
-
-      "/architecture/": [
-        {
-          text: "Architecture",
-          items: [
-            { text: "Overview", link: "/architecture/overview" },
-            { text: "Contracts", link: "/architecture/CONTRACTS" },
-            { text: "Configuration", link: "/architecture/CONFIGURATION" },
-          ],
-        },
-        {
-          text: "Decisions",
-          collapsed: false,
-          items: [
-            {
-              text: "001 — Plugin system",
-              link: "/architecture/decisions/001-plugin-system",
-            },
-            {
-              text: "002 — Monorepo structure",
-              link: "/architecture/decisions/002-monorepo-structure",
-            },
-            {
-              text: "003 — Shell + core plugins",
-              link: "/architecture/decisions/003-shell-plus-core-plugins",
-            },
-          ],
-        },
-      ],
-
-      "/operations/": [
-        {
-          text: "Operations",
-          items: [
-            { text: "Release & versioning", link: "/operations/release" },
-            { text: "Release test protocol", link: "/operations/test-protocol" },
-            { text: "Recording a manual test run", link: "/operations/manual-test-recording" },
-            { text: "Extending the workspace", link: "/operations/extending-the-workspace" },
-            { text: "CI", link: "/operations/ci" },
-            { text: "Testing", link: "/operations/testing" },
-          ],
-        },
-      ],
-    },
+    sidebar: sidebar(),
 
     socialLinks: [{ icon: "github", link: REPO_URL }],
 
@@ -195,6 +125,117 @@ export default defineConfig({
     },
   },
 });
+
+// ---------------------------------------------------------------------------
+// Sidebar
+// ---------------------------------------------------------------------------
+
+/**
+ * One sidebar per role entry. The site is organised by *who is reading*, not
+ * by topic: Use / Operate / Extend / Contribute each get their own tree so a
+ * reader never has to scroll past four other audiences to find their task.
+ * Cross-role navigation is the top nav bar, not the sidebar.
+ *
+ * Every section starts with the same "Start here" group, so a reader who
+ * landed deep (search, a shared link) can always get back to the map.
+ */
+function sidebar() {
+  const startHere = {
+    text: "Start here",
+    items: [
+      { text: "What is Management UI?", link: "/what-is-management-ui" },
+      { text: "Quickstart", link: "/quickstart" },
+    ],
+  };
+
+  const section = (
+    text: string,
+    tasks: { text: string; link: string }[],
+    lookup: { text: string; link: string }[],
+  ) => [
+    startHere,
+    { text, items: tasks },
+    { text: "Look it up", items: lookup },
+  ];
+
+  return {
+    "/use/": section(
+      "Use it",
+      [
+        { text: "Using the interface", link: "/use/" },
+        { text: "The interface in five minutes", link: "/use/tour" },
+        { text: "Find a video", link: "/use/find-a-video" },
+        { text: "Edit metadata", link: "/use/edit-metadata" },
+        { text: "Upload a video", link: "/use/upload" },
+        { text: "Work with series", link: "/use/series" },
+        { text: "Delete a video", link: "/use/delete-a-video" },
+      ],
+      [
+        { text: "Status reference", link: "/use/status-reference" },
+        { text: "Field reference", link: "/use/field-reference" },
+      ],
+    ),
+
+    "/operate/": section(
+      "Run it",
+      [
+        { text: "Operating a deployment", link: "/operate/" },
+        { text: "Install", link: "/operate/install" },
+        { text: "Configure", link: "/operate/configure" },
+        { text: "Backend configuration", link: "/operate/backend-config" },
+        { text: "Upgrade", link: "/operate/upgrade" },
+      ],
+      [{ text: "Troubleshooting", link: "/operate/troubleshooting" }],
+    ),
+
+    "/extend/": section(
+      "Extend it",
+      [
+        { text: "Extending the UI", link: "/extend/" },
+        { text: "Your first plugin", link: "/extend/first-plugin" },
+        { text: "Building a plugin", link: "/extend/plugin-guide" },
+        { text: "Styling", link: "/extend/styling" },
+        { text: "Translations", link: "/extend/i18n" },
+        { text: "Testing a plugin", link: "/extend/testing" },
+        { text: "Add a GraphQL field", link: "/extend/graphql-field" },
+      ],
+      [
+        { text: "Backend bundles", link: "/extend/backend-bundles" },
+        { text: "Distribution", link: "/extend/distribution" },
+      ],
+    ),
+
+    "/contribute/": section(
+      "Contribute",
+      [
+        { text: "Contributing", link: "/contribute/" },
+        { text: "Set up the repo", link: "/contribute/setup" },
+        { text: "Your first pull request", link: "/contribute/first-pr" },
+      ],
+      [
+        { text: "Full local setup", link: "/contribute/local-backend" },
+        { text: "Testing", link: "/contribute/testing" },
+        { text: "CI", link: "/contribute/ci" },
+        { text: "Releases", link: "/contribute/release" },
+      ],
+    ),
+
+    // Root-level pages (quickstart, what-is-…): show the map of all five
+    // entries so the first click after the landing page is an informed one.
+    "/": [
+      startHere,
+      {
+        text: "Entries",
+        items: [
+          { text: "Use it", link: "/use/" },
+          { text: "Run it", link: "/operate/" },
+          { text: "Extend it", link: "/extend/" },
+          { text: "Contribute", link: "/contribute/" },
+        ],
+      },
+    ],
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Cross-repo link rewriting

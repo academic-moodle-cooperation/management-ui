@@ -8,9 +8,11 @@ A modular, plugin-first admin interface for [Opencast](https://opencast.org). A 
 
 | You want to… | Start at |
 |---|---|
-| **Run it on your Opencast** | [Deployment](docs/getting-started/deployment.md) — JARs deployed, `config.json` in place, login working. |
-| **Build a plugin** | [Your first plugin](docs/plugins/first-plugin.md) — scaffolded, visible in the dev shell, contract test green in about five minutes. |
-| **Contribute to this repo** | [`CONTRIBUTING.md`](CONTRIBUTING.md) — the dev loop, the changeset rule, and everything to land your first PR. |
+| **Try it** | [Quickstart](docs/quickstart.md) — five commands, the UI in your browser against an Opencast you already run. |
+| **Use it** | [Use it](docs/use/index.md) — find a video, edit metadata, upload, manage series. |
+| **Run it on your Opencast** | [Run it](docs/operate/index.md) — bundles deployed, `config.json` in place, login working. |
+| **Build a plugin** | [Extend it](docs/extend/index.md) — your own screens in the shell, contract test green. |
+| **Contribute to this repo** | [Contribute](docs/contribute/index.md) — the dev loop, the gate, and everything to land your first PR. |
 
 Full documentation lives in [`docs/`](docs/README.md) and renders as the [docs site](https://academic-moodle-cooperation.github.io/management-ui/) (Pages deploys are currently dormant — browse `docs/` on GitHub meanwhile). Architecture tour: [`docs/architecture/overview.md`](docs/architecture/overview.md). For AI agents and tooling: [`AGENTS.md`](AGENTS.md) (operational rules) and [`llms.txt`](llms.txt).
 
@@ -20,11 +22,11 @@ Full documentation lives in [`docs/`](docs/README.md) and renders as the [docs s
 git clone https://github.com/academic-moodle-cooperation/management-ui.git
 cd management-ui
 pnpm install
-pnpm build         # one-time — builds dist-types/ for upstream packages
+pnpm build         # required — @oc-mui/* packages are consumed from dist/
 pnpm dev           # http://127.0.0.1:3000/management-ui/
 ```
 
-Node and pnpm versions are pinned in [`package.json`](package.json) (`engines` and `packageManager`) — `corepack enable` picks the right pnpm automatically. Full development setup, including backend wiring and troubleshooting: [Run from source](docs/getting-started/installation.md).
+Node and pnpm versions are pinned in [`package.json`](package.json) (`engines` and `packageManager`) — `corepack enable` picks the right pnpm automatically. To point that dev server at a real Opencast, follow the [Quickstart](docs/quickstart.md).
 
 ## Everyday commands
 
