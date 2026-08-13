@@ -18,6 +18,12 @@ public String myNewField() {
 
 The series side mirrors it (`MuiSeriesExtension` → `MuiSeriesInfo`), and mutations hang off `MuiMutationExtension`, which adds a `mui` field to the root `Mutation` type — which is why every mutation the UI sends is nested inside `mui { … }`.
 
+::: warning Mutation arguments are read by name, not through the parameter
+A `@GraphQLName`-annotated parameter on a `MuiMutation` method **declares** the argument in the schema; it does not necessarily carry the value into the command. The commands pull arguments straight out of the `DataFetchingEnvironment` by string key: `MuiUpdateEventCommand` and `MuiUpdateEventAclCommand` read `environment.getArgument("publishChanges")`, and the upstream `UpdateEventCommand` / `UpdateEventAclCommand` they extend read `"metadata"` and `"acl"` the same way.
+
+So a Java parameter that is never referenced in the method body is still load-bearing — `updateEvent`'s `acl` and `publishChanges` look dead and are not. Deleting the parameter removes the argument from the schema and the lookup then yields `null`; renaming its `@GraphQLName` breaks the lookup at runtime with **no compiler error**. Change the annotation and the `getArgument` key together, and grep the command classes for the key before touching either.
+:::
+
 ## 2. Add a config key, if the field needs one
 
 Values an operator must be able to change belong in `MuiConfig.java`, an OSGi metatype `@interface` on the PID `org.opencastproject.mui`. Method names map to dotted property names: `thumbnail_channel_id()` is the key `thumbnail.channel.id`. Give it a `default` there, and add the shipped value to `src/main/resources/OSGI-INF/configurator/mui.json` so a fresh install starts configured.

@@ -177,8 +177,8 @@ This runs in three steps:
    | `Http-Alias` | `/management-ui/static/plugins/<plugin-id>` | Yes — URL prefix |
    | `Http-Classpath` | `/static/plugins/<plugin-id>` | Yes — JAR-internal directory served at the alias |
    | `Include-Resource` | `static/=target/classes/static` | Yes — embeds the assets in the JAR |
-   | `Management-Plugin-Css` | filename stem if not `<plugin-id>.css` | Optional — **ignored when `plugin.json` is present** |
-   | `Management-Plugin-I18n` | comma-separated namespace list | Optional — **ignored when `plugin.json` is present** |
+   | `Management-Plugin-Css` | filename stem if not `<plugin-id>.css` | Optional — **ignored when `plugin.json` is present** ([#351](https://github.com/academic-moodle-cooperation/management-ui/issues/351)) |
+   | `Management-Plugin-I18n` | comma-separated namespace list | Optional — **ignored when `plugin.json` is present** ([#351](https://github.com/academic-moodle-cooperation/management-ui/issues/351)) |
 
 If you already built the frontend separately (e.g. a CI pipeline that builds JS and JAR independently), skip the Node toolchain:
 

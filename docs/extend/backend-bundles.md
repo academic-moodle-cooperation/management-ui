@@ -52,7 +52,7 @@ The tracker tries the manifest first and falls back to filenames:
 2. **Filename convention.** Used when `plugin.json` is absent, or present and unparseable — a parse failure is logged as a warning and silently degrades to this path. Every `*.mjs` directly inside the static directory becomes an entry; when none is found, `<name>.mjs` is assumed. A stylesheet is matched by `Management-Plugin-Css`, else by the same stem as the module, else by being the only `.css` present. The module id is the plain plugin name for a single canonical entry (`<name>.mjs` or `plugin-<name>.mjs`) and `<name>/<stem>` otherwise; a stem of `<name>-<suffix>` or `plugin-<name>-<suffix>` sets the entry's `type` to `<suffix>`.
 
 ::: warning Precedence trap
-`Management-Plugin-Css` and `Management-Plugin-I18n` are read **only** on the fallback path. A JAR that ships a `plugin.json` *and* sets those headers gets its headers ignored — the manifest's `css` and `i18nNamespaces` decide. Org plugin POMs commonly set both, which is harmless but misleading: change the manifest, not the header.
+`Management-Plugin-Css` and `Management-Plugin-I18n` are read **only** on the fallback path. A JAR that ships a `plugin.json` *and* sets those headers gets its headers ignored — the manifest's `css` and `i18nNamespaces` decide. Org plugin POMs commonly set both, which is harmless but misleading: change the manifest, not the header. Tracked as [#351](https://github.com/academic-moodle-cooperation/management-ui/issues/351).
 :::
 
 ### What the shell receives
@@ -90,7 +90,7 @@ Mutations in `MuiMutation` wrap Opencast's commands to apply configured workflow
 
 Both behaviours above read `MuiConfig`, an OSGi metatype interface on the PID `org.opencastproject.mui`. Method names map to dotted property names (`thumbnail_channel_id()` ↔ `thumbnail.channel.id`). Shipped values live in [`OSGI-INF/configurator/mui.json`](../../backend/management-graphql/src/main/resources/OSGI-INF/configurator/mui.json), applied by Opencast's configurator at install time; the keys and what each one changes are in [Backend configuration](../operate/backend-config.md).
 
-Two details worth knowing before you edit either file. `trash_workflow_id()` is the one method **without** a Java `default` — it is only ever set by the configurator resource, so a deployment that removes it from `mui.json` gets `null` and permanent deletes. And the resource declares `":configurator:symbolic-name": "org.opencastproject.management.config"`, which matches neither bundle's actual symbolic name (`management-ui-graphql`, the bundle that ships the file, or `management-ui-config`); it works today, but do not treat that string as a reliable pointer.
+Two details worth knowing before you edit either file. `trash_workflow_id()` is the one method **without** a Java `default` — it is only ever set by the configurator resource, so a deployment that removes it from `mui.json` gets `null` and permanent deletes ([#342](https://github.com/academic-moodle-cooperation/management-ui/issues/342)). And the resource declares `":configurator:symbolic-name": "org.opencastproject.management.config"`, which matches neither bundle's actual symbolic name (`management-ui-graphql`, the bundle that ships the file, or `management-ui-config`); it works today, but do not treat that string as a reliable pointer ([#352](https://github.com/academic-moodle-cooperation/management-ui/issues/352)).
 
 ## See also
 
