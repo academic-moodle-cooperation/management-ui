@@ -122,6 +122,6 @@ To customize an auto-generated shadcn component, copy it to `src/components/cust
 
 - [`CONTRACTS.md`](./CONTRACTS.md) — the six frozen contracts.
 - [`CONFIGURATION.md`](./CONFIGURATION.md) — the full config layer model.
-- [`decisions/`](./decisions/001-plugin-system) — architecture decision records (ADRs).
+- [`decisions/`](./decisions/001-plugin-system.md) — architecture decision records (ADRs).
 - [`../plugins/README.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/plugins/README.md) — the plugin-author entry point. (GitHub link — the page is deliberately excluded from the published docs site.)
 - [`../../AGENTS.md`](../../AGENTS.md) — operational rules for plugin work (the author-facing pre-flight checklist).
