@@ -32,6 +32,13 @@ public @interface MuiConfig {
 
   String republish_workflow_id() default "republish-metadata";
 
+  /**
+   * Deliberately the only option without a default. Its absence is how a
+   * deployment selects permanent deletion — the behaviour plain Opencast has,
+   * since it ships no trash workflow. Giving it a default would remove that
+   * choice and break deletion on every server lacking a workflow by that name.
+   * The fallback is logged as a warning in {@code MuiMutation#deleteEvent}.
+   */
   String trash_workflow_id();
 
   String thumbnail_channel_id() default "engage-player";
