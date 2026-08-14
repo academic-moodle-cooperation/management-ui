@@ -1469,7 +1469,7 @@ export type MuiSearchUserQuery = {
     searchUser: {
         totalCount: any;
         nodes: Array<{
-            __typename: 'MuiUser';
+            __typename: 'User';
             email?: string | null;
             name?: string | null;
             provider?: string | null;
@@ -1678,7 +1678,7 @@ export const MuiUserDocument = "\n    query MuiUser {\n  currentUser {\n    emai
 
 // @public (undocumented)
 export type MuiUserFieldsFragment = {
-    __typename: 'MuiUser';
+    __typename: 'User';
 };
 
 // @public (undocumented)
@@ -2345,7 +2345,7 @@ export type UserList = {
 };
 
 // @public (undocumented)
-export const useSuspenseEventsFromSeriesQuery: {
+export const useSuspenseMuiEventsFromSeriesQuery: {
     <TData = MuiEventsFromSeriesQuery, TError = unknown>(variables: MuiEventsFromSeriesQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2359,7 +2359,7 @@ export const useSuspenseEventsFromSeriesQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetAllManagedAclsQuery: {
+export const useSuspenseMuiGetAllManagedAclsQuery: {
     <TData = MuiGetAllManagedAclsQuery, TError = unknown>(variables?: MuiGetAllManagedAclsQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2369,7 +2369,7 @@ export const useSuspenseGetAllManagedAclsQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetEventByIdInputFieldsQuery: {
+export const useSuspenseMuiGetEventByIdInputFieldsQuery: {
     <TData = MuiGetEventByIdInputFieldsQuery, TError = unknown>(variables: MuiGetEventByIdInputFieldsQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2379,7 +2379,7 @@ export const useSuspenseGetEventByIdInputFieldsQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetEventByIdQuery: {
+export const useSuspenseMuiGetEventByIdQuery: {
     <TData = MuiGetEventByIdQuery, TError = unknown>(variables: MuiGetEventByIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetEventByIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetEventByIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2389,7 +2389,7 @@ export const useSuspenseGetEventByIdQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetManagedAclsWithEventIdQuery: {
+export const useSuspenseMuiGetManagedAclsWithEventIdQuery: {
     <TData = MuiGetManagedAclsWithEventIdQuery, TError = unknown>(variables: MuiGetManagedAclsWithEventIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2399,7 +2399,7 @@ export const useSuspenseGetManagedAclsWithEventIdQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetManagedAclsWithSeriesIdQuery: {
+export const useSuspenseMuiGetManagedAclsWithSeriesIdQuery: {
     <TData = MuiGetManagedAclsWithSeriesIdQuery, TError = unknown>(variables: MuiGetManagedAclsWithSeriesIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2409,7 +2409,7 @@ export const useSuspenseGetManagedAclsWithSeriesIdQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetMyEventsQuery: {
+export const useSuspenseMuiGetMyEventsQuery: {
     <TData = MuiGetMyEventsQuery, TError = unknown>(variables?: MuiGetMyEventsQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetMyEventsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetMyEventsQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2422,7 +2422,7 @@ export const useSuspenseGetMyEventsQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetMySeriesNameAndIdQuery: {
+export const useSuspenseMuiGetMySeriesNameAndIdQuery: {
     <TData = MuiGetMySeriesNameAndIdQuery, TError = unknown>(variables?: MuiGetMySeriesNameAndIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2435,7 +2435,7 @@ export const useSuspenseGetMySeriesNameAndIdQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetMySeriesQuery: {
+export const useSuspenseMuiGetMySeriesQuery: {
     <TData = MuiGetMySeriesQuery, TError = unknown>(variables?: MuiGetMySeriesQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetMySeriesQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetMySeriesQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2448,7 +2448,7 @@ export const useSuspenseGetMySeriesQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetSeriesByIdInputFieldsQuery: {
+export const useSuspenseMuiGetSeriesByIdInputFieldsQuery: {
     <TData = MuiGetSeriesByIdInputFieldsQuery, TError = unknown>(variables: MuiGetSeriesByIdInputFieldsQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2458,7 +2458,7 @@ export const useSuspenseGetSeriesByIdInputFieldsQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetSeriesInfoQuery: {
+export const useSuspenseMuiGetSeriesInfoQuery: {
     <TData = MuiGetSeriesInfoQuery, TError = unknown>(variables: MuiGetSeriesInfoQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2468,7 +2468,7 @@ export const useSuspenseGetSeriesInfoQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetSeriesNameByIdQuery: {
+export const useSuspenseMuiGetSeriesNameByIdQuery: {
     <TData = MuiGetSeriesNameByIdQuery, TError = unknown>(variables: MuiGetSeriesNameByIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2477,14 +2477,8 @@ export const useSuspenseGetSeriesNameByIdQuery: {
     }>)[];
 };
 
-export { useSuspenseQuery }
-
-export { UseSuspenseQueryOptions }
-
-export { UseSuspenseQueryResult }
-
 // @public (undocumented)
-export const useSuspenseSearchUserQuery: {
+export const useSuspenseMuiSearchUserQuery: {
     <TData = MuiSearchUserQuery, TError = unknown>(variables: MuiSearchUserQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiSearchUserQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiSearchUserQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2496,7 +2490,7 @@ export const useSuspenseSearchUserQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseUserQuery: {
+export const useSuspenseMuiUserQuery: {
     <TData = MuiUserQuery, TError = unknown>(variables?: MuiUserQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiUserQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiUserQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2504,6 +2498,12 @@ export const useSuspenseUserQuery: {
         [key: string]: never;
     }>)[];
 };
+
+export { useSuspenseQuery }
+
+export { UseSuspenseQueryOptions }
+
+export { UseSuspenseQueryResult }
 
 // (No @packageDocumentation comment for this package)
 
