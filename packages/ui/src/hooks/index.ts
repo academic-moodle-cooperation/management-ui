@@ -3,3 +3,4 @@
 
 export * from "./use-mobile";
 export * from "./useClickOutside";
+export * from "./useExtensionLabel";

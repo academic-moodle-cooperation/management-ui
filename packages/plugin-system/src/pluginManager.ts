@@ -71,7 +71,7 @@ export interface PluginManager {
   registerComponent(
     extensionPoint: string,
     component: PluginComponent,
-    options?: { key?: string; order?: number },
+    options?: { key?: string; order?: number; label?: string },
   ): void;
   registerObject<T = unknown>(
     type: string,
@@ -206,9 +206,9 @@ export const createPluginManager = (): PluginManager => {
   const registerComponent = (
     extensionPoint: string,
     component: PluginComponent,
-    options: { key?: string; order?: number } = {},
+    options: { key?: string; order?: number; label?: string } = {},
   ) => {
-    const { key = crypto.randomUUID(), order = 100 } = options;
+    const { key = crypto.randomUUID(), order = 100, label } = options;
     const pluginName = currentPlugin?.name || "unknown";
 
     // Create a namespaced key if the provided key doesn't already have namespacing
@@ -222,8 +222,10 @@ export const createPluginManager = (): PluginManager => {
       );
     }
 
-    // Register the component using the renderer plugin
-    executeFunction("renderer.add", extensionPoint, component, componentKey, order);
+    // Register the component using the renderer plugin. `label` travels as an
+    // opaque string: this package knows nothing about i18n (it depends on
+    // `@oc-mui/utils` and nothing else), so translating it is the host's job.
+    executeFunction("renderer.add", extensionPoint, component, componentKey, order, label);
   };
 
   // Add implementations to createPluginManager

@@ -16,7 +16,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from "@oc-mui/ui/components";
-import { useClickOutside } from "@oc-mui/ui/hooks";
+import { useClickOutside, useExtensionLabels } from "@oc-mui/ui/hooks";
 import { logger } from "@oc-mui/utils";
 
 import { EpisodesInfoContent } from "./EpisodesInfoContent";
@@ -97,11 +97,17 @@ export const EpisodesTableSidebar: React.FC<EpisodesTableSidebarProps> = ({
         }>;
         key: string;
         order: number;
+        label?: string;
       }>
     >("renderer.getComponents", "table-sidebar:episodes:tabs") || [];
 
   // Sort components by order
   const sortedTabComponents = tabComponents.sort((a, b) => (a.order || 100) - (b.order || 100));
+
+  // A tab's caption comes from the `label` it registered — a translation key,
+  // resolved at render time. Registrations without one keep the label derived
+  // from their key, which is what every tab showed before the option existed.
+  const labelFor = useExtensionLabels(sortedTabComponents);
   const hasTabPlugins = sortedTabComponents.length > 0;
 
   logger.debug("EpisodesTableSidebar: Tab plugins found", {
@@ -151,10 +157,7 @@ export const EpisodesTableSidebar: React.FC<EpisodesTableSidebarProps> = ({
                   </TabsTrigger>
                   {sortedTabComponents.map((tabComponent) => (
                     <TabsTrigger key={tabComponent.key} value={tabComponent.key}>
-                      {tabComponent.key
-                        .replace(/^.*:/, "")
-                        .replace(/-/g, " ")
-                        .replace(/\b\w/g, (l) => l.toUpperCase())}
+                      {labelFor(tabComponent)}
                     </TabsTrigger>
                   ))}
                 </TabsList>

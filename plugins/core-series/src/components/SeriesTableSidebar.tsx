@@ -16,7 +16,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from "@oc-mui/ui/components";
-import { useClickOutside } from "@oc-mui/ui/hooks";
+import { useClickOutside, useExtensionLabels } from "@oc-mui/ui/hooks";
 import { logger } from "@oc-mui/utils";
 
 import { SeriesInfoContent } from "./SeriesInfoContent";
@@ -89,11 +89,20 @@ export const SeriesTableSidebar: React.FC<SeriesTableSidebarProps> = ({
   // Plugin system integration - check for table sidebar plugins
   const tabComponents =
     manager.executeFunction<
-      Array<{ component: React.ComponentType<Record<string, unknown>>; key: string; order: number }>
+      Array<{
+        component: React.ComponentType<Record<string, unknown>>;
+        key: string;
+        order: number;
+        label?: string;
+      }>
     >("renderer.getComponents", "table-sidebar:series:tabs") || [];
 
   // Sort components by order
   const sortedTabComponents = tabComponents.sort((a, b) => (a.order || 100) - (b.order || 100));
+
+  // See EpisodesTableSidebar: the caption comes from the registered `label`
+  // (a translation key), falling back to one derived from the key.
+  const labelFor = useExtensionLabels(sortedTabComponents);
   const hasTabPlugins = sortedTabComponents.length > 0;
 
   logger.debug("SeriesTableSidebar: Tab plugins found", {
@@ -141,10 +150,7 @@ export const SeriesTableSidebar: React.FC<SeriesTableSidebarProps> = ({
                   <TabsTrigger value="metadata">{t("series:seriesInfo.tabs.metadata")}</TabsTrigger>
                   {sortedTabComponents.map((tabComponent) => (
                     <TabsTrigger key={tabComponent.key} value={tabComponent.key}>
-                      {tabComponent.key
-                        .replace(/^.*:/, "")
-                        .replace(/-/g, " ")
-                        .replace(/\b\w/g, (l) => l.toUpperCase())}
+                      {labelFor(tabComponent)}
                     </TabsTrigger>
                   ))}
                 </TabsList>
