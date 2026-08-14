@@ -223,7 +223,10 @@ test("[SER-02] [SER-24] [SER-26] the row shows the values the backend supplied",
   // Exactly one creator is shown (SER-26), and the created cell carries a date
   // *and* a time (SER-24), not just a day.
   await expect(page.getByRole("cell", { name: "Alex Roe" })).toHaveCount(1);
-  await expect(page.getByRole("cell", { name: /15\.01\.2026.*\d{2}:\d{2}/ })).toBeVisible();
+  // English format: dates follow the active UI language now, and the shipped
+  // config starts this deployment in English (`app.locale: "en"`). What the
+  // protocol step asks for is a date *plus* a time, not a German one.
+  await expect(page.getByRole("cell", { name: /Jan 15, 2026.*\d{1,2}:\d{2}/ })).toBeVisible();
 });
 
 test("[SER-05] sorting by a column asks the backend to sort, across all pages", async ({
