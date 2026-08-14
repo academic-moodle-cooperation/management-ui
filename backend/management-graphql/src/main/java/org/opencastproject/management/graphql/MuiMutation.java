@@ -40,10 +40,15 @@ import graphql.annotations.annotationTypes.GraphQLName;
 import graphql.annotations.annotationTypes.GraphQLNonNull;
 import graphql.schema.DataFetchingEnvironment;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @GraphQLName(MuiMutation.TYPE_NAME)
 public class MuiMutation {
 
   public static final String TYPE_NAME = "MuiMutation";
+
+  private static final Logger logger = LoggerFactory.getLogger(MuiMutation.class);
 
   @GraphQLField
   @GraphQLNonNull
@@ -85,6 +90,15 @@ public class MuiMutation {
   public static GqlDeleteEventPayload deleteEvent(
       @GraphQLName("id") @GraphQLNonNull String id,
       final DataFetchingEnvironment environment) {
+    // `trash_workflow_id()` is deliberately the one option without a metatype
+    // default: its ABSENCE is how a deployment selects permanent deletion,
+    // which is also what plain Opencast does (it ships no trash workflow).
+    // Adding a default here would remove that choice and break deletion
+    // outright on every server that has no workflow by that name.
+    //
+    // An explicitly configured but blank value is NOT treated as "absent": a
+    // blank value is far more likely a mistake than an intent to destroy
+    // recordings, so it keeps failing loudly in the trash branch.
     String trashWorkflowId = GraphQLProvider.getConfig().trash_workflow_id();
     if (trashWorkflowId != null) {
       return MuiMoveToTrashEventCommand.create(id, trashWorkflowId)
@@ -92,6 +106,13 @@ public class MuiMutation {
           .build()
           .execute();
     } else {
+      // Deleting for good is not something an operator should discover from
+      // the data being gone — say so where deployments actually look.
+      logger.warn(
+          "No trash workflow configured ({}.trash.workflow.id is unset), so event {} is being "
+              + "deleted permanently and cannot be restored. Set that key to a workflow the server "
+              + "has if deletions should be reversible.",
+          MuiConfig.CONFIGURATION_PID, id);
       return DeleteEventCommand.create(id)
           .environment(environment)
           .build()

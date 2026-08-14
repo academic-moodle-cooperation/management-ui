@@ -69,7 +69,8 @@
         "presenter": "Camera",
         "subtitles": "Subtitles"
       },
-      "selectDownloadVersion": "Select version"
+      "selectDownloadVersion": "Select version",
+      "downloadUnavailable": "No downloadable version available. The recording may not be published, or it is only offered as a stream."
     },
     "notification": {
       "changesSaved": "Changes have been saved!",

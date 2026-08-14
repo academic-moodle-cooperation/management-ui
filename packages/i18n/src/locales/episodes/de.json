@@ -69,7 +69,8 @@
         "presenter": "Kamera",
         "subtitles": "Untertitel"
       },
-      "selectDownloadVersion": "Version auswählen"
+      "selectDownloadVersion": "Version auswählen",
+      "downloadUnavailable": "Keine herunterladbare Version verfügbar. Die Aufzeichnung ist möglicherweise nicht veröffentlicht oder wird nur als Stream angeboten."
     },
     "notification": {
       "changesSaved": "Änderungen wurden gespeichert",
