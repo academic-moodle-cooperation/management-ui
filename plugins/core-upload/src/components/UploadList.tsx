@@ -1,6 +1,7 @@
 import { CheckCircle2, Clock, PencilIcon, X, XCircle } from "lucide-react";
 import React from "react";
 
+import { useI18n } from "@oc-mui/i18n";
 import type { UploadFileBlob } from "@oc-mui/store";
 import { cn } from "@oc-mui/ui/lib/utils";
 
@@ -34,6 +35,7 @@ export const UploadList = ({
   isLoading: boolean;
   className: string;
 }) => {
+  const { t } = useI18n();
   return (
     <ul
       role="list"
@@ -108,7 +110,7 @@ export const UploadList = ({
                         )}
                         onClick={() => abortUpload(selectedFile)}
                       >
-                        <span className="sr-only">Remove from list</span>
+                        <span className="sr-only">{t("upload:removeFromList")}</span>
                         <X
                           className="w-5 h-5 text-muted-foreground hover:text-foreground"
                           aria-hidden="true"
@@ -121,7 +123,7 @@ export const UploadList = ({
               <div className="">
                 <div className="flex justify-between mb-1">
                   <span className="text-sm font-medium text-muted-foreground">
-                    Größe: {(selectedFile.size / 1000000).toFixed(1)} MB
+                    {t("upload:fileSize", { size: (selectedFile.size / 1000000).toFixed(1) })}
                   </span>
                   <span className="text-base font-medium text-muted-foreground">
                     {selectedFile.progress}%

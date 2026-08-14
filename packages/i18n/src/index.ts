@@ -7,4 +7,6 @@ import { I18nextProvider, useTranslation } from "react-i18next";
 // inside this package. See packages/i18n/README.md ("Stability contract").
 export * from "./useTranslation";
 export * from "./translationLoader";
+export * from "./dateFormat";
+export * from "./localePreference";
 export { i18next, I18nextProvider, useTranslation };

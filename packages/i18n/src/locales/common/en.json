@@ -89,7 +89,9 @@
     "rememberMe": "Remember me",
     "signingIn": "Signing in…",
     "errorInvalidCredentials": "Incorrect username or password.",
-    "errorServerUnreachable": "Couldn't reach the server. Check your connection and try again."
+    "errorServerUnreachable": "Couldn't reach the server. Check your connection and try again.",
+    "logIn": "Log in",
+    "logOut": "Log out"
   },
   "errors": {
     "notFound": {
@@ -196,5 +198,8 @@
     "errorLoginConfig": "Error loading login configuration.",
     "errorLogoutConfig": "Error loading logout configuration.",
     "noLoginMethod": "No login method is configured for this deployment."
-  }
+  },
+  "reset": "Reset",
+  "update": "Update",
+  "selectSeries": "Select a series"
 }

@@ -28,6 +28,8 @@ interface AppConfig {
   downloadBaseUrl?: string | undefined;
   matomo: MatomoConfig;
   app: {
+    // Language the UI starts in. A default, not a lock: a user's own pick
+    // from the language switcher is remembered and wins on later visits.
     locale: string;
     HtmlDocumentTitle: string; // <title> of the document
     logoUrl?: string;

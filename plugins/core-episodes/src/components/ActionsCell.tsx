@@ -286,11 +286,15 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="w-4 h-4">
                   <MoreVertical />
-                  <span className="sr-only">More actions</span>
+                  <span className="sr-only">
+                    {i18next.t("episodes:episodesTable.action.moreActions")}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuLabel>More Actions</DropdownMenuLabel>
+                <DropdownMenuLabel>
+                  {i18next.t("episodes:episodesTable.action.moreActions")}
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {hiddenActions.map((action) => {
                   if (action.menuItem) {
@@ -356,7 +360,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
               </DropdownMenuContent>
             </DropdownMenu>
           </TooltipTrigger>
-          <TooltipContent>More actions</TooltipContent>
+          <TooltipContent>{i18next.t("episodes:episodesTable.action.moreActions")}</TooltipContent>
         </Tooltip>
       )}
       <DeleteDialog
@@ -709,7 +713,9 @@ const DownloadDropdown: React.FC<{
         </DropdownMenuTrigger>
       </TooltipTrigger>
       <TooltipContent>{i18next.t("episodes:episodesTable.action.download")}</TooltipContent>
-      <DropdownMenuContent>{renderDownloadDropdownBody(event, downloadBaseUrl)}</DropdownMenuContent>
+      <DropdownMenuContent>
+        {renderDownloadDropdownBody(event, downloadBaseUrl)}
+      </DropdownMenuContent>
     </DropdownMenu>
   </Tooltip>
 );
