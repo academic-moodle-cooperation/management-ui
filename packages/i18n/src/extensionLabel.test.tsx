@@ -1,18 +1,22 @@
+// @vitest-environment jsdom
+// (this package's vitest config defaults to node; renderHook needs a DOM)
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { deriveLabelFromKey, useExtensionLabels } from "./useExtensionLabel";
-
+// See dateFormat.test.ts — the real modules boot i18next, which cannot run
+// here. Only the resolution logic is under test.
 const loadNamespace = vi.hoisted(() => vi.fn());
 const known = new Set(["acme:tabs.recordings"]);
 
-vi.mock("@oc-mui/i18n", () => ({
-  loadNamespace,
+vi.mock("./translationLoader", () => ({ loadNamespace }));
+vi.mock("./useTranslation", () => ({
   useI18n: () => ({
     t: (key: string) => `translated(${key})`,
     i18n: { language: "en", exists: (key: string) => known.has(key) },
   }),
 }));
+
+import { deriveLabelFromKey, useExtensionLabels } from "./extensionLabel";
 
 describe("deriveLabelFromKey", () => {
   it("turns a registration key into the label hosts showed before `label` existed", () => {

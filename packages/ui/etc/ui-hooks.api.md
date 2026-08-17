@@ -7,19 +7,7 @@
 import { RefObject } from 'react';
 
 // @public
-export const deriveLabelFromKey: (key: string) => string;
-
-// @public
 export function useClickOutside(refs: RefObject<HTMLElement | null>[], handler: () => void): void;
-
-// @public
-export const useExtensionLabels: (entries: ReadonlyArray<{
-    key: string;
-    label?: string | undefined;
-}>) => ((entry: {
-    key: string;
-    label?: string | undefined;
-}) => string);
 
 // @public (undocumented)
 export function useIsMobile(): boolean;

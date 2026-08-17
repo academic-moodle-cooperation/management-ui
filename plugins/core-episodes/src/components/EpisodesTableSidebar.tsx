@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 
-import { useTranslation } from "@oc-mui/i18n";
+import { useExtensionLabels, useTranslation } from "@oc-mui/i18n";
 import { usePluginManager } from "@oc-mui/plugin-system";
 import { useMuiUpdateEventMutation } from "@oc-mui/query";
 import type { MuiGetEventByIdInputFieldsQuery, MuiEventsDataFragment } from "@oc-mui/query";
@@ -16,7 +16,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from "@oc-mui/ui/components";
-import { useClickOutside, useExtensionLabels } from "@oc-mui/ui/hooks";
+import { useClickOutside } from "@oc-mui/ui/hooks";
 import { logger } from "@oc-mui/utils";
 
 import { EpisodesInfoContent } from "./EpisodesInfoContent";

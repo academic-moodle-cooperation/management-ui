@@ -1,6 +1,7 @@
 import React from "react";
 
-import { loadNamespace, useI18n } from "@oc-mui/i18n";
+import { loadNamespace } from "./translationLoader";
+import { useI18n } from "./useTranslation";
 
 /**
  * The visible label for a plugin-contributed entry (a sidebar tab, say).
