@@ -430,6 +430,39 @@ describe("PluginManager", () => {
       expect(Array.isArray(components) && components.length).toBe(2);
     });
 
+    it("carries a registered label through to the renderer registry", () => {
+      const TestComponent = () => null;
+      const plugin: Plugin = {
+        name: "test:plugin",
+        version: "1.0.0",
+        activate: vi.fn(),
+        deactivate: vi.fn(),
+      };
+
+      manager.register(plugin);
+      manager.registerComponent("test:position", TestComponent, {
+        key: "recordings",
+        label: "acme:tabs.recordings",
+      });
+      // Registrations that predate the option must stay label-free, so hosts
+      // can tell "nothing supplied" from "supplied an empty string".
+      manager.registerComponent("test:position", TestComponent, { key: "legacy" });
+
+      const components =
+        manager.executeFunction<Array<{ key: string; label?: string }>>(
+          "renderer.getComponents",
+          "test:position",
+        ) ?? [];
+
+      // Keys are namespaced at registration time, so match on the suffix.
+      const labelled = components.find((c) => c.key.endsWith(":recordings"));
+      const legacy = components.find((c) => c.key.endsWith(":legacy"));
+
+      expect(labelled?.label).toBe("acme:tabs.recordings");
+      expect(legacy).toBeDefined();
+      expect(legacy).not.toHaveProperty("label");
+    });
+
     it("should register components without key (auto-generated)", () => {
       const TestComponent = () => null;
       const plugin: Plugin = {

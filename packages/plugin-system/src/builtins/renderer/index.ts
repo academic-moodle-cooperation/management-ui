@@ -13,9 +13,18 @@ export const createRendererPlugin = (): Plugin => {
     initialize(manager) {
       manager.addFunction(
         "renderer.add",
-        (position: string, component: React.FC, key = crypto.randomUUID(), order = 100) => {
+        (
+          position: string,
+          component: React.FC,
+          key = crypto.randomUUID(),
+          order = 100,
+          label?: string,
+        ) => {
           const existing = components.get(position) || [];
-          components.set(position, [...existing, { component, key, position, order }]);
+          components.set(position, [
+            ...existing,
+            { component, key, position, order, ...(label === undefined ? {} : { label }) },
+          ]);
           try {
             const positionComponents = components.get(position) || [];
             if (positionComponents.length > 1) {

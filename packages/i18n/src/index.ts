@@ -9,4 +9,5 @@ export * from "./useTranslation";
 export * from "./translationLoader";
 export * from "./dateFormat";
 export * from "./localePreference";
+export * from "./extensionLabel";
 export { i18next, I18nextProvider, useTranslation };

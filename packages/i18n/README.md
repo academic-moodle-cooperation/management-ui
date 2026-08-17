@@ -55,6 +55,7 @@ Files are flat JSON, one key per phrase. The contract test's `expectI18nKeyParit
 | `createNamespacedKey`, `createOrganizationNamespace` | Helpers for building consistent namespace strings. |
 | `formatDate(value, options?)`, `activeDateLocale()` | Formats a date in the active UI language. Use these instead of `new Intl.DateTimeFormat("<locale>", …)` — a hardcoded locale printed German dates to English users. Unusable input yields `""` rather than a thrown `RangeError`. |
 | `setUserLanguage(language)`, `getUserLanguage()`, `applyConfiguredLanguage(locale)` | Language selection. See below. |
+| `useExtensionLabels(entries)`, `deriveLabelFromKey(key)` | For hosts rendering a caption on behalf of a plugin registration (e.g. sidebar tabs): resolves a registered `label` translation key at render time, loads its namespace, and falls back to the label derived from the registration key. |
 
 For the exhaustive surface, see [`etc/i18n.api.md`](./etc/i18n.api.md).
 
