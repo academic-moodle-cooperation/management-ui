@@ -9,7 +9,7 @@ import ReactDOM from "react-dom/client";
 import "@oc-mui/ui/globals.css";
 import "./app.css";
 import "./themes/default.css";
-import { loadNamespace, useTranslation } from "@oc-mui/i18n";
+import { applyConfiguredLanguage, loadNamespace, useTranslation } from "@oc-mui/i18n";
 import { PluginProvider } from "@oc-mui/plugin-system";
 import { AppProviders } from "@oc-mui/providers";
 import { useAppConfig, QueryProvider } from "@oc-mui/query";
@@ -57,6 +57,13 @@ const AppWithConfig = () => {
     eager: false,
     query: "?rcss",
   });
+
+  // `app.locale` is the deployment's default language. It is applied here,
+  // once — the user's own pick from the language switcher is remembered and
+  // takes precedence, so this is a starting point, not a lock.
+  useEffect(() => {
+    void applyConfiguredLanguage(config.app.locale);
+  }, [config.app.locale]);
 
   useEffect(() => {
     const themeName = config.app["theme"] || "default";

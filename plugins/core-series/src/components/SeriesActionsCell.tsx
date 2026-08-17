@@ -53,11 +53,11 @@ const DefaultSeriesActionsCell: React.FC<SeriesActionsCellProps> = ({ series }) 
           >
             <Button variant="ghost" size="icon" className="w-4 h-4">
               <UploadCloud />
-              <span className="sr-only">Upload</span>
+              <span className="sr-only">{i18next.t("series:seriesTable.action.upload")}</span>
             </Button>
           </Link>
         </TooltipTrigger>
-        <TooltipContent>Upload</TooltipContent>
+        <TooltipContent>{i18next.t("series:seriesTable.action.upload")}</TooltipContent>
       </Tooltip>
     </div>
   );

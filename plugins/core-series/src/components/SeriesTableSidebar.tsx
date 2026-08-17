@@ -125,8 +125,20 @@ export const SeriesTableSidebar: React.FC<SeriesTableSidebarProps> = ({
                 defaultValue="metadata"
                 className="flex flex-col h-full"
               >
-                <TabsList className="mx-2 mb-4 grid w-auto grid-cols-2">
-                  <TabsTrigger value="metadata">Metadata</TabsTrigger>
+                {/*
+                  One column per tab, computed rather than fixed: the count is
+                  1 (metadata) plus however many tabs plugins contribute, and a
+                  hardcoded `grid-cols-2` broke the bar as soon as a second
+                  plugin registered one. Tailwind cannot generate class names
+                  at runtime, so the track count is an inline style.
+                */}
+                <TabsList
+                  className="mx-2 mb-4 grid w-auto"
+                  style={{
+                    gridTemplateColumns: `repeat(${sortedTabComponents.length + 1}, minmax(0, 1fr))`,
+                  }}
+                >
+                  <TabsTrigger value="metadata">{t("series:seriesInfo.tabs.metadata")}</TabsTrigger>
                   {sortedTabComponents.map((tabComponent) => (
                     <TabsTrigger key={tabComponent.key} value={tabComponent.key}>
                       {tabComponent.key

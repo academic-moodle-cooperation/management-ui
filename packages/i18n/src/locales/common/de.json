@@ -89,7 +89,9 @@
     "rememberMe": "Angemeldet bleiben",
     "signingIn": "Anmeldung läuft…",
     "errorInvalidCredentials": "Benutzername oder Passwort ist falsch.",
-    "errorServerUnreachable": "Server nicht erreichbar. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+    "errorServerUnreachable": "Server nicht erreichbar. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "logIn": "Anmelden",
+    "logOut": "Abmelden"
   },
   "errors": {
     "notFound": {
@@ -196,5 +198,8 @@
     "errorLoginConfig": "Fehler beim Laden der Anmeldekonfiguration.",
     "errorLogoutConfig": "Fehler beim Laden der Abmeldekonfiguration.",
     "noLoginMethod": "Für diese Installation ist keine Anmeldemethode konfiguriert."
-  }
+  },
+  "reset": "Zurücksetzen",
+  "update": "Aktualisieren",
+  "selectSeries": "Serie auswählen"
 }

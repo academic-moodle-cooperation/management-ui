@@ -39,5 +39,7 @@
   "alert": {
     "title": "Invalid File Format",
     "text": "The file format is not supported. Please upload only audio and video files."
-  }
+  },
+  "removeFromList": "Remove from list",
+  "fileSize": "Size: {{size}} MB"
 }

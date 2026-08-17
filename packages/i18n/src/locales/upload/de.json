@@ -39,5 +39,7 @@
   "alert": {
     "title": "Ungültiges Dateiformat",
     "text": "Das Dateiformat wird nicht unterstützt. Bitte laden Sie nur Audio- und Videodateien hoch."
-  }
+  },
+  "removeFromList": "Aus der Liste entfernen",
+  "fileSize": "Größe: {{size}} MB"
 }
