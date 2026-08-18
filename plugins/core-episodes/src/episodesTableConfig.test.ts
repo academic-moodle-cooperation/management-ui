@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   getEpisodesColumnLabelOverrides,
+  getEpisodesVisibilityDefaults,
   resolveColumnLabel,
   resolveColumnMeta,
   resolveEpisodesViewConfig,
@@ -95,5 +96,22 @@ describe("episodesTableConfig", () => {
     ).toEqual({
       resolvedTitle: "Termin",
     });
+  });
+});
+
+describe("getEpisodesVisibilityDefaults", () => {
+  it("maps only the configured columns, keeping their show flag verbatim", () => {
+    const defaults = getEpisodesVisibilityDefaults([
+      { key: "title", show: true },
+      { key: "seriesName", show: false },
+    ]);
+
+    // `location` is deliberately absent: an unconfigured column keeps the
+    // table's own default rather than being forced either way.
+    expect(defaults).toEqual({ title: true, seriesName: false });
+  });
+
+  it("yields no defaults for an empty column config", () => {
+    expect(getEpisodesVisibilityDefaults([])).toEqual({});
   });
 });
