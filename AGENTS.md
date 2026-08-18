@@ -222,7 +222,7 @@ CI rejects PRs that change a versioned package without a changeset (`.github/wor
 
 ## Pre-push gate — `pnpm verify`
 
-This is the canonical command. It runs lint + type-check + build + unit tests + contract tests + api-check, then `test:docs` (the VitePress build, which fails on any dead internal link), then the Playwright E2E suite (incl. smoke) — the same order CI does. If `pnpm verify` is green locally, CI will be too — modulo network-dependent E2E flakes (caught by retries).
+This is the canonical command. It runs lint + type-check + build + unit tests + contract tests + api-check, then `codegen:check` (regenerates the GraphQL output from the committed schema and fails on any diff, plus the consumer-perspective type check over `dist-types`), then `test:docs` (the VitePress build, which fails on any dead internal link), then the Playwright E2E suite (incl. smoke) — the same order CI does. If `pnpm verify` is green locally, CI will be too — modulo network-dependent E2E flakes (caught by retries).
 
 If you only want a fast inner loop while iterating on one plugin:
 
