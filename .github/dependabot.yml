@@ -16,3 +16,24 @@ updates:
           - "*"
     commit-message:
       prefix: "chore(ci)"
+    ignore:
+      # v2 is a breaking rewrite of the inputs/token handling our release.yml
+      # relies on; the migration is deliberate work, tracked in #367. Without
+      # this, the group PR re-proposes the major every week.
+      - dependency-name: "changesets/action"
+        update-types: ["version-update:semver-major"]
+
+  # npm dependencies across the pnpm workspace. Security updates matter most
+  # here; routine bumps arrive as one weekly PR per dependency group.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      npm-minor-and-patch:
+        patterns:
+          - "*"
+        update-types: ["minor", "patch"]
+    # Majors stay individual PRs so a breaking bump is reviewed on its own.
+    commit-message:
+      prefix: "chore(deps)"
