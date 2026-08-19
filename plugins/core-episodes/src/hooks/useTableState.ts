@@ -31,15 +31,18 @@ export function useTableState<State extends TableBaseState, Action extends Table
   const sortingAtomKey = `${appName}_sorting`;
   const columnVisibilityAtomKey = `${appName}_columnVisibility`;
 
-  // Create atoms for storage
+  // Create atoms for storage. The visibility atom starts EMPTY on purpose:
+  // its value is merged over the config's per-view visibility defaults as
+  // "the user's own choices", so a non-empty initial value would count as a
+  // choice the user never made and pin columns against the config (#373
+  // found this via the old `{ title: true }` seed).
   const sortingAtom = useMemo(
     () => atomWithStorage<SortingState>(sortingAtomKey, [{ id: "startDate", desc: true }]),
     [sortingAtomKey],
   );
 
   const columnVisibilityAtom = useMemo(
-    () =>
-      atomWithStorage<VisibilityState>(columnVisibilityAtomKey, { title: true } as VisibilityState),
+    () => atomWithStorage<VisibilityState>(columnVisibilityAtomKey, {} as VisibilityState),
     [columnVisibilityAtomKey],
   );
 

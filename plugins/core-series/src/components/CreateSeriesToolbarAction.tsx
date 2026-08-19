@@ -361,7 +361,9 @@ export const CreateSeriesToolbarAction = ({ refetch }: CreateSeriesToolbarAction
 
           {isFieldAccepted("description") && (
             <div className="grid gap-2">
-              <Label htmlFor="create-series-description">{t("series:seriesInfo.description")}</Label>
+              <Label htmlFor="create-series-description">
+                {t("series:seriesInfo.description")}
+              </Label>
               <Textarea
                 id="create-series-description"
                 rows={3}
@@ -419,7 +421,9 @@ export const CreateSeriesToolbarAction = ({ refetch }: CreateSeriesToolbarAction
 
           {isFieldAccepted("contributor") && (
             <div className="grid gap-2">
-              <Label htmlFor="create-series-contributor">{t("series:seriesInfo.contributor")}</Label>
+              <Label htmlFor="create-series-contributor">
+                {t("series:seriesInfo.contributor")}
+              </Label>
               <Textarea
                 id="create-series-contributor"
                 rows={2}

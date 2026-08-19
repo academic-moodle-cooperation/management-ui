@@ -1,11 +1,18 @@
 import { useMemo, useEffect, useCallback, useRef } from "react";
 
-import { useI18n } from "@oc-mui/i18n";
+import { loadNamespace, useI18n } from "@oc-mui/i18n";
 import { useRegistry } from "@oc-mui/plugin-system";
 import { useMuiUpdateSeriesMutation } from "@oc-mui/query";
 import type { MuiSeriesDataFragment } from "@oc-mui/query";
-import { MUITable, createMetadataHelpers, AppLoader, type Row } from "@oc-mui/ui/components";
-import type { ColumnsField, MetadataItem } from "@oc-mui/ui/config-primitives";
+import {
+  MUITable,
+  createMetadataHelpers,
+  AppLoader,
+  getColumnLabelOverrides,
+  normalizeColumnConfigs,
+  type Row,
+} from "@oc-mui/ui/components";
+import type { MetadataItem, TableColumnItem } from "@oc-mui/ui/config-primitives";
 import { logger } from "@oc-mui/utils";
 
 import { createColumns } from "../columns";
@@ -28,11 +35,10 @@ interface SeriesToolbarEndAction {
  * Component for displaying and managing series data
  */
 // TanStack table column types are complex; accessorKey and id are optional.
-const columnId = (column: { accessorKey?: string; id?: string }) =>
-  column.id ?? column.accessorKey;
+const columnId = (column: { accessorKey?: string; id?: string }) => column.id ?? column.accessorKey;
 
 const SeriesTable = () => {
-  const { t } = useI18n();
+  const { t, i18n } = useI18n();
   const cfg = seriesConfig.use();
 
   // Create a ref for the table element
@@ -76,7 +82,33 @@ const SeriesTable = () => {
   const { pageIndex, pageSize, queryFilter } = state;
 
   // Create columns with the store's setIsEditing function
-  const columns = useMemo(() => createColumns(setIsEditing), [setIsEditing]);
+  const configColumns = cfg.seriesTable?.columns;
+  const configuredColumns = useMemo(
+    () => normalizeColumnConfigs(configColumns as TableColumnItem[] | undefined),
+    [configColumns],
+  );
+
+  // Config label overrides for the headers (#372) — and the namespaces of any
+  // org-plugin labelKeys, which nothing else loads before the table renders.
+  const columnLabelOverrides = useMemo(
+    () => getColumnLabelOverrides(configuredColumns),
+    [configuredColumns],
+  );
+  useEffect(() => {
+    const namespaces = new Set<string>();
+    Object.values(columnLabelOverrides).forEach((override) => {
+      const colon = override.labelKey?.indexOf(":") ?? -1;
+      if (override.labelKey && colon > 0) {
+        namespaces.add(override.labelKey.slice(0, colon));
+      }
+    });
+    namespaces.forEach((namespace) => void loadNamespace(namespace, i18n.language));
+  }, [columnLabelOverrides, i18n.language]);
+
+  const columns = useMemo(
+    () => createColumns(setIsEditing, columnLabelOverrides),
+    [setIsEditing, columnLabelOverrides],
+  );
 
   const metadata: MetadataItem[] = cfg.seriesInfo?.metadata ?? [];
   const { isReadOnly } = createMetadataHelpers(metadata);
@@ -195,19 +227,6 @@ const SeriesTable = () => {
   // the config but never removed — hiding is the visibility default's job,
   // so the View menu keeps offering every column (the show/hide half of #80,
   // same fix as the episodes table).
-  const configColumns = cfg.seriesTable?.columns;
-  const configuredColumns = useMemo(
-    () =>
-      ((configColumns ?? []) as Record<string, ColumnsField>[])
-        .map((column) => {
-          if (!column || typeof column !== "object") return null;
-          const key = Object.keys(column)[0];
-          const field = key ? column[key] : undefined;
-          return key && field ? { key, show: field.show === true } : null;
-        })
-        .filter((column): column is { key: string; show: boolean } => Boolean(column)),
-    [configColumns],
-  );
   const hasConfiguredColumns = configuredColumns.length > 0;
 
   const visibilityDefaults = useMemo(() => {
