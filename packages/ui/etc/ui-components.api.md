@@ -51,7 +51,7 @@ import type { SelectSingleEventHandler } from 'react-day-picker';
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
 import { SetStateAction } from 'react';
 import { SortingState } from '@tanstack/react-table';
-import { Switch as SwitchHeadlessUI } from '@headlessui/react';
+import * as SwitchPrimitive from '@radix-ui/react-switch';
 import type { Table as Table_2 } from '@tanstack/react-table';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import { TimeValue } from 'react-aria';
@@ -943,7 +943,8 @@ export function Skeleton(input: React.ComponentProps<"div">): JSX.Element;
 
 export { SortingState }
 
-export { SwitchHeadlessUI }
+// @public (undocumented)
+export function Switch(input: React_2.ComponentProps<typeof SwitchPrimitive.Root>): JSX.Element;
 
 // @public (undocumented)
 export function Table(input: React_2.ComponentProps<"table">): JSX.Element;
