@@ -23,8 +23,7 @@
     "required": "* required",
     "noData": "No data available",
     "tabs": {
-      "metadata": "Metadata",
-      "access": "Access"
+      "metadata": "Metadata"
     }
   },
   "episodesTable": {
