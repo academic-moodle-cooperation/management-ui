@@ -96,6 +96,16 @@ public class PluginBundleTracker extends BundleTracker<List<PluginConfig>> {
 
     List<PluginConfig> manifestConfigs = extractFromManifest(bundle, pluginName, scope, pluginPath, httpAlias);
     if (manifestConfigs != null) {
+      // The manifest is authoritative: a bundle that ships a parseable
+      // plugin.json never reaches the header-convention path. Setting the
+      // headers anyway used to be a silent no-op — an author editing only
+      // the header saw no effect and no hint why. Say so instead.
+      if (headers.get(MANAGEMENT_PLUGIN_CSS) != null || headers.get(MANAGEMENT_PLUGIN_I18N) != null) {
+        logger.warn(
+            "Bundle {} ships a plugin.json, so its {}/{} manifest headers are ignored"
+                + " — declare css/i18nNamespaces in plugin.json instead.",
+            pluginName, MANAGEMENT_PLUGIN_CSS, MANAGEMENT_PLUGIN_I18N);
+      }
       return manifestConfigs;
     }
 
