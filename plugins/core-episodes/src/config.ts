@@ -101,7 +101,21 @@ export const episodesConfigDefaults: EpisodesConfig = {
   episodesTable: {
     views: {
       list: { enabled: true },
-      gallery: { enabled: true },
+      gallery: {
+        enabled: true,
+        // The gallery's out-of-the-box look: the combined cells plus the
+        // columns it has always shown. The rest of the gallery pool (single
+        // variants of the combined cells, thumbnail) starts hidden but stays
+        // in the View menu; a deployment's own `views.gallery.columns`
+        // replaces this list wholesale (#373).
+        columns: [
+          { video: { show: true } },
+          { seriesName: { show: true } },
+          { dateAndLocation: { show: true } },
+          { presenters: { show: true } },
+          { actions: { show: true } },
+        ],
+      },
     },
     columns: [
       { title: { show: true } },

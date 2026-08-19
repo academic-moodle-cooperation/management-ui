@@ -13,3 +13,4 @@ export {
 export * from "./data-table-pagination";
 export * from "./data-table-column-header";
 export * from "./restrict-sorting";
+export * from "./column-config";
