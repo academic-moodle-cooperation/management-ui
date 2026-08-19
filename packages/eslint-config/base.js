@@ -314,6 +314,33 @@ export const config = [
       "local/no-palette-classes": "error",
     },
   },
+  // Config-slice boundary, made mechanical (#323): nothing reads the raw
+  // `plugins` map off an AppConfig — slices are consumed through their
+  // definePluginConfig reader, which validates and falls back to defaults.
+  // The enumerated ignores are the infrastructure that legitimately touches
+  // the raw map: the reader implementation itself, the config-merge tests,
+  // and route protection (which by design reads any plugin's `protection`
+  // subkey). The rule's own tests carry violating snippets as fixtures.
+  {
+    files: ["**/*.ts", "**/*.tsx", "**/*.jsx"],
+    // Package-relative: each workspace package lints from its own root. The
+    // shell entries are the HOST enumerating plugin slices by design — the
+    // loader's `enabled` check and the router's per-app config lookup.
+    ignores: [
+      "**/config/definePluginConfig.*",
+      "**/getAppConfig.test.*",
+      "**/route-protection/AppProtection.*",
+      "**/src/loadPlugins.*",
+      "**/components/DynamicRouterProvider.*",
+      "**/rules/no-cross-plugin-config*.js",
+    ],
+    plugins: {
+      local: localPlugin,
+    },
+    rules: {
+      "local/no-cross-plugin-config": "error",
+    },
+  },
   {
     ignores: ["dist/**"],
   },

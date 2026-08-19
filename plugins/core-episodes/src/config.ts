@@ -9,8 +9,8 @@ import { definePluginConfig } from "@oc-mui/query";
  * is consumed by {@link definePluginConfig} at the bottom of the file.
  * Components obtain the validated slice through `episodesConfig.use()`
  * (or `episodesConfig.read(config)` outside React) — direct reads via
- * `useAppConfig().config.plugins.episodes` bypass validation — no lint
- * rule catches this yet, so reviews enforce it.
+ * `useAppConfig().config.plugins.episodes` bypass validation — the
+ * `local/no-cross-plugin-config` lint rule flags them (#323).
  */
 
 export const EPISODES_PLUGIN_ID = "episodes";
