@@ -26,7 +26,6 @@ import org.opencastproject.management.ui.config.PluginManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
@@ -52,11 +51,6 @@ public class PluginEndpoint {
   private PluginManager pluginManager;
 
   private final Gson gson = new GsonBuilder().serializeNulls().create();
-
-  @Activate
-  public void activate() {
-    Object is = null;
-  }
 
   @GET
   @Path("plugins.json")

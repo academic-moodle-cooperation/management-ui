@@ -213,6 +213,7 @@ export interface PluginManager {
     registerComponent(extensionPoint: string, component: PluginComponent_2, options?: {
         key?: string;
         order?: number;
+        label?: string;
     }): void;
     // (undocumented)
     registerObject<T = unknown>(type: string, objectId: string, data: T, metadata?: RegistryMetadata): void;

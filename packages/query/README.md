@@ -2,7 +2,7 @@
 
 Data-fetching layer. Wraps TanStack Query and `graphql-request` behind a single workspace import, exposes typed GraphQL hooks generated from `.graphql` files, and owns the `definePluginConfig` reader API.
 
-**Contract**: implements the Config Contract — see [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md#4-config-contract) and [`docs/architecture/CONFIGURATION.md`](../../docs/architecture/CONFIGURATION.md). Public API surface tracked in [`etc/query.api.md`](./etc/query.api.md).
+**Contract**: implements the Config Contract — see [`docs/reference/contracts.md`](../../docs/reference/contracts.md#4-config-contract) and [`docs/reference/configuration.md`](../../docs/reference/configuration.md). Public API surface tracked in [`etc/query.api.md`](./etc/query.api.md).
 
 ## The wrapper rule
 
@@ -61,26 +61,31 @@ For the exhaustive list, see [`etc/query.api.md`](./etc/query.api.md).
 
 ## Code generation
 
-Two source files in this package are **generated from the live GraphQL schema** and committed to the repo, so the rest of the workspace (and CI) builds without a backend:
+Two source files in this package are **generated from the committed schema** — [`src/schema.graphql`](./src/schema.graphql) — and committed to the repo, so the rest of the workspace (and CI) builds *and regenerates* without a backend:
 
 | Generated file | Produced by | Contains |
 |----------------|-------------|----------|
 | [`src/gql-generated.ts`](./src/gql-generated.ts) | `@graphql-codegen` `typescript` + `typescript-operations` + `typescript-react-query` plugins | Types and React Query hooks for every `.graphql` operation. |
 | [`src/schema-input-fields.generated.ts`](./src/schema-input-fields.generated.ts) | the local [`codegen-plugins/input-field-names.mjs`](./src/codegen-plugins/input-field-names.mjs) plugin | Runtime `as const` arrays of the field names in each `*OrderByInput` / `*FilterByInput` type. TypeScript input types are erased at runtime, so this is how the UI knows which fields are orderable/filterable without hardcoding them. |
 
-**You only need to run codegen when the GraphQL schema changes** — not as part of normal setup or per-build. The generated files are committed; a fresh clone builds fine without ever running codegen.
+**You only need to run codegen when an operation or the schema changes** — not as part of normal setup or per-build. The generated files are committed; a fresh clone builds fine without ever running codegen. `pnpm codegen:check` (part of `pnpm verify` and CI) regenerates from the committed schema and fails on any diff, so inputs and outputs cannot drift apart.
 
-When the schema does change:
+Adding or changing an **operation** (`.graphql` files) needs no backend at all:
 
 ```bash
-# Point at a backend exposing the schema (defaults to http://127.0.0.1:8080/graphql).
-GRAPHQL_ENDPOINT=https://your-opencast/graphql \
-  pnpm --filter @oc-mui/query codegen
+pnpm --filter @oc-mui/query codegen
 ```
 
-This rewrites both generated files. Commit the diff. If `schema-input-fields.generated.ts` changes, `src/sortableFields.test.ts` may need its pinned expectations updated — that test failing is the intended signal that the set of sortable/filterable fields shifted.
+When the **backend schema** changed, refresh the committed SDL first — this is the deliberate, reviewed step that does need a backend (endpoint from the repo-root `.env`):
 
-The config lives in [`src/codegen.ts`](./src/codegen.ts); it reads `GRAPHQL_ENDPOINT` and optional `GRAPHQL_HEADERS` (JSON) from the environment.
+```bash
+pnpm --filter @oc-mui/query schema:refresh   # updates src/schema.graphql — review the diff!
+pnpm --filter @oc-mui/query codegen
+```
+
+`schema.graphql`'s header records which Opencast version it was taken from. Mind that Opencast's `*MetadataInput` types are per-organisation (readOnly catalog fields are absent from them) — refresh from an instance whose catalog configuration matches what the UI should support. If `schema-input-fields.generated.ts` changes, `src/sortableFields.test.ts` may need its pinned expectations updated — that test failing is the intended signal that the set of sortable/filterable fields shifted.
+
+The config lives in [`src/codegen.ts`](./src/codegen.ts); the refresh script in [`src/refresh-schema.mjs`](./src/refresh-schema.mjs). Post-processing ([`src/fix-fetcher-import.mjs`](./src/fix-fetcher-import.mjs)) annotates the generated hooks' return types explicitly so the emitted `.d.ts` never references tanstack's `NoInfer` — that reference only resolves on some `@tanstack/react-query` minors, and where it doesn't, every hook's `data` silently degrades to `any` for consumers (#354). `test:consumer-types` guards both halves.
 
 ## Layer
 
@@ -88,6 +93,6 @@ Integration. Depends on `@oc-mui/plugin-system`, `@oc-mui/utils`. The Config Con
 
 ## See also
 
-- [`docs/architecture/CONFIGURATION.md`](../../docs/architecture/CONFIGURATION.md) — full Config layer model and the reader API.
-- [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md#4-config-contract) — what's frozen.
+- [`docs/reference/configuration.md`](../../docs/reference/configuration.md) — full Config layer model and the reader API.
+- [`docs/reference/contracts.md`](../../docs/reference/contracts.md#4-config-contract) — what's frozen.
 - [`etc/query.api.md`](./etc/query.api.md) — committed API surface.

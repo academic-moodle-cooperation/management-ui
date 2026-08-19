@@ -121,7 +121,7 @@ function attachFriendlyErrorHandler(
               "│        VITE_PROXY_TARGET=https://your-staging.example.org pnpm dev",
               "│",
               "│ Or skip the backend entirely if you're only working on plugins:",
-              "│ see docs/getting-started/installation.md → 'Configure the backend'.",
+              "│ see docs/contribute/setup.md → 'Pick a backend'.",
               "│",
               "│ Further ECONNREFUSED hits against this target will be silenced.",
               "└" + "─".repeat(72),

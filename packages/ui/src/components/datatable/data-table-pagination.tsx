@@ -2,14 +2,7 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-r
 
 import { useI18n } from "@oc-mui/i18n";
 
-import {
-  Button,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui";
+import { Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui";
 
 import type { Table } from "@tanstack/react-table";
 
@@ -44,7 +37,14 @@ export function DataTablePagination<TData>({
 
   return (
     <div className="flex items-center justify-between px-2 py-4">
-      {!totalRows && (
+      {/*
+        The condition used to be `!totalRows`, which showed the counter only
+        when there was nothing to count — and, because this row is
+        `justify-between` with a single remaining child, left the page controls
+        stranded on the left. `!== undefined` keeps the informative "0 rows
+        total" for genuinely empty tables while showing real counts.
+      */}
+      {totalRows !== undefined && (
         <div className="flex-1 text-sm text-muted-foreground">
           {totalRows} {t("pagination.rows")} {t("pagination.total")}.
         </div>

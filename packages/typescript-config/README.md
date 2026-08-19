@@ -31,4 +31,4 @@ Core infrastructure. Zero runtime dependencies — only ships JSON files.
 ## See also
 
 - [`base.json`](./base.json) — the strict flags every package inherits.
-- [`docs/architecture/overview.md`](../../docs/architecture/overview.md) — where this fits in the package layers.
+- [`docs/reference/architecture.md`](../../docs/reference/architecture.md) — where this fits in the package layers.

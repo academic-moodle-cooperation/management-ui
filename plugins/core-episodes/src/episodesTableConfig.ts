@@ -92,6 +92,22 @@ export const getEpisodesColumnLabelOverrides = (
     return acc;
   }, {});
 
+/**
+ * Config-declared default visibility, keyed by column id.
+ *
+ * Only columns the config names appear here — everything else keeps the
+ * table's own default. This is a *default*, not a lock: the user's own
+ * show/hide toggles are merged on top and win (mirroring how `app.locale`
+ * treats its config value).
+ */
+export const getEpisodesVisibilityDefaults = (
+  columns: ResolvedEpisodesColumnConfig[],
+): Record<string, boolean> =>
+  columns.reduce<Record<string, boolean>>((acc, column) => {
+    acc[column.key] = column.show;
+    return acc;
+  }, {});
+
 export const resolveColumnLabel = (
   overrides: EpisodesColumnLabelOverrides,
   columnKey: string,

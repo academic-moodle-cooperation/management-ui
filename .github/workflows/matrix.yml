@@ -4,7 +4,7 @@ name: Browser matrix (E2E)
 # (test.yml) so the gate stays fast; this workflow adds the other engines.
 #
 # Those engines are the manual test protocol's per-browser result columns, which
-# a human used to walk one at a time. See docs/operations/testing.md and
+# a human used to walk one at a time. See docs/contribute/testing.md and
 # tests/protocol/README.md.
 #
 # Runner-minute budget drove three decisions:

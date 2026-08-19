@@ -88,7 +88,7 @@ body:
         The oldest Opencast major this work applies to. It determines which
         release line (`r/NN.x`) the change lands on — the PR targets the line
         of the oldest affected major (see
-        [Releases & versioning](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/operations/release.md)).
+        [Releases & versioning](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/contribute/release.md)).
         Leave blank if unsure or not applicable.
       options:
         - "19 — applies to all supported majors"
@@ -106,7 +106,7 @@ body:
       placeholder: |
         - `packages/vite-config/src/shell.config.ts` (alias map)
         - AGENTS.md → "Versioning — changesets"
-        - docs/operations/open-followups.md §9.1
+        - docs/reference/open-followups.md §9.1
         - Related: #123, #124
 
   - type: checkboxes

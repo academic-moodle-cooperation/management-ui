@@ -286,11 +286,15 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="w-4 h-4">
                   <MoreVertical />
-                  <span className="sr-only">More actions</span>
+                  <span className="sr-only">
+                    {i18next.t("episodes:episodesTable.action.moreActions")}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuLabel>More Actions</DropdownMenuLabel>
+                <DropdownMenuLabel>
+                  {i18next.t("episodes:episodesTable.action.moreActions")}
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {hiddenActions.map((action) => {
                   if (action.menuItem) {
@@ -356,7 +360,7 @@ const DefaultActionsCell: React.FC<ExtendedActionsCellProps> = ({
               </DropdownMenuContent>
             </DropdownMenu>
           </TooltipTrigger>
-          <TooltipContent>More actions</TooltipContent>
+          <TooltipContent>{i18next.t("episodes:episodesTable.action.moreActions")}</TooltipContent>
         </Tooltip>
       )}
       <DeleteDialog
@@ -622,17 +626,58 @@ const renderDownloadMenuItems = (event: MuiEventsDataFragment, downloadBaseUrl?:
     })
     .filter((item): item is React.ReactElement => item !== null);
 
+/**
+ * Body of the visible download dropdown. Without the empty case this rendered
+ * a "select a version" label over an empty list — the same missing-track state
+ * the overflow menu explains, but with no explanation at all.
+ */
+const renderDownloadDropdownBody = (
+  event: MuiEventsDataFragment,
+  downloadBaseUrl: string | undefined,
+) => {
+  const items = renderDownloadMenuItems(event, downloadBaseUrl);
+  if (!items || items.length === 0) {
+    return (
+      <DropdownMenuItem disabled className="max-w-xs whitespace-normal">
+        {i18next.t("episodes:episodesTable.action.downloadUnavailable")}
+      </DropdownMenuItem>
+    );
+  }
+  return (
+    <>
+      <DropdownMenuLabel>
+        {i18next.t("episodes:episodesTable.action.selectDownloadVersion")}
+      </DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      {items}
+    </>
+  );
+};
+
 const DownloadMenuItem: React.FC<{
   event: MuiEventsDataFragment;
   downloadBaseUrl: string | undefined;
 }> = ({ event, downloadBaseUrl }) => {
   const downloadItems = renderDownloadMenuItems(event, downloadBaseUrl);
   if (!downloadItems || downloadItems.length === 0) {
+    // A disabled control with no reason is indistinguishable from a broken
+    // one, so say why: the event carries no downloadable track (streaming-only
+    // manifests are filtered out), or `downloadBaseUrl` is unset.
     return (
-      <DropdownMenuItem disabled className="gap-2">
-        <ArrowDownToLine className="w-4 h-4" />
-        <span>{i18next.t("episodes:episodesTable.action.download")}</span>
-      </DropdownMenuItem>
+      <Tooltip delayDuration={300}>
+        <TooltipTrigger asChild>
+          {/* A disabled item swallows pointer events, so the trigger wraps it. */}
+          <div>
+            <DropdownMenuItem disabled className="gap-2">
+              <ArrowDownToLine className="w-4 h-4" />
+              <span>{i18next.t("episodes:episodesTable.action.download")}</span>
+            </DropdownMenuItem>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-xs">
+          {i18next.t("episodes:episodesTable.action.downloadUnavailable")}
+        </TooltipContent>
+      </Tooltip>
     );
   }
 
@@ -669,11 +714,7 @@ const DownloadDropdown: React.FC<{
       </TooltipTrigger>
       <TooltipContent>{i18next.t("episodes:episodesTable.action.download")}</TooltipContent>
       <DropdownMenuContent>
-        <DropdownMenuLabel>
-          {i18next.t("episodes:episodesTable.action.selectDownloadVersion")}
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {renderDownloadMenuItems(event, downloadBaseUrl)}
+        {renderDownloadDropdownBody(event, downloadBaseUrl)}
       </DropdownMenuContent>
     </DropdownMenu>
   </Tooltip>

@@ -52,9 +52,9 @@ edit actually covers the identifier, not just an unrelated hunk.
   fact means exactly **one** doc should change, and any *other* doc restating it
   (rather than linking to it) is itself a finding:
   - verify pipeline (steps/order of `pnpm verify`) and the changeset rule → `AGENTS.md`
-  - the six contracts (manifest, runtime API, theme, config, shared runtime deps, GraphQL operation naming) → `docs/architecture/CONTRACTS.md`
-  - the config layer model → `docs/architecture/CONFIGURATION.md`
-  - release lines / publish set / versioning mechanics → `docs/operations/release.md`
+  - the six contracts (manifest, runtime API, theme, config, shared runtime deps, GraphQL operation naming) → `docs/reference/contracts.md`
+  - the config layer model → `docs/reference/configuration.md`
+  - release lines / publish set / versioning mechanics → `docs/contribute/release.md`
   - extension-point catalog → `plugins/core/README.md`
 - **Docs-only changes run in reverse.** When the diff itself is under `docs/**` (or a
   README), verify the *doc* against the *code*: do the file paths, symbols, commands,

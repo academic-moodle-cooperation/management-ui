@@ -40,4 +40,4 @@ Foundation. Depends on nothing in the workspace. Higher-layer packages and plugi
 ## See also
 
 - [`etc/store.api.md`](./etc/store.api.md) — exhaustive type-level surface.
-- [`docs/architecture/overview.md`](../../docs/architecture/overview.md#package-layers) — where this fits in the dependency layers.
+- [`docs/reference/architecture.md`](../../docs/reference/architecture.md#package-layers) — where this fits in the dependency layers.

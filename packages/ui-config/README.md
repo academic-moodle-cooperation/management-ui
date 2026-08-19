@@ -33,7 +33,7 @@ Foundation. Depends on nothing in the workspace — by design, so it can be impo
 
 ## See also
 
-- [`docs/architecture/CONFIGURATION.md`](../../docs/architecture/CONFIGURATION.md) — full layer model and merge order.
-- [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md#4-config-contract) — what's frozen.
+- [`docs/reference/configuration.md`](../../docs/reference/configuration.md) — full layer model and merge order.
+- [`docs/reference/contracts.md`](../../docs/reference/contracts.md#4-config-contract) — what's frozen.
 - [`packages/query/README.md`](../query/README.md) — the reactive layer (`useAppConfig`, `definePluginConfig`).
 - [`etc/ui-config.api.md`](./etc/ui-config.api.md) — committed API surface.

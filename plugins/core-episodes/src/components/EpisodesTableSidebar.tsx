@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 
-import { useTranslation } from "@oc-mui/i18n";
+import { useExtensionLabels, useTranslation } from "@oc-mui/i18n";
 import { usePluginManager } from "@oc-mui/plugin-system";
 import { useMuiUpdateEventMutation } from "@oc-mui/query";
 import type { MuiGetEventByIdInputFieldsQuery, MuiEventsDataFragment } from "@oc-mui/query";
@@ -97,11 +97,17 @@ export const EpisodesTableSidebar: React.FC<EpisodesTableSidebarProps> = ({
         }>;
         key: string;
         order: number;
+        label?: string;
       }>
     >("renderer.getComponents", "table-sidebar:episodes:tabs") || [];
 
   // Sort components by order
   const sortedTabComponents = tabComponents.sort((a, b) => (a.order || 100) - (b.order || 100));
+
+  // A tab's caption comes from the `label` it registered — a translation key,
+  // resolved at render time. Registrations without one keep the label derived
+  // from their key, which is what every tab showed before the option existed.
+  const labelFor = useExtensionLabels(sortedTabComponents);
   const hasTabPlugins = sortedTabComponents.length > 0;
 
   logger.debug("EpisodesTableSidebar: Tab plugins found", {
@@ -133,14 +139,25 @@ export const EpisodesTableSidebar: React.FC<EpisodesTableSidebarProps> = ({
                 defaultValue="metadata"
                 className="flex flex-col h-full"
               >
-                <TabsList className="mx-2 mb-4 grid w-auto grid-cols-2">
-                  <TabsTrigger value="metadata">Metadata</TabsTrigger>
+                {/*
+                  One column per tab, computed rather than fixed: the count is
+                  1 (metadata) plus however many tabs plugins contribute, and a
+                  hardcoded `grid-cols-2` broke the bar as soon as a second
+                  plugin registered one. Tailwind cannot generate class names
+                  at runtime, so the track count is an inline style.
+                */}
+                <TabsList
+                  className="mx-2 mb-4 grid w-auto"
+                  style={{
+                    gridTemplateColumns: `repeat(${sortedTabComponents.length + 1}, minmax(0, 1fr))`,
+                  }}
+                >
+                  <TabsTrigger value="metadata">
+                    {t("episodes:episodesInfo.tabs.metadata")}
+                  </TabsTrigger>
                   {sortedTabComponents.map((tabComponent) => (
                     <TabsTrigger key={tabComponent.key} value={tabComponent.key}>
-                      {tabComponent.key
-                        .replace(/^.*:/, "")
-                        .replace(/-/g, " ")
-                        .replace(/\b\w/g, (l) => l.toUpperCase())}
+                      {labelFor(tabComponent)}
                     </TabsTrigger>
                   ))}
                 </TabsList>

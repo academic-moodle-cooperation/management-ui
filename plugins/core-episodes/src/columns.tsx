@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import React from "react";
 
-import { i18next } from "@oc-mui/i18n";
+import { formatDate, i18next } from "@oc-mui/i18n";
 import { EVENT_SORTABLE_FIELDS } from "@oc-mui/query";
 import type { MuiEventsDataFragment } from "@oc-mui/query";
 import {
@@ -286,10 +286,7 @@ export const createColumns = (
         />
       ),
       cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => {
-        const value = new Intl.DateTimeFormat("de-DE", {
-          dateStyle: "medium",
-          timeStyle: "short",
-        }).format(new Date(row.getValue("startDate") as string));
+        const value = formatDate(row.getValue("startDate") as string);
         return (
           <div className="flex justify-center space-x-2 truncate">
             <OverflowTooltip>{value}</OverflowTooltip>
@@ -460,10 +457,7 @@ export const createColumns = (
         />
       ),
       cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => {
-        const value = new Intl.DateTimeFormat("de-DE", {
-          dateStyle: "medium",
-          timeStyle: "short",
-        }).format(new Date(row.getValue("startDate") as string));
+        const value = formatDate(row.getValue("startDate") as string);
         return (
           <div className="grid items-center justify-start">
             <OverflowTooltip className="truncate text-center">{value}</OverflowTooltip>

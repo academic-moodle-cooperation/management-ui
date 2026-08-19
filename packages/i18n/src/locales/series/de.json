@@ -16,7 +16,10 @@
     "created": "Erstellt",
     "creator2": "Ersteller*in",
     "required": "* Pflichtfeld",
-    "noData": "Keine Daten vorhanden"
+    "noData": "Keine Daten vorhanden",
+    "tabs": {
+      "metadata": "Metadaten"
+    }
   },
   "seriesTable": {
     "heading": {

@@ -11,7 +11,6 @@ import { GraphQLClient } from 'graphql-request';
 import { InfiniteData } from '@tanstack/react-query';
 import { InfiniteQueryObserverResult } from '@tanstack/react-query';
 import { MatomoConfig } from '@oc-mui/ui-config';
-import { NoInfer as NoInfer_2 } from '@tanstack/react-query';
 import { PluginManager } from '@oc-mui/plugin-system';
 import { PluginsConfig } from '@oc-mui/ui-config';
 import { QueryClient } from '@tanstack/react-query';
@@ -175,6 +174,7 @@ export const createQueryClient: () => QueryClient;
 export type CurrentUser = {
     email?: Maybe<Scalars['String']['output']>;
     myEvents: EventList;
+    myPlaylists: PlaylistList;
     mySeries: SeriesList;
     name?: Maybe<Scalars['String']['output']>;
     roles: Array<Maybe<Scalars['String']['output']>>;
@@ -187,6 +187,14 @@ export type CurrentUserMyEventsArgs = {
     limit?: InputMaybe<Scalars['Int']['input']>;
     offset?: InputMaybe<Scalars['Int']['input']>;
     orderBy?: InputMaybe<EventOrderByInput>;
+    query?: InputMaybe<Scalars['String']['input']>;
+};
+
+// @public
+export type CurrentUserMyPlaylistsArgs = {
+    limit?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<PlaylistOrderByInput>;
     query?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -239,6 +247,11 @@ export interface DeleteEventPermanentlyResult {
         status?: string | null;
     } | null;
 }
+
+// @public
+export type DeletePlaylistPayload = {
+    id?: Maybe<Scalars['String']['output']>;
+};
 
 // @public (undocumented)
 export type DurationMetadataField = MetadataFieldInterface & {
@@ -332,6 +345,14 @@ export type EventOrderByInput = {
 };
 
 // @public
+export type EventPlaylistEntry = PlaylistEntry & {
+    contentId?: Maybe<Scalars['String']['output']>;
+    event?: Maybe<Event_2>;
+    id?: Maybe<Scalars['Long']['output']>;
+    type?: Maybe<PlaylistEntryType>;
+};
+
+// @public
 export type EventPublicationsArgs = {
     channel?: InputMaybe<Scalars['String']['input']>;
     tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
@@ -364,6 +385,13 @@ export function getAppConfigSync(pluginManager?: PluginManager, baseConfig?: App
 export const getCachedAppConfig: () => Promise<AppConfig>;
 
 export { gql }
+
+// @public
+export type InaccessiblePlaylistEntry = PlaylistEntry & {
+    contentId?: Maybe<Scalars['String']['output']>;
+    id?: Maybe<Scalars['Long']['output']>;
+    type?: Maybe<PlaylistEntryType>;
+};
 
 // @public (undocumented)
 export type Incremental<T> = T | {
@@ -1469,7 +1497,7 @@ export type MuiSearchUserQuery = {
     searchUser: {
         totalCount: any;
         nodes: Array<{
-            __typename: 'MuiUser';
+            __typename: 'User';
             email?: string | null;
             name?: string | null;
             provider?: string | null;
@@ -1678,7 +1706,7 @@ export const MuiUserDocument = "\n    query MuiUser {\n  currentUser {\n    emai
 
 // @public (undocumented)
 export type MuiUserFieldsFragment = {
-    __typename: 'MuiUser';
+    __typename: 'User';
 };
 
 // @public (undocumented)
@@ -1702,13 +1730,23 @@ export type MuiUserQueryVariables = Exact<{
 
 // @public (undocumented)
 export type Mutation = {
+    createPlaylist?: Maybe<Playlist>;
     createSeries: Series;
     deleteEvent?: Maybe<DeleteEventPayload>;
+    deletePlaylist?: Maybe<DeletePlaylistPayload>;
     mui?: Maybe<MuiMutation>;
     updateEvent: Event_2;
     updateEventAcl: Event_2;
+    updatePlaylist?: Maybe<Playlist>;
     updateSeries: Series;
     updateSeriesAcl: Series;
+};
+
+// @public (undocumented)
+export type MutationCreatePlaylistArgs = {
+    acl: AccessControlListInput;
+    entries?: InputMaybe<Array<InputMaybe<PlaylistEntryInput>>>;
+    metadata: PlaylistMetadataInput;
 };
 
 // @public (undocumented)
@@ -1723,6 +1761,11 @@ export type MutationDeleteEventArgs = {
 };
 
 // @public (undocumented)
+export type MutationDeletePlaylistArgs = {
+    id: Scalars['String']['input'];
+};
+
+// @public (undocumented)
 export type MutationUpdateEventAclArgs = {
     acl: AccessControlListInput;
     id: Scalars['String']['input'];
@@ -1733,6 +1776,14 @@ export type MutationUpdateEventArgs = {
     acl?: InputMaybe<AccessControlListInput>;
     id: Scalars['String']['input'];
     metadata: CommonEventMetadataInput;
+};
+
+// @public (undocumented)
+export type MutationUpdatePlaylistArgs = {
+    acl?: InputMaybe<AccessControlListInput>;
+    entries?: InputMaybe<Array<InputMaybe<PlaylistEntryInput>>>;
+    id: Scalars['String']['input'];
+    metadata?: InputMaybe<PlaylistMetadataInput>;
 };
 
 // @public (undocumented)
@@ -1774,6 +1825,66 @@ export type PageInfo = {
 export function pickAcceptedFields<T extends Record<string, unknown>>(metadata: T, accepted: ReadonlySet<string> | undefined): T;
 
 // @public
+export type Playlist = {
+    accessControlEntries?: Maybe<Array<Maybe<PlaylistAccessControlEntry>>>;
+    creator?: Maybe<Scalars['String']['output']>;
+    description?: Maybe<Scalars['String']['output']>;
+    entries?: Maybe<Array<Maybe<PlaylistEntry>>>;
+    id: Scalars['ID']['output'];
+    title?: Maybe<Scalars['String']['output']>;
+    updated?: Maybe<Scalars['DateTime']['output']>;
+};
+
+// @public
+export type PlaylistAccessControlEntry = {
+    action?: Maybe<Scalars['String']['output']>;
+    allow?: Maybe<Scalars['Boolean']['output']>;
+    role?: Maybe<Scalars['String']['output']>;
+};
+
+// @public
+export type PlaylistEntry = {
+    contentId?: Maybe<Scalars['String']['output']>;
+    id?: Maybe<Scalars['Long']['output']>;
+    type?: Maybe<PlaylistEntryType>;
+};
+
+// @public
+export type PlaylistEntryInput = {
+    contentId: Scalars['String']['input'];
+    type: PlaylistEntryType;
+};
+
+// @public
+export enum PlaylistEntryType {
+    Event = "EVENT",
+    Inaccessible = "INACCESSIBLE"
+}
+
+// @public
+export type PlaylistList = {
+    nodes: Array<Maybe<Playlist>>;
+    pageInfo: OffsetPageInfo;
+    totalCount: Scalars['Long']['output'];
+};
+
+// @public
+export type PlaylistMetadataInput = {
+    description?: InputMaybe<Scalars['String']['input']>;
+    title?: InputMaybe<Scalars['String']['input']>;
+};
+
+// @public
+export type PlaylistOrderByInput = {
+    creator?: InputMaybe<OrderDirection>;
+    deletionDate?: InputMaybe<OrderDirection>;
+    description?: InputMaybe<OrderDirection>;
+    organization?: InputMaybe<OrderDirection>;
+    title?: InputMaybe<OrderDirection>;
+    updated?: InputMaybe<OrderDirection>;
+};
+
+// @public
 export interface PluginConfigReader<T extends z.ZodTypeAny> {
     // (undocumented)
     readonly defaults: z.infer<T>;
@@ -1807,11 +1918,13 @@ export type PublicationTracksArgs = {
 // @public (undocumented)
 export type Query = {
     allEvents: EventList;
+    allPlaylists: PlaylistList;
     allSeries: SeriesList;
     currentUser: CurrentUser;
     eventById?: Maybe<Event_2>;
     listProvider: ListProvider;
     managedAcls: ManagedAccessControlListCatalogue;
+    playlistById?: Maybe<Playlist>;
     searchUser: UserList;
     seriesById?: Maybe<Series>;
 };
@@ -1822,6 +1935,14 @@ export type QueryAllEventsArgs = {
     limit?: InputMaybe<Scalars['Int']['input']>;
     offset?: InputMaybe<Scalars['Int']['input']>;
     orderBy?: InputMaybe<EventOrderByInput>;
+    query?: InputMaybe<Scalars['String']['input']>;
+};
+
+// @public (undocumented)
+export type QueryAllPlaylistsArgs = {
+    limit?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<PlaylistOrderByInput>;
     query?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1858,6 +1979,11 @@ export type QueryManagedAclsArgs = {
     offset?: InputMaybe<Scalars['Int']['input']>;
     orderBy?: InputMaybe<ManagedAclOrderByInput>;
     query?: InputMaybe<Scalars['String']['input']>;
+};
+
+// @public (undocumented)
+export type QueryPlaylistByIdArgs = {
+    id: Scalars['String']['input'];
 };
 
 // Warning: (ae-forgotten-export) The symbol "AppQueryProviderProps" needs to be exported by the entry point index.d.ts
@@ -2092,7 +2218,7 @@ export const useMuiDeleteEventMutation: {
 export const useMuiEventsFromSeriesQuery: {
     <TData = MuiEventsFromSeriesQuery, TError = unknown>(variables: MuiEventsFromSeriesQueryVariables, options?: Omit<UseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    }): UseQueryResult<TData, TError>;
     getKey(variables: MuiEventsFromSeriesQueryVariables): (string | Exact<{
         seriesId: Scalars["String"]["input"];
         limit?: InputMaybe<Scalars["Int"]["input"]>;
@@ -2107,7 +2233,7 @@ export const useMuiEventsFromSeriesQuery: {
 export const useMuiGetAllManagedAclsQuery: {
     <TData = MuiGetAllManagedAclsQuery, TError = unknown>(variables?: MuiGetAllManagedAclsQueryVariables, options?: Omit<UseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    }): UseQueryResult<TData, TError>;
     getKey(variables?: MuiGetAllManagedAclsQueryVariables): (string | Exact<{
         [key: string]: never;
     }>)[];
@@ -2118,7 +2244,7 @@ export const useMuiGetAllManagedAclsQuery: {
 export const useMuiGetEventByIdInputFieldsQuery: {
     <TData = MuiGetEventByIdInputFieldsQuery, TError = unknown>(variables: MuiGetEventByIdInputFieldsQueryVariables, options?: Omit<UseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    }): UseQueryResult<TData, TError>;
     getKey(variables: MuiGetEventByIdInputFieldsQueryVariables): (string | Exact<{
         eventId: Scalars["String"]["input"];
     }>)[];
@@ -2129,7 +2255,7 @@ export const useMuiGetEventByIdInputFieldsQuery: {
 export const useMuiGetEventByIdQuery: {
     <TData = MuiGetEventByIdQuery, TError = unknown>(variables: MuiGetEventByIdQueryVariables, options?: Omit<UseQueryOptions<MuiGetEventByIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetEventByIdQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    }): UseQueryResult<TData, TError>;
     getKey(variables: MuiGetEventByIdQueryVariables): (string | Exact<{
         eventId: Scalars["String"]["input"];
     }>)[];
@@ -2140,7 +2266,7 @@ export const useMuiGetEventByIdQuery: {
 export const useMuiGetManagedAclsWithEventIdQuery: {
     <TData = MuiGetManagedAclsWithEventIdQuery, TError = unknown>(variables: MuiGetManagedAclsWithEventIdQueryVariables, options?: Omit<UseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    }): UseQueryResult<TData, TError>;
     getKey(variables: MuiGetManagedAclsWithEventIdQueryVariables): (string | Exact<{
         id: Scalars["String"]["input"];
     }>)[];
@@ -2151,7 +2277,7 @@ export const useMuiGetManagedAclsWithEventIdQuery: {
 export const useMuiGetManagedAclsWithSeriesIdQuery: {
     <TData = MuiGetManagedAclsWithSeriesIdQuery, TError = unknown>(variables: MuiGetManagedAclsWithSeriesIdQueryVariables, options?: Omit<UseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    }): UseQueryResult<TData, TError>;
     getKey(variables: MuiGetManagedAclsWithSeriesIdQueryVariables): (string | Exact<{
         id: Scalars["String"]["input"];
     }>)[];
@@ -2162,7 +2288,7 @@ export const useMuiGetManagedAclsWithSeriesIdQuery: {
 export const useMuiGetMyEventsQuery: {
     <TData = MuiGetMyEventsQuery, TError = unknown>(variables?: MuiGetMyEventsQueryVariables, options?: Omit<UseQueryOptions<MuiGetMyEventsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetMyEventsQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    }): UseQueryResult<TData, TError>;
     getKey(variables?: MuiGetMyEventsQueryVariables): (string | Exact<{
         limit?: InputMaybe<Scalars["Int"]["input"]>;
         offset?: InputMaybe<Scalars["Int"]["input"]>;
@@ -2176,7 +2302,7 @@ export const useMuiGetMyEventsQuery: {
 export const useMuiGetMySeriesNameAndIdQuery: {
     <TData = MuiGetMySeriesNameAndIdQuery, TError = unknown>(variables?: MuiGetMySeriesNameAndIdQueryVariables, options?: Omit<UseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    }): UseQueryResult<TData, TError>;
     getKey(variables?: MuiGetMySeriesNameAndIdQueryVariables): (string | Exact<{
         limit?: InputMaybe<Scalars["Int"]["input"]>;
         offset?: InputMaybe<Scalars["Int"]["input"]>;
@@ -2190,7 +2316,7 @@ export const useMuiGetMySeriesNameAndIdQuery: {
 export const useMuiGetMySeriesQuery: {
     <TData = MuiGetMySeriesQuery, TError = unknown>(variables?: MuiGetMySeriesQueryVariables, options?: Omit<UseQueryOptions<MuiGetMySeriesQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetMySeriesQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    }): UseQueryResult<TData, TError>;
     getKey(variables?: MuiGetMySeriesQueryVariables): (string | Exact<{
         limit?: InputMaybe<Scalars["Int"]["input"]>;
         offset?: InputMaybe<Scalars["Int"]["input"]>;
@@ -2204,7 +2330,7 @@ export const useMuiGetMySeriesQuery: {
 export const useMuiGetSeriesByIdInputFieldsQuery: {
     <TData = MuiGetSeriesByIdInputFieldsQuery, TError = unknown>(variables: MuiGetSeriesByIdInputFieldsQueryVariables, options?: Omit<UseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    }): UseQueryResult<TData, TError>;
     getKey(variables: MuiGetSeriesByIdInputFieldsQueryVariables): (string | Exact<{
         seriesId: Scalars["String"]["input"];
     }>)[];
@@ -2215,7 +2341,7 @@ export const useMuiGetSeriesByIdInputFieldsQuery: {
 export const useMuiGetSeriesInfoQuery: {
     <TData = MuiGetSeriesInfoQuery, TError = unknown>(variables: MuiGetSeriesInfoQueryVariables, options?: Omit<UseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    }): UseQueryResult<TData, TError>;
     getKey(variables: MuiGetSeriesInfoQueryVariables): (string | Exact<{
         seriesId: Scalars["String"]["input"];
     }>)[];
@@ -2226,7 +2352,7 @@ export const useMuiGetSeriesInfoQuery: {
 export const useMuiGetSeriesNameByIdQuery: {
     <TData = MuiGetSeriesNameByIdQuery, TError = unknown>(variables: MuiGetSeriesNameByIdQueryVariables, options?: Omit<UseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    }): UseQueryResult<TData, TError>;
     getKey(variables: MuiGetSeriesNameByIdQueryVariables): (string | Exact<{
         seriesId: Scalars["String"]["input"];
     }>)[];
@@ -2237,7 +2363,7 @@ export const useMuiGetSeriesNameByIdQuery: {
 export const useMuiSearchUserQuery: {
     <TData = MuiSearchUserQuery, TError = unknown>(variables: MuiSearchUserQueryVariables, options?: Omit<UseQueryOptions<MuiSearchUserQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiSearchUserQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    }): UseQueryResult<TData, TError>;
     getKey(variables: MuiSearchUserQueryVariables): (string | Exact<{
         limit?: InputMaybe<Scalars["Int"]["input"]>;
         offset?: InputMaybe<Scalars["Int"]["input"]>;
@@ -2286,7 +2412,7 @@ export const useMuiUpdateSeriesMutation: {
 export const useMuiUserQuery: {
     <TData = MuiUserQuery, TError = unknown>(variables?: MuiUserQueryVariables, options?: Omit<UseQueryOptions<MuiUserQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiUserQuery, TError, TData>["queryKey"];
-    }): UseQueryResult<NoInfer_2<TData>, TError>;
+    }): UseQueryResult<TData, TError>;
     getKey(variables?: MuiUserQueryVariables): (string | Exact<{
         [key: string]: never;
     }>)[];
@@ -2345,7 +2471,7 @@ export type UserList = {
 };
 
 // @public (undocumented)
-export const useSuspenseEventsFromSeriesQuery: {
+export const useSuspenseMuiEventsFromSeriesQuery: {
     <TData = MuiEventsFromSeriesQuery, TError = unknown>(variables: MuiEventsFromSeriesQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2359,7 +2485,7 @@ export const useSuspenseEventsFromSeriesQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetAllManagedAclsQuery: {
+export const useSuspenseMuiGetAllManagedAclsQuery: {
     <TData = MuiGetAllManagedAclsQuery, TError = unknown>(variables?: MuiGetAllManagedAclsQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2369,7 +2495,7 @@ export const useSuspenseGetAllManagedAclsQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetEventByIdInputFieldsQuery: {
+export const useSuspenseMuiGetEventByIdInputFieldsQuery: {
     <TData = MuiGetEventByIdInputFieldsQuery, TError = unknown>(variables: MuiGetEventByIdInputFieldsQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2379,7 +2505,7 @@ export const useSuspenseGetEventByIdInputFieldsQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetEventByIdQuery: {
+export const useSuspenseMuiGetEventByIdQuery: {
     <TData = MuiGetEventByIdQuery, TError = unknown>(variables: MuiGetEventByIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetEventByIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetEventByIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2389,7 +2515,7 @@ export const useSuspenseGetEventByIdQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetManagedAclsWithEventIdQuery: {
+export const useSuspenseMuiGetManagedAclsWithEventIdQuery: {
     <TData = MuiGetManagedAclsWithEventIdQuery, TError = unknown>(variables: MuiGetManagedAclsWithEventIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2399,7 +2525,7 @@ export const useSuspenseGetManagedAclsWithEventIdQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetManagedAclsWithSeriesIdQuery: {
+export const useSuspenseMuiGetManagedAclsWithSeriesIdQuery: {
     <TData = MuiGetManagedAclsWithSeriesIdQuery, TError = unknown>(variables: MuiGetManagedAclsWithSeriesIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2409,7 +2535,7 @@ export const useSuspenseGetManagedAclsWithSeriesIdQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetMyEventsQuery: {
+export const useSuspenseMuiGetMyEventsQuery: {
     <TData = MuiGetMyEventsQuery, TError = unknown>(variables?: MuiGetMyEventsQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetMyEventsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetMyEventsQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2422,7 +2548,7 @@ export const useSuspenseGetMyEventsQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetMySeriesNameAndIdQuery: {
+export const useSuspenseMuiGetMySeriesNameAndIdQuery: {
     <TData = MuiGetMySeriesNameAndIdQuery, TError = unknown>(variables?: MuiGetMySeriesNameAndIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2435,7 +2561,7 @@ export const useSuspenseGetMySeriesNameAndIdQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetMySeriesQuery: {
+export const useSuspenseMuiGetMySeriesQuery: {
     <TData = MuiGetMySeriesQuery, TError = unknown>(variables?: MuiGetMySeriesQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetMySeriesQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetMySeriesQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2448,7 +2574,7 @@ export const useSuspenseGetMySeriesQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetSeriesByIdInputFieldsQuery: {
+export const useSuspenseMuiGetSeriesByIdInputFieldsQuery: {
     <TData = MuiGetSeriesByIdInputFieldsQuery, TError = unknown>(variables: MuiGetSeriesByIdInputFieldsQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2458,7 +2584,7 @@ export const useSuspenseGetSeriesByIdInputFieldsQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetSeriesInfoQuery: {
+export const useSuspenseMuiGetSeriesInfoQuery: {
     <TData = MuiGetSeriesInfoQuery, TError = unknown>(variables: MuiGetSeriesInfoQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2468,7 +2594,7 @@ export const useSuspenseGetSeriesInfoQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseGetSeriesNameByIdQuery: {
+export const useSuspenseMuiGetSeriesNameByIdQuery: {
     <TData = MuiGetSeriesNameByIdQuery, TError = unknown>(variables: MuiGetSeriesNameByIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2477,14 +2603,8 @@ export const useSuspenseGetSeriesNameByIdQuery: {
     }>)[];
 };
 
-export { useSuspenseQuery }
-
-export { UseSuspenseQueryOptions }
-
-export { UseSuspenseQueryResult }
-
 // @public (undocumented)
-export const useSuspenseSearchUserQuery: {
+export const useSuspenseMuiSearchUserQuery: {
     <TData = MuiSearchUserQuery, TError = unknown>(variables: MuiSearchUserQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiSearchUserQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiSearchUserQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2496,7 +2616,7 @@ export const useSuspenseSearchUserQuery: {
 };
 
 // @public (undocumented)
-export const useSuspenseUserQuery: {
+export const useSuspenseMuiUserQuery: {
     <TData = MuiUserQuery, TError = unknown>(variables?: MuiUserQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiUserQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiUserQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
@@ -2504,6 +2624,12 @@ export const useSuspenseUserQuery: {
         [key: string]: never;
     }>)[];
 };
+
+export { useSuspenseQuery }
+
+export { UseSuspenseQueryOptions }
+
+export { UseSuspenseQueryResult }
 
 // (No @packageDocumentation comment for this package)
 

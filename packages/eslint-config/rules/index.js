@@ -7,7 +7,7 @@
  *
  * Today only one rule lives here. If the count grows past a handful, split
  * into a dedicated `@oc-mui/eslint-plugin-*` package per the comment in
- * docs/operations/open-followups.md.
+ * docs/reference/open-followups.md.
  */
 
 import { graphqlOperationNaming, ruleName as graphqlOperationNamingRuleName } from "./graphql-operation-naming.js";

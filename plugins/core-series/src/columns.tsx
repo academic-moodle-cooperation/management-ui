@@ -1,6 +1,6 @@
 import { Film, Info } from "lucide-react";
 
-import { i18next } from "@oc-mui/i18n";
+import { formatDate, i18next } from "@oc-mui/i18n";
 import { SERIES_SORTABLE_FIELDS } from "@oc-mui/query";
 import type { MuiSeriesDataFragment } from "@oc-mui/query";
 import { Link } from "@oc-mui/router";
@@ -58,10 +58,7 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => {
         />
       ),
       cell: ({ row }) => {
-        const value = new Intl.DateTimeFormat("de-DE", {
-          dateStyle: "medium",
-          timeStyle: "short",
-        }).format(new Date(row.getValue("created") as string));
+        const value = formatDate(row.getValue("created") as string);
         return (
           <OverflowTooltip className="flex justify-center space-x-2 truncate">
             {value}
@@ -176,9 +173,7 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => {
                   e.stopPropagation();
                 }}
               >
-                <span className="group-hover:underline group-hover:text-info">
-                  {episodeCount}
-                </span>
+                <span className="group-hover:underline group-hover:text-info">{episodeCount}</span>
                 <Film className="inline w-4 h-4 ml-2 group-hover:text-info" />
               </Link>
             </TooltipTrigger>

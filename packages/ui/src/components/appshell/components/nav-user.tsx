@@ -3,6 +3,7 @@
 import { ChevronsUpDown, LogOut } from "lucide-react";
 import React from "react";
 
+import { useTranslation } from "@oc-mui/i18n";
 import { useGetCurrentUser } from "@oc-mui/query";
 
 import {
@@ -42,6 +43,7 @@ export function NavUser({
   renderAvatar?: (userData: UserData) => React.ReactNode;
   customMenuItems?: React.ReactNode;
 }) {
+  const { t } = useTranslation();
   const { isMobile } = useSidebar();
 
   if (isLoading || !userData) {
@@ -94,7 +96,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={onLogout}>
               <LogOut />
-              Log out
+              {t("auth.logOut")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

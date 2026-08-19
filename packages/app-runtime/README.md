@@ -39,4 +39,4 @@ Application. Depends on `@oc-mui/plugin-system`, `@oc-mui/query`, `@oc-mui/route
 ## See also
 
 - [`apps/playground/`](../../apps/playground/) — uses `bootstrapStandaloneApp` as its mounting strategy.
-- [`docs/architecture/decisions/003-shell-plus-core-plugins.md`](../../docs/architecture/decisions/003-shell-plus-core-plugins.md) — why we have a single shell plus plugins instead of multiple top-level apps.
+- [`docs/reference/decisions/003-shell-plus-core-plugins.md`](../../docs/reference/decisions/003-shell-plus-core-plugins.md) — why we have a single shell plus plugins instead of multiple top-level apps.

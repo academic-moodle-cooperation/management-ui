@@ -131,7 +131,11 @@ test("[GEN-04] a signed-in user is offered a way out", async ({ page }) => {
   await installMockBackend(page, seed());
   await page.goto("/management-ui/");
 
-  await expect(page.getByRole("button", { name: /^logout$/i })).toBeVisible({ timeout: 15_000 });
+  // The label goes through `t("auth.logOut")` now — "Log out" in English,
+  // "Abmelden" in German. Match the action rather than one wording.
+  await expect(page.getByRole("button", { name: /^(log ?out|abmelden)$/i })).toBeVisible({
+    timeout: 15_000,
+  });
 });
 
 /*

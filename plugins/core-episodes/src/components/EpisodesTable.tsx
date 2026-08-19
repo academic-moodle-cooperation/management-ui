@@ -1,7 +1,7 @@
 import { LayoutGrid, List } from "lucide-react";
 import { useMemo, useEffect, useCallback, useRef } from "react";
 
-import { useI18n } from "@oc-mui/i18n";
+import { loadNamespace, useI18n } from "@oc-mui/i18n";
 import {
   useMuiUpdateEventMutation,
   useAppConfig,
@@ -24,6 +24,7 @@ import { createColumns } from "../columns";
 import { episodesConfig } from "../config";
 import {
   getEpisodesColumnLabelOverrides,
+  getEpisodesVisibilityDefaults,
   getEpisodesTableConfig,
 } from "../episodesTableConfig";
 import { useEpisodesTable } from "../hooks";
@@ -42,7 +43,7 @@ interface EpisodesTableProps {
  * Component for displaying and managing episodes data
  */
 const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
-  const { t } = useI18n();
+  const { t, i18n } = useI18n();
   const { config } = useAppConfig();
 
   // Create a ref for the table element
@@ -97,10 +98,66 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     [activeViewConfig.columns],
   );
 
+  // A configured `labelKey` may live in an org plugin's namespace, which
+  // nothing has loaded when the table renders — `t()` then shows the raw key
+  // (the "labels translate only for core plugins" half of #80). Load them;
+  // MUITable subscribes to i18n, so the headers re-resolve once they arrive.
+  useEffect(() => {
+    const namespaces = new Set<string>();
+    Object.values(columnLabelOverrides).forEach((override) => {
+      const colon = override.labelKey?.indexOf(":") ?? -1;
+      if (override.labelKey && colon > 0) {
+        namespaces.add(override.labelKey.slice(0, colon));
+      }
+    });
+    namespaces.forEach((namespace) => void loadNamespace(namespace, i18n.language));
+  }, [columnLabelOverrides, i18n.language]);
+
   // Create columns with the current layout and refetch function
   const columns: ColumnDef<MuiEventsDataFragment>[] = useMemo(
     () => createColumns(refetch, effectiveLayout, columnLabelOverrides),
     [refetch, effectiveLayout, columnLabelOverrides],
+  );
+
+  // The config's per-column `show` is the *default* visibility (it used to be
+  // resolved and then consumed by nothing — the other half of #80). The
+  // user's own toggles are merged on top and win, and since they persist via
+  // the storage atom, they keep winning on the next visit.
+  const visibilityDefaults = useMemo(() => {
+    const configured = getEpisodesVisibilityDefaults(activeViewConfig.columns);
+    if (activeViewConfig.columns.length === 0) {
+      return configured;
+    }
+    // A config that lists columns enumerates the deployment's table: listed
+    // columns carry their `show` flag, everything else starts hidden — the
+    // same visible set the old remove-unlisted-columns behavior produced,
+    // except nothing is removed anymore: every column stays in the table and
+    // the View menu, so the user can bring it back (the half of #80 where
+    // show/hide "didn't work").
+    const all: Record<string, boolean> = {};
+    for (const column of columns) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const id = ((column as any).id ?? (column as any).accessorKey) as string | undefined;
+      if (id) {
+        all[id] = configured[id] ?? false;
+      }
+    }
+    return all;
+  }, [activeViewConfig.columns, columns]);
+  const effectiveColumnVisibility = useMemo(
+    () => ({ ...visibilityDefaults, ...columnVisibility }),
+    [visibilityDefaults, columnVisibility],
+  );
+  const handleColumnVisibilityChange = useCallback<typeof setColumnVisibility>(
+    (updater) => {
+      setColumnVisibility((previous) => {
+        // Updaters must see what the user sees — defaults included — or the
+        // first toggle would compute from a state the table never showed.
+        const base = { ...visibilityDefaults, ...previous };
+        return typeof updater === "function" ? updater(base) : updater;
+      });
+    },
+    [setColumnVisibility, visibilityDefaults],
   );
 
   const metadata: MetadataItem[] = episodesConfig.use().episodeInfo?.metadata ?? [];
@@ -219,21 +276,29 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     return episodesData?.find((episode) => episode.id === selectedId);
   }, [episodesData, selectedId]);
 
-  const configuredVisibleColumns = activeViewConfig.columns.filter((column) => column.show);
-  const configuredColumnKeys = configuredVisibleColumns.map((column) => column.key);
-  const hasConfiguredColumns = activeViewConfig.columns.length > 0;
+  // The config's column order wins for the columns it names; everything else
+  // follows in its built-in order. Columns are ordered here but never removed
+  // — hiding is the visibility default's job above, so the View menu keeps
+  // offering every column.
+  const configuredColumnKeys = activeViewConfig.columns.map((column) => column.key);
+  const hasConfiguredColumns = configuredColumnKeys.length > 0;
 
+  const columnId = (column: (typeof columns)[number]) => {
+    // TanStack table column types are complex, accessorKey and id are optional
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const col = column as any;
+    return (col.id ?? col.accessorKey) as string | undefined;
+  };
   const sortedColumns = hasConfiguredColumns
-    ? configuredColumnKeys
-        .map((columnsKey) =>
-          columns.find((column) => {
-            // TanStack table column types are complex, accessorKey and id are optional
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const col = column as any;
-            return col.accessorKey === columnsKey || col.id === columnsKey;
-          }),
-        )
-        .filter((column): column is NonNullable<typeof column> => Boolean(column))
+    ? [
+        ...configuredColumnKeys
+          .map((key) => columns.find((column) => columnId(column) === key))
+          .filter((column): column is NonNullable<typeof column> => Boolean(column)),
+        ...columns.filter((column) => {
+          const id = columnId(column);
+          return !id || !configuredColumnKeys.includes(id);
+        }),
+      ]
     : columns;
 
   // Error handling
@@ -291,8 +356,8 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
           sorting={sorting}
           queryFilter={queryFilter}
           setQueryFilter={setQueryFilter}
-          columnVisibility={columnVisibility}
-          setColumnVisibility={setColumnVisibility}
+          columnVisibility={effectiveColumnVisibility}
+          setColumnVisibility={handleColumnVisibilityChange}
           designButton={layoutToggleButton}
           emptyState={<EpisodesEmptyState />}
         />

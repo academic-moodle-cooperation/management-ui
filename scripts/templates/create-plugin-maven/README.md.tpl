@@ -54,9 +54,9 @@ The tracker then reads `static/plugins/__PLUGIN_NAME__/plugin.json` (copied from
 
 - **Don't move this `backend/` directory** without also updating the relative paths in `pom.xml` (`${project.basedir}/..` is hardcoded as the plugin root).
 - **Don't rename `Management-Plugin` or `Http-Alias` headers** unless you're sure Opencast's tracker has been updated to recognise the new name.
-- **Don't bundle `react`, `@oc-mui/*`, or other shared runtime deps into the JAR** — they're provided by the host. See [`docs/architecture/CONTRACTS.md` § 5](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/docs/architecture/CONTRACTS.md#5-shared-runtime-dependencies) for the full list.
+- **Don't bundle `react`, `@oc-mui/*`, or other shared runtime deps into the JAR** — they're provided by the host. See [`docs/reference/contracts.md` § 5](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/docs/reference/contracts.md#5-shared-runtime-dependencies) for the full list.
 
 ## See also
 
-- [`docs/plugins/distribution.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/docs/plugins/distribution.md) — comparison of the four distribution paths (in-tree, `.local-plugins/`, JAR, CDN).
-- [`docs/architecture/CONTRACTS.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/docs/architecture/CONTRACTS.md) — manifest, runtime API, theme, config, and shared-runtime-deps contracts.
+- [`docs/extend/distribution.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/docs/extend/distribution.md) — comparison of the four distribution paths (in-tree, `.local-plugins/`, JAR, CDN).
+- [`docs/reference/contracts.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/docs/reference/contracts.md) — manifest, runtime API, theme, config, and shared-runtime-deps contracts.
