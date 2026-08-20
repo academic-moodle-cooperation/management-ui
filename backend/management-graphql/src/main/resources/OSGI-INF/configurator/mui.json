@@ -1,12 +1,16 @@
 {
   ":configurator:resource-version": 1,
-  ":configurator:symbolic-name": "org.opencastproject.management.config",
+  ":configurator:symbolic-name": "management-ui-graphql",
   "org.opencastproject.mui": {
     "trash.workflow.id": "trash",
     "republish.workflow.id": "republish-metadata",
     "thumbnail.channel.id": "engage-player",
     "thumbnail.flavor": "*/search+preview",
     "publication.channel.id": "engage-player",
-    "managed.acl.order": ["public", "authenticated", "private"]
+    "managed.acl.order": [
+      "public",
+      "authenticated",
+      "private"
+    ]
   }
 }
