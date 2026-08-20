@@ -189,7 +189,7 @@ export const myPluginConfig = definePluginConfig({
 //   cfg.enabled  // typed, validated, falls back to defaults on bad input
 ```
 
-Reading another plugin's slice (e.g. `useAppConfig().config.plugins["other-plugin"]`) is forbidden — no lint rule enforces this today, so reviews do. The full config layer model is at [`docs/reference/configuration.md`](docs/reference/configuration.md).
+Reading another plugin's slice (e.g. `useAppConfig().config.plugins["other-plugin"]`) is forbidden — the `local/no-cross-plugin-config` lint rule flags any raw read of the `plugins` map. The full config layer model is at [`docs/reference/configuration.md`](docs/reference/configuration.md).
 
 ## Theme — CSS variables only
 
