@@ -701,6 +701,11 @@ export { OnChangeFn }
 // @public (undocumented)
 export const OverflowTooltip: FC<OverflowTooltipProps>;
 
+// Warning: (ae-forgotten-export) The symbol "PageShellProps" needs to be exported by the entry point index.d.ts
+//
+// @public
+export const PageShell: FC<PageShellProps>;
+
 // @public (undocumented)
 export function Popover(input: React_2.ComponentProps<typeof PopoverPrimitive.Root>): JSX.Element;
 
