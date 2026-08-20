@@ -18,6 +18,7 @@ import React, { useMemo, useState } from "react";
 
 import type { PluginManager } from "@oc-mui/plugin-system";
 import {
+  PageShell,
   Badge,
   Button,
   Card,
@@ -223,7 +224,7 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
   if (selectedPlugin && selectedPluginData) {
     const meta = getPluginMetadataOrDefault(selectedPluginData.plugin.name);
     return (
-      <div className="mx-auto max-w-6xl px-6 py-8">
+      <div className="mx-auto max-w-6xl p-8">
         <PluginDetailView
           pluginName={selectedPluginData.plugin.name}
           displayName={meta.name}
@@ -253,15 +254,11 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
   const loadedCount = allBundled.filter((p) => p.isLoaded).length;
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 px-6 py-8">
-      {/* Header with top toggle */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Marketplace</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {loadedCount} active plugins · {m.themes.length} themes available
-          </p>
-        </div>
+    <PageShell
+      className="mx-auto max-w-6xl"
+      title="Marketplace"
+      description={`${loadedCount} active plugins · ${m.themes.length} themes available`}
+      actions={
         <div className="flex rounded-lg border bg-muted/30 p-0.5">
           <button
             type="button"
@@ -286,120 +283,122 @@ export const MarketplaceDashboard: React.FC<MarketplaceDashboardProps> = ({
             Themes
           </button>
         </div>
-      </div>
+      }
+    >
+      <div className="space-y-6">
+        {/* Status banners */}
+        <StatusBanners
+          pendingChanges={m.pendingChanges}
+          conflicts={m.conflicts}
+          error={m.error}
+          onReload={m.reload}
+          onDiscardChanges={m.clearAllOverrides}
+          onClearError={m.clearError}
+        />
 
-      {/* Status banners */}
-      <StatusBanners
-        pendingChanges={m.pendingChanges}
-        conflicts={m.conflicts}
-        error={m.error}
-        onReload={m.reload}
-        onDiscardChanges={m.clearAllOverrides}
-        onClearError={m.clearError}
-      />
-
-      {/* Search bar + namespace filter */}
-      <div className="flex items-center gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder={activeView === "plugins" ? "Search plugins..." : "Search themes..."}
-            value={searchQuery}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-            className="h-9 pl-9"
-          />
-        </div>
-        {activeView === "plugins" && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-9 gap-1.5 text-xs">
-                <Filter className="h-3.5 w-3.5" />
-                Namespace
-                {namespaceFilters.size > 0 && (
-                  <Badge variant="secondary" className="ml-0.5 h-4 px-1 text-[10px]">
-                    {namespaceFilters.size}
-                  </Badge>
-                )}
-                <ChevronDown className="h-3 w-3 opacity-50" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuLabel className="text-xs">Filter by namespace</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {allNamespaces.map((ns) => (
-                <DropdownMenuCheckboxItem
-                  key={ns.name}
-                  checked={namespaceFilters.has(ns.name)}
-                  onCheckedChange={() => toggleNamespaceFilter(ns.name)}
-                  onSelect={(e) => e.preventDefault()}
-                  className="text-xs"
-                >
-                  <span className="flex-1">{ns.name}</span>
-                  <span className="ml-auto text-[10px] tabular-nums text-muted-foreground">
-                    {ns.count}
-                  </span>
-                </DropdownMenuCheckboxItem>
-              ))}
-              {namespaceFilters.size > 0 && (
-                <>
-                  <DropdownMenuSeparator />
+        {/* Search bar + namespace filter */}
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder={activeView === "plugins" ? "Search plugins..." : "Search themes..."}
+              value={searchQuery}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+              className="h-9 pl-9"
+            />
+          </div>
+          {activeView === "plugins" && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-9 gap-1.5 text-xs">
+                  <Filter className="h-3.5 w-3.5" />
+                  Namespace
+                  {namespaceFilters.size > 0 && (
+                    <Badge variant="secondary" className="ml-0.5 h-4 px-1 text-[10px]">
+                      {namespaceFilters.size}
+                    </Badge>
+                  )}
+                  <ChevronDown className="h-3 w-3 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel className="text-xs">Filter by namespace</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {allNamespaces.map((ns) => (
                   <DropdownMenuCheckboxItem
-                    checked={false}
-                    onCheckedChange={() => setNamespaceFilters(new Set())}
-                    className="text-xs text-muted-foreground"
+                    key={ns.name}
+                    checked={namespaceFilters.has(ns.name)}
+                    onCheckedChange={() => toggleNamespaceFilter(ns.name)}
+                    onSelect={(e) => e.preventDefault()}
+                    className="text-xs"
                   >
-                    Clear all
+                    <span className="flex-1">{ns.name}</span>
+                    <span className="ml-auto text-[10px] tabular-nums text-muted-foreground">
+                      {ns.count}
+                    </span>
                   </DropdownMenuCheckboxItem>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                ))}
+                {namespaceFilters.size > 0 && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuCheckboxItem
+                      checked={false}
+                      onCheckedChange={() => setNamespaceFilters(new Set())}
+                      className="text-xs text-muted-foreground"
+                    >
+                      Clear all
+                    </DropdownMenuCheckboxItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
+
+        {/* Main content */}
+        {activeView === "themes" ? (
+          <>
+            <ThemesView
+              themes={filteredThemes}
+              isThemeInstalled={m.isThemeInstalled}
+              loading={m.loading}
+              onSelectTheme={setSelectedTheme}
+            />
+            <ThemeModal
+              theme={selectedTheme}
+              isInstalled={selectedTheme ? m.isThemeInstalled(selectedTheme.previewUrl) : false}
+              isLoading={selectedTheme ? m.loading === selectedTheme.previewUrl : false}
+              onClose={() => setSelectedTheme(null)}
+              onPreview={() => selectedTheme && void m.tryTheme(selectedTheme.previewUrl)}
+              onApply={() => selectedTheme && void m.installTheme(selectedTheme.previewUrl)}
+              onRemove={() => {
+                m.uninstallTheme();
+                setSelectedTheme(null);
+              }}
+            />
+          </>
+        ) : (
+          <PluginsView
+            sources={filteredSources}
+            remoteLoadingEnabled={remoteLoadingEnabled}
+            jarPlugins={m.jarPlugins}
+            communityPlugins={filteredCommunity}
+            communityPluginsLoading={m.communityPluginsLoading}
+            bundledPluginsLoading={m.bundledPluginsLoading}
+            loading={m.loading}
+            installedRemotePlugins={m.installedRemotePlugins}
+            onSelectPlugin={setSelectedPlugin}
+            onInstallCommunity={(plugin) => void m.installCommunityPlugin(plugin)}
+            isCommunityInstalled={m.isCommunityPluginInstalled}
+            onRefreshBundled={() => void m.refreshBundledPlugins()}
+            onRefreshCommunity={() => void m.refreshCommunityPlugins()}
+            onTryCustomUrl={(url, force) => void m.tryCustomUrl(url, force)}
+            onInstallCustomUrl={(url, force) => void m.installCustomUrl(url, force)}
+            onUninstallPlugin={m.uninstallPlugin}
+          />
         )}
       </div>
-
-      {/* Main content */}
-      {activeView === "themes" ? (
-        <>
-          <ThemesView
-            themes={filteredThemes}
-            isThemeInstalled={m.isThemeInstalled}
-            loading={m.loading}
-            onSelectTheme={setSelectedTheme}
-          />
-          <ThemeModal
-            theme={selectedTheme}
-            isInstalled={selectedTheme ? m.isThemeInstalled(selectedTheme.previewUrl) : false}
-            isLoading={selectedTheme ? m.loading === selectedTheme.previewUrl : false}
-            onClose={() => setSelectedTheme(null)}
-            onPreview={() => selectedTheme && void m.tryTheme(selectedTheme.previewUrl)}
-            onApply={() => selectedTheme && void m.installTheme(selectedTheme.previewUrl)}
-            onRemove={() => {
-              m.uninstallTheme();
-              setSelectedTheme(null);
-            }}
-          />
-        </>
-      )       : (
-        <PluginsView
-          sources={filteredSources}
-          remoteLoadingEnabled={remoteLoadingEnabled}
-          jarPlugins={m.jarPlugins}
-          communityPlugins={filteredCommunity}
-          communityPluginsLoading={m.communityPluginsLoading}
-          bundledPluginsLoading={m.bundledPluginsLoading}
-          loading={m.loading}
-          installedRemotePlugins={m.installedRemotePlugins}
-          onSelectPlugin={setSelectedPlugin}
-          onInstallCommunity={(plugin) => void m.installCommunityPlugin(plugin)}
-          isCommunityInstalled={m.isCommunityPluginInstalled}
-          onRefreshBundled={() => void m.refreshBundledPlugins()}
-          onRefreshCommunity={() => void m.refreshCommunityPlugins()}
-          onTryCustomUrl={(url, force) => void m.tryCustomUrl(url, force)}
-          onInstallCustomUrl={(url, force) => void m.installCustomUrl(url, force)}
-          onUninstallPlugin={m.uninstallPlugin}
-        />
-      )}
-    </div>
+    </PageShell>
   );
 };
 
@@ -534,14 +533,12 @@ const ThemesView: React.FC<{
 // ---------------------------------------------------------------------------
 
 type MarketplaceHook = ReturnType<typeof useMarketplace>;
-type DiscoveredPlugin = ReturnType<typeof useMarketplace>["bundledPlugins"] extends Map<
-  string,
-  infer V
->
-  ? V extends (infer U)[]
-    ? U
-    : never
-  : never;
+type DiscoveredPlugin =
+  ReturnType<typeof useMarketplace>["bundledPlugins"] extends Map<string, infer V>
+    ? V extends (infer U)[]
+      ? U
+      : never
+    : never;
 
 const PluginsView: React.FC<{
   sources: Record<string, DiscoveredPlugin[]>;
