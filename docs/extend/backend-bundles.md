@@ -52,7 +52,7 @@ The tracker tries the manifest first and falls back to filenames:
 2. **Filename convention.** Used when `plugin.json` is absent, or present and unparseable — a parse failure is logged as a warning and silently degrades to this path. Every `*.mjs` directly inside the static directory becomes an entry; when none is found, `<name>.mjs` is assumed. A stylesheet is matched by `Management-Plugin-Css`, else by the same stem as the module, else by being the only `.css` present. The module id is the plain plugin name for a single canonical entry (`<name>.mjs` or `plugin-<name>.mjs`) and `<name>/<stem>` otherwise; a stem of `<name>-<suffix>` or `plugin-<name>-<suffix>` sets the entry's `type` to `<suffix>`.
 
 ::: warning Precedence trap
-`Management-Plugin-Css` and `Management-Plugin-I18n` are read **only** on the fallback path. A JAR that ships a `plugin.json` *and* sets those headers gets its headers ignored — the manifest's `css` and `i18nNamespaces` decide. Org plugin POMs commonly set both, which is harmless but misleading: change the manifest, not the header. Tracked as [#351](https://github.com/academic-moodle-cooperation/management-ui/issues/351).
+`Management-Plugin-Css` and `Management-Plugin-I18n` are read **only** on the fallback path. A JAR that ships a `plugin.json` *and* sets those headers gets its headers ignored — the manifest's `css` and `i18nNamespaces` decide. Org plugin POMs commonly set both, which is harmless but misleading: change the manifest, not the header — since #351 the backend logs a warning when a manifest-shipping bundle sets them, and the scaffold's POM comment says they are fallback-only.
 :::
 
 ### What the shell receives

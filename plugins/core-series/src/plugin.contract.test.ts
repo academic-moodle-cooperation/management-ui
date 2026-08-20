@@ -3,11 +3,7 @@ import { fileURLToPath } from "node:url";
 
 import { afterAll, beforeAll, describe, it } from "vitest";
 
-import {
-  loadPluginInHarness,
-  readPluginManifest,
-  type TestHarness,
-} from "@oc-mui/plugin-testing";
+import { loadPluginInHarness, readPluginManifest, type TestHarness } from "@oc-mui/plugin-testing";
 
 import { coreSeriesPlugin } from "./index";
 
@@ -30,8 +26,7 @@ describe("core-series plugin contract", () => {
   it("populates every extension point declared in plugin.json", () =>
     harness.expectAllManifestRegistrationsSucceed());
 
-  it("does not log errors or warnings during activation", () =>
-    harness.expectCleanRender());
+  it("does not log errors or warnings during activation", () => harness.expectCleanRender());
 
   it("has i18n key parity across shipped locales", () => harness.expectI18nKeyParity());
 });

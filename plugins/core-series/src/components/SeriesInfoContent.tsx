@@ -121,9 +121,7 @@ const SeriesInfoContent = ({
                       </>
                     </div>
                     {textCopied && (
-                      <p className="text-ok text-sm">
-                        {t(`series:seriesInfo.identifierCopied`)}
-                      </p>
+                      <p className="text-ok text-sm">{t(`series:seriesInfo.identifierCopied`)}</p>
                     )}
                   </>
                 ) : (
