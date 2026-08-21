@@ -267,7 +267,40 @@ For plugins distributed publicly:
 > would admit every GitHub user's Pages site. To serve plugins from your own
 > GitHub Pages, allow your subdomain explicitly (e.g. `"my-org.github.io"`).
 
-A first-party community registry is planned but not yet shipped.
+### Listing plugins in a registry
+
+Instead of handing every admin a raw URL, a deployment can point the
+marketplace at one or more **plugin registries** — plain static JSON files it
+lists for browsing:
+
+```json
+{
+  "plugins": {
+    "admin-marketplace": {
+      "remotePlugins": {
+        "enabled": true,
+        "allowedDomains": ["cdn.jsdelivr.net"],
+        "registryUrls": ["https://example.org/mui-plugins/registry.json"]
+      }
+    }
+  }
+}
+```
+
+A `registry.json` carries a `plugins` array; the entry format is documented in
+[`registry-fetcher.ts`](../../plugins/admin-marketplace/src/services/registry-fetcher.ts).
+The essentials per entry: `id`, `name`, `description`, `version`, `author`,
+`url` (the `.mjs` bundle), `category`, and optionally
+`workspaceDependencies`/`apiVersion` (compatibility gates) plus
+`localesUrl` + `i18nNamespaces` — set those two so a remote-loaded plugin keeps
+its translations (`<localesUrl>/<namespace>/<language>.json`, the same layout
+the JAR path serves); without them its UI falls back to raw keys.
+
+Listing and loading are gated separately: configuring a registry makes its
+entries *visible*, but Try/Install still require `enabled: true` and a host on
+the `allowedDomains` list. No registry is contacted unless `registryUrls` is
+set (in dev, a local `public/registry.json` is picked up automatically for
+testing the flow).
 
 ## Picking between JAR and CDN
 

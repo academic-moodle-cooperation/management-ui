@@ -14,6 +14,7 @@
     "test:contract": "vitest run plugin.contract"
   },
   "dependencies": {
+    "@oc-mui/i18n": "workspace:*",
     "@oc-mui/plugin-system": "workspace:*",
     "@oc-mui/query": "workspace:*",
     "@oc-mui/remote-plugin-loader": "workspace:*",
