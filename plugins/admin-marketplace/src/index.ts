@@ -63,6 +63,9 @@ export const adminMarketplacePlugin = createPlugin({
     securityService.updateConfig({
       remotePluginsEnabled: cfg.remotePlugins.enabled,
       allowedDomains: cfg.remotePlugins.allowedDomains,
+      // Deployment opt-out for TLS-less hosts (test boxes, intranet installs);
+      // default keeps the HTTPS requirement in production builds.
+      enforceHttpsInProduction: !cfg.remotePlugins.allowInsecureHttp,
     });
 
     // Load installed theme in background (do not block plugin init or router)
