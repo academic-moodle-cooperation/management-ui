@@ -3,7 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { defaultConfig } from "../../packages/ui-config/src";
 
 /**
- * test-protocol.md §11 — Marketplace CDN-distributed plugin (Developer Tools).
+ * test-protocol.md §11 — Marketplace CDN-distributed plugin (Discover → Advanced URL card).
  * The demo plugin was scaffolded + built by global-setup.ts and is served by
  * the dev shell at the URL below. We drive Try / Install / Uninstall and assert
  * the persistence contract via localStorage (`installed_remote_plugins`):
@@ -87,9 +87,18 @@ const lsHasPlugin = (page: Page): Promise<boolean> =>
 // buttons exist elsewhere on the page, so scope to this card).
 const devCard = (page: Page) => page.locator("div.space-y-4", { has: page.locator("#dev-url") });
 
+// v2 layout: the custom-URL card lives in the Discover tab, collapsed behind
+// the "Advanced" disclosure.
+async function gotoDiscover(page: Page) {
+  await page.getByRole("tab", { name: "Discover" }).click();
+}
+
 async function openDevTools(page: Page) {
   await stubAdmin(page);
   await page.goto("/management-ui/admin/marketplace/plugins");
+  await expect(page.getByRole("tab", { name: "Discover" })).toBeVisible({ timeout: 20_000 });
+  await gotoDiscover(page);
+  await page.getByRole("button", { name: /Advanced: load a plugin from a URL/ }).click();
   const input = page.locator("#dev-url");
   await expect(input).toBeVisible({ timeout: 20_000 });
   return input;
@@ -117,9 +126,11 @@ test("§11.5–11.7 Install persists across reload; Uninstall removes it", async
   // Persisted to localStorage…
   await expect.poll(() => lsHasPlugin(page), { timeout: 20_000 }).toBe(true);
 
-  // …survives a reload, and shows in the "Installed remote plugins" list (routes
-  // registered on the page persist across reloads).
+  // …survives a reload, and shows in the installed-in-this-browser list on the
+  // Discover tab (routes registered on the page persist across reloads).
   await page.reload();
+  await expect(page.getByRole("tab", { name: "Discover" })).toBeVisible({ timeout: 20_000 });
+  await gotoDiscover(page);
   await expect(page.getByText(PLUGIN_URL, { exact: false })).toBeVisible({ timeout: 20_000 });
   expect(await lsHasPlugin(page)).toBe(true);
 

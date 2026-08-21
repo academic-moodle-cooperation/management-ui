@@ -158,9 +158,8 @@ Self-contained in [`testing.md` → Follow-ups](../contribute/testing.md#follow-
 1. E2E suites per feature — residue only (the protocol-driven specs cover the main flows; convert the remaining hand-run protocol steps).
 2. Coverage gates — extend to the apps (seven packages already enforce thresholds).
 3. Playground-as-isolated-plugin-runner.
-4. Marketplace metadata cleanup (move from hard-coded map to `extensionPoints` manifest).
-5. Visual regression — data screens + promote to CI (default + alternate-theme baselines are committed).
-6. Remote turbo cache to share artefacts across CI jobs.
+4. Visual regression — data screens + promote to CI (default + alternate-theme baselines are committed).
+5. Remote turbo cache to share artefacts across CI jobs.
 
 ---
 
