@@ -46,7 +46,7 @@ export default createCommunityPluginConfig({
 
 ## Internal Vite plugins
 
-[`src/plugins/local-plugins-dev.ts`](./src/plugins/local-plugins-dev.ts) is the dev-server piece that discovers `.local-plugins/<name>/dist/*.mjs`, serves them at `/local-plugins/<name>/<file>.mjs`, and exposes `/local-plugins/manifest.json` for the shell to load. Detailed write-up in [`docs/plugins/distribution.md`](../../docs/plugins/distribution.md#path-2--local-plugins-dev-only).
+[`src/plugins/local-plugins-dev.ts`](./src/plugins/local-plugins-dev.ts) is the dev-server piece that discovers `.local-plugins/<name>/dist/*.mjs`, serves them at `/local-plugins/<name>/<file>.mjs`, and exposes `/local-plugins/manifest.json` for the shell to load. Detailed write-up in [`docs/extend/distribution.md`](../../docs/extend/distribution.md#path-2--local-plugins-dev-only).
 
 [`src/plugins/local-config-dev.ts`](./src/plugins/local-config-dev.ts) serves a committed default `config.json` from disk at the shell's config fetch path when no backend proxy is configured — edit `apps/shell/public/ui/config/management-ui/config.json` and reload, no backend needed. When `VITE_PROXY_TARGET` is set, the proxy wins and this plugin is not registered. Dev-server only (`apply: "serve"`).
 
@@ -58,5 +58,5 @@ Core infrastructure. Depends on `@oc-mui/utils` only.
 
 ## See also
 
-- [`docs/plugins/distribution.md`](../../docs/plugins/distribution.md) — how the four loading paths use these configs.
+- [`docs/extend/distribution.md`](../../docs/extend/distribution.md) — how the four loading paths use these configs.
 - [`packages/tailwind-config/README.md`](../tailwind-config/README.md) — the Tailwind preset wired in here.

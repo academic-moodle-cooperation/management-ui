@@ -21,7 +21,7 @@ name: Deploy docs
 # Pre-1.0 the site is blocked from search indexing through two
 # belt-and-suspenders guards: docs/public/robots.txt + a noindex meta tag in
 # docs/.vitepress/config.mts. Both flip together when going public — see
-# docs/operations/open-followups.md §8.3 for the checklist.
+# docs/reference/open-followups.md §8.3 for the checklist.
 
 on:
   workflow_dispatch:
@@ -59,9 +59,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Full history: the symbol-drift check below diffs against the PR's
+          # base branch, and a shallow clone has no merge base to diff from.
+          fetch-depth: 0
 
       - name: Run markdownlint-cli2
-        uses: DavidAnson/markdownlint-cli2-action@4580e1612f6407034edd6c0e4e316d725920867b # v24.2.0
+        uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff # v24.2.0
         with:
           globs: "**/*.md"
 
@@ -71,6 +75,17 @@ jobs:
       # needed here; reproduce locally with `pnpm docs:ownership`.
       - name: Docs ownership check
         run: node scripts/docs-ownership-check.mjs
+
+      # Symbol-drift check: fails when this PR deletes a symbol the prose still
+      # names as API. Needs the base branch present to diff against, hence the
+      # fetch; on a push to develop there is no PR base, so it is skipped.
+      - name: Fetch base branch
+        if: github.event_name == 'pull_request'
+        run: git fetch --no-tags origin "${{ github.base_ref }}"
+
+      - name: Docs symbol-drift check
+        if: github.event_name == 'pull_request'
+        run: node scripts/docs-symbol-drift.mjs "origin/${{ github.base_ref }}"
 
   # Fast path job 2: offline link check. `--offline` restricts lychee to
   # repo-internal file links — exactly the ones that rot when files move and

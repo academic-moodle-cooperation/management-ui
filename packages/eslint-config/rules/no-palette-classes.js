@@ -2,7 +2,7 @@
  * no-palette-classes
  *
  * Enforces the semantic-token theme rule (AGENTS.md → "Theme — CSS variables
- * only", docs/plugins/styling.md) mechanically: Tailwind's raw palette color
+ * only", docs/extend/styling.md) mechanically: Tailwind's raw palette color
  * classes (`text-gray-900`, `border-slate-300`, `focus:ring-indigo-600`, …)
  * are forbidden in string and template literals. Raw palette classes ignore
  * the theme tokens, which is exactly how #279 happened — near-black text on
@@ -54,7 +54,7 @@ export const noPaletteClasses = {
     schema: [],
     messages: {
       palette:
-        'Raw palette class "{{match}}" ignores the theme tokens (this is how #279 happened). Use a semantic token instead — see docs/plugins/styling.md.',
+        'Raw palette class "{{match}}" ignores the theme tokens (this is how #279 happened). Use a semantic token instead — see docs/extend/styling.md.',
     },
   },
 

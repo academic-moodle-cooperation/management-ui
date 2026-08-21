@@ -38,16 +38,16 @@ plugins/example/
 
 ## Using it as a template
 
-Use `pnpm create-plugin <name>` instead of copying this folder by hand — the CLI scaffolds the full layout (package.json, plugin.json, tsconfig, vitest, contract test, README) with the right names and a working extension-point registration. See [`docs/plugins/creating-a-plugin.md`](../../docs/plugins/creating-a-plugin.md).
+Use `pnpm create-plugin <name>` instead of copying this folder by hand — the CLI scaffolds the full layout (package.json, plugin.json, tsconfig, vitest, contract test, README) with the right names and a working extension-point registration. See [`docs/extend/plugin-guide.md`](../../docs/extend/plugin-guide.md).
 
 If you copy this folder manually, rename the package in [`package.json`](./package.json), rewrite [`modules/header-logo-example.ts`](./modules/header-logo-example.ts) to register on the extension points you need, and if you ship a theme update the `previewUrl` in [`plugins/admin-marketplace/src/services/themes.ts`](../admin-marketplace/src/services/themes.ts) (or register the theme at runtime from your own marketplace plugin).
 
 ## Contract
 
-Targets the Plugin Runtime API — see [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md). The exact host-API-version constant lives in [`packages/plugin-system/src/apiVersion.ts`](../../packages/plugin-system/src/apiVersion.ts).
+Targets the Plugin Runtime API — see [`docs/reference/contracts.md`](../../docs/reference/contracts.md). The exact host-API-version constant lives in [`packages/plugin-system/src/apiVersion.ts`](../../packages/plugin-system/src/apiVersion.ts).
 
 ## See also
 
-- [`docs/plugins/creating-a-plugin.md`](../../docs/plugins/creating-a-plugin.md) — full walkthrough.
-- [`docs/plugins/styling.md`](../../docs/plugins/styling.md) — the Theme Contract.
+- [`docs/extend/plugin-guide.md`](../../docs/extend/plugin-guide.md) — full walkthrough.
+- [`docs/extend/styling.md`](../../docs/extend/styling.md) — the Theme Contract.
 - [`plugins/core/README.md`](../core/README.md) — extension points you can register on.

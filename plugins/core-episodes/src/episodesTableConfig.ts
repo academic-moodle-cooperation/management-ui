@@ -1,58 +1,28 @@
-import type { TableColumnItem } from "@oc-mui/ui/config-primitives";
+import {
+  getColumnLabelOverrides,
+  getColumnVisibilityDefaults,
+  normalizeColumnConfigs,
+  resolveColumnLabel as resolveColumnLabelGeneric,
+  resolveColumnMeta as resolveColumnMetaGeneric,
+} from "@oc-mui/ui/components";
+import type { ColumnLabelOverrides, ResolvedColumnConfig } from "@oc-mui/ui/components";
 import type { AppConfig } from "@oc-mui/ui-config";
 
 import { episodesConfig, type EpisodesTable as EpisodesTableConfig } from "./config";
 
 export type EpisodesLayout = "list" | "gallery";
 
-export interface ResolvedEpisodesColumnConfig {
-  key: string;
-  show: boolean;
-  label?: string;
-  labelKey?: string;
-}
+// The generic per-column config semantics live in @oc-mui/ui (shared with the
+// series table, #372); this module keeps the episode-specific view resolution
+// and re-exports the helpers under their established names.
+export type ResolvedEpisodesColumnConfig = ResolvedColumnConfig;
+export type EpisodesColumnLabelOverride = ColumnLabelOverrides[string];
+export type EpisodesColumnLabelOverrides = ColumnLabelOverrides;
 
 export interface ResolvedEpisodesViewConfig {
   enabled: boolean;
-  columns: ResolvedEpisodesColumnConfig[];
+  columns: ResolvedColumnConfig[];
 }
-
-export interface EpisodesColumnLabelOverride {
-  label?: string;
-  labelKey?: string;
-}
-
-export type EpisodesColumnLabelOverrides = Record<string, EpisodesColumnLabelOverride>;
-
-const normalizeColumnConfig = (
-  column: TableColumnItem | undefined,
-): ResolvedEpisodesColumnConfig | null => {
-  if (!column || typeof column !== "object") {
-    return null;
-  }
-
-  const key = Object.keys(column)[0];
-  if (!key) {
-    return null;
-  }
-
-  const field = column[key];
-  if (!field) {
-    return null;
-  }
-
-  return {
-    key,
-    show: field.show === true,
-    ...(field.label && { label: field.label }),
-    ...(field.labelKey && { labelKey: field.labelKey }),
-  };
-};
-
-const normalizeColumns = (columns: TableColumnItem[] | undefined): ResolvedEpisodesColumnConfig[] =>
-  (columns ?? [])
-    .map((column) => normalizeColumnConfig(column))
-    .filter((column): column is ResolvedEpisodesColumnConfig => Boolean(column));
 
 export const resolveEpisodesViewConfig = (
   tableConfig: EpisodesTableConfig | undefined,
@@ -63,7 +33,7 @@ export const resolveEpisodesViewConfig = (
 
   return {
     enabled: viewConfig?.enabled ?? true,
-    columns: normalizeColumns(columns),
+    columns: normalizeColumnConfigs(columns),
   };
 };
 
@@ -76,46 +46,7 @@ export const getEpisodesTableConfig = (config: AppConfig | undefined) => {
   };
 };
 
-export const getEpisodesColumnLabelOverrides = (
-  columns: ResolvedEpisodesColumnConfig[],
-): EpisodesColumnLabelOverrides =>
-  columns.reduce<EpisodesColumnLabelOverrides>((acc, column) => {
-    if (!column.label && !column.labelKey) {
-      return acc;
-    }
-
-    acc[column.key] = {
-      ...(column.label && { label: column.label }),
-      ...(column.labelKey && { labelKey: column.labelKey }),
-    };
-
-    return acc;
-  }, {});
-
-export const resolveColumnLabel = (
-  overrides: EpisodesColumnLabelOverrides,
-  columnKey: string,
-  fallbackLabelKey: string,
-  translate: (key: string) => string,
-) => {
-  const override = overrides[columnKey];
-
-  if (override?.label) {
-    return override.label;
-  }
-
-  return translate(override?.labelKey ?? fallbackLabelKey);
-};
-
-export const resolveColumnMeta = (
-  overrides: EpisodesColumnLabelOverrides,
-  columnKey: string,
-  fallbackLabelKey: string,
-) => {
-  const override = overrides[columnKey];
-
-  return {
-    ...(!override?.label && { translatedTitle: override?.labelKey ?? fallbackLabelKey }),
-    ...(override?.label && { resolvedTitle: override.label }),
-  };
-};
+export const getEpisodesColumnLabelOverrides = getColumnLabelOverrides;
+export const getEpisodesVisibilityDefaults = getColumnVisibilityDefaults;
+export const resolveColumnLabel = resolveColumnLabelGeneric;
+export const resolveColumnMeta = resolveColumnMetaGeneric;

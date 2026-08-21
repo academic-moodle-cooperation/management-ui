@@ -23,6 +23,11 @@
     // headingless format; linting them only punishes contributors.
     ".changeset/**",
     // Org/community plugin checkouts — gitignored, not part of the OSS tree.
-    ".local-plugins/**"
+    ".local-plugins/**",
+    // Gitignored local working directories that never exist in a CI checkout;
+    // without these, `pnpm docs:lint` drowns in machine-local files and stops
+    // being the local repro of the CI job it is documented as.
+    ".specstory/**",
+    ".claude/worktrees/**"
   ]
 }

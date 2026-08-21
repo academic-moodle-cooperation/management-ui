@@ -92,7 +92,7 @@ jobs:
         continue-on-error: true
         # Only the 15 publishable SDK packages — not the feature plugins or
         # host-only infra. Keep this list in sync with the SDK set documented in
-        # docs/operations/release.md ("What gets published").
+        # docs/contribute/release.md ("What gets published").
         run: >
           pnpm dlx pkg-pr-new@0.0.75 publish --pnpm
           ./packages/plugin-system

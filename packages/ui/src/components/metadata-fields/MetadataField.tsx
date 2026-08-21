@@ -1,4 +1,4 @@
-import { useI18n } from "@oc-mui/i18n";
+import { formatDate, useI18n } from "@oc-mui/i18n";
 import type { MetadataFieldType } from "@oc-mui/query";
 import { parseDuration } from "@oc-mui/utils";
 
@@ -55,25 +55,11 @@ export const MetadataField = ({ type, listProvider, collection, value }: Metadat
         );
         break;
       case "DATE":
-        metadataElement = (
-          <>
-            {new Intl.DateTimeFormat("de-DE", {
-              dateStyle: "medium",
-              timeStyle: "short",
-            }).format(new Date(value))}
-          </>
-        );
+        metadataElement = <>{formatDate(value)}</>;
         break;
       case "START_DATE":
         // Format START_DATE consistently with DATE (medium date, short time)
-        metadataElement = (
-          <>
-            {new Intl.DateTimeFormat("de-DE", {
-              dateStyle: "medium",
-              timeStyle: "short",
-            }).format(new Date(value))}
-          </>
-        );
+        metadataElement = <>{formatDate(value)}</>;
         break;
       case "DURATION":
         metadataElement = <>{parseDuration(value)}</>;

@@ -1,21 +1,21 @@
 # AGENTS.md
 
-Operational rules for AI coding agents (Claude, Copilot, Cursor, etc.) working in this repository. Human contributors should read [`CONTRIBUTING.md`](CONTRIBUTING.md) instead — it has the same rules in long form, plus the wider workflow context.
+Operational rules for AI coding agents (Claude, Copilot, Cursor, etc.) working in this repository. Human contributors should read [`docs/contribute/`](docs/contribute/index.md) instead — the same ground, walked step by step ([`CONTRIBUTING.md`](CONTRIBUTING.md) is a short pointer into it).
 
-This file is **not** a project tour. For architecture, package layers, and the general "what is this codebase" briefing, start at [`docs/architecture/overview.md`](docs/architecture/overview.md). The rules below assume you have that context.
+This file is **not** a project tour. For architecture, package layers, and the general "what is this codebase" briefing, start at [`docs/reference/architecture.md`](docs/reference/architecture.md). The rules below assume you have that context.
 
 ## TL;DR — Pre-flight checklist
 
 Before you finish a plugin-touching change:
 
 1. Plugin entry uses `createPlugin({...})` from `@oc-mui/plugin-system`. ✓
-2. `plugin.json` exists at the plugin root with the [required manifest fields](docs/architecture/CONTRACTS.md#1-plugin-manifest-contract) (`id`, `name`, `version`, `description`, `author`, `namespace`) and an `extensionPoints` array. Applies to every plugin **except `plugins/core`** — the infrastructure plugin ships no `plugin.json`. ✓
+2. `plugin.json` exists at the plugin root with the [required manifest fields](docs/reference/contracts.md#1-plugin-manifest-contract) (`id`, `name`, `version`, `description`, `author`, `namespace`) and an `extensionPoints` array. Applies to every plugin **except `plugins/core`** — the infrastructure plugin ships no `plugin.json`. ✓
 3. Every extension point your `initialize()` populates also appears in `plugin.json`'s `extensionPoints`. ✓
 4. A `src/plugin.contract.test.ts` exists — the file `pnpm create-plugin` scaffolds, with only the import line and the `describe` label changed. Every plugin except `plugins/core` ships one. ✓
 5. Plugin imports nothing from `apps/*`, `plugins/<other>/*`, or any external library not already wrapped behind a `@oc-mui/*` facade. ✓
 6. `pnpm verify` passes locally. ✓
 7. **Changeset committed.** If you changed *any* versioned package, you ran `pnpm changeset`, picked the bump level, and **committed** the `.changeset/*.md` file. "Versioned" = every package under `packages/*` and `plugins/*`, **including private (`"private": true`) ones** — the *only* exemptions are those listed in `.changeset/config.json`'s `ignore` (currently just `shell` and `playground`). This is **not** limited to public-API changes: a dev-server tweak, an internal bug fix, a new asset MIME type all need one. An uncommitted changeset does **not** count — CI runs `changeset status` against the committed tree. When unsure, run `pnpm changeset status --since=origin/<base-branch>` (green = covered). If the change *also* touched a public `@oc-mui/*` API surface, additionally run `pnpm api-check` and commit the regenerated `etc/<pkg>.api.md`. ✓
-8. **Docs stay in sync.** Any doc your change makes stale is updated in the same PR. If you renamed a public symbol, fix every doc that names it; if you changed an extension point's contract, fix [`docs/plugins/`](docs/plugins/) and [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md); if you changed how something is built or released, fix [`docs/operations/`](docs/operations/). Use the "Where to find things" table at the bottom of this file to find every doc that mentions what you touched. ✓
+8. **Docs stay in sync.** Any doc your change makes stale is updated in the same PR. If you renamed a public symbol, fix every doc that names it; if you changed an extension point's contract, fix [`docs/extend/`](docs/extend/index.md) and [`docs/reference/contracts.md`](docs/reference/contracts.md); if you changed how something is built or released, fix [`docs/contribute/`](docs/contribute/index.md). Use the "Where to find things" table at the bottom of this file to find every doc that mentions what you touched. ✓
 
 If any of those is unchecked, do not declare the change finished.
 
@@ -60,7 +60,7 @@ import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
 
 export const myPlugin = createPlugin({
   namespace: "my-namespace",  // kebab-case, no colons, matches plugin.json's `namespace`
-  type: "app",                // see CONTRACTS.md for the type vocabulary
+  type: "app",                // see the contracts reference for the type vocabulary
   version: "1.0.0",
 
   initialize(manager: PluginManager) {
@@ -85,6 +85,13 @@ export const myPlugin = createPlugin({
 | `app:header-logo` | An `{ src, alt, href, width, height }` object | `plugins/example/modules/header-logo-example.ts` |
 
 For every extension point your plugin touches, add the string key to `plugin.json`'s `extensionPoints` array. The contract test fails when an entry is declared but not populated. Registration ids are namespaced by plugin name at registration time (`registerObject` prefixes un-namespaced ids with `<plugin>:`), which is what keeps ids from colliding across plugins — no lint rule checks for collisions.
+
+The full catalogue of declared points lives in [`plugins/core/README.md`](plugins/core/README.md).
+
+`apps:definitions` takes an `AppDefinition` ([`packages/plugin-system/src/appTypes.ts`](packages/plugin-system/src/appTypes.ts)). Beyond the required `{ id, name, routePath, component }`:
+
+- `requiredRoles?: string[]` — when set, the shell mounts the app only for users holding at least one listed role; everyone else gets an access-denied screen. A deployment overrides the list via `config.plugins[<id>].protection.requiredRoles`.
+- Nested routes such as `/reports/:id` need no extra registration — the shell adds a generic `$routeSubPath` child route. Read the segment with `useParams({ strict: false })`.
 
 ## Contract test — required, mechanical
 
@@ -138,7 +145,7 @@ describe("my-plugin plugin contract", () => {
 });
 ```
 
-Run with `pnpm test:contract`. The full harness API is documented in [`packages/plugin-testing/README.md`](packages/plugin-testing/README.md); the test pyramid + follow-up backlog live in [`docs/operations/testing.md`](docs/operations/testing.md).
+Run with `pnpm test:contract`. The full harness API is documented in [`packages/plugin-testing/README.md`](packages/plugin-testing/README.md); the test pyramid + follow-up backlog live in [`docs/contribute/testing.md`](docs/contribute/testing.md).
 
 ## Boundaries — what plugins **must not** import
 
@@ -182,18 +189,18 @@ export const myPluginConfig = definePluginConfig({
 //   cfg.enabled  // typed, validated, falls back to defaults on bad input
 ```
 
-Reading another plugin's slice (e.g. `useAppConfig().config.plugins["other-plugin"]`) is forbidden — no lint rule enforces this today, so reviews do. The full config layer model is at [`docs/architecture/CONFIGURATION.md`](docs/architecture/CONFIGURATION.md).
+Reading another plugin's slice (e.g. `useAppConfig().config.plugins["other-plugin"]`) is forbidden — the `local/no-cross-plugin-config` lint rule flags any raw read of the `plugins` map. The full config layer model is at [`docs/reference/configuration.md`](docs/reference/configuration.md).
 
 ## Theme — CSS variables only
 
-No hex colors, no hardcoded font names, no raw spacing values in plugin code. Use the semantic tokens listed in [`docs/plugins/styling.md`](docs/plugins/styling.md). Org-specific theming lives in a theme plugin (`.local-plugins/<org>-theme/`), not inline in feature plugins.
+No hex colors, no hardcoded font names, no raw spacing values in plugin code. Use the semantic tokens listed in [`docs/extend/styling.md`](docs/extend/styling.md). Org-specific theming lives in a theme plugin (`.local-plugins/<org>-theme/`), not inline in feature plugins.
 
 ## i18n
 
 - Translation namespaces are declared in `plugin.json`'s `i18nNamespaces` array. This declaration is load-bearing: the contract test's `expectI18nKeyParity` resolves the namespaces to check from it, so declare every namespace you ship.
 - Locale files live in one directory per namespace: `<plugin>/locales/<namespace>/<locale>.json`. The harness discovers them under the plugin dir (the manifest's optional `locales` field can point the root elsewhere). `expectI18nKeyParity` fails when a namespace's locale files have mismatched key sets.
 - The in-tree plugins ship few translations; org plugins are the primary users of this mechanism — in practice each of their modules declares its own namespace. Never treat `i18nNamespaces` as unused based on in-tree usage.
-- Reference keys with `t("namespace:key")` via `usePluginTranslation` from `@oc-mui/i18n` — it auto-loads your declared namespaces. See [`docs/plugins/i18n.md`](docs/plugins/i18n.md).
+- Reference keys with `t("namespace:key")` via `usePluginTranslation` from `@oc-mui/i18n` — it auto-loads your declared namespaces. See [`docs/extend/i18n.md`](docs/extend/i18n.md).
 
 ## Versioning — changesets (every versioned package) and public-API changes
 
@@ -209,13 +216,13 @@ For any versioned-package change:
 If the change *also* touches a `@oc-mui/*` package's public surface (anything reachable through its `exports` field), additionally:
 
 5. `pnpm api-check` regenerates the affected `etc/<pkg>.api.md`. Inspect the diff; commit it if the change was intentional.
-6. Major bumps require a `@deprecated` JSDoc tag on the previous version, kept for one full major cycle. See [`docs/operations/release.md` → Deprecations](docs/operations/release.md#deprecations) for the full rule.
+6. Major bumps require a `@deprecated` JSDoc tag on the previous version, kept for one full major cycle. See [`docs/contribute/release.md` → Deprecations](docs/contribute/release.md#deprecations) for the full rule.
 
 CI rejects PRs that change a versioned package without a changeset (`.github/workflows/changeset.yml`), and rejects PRs whose `.api.md` snapshots drift without an accompanying regeneration.
 
 ## Pre-push gate — `pnpm verify`
 
-This is the canonical command. It runs lint + type-check + build + unit tests + contract tests + api-check + the Playwright E2E suite (incl. smoke) in the same order CI does. If `pnpm verify` is green locally, CI will be too — modulo network-dependent E2E flakes (caught by retries).
+This is the canonical command. It runs lint + type-check + build + unit tests + contract tests + api-check, then `codegen:check` (regenerates the GraphQL output from the committed schema and fails on any diff, plus the consumer-perspective type check over `dist-types`), then `test:docs` (the VitePress build, which fails on any dead internal link), then the Playwright E2E suite (incl. smoke) — the same order CI does. If `pnpm verify` is green locally, CI will be too — modulo network-dependent E2E flakes (caught by retries).
 
 If you only want a fast inner loop while iterating on one plugin:
 
@@ -223,18 +230,20 @@ If you only want a fast inner loop while iterating on one plugin:
 - `pnpm --filter @oc-mui/plugin-<name> test:contract` — that plugin's contract test
 - `pnpm test:e2e:ui` — Playwright in interactive mode
 
+`pnpm verify` deliberately **excludes `.local-plugins/*`** (`--filter='!./.local-plugins/*'`), so a green gate says nothing about an org plugin mounted there — run that plugin's own `test` and `test:contract` scripts separately.
+
 ## Where to find things
 
 | Looking for | Read |
 |---|---|
-| Project tour, package layers, plugin model | [`docs/architecture/overview.md`](docs/architecture/overview.md) |
-| The six contracts | [`docs/architecture/CONTRACTS.md`](docs/architecture/CONTRACTS.md) |
-| Test pyramid + harness API reference | [`docs/operations/testing.md`](docs/operations/testing.md), [`packages/plugin-testing/README.md`](packages/plugin-testing/README.md) |
-| Versioning rules + changeset workflow | [`docs/operations/release.md`](docs/operations/release.md); walkthrough in [`CONTRIBUTING.md`](CONTRIBUTING.md#5-add-a-changeset) |
-| Config layer model + reader API | [`docs/architecture/CONFIGURATION.md`](docs/architecture/CONFIGURATION.md) |
-| Theme tokens + CSS rules | [`docs/plugins/styling.md`](docs/plugins/styling.md) |
-| Why the architecture is the way it is | [`docs/architecture/decisions/`](docs/architecture/decisions/) |
-| What's deferred / waiting on upstream / open decisions | [`docs/operations/open-followups.md`](docs/operations/open-followups.md) |
+| Project tour, package layers, plugin model | [`docs/reference/architecture.md`](docs/reference/architecture.md) |
+| The six contracts | [`docs/reference/contracts.md`](docs/reference/contracts.md) |
+| Test pyramid + harness API reference | [`docs/contribute/testing.md`](docs/contribute/testing.md), [`packages/plugin-testing/README.md`](packages/plugin-testing/README.md) |
+| Versioning rules + changeset workflow | [`docs/contribute/release.md`](docs/contribute/release.md); walkthrough in [`docs/contribute/first-pr.md`](docs/contribute/first-pr.md#4-add-a-changeset) |
+| Config layer model + reader API | [`docs/reference/configuration.md`](docs/reference/configuration.md) |
+| Theme tokens + CSS rules | [`docs/extend/styling.md`](docs/extend/styling.md) |
+| Why the architecture is the way it is | [`docs/reference/decisions/`](docs/reference/decisions/) |
+| What's deferred / waiting on upstream / open decisions | [`docs/reference/open-followups.md`](docs/reference/open-followups.md) |
 
 ## When in doubt
 

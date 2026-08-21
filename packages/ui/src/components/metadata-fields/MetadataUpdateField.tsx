@@ -41,7 +41,6 @@ import {
   Button,
 } from "../ui";
 
-
 type MetadataUpdateFieldProps = MetadataFieldType & {
   value: string | string[];
   onUpdate: (value: string | string[]) => void;
@@ -150,7 +149,7 @@ export const MetadataUpdateField = ({
   //         searchSeries={setQuery}
   //         infiniteFetchNextPage={fetchNextPage}
   //         hasNextPage={hasNextPage}
-  //         placeholder={"Select a series"}
+  //         placeholder={t("selectSeries")}
   //       />
   //     </>
   //   );
@@ -380,11 +379,7 @@ export const MetadataUpdateField = ({
 
     default:
       metadataElement = (
-        <Input
-          type="text"
-          value={value || ""}
-          onChange={(e) => onUpdate(e.target.value)}
-        />
+        <Input type="text" value={value || ""} onChange={(e) => onUpdate(e.target.value)} />
       );
       break;
   }

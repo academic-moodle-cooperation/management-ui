@@ -12,7 +12,7 @@ const CORE_APP_NAMES = ["playground"];
 
 // Known in-repo plugin packages, used to assign deterministic dev/preview ports.
 // Standalone and .local-plugins plugins instead pick a free dev port in their own
-// vite.config.ts — see docs/operations/extending-the-workspace.md.
+// vite.config.ts — see docs/contribute/extending-the-workspace.md.
 const discoverPluginPackages = (): string[] => {
   return ["@oc-mui/plugin-example"];
 };

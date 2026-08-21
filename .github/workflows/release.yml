@@ -1,6 +1,6 @@
 name: Release
 
-# Changesets release automation (see docs/operations/release.md -> "Cutting a release").
+# Changesets release automation (see docs/contribute/release.md -> "Cutting a release").
 #
 # Branching model (Opencast-style, no `main`): development lands on `develop`;
 # releases happen on `r/NN.x` release lines named after the Opencast major the
@@ -48,7 +48,7 @@ on:
 # Let the action push the Version Packages branch and open its PR.
 # id-token lets npm Trusted Publishing (OIDC) authenticate the publish once
 # it is configured on the packages - the post-bootstrap, tokenless end state
-# (see docs/operations/release.md -> "npm authentication").
+# (see docs/contribute/release.md -> "npm authentication").
 permissions:
   contents: write
   pull-requests: write

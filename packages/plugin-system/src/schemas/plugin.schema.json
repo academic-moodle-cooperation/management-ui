@@ -66,12 +66,12 @@
     "apiVersion": {
       "type": "string",
       "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.]+)?$",
-      "description": "Minimum plugin runtime API version required, as a strict semver (MAJOR.MINOR.PATCH, optional prerelease). The host refuses plugins whose major mismatches the host or whose minor is higher than the host's minor. If absent, 1.0.0 is assumed. See docs/architecture/CONTRACTS.md for version semantics."
+      "description": "Minimum plugin runtime API version required, as a strict semver (MAJOR.MINOR.PATCH, optional prerelease). The host refuses plugins whose major mismatches the host or whose minor is higher than the host's minor. If absent, 1.0.0 is assumed. See docs/reference/contracts.md for version semantics."
     },
     "workspaceDependencies": {
       "type": "object",
       "additionalProperties": { "type": "string" },
-      "description": "Version constraints for shared runtime dependencies the plugin consumes from the host (react, react-dom, lucide-react, @oc-mui/*). Each entry's lower-bound major must match the host's major for that dependency, otherwise the host refuses to load the plugin. Example: { \"react\": \"^19.0.0\", \"@oc-mui/plugin-system\": \"^1.0.0\", \"@oc-mui/ui\": \"^1.0.0\" }. See docs/architecture/CONTRACTS.md → \"Shared Runtime Dependencies\" for the full list and rules."
+      "description": "Version constraints for shared runtime dependencies the plugin consumes from the host (react, react-dom, lucide-react, @oc-mui/*). Each entry's lower-bound major must match the host's major for that dependency, otherwise the host refuses to load the plugin. Example: { \"react\": \"^19.0.0\", \"@oc-mui/plugin-system\": \"^1.0.0\", \"@oc-mui/ui\": \"^1.0.0\" }. See docs/reference/contracts.md → \"Shared Runtime Dependencies\" for the full list and rules."
     },
     "pluginDependencies": {
       "type": "array",

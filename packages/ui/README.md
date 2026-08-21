@@ -47,7 +47,11 @@ The library is split between **atomic shadcn components** (under `src/components
 
 ## Theme
 
-Components consume the semantic tokens from [`src/styles/globals.css`](./src/styles/globals.css). Org themes override the token values, not the class names. Full contract: [`docs/plugins/styling.md`](../../docs/plugins/styling.md).
+Components consume the semantic tokens from [`src/styles/globals.css`](./src/styles/globals.css). Org themes override the token values, not the class names. Full contract: [`docs/extend/styling.md`](../../docs/extend/styling.md).
+
+## PageShell — the standard page frame
+
+Content pages (episodes, series, upload, marketplace) render inside `PageShell`: uniform page padding, the title in the same place and type scale everywhere, optional description, an optional right-aligned `actions` slot, separator, then the content. Plugin apps should use it too, so their pages sit visually flush with the core ones. The landing page deliberately does not — it is a marketing surface, not a content page.
 
 ## Layer
 
@@ -57,5 +61,5 @@ Deliberately **not** a dependency: `@oc-mui/router`. Router-aware components (si
 
 ## See also
 
-- [`docs/plugins/styling.md`](../../docs/plugins/styling.md) — the Theme Contract.
+- [`docs/extend/styling.md`](../../docs/extend/styling.md) — the Theme Contract.
 - [`packages/tailwind-config/README.md`](../tailwind-config/README.md) — the shared Tailwind preset.

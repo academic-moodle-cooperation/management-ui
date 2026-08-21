@@ -12,7 +12,7 @@
 # 2. Remove the `noindex` meta tag set in docs/.vitepress/config.mts.
 #
 # The full go-public checklist (including the one-time GitHub Pages setting)
-# lives in docs/operations/open-followups.md §8.3.
+# lives in docs/reference/open-followups.md §8.3.
 
 User-agent: *
 Disallow: /

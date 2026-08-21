@@ -23,6 +23,9 @@ const EmptyState = () => {
         <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
           {t("series:noSeriesAvailable.title")}
         </h4>
+        <p className="max-w-md text-sm text-muted-foreground">
+          {t("series:noSeriesAvailable.text")}
+        </p>
       </div>
     </div>
   );

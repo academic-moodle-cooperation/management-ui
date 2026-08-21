@@ -5,15 +5,21 @@
 > Organisations customize by adding plugins and themes, not by forking.
 > pnpm + Turborepo monorepo; React, TypeScript, Tailwind CSS, shadcn/ui.
 
-## Start here (by audience)
+## Start here — the docs are organised by who is reading
 
-- Run it on your Opencast → `docs/getting-started/deployment.md`
-- Build a plugin → `docs/plugins/first-plugin.md`
-- Contribute to this repo → `CONTRIBUTING.md`
+- Try it → `docs/quickstart.md` — the UI in a browser against an Opencast you already run
+- Use it → `docs/use/index.md` — find a video, edit metadata, upload, manage series
+- Run it → `docs/operate/index.md` — install the bundles, `config.json`, backend keys, upgrade
+- Extend it → `docs/extend/index.md` — write a plugin, add a GraphQL field, ship it
+- Contribute → `docs/contribute/index.md` — set up the repo, pass the gate, open a PR
 
-AI agents: `AGENTS.md` is the operational rulebook (pre-flight checklist,
-import boundaries, contract test, changeset rule, `pnpm verify` gate). Read
-it before changing anything under `plugins/` or `packages/`.
+Look-up material sits beside those, deliberately dense: `docs/reference/`
+(architecture, contracts, configuration model, ADRs, open follow-ups).
+
+AI agents: `AGENTS.md` is the operational rulebook — pre-flight checklist,
+plugin layout, import boundaries, the required contract test, the config-slice
+rule, the changeset rule, and the `pnpm verify` gate. Read it before changing
+anything under `plugins/`, `packages/`, or `apps/`.
 
 ## Repo layout
 
@@ -43,31 +49,33 @@ never directly.
 
 Org or community plugins live outside the repo and mount at dev time under
 `.local-plugins/<name>/` (gitignored, same layout as in-tree plugins). See
-`docs/plugins/distribution.md` for how plugins ship in production.
+`docs/extend/distribution.md` for how plugins ship in production.
 
-## The six contracts
+### Backend (`backend/`, `assemblies/`)
 
-Manifest, Runtime API, Theme, Config, Shared Runtime Dependencies, GraphQL
-Operation Naming — all frozen and versioned in `docs/architecture/CONTRACTS.md`.
+OSGi bundles deployed into Opencast: a config bundle that serves
+`plugins.json` and discovers plugin JARs, a GraphQL bundle that adds the
+`mui*` extensions, plus a Karaf feature. See `docs/extend/backend-bundles.md`.
+
+## Contracts
+
+Manifest, Runtime API, Theme, Config, Shared Runtime Dependencies, and GraphQL
+Operation Naming are frozen and versioned in `docs/reference/contracts.md`.
+That page owns the contract names and their version numbers — do not restate a
+version anywhere else.
 
 ## Key commands
 
 - `pnpm dev` — run the shell locally
-- `pnpm verify` — the canonical pre-push gate (lint, types, build, unit,
-  contract, api-check, E2E); rules and fast inner-loop variants in `AGENTS.md`
+- `pnpm verify` — the canonical pre-push gate; its step list and the fast
+  inner-loop variants live once in `AGENTS.md` → Pre-push gate
 - `pnpm create-plugin <name>` — scaffold a plugin under `.local-plugins/`
   (`--in-tree` for a built-in one)
 - `pnpm changeset` — required for any change to a versioned package
+- `pnpm docs:build` / `docs:lint` / `docs:ownership` — the docs checks
 
-## Documentation map
+## Other root files
 
-- `docs/README.md` — docs entry point and audience routing
-- `docs/architecture/overview.md` — architecture tour: pillars, layers, plugin model
-- `docs/architecture/CONTRACTS.md` — the six contracts
-- `docs/architecture/CONFIGURATION.md` — config layer model, `definePluginConfig`
-- `docs/architecture/decisions/` — ADRs (why it is the way it is)
-- `docs/plugins/` — plugin authoring: first plugin, styling, testing, i18n, distribution
-- `docs/getting-started/` — deployment, installation, configuration, local backend
-- `docs/operations/` — testing, release, CI, open follow-ups
-- `AGENTS.md` — operational rules for AI agents
-- `CONTRIBUTING.md` — human contributor guide
+- `README.md` — GitHub landing page, routes into the five entries above
+- `CONTRIBUTING.md` — short pointer into `docs/contribute/`
+- `SECURITY.md`, `CODE_OF_CONDUCT.md` — vulnerability reporting and conduct

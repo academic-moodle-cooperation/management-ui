@@ -376,7 +376,9 @@ test("[VID-27] [VID-28] [VID-30] [VID-31] the row shows presenter, series, date 
   // a time (VID-30) and a status column that carries something (VID-31).
   await expect(page.getByRole("cell", { name: "Alex Roe" })).toHaveCount(1);
   await expect(page.getByRole("cell", { name: "Physik I" })).toBeVisible();
-  await expect(page.getByRole("cell", { name: /10\.02\.2026.*\d{2}:\d{2}/ })).toBeVisible();
+  // English format — see the note in protocol-series.spec.ts; VID-30 asks for
+  // a date with a time, which this still pins.
+  await expect(page.getByRole("cell", { name: /Feb 10, 2026.*\d{1,2}:\d{2}/ })).toBeVisible();
   await expect(page.getByRole("columnheader", { name: /status/i })).toBeVisible();
 });
 

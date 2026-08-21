@@ -1,7 +1,7 @@
 /**
  * Plugin Runtime API version shipped by this host.
  *
- * Semantics (see docs/architecture/CONTRACTS.md):
+ * Semantics (see docs/reference/contracts.md):
  * - Patch: no plugin-observable behaviour change.
  * - Minor: new capabilities added; existing plugins continue to work unchanged.
  * - Major: removal or behaviour change that may break existing plugins.

@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { defaultConfig } from "../../packages/ui-config/src";
 
+import { installMockBackend, makeEvent } from "./_fixtures/mock-backend";
 import { stubShellBoot } from "./_mock-backend";
 
 /**
@@ -38,4 +39,104 @@ test("§6.5 an unknown top-level config key doesn't break boot", async ({ page }
   await page.goto("/management-ui/");
   // The `[key: string]: unknown` passthrough means the shell still boots.
   await expect(page.getByRole("link", { name: /home/i })).toBeVisible({ timeout: 15_000 });
+});
+
+test("§6.2 episodesTable column config sets the default; the user's toggle wins and persists", async ({
+  page,
+}) => {
+  // A deployment that lists columns enumerates its table: `show: false` (and
+  // anything unlisted) starts hidden — but stays in the View menu, where the
+  // user's own toggle wins over the config default (#80).
+  const config = {
+    ...defaultConfig,
+    plugins: {
+      ...defaultConfig.plugins,
+      episodes: {
+        episodesTable: {
+          columns: [
+            { title: { show: true } },
+            { seriesName: { show: false } },
+            { actions: { show: true } },
+          ],
+        },
+      },
+    },
+  };
+  await installMockBackend(page, { config, events: [makeEvent({ seriesName: "Physik I" })] });
+  await page.goto("/management-ui/episodes");
+
+  await expect(page.getByRole("columnheader", { name: /^title$/i })).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(page.getByRole("columnheader", { name: /^series$/i })).toHaveCount(0);
+
+  // The user re-enables the column via the View menu — their choice beats the
+  // config default…
+  await page.getByRole("button", { name: "View", exact: true }).click();
+  await page.getByRole("menuitemcheckbox", { name: /^series/i }).click();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("columnheader", { name: /^series$/i })).toBeVisible();
+
+  // …and keeps beating it after a reload, because the toggle persists.
+  await page.reload();
+  await expect(page.getByRole("columnheader", { name: /^title$/i })).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(page.getByRole("columnheader", { name: /^series$/i })).toBeVisible();
+});
+
+test("§6.2 gallery keeps its combined cells by default; config can split them into single columns", async ({
+  page,
+}) => {
+  // Default: the combined "Video" cell shows, its single-value variants stay
+  // hidden (but available in the View menu — nothing is removed).
+  await installMockBackend(page, { events: [makeEvent({ title: "Kombiniert" })] });
+  await page.goto("/management-ui/episodes");
+  // Wait for the list to hydrate before toggling, or the click can land
+  // before the handler is attached.
+  await expect(page.getByRole("columnheader", { name: /^title$/i })).toBeVisible({
+    timeout: 15_000,
+  });
+  await page.getByRole("button", { name: "Switch to gallery view" }).click();
+  await expect(page.getByRole("columnheader", { name: /^video$/i })).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(page.getByRole("columnheader", { name: /^title$/i })).toHaveCount(0);
+});
+
+test("§6.2 a separated gallery config renders single columns instead of the combined cells", async ({
+  page,
+}) => {
+  const config = {
+    ...defaultConfig,
+    plugins: {
+      ...defaultConfig.plugins,
+      episodes: {
+        episodesTable: {
+          views: {
+            gallery: {
+              columns: [
+                { thumbnail: { show: true } },
+                { title: { show: true } },
+                { startDate: { show: true } },
+                { actions: { show: true } },
+              ],
+            },
+          },
+        },
+      },
+    },
+  };
+  await installMockBackend(page, { config, events: [makeEvent({ title: "Getrennt" })] });
+  await page.goto("/management-ui/episodes");
+  await expect(page.getByRole("columnheader", { name: /^title$/i })).toBeVisible({
+    timeout: 15_000,
+  });
+  await page.getByRole("button", { name: "Switch to gallery view" }).click();
+
+  await expect(page.getByRole("columnheader", { name: /^title$/i })).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(page.getByRole("columnheader", { name: /thumbnail/i })).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: /^video$/i })).toHaveCount(0);
 });

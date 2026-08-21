@@ -9,7 +9,7 @@
  * in their manifest. The host loader rejects plugins whose declared
  * major doesn't match the host's.
  *
- * Versioning rules (see docs/architecture/CONTRACTS.md):
+ * Versioning rules (see docs/reference/contracts.md):
  * - Adding a new entry: **minor** bump of `@oc-mui/plugin-system`.
  * - Bumping any entry's major: **major** bump of `@oc-mui/plugin-system`.
  * - Removing an entry: **major** bump.

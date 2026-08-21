@@ -21,7 +21,7 @@ const gateLogger = logger.child({ component: "SharedDepsGate" });
  *
  * Entries that declare no `workspaceDependencies` always pass — e.g. JAR
  * plugins whose `plugins.json` doesn't yet carry the field (the backend has
- * to surface it; see `docs/operations/open-followups.md` §5.3). Deps the host
+ * to surface it; see `docs/reference/open-followups.md` §5.3). Deps the host
  * doesn't ship are logged but don't block (the plugin may bundle them).
  *
  * @returns `true` when the entry is compatible and should be loaded.

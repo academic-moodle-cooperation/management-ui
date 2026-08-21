@@ -23,7 +23,7 @@
 
       mvn install -DdeployTo=/path/to/opencast/home
 
-  See docs/plugins/distribution.md (Path 3 — JAR) for the full story.
+  See docs/extend/distribution.md (Path 3 — JAR) for the full story.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -39,7 +39,7 @@
   <parent>
     <groupId>org.opencastproject</groupId>
     <artifactId>base</artifactId>
-    <version>19-SNAPSHOT</version>
+    <version>20-SNAPSHOT</version>
   </parent>
 
   <!--
@@ -210,7 +210,12 @@
                                  alias above.
           - Include-Resource     embeds the static/ tree into the JAR.
 
-        Optional headers (uncomment if your plugin needs them):
+        Optional headers — FALLBACK ONLY: they are read exclusively when
+        the bundle ships NO parseable plugin.json. This build copies
+        plugin.json into the JAR (copy-plugin-manifest below), so for a
+        scaffolded plugin these headers are ignored (the backend logs a
+        warning if you set them anyway) — declare `css` and
+        `i18nNamespaces` in plugin.json instead:
           - Management-Plugin-Css      explicit CSS stem if the file
                                        name doesn't match <pluginId>.css
           - Management-Plugin-I18n     comma-separated i18n namespaces

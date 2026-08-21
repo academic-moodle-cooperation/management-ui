@@ -22,7 +22,7 @@ const RECORDINGS_DIR = "tests/har-replay/recordings";
  * Recordings are gitignored — the machinery is shared, the data is not. With an
  * empty recordings dir every spec skips and no dev server is started.
  *
- * See docs/operations/manual-test-recording.md.
+ * See docs/contribute/manual-test-recording.md.
  */
 const hasRecordings =
   existsSync(RECORDINGS_DIR) && readdirSync(RECORDINGS_DIR).some((f) => f.endsWith(".har"));

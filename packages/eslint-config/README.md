@@ -35,8 +35,8 @@ export default [
 
 - The **wrapper rule**: `no-restricted-imports` blocks direct imports of `@tanstack/react-router`, `@tanstack/react-query`, `i18next`, `react-i18next`, `jotai` — those must go through `@oc-mui/router`, `@oc-mui/query`, `@oc-mui/i18n`, `@oc-mui/store`. Each wrapper package has an explicit exception for itself.
 - **Architectural boundaries** via `eslint-plugin-boundaries`: apps can import from packages and plugins; plugins from packages (and `@oc-mui/plugin-core`); packages from packages. Cross-plugin imports are caught. See the comment block in [`base.js`](./base.js) under "Known limitations" for the exact element/rule matrix.
-- **GraphQL operation naming** via the custom `local/graphql-operation-naming` rule (in [`rules/`](./rules/)): every `query`/`mutation`/`subscription`/`fragment` declared in a `gql\`\`` template literal or `.graphql` file must be prefixed with the owning plugin's namespace in PascalCase (or `Mui` for shared-core code in `packages/query/`). Implements [CONTRACTS.md §6](../../docs/architecture/CONTRACTS.md#6-graphql-operation-naming).
-- **No raw palette colour classes** via the custom `local/no-palette-classes` rule (in [`rules/`](./rules/)): Tailwind's numbered palette classes (`text-gray-900`, `border-slate-300`, …) are forbidden in string/template literals — use the semantic tokens from [`docs/plugins/styling.md`](../../docs/plugins/styling.md) instead. The shadcn-generated `components/ui/` layer is excluded.
+- **GraphQL operation naming** via the custom `local/graphql-operation-naming` rule (in [`rules/`](./rules/)): every `query`/`mutation`/`subscription`/`fragment` declared in a `gql\`\`` template literal or `.graphql` file must be prefixed with the owning plugin's namespace in PascalCase (or `Mui` for shared-core code in `packages/query/`). Implements [CONTRACTS.md §6](../../docs/reference/contracts.md#6-graphql-operation-naming).
+- **No raw palette colour classes** via the custom `local/no-palette-classes` rule (in [`rules/`](./rules/)): Tailwind's numbered palette classes (`text-gray-900`, `border-slate-300`, …) are forbidden in string/template literals — use the semantic tokens from [`docs/extend/styling.md`](../../docs/extend/styling.md) instead. The shadcn-generated `components/ui/` layer is excluded.
 
 ## Custom rules
 
@@ -55,4 +55,4 @@ Core infrastructure. Depends on nothing in the workspace.
 ## See also
 
 - [`base.js`](./base.js) — the source of truth, with inline rationale comments for non-obvious rules.
-- [`docs/operations/open-followups.md`](../../docs/operations/open-followups.md) §3 — known boundaries-plugin limitations and the planned v6 migration.
+- [`docs/reference/open-followups.md`](../../docs/reference/open-followups.md) §3 — known boundaries-plugin limitations and the planned v6 migration.

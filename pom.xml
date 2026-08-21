@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.opencastproject</groupId>
     <artifactId>base</artifactId>
-    <version>19-SNAPSHOT</version>
+    <version>20-SNAPSHOT</version>
   </parent>
 
   <groupId>org.amc.management</groupId>
@@ -21,7 +21,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <opencast.version>19-SNAPSHOT</opencast.version>
+    <opencast.version>20-SNAPSHOT</opencast.version>
     <!-- Build performance optimizations -->
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>

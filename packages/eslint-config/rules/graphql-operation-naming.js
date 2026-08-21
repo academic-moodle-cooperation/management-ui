@@ -1,7 +1,7 @@
 /**
  * graphql-operation-naming
  *
- * Enforces the GraphQL Operation Naming Contract (docs/architecture/CONTRACTS.md §6):
+ * Enforces the GraphQL Operation Naming Contract (docs/reference/contracts.md §6):
  * every `query` / `mutation` / `subscription` / `fragment` declared by a plugin
  * is prefixed with the plugin's namespace in PascalCase, so two plugins can't
  * collide on a fragment name at GraphQL Codegen, attribute load to the wrong
@@ -115,11 +115,11 @@ export const graphqlOperationNaming = {
       description:
         "Enforce that every GraphQL operation and fragment is prefixed with the plugin's namespace in PascalCase (CONTRACTS.md §6).",
       recommended: true,
-      url: "https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/docs/architecture/CONTRACTS.md#6-graphql-operation-naming",
+      url: "https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/docs/reference/contracts.md#6-graphql-operation-naming",
     },
     messages: {
       missingPrefix:
-        "GraphQL {{kind}} '{{name}}' must be prefixed with the plugin's namespace. Expected something starting with '{{prefix}}' (e.g. '{{example}}'). See docs/architecture/CONTRACTS.md §6.",
+        "GraphQL {{kind}} '{{name}}' must be prefixed with the plugin's namespace. Expected something starting with '{{prefix}}' (e.g. '{{example}}'). See docs/reference/contracts.md §6.",
     },
     schema: [],
   },
