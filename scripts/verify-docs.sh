@@ -6,10 +6,10 @@
 # Builds the VitePress site with dead-link checking enabled
 # (`ignoreDeadLinks: false` in docs/.vitepress/config.mts), so the build
 # fails on any dead internal link and a green build doubles as a link check.
-# Then asserts the pre-1.0 crawler guards are present in the output: the
-# `noindex` meta on built pages and robots.txt's `Disallow: /`. When the
-# project goes public these guards are removed — at which point this
-# script's last two checks should be flipped/deleted.
+# Then asserts the site is publicly indexable: no `noindex` meta in built
+# pages and a permissive robots.txt. (Pre-public these checks asserted the
+# opposite — the crawler guards; they flipped with the go-public PR, as the
+# guards' comments prescribed.)
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -24,13 +24,17 @@ pnpm docs:build >/dev/null 2>&1 || fail "docs:build failed (often a dead interna
 test -f "${DIST}/index.html" || fail "no built index.html under ${DIST}"
 echo "  ok — built site at ${DIST}"
 
-say "§14.10 noindex guard present in built pages"
-grep -rqiE 'name="robots"[^>]*noindex' "${DIST}" || fail "noindex meta missing from built HTML"
+say "§14.10 built pages carry no noindex meta"
+if grep -rqiE 'name="robots"[^>]*noindex' "${DIST}"; then
+  fail "noindex meta found in built HTML — the site is public, nothing may reintroduce it"
+fi
 echo "  ok"
 
-say "§14.11 robots.txt discourages crawlers"
+say "§14.11 robots.txt permits crawlers"
 test -f "${DIST}/robots.txt" || fail "robots.txt not emitted to ${DIST}"
-grep -q "Disallow: /" "${DIST}/robots.txt" || fail "robots.txt missing 'Disallow: /'"
+if grep -Eq "Disallow: */$" "${DIST}/robots.txt"; then
+  fail "robots.txt still carries 'Disallow: /' — the site is public"
+fi
 echo "  ok"
 
 echo

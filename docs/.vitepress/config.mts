@@ -34,12 +34,6 @@ export default defineConfig({
   lastUpdated: true,
   srcExclude,
 
-  // Pre-1.0 — the site is built but not publicly announced. Tell search
-  // engines not to index any page. Belt-and-suspenders with
-  // docs/public/robots.txt; remove both when going public (tracked in
-  // docs/reference/open-followups.md §8.3).
-  head: [["meta", { name: "robots", content: "noindex, nofollow" }]],
-
   // Fail the build on dead internal links. Links to source files
   // (../packages/..., ../apps/..., etc.) are rewritten to GitHub permalinks by
   // the markdown transformer below, so they don't false-positive; anything the
@@ -59,10 +53,7 @@ export default defineConfig({
         const hrefIndex = token.attrIndex("href");
         if (hrefIndex >= 0) {
           const href = token.attrs![hrefIndex][1];
-          const rewritten = rewriteRepoLink(
-            href,
-            (env as { relativePath?: string }).relativePath,
-          );
+          const rewritten = rewriteRepoLink(href, (env as { relativePath?: string }).relativePath);
           if (rewritten !== href) {
             token.attrs![hrefIndex][1] = rewritten;
             // External links open in a new tab for clarity.
@@ -147,11 +138,7 @@ function sidebar() {
     text: string,
     tasks: { text: string; link: string }[],
     lookup: { text: string; link: string }[],
-  ) => [
-    startHere,
-    { text, items: tasks },
-    { text: "Look it up", items: lookup },
-  ];
+  ) => [startHere, { text, items: tasks }, { text: "Look it up", items: lookup }];
 
   return {
     "/use/": section(

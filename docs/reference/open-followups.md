@@ -197,15 +197,13 @@ PR-3a restructured `docs/` from 40 files to 20, rewrote the plugin-author and op
 
 The deploy trigger is **already active**: [`.github/workflows/docs.yml`](../../.github/workflows/docs.yml) deploys the site on every push to `develop` (plus manual `workflow_dispatch`) — there is no `main` branch in this repo. **Current blocker: GitHub Actions billing** — while it's unresolved no workflow runs at all, so no deploy happens; the moment billing is restored the site starts updating on merge with zero further edits.
 
-Until the project is ready for public traffic the site stays **discouraged from indexing**. Exactly three things remain for go-public:
+Items 1 and 2 of the original three-step go-public list (the robots.txt crawler block and the `noindex` meta tag in the VitePress config) were flipped together in the flip-day PR — merged the day the repo went public. One step remains:
 
 | # | What | Where | Change |
 |---|------|-------|--------|
-| 1 | Crawler block | [`docs/public/robots.txt`](../../docs/public/robots.txt) | `Disallow: /` → `Disallow:` (empty — allows everything). |
-| 2 | `noindex` meta tag | [`docs/.vitepress/config.mts`](../../docs/.vitepress/config.mts) | Remove the `<meta name="robots" content="noindex, nofollow">` entry from the `head` array. |
 | 3 | One-time GitHub setting | Repo **Settings → Pages** | Set source to **GitHub Actions** (not "Deploy from a branch"). The workflow's `actions/deploy-pages` step errors out until this is set. |
 
-**When to revisit**: alongside the go-public flip (see [`test-protocol.md`](../contribute/test-protocol.md)'s closing section). Flip 1 and 2 together — the combo is belt-and-suspenders (robots.txt is advisory; the meta tag is what most search engines actually obey, so flipping only one leaves the other gating). Item 3 can be done earlier: with the guards in place, a manual `workflow_dispatch` deploy is safe any time — the URL exists, but search engines stay away.
+**When to revisit**: on flip day, together with merging the flip-day PR (#302 has the complete day-of checklist).
 
 ### 8.4 Source-link rewriting is heuristic-based
 
