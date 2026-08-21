@@ -32,11 +32,19 @@ const remotePluginsSchema = z
      * so this is necessary-but-not-sufficient — keep the feature admin-only.
      */
     allowedDomains: z.array(z.string()).default([...DEFAULT_ALLOWED_DOMAINS]),
+    /**
+     * Plugin-registry URLs (each serving a `registry.json`) whose entries the
+     * marketplace lists for browsing. Listing is only the catalog — actually
+     * loading an entry stays behind `enabled` + `allowedDomains`. Empty (the
+     * default) means no registry is contacted; outside dev the marketplace
+     * then only shows locally present plugins.
+     */
+    registryUrls: z.array(z.string()).default([]),
   })
   // Whole-object default for when `remotePlugins` is absent; the per-field
   // defaults above cover a partial slice (e.g. `{ "enabled": true }` still fills
   // `allowedDomains`).
-  .default({ enabled: false, allowedDomains: [...DEFAULT_ALLOWED_DOMAINS] });
+  .default({ enabled: false, allowedDomains: [...DEFAULT_ALLOWED_DOMAINS], registryUrls: [] });
 
 export const adminMarketplaceConfigSchema = z.object({
   remotePlugins: remotePluginsSchema,
@@ -53,6 +61,7 @@ export const adminMarketplaceConfig = definePluginConfig({
     remotePlugins: {
       enabled: false,
       allowedDomains: [...DEFAULT_ALLOWED_DOMAINS],
+      registryUrls: [],
     },
   },
 });

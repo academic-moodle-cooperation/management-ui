@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 
 import type { PluginManager } from "@oc-mui/plugin-system";
 
+import { adminMarketplaceConfig } from "../config";
 import { PluginExplorer, type DiscoveredPlugin, type PluginConflict } from "../services/plugin-explorer";
 import { registryFetcher, type RegistryPlugin } from "../services/registry-fetcher";
 import { RemoteLoader, type LoadResult } from "../services/remote-loader";
@@ -103,11 +104,18 @@ export function useMarketplace(manager: PluginManager): MarketplaceState & Marke
   }, [manager]);
 
   // --- Load community plugins ---
+  // The deployment's registries come from the config slice
+  // (`remotePlugins.registryUrls`); the fetcher merges them with its dev-mode
+  // local registry. Joined so the effect re-runs only when the set changes.
+  const cfg = adminMarketplaceConfig.use();
+  const registryUrls = cfg.remotePlugins.registryUrls;
+  const registryUrlsKey = registryUrls.join(",");
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
       setCommunityPluginsLoading(true);
       try {
+        registryFetcher.updateConfig({ registryUrls: [...registryUrls] });
         const plugins = await registryFetcher.fetchAllPlugins();
         if (!cancelled) setCommunityPlugins(plugins);
       } catch {
@@ -118,7 +126,8 @@ export function useMarketplace(manager: PluginManager): MarketplaceState & Marke
     };
     load();
     return () => { cancelled = true; };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registryUrlsKey]);
 
   // --- Load JAR plugins ---
   useEffect(() => {
@@ -207,7 +216,10 @@ export function useMarketplace(manager: PluginManager): MarketplaceState & Marke
   const installCommunityPlugin = useCallback(async (plugin: RegistryPlugin) => {
     const result = await withLoading(plugin.url, () => RemoteLoader.loadAndRegister(plugin.url, manager, plugin));
     if (result.success) {
-      RemoteLoader.persist(plugin.url, plugin.id, plugin.version);
+      RemoteLoader.persist(plugin.url, plugin.id, plugin.version, {
+        localesUrl: plugin.localesUrl,
+        i18nNamespaces: plugin.i18nNamespaces,
+      });
       setInstalledRemotePlugins(RemoteLoader.getInstalledUrls());
       setPendingChanges(true);
     }

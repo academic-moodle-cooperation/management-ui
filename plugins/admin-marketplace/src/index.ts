@@ -129,19 +129,9 @@ export const adminMarketplacePlugin = createPlugin({
       );
     } else if (savedUrls.length > 0) {
       log.debug(`loading ${savedUrls.length} installed plugin(s)`);
-
-      const loadResults = await Promise.allSettled(
-        savedUrls.map((url) => RemoteLoader.loadAndRegister(url, manager))
-      );
-
-      loadResults.forEach((result, index) => {
-        if (result.status === "rejected") {
-          log.error(
-            `failed to load installed plugin from ${savedUrls[index]}`,
-            result.reason instanceof Error ? result.reason : new Error(String(result.reason)),
-          );
-        }
-      });
+      // loadAllInstalled also re-registers each plugin's persisted locale
+      // base, so installed plugins keep their translations across reloads.
+      await RemoteLoader.loadAllInstalled(manager);
     }
 
     // .local-plugins/ are loaded by the core in dev (PluginInitializer); no need to load here

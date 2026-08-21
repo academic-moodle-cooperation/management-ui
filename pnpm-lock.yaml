@@ -1048,6 +1048,9 @@ importers:
 
   plugins/admin-marketplace:
     dependencies:
+      '@oc-mui/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
       '@oc-mui/plugin-system':
         specifier: workspace:*
         version: link:../../packages/plugin-system
