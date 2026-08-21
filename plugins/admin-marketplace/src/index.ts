@@ -154,6 +154,4 @@ export default adminMarketplacePlugin;
 // Export services for external use if needed
 export { RemoteLoader } from "./services/remote-loader";
 export { ThemeLoader } from "./services/theme-loader";
-export { PluginExplorer } from "./services/plugin-explorer";
-export * from "./services/plugin-metadata";
 export { MarketplaceDashboard } from "./views/MarketplaceDashboard";
