@@ -29,6 +29,20 @@ The plugins under [`extension-points/`](./extension-points/) register documentat
 | `upload:workflow-selector` | `uploadExtensionPoints` | Workflow picker in the upload flow. |
 | `upload:pre-upload-validation` | `uploadExtensionPoints` | Validation hook that runs before the upload starts. |
 
+#### Labelling a sidebar tab
+
+The three `table-sidebar:*` points render a tab strip, and the caption of each tab is the host's business. Pass a `label` — a translation key — so it can be localized:
+
+```ts
+manager.registerComponent("table-sidebar:episodes:tabs", ExamRecordingsTab, {
+  key: "exam-recordings",
+  order: 20,
+  label: "acme:tabs.examRecordings",
+});
+```
+
+The host resolves the key at render time, so the caption follows a language switch, and it loads the key's namespace itself — the tab's own component may not have mounted yet. A `label` without a `:` is taken as a literal. Omit it and the caption is derived from `key` (`exam-recordings` → "Exam Recordings"), which is what every tab showed before the option existed.
+
 ### Centrally consumed extension points
 
 Three further points are not declared here but are consumed by the platform itself — plugins register on them all the same:
@@ -81,6 +95,6 @@ In-tree plugin. Depends on `@oc-mui/i18n`, `@oc-mui/plugin-system`, `@oc-mui/que
 
 ## See also
 
-- [`docs/plugins/creating-a-plugin.md`](../../docs/plugins/creating-a-plugin.md) — how to register on these extension points.
-- [`docs/architecture/CONTRACTS.md`](../../docs/architecture/CONTRACTS.md) — Manifest and Runtime API contract.
+- [`docs/extend/plugin-guide.md`](../../docs/extend/plugin-guide.md) — how to register on these extension points.
+- [`docs/reference/contracts.md`](../../docs/reference/contracts.md) — Manifest and Runtime API contract.
 - [`AGENTS.md`](../../AGENTS.md) — operational rules.

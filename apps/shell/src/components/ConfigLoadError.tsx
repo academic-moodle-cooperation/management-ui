@@ -90,7 +90,7 @@ export function ConfigLoadError({ error, configUrl, onRetry }: ConfigLoadErrorPr
               </ol>
               <p>
                 The terminal running <code>pnpm dev</code> has more detail, plus a link to{" "}
-                <code>docs/getting-started/installation.md</code>.
+                <code>docs/contribute/setup.md</code>.
               </p>
             </div>
           ) : (

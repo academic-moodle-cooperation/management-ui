@@ -56,4 +56,4 @@ Integration. Depends on `@oc-mui/plugin-system`, `@oc-mui/query` (for user/auth 
 ## See also
 
 - [`etc/router.api.md`](./etc/router.api.md) — committed API surface.
-- [`docs/architecture/decisions/003-shell-plus-core-plugins.md`](../../docs/architecture/decisions/003-shell-plus-core-plugins.md) — why the shell mounts every route through plugin registrations.
+- [`docs/reference/decisions/003-shell-plus-core-plugins.md`](../../docs/reference/decisions/003-shell-plus-core-plugins.md) — why the shell mounts every route through plugin registrations.

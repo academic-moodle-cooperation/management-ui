@@ -62,6 +62,6 @@ JAR plugins are loaded by the **shell** at boot, not by the marketplace. The mar
 
 ## See also
 
-- [`docs/plugins/distribution.md`](../../docs/plugins/distribution.md) — full picture of the four distribution paths.
+- [`docs/extend/distribution.md`](../../docs/extend/distribution.md) — full picture of the four distribution paths.
 - [`packages/remote-plugin-loader/README.md`](../../packages/remote-plugin-loader/README.md) — the loader the marketplace delegates to.
-- [`docs/operations/open-followups.md`](../../docs/operations/open-followups.md) §6 — note about migrating `plugin-metadata.ts` to read from `extensionPoints` manifests.
+- [`docs/reference/open-followups.md`](../../docs/reference/open-followups.md) §6 — note about migrating `plugin-metadata.ts` to read from `extensionPoints` manifests.

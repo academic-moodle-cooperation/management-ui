@@ -2,9 +2,9 @@ See @AGENTS.md for all project conventions.
 
 `AGENTS.md` is the canonical operational guide for AI agents in this repo — plugin
 layout, import boundaries, contract tests, config slices, versioning/changesets, and
-the `pnpm verify` pre-push gate. `CONTRIBUTING.md` carries the same rules in long form
-for humans, and `docs/architecture/overview.md` is the architecture tour. Read those
-first; this file only documents the Claude Code-specific layer that sits on top.
+the `pnpm verify` pre-push gate. The human contributor path is
+`docs/contribute/` (`CONTRIBUTING.md` is a short pointer into it), and
+`docs/reference/architecture.md` is the architecture tour. Read those first; this file only documents the Claude Code-specific layer that sits on top.
 
 ## Working with Claude Code
 

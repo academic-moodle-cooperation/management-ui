@@ -53,8 +53,19 @@ Files are flat JSON, one key per phrase. The contract test's `expectI18nKeyParit
 | `selectedLanguage` | The `{ code: label }` map of shipped UI languages (`de`, `en`) — drives the language switcher. |
 | `LinkText` | Tiny anchor component for use inside `<Trans>` interpolations. |
 | `createNamespacedKey`, `createOrganizationNamespace` | Helpers for building consistent namespace strings. |
+| `formatDate(value, options?)`, `activeDateLocale()` | Formats a date in the active UI language. Use these instead of `new Intl.DateTimeFormat("<locale>", …)` — a hardcoded locale printed German dates to English users. Unusable input yields `""` rather than a thrown `RangeError`. |
+| `setUserLanguage(language)`, `getUserLanguage()`, `applyConfiguredLanguage(locale)` | Language selection. See below. |
+| `useExtensionLabels(entries)`, `deriveLabelFromKey(key)` | For hosts rendering a caption on behalf of a plugin registration (e.g. sidebar tabs): resolves a registered `label` translation key at render time, loads its namespace, and falls back to the label derived from the registration key. |
 
 For the exhaustive surface, see [`etc/i18n.api.md`](./etc/i18n.api.md).
+
+## Which language the UI starts in
+
+`app.locale` in `config.json` is the deployment's **default**, not a lock. The shell calls `applyConfiguredLanguage(config.app.locale)` once the config has loaded; the call is a no-op as soon as the user has picked a language themselves.
+
+The language switcher calls `setUserLanguage(...)`, which records the choice under its own storage key. That key — not i18next's detector cache — is what "the user chose" means here: the detector caches whatever language it *detected* on the first visit, so its presence says nothing about intent.
+
+Precedence: user choice → `app.locale` → browser detection → `en`.
 
 The shell ships a base set of locales (`packages/i18n/src/locales/`) for `common`, `episodes`, `series`, `upload`, etc. Plugins ship their own under `<plugin>/locales/<namespace>/<lng>.json`.
 
@@ -64,6 +75,6 @@ Foundation. Depends on nothing in the workspace.
 
 ## See also
 
-- [`docs/plugins/i18n.md`](../../docs/plugins/i18n.md) — plugin-author guide.
+- [`docs/extend/i18n.md`](../../docs/extend/i18n.md) — plugin-author guide.
 - [`packages/plugin-testing/README.md`](../plugin-testing/README.md) — `expectI18nKeyParity` test assertion.
 - [`etc/i18n.api.md`](./etc/i18n.api.md) — committed API surface.

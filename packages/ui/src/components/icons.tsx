@@ -3,7 +3,7 @@
  * lucide equivalent.
  *
  * It used to also re-export 32 hand-picked lucide icons. That barrel was
- * removed: it was an arbitrary subset of ~1500, `docs/plugins/styling.md`
+ * removed: it was an arbitrary subset of ~1500, `docs/extend/styling.md`
  * already prescribes importing `lucide-react` directly, and the host shares
  * the *complete* lucide module with remote plugins anyway
  * (`apps/shell/src/shared/sharedModules.ts`), so nothing was gained by

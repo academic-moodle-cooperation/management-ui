@@ -40,4 +40,4 @@ Core infrastructure. Sits at the bottom of the dependency layers — nothing in 
 
 ## See also
 
-- [`docs/architecture/overview.md`](../../docs/architecture/overview.md#package-layers) — where this package sits in the layer model.
+- [`docs/reference/architecture.md`](../../docs/reference/architecture.md#package-layers) — where this package sits in the layer model.

@@ -4,37 +4,40 @@ layout: home
 hero:
   name: Management UI
   text: A plugin-first admin interface for Opencast.
-  tagline: A thin shell hosts routing, auth, and layout. Every visible feature ships as a plugin — with a frozen contract.
+  tagline: A thin shell hosts routing, auth, and layout. Every visible feature ships as a plugin — against a frozen contract.
   actions:
     - theme: brand
-      text: Deploy it
-      link: /getting-started/deployment
+      text: Quickstart
+      link: /quickstart
     - theme: alt
-      text: Build a plugin
-      link: /plugins/first-plugin
-    - theme: alt
-      text: Contribute
-      link: https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/CONTRIBUTING.md
+      text: What is Management UI?
+      link: /what-is-management-ui
 
 features:
-  - title: Deploy it
-    details: For Opencast admins. Afterwards you'll have Management UI running on your Opencast — three JARs deployed, one config.json in place, login working.
-    link: /getting-started/deployment
-    linkText: Deployment
-  - title: Build a plugin
-    details: For plugin developers. Afterwards you'll have a working plugin scaffolded, visible in the dev shell, with its contract test green — in about five minutes.
-    link: /plugins/first-plugin
-    linkText: Your first plugin
+  - title: Try it
+    details: For anyone evaluating the project. Afterwards you'll have the UI running on your machine against an Opencast you already operate — five commands, no install on the server.
+    link: /quickstart
+    linkText: Quickstart
+  - title: Use it
+    details: For everyone who works with recordings. Afterwards you'll be able to find a video, change its metadata, upload new material, and manage series.
+    link: /use/
+    linkText: Using the interface
+  - title: Run it
+    details: For Opencast admins. Afterwards you'll have Management UI deployed on your Opencast, configured for your organization, and upgradable.
+    link: /operate/
+    linkText: Operating a deployment
+  - title: Extend it
+    details: For plugin developers. Afterwards you'll have your own screens running in the shell — and know how to add the backend field they query.
+    link: /extend/
+    linkText: Extending the UI
   - title: Contribute
-    details: For contributors to this repo. Afterwards you'll know the dev loop, the changeset rule, and what CI will demand — everything to land your first PR.
-    link: https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/CONTRIBUTING.md
-    linkText: CONTRIBUTING.md
+    details: For contributors to this repo. Afterwards you'll have the dev loop, the pre-push gate, and everything needed to land your first pull request.
+    link: /contribute/
+    linkText: Contributing
 ---
 
-## What to read next
+## New here?
 
-- **[Deploy it](/getting-started/deployment)** — run Management UI on your Opencast.
-- **[Build a plugin](/plugins/first-plugin)** — extend the UI without forking it.
-- **[Contribute](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/CONTRIBUTING.md)** — work on the shell, the shared packages, or the built-in plugins.
+[What is Management UI?](/what-is-management-ui) is the one-screen answer to "what is this, and does it fit my case?". If you'd rather just see it running, go straight to the [Quickstart](/quickstart).
 
-New here? [What is Management UI?](/getting-started/what-is-management-ui) is the one-screen tour. The frozen plugin contracts live in [Contracts](/architecture/CONTRACTS); AI agents start at [`AGENTS.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/AGENTS.md) and [`llms.txt`](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/llms.txt).
+AI agents and tooling start at [`AGENTS.md`](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/AGENTS.md) and [`llms.txt`](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/llms.txt).

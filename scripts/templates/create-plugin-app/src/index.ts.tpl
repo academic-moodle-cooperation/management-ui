@@ -12,7 +12,7 @@ import { __PLUGIN_PASCAL_NAME__Page } from "./__PLUGIN_PASCAL_NAME__Page";
  * it at /__PLUGIN_NAME__) and a left-nav link on `sidebar:nav-items`.
  * Both render in dev AND production. Swap the page, title, icon, and
  * route for your own, and keep plugin.json's `extensionPoints` in sync if
- * you register on different points. See docs/plugins/creating-a-plugin.md.
+ * you register on different points. See docs/extend/plugin-guide.md.
  */
 export const __PLUGIN_VAR_NAME__Plugin = createPlugin({
   namespace: "__PLUGIN_NAME__",

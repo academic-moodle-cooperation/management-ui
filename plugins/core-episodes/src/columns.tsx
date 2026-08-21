@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import React from "react";
 
-import { i18next } from "@oc-mui/i18n";
+import { formatDate, i18next } from "@oc-mui/i18n";
 import { EVENT_SORTABLE_FIELDS } from "@oc-mui/query";
 import type { MuiEventsDataFragment } from "@oc-mui/query";
 import {
@@ -286,10 +286,7 @@ export const createColumns = (
         />
       ),
       cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => {
-        const value = new Intl.DateTimeFormat("de-DE", {
-          dateStyle: "medium",
-          timeStyle: "short",
-        }).format(new Date(row.getValue("startDate") as string));
+        const value = formatDate(row.getValue("startDate") as string);
         return (
           <div className="flex justify-center space-x-2 truncate">
             <OverflowTooltip>{value}</OverflowTooltip>
@@ -331,10 +328,16 @@ export const createColumns = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const galleryColumns: ColumnDef<MuiEventsDataFragment, any>[] = [
     columnHelper.accessor("title", {
+      // Config-addressable id for the combined cell (#373). Sorting stays
+      // enabled explicitly: the id is no backend field, so the automatic
+      // restriction below would strip it — useEpisodesTable maps the id back
+      // to `title` when building orderBy.
+      id: "video",
+      enableSorting: true,
       header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
-          title={getTitle("title", "episodes:episodesTable.heading.video")}
+          title={getTitle("video", "episodes:episodesTable.heading.video")}
         />
       ),
       cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => {
@@ -431,7 +434,7 @@ export const createColumns = (
           </div>
         );
       },
-      meta: getMeta("title", "episodes:episodesTable.heading.video"),
+      meta: getMeta("video", "episodes:episodesTable.heading.video"),
     }),
     columnHelper.accessor("seriesName", {
       header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
@@ -452,18 +455,18 @@ export const createColumns = (
       meta: getMeta("seriesName", "episodes:episodesTable.heading.series"),
     }),
     columnHelper.accessor("startDate", {
+      // See "video" above — id maps back to `startDate` for orderBy.
+      id: "dateAndLocation",
+      enableSorting: true,
       header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
         <DataTableColumnHeader
           column={column}
-          title={getTitle("startDate", "episodes:episodesTable.heading.dateAndLocation")}
+          title={getTitle("dateAndLocation", "episodes:episodesTable.heading.dateAndLocation")}
           className="grid justify-start space-x-2"
         />
       ),
       cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => {
-        const value = new Intl.DateTimeFormat("de-DE", {
-          dateStyle: "medium",
-          timeStyle: "short",
-        }).format(new Date(row.getValue("startDate") as string));
+        const value = formatDate(row.getValue("startDate") as string);
         return (
           <div className="grid items-center justify-start">
             <OverflowTooltip className="truncate text-center">{value}</OverflowTooltip>
@@ -471,7 +474,7 @@ export const createColumns = (
           </div>
         );
       },
-      meta: getMeta("startDate", "episodes:episodesTable.heading.dateAndLocation"),
+      meta: getMeta("dateAndLocation", "episodes:episodesTable.heading.dateAndLocation"),
     }),
     columnHelper.accessor("presenters", {
       header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
@@ -508,10 +511,66 @@ export const createColumns = (
     }),
   ];
 
+  // A standalone thumbnail column for deployments that split the combined
+  // "video" cell into separate columns (#373). Display-only, never sortable.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const thumbnailColumn: ColumnDef<MuiEventsDataFragment, any> = columnHelper.display({
+    id: "thumbnail",
+    header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
+      <DataTableColumnHeader
+        column={column}
+        title={getTitle("thumbnail", "episodes:episodesTable.heading.thumbnail")}
+      />
+    ),
+    cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => (
+      <img
+        src={row.original.muiEventInfo?.thumbnailUrl || "./nothumbnail.svg"}
+        className="w-[120px] rounded-lg"
+        alt=""
+      />
+    ),
+    enableSorting: false,
+    meta: getMeta("thumbnail", "episodes:episodesTable.heading.thumbnail"),
+  });
+
+  // The gallery's column POOL is the combined cells plus every list column
+  // that has no gallery-specific counterpart, plus the thumbnail. Which of
+  // them actually show is decided by visibility (GALLERY_DEFAULT_VISIBLE
+  // below ⊕ the deployment's config ⊕ the user's toggles) — so one config
+  // can keep the combined cells while another splits them into single
+  // columns, without two view implementations (#373).
+  const galleryOnlyIds = new Set(
+    galleryColumns.map(
+      (column) =>
+        (column as { id?: string; accessorKey?: string }).id ??
+        (column as { accessorKey?: string }).accessorKey,
+    ),
+  );
+  const galleryPool = [
+    ...galleryColumns,
+    thumbnailColumn,
+    ...listColumns.filter((column) => {
+      const id =
+        (column as { id?: string; accessorKey?: string }).id ??
+        (column as { accessorKey?: string }).accessorKey;
+      return id !== undefined && !galleryOnlyIds.has(id);
+    }),
+  ];
+
   // Derive sortability from the backend's EventOrderByInput rather than
   // hardcoding enableSorting per column: any column whose field the
   // backend can't order by loses its sort control automatically. Keeps
   // the table honest when columns are added or the schema changes.
-  const columns = layout === "gallery" ? galleryColumns : listColumns;
+  const columns = layout === "gallery" ? galleryPool : listColumns;
   return restrictSortingToFields(columns, EVENT_SORTABLE_FIELDS);
+};
+
+/**
+ * Sorting ids the backend does not know: the combined gallery cells sort by
+ * the field their primary content comes from. Applied where orderBy is built
+ * (useEpisodesTable).
+ */
+export const GALLERY_SORT_FIELD_BY_COLUMN: Record<string, string> = {
+  video: "title",
+  dateAndLocation: "startDate",
 };

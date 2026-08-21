@@ -6,7 +6,7 @@ export * from "./pluginTypes";
 export * from "./types";
 export * from "./appTypes";
 
-// Public API contract version (see docs/architecture/CONTRACTS.md)
+// Public API contract version (see docs/reference/contracts.md)
 export {
   PLUGIN_API_VERSION,
   parseSemver,
@@ -14,7 +14,7 @@ export {
 } from "./apiVersion";
 export type { ParsedSemver, ApiVersionCheckResult } from "./apiVersion";
 
-// Shared Runtime Dependencies contract (see docs/architecture/CONTRACTS.md #5)
+// Shared Runtime Dependencies contract (see docs/reference/contracts.md #5)
 export {
   SHARED_RUNTIME_MAJORS,
   checkSharedDependencyCompatibility,
@@ -41,7 +41,7 @@ export * from "./builtins/appRegistry";
 // Export services (Community Plugin System)
 export * from "./services";
 
-// Export manifest validator (see docs/architecture/CONTRACTS.md #1)
+// Export manifest validator (see docs/reference/contracts.md #1)
 export {
   validatePluginMetadata,
   type PluginMetadataValidationResult,

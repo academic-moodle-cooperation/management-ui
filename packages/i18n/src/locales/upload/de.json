@@ -4,18 +4,12 @@
   "headingList": "Uploadliste",
   "descriptionList": "",
   "uploadButton": {
-    "completed": "Fertiggestellt",
     "loading": "Lädt...",
     "upload": "Upload"
   },
   "deleteButton": "Liste leeren",
   "series": "Serie",
   "selectSeries": "Serie auswählen",
-  "noSeries": "Keine Serie ausgewählt",
-  "noSeriesAvailable": {
-    "title": "Keine Serie vorhanden",
-    "text": "Derzeit haben Sie noch keine Serie angemeldet. Um eine neue Serie anzumelden, gehen Sie bitte auf die Web-Oberfläche. Weitere Informationen zur Anmeldung einer Serie finden Sie in der Anleitung."
-  },
   "selectFiles": "Dateien auswählen",
   "dndSection": {
     "info1": "Für Upload klicken",
@@ -23,14 +17,6 @@
     "info3": "Nur für Audio- und Videodateien"
   },
   "lastUploads": "Zuletzt Hochgeladen",
-  "access": "Zugriff",
-  "dialog": {
-    "completed": {
-      "heading": "Upload abgeschlossen",
-      "text": "Die Dateien wurden erfolgreich hochgeladen. Diese werden nun fürs Streaming aufbereitet. Sobald die Verarbeitung abgeschlossen ist, erhalten Sie für jede Datei eine E-Mail mit Informationen zu den Veröffentlichungsmöglichkeiten. Bitte beachten Sie, dass abhängig von der Länge und Größe der hochgeladenen Videos die Verarbeitung einige Stunden in Anspruch nehmen kann.",
-      "close": "Schließen"
-    }
-  },
   "toast": {
     "success": "File erfolgreich hochgeladen",
     "aborted": "File Upload abgebrochen",
@@ -39,5 +25,7 @@
   "alert": {
     "title": "Ungültiges Dateiformat",
     "text": "Das Dateiformat wird nicht unterstützt. Bitte laden Sie nur Audio- und Videodateien hoch."
-  }
+  },
+  "removeFromList": "Aus der Liste entfernen",
+  "fileSize": "Größe: {{size}} MB"
 }

@@ -2,9 +2,9 @@
 /**
  * docs-ownership-check.mjs — single-source facts stay single-source.
  *
- * Some facts in this repo have exactly one home (the ownership table in the
- * docs overhaul: verify-pipeline step list -> AGENTS.md, contract versions ->
- * docs/architecture/CONTRACTS.md, changeset exemptions -> AGENTS.md, ...).
+ * Some facts in this repo have exactly one home: the verify-pipeline step
+ * list -> AGENTS.md, contract versions -> docs/reference/contracts.md,
+ * changeset exemptions -> AGENTS.md, and so on.
  * Every other page links to the home instead of restating the fact, so the
  * copies can't drift. This check greps the tracked tree for restatements and
  * fails when one appears outside its home.
@@ -75,7 +75,8 @@ const RULES = [
     id: "contract-version-pair",
     // A contract name paired with a version number ("Manifest 1.1",
     // "Runtime API 1.0", "Theme Contract 2.0", ...). Versions live in code
-    // (apiVersion.ts) and are documented once in CONTRACTS.md; everywhere
+    // (apiVersion.ts) and are documented once in the contracts reference;
+    // everywhere
     // else says "the ... contract" and links, so a bump can't strand stale
     // numbers. Only markdown is scanned — code is a legitimate holder.
     patterns: [
@@ -83,17 +84,13 @@ const RULES = [
     ],
     include: ["**/*.md", "llms.txt"],
     allow: [
-      "docs/architecture/CONTRACTS.md", // the home
-      "docs/architecture/decisions/**", // ADRs are historical records
+      "docs/reference/contracts.md", // the home
+      "docs/reference/decisions/**", // ADRs are historical records
       "**/CHANGELOG.md", // generated release history
       ".changeset/**", // pending release history
-      // TEMPORARY (2026-08-12): line 26 says "Manifest 1.1"; the file is
-      // owned by the parallel PR #330 right now. Remove this entry once
-      // #330 lands and drop the version pair there.
-      "docs/plugins/creating-a-plugin.md",
     ],
     message:
-      "contract versions live in code and docs/architecture/CONTRACTS.md — name the contract without a number and link there",
+      "contract versions live in code and docs/reference/contracts.md — name the contract without a number and link there",
   },
   {
     id: "changeset-exemption",
@@ -123,14 +120,13 @@ const RULES = [
     patterns: [/\bpluginNamespace\b/g],
     include: ["**/*.md", "llms.txt"],
     allow: [
-      "docs/architecture/CONFIGURATION.md", // records the rename
-      "docs/getting-started/upgrading.md", // pre-1.0 migration step
-      "docs/operations/open-followups.md", // historical follow-up log
+      "docs/reference/configuration.md", // records the rename
+      "docs/reference/open-followups.md", // historical follow-up log
       "**/CHANGELOG.md",
       ".changeset/**",
     ],
     message:
-      "`pluginNamespace` is a removed pre-1.0 config key — only the migration notes (CONFIGURATION.md, upgrading.md, open-followups.md) may name it",
+      "`pluginNamespace` is a removed pre-1.0 config key — only the migration notes (docs/reference/configuration.md, docs/reference/open-followups.md) may name it",
   },
   {
     id: "org-name-leak",

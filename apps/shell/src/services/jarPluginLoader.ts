@@ -38,7 +38,7 @@ export interface JarPluginInfo {
    * Optional shared-runtime majors the plugin targets (from its manifest's
    * `workspaceDependencies`). Gated by the shared-dependency check at load time
    * when present. The backend's aggregated `plugins.json` doesn't carry this
-   * yet — see `docs/operations/open-followups.md` §5.3 — so it's typically
+   * yet — see `docs/reference/open-followups.md` §5.3 — so it's typically
    * absent and the gate is a no-op for JAR plugins until then.
    */
   workspaceDependencies?: Record<string, string>;

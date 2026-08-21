@@ -7,7 +7,7 @@ standalone shell, with no other plugins loaded.
 
 Skeleton only. The harness currently renders a placeholder; the mechanism to
 pick a plugin and run contract/smoke tests against it in CI will land in a
-later phase (see [ADR-003](../../docs/architecture/decisions/003-shell-plus-core-plugins.md)).
+later phase (see [ADR-003](../../docs/reference/decisions/003-shell-plus-core-plugins.md)).
 
 ## Non-goals
 
@@ -25,4 +25,4 @@ pnpm --filter=playground dev
 
 - [`apps/shell/`](../shell/) — the production app.
 - [`packages/app-runtime/`](../../packages/app-runtime/) — the standalone/integrated dual-mode runtime the playground builds on.
-- [`docs/operations/open-followups.md`](../../docs/operations/open-followups.md) §6.4 — the planned "playground as plugin runner" enhancement.
+- [`docs/reference/open-followups.md`](../../docs/reference/open-followups.md) §6.4 — the planned "playground as plugin runner" enhancement.

@@ -443,7 +443,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
               size={"sm"}
               disabled={!hasChanges}
             >
-              Update
+              {t("common:update")}
             </Button>
           ) : (
             <div className="text-xs text-center text-muted-foreground">
