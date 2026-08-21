@@ -258,7 +258,10 @@ For plugins distributed publicly:
 > }
 > ```
 >
-> While disabled, the Discover tab shows how to turn it on and
+> HTTPS is required for plugin URLs in production builds; a deployment that
+> itself runs without TLS (a test box, an intranet install) can opt out with
+> `"allowInsecureHttp": true` in the same `remotePlugins` block — leave that
+> off wherever TLS exists. While disabled, the Discover tab shows how to turn it on and
 > the loader refuses every remote load (including previously-installed plugins).
 > Paths 1–3 (bundled, in-tree, JAR) are unaffected. The marketplace routes are
 > also admin-only. Note the allowlist authenticates the *host*, not the code's

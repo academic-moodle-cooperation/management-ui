@@ -40,11 +40,24 @@ const remotePluginsSchema = z
      * then only shows locally present plugins.
      */
     registryUrls: z.array(z.string()).default([]),
+    /**
+     * Permit plain-HTTP plugin URLs in production builds. Default false:
+     * HTTPS is required outside dev. Meant for deployments that themselves
+     * run without TLS (test boxes, intranet installs) — on such a host the
+     * page is plain HTTP anyway, so this adds no new interception surface,
+     * but leave it off wherever TLS exists. `allowedDomains` still applies.
+     */
+    allowInsecureHttp: z.boolean().default(false),
   })
   // Whole-object default for when `remotePlugins` is absent; the per-field
   // defaults above cover a partial slice (e.g. `{ "enabled": true }` still fills
   // `allowedDomains`).
-  .default({ enabled: false, allowedDomains: [...DEFAULT_ALLOWED_DOMAINS], registryUrls: [] });
+  .default({
+    enabled: false,
+    allowedDomains: [...DEFAULT_ALLOWED_DOMAINS],
+    registryUrls: [],
+    allowInsecureHttp: false,
+  });
 
 export const adminMarketplaceConfigSchema = z.object({
   remotePlugins: remotePluginsSchema,
@@ -62,6 +75,7 @@ export const adminMarketplaceConfig = definePluginConfig({
       enabled: false,
       allowedDomains: [...DEFAULT_ALLOWED_DOMAINS],
       registryUrls: [],
+      allowInsecureHttp: false,
     },
   },
 });
