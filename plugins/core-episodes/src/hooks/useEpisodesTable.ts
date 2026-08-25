@@ -5,6 +5,7 @@ import {
   useMuiEventsFromSeriesQuery,
   OrderDirection,
   useMuiGetEventByIdInputFieldsQuery,
+  useAppConfig,
 } from "@oc-mui/query";
 import { useNavigate } from "@oc-mui/router";
 import { useSidebarContent } from "@oc-mui/ui/components";
@@ -91,6 +92,7 @@ function episodesTableReducer(
   }
 }
 
+
 /**
  * Custom hook for managing episodes table state and data fetching
  */
@@ -101,6 +103,7 @@ export function useEpisodesTable(seriesId?: string) {
     episodesTableReducer,
     "episodes",
   );
+  const { config } = useAppConfig();
 
   // Use the sidebar content hook for metadata operations
   const sidebarContent = useSidebarContent();
@@ -135,6 +138,8 @@ export function useEpisodesTable(seriesId?: string) {
       offset,
       ...(orderBy !== undefined && { orderBy }),
       ...(queryFilter !== undefined && { query: queryFilter }),
+      channel: config.app.channel,
+      tags: config.app.tags,
     },
     {
       enabled: !seriesId, // Only enabled when no seriesId is provided
