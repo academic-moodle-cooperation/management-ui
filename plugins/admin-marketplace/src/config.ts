@@ -18,7 +18,7 @@ import { DEFAULT_ALLOWED_DOMAINS } from "./services/security";
  * Consume the validated slice through `adminMarketplaceConfig.use()` (React) or
  * `adminMarketplaceConfig.read(config)` (outside React) — never index
  * `config.plugins["admin-marketplace"]` directly — it skips validation + the
- * security defaults below. No lint rule catches this yet; reviews enforce it.
+ * security defaults below. The `local/no-cross-plugin-config` lint rule flags such reads (#323).
  */
 export const ADMIN_MARKETPLACE_PLUGIN_ID = "admin-marketplace";
 
@@ -32,11 +32,32 @@ const remotePluginsSchema = z
      * so this is necessary-but-not-sufficient — keep the feature admin-only.
      */
     allowedDomains: z.array(z.string()).default([...DEFAULT_ALLOWED_DOMAINS]),
+    /**
+     * Plugin-registry URLs (each serving a `registry.json`) whose entries the
+     * marketplace lists for browsing. Listing is only the catalog — actually
+     * loading an entry stays behind `enabled` + `allowedDomains`. Empty (the
+     * default) means no registry is contacted; outside dev the marketplace
+     * then only shows locally present plugins.
+     */
+    registryUrls: z.array(z.string()).default([]),
+    /**
+     * Permit plain-HTTP plugin URLs in production builds. Default false:
+     * HTTPS is required outside dev. Meant for deployments that themselves
+     * run without TLS (test boxes, intranet installs) — on such a host the
+     * page is plain HTTP anyway, so this adds no new interception surface,
+     * but leave it off wherever TLS exists. `allowedDomains` still applies.
+     */
+    allowInsecureHttp: z.boolean().default(false),
   })
   // Whole-object default for when `remotePlugins` is absent; the per-field
   // defaults above cover a partial slice (e.g. `{ "enabled": true }` still fills
   // `allowedDomains`).
-  .default({ enabled: false, allowedDomains: [...DEFAULT_ALLOWED_DOMAINS] });
+  .default({
+    enabled: false,
+    allowedDomains: [...DEFAULT_ALLOWED_DOMAINS],
+    registryUrls: [],
+    allowInsecureHttp: false,
+  });
 
 export const adminMarketplaceConfigSchema = z.object({
   remotePlugins: remotePluginsSchema,
@@ -53,6 +74,8 @@ export const adminMarketplaceConfig = definePluginConfig({
     remotePlugins: {
       enabled: false,
       allowedDomains: [...DEFAULT_ALLOWED_DOMAINS],
+      registryUrls: [],
+      allowInsecureHttp: false,
     },
   },
 });

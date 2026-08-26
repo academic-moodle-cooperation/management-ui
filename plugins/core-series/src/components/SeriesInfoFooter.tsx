@@ -1,7 +1,11 @@
 import React from "react";
 
 import { useI18n } from "@oc-mui/i18n";
-import { useMuiUpdateSeriesMutation, useAcceptedInputFields, pickAcceptedFields } from "@oc-mui/query";
+import {
+  useMuiUpdateSeriesMutation,
+  useAcceptedInputFields,
+  pickAcceptedFields,
+} from "@oc-mui/query";
 import type { MuiGetSeriesByIdInputFieldsQuery } from "@oc-mui/query";
 import { Button, toast } from "@oc-mui/ui/components";
 import { normalizeMetadataObject } from "@oc-mui/utils";

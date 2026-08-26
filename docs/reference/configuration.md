@@ -224,6 +224,55 @@ A lint rule that forbids `config.plugins[...]` outside
 `admin-marketplace` case still has to be designed. Until that rule
 lands, treat direct reads as a review-time red flag.
 
+## Table columns (episodes & series)
+
+Both table plugins read a per-column config from their slice. The full shape, using episodes as the example (series has the same `columns` mechanics under `plugins.series.seriesTable`, without the `views` split):
+
+```jsonc
+"plugins": {
+  "episodes": {
+    "episodesTable": {
+      "columns": [ /* shared — applies to BOTH views when set */ ],
+      "views": {
+        "list":    { "columns": [ /* list-only override */ ] },
+        "gallery": { "enabled": true, "columns": [ /* gallery-only override */ ] }
+      }
+    }
+  }
+}
+```
+
+Each entry is `{ "<columnId>": { "show": bool, "label"?: string, "labelKey"?: string } }`. The semantics:
+
+- **Order + default visibility, never removal.** The config's order wins for the columns it names; `show` is the *default* visibility, and once a config lists any column, unlisted ones start hidden. Every column stays in the table's View menu, where the user's own toggles win over the config defaults and persist.
+- **Labels.** `label` is a literal caption; `labelKey` is a translation key resolved at render time — an org plugin's own namespace works, its locale files are loaded on demand.
+- **Column ids** are the ids the table defines. List view (episodes): `title`, `seriesName`, `description`, `eventStatus`, `contributors`, `creator`, `created`, `duration`, `location`, `presenters`, `startDate`, `actions`. Series: `title`, `created`, `description`, `creator`, `contributors`, `events`, `actions`.
+
+### Gallery: combined cells or single columns
+
+The gallery's column pool contains **both** presentations. Two combined cells — `video` (thumbnail + title + description + duration + status) and `dateAndLocation` — plus every single-value list column and a standalone `thumbnail`. Which of them show is just visibility, so one deployment keeps the combined look while another splits it, with no second view implementation:
+
+```jsonc
+// Default (no config): the combined look —
+// video · seriesName · dateAndLocation · presenters · actions
+
+// Split into single columns instead:
+"views": {
+  "gallery": {
+    "columns": [
+      { "thumbnail": { "show": true } },
+      { "title": { "show": true } },
+      { "startDate": { "show": true } },
+      { "duration": { "show": true } },
+      { "eventStatus": { "show": true } },
+      { "actions": { "show": true } }
+    ]
+  }
+}
+```
+
+The combined cells sort by their primary content (`video` → title, `dateAndLocation` → start date); `thumbnail` is not sortable.
+
 ## `enabledPlugins` vs. `config.plugins[id].enabled`
 
 The two switches do different things on purpose:

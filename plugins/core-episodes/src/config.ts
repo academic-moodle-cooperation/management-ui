@@ -9,8 +9,8 @@ import { definePluginConfig } from "@oc-mui/query";
  * is consumed by {@link definePluginConfig} at the bottom of the file.
  * Components obtain the validated slice through `episodesConfig.use()`
  * (or `episodesConfig.read(config)` outside React) — direct reads via
- * `useAppConfig().config.plugins.episodes` bypass validation — no lint
- * rule catches this yet, so reviews enforce it.
+ * `useAppConfig().config.plugins.episodes` bypass validation — the
+ * `local/no-cross-plugin-config` lint rule flags them (#323).
  */
 
 export const EPISODES_PLUGIN_ID = "episodes";
@@ -103,7 +103,21 @@ export const episodesConfigDefaults: EpisodesConfig = {
   episodesTable: {
     views: {
       list: { enabled: true },
-      gallery: { enabled: true },
+      gallery: {
+        enabled: true,
+        // The gallery's out-of-the-box look: the combined cells plus the
+        // columns it has always shown. The rest of the gallery pool (single
+        // variants of the combined cells, thumbnail) starts hidden but stays
+        // in the View menu; a deployment's own `views.gallery.columns`
+        // replaces this list wholesale (#373).
+        columns: [
+          { video: { show: true } },
+          { seriesName: { show: true } },
+          { dateAndLocation: { show: true } },
+          { presenters: { show: true } },
+          { actions: { show: true } },
+        ],
+      },
     },
     columns: [
       { title: { show: true } },

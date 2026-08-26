@@ -9,6 +9,7 @@
  * Loading: Delegated to @oc-mui/remote-plugin-loader (shared with core JAR loading).
  */
 
+import { registerPluginI18nNamespaces } from "@oc-mui/i18n";
 import {
   type PluginManager,
   checkApiVersionCompatibility,
@@ -37,6 +38,9 @@ interface InstalledPluginInfo {
   id: string;
   version: string;
   installedAt: string;
+  /** Locale base + namespaces, kept so translations survive the boot replay. */
+  localesUrl?: string;
+  i18nNamespaces?: string[];
 }
 
 export type { LoadResult } from "@oc-mui/remote-plugin-loader";
@@ -114,6 +118,16 @@ export const RemoteLoader = {
     }
 
     const result = await loadAndRegisterFromPackage(url, manager, { forceReload });
+
+    // Wire up translations. The JAR path does this from plugins.json's
+    // localesUrl/i18nNamespaces; remote loads used to skip it, leaving a
+    // remote-only plugin with raw keys. Registering the base is enough — the
+    // plugin's own usePluginTranslation and the host's label resolution load
+    // the namespaces on demand.
+    if (result.success && metadata?.localesUrl && metadata.i18nNamespaces?.length) {
+      registerPluginI18nNamespaces(metadata.i18nNamespaces, metadata.localesUrl);
+    }
+
     return {
       ...result,
       warnings: [...warnings, ...result.warnings],
@@ -127,7 +141,12 @@ export const RemoteLoader = {
    * @param pluginId - Plugin identifier
    * @param version - Plugin version
    */
-  persist(url: string, pluginId: string, version: string): void {
+  persist(
+    url: string,
+    pluginId: string,
+    version: string,
+    i18n?: { localesUrl?: string | undefined; i18nNamespaces?: string[] | undefined },
+  ): void {
     const installed = this.getInstalledPlugins();
     const existingIndex = installed.findIndex((p) => p.url === url || p.id === pluginId);
 
@@ -136,6 +155,8 @@ export const RemoteLoader = {
       id: pluginId,
       version,
       installedAt: new Date().toISOString(),
+      ...(i18n?.localesUrl && { localesUrl: i18n.localesUrl }),
+      ...(i18n?.i18nNamespaces?.length && { i18nNamespaces: i18n.i18nNamespaces }),
     };
 
     if (existingIndex >= 0) {
@@ -260,6 +281,13 @@ export const RemoteLoader = {
     const results = await Promise.all(
       plugins.map(async (plugin) => {
         const result = await this.loadAndRegister(plugin.url, manager);
+
+        // Re-register the persisted locale base, so an installed plugin's
+        // translations survive the boot replay (install-time registration
+        // does not outlive a reload).
+        if (result.success && plugin.localesUrl && plugin.i18nNamespaces?.length) {
+          registerPluginI18nNamespaces(plugin.i18nNamespaces, plugin.localesUrl);
+        }
 
         // If load failed, we might want to remove it from storage
         if (!result.success) {

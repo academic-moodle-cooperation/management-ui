@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 
 import type { PluginManager } from "@oc-mui/plugin-system";
 
-import { PluginExplorer, type DiscoveredPlugin, type PluginConflict } from "../services/plugin-explorer";
+import { adminMarketplaceConfig } from "../config";
+import { PluginExplorer, type DiscoveredPlugin } from "../services/plugin-explorer";
 import { registryFetcher, type RegistryPlugin } from "../services/registry-fetcher";
 import { RemoteLoader, type LoadResult } from "../services/remote-loader";
 import { securityService } from "../services/security";
@@ -13,7 +14,6 @@ export interface MarketplaceState {
   loading: string | null;
   error: string | null;
   pendingChanges: boolean;
-  conflicts: PluginConflict[];
 
   bundledPlugins: Map<string, DiscoveredPlugin[]>;
   bundledPluginsLoading: boolean;
@@ -33,9 +33,6 @@ export interface MarketplaceActions {
   clearError: () => void;
 
   refreshBundledPlugins: () => Promise<void>;
-  enableBundledPlugin: (pluginName: string, mode?: "additive" | "replacement") => void;
-  disableBundledPlugin: (pluginName: string, mode?: "additive" | "replacement") => Promise<void>;
-  removeOverride: (pluginName: string) => void;
   clearAllOverrides: () => void;
 
   refreshCommunityPlugins: () => Promise<void>;
@@ -61,7 +58,6 @@ export function useMarketplace(manager: PluginManager): MarketplaceState & Marke
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pendingChanges, setPendingChanges] = useState(false);
-  const [conflicts, setConflicts] = useState<PluginConflict[]>([]);
 
   const [bundledPlugins, setBundledPlugins] = useState<Map<string, DiscoveredPlugin[]>>(new Map());
   const [bundledPluginsLoading, setBundledPluginsLoading] = useState(true);
@@ -103,11 +99,18 @@ export function useMarketplace(manager: PluginManager): MarketplaceState & Marke
   }, [manager]);
 
   // --- Load community plugins ---
+  // The deployment's registries come from the config slice
+  // (`remotePlugins.registryUrls`); the fetcher merges them with its dev-mode
+  // local registry. Joined so the effect re-runs only when the set changes.
+  const cfg = adminMarketplaceConfig.use();
+  const registryUrls = cfg.remotePlugins.registryUrls;
+  const registryUrlsKey = registryUrls.join(",");
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
       setCommunityPluginsLoading(true);
       try {
+        registryFetcher.updateConfig({ registryUrls: [...registryUrls] });
         const plugins = await registryFetcher.fetchAllPlugins();
         if (!cancelled) setCommunityPlugins(plugins);
       } catch {
@@ -118,7 +121,8 @@ export function useMarketplace(manager: PluginManager): MarketplaceState & Marke
     };
     load();
     return () => { cancelled = true; };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registryUrlsKey]);
 
   // --- Load JAR plugins ---
   useEffect(() => {
@@ -137,36 +141,10 @@ export function useMarketplace(manager: PluginManager): MarketplaceState & Marke
     setPendingChanges(PluginExplorer.hasPendingChanges(manager));
   }, [manager]);
 
-  const enableBundledPlugin = useCallback((pluginName: string, mode: "additive" | "replacement" = "additive") => {
-    const detectedConflicts = PluginExplorer.detectConflicts(pluginName, manager);
-    if (detectedConflicts.length > 0 && mode === "additive") {
-      setConflicts(detectedConflicts);
-    } else {
-      setConflicts([]);
-    }
-    PluginExplorer.enablePlugin(pluginName, mode);
-    void refreshBundledPlugins();
-  }, [manager, refreshBundledPlugins]);
-
-  const disableBundledPlugin = useCallback(async (pluginName: string, mode: "additive" | "replacement" = "additive") => {
-    const safety = await PluginExplorer.checkDisableSafety(pluginName, manager);
-    if (!safety.safe) {
-      setError(`Cannot disable "${pluginName}" — depends: ${safety.wouldBreak.join(", ")}`);
-      return;
-    }
-    PluginExplorer.disablePlugin(pluginName, mode);
-    void refreshBundledPlugins();
-  }, [manager, refreshBundledPlugins]);
-
-  const removeOverride = useCallback((pluginName: string) => {
-    PluginExplorer.removeOverride(pluginName);
-    setConflicts([]);
-    void refreshBundledPlugins();
-  }, [refreshBundledPlugins]);
-
+  // The escape hatch for overrides persisted by earlier sessions (the v2 UI no
+  // longer creates new ones): wipe them and refresh, so a reload starts clean.
   const clearAllOverrides = useCallback(() => {
     PluginExplorer.clearAllOverrides();
-    setConflicts([]);
     setPendingChanges(false);
     void refreshBundledPlugins();
   }, [refreshBundledPlugins]);
@@ -207,7 +185,10 @@ export function useMarketplace(manager: PluginManager): MarketplaceState & Marke
   const installCommunityPlugin = useCallback(async (plugin: RegistryPlugin) => {
     const result = await withLoading(plugin.url, () => RemoteLoader.loadAndRegister(plugin.url, manager, plugin));
     if (result.success) {
-      RemoteLoader.persist(plugin.url, plugin.id, plugin.version);
+      RemoteLoader.persist(plugin.url, plugin.id, plugin.version, {
+        localesUrl: plugin.localesUrl,
+        i18nNamespaces: plugin.i18nNamespaces,
+      });
       setInstalledRemotePlugins(RemoteLoader.getInstalledUrls());
       setPendingChanges(true);
     }
@@ -277,7 +258,7 @@ export function useMarketplace(manager: PluginManager): MarketplaceState & Marke
   const themes = useMemo(() => AVAILABLE_THEMES, []);
 
   return {
-    loading, error, pendingChanges, conflicts,
+    loading, error, pendingChanges,
     bundledPlugins, bundledPluginsLoading,
     communityPlugins, communityPluginsLoading,
     jarPlugins,
@@ -285,8 +266,7 @@ export function useMarketplace(manager: PluginManager): MarketplaceState & Marke
     themes,
 
     clearError: () => setError(null),
-    refreshBundledPlugins, enableBundledPlugin, disableBundledPlugin,
-    removeOverride, clearAllOverrides,
+    refreshBundledPlugins, clearAllOverrides,
     refreshCommunityPlugins, tryCommunityPlugin, installCommunityPlugin,
     uninstallPlugin, isCommunityPluginInstalled, getInstalledVersion, checkVersionCompatibility,
     tryCustomUrl, installCustomUrl,

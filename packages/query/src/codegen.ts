@@ -1,20 +1,11 @@
-import process from "node:process";
-
 import type { CodegenConfig } from "@graphql-codegen/cli";
 
-const graphqlEndpoint = process.env["GRAPHQL_ENDPOINT"] || "http://127.0.0.1:8080/graphql";
-const graphqlHeaders: Record<string, string> = process.env["GRAPHQL_HEADERS"]
-  ? (JSON.parse(process.env["GRAPHQL_HEADERS"]) as Record<string, string>)
-  : {};
-
 const config: CodegenConfig = {
-  schema: [
-    {
-      [graphqlEndpoint]: {
-        headers: graphqlHeaders,
-      },
-    },
-  ],
+  // The committed SDL is the single schema input — regenerating needs no
+  // running backend, and CI can regenerate-and-compare to catch drift.
+  // Refreshing the SDL from a live Opencast is the separate, reviewed step:
+  // `pnpm --filter @oc-mui/query schema:refresh` (src/refresh-schema.mjs).
+  schema: "./src/schema.graphql",
   overwrite: true,
   documents: "./src/**/*.graphql",
   emitLegacyCommonJSImports: false,

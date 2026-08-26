@@ -18,7 +18,9 @@
  *       "author": { "name": "Author Name", "url": "https://example.com" },
  *       "url": "https://cdn.jsdelivr.net/gh/org/repo@v1.0.0/dist/plugin.mjs",
  *       "category": "feature",
- *       "workspaceDependencies": { "@oc-mui/plugin-system": ">=1.0.0" }
+ *       "workspaceDependencies": { "@oc-mui/plugin-system": ">=1.0.0" },
+ *       "localesUrl": "https://cdn.jsdelivr.net/gh/org/repo@v1.0.0/locales",
+ *       "i18nNamespaces": ["sample-university"]
  *     }
  *   ]
  * }
@@ -70,6 +72,15 @@ export interface RegistryPlugin {
   tags?: string[];
   /** Version constraints for workspace packages */
   workspaceDependencies?: PluginVersionConstraints;
+  /**
+   * Base URL the plugin's locale files are served from
+   * (`<localesUrl>/<namespace>/<language>.json`). Together with
+   * `i18nNamespaces` this lets a remote-loaded plugin ship translations —
+   * without it, its UI falls back to raw keys / derived labels.
+   */
+  localesUrl?: string;
+  /** Translation namespaces served under `localesUrl`. */
+  i18nNamespaces?: string[];
   /**
    * Minimum plugin runtime API version this plugin requires.
    * The host loader refuses plugins whose major mismatches the host or whose

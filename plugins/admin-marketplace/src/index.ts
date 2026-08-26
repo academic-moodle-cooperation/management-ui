@@ -63,6 +63,9 @@ export const adminMarketplacePlugin = createPlugin({
     securityService.updateConfig({
       remotePluginsEnabled: cfg.remotePlugins.enabled,
       allowedDomains: cfg.remotePlugins.allowedDomains,
+      // Deployment opt-out for TLS-less hosts (test boxes, intranet installs);
+      // default keeps the HTTPS requirement in production builds.
+      enforceHttpsInProduction: !cfg.remotePlugins.allowInsecureHttp,
     });
 
     // Load installed theme in background (do not block plugin init or router)
@@ -129,19 +132,9 @@ export const adminMarketplacePlugin = createPlugin({
       );
     } else if (savedUrls.length > 0) {
       log.debug(`loading ${savedUrls.length} installed plugin(s)`);
-
-      const loadResults = await Promise.allSettled(
-        savedUrls.map((url) => RemoteLoader.loadAndRegister(url, manager))
-      );
-
-      loadResults.forEach((result, index) => {
-        if (result.status === "rejected") {
-          log.error(
-            `failed to load installed plugin from ${savedUrls[index]}`,
-            result.reason instanceof Error ? result.reason : new Error(String(result.reason)),
-          );
-        }
-      });
+      // loadAllInstalled also re-registers each plugin's persisted locale
+      // base, so installed plugins keep their translations across reloads.
+      await RemoteLoader.loadAllInstalled(manager);
     }
 
     // .local-plugins/ are loaded by the core in dev (PluginInitializer); no need to load here
@@ -164,6 +157,4 @@ export default adminMarketplacePlugin;
 // Export services for external use if needed
 export { RemoteLoader } from "./services/remote-loader";
 export { ThemeLoader } from "./services/theme-loader";
-export { PluginExplorer } from "./services/plugin-explorer";
-export * from "./services/plugin-metadata";
 export { MarketplaceDashboard } from "./views/MarketplaceDashboard";

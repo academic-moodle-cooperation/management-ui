@@ -11,7 +11,7 @@ Reference — pick the path that matches how your plugin will be operated.
 | **In-tree** | Core plugins shipped with this repo | `plugins/<name>/` | Bundled into `@oc-mui/plugins`, statically imported at app startup |
 | **`.local-plugins/` dev mount** | Dev-time iteration on an org plugin | `.local-plugins/<name>/` (gitignored) | Vite dev server serves the plugin's `dist/`; shell fetches `/local-plugins/manifest.json` |
 | **JAR** | Production deploy with an Opencast backend | One JAR per org plugin in `$OPENCAST_HOME/deploy/` | Backend exposes `/management-tool/ui/config/plugins.json` |
-| **CDN / community registry** | Plugins users install themselves at runtime | Any HTTPS URL serving an ESM bundle | Marketplace "Developer Tools" or the future registry |
+| **CDN / community registry** | Plugins users install themselves at runtime | Any HTTPS URL serving an ESM bundle | Marketplace Discover tab (registry entries, or the advanced URL card) |
 
 All four paths end at the same place: `@oc-mui/remote-plugin-loader` fetches the `.mjs`, rewires its bare imports to shared modules, injects the CSS, and registers the plugin with `PluginManager`. The differences are only in **how the URL list is produced**.
 
@@ -135,7 +135,7 @@ On the next reload the console shows `Skipping JAR plugin(s) replaced by
 production (which never reads `.local-plugins/`), so it's safe to ship in
 the manifest. Find the scope to use in the backend's
 `/management-tool/ui/config/plugins.json` (`scope` field) or the
-marketplace's "Organization (JAR)" card.
+marketplace's Installed tab (Organization group).
 
 ## Path 3 — JAR (production)
 
@@ -242,7 +242,7 @@ For plugins distributed publicly:
    ```
 
    Or any CDN/object store that serves with correct CORS headers.
-3. **Install**: Inside the running shell, open the Marketplace → Developer Tools → paste the URL → "Install" persists it in `localStorage`. On reload the marketplace loads it through the same `remote-plugin-loader`.
+3. **Install**: Inside the running shell, open the Marketplace → Discover → "Advanced: load a plugin from a URL" → paste the URL → "Install" persists it in `localStorage`. On reload the marketplace loads it through the same `remote-plugin-loader`.
 
 > **Remote loading is opt-in.** Because Path 4 fetches and executes third-party
 > code at runtime, it is **off by default**. An administrator must enable it in
@@ -258,7 +258,10 @@ For plugins distributed publicly:
 > }
 > ```
 >
-> While disabled, the Community and Developer sections show how to turn it on and
+> HTTPS is required for plugin URLs in production builds; a deployment that
+> itself runs without TLS (a test box, an intranet install) can opt out with
+> `"allowInsecureHttp": true` in the same `remotePlugins` block — leave that
+> off wherever TLS exists. While disabled, the Discover tab shows how to turn it on and
 > the loader refuses every remote load (including previously-installed plugins).
 > Paths 1–3 (bundled, in-tree, JAR) are unaffected. The marketplace routes are
 > also admin-only. Note the allowlist authenticates the *host*, not the code's
@@ -267,7 +270,40 @@ For plugins distributed publicly:
 > would admit every GitHub user's Pages site. To serve plugins from your own
 > GitHub Pages, allow your subdomain explicitly (e.g. `"my-org.github.io"`).
 
-A first-party community registry is planned but not yet shipped.
+### Listing plugins in a registry
+
+Instead of handing every admin a raw URL, a deployment can point the
+marketplace at one or more **plugin registries** — plain static JSON files it
+lists for browsing:
+
+```json
+{
+  "plugins": {
+    "admin-marketplace": {
+      "remotePlugins": {
+        "enabled": true,
+        "allowedDomains": ["cdn.jsdelivr.net"],
+        "registryUrls": ["https://example.org/mui-plugins/registry.json"]
+      }
+    }
+  }
+}
+```
+
+A `registry.json` carries a `plugins` array; the entry format is documented in
+[`registry-fetcher.ts`](../../plugins/admin-marketplace/src/services/registry-fetcher.ts).
+The essentials per entry: `id`, `name`, `description`, `version`, `author`,
+`url` (the `.mjs` bundle), `category`, and optionally
+`workspaceDependencies`/`apiVersion` (compatibility gates) plus
+`localesUrl` + `i18nNamespaces` — set those two so a remote-loaded plugin keeps
+its translations (`<localesUrl>/<namespace>/<language>.json`, the same layout
+the JAR path serves); without them its UI falls back to raw keys.
+
+Listing and loading are gated separately: configuring a registry makes its
+entries *visible*, but Try/Install still require `enabled: true` and a host on
+the `allowedDomains` list. No registry is contacted unless `registryUrls` is
+set (in dev, a local `public/registry.json` is picked up automatically for
+testing the flow).
 
 ## Picking between JAR and CDN
 

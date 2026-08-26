@@ -18,7 +18,7 @@
     "test:watch": "turbo run test:watch",
     "test:coverage": "turbo run test:coverage",
     "test:contract": "turbo run test:contract",
-    "verify": "mkdir -p .local-plugins && pnpm turbo run lint check-types build test test:contract api-check --filter='!./.local-plugins/*' && pnpm test:docs && pnpm test:e2e",
+    "verify": "mkdir -p .local-plugins && pnpm turbo run lint check-types build test test:contract api-check --filter='!./.local-plugins/*' && pnpm codegen:check && pnpm test:docs && pnpm test:e2e",
     "validate:plugins": "node scripts/validate-plugins.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
@@ -54,7 +54,8 @@
     "docs:symbol-drift": "node scripts/docs-symbol-drift.mjs",
     "docs:screenshots": "playwright test --config=playwright.docs.config.ts",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:preview": "vitepress preview docs",
+    "codegen:check": "pnpm --filter @oc-mui/query codegen && git diff --exit-code -- packages/query/src/gql-generated.ts packages/query/src/schema-input-fields.generated.ts && pnpm --filter @oc-mui/query test:consumer-types"
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.0",

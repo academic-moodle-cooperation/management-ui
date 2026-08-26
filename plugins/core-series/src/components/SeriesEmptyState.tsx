@@ -22,6 +22,9 @@ const NoSeriesAvailable = () => (
     <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
       {i18next.t("series:noSeriesAvailable.title")}
     </h4>
+    <p className="max-w-md text-sm text-muted-foreground">
+      {i18next.t("series:noSeriesAvailable.text")}
+    </p>
   </div>
 );
 

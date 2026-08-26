@@ -16,9 +16,13 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  /** A slightly refined version of RFC-3339 compliant DateTime Scalar */
   DateTime: { input: any; output: any; }
+  /** A slightly refined version of RFC-3339 compliant DateTime Scalar */
   Duration: { input: any; output: any; }
+  /** A JSON scalar */
   JSON: { input: any; output: any; }
+  /** A 64-bit signed integer */
   Long: { input: any; output: any; }
 };
 
@@ -1331,7 +1335,7 @@ export const useMuiUserQuery = <
     >(
       variables?: MuiUserQueryVariables,
       options?: Omit<UseQueryOptions<MuiUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiUserQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseQueryResult<TData, TError> => {
     
     return useQuery<MuiUserQuery, TError, TData>(
       {
@@ -1349,7 +1353,7 @@ export const useSuspenseMuiUserQuery = <
     >(
       variables?: MuiUserQueryVariables,
       options?: Omit<UseSuspenseQueryOptions<MuiUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiUserQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseSuspenseQueryResult<TData, TError> => {
     
     return useSuspenseQuery<MuiUserQuery, TError, TData>(
       {
@@ -1392,7 +1396,7 @@ export const useMuiSearchUserQuery = <
     >(
       variables: MuiSearchUserQueryVariables,
       options?: Omit<UseQueryOptions<MuiSearchUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiSearchUserQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseQueryResult<TData, TError> => {
     
     return useQuery<MuiSearchUserQuery, TError, TData>(
       {
@@ -1410,7 +1414,7 @@ export const useSuspenseMuiSearchUserQuery = <
     >(
       variables: MuiSearchUserQueryVariables,
       options?: Omit<UseSuspenseQueryOptions<MuiSearchUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiSearchUserQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseSuspenseQueryResult<TData, TError> => {
     
     return useSuspenseQuery<MuiSearchUserQuery, TError, TData>(
       {
@@ -1444,7 +1448,7 @@ export const useMuiGetMySeriesQuery = <
     >(
       variables?: MuiGetMySeriesQueryVariables,
       options?: Omit<UseQueryOptions<MuiGetMySeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetMySeriesQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseQueryResult<TData, TError> => {
     
     return useQuery<MuiGetMySeriesQuery, TError, TData>(
       {
@@ -1462,7 +1466,7 @@ export const useSuspenseMuiGetMySeriesQuery = <
     >(
       variables?: MuiGetMySeriesQueryVariables,
       options?: Omit<UseSuspenseQueryOptions<MuiGetMySeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetMySeriesQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseSuspenseQueryResult<TData, TError> => {
     
     return useSuspenseQuery<MuiGetMySeriesQuery, TError, TData>(
       {
@@ -1506,7 +1510,7 @@ export const useMuiGetSeriesInfoQuery = <
     >(
       variables: MuiGetSeriesInfoQueryVariables,
       options?: Omit<UseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseQueryResult<TData, TError> => {
     
     return useQuery<MuiGetSeriesInfoQuery, TError, TData>(
       {
@@ -1524,7 +1528,7 @@ export const useSuspenseMuiGetSeriesInfoQuery = <
     >(
       variables: MuiGetSeriesInfoQueryVariables,
       options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseSuspenseQueryResult<TData, TError> => {
     
     return useSuspenseQuery<MuiGetSeriesInfoQuery, TError, TData>(
       {
@@ -1585,7 +1589,7 @@ export const useMuiGetSeriesByIdInputFieldsQuery = <
     >(
       variables: MuiGetSeriesByIdInputFieldsQueryVariables,
       options?: Omit<UseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseQueryResult<TData, TError> => {
     
     return useQuery<MuiGetSeriesByIdInputFieldsQuery, TError, TData>(
       {
@@ -1603,7 +1607,7 @@ export const useSuspenseMuiGetSeriesByIdInputFieldsQuery = <
     >(
       variables: MuiGetSeriesByIdInputFieldsQueryVariables,
       options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseSuspenseQueryResult<TData, TError> => {
     
     return useSuspenseQuery<MuiGetSeriesByIdInputFieldsQuery, TError, TData>(
       {
@@ -1637,7 +1641,7 @@ export const useMuiGetMySeriesNameAndIdQuery = <
     >(
       variables?: MuiGetMySeriesNameAndIdQueryVariables,
       options?: Omit<UseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseQueryResult<TData, TError> => {
     
     return useQuery<MuiGetMySeriesNameAndIdQuery, TError, TData>(
       {
@@ -1655,7 +1659,7 @@ export const useSuspenseMuiGetMySeriesNameAndIdQuery = <
     >(
       variables?: MuiGetMySeriesNameAndIdQueryVariables,
       options?: Omit<UseSuspenseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseSuspenseQueryResult<TData, TError> => {
     
     return useSuspenseQuery<MuiGetMySeriesNameAndIdQuery, TError, TData>(
       {
@@ -1684,7 +1688,7 @@ export const useMuiGetSeriesNameByIdQuery = <
     >(
       variables: MuiGetSeriesNameByIdQueryVariables,
       options?: Omit<UseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseQueryResult<TData, TError> => {
     
     return useQuery<MuiGetSeriesNameByIdQuery, TError, TData>(
       {
@@ -1702,7 +1706,7 @@ export const useSuspenseMuiGetSeriesNameByIdQuery = <
     >(
       variables: MuiGetSeriesNameByIdQueryVariables,
       options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseSuspenseQueryResult<TData, TError> => {
     
     return useSuspenseQuery<MuiGetSeriesNameByIdQuery, TError, TData>(
       {
@@ -1738,7 +1742,7 @@ export const useMuiEventsFromSeriesQuery = <
     >(
       variables: MuiEventsFromSeriesQueryVariables,
       options?: Omit<UseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseQueryResult<TData, TError> => {
     
     return useQuery<MuiEventsFromSeriesQuery, TError, TData>(
       {
@@ -1756,7 +1760,7 @@ export const useSuspenseMuiEventsFromSeriesQuery = <
     >(
       variables: MuiEventsFromSeriesQueryVariables,
       options?: Omit<UseSuspenseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseSuspenseQueryResult<TData, TError> => {
     
     return useSuspenseQuery<MuiEventsFromSeriesQuery, TError, TData>(
       {
@@ -1790,7 +1794,7 @@ export const useMuiGetMyEventsQuery = <
     >(
       variables?: MuiGetMyEventsQueryVariables,
       options?: Omit<UseQueryOptions<MuiGetMyEventsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetMyEventsQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseQueryResult<TData, TError> => {
     
     return useQuery<MuiGetMyEventsQuery, TError, TData>(
       {
@@ -1808,7 +1812,7 @@ export const useSuspenseMuiGetMyEventsQuery = <
     >(
       variables?: MuiGetMyEventsQueryVariables,
       options?: Omit<UseSuspenseQueryOptions<MuiGetMyEventsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetMyEventsQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseSuspenseQueryResult<TData, TError> => {
     
     return useSuspenseQuery<MuiGetMyEventsQuery, TError, TData>(
       {
@@ -1838,7 +1842,7 @@ export const useMuiGetEventByIdQuery = <
     >(
       variables: MuiGetEventByIdQueryVariables,
       options?: Omit<UseQueryOptions<MuiGetEventByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetEventByIdQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseQueryResult<TData, TError> => {
     
     return useQuery<MuiGetEventByIdQuery, TError, TData>(
       {
@@ -1856,7 +1860,7 @@ export const useSuspenseMuiGetEventByIdQuery = <
     >(
       variables: MuiGetEventByIdQueryVariables,
       options?: Omit<UseSuspenseQueryOptions<MuiGetEventByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetEventByIdQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseSuspenseQueryResult<TData, TError> => {
     
     return useSuspenseQuery<MuiGetEventByIdQuery, TError, TData>(
       {
@@ -1937,7 +1941,7 @@ export const useMuiGetEventByIdInputFieldsQuery = <
     >(
       variables: MuiGetEventByIdInputFieldsQueryVariables,
       options?: Omit<UseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseQueryResult<TData, TError> => {
     
     return useQuery<MuiGetEventByIdInputFieldsQuery, TError, TData>(
       {
@@ -1955,7 +1959,7 @@ export const useSuspenseMuiGetEventByIdInputFieldsQuery = <
     >(
       variables: MuiGetEventByIdInputFieldsQueryVariables,
       options?: Omit<UseSuspenseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseSuspenseQueryResult<TData, TError> => {
     
     return useSuspenseQuery<MuiGetEventByIdInputFieldsQuery, TError, TData>(
       {
@@ -1993,7 +1997,7 @@ export const useMuiGetAllManagedAclsQuery = <
     >(
       variables?: MuiGetAllManagedAclsQueryVariables,
       options?: Omit<UseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseQueryResult<TData, TError> => {
     
     return useQuery<MuiGetAllManagedAclsQuery, TError, TData>(
       {
@@ -2011,7 +2015,7 @@ export const useSuspenseMuiGetAllManagedAclsQuery = <
     >(
       variables?: MuiGetAllManagedAclsQueryVariables,
       options?: Omit<UseSuspenseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseSuspenseQueryResult<TData, TError> => {
     
     return useSuspenseQuery<MuiGetAllManagedAclsQuery, TError, TData>(
       {
@@ -2050,7 +2054,7 @@ export const useMuiGetManagedAclsWithEventIdQuery = <
     >(
       variables: MuiGetManagedAclsWithEventIdQueryVariables,
       options?: Omit<UseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseQueryResult<TData, TError> => {
     
     return useQuery<MuiGetManagedAclsWithEventIdQuery, TError, TData>(
       {
@@ -2068,7 +2072,7 @@ export const useSuspenseMuiGetManagedAclsWithEventIdQuery = <
     >(
       variables: MuiGetManagedAclsWithEventIdQueryVariables,
       options?: Omit<UseSuspenseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseSuspenseQueryResult<TData, TError> => {
     
     return useSuspenseQuery<MuiGetManagedAclsWithEventIdQuery, TError, TData>(
       {
@@ -2107,7 +2111,7 @@ export const useMuiGetManagedAclsWithSeriesIdQuery = <
     >(
       variables: MuiGetManagedAclsWithSeriesIdQueryVariables,
       options?: Omit<UseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseQueryResult<TData, TError> => {
     
     return useQuery<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>(
       {
@@ -2125,7 +2129,7 @@ export const useSuspenseMuiGetManagedAclsWithSeriesIdQuery = <
     >(
       variables: MuiGetManagedAclsWithSeriesIdQueryVariables,
       options?: Omit<UseSuspenseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>['queryKey'] }
-    ) => {
+    ): UseSuspenseQueryResult<TData, TError> => {
     
     return useSuspenseQuery<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>(
       {

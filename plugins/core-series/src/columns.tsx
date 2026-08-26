@@ -13,7 +13,10 @@ import {
   DataTableColumnHeader,
   OverflowTooltip,
   restrictSortingToFields,
+  resolveColumnLabel,
+  resolveColumnMeta,
   type ColumnDef,
+  type ColumnLabelOverrides,
 } from "@oc-mui/ui/components";
 import { cn } from "@oc-mui/ui/lib";
 
@@ -25,15 +28,24 @@ const columnHelper = createColumnHelper<MuiSeriesDataFragment>();
 // Sortability is derived from the backend's SeriesOrderByInput via
 // restrictSortingToFields — a column whose field the backend can't order
 // by loses its sort control automatically, no per-column flag needed.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const createColumns = (setIsEditing: (editing: boolean) => void) => {
+export const createColumns = (
+  setIsEditing: (editing: boolean) => void,
+  columnLabelOverrides: ColumnLabelOverrides = {},
+) => {
+  // Config label overrides, same semantics as the episodes table (#372):
+  // a `label` literal wins, a `labelKey` is translated at render time,
+  // otherwise the built-in heading key applies.
+  const getTitle = (columnKey: string, fallbackLabelKey: string) =>
+    resolveColumnLabel(columnLabelOverrides, columnKey, fallbackLabelKey, i18next.t.bind(i18next));
+  const getMeta = (columnKey: string, fallbackLabelKey: string) =>
+    resolveColumnMeta(columnLabelOverrides, columnKey, fallbackLabelKey);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const seriesColumns: ColumnDef<MuiSeriesDataFragment, any>[] = [
     columnHelper.accessor("title", {
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("series:seriesTable.heading.title")}
+          title={getTitle("title", "series:seriesTable.heading.title")}
         />
       ),
       cell: ({ row }) => {
@@ -45,15 +57,13 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => {
           </div>
         );
       },
-      meta: {
-        translatedTitle: "series:seriesTable.heading.title",
-      },
+      meta: getMeta("title", "series:seriesTable.heading.title"),
     }),
     columnHelper.accessor("created", {
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("series:seriesTable.heading.created")}
+          title={getTitle("created", "series:seriesTable.heading.created")}
           className="flex justify-center ml-3"
         />
       ),
@@ -65,15 +75,13 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => {
           </OverflowTooltip>
         );
       },
-      meta: {
-        translatedTitle: "series:seriesTable.heading.created",
-      },
+      meta: getMeta("created", "series:seriesTable.heading.created"),
     }),
     columnHelper.accessor("description", {
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("series:seriesTable.heading.description")}
+          title={getTitle("description", "series:seriesTable.heading.description")}
         />
       ),
       cell: ({ row }) => {
@@ -85,29 +93,25 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => {
           </div>
         );
       },
-      meta: {
-        translatedTitle: "series:seriesTable.heading.description",
-      },
+      meta: getMeta("description", "series:seriesTable.heading.description"),
     }),
     columnHelper.accessor("creator", {
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("series:seriesTable.heading.creator")}
+          title={getTitle("creator", "series:seriesTable.heading.creator")}
         />
       ),
       cell: (data) => {
         return <OverflowTooltip>{data.getValue()}</OverflowTooltip>;
       },
-      meta: {
-        translatedTitle: "series:seriesTable.heading.creator",
-      },
+      meta: getMeta("creator", "series:seriesTable.heading.creator"),
     }),
     columnHelper.accessor("contributors", {
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("series:seriesTable.heading.contributors")}
+          title={getTitle("contributors", "series:seriesTable.heading.contributors")}
         />
       ),
       cell: (data) => {
@@ -123,9 +127,7 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => {
           </OverflowTooltip>
         );
       },
-      meta: {
-        translatedTitle: "series:seriesTable.heading.contributors",
-      },
+      meta: getMeta("contributors", "series:seriesTable.heading.contributors"),
     }),
     columnHelper.display({
       id: "actions",
@@ -158,7 +160,7 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => {
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title={i18next.t("series:seriesTable.heading.episodes")}
+          title={getTitle("events", "series:seriesTable.heading.episodes")}
         />
       ),
       cell: (data) => {
@@ -183,9 +185,7 @@ export const createColumns = (setIsEditing: (editing: boolean) => void) => {
           <p className="flex items-center justify-center">–</p>
         );
       },
-      meta: {
-        translatedTitle: "series:seriesTable.heading.episodes",
-      },
+      meta: getMeta("events", "series:seriesTable.heading.episodes"),
       // The events count isn't a SeriesOrderByInput field, so it stays
       // non-sortable. restrictSortingToFields respects this explicit flag.
       enableSorting: false,

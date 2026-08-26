@@ -12,6 +12,7 @@ import { useSidebarContent } from "@oc-mui/ui/components";
 import type { Row } from "@oc-mui/ui/components";
 import { hasProcessingEvents, isEventProcessing } from "@oc-mui/utils";
 
+import { GALLERY_SORT_FIELD_BY_COLUMN } from "../columns";
 import { useSidebarStore } from "../stores/sidebarStore";
 
 import { useTableState } from "./useTableState";
@@ -121,12 +122,18 @@ export function useEpisodesTable(seriesId?: string) {
 
   // Calculate API parameters
   const offset = pageSize * pageIndex;
+  // The combined gallery cells sort under their own column ids, which the
+  // backend does not know — translate them to the field their content comes
+  // from before building orderBy (#373).
+  const sortColumnId = tableState.sorting[0]?.id;
+  const orderByField =
+    sortColumnId !== undefined
+      ? (GALLERY_SORT_FIELD_BY_COLUMN[sortColumnId] ?? sortColumnId)
+      : undefined;
   const orderBy =
-    tableState.sorting.length > 0 && tableState.sorting[0]?.id !== undefined
+    tableState.sorting.length > 0 && orderByField !== undefined
       ? {
-          [tableState.sorting[0].id]: tableState.sorting[0].desc
-            ? OrderDirection.Desc
-            : OrderDirection.Asc,
+          [orderByField]: tableState.sorting[0]!.desc ? OrderDirection.Desc : OrderDirection.Asc,
         }
       : undefined;
 

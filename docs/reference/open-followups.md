@@ -158,9 +158,8 @@ Self-contained in [`testing.md` → Follow-ups](../contribute/testing.md#follow-
 1. E2E suites per feature — residue only (the protocol-driven specs cover the main flows; convert the remaining hand-run protocol steps).
 2. Coverage gates — extend to the apps (seven packages already enforce thresholds).
 3. Playground-as-isolated-plugin-runner.
-4. Marketplace metadata cleanup (move from hard-coded map to `extensionPoints` manifest).
-5. Visual regression — data screens + promote to CI (default + alternate-theme baselines are committed).
-6. Remote turbo cache to share artefacts across CI jobs.
+4. Visual regression — data screens + promote to CI (default + alternate-theme baselines are committed).
+5. Remote turbo cache to share artefacts across CI jobs.
 
 ---
 
@@ -298,14 +297,11 @@ exports (this PR).
   mutators and the `extension-points:documentation` extension point (registered,
   never read). **Not dead — earlier drafts of this list were wrong:**
   `datetime-picker.tsx` is live (rendered by `MetadataUpdateField` for DURATION
-  fields), and the `SwitchHeadlessUI` re-export is consumed by an org plugin (below).
-- **Migrate the org-plugin language toggle off `@headlessui`.** One org plugin's
-  SidebarHeader (in the private org-plugins repo) uses `SwitchHeadlessUI`
-  re-exported from `@oc-mui/ui/components` — the only consumer of
-  `@headlessui/react`. Add a native radix `Switch` to `@oc-mui/ui` (there is no
-  `switch.tsx` today), migrate that SidebarHeader to it, then drop the re-export +
-  the `@headlessui/react` dependency. Cross-repo: the plugin change ships in the
-  org-plugins repo alongside the `@oc-mui/ui` release that adds the native Switch.
+  fields).
+- **Migrate the org-plugin language toggle off `@headlessui`** — ✅ done (#277,
+  PR #377 + the org-plugins counterpart): `@oc-mui/ui` ships a native radix
+  `Switch`, the org SidebarHeader migrated to it, and `SwitchHeadlessUI` plus
+  the `@headlessui/react` dependency are gone.
 - **Real license check in CI** — [`scripts/check-licenses.js`](../../scripts/check-licenses.js)
   is a basic allowlist script that is currently wired to no npm script and no CI
   job; either wire it up or replace it with a maintained checker.
