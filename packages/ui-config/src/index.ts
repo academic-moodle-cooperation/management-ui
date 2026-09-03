@@ -22,18 +22,20 @@ export const defaultConfig: AppConfig = {
   },
   app: {
     locale: "en",
+    channel: "download",
+    tags: "engage-download",
     HtmlDocumentTitle: "Management UI",
     logoUrl: "assets/default/logo.svg",
     orgLogoUrl: "",
     faviconUrl: "assets/favicon/favicon.svg",
-    theme: "default",
+    theme: "tuwien",
     // Core OSS plugins that ship with the shell plus the two integration
     // hooks:
     //  - `admin`  → admin-marketplace plugin (bundled)
     //  - `config` → `.local-plugins/config/` loader runs first in phase 1
     //               so org-specific plugins can extend `enabledPlugins`
     //               before phase 2 picks up the rest of .local-plugins.
-    enabledPlugins: ["core", "episodes", "series", "upload", "admin", "config"],
+    enabledPlugins: ["core", "episodes", "series", "upload", "admin", "config", "tuwien"],
   },
   auth: {
     loginUrl: "/Shibboleth.sso/Login?target=/management-ui/",
