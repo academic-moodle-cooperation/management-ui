@@ -59,6 +59,7 @@ export interface AclEditorProps {
   onManagedAclChange: (managedAclId: string) => void;
   onClose?: (() => void) | undefined;
   disabled?: boolean | undefined;
+  i18nNamespace?: string | undefined;
 
   /**
    * The three below drive the "edit an existing entity, then press Update"
@@ -84,6 +85,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   onManagedAclChange,
   onHasChangesChange = () => {},
   disabled = false,
+  i18nNamespace = "muitable-sidebar",
 }) => {
   // Only UI state is local
   const [open, setOpen] = useState(false);
@@ -97,7 +99,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   // when the bundle arrived, so the first render in any context that hadn't
   // already loaded it showed bare keys ("accessPolicy", "addUser", …).
   // Naming the namespace here makes react-i18next load it and re-render.
-  const { t } = useI18n("muitable-sidebar");
+  const { t } = useI18n(i18nNamespace);
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useMuiSearchUserQuery({
@@ -106,6 +108,8 @@ export const AclEditor: React.FC<AclEditorProps> = ({
     offset: 0,
   });
   const filteredUsers = data?.searchUser.nodes || [];
+
+  console.log("loaded following namespace for translations: " + i18nNamespace);
 
   const isEvent = selectedElement?.__typename === "Event";
   const isSeries = selectedElement?.__typename === "Series";
@@ -273,7 +277,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
                 .filter((policy) => policy != null)
                 .map((policy) => (
                   <SelectItem key={policy.id} value={policy.id}>
-                    {t(`muitable-sidebar:acls.${policy.name}`)}
+                    {t(`${i18nNamespace}:acls.${policy.name}`)}
                   </SelectItem>
                 ))}
             </SelectContent>

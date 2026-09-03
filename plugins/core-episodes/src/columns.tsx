@@ -476,6 +476,35 @@ export const createColumns = (
       },
       meta: getMeta("dateAndLocation", "episodes:episodesTable.heading.dateAndLocation"),
     }),
+    columnHelper.accessor((row) => row.muiEventInfo?.isPublic, {
+      id: "isPublic",
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={getTitle("isPublic", "episodes:episodesTable.heading.access")}
+          className="flex justify-center"
+        />
+      ),
+      cell: ({ row }) => {
+        const isPublic = row.original.muiEventInfo?.isPublic;
+        return (
+          <div className="flex justify-center space-x-2">
+            <Tooltip delayDuration={300}>
+              <TooltipTrigger asChild>
+                {isPublic ? <Globe className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+              </TooltipTrigger>
+              <TooltipContent>
+                {isPublic
+                  ? i18next.t("episodes:episodesTable.accessState.public")
+                  : i18next.t("episodes:episodesTable.accessState.private")}
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        );
+      },
+      enableSorting: false,
+      meta: getMeta("isPublic", "episodes:episodesTable.heading.access"),
+    }),
     columnHelper.accessor("presenters", {
       header: ({ column }: { column: Column<MuiEventsDataFragment> }) => (
         <DataTableColumnHeader

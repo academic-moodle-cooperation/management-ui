@@ -2,6 +2,8 @@
   "$comment": "Default Management UI deployment config. In dev (no VITE_PROXY_TARGET) the shell serves THIS file at /ui/config/management-ui/config.json — edit it and reload to test config changes without a backend. It also ships inside the JAR as the shipped default; production deployments mount their own config.json over it at the same path. Anything omitted here falls back to defaultConfig in @oc-mui/ui-config; plugins contribute their own slice defaults at runtime.",
   "app": {
     "HtmlDocumentTitle": "Management UI",
+    "channel": "download",
+    "tags": "engage-download",
     "locale": "en",
     "theme": "default",
     "logoUrl": "assets/default/logo.svg",
@@ -22,5 +24,6 @@
   "matomo": {
     "enabled": false
   },
-  "plugins": {}
+  "plugins": {},
+  "downloadBaseUrl": "test.com"
 }
