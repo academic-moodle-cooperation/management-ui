@@ -5,11 +5,11 @@
     "channel": "download",
     "tags": "engage-download",
     "locale": "en",
-    "theme": "tuwien",
+    "theme": "default",
     "logoUrl": "assets/default/logo.svg",
     "faviconUrl": "assets/favicon/favicon.svg",
     "orgLogoUrl": "",
-    "enabledPlugins": ["core", "episodes", "series", "upload", "admin", "config", "tuwien"]
+    "enabledPlugins": ["core", "episodes", "series", "upload", "admin", "config"]
   },
   "auth": {
     "loginUrl": "/Shibboleth.sso/Login?target=/management-ui/",
