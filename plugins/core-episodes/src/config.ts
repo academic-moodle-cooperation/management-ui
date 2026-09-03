@@ -14,8 +14,6 @@ import { definePluginConfig } from "@oc-mui/query";
  */
 
 export const EPISODES_PLUGIN_ID = "episodes";
-export const channel = "download";
-export const tags = "engage-download";
 
 /** Per-field metadata visibility contract (show/readonly). */
 const metadataFieldSchema = z.object({
