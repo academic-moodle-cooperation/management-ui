@@ -115,6 +115,7 @@ export const episodesConfigDefaults: EpisodesConfig = {
           { seriesName: { show: true } },
           { dateAndLocation: { show: true } },
           { presenters: { show: true } },
+          { isPublic: { show: true } },
           { actions: { show: true } },
         ],
       },
