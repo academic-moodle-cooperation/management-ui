@@ -71,7 +71,7 @@
     "@vitest/ui": "^4.1.9",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
-    "jsdom": "^27.4.0",
+    "jsdom": "^30.0.1",
     "prettier": "^3.5.3",
     "turbo": "^2.10.2",
     "typescript": "5.8.2",
