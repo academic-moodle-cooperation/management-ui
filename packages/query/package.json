@@ -77,7 +77,7 @@
     "@oc-mui/typescript-config": "workspace:*",
     "dotenv-cli": "^8.0.0",
     "eslint": "^9.9.0",
-    "jsdom": "^27.4.0",
+    "jsdom": "^30.0.1",
     "tsup": "^8.5.0",
     "typescript": "~5.5.4",
     "vitest": "^4.0.17"
