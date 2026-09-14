@@ -45,7 +45,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.7",
+    "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-react-swc": "^3.9.0",
     "@oc-mui/utils": "workspace:*",
     "vite-plugin-static-copy": "^1.0.6"

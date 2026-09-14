@@ -25,18 +25,18 @@
     "lucide-react": "^0.417.0",
     "mustache": "^4.2.0",
     "@oc-mui/plugin-core": "workspace:*",
-    "zod": "^4.3.6"
+    "zod": "^4.6.2"
   },
   "devDependencies": {
     "@types/mustache": "^4.2.5",
-    "@types/react": "^18.0.0 || ^19.0.0",
+    "@types/react": "^19.3.0",
     "@oc-mui/eslint-config": "workspace:*",
     "@oc-mui/plugin-testing": "workspace:*",
     "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.20.0",
     "typescript": "^5.3.3",
     "vitest": "^4.0.17",
-    "react": "^19.1.0"
+    "react": "^19.3.0"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"
