@@ -24,6 +24,5 @@
   "matomo": {
     "enabled": false
   },
-  "plugins": {},
-  "downloadBaseUrl": "test.com"
+  "plugins": {}
 }
