@@ -109,8 +109,6 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   });
   const filteredUsers = data?.searchUser.nodes || [];
 
-  console.log("loaded following namespace for translations: " + i18nNamespace);
-
   const isEvent = selectedElement?.__typename === "Event";
   const isSeries = selectedElement?.__typename === "Series";
   const isUpload = selectedElement?.__typename === "Upload" || (!isEvent && !isSeries);
