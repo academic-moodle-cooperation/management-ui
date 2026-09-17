@@ -50,6 +50,8 @@ type UserSearchResult = NonNullable<NonNullable<MuiSearchUserQuery["searchUser"]
  * unexported, the report only says `AclEditor: React.FC<AclEditorProps>` and a
  * change to any prop — required becoming optional, a callback signature
  * changing — slips through unnoticed.
+ * Additionally, the i18nNamespace is used for the ACLs, meaning the supplied namespace must provide
+ * the acls.<policyName> keys, otherwise the translation will render the raw keys.
  */
 export interface AclEditorProps {
   selectedElement?: SelectedElement | null | undefined;
