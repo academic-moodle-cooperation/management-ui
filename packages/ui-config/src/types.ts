@@ -57,8 +57,8 @@ export interface AppConfig {
   downloadBaseUrl?: string | undefined;
   matomo: MatomoConfig;
   app: {
-    tags: string;
-    channel: string;
+    tags?: string | string[];
+    channel?: string;
     locale: string;
     /** `<title>` of the HTML document. */
     HtmlDocumentTitle: string;

@@ -22,7 +22,7 @@ export const defaultConfig: AppConfig = {
   },
   app: {
     locale: "en",
-    channel: "download",
+    channel: "engage-player",
     tags: "engage-download",
     HtmlDocumentTitle: "Management UI",
     logoUrl: "assets/default/logo.svg",
