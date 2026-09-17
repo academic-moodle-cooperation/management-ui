@@ -5,7 +5,6 @@ import {
   useMuiEventsFromSeriesQuery,
   OrderDirection,
   useMuiGetEventByIdInputFieldsQuery,
-  useAppConfig,
 } from "@oc-mui/query";
 import { useNavigate } from "@oc-mui/router";
 import { useSidebarContent } from "@oc-mui/ui/components";
@@ -15,6 +14,7 @@ import { hasProcessingEvents, isEventProcessing } from "@oc-mui/utils";
 import { GALLERY_SORT_FIELD_BY_COLUMN } from "../columns";
 import { useSidebarStore } from "../stores/sidebarStore";
 
+import { useEventFilterParams } from "./useEventFilterParams";
 import { useTableState } from "./useTableState";
 
 import type { TableBaseState } from "./useTableState";
@@ -104,7 +104,7 @@ export function useEpisodesTable(seriesId?: string) {
     episodesTableReducer,
     "episodes",
   );
-  const { config } = useAppConfig();
+  const eventFilterParams = useEventFilterParams();
 
   // Use the sidebar content hook for metadata operations
   const sidebarContent = useSidebarContent();
@@ -145,8 +145,7 @@ export function useEpisodesTable(seriesId?: string) {
       offset,
       ...(orderBy !== undefined && { orderBy }),
       ...(queryFilter !== undefined && { query: queryFilter }),
-      channel: config.app.channel,
-      tags: config.app.tags,
+      ...eventFilterParams,
     },
     {
       enabled: !seriesId, // Only enabled when no seriesId is provided
@@ -165,6 +164,7 @@ export function useEpisodesTable(seriesId?: string) {
       offset,
       ...(orderBy !== undefined && { orderBy }),
       ...(queryFilter !== undefined && { query: queryFilter }),
+      ...eventFilterParams,
     },
     {
       enabled: Boolean(seriesId), // Only enabled when seriesId is provided
