@@ -94,6 +94,8 @@ export interface AclEditorProps {
     disabled?: boolean | undefined;
     hasChanges?: boolean | undefined;
     // (undocumented)
+    i18nNamespace?: string | undefined;
+    // (undocumented)
     managedAclId?: string | undefined;
     // (undocumented)
     onAclChange: (entries: ACLEntry[]) => void;

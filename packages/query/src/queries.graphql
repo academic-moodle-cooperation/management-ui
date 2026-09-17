@@ -259,9 +259,9 @@ fragment MuiEventsData on Event {
   location
   presenters
   startDate
-  publications(channel: "engage-player") {
+  publications(channel: $channel) {
     uri
-    tracks(tags: "engage-download") {
+    tracks(tags: $tags) {
       width
       uri
       tags
@@ -289,6 +289,8 @@ query MuiEventsFromSeries(
   $offset: Int
   $orderBy: EventOrderByInput
   $query: String
+  $channel: String
+  $tags: [String]
 ) {
   seriesById(id: $seriesId) {
     id
@@ -302,7 +304,7 @@ query MuiEventsFromSeries(
   }
 }
 
-query MuiGetMyEvents($limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String) {
+query MuiGetMyEvents($limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String, $channel: String, $tags: [String]) {
   currentUser {
     myEvents(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
       totalCount
@@ -466,7 +468,7 @@ mutation MuiUpdateSeries($seriesId: String!, $metadata: CommonSeriesMetadataInpu
   }
 }
 
-mutation MuiUpdateEvent($eventId: String!, $metadata: CommonEventMetadataInput!) {
+mutation MuiUpdateEvent($eventId: String!, $metadata: CommonEventMetadataInput!, $channel: String, $tags: [String]) {
   mui {
     updateEvent(id: $eventId, metadata: $metadata) {
       ...MuiEventsData
