@@ -5,12 +5,19 @@
  * Management UI workspace. It is wired in `base.js` under the plugin name
  * `local` so configurations refer to rules as `local/<rule-name>`.
  *
- * Today only one rule lives here. If the count grows past a handful, split
+ * A handful of rules live here. If the count grows past a handful, split
  * into a dedicated `@oc-mui/eslint-plugin-*` package per the comment in
  * docs/reference/open-followups.md.
  */
 
-import { graphqlOperationNaming, ruleName as graphqlOperationNamingRuleName } from "./graphql-operation-naming.js";
+import {
+  graphqlOperationNaming,
+  ruleName as graphqlOperationNamingRuleName,
+} from "./graphql-operation-naming.js";
+import {
+  noCrossPluginConfig,
+  ruleName as noCrossPluginConfigRuleName,
+} from "./no-cross-plugin-config.js";
 import { noPaletteClasses, ruleName as noPaletteClassesRuleName } from "./no-palette-classes.js";
 
 export const localPlugin = {
@@ -21,5 +28,6 @@ export const localPlugin = {
   rules: {
     [graphqlOperationNamingRuleName]: graphqlOperationNaming,
     [noPaletteClassesRuleName]: noPaletteClasses,
+    [noCrossPluginConfigRuleName]: noCrossPluginConfig,
   },
 };

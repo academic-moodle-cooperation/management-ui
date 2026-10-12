@@ -1,11 +1,18 @@
 import { useMemo, useEffect, useCallback, useRef } from "react";
 
-import { useI18n } from "@oc-mui/i18n";
+import { loadNamespace, useI18n } from "@oc-mui/i18n";
 import { useRegistry } from "@oc-mui/plugin-system";
 import { useMuiUpdateSeriesMutation } from "@oc-mui/query";
 import type { MuiSeriesDataFragment } from "@oc-mui/query";
-import { MUITable, createMetadataHelpers, AppLoader, type Row } from "@oc-mui/ui/components";
-import type { ColumnsField, MetadataItem } from "@oc-mui/ui/config-primitives";
+import {
+  MUITable,
+  createMetadataHelpers,
+  AppLoader,
+  getColumnLabelOverrides,
+  normalizeColumnConfigs,
+  type Row,
+} from "@oc-mui/ui/components";
+import type { MetadataItem, TableColumnItem } from "@oc-mui/ui/config-primitives";
 import { logger } from "@oc-mui/utils";
 
 import { createColumns } from "../columns";
@@ -27,8 +34,11 @@ interface SeriesToolbarEndAction {
 /**
  * Component for displaying and managing series data
  */
+// TanStack table column types are complex; accessorKey and id are optional.
+const columnId = (column: { accessorKey?: string; id?: string }) => column.id ?? column.accessorKey;
+
 const SeriesTable = () => {
-  const { t } = useI18n();
+  const { t, i18n } = useI18n();
   const cfg = seriesConfig.use();
 
   // Create a ref for the table element
@@ -72,7 +82,33 @@ const SeriesTable = () => {
   const { pageIndex, pageSize, queryFilter } = state;
 
   // Create columns with the store's setIsEditing function
-  const columns = useMemo(() => createColumns(setIsEditing), [setIsEditing]);
+  const configColumns = cfg.seriesTable?.columns;
+  const configuredColumns = useMemo(
+    () => normalizeColumnConfigs(configColumns as TableColumnItem[] | undefined),
+    [configColumns],
+  );
+
+  // Config label overrides for the headers (#372) — and the namespaces of any
+  // org-plugin labelKeys, which nothing else loads before the table renders.
+  const columnLabelOverrides = useMemo(
+    () => getColumnLabelOverrides(configuredColumns),
+    [configuredColumns],
+  );
+  useEffect(() => {
+    const namespaces = new Set<string>();
+    Object.values(columnLabelOverrides).forEach((override) => {
+      const colon = override.labelKey?.indexOf(":") ?? -1;
+      if (override.labelKey && colon > 0) {
+        namespaces.add(override.labelKey.slice(0, colon));
+      }
+    });
+    namespaces.forEach((namespace) => void loadNamespace(namespace, i18n.language));
+  }, [columnLabelOverrides, i18n.language]);
+
+  const columns = useMemo(
+    () => createColumns(setIsEditing, columnLabelOverrides),
+    [setIsEditing, columnLabelOverrides],
+  );
 
   const metadata: MetadataItem[] = cfg.seriesInfo?.metadata ?? [];
   const { isReadOnly } = createMetadataHelpers(metadata);
@@ -186,29 +222,53 @@ const SeriesTable = () => {
     return seriesData?.find((series) => series?.id === selectedId);
   }, [seriesData, selectedId]);
 
-  // Get visible columns from app config - use the columns configuration or fallback to all columns
-  const configColumns = cfg.seriesTable?.columns ?? [];
-  const visibleColumns = (configColumns as Record<string, ColumnsField>[]).filter((column) => {
-    if (!column || typeof column !== "object") return false;
-    const key = Object.keys(column)[0];
-    if (!key) return false;
-    const field = column[key];
-    return field?.show === true;
-  });
+  // The config's per-column `show` is the *default* visibility; the user's
+  // own toggles are merged on top, win, and persist. Columns are ordered by
+  // the config but never removed — hiding is the visibility default's job,
+  // so the View menu keeps offering every column (the show/hide half of #80,
+  // same fix as the episodes table).
+  const hasConfiguredColumns = configuredColumns.length > 0;
 
-  const columnsKeys = visibleColumns
-    .map((column) => Object.keys(column)[0])
-    .filter((key): key is string => Boolean(key));
+  const visibilityDefaults = useMemo(() => {
+    if (!hasConfiguredColumns) return {};
+    // A config that lists columns enumerates the deployment's table: listed
+    // columns carry their `show` flag, everything else starts hidden.
+    const all: Record<string, boolean> = {};
+    for (const column of columns) {
+      const id = columnId(column);
+      if (id) {
+        all[id] = configuredColumns.find((c) => c.key === id)?.show ?? false;
+      }
+    }
+    return all;
+  }, [hasConfiguredColumns, configuredColumns, columns]);
 
-  const sortedColumns = columnsKeys
-    .map((columnsKey) =>
-      columns.find((column) => {
-        // TanStack table column types are complex, but we can safely access these properties
-        const col = column as { accessorKey?: string; id?: string };
-        return col.accessorKey === columnsKey || col.id === columnsKey;
-      }),
-    )
-    .filter((column): column is NonNullable<typeof column> => Boolean(column));
+  const effectiveColumnVisibility = useMemo(
+    () => ({ ...visibilityDefaults, ...columnVisibility }),
+    [visibilityDefaults, columnVisibility],
+  );
+  const handleColumnVisibilityChange = useCallback<typeof setColumnVisibility>(
+    (updater) => {
+      setColumnVisibility((previous) => {
+        // Updaters must see what the user sees — defaults included.
+        const base = { ...visibilityDefaults, ...previous };
+        return typeof updater === "function" ? updater(base) : updater;
+      });
+    },
+    [setColumnVisibility, visibilityDefaults],
+  );
+
+  const sortedColumns = hasConfiguredColumns
+    ? [
+        ...configuredColumns
+          .map(({ key }) => columns.find((column) => columnId(column) === key))
+          .filter((column): column is NonNullable<typeof column> => Boolean(column)),
+        ...columns.filter((column) => {
+          const id = columnId(column);
+          return !id || !configuredColumns.some((c) => c.key === id);
+        }),
+      ]
+    : columns;
 
   const isCreateSeriesEnabled = cfg.seriesTable?.createSeries?.enabled !== false;
 
@@ -275,8 +335,8 @@ const SeriesTable = () => {
           sorting={sorting}
           queryFilter={queryFilter}
           setQueryFilter={setQueryFilter}
-          columnVisibility={columnVisibility}
-          setColumnVisibility={setColumnVisibility}
+          columnVisibility={effectiveColumnVisibility}
+          setColumnVisibility={handleColumnVisibilityChange}
           toolbarEndButtons={toolbarEndButtons}
           emptyState={<SeriesEmptyState />}
         />

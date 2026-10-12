@@ -1,6 +1,7 @@
 export * from "./router-context";
 export * from "./appheading";
 export * from "./container";
+export * from "./page-shell";
 export * from "./mui-table";
 export * from "./datatable";
 export * from "./debounced-input";
@@ -18,8 +19,6 @@ export * from "./overflow-tooltip";
 export * from "./appLoader";
 export * from "./acl-editor";
 export * from "./theme-mode";
-
-export { Switch as SwitchHeadlessUI } from "@headlessui/react";
 
 // Explicitly re-export types for Vite/Rollup compatibility
 // when using 'import type' syntax

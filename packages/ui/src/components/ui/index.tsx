@@ -12,6 +12,7 @@ export * from "./button";
 export * from "./calendar";
 export * from "./card";
 export * from "./checkbox";
+export * from "./switch";
 export * from "./collapsible";
 export * from "./command";
 export * from "./dialog";

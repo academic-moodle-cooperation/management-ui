@@ -33,15 +33,15 @@ import org.opencastproject.management.graphql.command.MuiMoveToTrashEventCommand
 import org.opencastproject.management.graphql.command.MuiUpdateEventAclCommand;
 import org.opencastproject.management.graphql.command.MuiUpdateEventCommand;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import graphql.annotations.annotationTypes.GraphQLDefaultValue;
 import graphql.annotations.annotationTypes.GraphQLDescription;
 import graphql.annotations.annotationTypes.GraphQLField;
 import graphql.annotations.annotationTypes.GraphQLName;
 import graphql.annotations.annotationTypes.GraphQLNonNull;
 import graphql.schema.DataFetchingEnvironment;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @GraphQLName(MuiMutation.TYPE_NAME)
 public class MuiMutation {

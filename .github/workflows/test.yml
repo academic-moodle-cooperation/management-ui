@@ -64,6 +64,13 @@ jobs:
       - name: Run type check
         run: pnpm check-types
 
+      # Regenerate the GraphQL codegen output from the COMMITTED schema and
+      # fail on any diff — committed inputs and outputs cannot drift apart
+      # (#355/#360). Also runs the consumer-perspective type check over the
+      # built dist-types (#354). Needs no backend: the schema is a file.
+      - name: Codegen drift + consumer types
+        run: pnpm codegen:check
+
   unit:
     name: Unit tests
     needs: lint-types

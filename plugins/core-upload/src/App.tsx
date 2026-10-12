@@ -21,8 +21,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  AppHeading,
   Button,
+  PageShell,
   Card,
   Container,
   SelectSeriesCombobox,
@@ -462,9 +462,7 @@ export const App = () => {
 
   return (
     <>
-      <Container className="flex flex-row flex-wrap w-full p-8 ">
-        <AppHeading heading={t("upload:heading")} description={t("upload:description")} />
-        <Separator className="mt-4 mb-8" />
+      <PageShell title={t("upload:heading")} description={t("upload:description")}>
         {!query && data?.pages.flat().length === 0 ? (
           <ComponentResolver
             componentType="series:empty-state"
@@ -622,7 +620,7 @@ export const App = () => {
         <Toaster closeButton richColors toastOptions={{}} />
 
         {/* TODO: Make Option for "No Series available" */}
-      </Container>
+      </PageShell>
     </>
   );
 };

@@ -36,10 +36,7 @@
     },
     "action": {
       "editData": "Edit Series",
-      "upload": "Upload",
-      "studio": "Studio",
-      "playlist": "Series Playlist",
-      "episodes": "Go to video playlist for this series"
+      "upload": "Upload"
     },
     "createSeries": {
       "button": "Create series",

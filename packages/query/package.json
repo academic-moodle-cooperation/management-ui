@@ -44,10 +44,12 @@
     "build:types": "tsc -p tsconfig.build.json",
     "api-check": "pnpm build:types && api-extractor run --local --verbose",
     "api-check:ci": "pnpm build:types && api-extractor run --verbose",
-    "codegen": "dotenv -e ../../.env -- graphql-codegen-esm --config src/codegen.ts && node src/fix-fetcher-import.mjs",
+    "codegen": "graphql-codegen-esm --config src/codegen.ts && node src/fix-fetcher-import.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "schema:refresh": "dotenv -e ../../.env -- node src/refresh-schema.mjs",
+    "test:consumer-types": "node type-tests/check-emitted.mjs && tsc -p type-tests/tsconfig.json"
   },
   "dependencies": {
     "@tanstack/react-query-devtools": "^5.51.15",

@@ -1,0 +1,16 @@
+{
+  // Consumer-perspective type check over the BUILT declarations (#354).
+  // skipLibCheck is deliberately false: that is the only setting under which
+  // a broken type reference inside dist-types surfaces at all — consumers
+  // run with skipLibCheck true and would silently get `any` instead.
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": false,
+    "types": []
+  },
+  "include": ["consumer.ts"]
+}

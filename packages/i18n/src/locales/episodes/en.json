@@ -23,8 +23,7 @@
     "required": "* required",
     "noData": "No data available",
     "tabs": {
-      "metadata": "Metadata",
-      "access": "Access"
+      "metadata": "Metadata"
     }
   },
   "episodesTable": {
@@ -46,7 +45,8 @@
       "actions": {
         "title": "Actions",
         "info": "Each person who is entitled to a series can edit this series and the associated videos. The changes are visible to everyone."
-      }
+      },
+      "thumbnail": "Thumbnail"
     },
     "accessState": {
       "public": "Public access",

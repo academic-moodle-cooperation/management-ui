@@ -51,7 +51,7 @@ import type { SelectSingleEventHandler } from 'react-day-picker';
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
 import { SetStateAction } from 'react';
 import { SortingState } from '@tanstack/react-table';
-import { Switch as SwitchHeadlessUI } from '@headlessui/react';
+import * as SwitchPrimitive from '@radix-ui/react-switch';
 import type { Table as Table_2 } from '@tanstack/react-table';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import { TimeValue } from 'react-aria';
@@ -276,6 +276,17 @@ export { Column }
 export { ColumnDef }
 
 export { ColumnHelper }
+
+// @public (undocumented)
+export interface ColumnLabelOverride {
+    // (undocumented)
+    label?: string;
+    // (undocumented)
+    labelKey?: string;
+}
+
+// @public (undocumented)
+export type ColumnLabelOverrides = Record<string, ColumnLabelOverride>;
 
 export { ColumnSort }
 
@@ -561,6 +572,12 @@ export function ForbiddenError(input: {
 export function GeneralError(input: GeneralErrorProps): JSX.Element;
 
 // @public (undocumented)
+export const getColumnLabelOverrides: (columns: ResolvedColumnConfig[]) => ColumnLabelOverrides;
+
+// @public
+export const getColumnVisibilityDefaults: (columns: ResolvedColumnConfig[]) => Record<string, boolean>;
+
+// @public (undocumented)
 export function HoverCard(input: React_2.ComponentProps<typeof HoverCardPrimitive.Root>): JSX.Element;
 
 // @public (undocumented)
@@ -666,6 +683,11 @@ export type NavMainProps = {
     customActiveStyles?: string;
 };
 
+// Warning: (ae-forgotten-export) The symbol "TableColumnItem" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const normalizeColumnConfigs: (columns: TableColumnItem[] | undefined) => ResolvedColumnConfig[];
+
 // @public (undocumented)
 export function NotFoundError(input: {
     onBackClick?: () => void;
@@ -679,6 +701,11 @@ export { OnChangeFn }
 // @public (undocumented)
 export const OverflowTooltip: FC<OverflowTooltipProps>;
 
+// Warning: (ae-forgotten-export) The symbol "PageShellProps" needs to be exported by the entry point index.d.ts
+//
+// @public
+export const PageShell: FC<PageShellProps>;
+
 // @public (undocumented)
 export function Popover(input: React_2.ComponentProps<typeof PopoverPrimitive.Root>): JSX.Element;
 
@@ -690,6 +717,27 @@ export function PopoverContent(input: React_2.ComponentProps<typeof PopoverPrimi
 
 // @public (undocumented)
 export function PopoverTrigger(input: React_2.ComponentProps<typeof PopoverPrimitive.Trigger>): JSX.Element;
+
+// @public (undocumented)
+export const resolveColumnLabel: (overrides: ColumnLabelOverrides, columnKey: string, fallbackLabelKey: string, translate: (key: string) => string) => string;
+
+// @public (undocumented)
+export const resolveColumnMeta: (overrides: ColumnLabelOverrides, columnKey: string, fallbackLabelKey: string) => {
+    resolvedTitle?: string;
+    translatedTitle?: string;
+};
+
+// @public
+export interface ResolvedColumnConfig {
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label?: string;
+    // (undocumented)
+    labelKey?: string;
+    // (undocumented)
+    show: boolean;
+}
 
 // @public
 export function restrictSortingToFields<TData, TValue>(columns: ColumnDef<TData, TValue>[], sortableFields: readonly string[]): ColumnDef<TData, TValue>[];
@@ -900,7 +948,8 @@ export function Skeleton(input: React.ComponentProps<"div">): JSX.Element;
 
 export { SortingState }
 
-export { SwitchHeadlessUI }
+// @public (undocumented)
+export function Switch(input: React_2.ComponentProps<typeof SwitchPrimitive.Root>): JSX.Element;
 
 // @public (undocumented)
 export function Table(input: React_2.ComponentProps<"table">): JSX.Element;

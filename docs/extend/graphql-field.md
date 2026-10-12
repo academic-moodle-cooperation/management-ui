@@ -64,22 +64,24 @@ HTTP 200 with a bare `null` body means Opencast built **no schema at all** for t
 
 Shared operations live in [`packages/query/src/queries.graphql`](../../packages/query/src/queries.graphql); a plugin declares its own in its `.graphql` files. Either way the operation and fragment names carry a prefix: `Mui` for the shared package, your namespace in PascalCase for a plugin. An ESLint rule fails the build otherwise — the rule and its casing table are in [Contracts § GraphQL Operation Naming](../reference/contracts.md#6-graphql-operation-naming).
 
-## 6. Run codegen against a live backend
+## 6. Refresh the committed schema, then run codegen
 
-Codegen **introspects a running Opencast** — there is no schema file in the repo. It reads `GRAPHQL_ENDPOINT` (and optional `GRAPHQL_HEADERS`) from the repo-root `.env`, which is gitignored and therefore absent after a fresh clone:
+Codegen reads the **committed schema** — [`packages/query/src/schema.graphql`](../../packages/query/src/schema.graphql) — so regenerating types needs **no running backend**:
 
 ```bash
-cp .env.example .env      # then set GRAPHQL_ENDPOINT to your backend
 pnpm --filter @oc-mui/query codegen
 ```
 
-Without a reachable backend it fails, and it fails on the *whole* schema, not just your field.
+What needs the backend is the step before: your new backend field only reaches the generated types once the committed schema knows it. Refreshing the schema is a deliberate, reviewed step — it reads `GRAPHQL_ENDPOINT` (and optional `GRAPHQL_HEADERS`) from the repo-root `.env`:
 
-::: danger Run codegen once before you touch `queries.graphql`
-Codegen rewrites the generated files from scratch, so its diff shows everything that has drifted since they were last committed — not just your change. Run it on a clean checkout **first** and confirm `git diff` is empty.
+```bash
+cp .env.example .env      # then set GRAPHQL_ENDPOINT to your backend
+pnpm --filter @oc-mui/query schema:refresh
+```
 
-If it isn't, the committed output has drifted from its committed inputs ([#355](https://github.com/academic-moodle-cooperation/management-ui/issues/355)) and the drift must be corrected in its own commit before you start. Otherwise your "add one field" PR silently carries unrelated public-API changes — today that includes renamed exported hooks such as `useSuspenseGetMyEventsQuery` → `useSuspenseMuiGetMyEventsQuery`, plus the matching api-check snapshot update.
-:::
+Review the `schema.graphql` diff before regenerating: it should contain exactly the backend change you expect. The file's header records which Opencast version it was taken from. Two things to know when the diff surprises you: type *order* follows the source instance's introspection order, and Opencast's `*MetadataInput` types are **per-organisation** — a catalog field configured `readOnly` on the source instance is absent from them, so refresh from an instance whose catalog configuration matches what the UI should support.
+
+CI regenerates from the committed schema and fails on any diff (`pnpm codegen:check`, also part of `pnpm verify`), so committed inputs and outputs can no longer drift apart ([#355](https://github.com/academic-moodle-cooperation/management-ui/issues/355) was exactly that class of bug).
 
 Two files are rewritten, and both are **committed**: `src/gql-generated.ts` (types plus React Query hooks) and `src/schema-input-fields.generated.ts` (runtime arrays of orderable/filterable field names). Once you have confirmed the baseline was clean, commit the diff — it is now yours alone. If the second file changed, `src/sortableFields.test.ts` may need its pinned expectations updated — that failure is the intended signal that the sortable set moved.
 
