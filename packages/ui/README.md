@@ -43,6 +43,7 @@ The library is split between **atomic shadcn components** (under `src/components
 | `AclEditor` | Access-control-list editor. |
 | `DatePicker`, `DateTimePicker` | Calendar input. |
 | `InfiniteScroll` | Sentinel-driven incremental loading. |
+| `SortableList` | Vertically sortable list with a drag handle, full keyboard reordering, and screen-reader announcements; `moveItem` for non-drag moves. |
 | `Container`, `AppHeading`, `OverflowTooltip`, `DebouncedInput` | General-purpose layout/UX. |
 
 ## Theme
