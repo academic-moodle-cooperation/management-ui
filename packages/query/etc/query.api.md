@@ -1707,9 +1707,36 @@ export type MuiPlaylistDataFragment = {
 // @public (undocumented)
 export const MuiPlaylistDataFragmentDoc = "\n    fragment MuiPlaylistData on Playlist {\n  __typename\n  id\n  title\n  description\n  creator\n  updated\n  accessControlEntries {\n    role\n    action\n    allow\n  }\n  entries {\n    ...MuiPlaylistEntryData\n  }\n}\n    \n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}\n    ";
 
-// Warning: (ae-forgotten-export) The symbol "MuiPlaylistEntryData_EventPlaylistEntry_Fragment" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "MuiPlaylistEntryData_InaccessiblePlaylistEntry_Fragment" needs to be exported by the entry point index.d.ts
-//
+// @public (undocumented)
+export type MuiPlaylistEntryData_EventPlaylistEntry_Fragment = {
+    __typename: 'EventPlaylistEntry';
+    id?: any | null;
+    contentId?: string | null;
+    type?: PlaylistEntryType | null;
+    event?: {
+        id: string;
+        title: string;
+        duration?: any | null;
+        seriesId?: string | null;
+        seriesName?: string | null;
+        eventStatus: string;
+        muiEventInfo?: {
+            isPublic?: boolean | null;
+            managedAclId?: any | null;
+            publishUrl?: string | null;
+            thumbnailUrl?: string | null;
+        } | null;
+    } | null;
+};
+
+// @public (undocumented)
+export type MuiPlaylistEntryData_InaccessiblePlaylistEntry_Fragment = {
+    __typename: 'InaccessiblePlaylistEntry';
+    id?: any | null;
+    contentId?: string | null;
+    type?: PlaylistEntryType | null;
+};
+
 // @public (undocumented)
 export type MuiPlaylistEntryDataFragment = MuiPlaylistEntryData_EventPlaylistEntry_Fragment | MuiPlaylistEntryData_InaccessiblePlaylistEntry_Fragment;
 

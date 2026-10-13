@@ -1128,9 +1128,9 @@ export type MuiUpdateSeriesAclMutationVariables = Exact<{
 
 export type MuiUpdateSeriesAclMutation = { updateSeriesAcl: { muiSeriesInfo?: { managedAclId?: any | null } | null } };
 
-type MuiPlaylistEntryData_EventPlaylistEntry_Fragment = { __typename: 'EventPlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null, event?: { id: string, title: string, duration?: any | null, seriesId?: string | null, seriesName?: string | null, eventStatus: string, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } | null };
+export type MuiPlaylistEntryData_EventPlaylistEntry_Fragment = { __typename: 'EventPlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null, event?: { id: string, title: string, duration?: any | null, seriesId?: string | null, seriesName?: string | null, eventStatus: string, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } | null };
 
-type MuiPlaylistEntryData_InaccessiblePlaylistEntry_Fragment = { __typename: 'InaccessiblePlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null };
+export type MuiPlaylistEntryData_InaccessiblePlaylistEntry_Fragment = { __typename: 'InaccessiblePlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null };
 
 export type MuiPlaylistEntryDataFragment = MuiPlaylistEntryData_EventPlaylistEntry_Fragment | MuiPlaylistEntryData_InaccessiblePlaylistEntry_Fragment;
 
