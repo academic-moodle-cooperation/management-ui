@@ -1,6 +1,6 @@
 # @oc-mui/ui
 
-Shared component library built on Tailwind CSS v4 and Radix UI primitives (via shadcn/ui). Atomic components (Button, Card, Input, …) plus composed building blocks (app shell, datatable, metadata fields, ACL editor, date picker).
+Shared component library built on Tailwind CSS v4, Radix UI primitives (via shadcn/ui) and `@dnd-kit` for drag-and-drop. Atomic components (Button, Card, Input, …) plus composed building blocks (app shell, datatable, metadata fields, ACL editor, date picker, sortable list, …).
 
 This is the only place plugins should source UI components — the Theme Contract guarantees consistent styling, and bundling your own shadcn copies breaks org theming.
 
