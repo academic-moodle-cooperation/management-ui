@@ -10,6 +10,13 @@ Core plugin. Registers the `/episodes` route, its sidebar entry, and the episode
 | `sidebar:nav-items` | The "Episodes" sidebar entry (icon: `Film`, order 30). Requires `episodes.view` permission. |
 | `app:config:defaults` | Episodes' default config slice (`config.plugins.episodes`) — merged *below* `config.json` so deployments win. |
 
+## What other plugins can hook into
+
+| Extension point | Consumed where |
+|------|------|
+| `episodes:table:actions` | The per-row actions cell ([`src/components/ActionsCell.tsx`](./src/components/ActionsCell.tsx)); a `registerComponent` with a lower `order` than 100 replaces the default. |
+| `episodes:table:status-indicators` | The status column and the gallery thumbnail overlay ([`src/components/EpisodeStatus.tsx`](./src/components/EpisodeStatus.tsx)); the first registered indicator whose `matches` accepts the row replaces the default status icon. Contract and example in [`plugins/core/README.md`](../core/README.md#adding-a-state-to-the-episodes-status-column). |
+
 ## Configuration
 
 The plugin owns `config.plugins.episodes`. Schema and defaults live in [`src/config.ts`](./src/config.ts) via `definePluginConfig` from `@oc-mui/query`.

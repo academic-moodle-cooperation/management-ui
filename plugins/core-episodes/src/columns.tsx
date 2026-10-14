@@ -1,18 +1,4 @@
-import {
-  History,
-  CircleEllipsis,
-  OctagonX,
-  CirclePause,
-  CircleCheck,
-  CircleX,
-  CalendarClock,
-  ArrowUpToLine,
-  Videotape,
-  Info,
-  Globe,
-  Lock,
-} from "lucide-react";
-import React from "react";
+import { Info, Globe, Lock } from "lucide-react";
 
 import { formatDate, i18next } from "@oc-mui/i18n";
 import { EVENT_SORTABLE_FIELDS } from "@oc-mui/query";
@@ -34,6 +20,8 @@ import { cn } from "@oc-mui/ui/lib";
 import { parseDuration } from "@oc-mui/utils";
 
 import ActionsCell from "./components/ActionsCell";
+import { EpisodeStatusCell } from "./components/EpisodeStatus";
+import { GalleryVideoCell } from "./components/GalleryVideoCell";
 import {
   resolveColumnLabel,
   resolveColumnMeta,
@@ -41,31 +29,6 @@ import {
 } from "./episodesTableConfig";
 
 const columnHelper = createColumnHelper<MuiEventsDataFragment>();
-
-const getStatusIcon = (status: string) => {
-  switch (status) {
-    case "PENDING":
-      return <CircleEllipsis className="h-5 w-5 text-warning" />;
-    case "PROCESSING":
-      return <History className="scale-x-[-1] h-5 w-5 text-info" />;
-    case "PROCESSING_CANCELLED":
-      return <OctagonX className="h-5 w-5 text-warning" />;
-    case "PAUSED":
-      return <CirclePause className="h-5 w-5 text-info" />;
-    case "PROCESSED":
-      return <CircleCheck className="h-5 w-5 text-ok" />;
-    case "PROCESSING_FAILURE":
-      return <CircleX className="h-5 w-5 text-error" />;
-    case "SCHEDULED":
-      return <CalendarClock className="h-5 w-5 text-info" />;
-    case "INGESTING":
-      return <ArrowUpToLine className="h-5 w-5 text-info" />;
-    case "RECORDING":
-      return <Videotape className="h-5 w-5 text-error" />;
-    default:
-      return <CircleEllipsis className="h-5 w-5 text-warning" />;
-  }
-};
 
 // Convert columns to a factory function that accepts layout and refetch
 export const createColumns = (
@@ -143,23 +106,9 @@ export const createColumns = (
           className="flex justify-center"
         />
       ),
-      cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => {
-        const status = row.original.eventStatus?.split(".").pop() || "";
-        const statusIcon = getStatusIcon(status);
-
-        return (
-          <div className="flex justify-center space-x-2">
-            <Tooltip delayDuration={300}>
-              <TooltipTrigger asChild>
-                <span className="flex items-center">{statusIcon}</span>
-              </TooltipTrigger>
-              <TooltipContent>
-                {i18next.t(`episodes:episodesTable.status.${status.toLowerCase()}`)}
-              </TooltipContent>
-            </Tooltip>
-          </div>
-        );
-      },
+      cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => (
+        <EpisodeStatusCell event={row.original} />
+      ),
       meta: getMeta("eventStatus", "episodes:episodesTable.heading.status"),
     }),
     columnHelper.accessor("contributors", {
@@ -340,100 +289,9 @@ export const createColumns = (
           title={getTitle("video", "episodes:episodesTable.heading.video")}
         />
       ),
-      cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => {
-        const thumbnail = row.original.muiEventInfo?.thumbnailUrl;
-        const parsedDuration = parseDuration(row.original.duration);
-        const duration = !parsedDuration || parsedDuration === "00:00:00" ? "∞" : parsedDuration;
-        const status = row.original.eventStatus?.split(".").pop() || "";
-        const statusIcon = getStatusIcon(status);
-        const isProcessed = status === "PROCESSED";
-
-        const thumbnailContent = (
-          <>
-            <img
-              src={thumbnail || "./nothumbnail.svg"}
-              className="
-                overflow-hidden
-                rounded-lg
-                w-[160px]
-                h-[90px]
-                transition-transform
-                duration-300
-                group-hover:scale-110
-              "
-              alt=""
-            />
-            {!isProcessed && (
-              <>
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm grayscale" />
-                <div className="absolute inset-0 flex items-center justify-center group-hover:scale-110">
-                  {React.cloneElement(statusIcon, {
-                    className: "w-1/3 h-1/3 text-white drop-shadow-lg mix-blend-screen",
-                  })}
-                </div>
-              </>
-            )}
-            {isProcessed && (
-              <div
-                className="
-                  absolute
-                  inset-0
-                  flex
-                  items-center
-                  justify-center
-                  opacity-0
-                  transition-opacity
-                  bg-black/5
-                  group-hover:opacity-100
-                  duration-300
-                "
-              ></div>
-            )}
-            <div
-              style={{
-                position: "absolute",
-                bottom: "5px",
-                right: "5px",
-                backgroundColor: "rgba(0, 0, 0, 0.7)",
-                color: "white",
-                padding: "4px",
-                borderRadius: "4px",
-              }}
-            >
-              {duration}
-            </div>
-          </>
-        );
-
-        return (
-          <div className="flex items-center h-[125px] w-[500px] space-x-2 group">
-            <div className="relative my-2 me-2 group overflow-hidden rounded-lg">
-              {isProcessed ? (
-                <a
-                  href={row.original.muiEventInfo?.publishUrl || ""}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e: React.MouseEvent) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  {thumbnailContent}
-                </a>
-              ) : (
-                thumbnailContent
-              )}
-            </div>
-            <div className="flex-1 self-center overflow-hidden min-w-0">
-              <OverflowTooltip className="block max-w-[300px] font-medium truncate whitespace-nowrap overflow-hidden">
-                {row.getValue("title")}
-              </OverflowTooltip>
-              <p className="max-w-[500px] overflow-hidden text-ellipsis break-word line-clamp-3">
-                {row.original.description}
-              </p>
-            </div>
-          </div>
-        );
-      },
+      cell: ({ row }: { row: Row<MuiEventsDataFragment> }) => (
+        <GalleryVideoCell event={row.original} />
+      ),
       meta: getMeta("video", "episodes:episodesTable.heading.video"),
     }),
     columnHelper.accessor("seriesName", {
