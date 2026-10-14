@@ -14,7 +14,7 @@ Core plugin. Registers the `/episodes` route, its sidebar entry, and the episode
 
 | Extension point | Consumed where |
 |------|------|
-| `episodes:table:actions` | The per-row actions cell ([`src/components/ActionsCell.tsx`](./src/components/ActionsCell.tsx)); a `registerComponent` with a lower `order` than 100 replaces the default. |
+| `episodes:table:actions` | The per-row actions cell ([`src/components/ActionsCell.tsx`](./src/components/ActionsCell.tsx)); any `registerComponent` on this slot replaces the default cell, and when several plugins register, the lowest `order` wins. The component receives `event`, `refetch`, `maxVisibleActions` and a `defaultRender()` to embed the stock actions. |
 | `episodes:table:status-indicators` | The status column and the gallery thumbnail overlay ([`src/components/EpisodeStatus.tsx`](./src/components/EpisodeStatus.tsx)); the first registered indicator whose `matches` accepts the row replaces the default status icon. Contract and example in [`plugins/core/README.md`](../core/README.md#adding-a-state-to-the-episodes-status-column). |
 
 ## Configuration
