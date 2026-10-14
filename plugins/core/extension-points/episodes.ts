@@ -45,6 +45,14 @@ export interface EpisodeStatusIndicator {
    * is shown literally.
    */
   label: string;
+  /**
+   * Where the state can be resolved — the editor, say. When it returns a URL
+   * for the event, the host renders the list icon as a link and points the
+   * gallery thumbnail at it instead of the player. Must not throw.
+   */
+  href?: (event: MuiEventsDataFragment) => string | null | undefined;
+  /** Link target for `href`. Defaults to `"_blank"`, like the row's own actions. */
+  target?: "_blank" | "_self";
 }
 
 export const episodesExtensionPoints = createPlugin({
@@ -80,6 +88,8 @@ export const episodesExtensionPoints = createPlugin({
         icon: "React.ComponentType<{ className?: string }> - Icon shown instead of the default",
         tone: "'ok' | 'info' | 'warning' | 'error' - Icon colour in the list view",
         label: "string - Tooltip caption: translation key (namespace:key) or literal",
+        href: "(event: MuiEventsDataFragment) => string | null | undefined - Optional link target (icon + gallery thumbnail)",
+        target: "'_blank' | '_self' - Link target for href, default '_blank'",
       },
       examples: [
         {
@@ -89,6 +99,7 @@ export const episodesExtensionPoints = createPlugin({
           icon: "CircleAlert",
           tone: "warning",
           label: "publication-status:pending",
+          href: "(event) => `/editor-ui/index.html?mediaPackageId=${event.id}`",
         },
       ],
     });

@@ -88,8 +88,30 @@ export const useEpisodeStatusIndicator = (
 };
 
 /**
+ * The URL an indicator wants the row to point at (the editor, say), or null.
+ * A throwing `href` is logged and treated as "no link", like `matches`.
+ */
+export const resolveIndicatorHref = (
+  indicator: EpisodeStatusIndicator | null,
+  event: MuiEventsDataFragment,
+): string | null => {
+  if (!indicator?.href) return null;
+  try {
+    return indicator.href(event) || null;
+  } catch (error) {
+    logger.warn(`[episodes] status indicator "${indicator.id}" href() threw and was ignored`, {
+      indicatorId: indicator.id,
+      eventId: event.id,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
+};
+
+/**
  * The list view's status column: an icon with a tooltip. A matching
- * indicator replaces both; otherwise the icon follows `eventStatus`.
+ * indicator replaces both — and turns the icon into a link when it names an
+ * `href`; otherwise the icon follows `eventStatus`.
  */
 export const EpisodeStatusCell: React.FC<{ event: MuiEventsDataFragment }> = ({ event }) => {
   const status = getEventStatus(event);
@@ -106,14 +128,29 @@ export const EpisodeStatusCell: React.FC<{ event: MuiEventsDataFragment }> = ({ 
   const caption = indicator
     ? labelFor({ key: indicator.id, label: indicator.label })
     : i18next.t(`episodes:episodesTable.status.${status.toLowerCase()}`);
+  const href = resolveIndicatorHref(indicator, event);
+
+  const icon = <Icon className={cn("h-5 w-5", className)} />;
 
   return (
     <div className="flex justify-center space-x-2">
       <Tooltip delayDuration={300}>
         <TooltipTrigger asChild>
-          <span className="flex items-center">
-            <Icon className={cn("h-5 w-5", className)} />
-          </span>
+          {href ? (
+            <a
+              href={href}
+              target={indicator?.target ?? "_blank"}
+              rel="noopener noreferrer"
+              aria-label={caption}
+              className="flex items-center"
+              // The row itself opens the detail sidebar on click.
+              onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            >
+              {icon}
+            </a>
+          ) : (
+            <span className="flex items-center">{icon}</span>
+          )}
         </TooltipTrigger>
         <TooltipContent>{caption}</TooltipContent>
       </Tooltip>

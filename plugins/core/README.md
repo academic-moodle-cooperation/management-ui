@@ -61,10 +61,14 @@ manager.registerObject("episodes:table:status-indicators", "publication-pending"
   icon: CircleAlert,
   tone: "warning",
   label: "acme:status.publicationPending",
+  // Optional: where the user resolves the state. The list icon becomes a link
+  // and the gallery thumbnail points here instead of the player.
+  href: (event) => `/editor-ui/index.html?mediaPackageId=${event.id}`,
+  target: "_blank", // the default
 } satisfies EpisodeStatusIndicator);
 ```
 
-For every row, `core-episodes` asks each registered indicator (lowest `order` first) whether it `matches` the event. The first one that does replaces the default status icon in the list view's status column, in the indicator's `tone` (`ok`, `info`, `warning`, `error` — the theme's status colours), and covers the gallery thumbnail with the same icon, the way the built-in non-processed states do. `label` follows the tab-label convention above: a translation key the host resolves, or a literal without a colon. A `matches` that throws is logged and skipped, so a faulty plugin cannot blank the table. When no indicator matches, the row shows exactly what it showed before.
+For every row, `core-episodes` asks each registered indicator (lowest `order` first) whether it `matches` the event. The first one that does replaces the default status icon in the list view's status column, in the indicator's `tone` (`ok`, `info`, `warning`, `error` — the theme's status colours), and covers the gallery thumbnail with the same icon, the way the built-in non-processed states do. `label` follows the tab-label convention above: a translation key the host resolves, or a literal without a colon. A `matches` (or `href`) that throws is logged and skipped, so a faulty plugin cannot blank the table. When no indicator matches, the row shows exactly what it showed before.
 
 ### Centrally consumed extension points
 

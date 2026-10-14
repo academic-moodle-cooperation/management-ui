@@ -7,18 +7,26 @@ import { parseDuration } from "@oc-mui/utils";
 import {
   EpisodeThumbnailStatusOverlay,
   hasThumbnailStatusOverlay,
+  resolveIndicatorHref,
   useEpisodeStatusIndicator,
 } from "./EpisodeStatus";
 
 /**
  * The gallery view's combined cell: thumbnail (with status overlay and
  * duration badge) next to title and description. The thumbnail links to the
- * player only when nothing covers it and the event has somewhere to play.
+ * player when nothing covers it and the event has somewhere to play — or to
+ * wherever a matching status indicator points (the editor, say).
  */
 export const GalleryVideoCell: React.FC<{ event: MuiEventsDataFragment }> = ({ event }) => {
   const indicator = useEpisodeStatusIndicator(event);
   const covered = hasThumbnailStatusOverlay(event, indicator);
+  const indicatorHref = resolveIndicatorHref(indicator, event);
   const publishUrl = event.muiEventInfo?.publishUrl;
+  const link = indicatorHref
+    ? { href: indicatorHref, target: indicator?.target ?? "_blank" }
+    : !covered && publishUrl
+      ? { href: publishUrl, target: "_blank" as const }
+      : null;
   const thumbnail = event.muiEventInfo?.thumbnailUrl;
   const parsedDuration = parseDuration(event.duration);
   const duration = !parsedDuration || parsedDuration === "00:00:00" ? "∞" : parsedDuration;
@@ -74,10 +82,10 @@ export const GalleryVideoCell: React.FC<{ event: MuiEventsDataFragment }> = ({ e
   return (
     <div className="flex items-center h-[125px] w-[500px] space-x-2 group">
       <div className="relative my-2 me-2 group overflow-hidden rounded-lg">
-        {!covered && publishUrl ? (
+        {link ? (
           <a
-            href={publishUrl}
-            target="_blank"
+            href={link.href}
+            target={link.target}
             rel="noopener noreferrer"
             onClick={(e: React.MouseEvent) => {
               e.stopPropagation();

@@ -143,6 +143,56 @@ describe("EpisodeStatusCell", () => {
   });
 });
 
+describe("EpisodeStatusCell with an indicator link", () => {
+  let harness: TestHarness;
+  afterEach(() => harness?.dispose());
+
+  const linked: EpisodeStatusIndicator = {
+    ...pending,
+    id: "linked",
+    href: (e) => `/editor-ui/index.html?mediaPackageId=${e.id}`,
+  };
+
+  const renderCell = (e: MuiEventsDataFragment) =>
+    render(
+      <HarnessPluginProvider manager={harness.manager}>
+        <EpisodeStatusCell event={e} />
+      </HarnessPluginProvider>,
+    );
+
+  it("turns the icon into a link to the indicator's target, opening in a new tab", async () => {
+    harness = await harnessWith(linked);
+    const { container } = renderCell(event({ id: "mp-7", muiEventInfo: { publishUrl: null } }));
+    const a = container.querySelector("a");
+    expect(a?.getAttribute("href")).toBe("/editor-ui/index.html?mediaPackageId=mp-7");
+    expect(a?.getAttribute("target")).toBe("_blank");
+    expect(a?.querySelector("svg.lucide-circle-alert")).not.toBeNull();
+  });
+
+  it("renders no link when href yields nothing", async () => {
+    harness = await harnessWith({ ...linked, href: () => null });
+    const { container } = renderCell(event({ muiEventInfo: { publishUrl: null } }));
+    expect(container.querySelector("a")).toBeNull();
+  });
+
+  it("ignores a throwing href and says so", async () => {
+    const warn = vi.spyOn(logger, "warn").mockImplementation(() => {});
+    harness = await harnessWith({
+      ...linked,
+      href: () => {
+        throw new Error("nope");
+      },
+    });
+    const { container } = renderCell(event({ muiEventInfo: { publishUrl: null } }));
+    expect(container.querySelector("a")).toBeNull();
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining("href()"),
+      expect.objectContaining({ indicatorId: "linked", error: "nope" }),
+    );
+    warn.mockRestore();
+  });
+});
+
 describe("gallery thumbnail overlay", () => {
   it("covers every event that is not plainly processed", () => {
     expect(hasThumbnailStatusOverlay(event(), null)).toBe(false);
