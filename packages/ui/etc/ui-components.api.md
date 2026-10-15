@@ -93,7 +93,6 @@ export interface AclEditorProps {
     // (undocumented)
     disabled?: boolean | undefined;
     hasChanges?: boolean | undefined;
-    // (undocumented)
     i18nNamespace?: string | undefined;
     // (undocumented)
     managedAclId?: string | undefined;
