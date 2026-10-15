@@ -15,8 +15,8 @@
   "dependencies": {
     "@oc-mui/app-runtime": "workspace:*",
     "@oc-mui/ui": "workspace:*",
-    "react": "~19.1.10",
-    "react-dom": "~19.1.10"
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@oc-mui/eslint-config": "workspace:*",
