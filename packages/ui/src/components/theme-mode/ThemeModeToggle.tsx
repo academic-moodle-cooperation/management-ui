@@ -1,5 +1,4 @@
 import { Monitor, Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
 
 import { useTranslation } from "@oc-mui/i18n";
 
@@ -11,15 +10,17 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
+import { useThemeMode } from "./theme-mode-context";
+
 /**
  * Light / Dark / System appearance switcher. Pairs with {@link ThemeModeProvider}.
  *
  * The trigger shows a sun in light mode and a moon in dark mode (cross-faded
  * via the `dark:` variant). Selecting an option persists it through
- * next-themes; "System" follows the OS preference.
+ * {@link ThemeModeProvider}; "System" follows the OS preference.
  */
 export function ThemeModeToggle() {
-  const { setTheme } = useTheme();
+  const { setTheme } = useThemeMode();
   const { t } = useTranslation();
 
   return (
