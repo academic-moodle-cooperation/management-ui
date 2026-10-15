@@ -95,4 +95,11 @@ jobs:
           esac
           echo "args=$args" >> "$GITHUB_OUTPUT"
 
+      - name: Check that the GitLab API is reachable from this runner
+        run: |
+          set +e
+          out=$(curl -sS -m 20 -o /dev/null -w '%{http_code} (%{remote_ip}, tls %{ssl_verify_result})' "${GITLAB_URL%/}/api/v4/version" 2>&1)
+          echo "GET ${GITLAB_URL%/}/api/v4/version → $out"
+          case "$out" in 200*|401*) ;; *) echo "::error::GitLab API not reachable from this runner: $out"; exit 1 ;; esac
+
       - run: node .github/scripts/gitlab-mirror/mirror.mjs ${{ steps.cmd.outputs.args }}

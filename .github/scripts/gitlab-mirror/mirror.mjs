@@ -63,11 +63,18 @@ const log = (...a) => console.log(DRY ? "[dry-run]" : "", ...a);
 // ---------------------------------------------------------------- HTTP
 
 async function request(url, { method = "GET", headers = {}, body } = {}) {
-  const res = await fetch(url, {
-    method,
-    headers: { "content-type": "application/json", ...headers },
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
+  let res;
+  try {
+    res = await fetch(url, {
+      method,
+      headers: { "content-type": "application/json", ...headers },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+  } catch (e) {
+    // undici's "fetch failed" hides the cause; surface it (ECONNREFUSED, ENOTFOUND, cert errors …)
+    const cause = e.cause ? ` — ${e.cause.code ?? ""} ${e.cause.message ?? ""}`.trimEnd() : "";
+    throw new Error(`${method} ${url.replace(/\?.*$/, "")} failed: ${e.message}${cause}`);
+  }
   const text = await res.text();
   const data = text ? safeJson(text) : null;
   if (!res.ok) {
