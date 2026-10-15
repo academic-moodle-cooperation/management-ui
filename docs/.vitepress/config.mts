@@ -209,6 +209,7 @@ function sidebar() {
         { text: "Contributing", link: "/contribute/" },
         { text: "Set up the repo", link: "/contribute/setup" },
         { text: "Your first pull request", link: "/contribute/first-pr" },
+        { text: "Issue workflow", link: "/contribute/issue-workflow" },
       ],
       [
         { text: "Full local setup", link: "/contribute/local-backend" },

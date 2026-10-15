@@ -1,0 +1,88 @@
+# One-way mirror of GitHub issues into the GitLab planning project, plus the
+# status feedback channel GitLab → GitHub. Runs here directly and is reused
+# by other repositories through `workflow_call` (they pass their own GitLab
+# project id and inherit their own GITLAB_TOKEN secret).
+#
+# Script + ownership rules: .github/scripts/gitlab-mirror/mirror.mjs
+# Process description:     docs/contribute/issue-workflow.md
+name: GitLab mirror
+
+on:
+  workflow_call:
+    inputs:
+      gitlab_project_id:
+        type: string
+        default: ""
+      gitlab_url:
+        type: string
+        default: ""
+      command:
+        type: string
+        default: ""
+    secrets:
+      GITLAB_TOKEN:
+        required: false
+  issues:
+    types: [opened, edited, closed, reopened, labeled, unlabeled]
+  pull_request_target:
+    types: [opened, reopened, ready_for_review, closed]
+  schedule:
+    - cron: "*/10 * * * *" # status GitLab → GitHub
+    - cron: "17 2 * * *" # nightly reconcile GitHub → GitLab
+  workflow_dispatch:
+    inputs:
+      command:
+        description: Command to run
+        type: choice
+        default: reconcile
+        options: [reconcile, status-to-github, backfill]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: gitlab-mirror-${{ github.repository }}-${{ github.event.issue.number || github.event.pull_request.number || github.event_name }}
+      cancel-in-progress: false
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+      GITLAB_URL: ${{ inputs.gitlab_url || vars.GITLAB_URL }}
+      GITLAB_PROJECT_ID: ${{ inputs.gitlab_project_id || vars.GITLAB_PROJECT_ID }}
+    steps:
+      # Always the script from this repository, also when called from another repo.
+      - uses: actions/checkout@v4
+        with:
+          repository: academic-moodle-cooperation/management-ui
+          ref: develop
+          sparse-checkout: .github/scripts/gitlab-mirror
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Pick command
+        id: cmd
+        env:
+          EVENT: ${{ github.event_name }}
+          ACTION: ${{ github.event.action }}
+          ISSUE: ${{ github.event.issue.number }}
+          PR: ${{ github.event.pull_request.number }}
+          CRON: ${{ github.event.schedule }}
+          COMMAND: ${{ inputs.command }}
+        run: |
+          case "$EVENT" in
+            issues)               args="issue $ISSUE $ACTION" ;;
+            pull_request_target)  args="pr $PR $ACTION" ;;
+            schedule)             [ "$CRON" = "17 2 * * *" ] && args="reconcile" || args="status-to-github" ;;
+            workflow_dispatch)    args="${COMMAND:-reconcile}" ;;
+            *)                    echo "unsupported event $EVENT"; exit 1 ;;
+          esac
+          echo "args=$args" >> "$GITHUB_OUTPUT"
+
+      - run: node .github/scripts/gitlab-mirror/mirror.mjs ${{ steps.cmd.outputs.args }}
