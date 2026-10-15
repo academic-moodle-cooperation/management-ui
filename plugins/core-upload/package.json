@@ -14,29 +14,29 @@
     "test:contract": "vitest run plugin.contract"
   },
   "dependencies": {
-    "@tanstack/react-table": "^8.19.3",
     "@oc-mui/i18n": "workspace:*",
+    "@oc-mui/plugin-core": "workspace:*",
     "@oc-mui/plugin-system": "workspace:*",
     "@oc-mui/query": "workspace:*",
     "@oc-mui/router": "workspace:*",
     "@oc-mui/store": "workspace:*",
     "@oc-mui/ui": "workspace:*",
     "@oc-mui/utils": "workspace:*",
+    "@tanstack/react-table": "^8.19.3",
     "lucide-react": "^0.417.0",
     "mustache": "^4.2.0",
-    "@oc-mui/plugin-core": "workspace:*",
     "zod": "^4.6.5"
   },
   "devDependencies": {
-    "@types/mustache": "^4.2.5",
-    "@types/react": "^19.3.0",
     "@oc-mui/eslint-config": "workspace:*",
     "@oc-mui/plugin-testing": "workspace:*",
     "@oc-mui/typescript-config": "workspace:*",
+    "@types/mustache": "^4.2.5",
+    "@types/react": "^18.0.0 || ^19.0.0",
     "eslint": "^9.20.0",
+    "react": "~19.1.10",
     "typescript": "^5.3.3",
-    "vitest": "^4.0.17",
-    "react": "^19.3.0"
+    "vitest": "^4.0.17"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"

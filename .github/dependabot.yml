@@ -34,6 +34,23 @@ updates:
         patterns:
           - "*"
         update-types: ["minor", "patch"]
+    ignore:
+      # The router devtools import internals of @tanstack/router-core and only
+      # work with the router minor they were released for; bumping them alone
+      # (1.125 → 1.167 in the October group) broke Vite's pre-bundling and
+      # with it the dev server and the E2E suite. They move together with
+      # @tanstack/react-router in @oc-mui/router — a deliberate bump, not a
+      # routine one.
+      - dependency-name: "@tanstack/router-devtools"
+      # React ≥ 19.2 logs a console error for the theme <script> next-themes
+      # 0.4.6 renders, and the E2E smoke test asserts zero console errors.
+      # Upstream fix pending (pacocoursey/next-themes #385/#387/#397); the
+      # React line is held at 19.1 via pnpm.overrides until the theme
+      # provider no longer renders a script. Then drop this and the override.
+      - dependency-name: "react"
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-minor"]
     # Majors stay individual PRs so a breaking bump is reviewed on its own.
     commit-message:
       prefix: "chore(deps)"

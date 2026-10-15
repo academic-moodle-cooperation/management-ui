@@ -10,6 +10,7 @@ import { AnyRouter } from '@tanstack/react-router';
 import { createRootRoute } from '@tanstack/react-router';
 import { createRoute } from '@tanstack/react-router';
 import { createRouter } from '@tanstack/react-router';
+import { JSX } from 'react/jsx-runtime';
 import { Link } from '@tanstack/react-router';
 import type { MuiUserQuery } from '@oc-mui/query';
 import { Navigate } from '@tanstack/react-router';
@@ -99,7 +100,7 @@ export function createProtectedComponentFactory(defaultOptions: {
 export function createProtectedRouteComponent(Component: React_2.ComponentType, protectionOptions?: Parameters<typeof withAuthProtection>[1], suspenseProps?: {
     fallback?: React_2.ReactNode;
 }): {
-    (): React_2.JSX.Element;
+    (): JSX.Element;
     displayName: string;
 };
 
