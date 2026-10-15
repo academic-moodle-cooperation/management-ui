@@ -16,13 +16,19 @@
  *   reconcile                 sync every GitHub issue (nightly)
  *   backfill                  initial import, iid = GitHub number (needs Owner token)
  *   pr <number> <action>      PR event → status transition in GitLab
+ *   pr-sync                   polling variant of `pr`: every PR updated within SINCE
  *   status-to-github          copy status:: GitLab → GitHub, close on done
+ *
+ * Event-driven (issue / pr) is what GitHub Actions uses; the polling variants
+ * (reconcile with SINCE, pr-sync) are for a scheduled job on the planning side,
+ * needed when the planning instance does not accept connections from GitHub's runners.
  *
  * Environment
  *   GITHUB_TOKEN, GITHUB_REPOSITORY (owner/repo)
  *   GITLAB_URL, GITLAB_TOKEN, GITLAB_PROJECT_ID
  *   GH_PROJECT_TOKEN, GH_PROJECT_NUMBER   optional: also set the Status field
  *                             of that org project (token needs the `project` scope)
+ *   SINCE=30m                 reconcile / pr-sync: only items updated in the last 30m (or 2h, 1d)
  *   DRY_RUN=1                 print what would change, write nothing
  *
  * Zero dependencies, Node 22+.
@@ -40,6 +46,12 @@ const GL_URL = env("GITLAB_URL").replace(/\/+$/, "");
 const GL_TOKEN = env("GITLAB_TOKEN");
 const PID = env("GITLAB_PROJECT_ID");
 const DRY = process.env.DRY_RUN === "1";
+const SINCE = (() => {
+  const m = /^(\d+)([mhd])$/.exec(process.env.SINCE ?? "");
+  if (!m) return null;
+  const ms = Number(m[1]) * { m: 60e3, h: 3600e3, d: 86400e3 }[m[2]];
+  return new Date(Date.now() - ms);
+})();
 
 const STATUS = {
   triage: "status::triage",
@@ -63,11 +75,18 @@ const log = (...a) => console.log(DRY ? "[dry-run]" : "", ...a);
 // ---------------------------------------------------------------- HTTP
 
 async function request(url, { method = "GET", headers = {}, body } = {}) {
-  const res = await fetch(url, {
-    method,
-    headers: { "content-type": "application/json", ...headers },
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
+  let res;
+  try {
+    res = await fetch(url, {
+      method,
+      headers: { "content-type": "application/json", ...headers },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+  } catch (e) {
+    // undici's "fetch failed" hides the cause; surface it (ECONNREFUSED, ENOTFOUND, cert errors …)
+    const cause = e.cause ? ` — ${e.cause.code ?? ""} ${e.cause.message ?? ""}`.trimEnd() : "";
+    throw new Error(`${method} ${url.replace(/\?.*$/, "")} failed: ${e.message}${cause}`);
+  }
   const text = await res.text();
   const data = text ? safeJson(text) : null;
   if (!res.ok) {
@@ -269,13 +288,15 @@ async function cmdIssue(number, action) {
   log(`#${number}: ${result}`);
 }
 
-async function allGhIssues() {
-  const issues = await ghAll(`repos/${REPO}/issues?state=all&sort=created&direction=asc`);
+async function allGhIssues(since) {
+  const q = since ? `&since=${encodeURIComponent(since.toISOString())}` : "";
+  const issues = await ghAll(`repos/${REPO}/issues?state=all&sort=created&direction=asc${q}`);
   return issues.filter((i) => !i.pull_request);
 }
 
 async function cmdReconcile() {
-  const issues = await allGhIssues();
+  const issues = await allGhIssues(SINCE);
+  if (SINCE) log(`reconcile: issues updated since ${SINCE.toISOString()}`);
   const tally = {};
   for (const issue of issues) {
     const r = await upsertIssue(issue);
@@ -315,23 +336,47 @@ const TRANSITIONS = {
     to: STATUS.inProgress,
     from: [STATUS.triage, STATUS.backlog, STATUS.planned, STATUS.testing, STATUS.review],
     note: (pr) => `PR [#${pr.number}](${pr.html_url}) geöffnet von @${pr.user.login} → **In progress**`,
+    marker: (pr) => `<!-- pr-event ${pr.number} opened -->`,
   },
   prMerged: {
     to: STATUS.testing,
     from: [STATUS.triage, STATUS.backlog, STATUS.planned, STATUS.inProgress],
     note: (pr) =>
       `PR [#${pr.number}](${pr.html_url}) gemerged → **Testing**. Bereit zum Test, Zuständigkeit wurde geleert.`,
+    marker: (pr) => `<!-- pr-event ${pr.number} merged -->`,
     clearAssignees: true,
   },
 };
 
+function ruleForEvent(pr, action) {
+  if (["opened", "reopened", "ready_for_review"].includes(action)) return TRANSITIONS.prOpened;
+  if (action === "closed" && pr.merged) return TRANSITIONS.prMerged;
+  return null;
+}
+
 async function cmdPr(number, action) {
   const pr = await gh(`repos/${REPO}/pulls/${number}`);
-  let rule;
-  if (["opened", "reopened", "ready_for_review"].includes(action)) rule = TRANSITIONS.prOpened;
-  else if (action === "closed" && pr.merged) rule = TRANSITIONS.prMerged;
+  const rule = ruleForEvent(pr, action);
   if (!rule) return log(`pr #${number} ${action}: nothing to do`);
+  await applyPrRule(pr, rule, { checkNotes: false });
+}
 
+/** Polling variant: every PR updated within SINCE; a note marker prevents re-applying. */
+async function cmdPrSync() {
+  const since = SINCE ?? new Date(Date.now() - 3600e3);
+  const prs = await ghAll(`repos/${REPO}/pulls?state=all&sort=updated&direction=desc`);
+  const recent = prs.filter((p) => new Date(p.updated_at) >= since);
+  log(`pr-sync: ${recent.length} PRs updated since ${since.toISOString()}`);
+  for (const pr of recent) {
+    if (pr.draft) continue;
+    const rule = pr.merged_at ? TRANSITIONS.prMerged : pr.state === "open" ? TRANSITIONS.prOpened : null;
+    if (!rule) continue;
+    await applyPrRule(pr, rule, { checkNotes: true });
+  }
+}
+
+async function applyPrRule(pr, rule, { checkNotes }) {
+  const number = pr.number;
   const numbers = issueNumbersFromPr(pr);
   if (numbers.length === 0) return log(`pr #${number}: no issue reference found`);
 
@@ -341,6 +386,10 @@ async function cmdPr(number, action) {
       log(`pr #${number}: GitLab #${n} is not a shadow issue, skipped`);
       continue;
     }
+    if (checkNotes) {
+      const notes = await glAll(`projects/${PID}/issues/${n}/notes`);
+      if (notes.some((note) => (note.body ?? "").includes(rule.marker(pr)))) continue; // already applied
+    }
     const cur = currentStatus(glIssue);
     if (cur === rule.to) continue;
     if (cur && !rule.from.includes(cur)) {
@@ -349,9 +398,12 @@ async function cmdPr(number, action) {
     }
     const body = { add_labels: rule.to };
     if (rule.clearAssignees) body.assignee_ids = [];
-    await write(`#${n}: ${cur ?? "no status"} → ${rule.to}`, async () => {
+    await write(`#${n}: ${cur ?? "no status"} → ${rule.to} (PR #${number})`, async () => {
       await gl(`projects/${PID}/issues/${n}`, { method: "PUT", body });
-      await gl(`projects/${PID}/issues/${n}/notes`, { method: "POST", body: { body: rule.note(pr) } });
+      await gl(`projects/${PID}/issues/${n}/notes`, {
+        method: "POST",
+        body: { body: `${rule.note(pr)}\n\n${rule.marker(pr)}` },
+      });
     });
   }
 }
@@ -515,6 +567,7 @@ const commands = {
   reconcile: cmdReconcile,
   backfill: cmdBackfill,
   pr: () => cmdPr(Number(args[0]), args[1]),
+  "pr-sync": cmdPrSync,
   "status-to-github": cmdStatusToGithub,
 };
 if (!commands[cmd]) {

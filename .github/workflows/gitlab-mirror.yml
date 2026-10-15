@@ -1,7 +1,12 @@
 # One-way mirror of GitHub issues into the GitLab planning project, plus the
-# status feedback channel GitLab → GitHub. Runs here directly and is reused
-# by other repositories through `workflow_call` (they pass their own GitLab
-# project id and inherit their own GITLAB_TOKEN secret).
+# status feedback channel GitLab → GitHub.
+#
+# The scheduled/event-driven triggers are OFF here: the planning instance does not
+# accept connections from GitHub-hosted runners (connection timeout), so the same
+# script runs as a scheduled CI job on the planning side instead (polling mode:
+# `reconcile` with SINCE, `pr-sync`, `status-to-github`). This workflow stays for
+# manual runs — and for the day the network allows event-driven runs again:
+# re-add `issues`, `pull_request_target` and `schedule` triggers (see git history).
 #
 # Script + ownership rules: .github/scripts/gitlab-mirror/mirror.mjs
 # Process description:     docs/contribute/issue-workflow.md
@@ -27,20 +32,13 @@ on:
         required: false
       GH_PROJECT_TOKEN:
         required: false
-  issues:
-    types: [opened, edited, closed, reopened, labeled, unlabeled]
-  pull_request_target:
-    types: [opened, reopened, ready_for_review, closed]
-  schedule:
-    - cron: "*/10 * * * *" # status GitLab → GitHub
-    - cron: "17 2 * * *" # nightly reconcile GitHub → GitLab
   workflow_dispatch:
     inputs:
       command:
         description: Command to run
         type: choice
         default: reconcile
-        options: [reconcile, status-to-github, backfill]
+        options: [reconcile, pr-sync, status-to-github, backfill]
 
 permissions:
   contents: read
@@ -94,5 +92,12 @@ jobs:
             *)                    echo "unsupported event $EVENT"; exit 1 ;;
           esac
           echo "args=$args" >> "$GITHUB_OUTPUT"
+
+      - name: Check that the GitLab API is reachable from this runner
+        run: |
+          set +e
+          out=$(curl -sS -m 20 -o /dev/null -w '%{http_code} (%{remote_ip}, tls %{ssl_verify_result})' "${GITLAB_URL%/}/api/v4/version" 2>&1)
+          echo "GET ${GITLAB_URL%/}/api/v4/version → $out"
+          case "$out" in 200*|401*) ;; *) echo "::error::GitLab API not reachable from this runner: $out"; exit 1 ;; esac
 
       - run: node .github/scripts/gitlab-mirror/mirror.mjs ${{ steps.cmd.outputs.args }}

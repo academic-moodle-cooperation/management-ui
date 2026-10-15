@@ -40,15 +40,21 @@ The shadow issue has the same number as the GitHub issue. Its description starts
 
 ## How it runs
 
-[`.github/workflows/gitlab-mirror.yml`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/.github/workflows/gitlab-mirror.yml) runs [`.github/scripts/gitlab-mirror/mirror.mjs`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/.github/scripts/gitlab-mirror/mirror.mjs) (Node 22, no dependencies):
+The logic is one script, [`.github/scripts/gitlab-mirror/mirror.mjs`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/.github/scripts/gitlab-mirror/mirror.mjs) (Node 22, no dependencies), with event-driven and polling commands:
 
-| Trigger | Command | Effect |
-| --- | --- | --- |
-| `issues` opened / edited / labeled / unlabeled / closed / reopened | `issue <n> <action>` | Upserts the shadow issue |
-| `pull_request_target` opened / reopened / ready for review / closed | `pr <n> <action>` | Status transition + a note with the PR link on the shadow issue |
-| every 10 minutes | `status-to-github` | Copies `status::` labels to GitHub, closes GitHub issues on `done` |
-| nightly | `reconcile` | Re-syncs every issue; repairs missed events |
-| manual (`workflow_dispatch`) | `backfill` | Initial import; needs a token that may set issue numbers (Owner) |
+| Command | Effect |
+| --- | --- |
+| `issue <n> <action>` | Upserts one shadow issue (GitHub `issues` event) |
+| `pr <n> <action>` | Status transition + a note with the PR link (GitHub `pull_request` event) |
+| `reconcile` | Re-syncs every issue, or only those updated within `SINCE` (e.g. `SINCE=30m`) |
+| `pr-sync` | Polling variant of `pr`: every PR updated within `SINCE`; a hidden marker in the note keeps it from applying twice |
+| `status-to-github` | Copies `status::` labels to GitHub, closes GitHub issues on `done`, optionally sets the project Status field |
+| `backfill` | Initial import; needs a token that may set issue numbers (Owner) |
+
+Where it runs depends on the network: the planning instance has to accept connections from wherever the job executes.
+
+- [`.github/workflows/gitlab-mirror.yml`](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/.github/workflows/gitlab-mirror.yml) is the GitHub Actions variant. It is kept for manual runs (`workflow_dispatch`) and documents the event triggers to re-enable if GitHub-hosted runners can reach the planning instance.
+- The maintainers' deployment runs the polling variant as a scheduled CI job on the planning side every 10 minutes (`reconcile` with `SINCE`, `pr-sync`, `status-to-github`), fetching the script from this repository's `develop` branch, because the planning instance does not accept connections from GitHub-hosted runners. Latency is then up to 10 minutes in both directions.
 
 Configuration per repository: the secret `GITLAB_TOKEN` (a group access token with `api` scope) and the variables `GITLAB_URL` and `GITLAB_PROJECT_ID`. Optionally the secret `GH_PROJECT_TOKEN` (a personal token with the `project` scope; the Actions token cannot write organization projects) and the variable `GH_PROJECT_NUMBER`: then `status-to-github` also sets the Status field of that organization project, adding issues that are not in it yet. The field's options must be named like the statuses above (`In progress`, `Done`, …). `DRY_RUN=1` makes every command print its plan without writing, which is the way to test a change locally:
 
