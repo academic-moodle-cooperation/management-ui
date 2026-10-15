@@ -63,14 +63,14 @@ jobs:
       GH_PROJECT_NUMBER: ${{ inputs.github_project_number || vars.GH_PROJECT_NUMBER || secrets.GH_PROJECT_NUMBER }}
     steps:
       # Always the script from this repository, also when called from another repo.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           repository: academic-moodle-cooperation/management-ui
           ref: develop
           sparse-checkout: .github/scripts/gitlab-mirror
           sparse-checkout-cone-mode: false
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
 
