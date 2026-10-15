@@ -237,10 +237,12 @@ The three modes documented in `docs/extend/distribution.md`.
 | 8.1 | `pnpm create-plugin trial-default` | Creates `.local-plugins/trial-default/` with the frontend + `backend/` Maven layout. |
 | 8.2 | `pnpm create-plugin trial-no-pom --no-pom` | Creates `.local-plugins/trial-no-pom/` with no `backend/`. |
 | 8.3 | `pnpm create-plugin trial-in-tree --in-tree` | Creates `plugins/trial-in-tree/`; no `backend/`. |
+| 8.3a | Inspect each scaffold's `plugin.json` (also `pnpm create-plugin trial-app --template app --no-pom`) | The `.local-plugins/` scaffolds declare `"entry": "dist/<name>.mjs"`, `"css": "dist/<name>.css"` and `"locales": "locales"` — the fields the backend tracker turns into `scriptUrl` / `cssUrl` / `localesUrl` for a JAR. The `--in-tree` scaffold carries none of them. All pass `node scripts/validate-plugins.mjs <path>`. |
 | 8.4 | `pnpm --filter @oc-mui/plugin-trial-default test:contract` | Passes on first run. (The placeholder `app:header-logo` registration is intentional.) |
 | 8.5 | `pnpm --filter @oc-mui/plugin-trial-default check-types` | Passes. |
+| 8.5a | Add `import "./probe.css"` (any stylesheet) to `src/index.ts`, then `pnpm --filter @oc-mui/plugin-trial-default build` | `dist/` contains `trial-default.mjs` **and** `trial-default.css` — the names `plugin.json`'s `entry` / `css` point at. (`createCommunityPluginConfig` sets Vite's `cssFileName`; without it the sheet would be `plugin-trial-default.css`.) |
 | 8.6 | Plugin's `plugin.json` declares `workspaceDependencies` with `Mui` prefix expectation in the README's "Conventions" section | Confirms the scaffold communicates the GraphQL naming + shared-deps contracts. |
-| 8.7 | After test, delete the trial plugins | `rm -rf .local-plugins/trial-default .local-plugins/trial-no-pom plugins/trial-in-tree` |
+| 8.7 | After test, delete the trial plugins | `rm -rf .local-plugins/trial-default .local-plugins/trial-no-pom .local-plugins/trial-app plugins/trial-in-tree` |
 
 ## Section 9 — `.local-plugins/` dev-time loading
 
