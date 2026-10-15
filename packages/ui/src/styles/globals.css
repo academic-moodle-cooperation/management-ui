@@ -1,16 +1,36 @@
-/* Cascade layer order. `plugins` sits AFTER Tailwind's `utilities` so that a
-   remote/JAR plugin's stylesheet — which @oc-mui/remote-plugin-loader loads
-   into `@layer plugins` — wins over the host's base utilities on the plugin's
-   own DOM, instead of losing to them by raw load order. Host chrome is
-   unaffected (utility definitions are deterministic), and plugins still can't
-   reorder the host because everything they ship lives in this single layer.
+/* Cascade layer order. The `plugins` layer — where @oc-mui/remote-plugin-loader
+   imports every remote/JAR plugin stylesheet — sits ABOVE Tailwind's `base`
+   and BELOW the host's `utilities`:
+
+   - Above `base`, so a plugin's own utilities beat the preflight reset
+     (`* { margin: 0; padding: 0 }`, `h1 { font-size: inherit }`). Without this
+     a plugin's `mt-10` / `sm:py-40` / `sm:text-6xl` render as nothing on any
+     deployment whose host build never generated those classes.
+   - Below `utilities`, because a remote plugin ships a COMPLETE Tailwind build
+     of its own, and class names collide across the two sheets on the host's
+     DOM. Were `plugins` last, the plugin's plain `.hidden` would beat the
+     host's `md:block` on the sidebar wrapper and the sidebar would vanish.
+     Host chrome must never depend on what a plugin happens to ship.
+
+   The price: on a plugin's own DOM, a responsive variant that only the plugin
+   generated (`sm:text-6xl`) loses to a base utility the host also has
+   (`text-4xl`) — layers beat specificity, so a higher-specificity selector in
+   the plugin does not help either. A plugin escalates such a rule with
+   Tailwind's `!` modifier (`sm:text-6xl!`): important declarations invert
+   the layer order, and they only ever match the plugin's own class names.
+   See docs/extend/styling.md.
+
+   Tailwind's `@tailwindcss/vite` plugin must be the ONLY Tailwind pass over
+   this sheet. A `postcss.config.*` that adds `@tailwindcss/postcss` on top
+   rewrites this statement (the alpha the repo once pinned hoisted `plugins`
+   below `base` — the production landing-page regression of 2026-10).
 
    INVARIANT: the host's own design tokens (`--font-sans`, `--primary`, …) MUST
    stay in an unlayered `:root {}` below — unlayered declarations beat every
    cascade layer, so the host theme survives even though a plugin ships its own
    default Tailwind theme into `@layer plugins`. Move them into `@theme`/a layer
    and a plugin's defaults would start overriding the host's. */
-@layer theme, base, components, utilities, plugins;
+@layer theme, base, plugins, components, utilities;
 
 @import "tailwindcss";
 @plugin "tailwindcss-animate";

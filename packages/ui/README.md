@@ -29,7 +29,7 @@ Plugin authors import from the **subpath exports** — never the package root �
 | `@oc-mui/ui/hooks` | `useIsMobile`, `useClickOutside`. |
 | `@oc-mui/ui/styles`, `@oc-mui/ui/globals.css` | The semantic-token CSS. Imported once by the shell. |
 | `@oc-mui/ui/config-primitives` | Building blocks for plugin config UIs. |
-| `@oc-mui/ui/postcss.config` | Shared PostCSS config — an app's `vite.config.ts` pulls it in. |
+| `@oc-mui/ui/postcss.config` | **Deprecated, no-op.** Tailwind runs through `@tailwindcss/vite` (wired by `@oc-mui/vite-config`); a host needs no PostCSS config. Kept as an empty config for one major cycle. |
 
 ## Components
 

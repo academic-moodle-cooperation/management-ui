@@ -158,9 +158,8 @@ Self-contained in [`testing.md` → Follow-ups](../contribute/testing.md#follow-
 1. E2E suites per feature — residue only (the protocol-driven specs cover the main flows; convert the remaining hand-run protocol steps).
 2. Coverage gates — extend to the apps (seven packages already enforce thresholds).
 3. Playground-as-isolated-plugin-runner.
-4. Marketplace metadata cleanup (move from hard-coded map to `extensionPoints` manifest).
-5. Visual regression — data screens + promote to CI (default + alternate-theme baselines are committed).
-6. Remote turbo cache to share artefacts across CI jobs.
+4. Visual regression — data screens + promote to CI (default + alternate-theme baselines are committed).
+5. Remote turbo cache to share artefacts across CI jobs.
 
 ---
 
@@ -336,3 +335,11 @@ feature for deployments that enable it.
   `packages/remote-plugin-loader/src/loadAndRegister.ts`.
 - **Namespace enforcement** so a loaded remote plugin can only register under its
   own declared namespace (can't hijack another plugin's routes/extension points).
+
+## 10. Plugin CSS isolation
+
+### 10.1 Class-name collisions between the host sheet and a remote plugin's sheet
+
+Since the Theme Contract revision of 2026-10-13 the `plugins` cascade layer sits between `base` and `utilities` (see [`styling.md` → Load order](../extend/styling.md#load-order)). That makes host chrome immune to whatever a plugin ships, at the price that a plugin's responsive variant (`sm:text-6xl`) loses to a host base utility (`text-4xl`) on the plugin's own DOM unless the plugin marks it `!`. Any layer order has one such collision class, because both sheets are complete Tailwind builds that share class names; the symmetric order (`plugins` last) hides the host sidebar through the plugin's plain `.hidden`.
+
+The real fix separates the two namespaces: either the plugin build uses Tailwind's `prefix()` (every plugin class becomes `uv:…`, no overlap with the host, the layer order stops mattering), or `@oc-mui/remote-plugin-loader` fetches the sheet and wraps it in `@scope` on a host-marked plugin root (needs a marker on every slot the host renders a plugin into, and portals escape the scope). Revisit when a second plugin needs `!` escalation, or when the create-plugin template's CSS entry is next touched — the prefix route changes every class string in a plugin, so it wants a migration note in `docs/extend/`.
