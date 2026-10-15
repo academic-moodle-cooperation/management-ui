@@ -7,6 +7,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "vite-env.d.ts", "vite.config.ts", "postcss.config.mjs", "tailwind.config.js"],
+  "include": ["src", "vite-env.d.ts", "vite.config.ts", "tailwind.config.js"],
   "exclude": ["node_modules", "dist", ".turbo"]
 }
