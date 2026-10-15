@@ -35,7 +35,7 @@ import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
 import type { InfiniteData } from '@oc-mui/query';
 import type { InfiniteQueryObserverResult } from '@oc-mui/query';
 import { InputHTMLAttributes } from 'react';
-import { JSX } from 'react/jsx-runtime';
+import { JSX } from 'react';
 import * as LabelPrimitive from '@radix-ui/react-label';
 import { LucideIcon } from 'lucide-react';
 import { MetadataFieldType } from '@oc-mui/query';
@@ -62,16 +62,16 @@ import { VariantProps } from 'class-variance-authority';
 import { VisibilityState } from '@tanstack/react-table';
 
 // @public (undocumented)
-export function Accordion(input: React_2.ComponentProps<typeof AccordionPrimitive.Root>): JSX.Element;
+export function Accordion(input: React_2.ComponentProps<typeof AccordionPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function AccordionContent(input: React_2.ComponentProps<typeof AccordionPrimitive.Content>): JSX.Element;
+export function AccordionContent(input: React_2.ComponentProps<typeof AccordionPrimitive.Content>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function AccordionItem(input: React_2.ComponentProps<typeof AccordionPrimitive.Item>): JSX.Element;
+export function AccordionItem(input: React_2.ComponentProps<typeof AccordionPrimitive.Item>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function AccordionTrigger(input: React_2.ComponentProps<typeof AccordionPrimitive.Trigger>): JSX.Element;
+export function AccordionTrigger(input: React_2.ComponentProps<typeof AccordionPrimitive.Trigger>): React_2.JSX.Element;
 
 // @public (undocumented)
 export interface AclData {
@@ -133,37 +133,37 @@ export interface ACLEntryInput {
 }
 
 // @public (undocumented)
-export function AlertDialog(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Root>): JSX.Element;
+export function AlertDialog(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function AlertDialogAction(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Action>): JSX.Element;
+export function AlertDialogAction(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Action>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function AlertDialogCancel(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Cancel>): JSX.Element;
+export function AlertDialogCancel(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Cancel>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function AlertDialogContent(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Content>): JSX.Element;
+export function AlertDialogContent(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Content>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function AlertDialogDescription(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Description>): JSX.Element;
+export function AlertDialogDescription(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Description>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function AlertDialogFooter(input: React_2.ComponentProps<"div">): JSX.Element;
+export function AlertDialogFooter(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function AlertDialogHeader(input: React_2.ComponentProps<"div">): JSX.Element;
+export function AlertDialogHeader(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function AlertDialogOverlay(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Overlay>): JSX.Element;
+export function AlertDialogOverlay(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Overlay>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function AlertDialogPortal(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Portal>): JSX.Element;
+export function AlertDialogPortal(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Portal>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function AlertDialogTitle(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Title>): JSX.Element;
+export function AlertDialogTitle(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Title>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function AlertDialogTrigger(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Trigger>): JSX.Element;
+export function AlertDialogTrigger(input: React_2.ComponentProps<typeof AlertDialogPrimitive.Trigger>): React_2.JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "AppHeadingProps" needs to be exported by the entry point index.d.ts
 //
@@ -182,18 +182,18 @@ export function Appshell(input: {
 }): JSX.Element;
 
 // @public (undocumented)
-export function Avatar(input: React_2.ComponentProps<typeof AvatarPrimitive.Root>): JSX.Element;
+export function Avatar(input: React_2.ComponentProps<typeof AvatarPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function AvatarFallback(input: React_2.ComponentProps<typeof AvatarPrimitive.Fallback>): JSX.Element;
+export function AvatarFallback(input: React_2.ComponentProps<typeof AvatarPrimitive.Fallback>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function AvatarImage(input: React_2.ComponentProps<typeof AvatarPrimitive.Image>): JSX.Element;
+export function AvatarImage(input: React_2.ComponentProps<typeof AvatarPrimitive.Image>): React_2.JSX.Element;
 
 // @public (undocumented)
 export function Badge(input: React_2.ComponentProps<"span"> & VariantProps<typeof badgeVariants> & {
     asChild?: boolean;
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
 export const badgeVariants: (props?: ({
@@ -201,32 +201,32 @@ export const badgeVariants: (props?: ({
 } & ClassProp) | undefined) => string;
 
 // @public (undocumented)
-export function Breadcrumb(input: React_2.ComponentProps<"nav">): JSX.Element;
+export function Breadcrumb(input: React_2.ComponentProps<"nav">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function BreadcrumbEllipsis(input: React_2.ComponentProps<"span">): JSX.Element;
+export function BreadcrumbEllipsis(input: React_2.ComponentProps<"span">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function BreadcrumbItem(input: React_2.ComponentProps<"li">): JSX.Element;
+export function BreadcrumbItem(input: React_2.ComponentProps<"li">): React_2.JSX.Element;
 
 // @public (undocumented)
 export function BreadcrumbLink(input: React_2.ComponentProps<"a"> & {
     asChild?: boolean;
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
-export function BreadcrumbList(input: React_2.ComponentProps<"ol">): JSX.Element;
+export function BreadcrumbList(input: React_2.ComponentProps<"ol">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function BreadcrumbPage(input: React_2.ComponentProps<"span">): JSX.Element;
+export function BreadcrumbPage(input: React_2.ComponentProps<"span">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function BreadcrumbSeparator(input: React_2.ComponentProps<"li">): JSX.Element;
+export function BreadcrumbSeparator(input: React_2.ComponentProps<"li">): React_2.JSX.Element;
 
 // @public (undocumented)
 export function Button(input: React_2.ComponentProps<"button"> & VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
 export const buttonVariants: (props?: ({
@@ -235,33 +235,33 @@ export const buttonVariants: (props?: ({
 } & ClassProp) | undefined) => string;
 
 // @public (undocumented)
-export function Calendar(input: React_2.ComponentProps<typeof DayPicker>): JSX.Element;
+export function Calendar(input: React_2.ComponentProps<typeof DayPicker>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function Card(input: React_2.ComponentProps<"div">): JSX.Element;
+export function Card(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function CardAction(input: React_2.ComponentProps<"div">): JSX.Element;
+export function CardAction(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function CardContent(input: React_2.ComponentProps<"div">): JSX.Element;
+export function CardContent(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function CardDescription(input: React_2.ComponentProps<"div">): JSX.Element;
+export function CardDescription(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function CardFooter(input: React_2.ComponentProps<"div">): JSX.Element;
+export function CardFooter(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function CardHeader(input: React_2.ComponentProps<"div">): JSX.Element;
+export function CardHeader(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function CardTitle(input: React_2.ComponentProps<"div">): JSX.Element;
+export function CardTitle(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 export { CellContext }
 
 // @public (undocumented)
-export function Checkbox(input: React_2.ComponentProps<typeof CheckboxPrimitive.Root>): JSX.Element;
+export function Checkbox(input: React_2.ComponentProps<typeof CheckboxPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
 export function Collapsible(input: React.ComponentProps<typeof CollapsiblePrimitive.Root>): JSX.Element;
@@ -292,7 +292,7 @@ export type ColumnLabelOverrides = Record<string, ColumnLabelOverride>;
 export { ColumnSort }
 
 // @public (undocumented)
-export function Command(input: React_2.ComponentProps<typeof Command_2>): JSX.Element;
+export function Command(input: React_2.ComponentProps<typeof Command_2>): React_2.JSX.Element;
 
 // @public (undocumented)
 export function CommandDialog(input: React_2.ComponentProps<typeof Dialog> & {
@@ -300,28 +300,28 @@ export function CommandDialog(input: React_2.ComponentProps<typeof Dialog> & {
     description?: string;
     className?: string;
     showCloseButton?: boolean;
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
-export function CommandEmpty(input: React_2.ComponentProps<typeof Command_2.Empty>): JSX.Element;
+export function CommandEmpty(input: React_2.ComponentProps<typeof Command_2.Empty>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function CommandGroup(input: React_2.ComponentProps<typeof Command_2.Group>): JSX.Element;
+export function CommandGroup(input: React_2.ComponentProps<typeof Command_2.Group>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function CommandInput(input: React_2.ComponentProps<typeof Command_2.Input>): JSX.Element;
+export function CommandInput(input: React_2.ComponentProps<typeof Command_2.Input>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function CommandItem(input: React_2.ComponentProps<typeof Command_2.Item>): JSX.Element;
+export function CommandItem(input: React_2.ComponentProps<typeof Command_2.Item>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function CommandList(input: React_2.ComponentProps<typeof Command_2.List>): JSX.Element;
+export function CommandList(input: React_2.ComponentProps<typeof Command_2.List>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function CommandSeparator(input: React_2.ComponentProps<typeof Command_2.Separator>): JSX.Element;
+export function CommandSeparator(input: React_2.ComponentProps<typeof Command_2.Separator>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function CommandShortcut(input: React_2.ComponentProps<"span">): JSX.Element;
+export function CommandShortcut(input: React_2.ComponentProps<"span">): React_2.JSX.Element;
 
 // @public (undocumented)
 export const Container: React_2.ForwardRefExoticComponent<ContainerProps & React_2.RefAttributes<HTMLDivElement>>;
@@ -346,12 +346,12 @@ export { createColumnHelper }
 export function createMetadataHelpers(metadata: MetadataItem[]): MetadataHelpers;
 
 // @public
-export function DataTable<TData extends Record<string, unknown>, TValue>(input: DataTableProps<TData, TValue>): JSX.Element | null;
+export function DataTable<TData extends Record<string, unknown>, TValue>(input: DataTableProps<TData, TValue>): React_3.JSX.Element | null;
 
 // Warning: (ae-forgotten-export) The symbol "DataTableColumnHeaderProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export function DataTableColumnHeader<TData, TValue>(input: DataTableColumnHeaderProps<TData, TValue>): JSX.Element;
+export function DataTableColumnHeader<TData, TValue>(input: DataTableColumnHeaderProps<TData, TValue>): React_3.JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "DataTablePaginationProps" needs to be exported by the entry point index.d.ts
 //
@@ -406,7 +406,7 @@ export type DateTimePickerRef = {
 };
 
 // @public (undocumented)
-export const DebouncedInput: (input: DebouncedInputProps) => JSX.Element;
+export const DebouncedInput: (input: DebouncedInputProps) => React_3.JSX.Element;
 
 // @public (undocumented)
 export interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"> {
@@ -422,118 +422,118 @@ export interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputE
 export const DefaultLandingPage: FC;
 
 // @public (undocumented)
-export function Dialog(input: React_2.ComponentProps<typeof DialogPrimitive.Root>): JSX.Element;
+export function Dialog(input: React_2.ComponentProps<typeof DialogPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DialogClose(input: React_2.ComponentProps<typeof DialogPrimitive.Close>): JSX.Element;
+export function DialogClose(input: React_2.ComponentProps<typeof DialogPrimitive.Close>): React_2.JSX.Element;
 
 // @public (undocumented)
 export function DialogContent(input: React_2.ComponentProps<typeof DialogPrimitive.Content> & {
     showCloseButton?: boolean;
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DialogDescription(input: React_2.ComponentProps<typeof DialogPrimitive.Description>): JSX.Element;
+export function DialogDescription(input: React_2.ComponentProps<typeof DialogPrimitive.Description>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DialogFooter(input: React_2.ComponentProps<"div">): JSX.Element;
+export function DialogFooter(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DialogHeader(input: React_2.ComponentProps<"div">): JSX.Element;
+export function DialogHeader(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DialogOverlay(input: React_2.ComponentProps<typeof DialogPrimitive.Overlay>): JSX.Element;
+export function DialogOverlay(input: React_2.ComponentProps<typeof DialogPrimitive.Overlay>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DialogPortal(input: React_2.ComponentProps<typeof DialogPrimitive.Portal>): JSX.Element;
+export function DialogPortal(input: React_2.ComponentProps<typeof DialogPrimitive.Portal>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DialogTitle(input: React_2.ComponentProps<typeof DialogPrimitive.Title>): JSX.Element;
+export function DialogTitle(input: React_2.ComponentProps<typeof DialogPrimitive.Title>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DialogTrigger(input: React_2.ComponentProps<typeof DialogPrimitive.Trigger>): JSX.Element;
+export function DialogTrigger(input: React_2.ComponentProps<typeof DialogPrimitive.Trigger>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function Drawer(input: React_2.ComponentProps<typeof Drawer_2.Root>): JSX.Element;
+export function Drawer(input: React_2.ComponentProps<typeof Drawer_2.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerClose(input: React_2.ComponentProps<typeof Drawer_2.Close>): JSX.Element;
+export function DrawerClose(input: React_2.ComponentProps<typeof Drawer_2.Close>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerContent(input: React_2.ComponentProps<typeof Drawer_2.Content>): JSX.Element;
+export function DrawerContent(input: React_2.ComponentProps<typeof Drawer_2.Content>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerDescription(input: React_2.ComponentProps<typeof Drawer_2.Description>): JSX.Element;
+export function DrawerDescription(input: React_2.ComponentProps<typeof Drawer_2.Description>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerFooter(input: React_2.ComponentProps<"div">): JSX.Element;
+export function DrawerFooter(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerHeader(input: React_2.ComponentProps<"div">): JSX.Element;
+export function DrawerHeader(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerOverlay(input: React_2.ComponentProps<typeof Drawer_2.Overlay>): JSX.Element;
+export function DrawerOverlay(input: React_2.ComponentProps<typeof Drawer_2.Overlay>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerPortal(input: React_2.ComponentProps<typeof Drawer_2.Portal>): JSX.Element;
+export function DrawerPortal(input: React_2.ComponentProps<typeof Drawer_2.Portal>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerTitle(input: React_2.ComponentProps<typeof Drawer_2.Title>): JSX.Element;
+export function DrawerTitle(input: React_2.ComponentProps<typeof Drawer_2.Title>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerTrigger(input: React_2.ComponentProps<typeof Drawer_2.Trigger>): JSX.Element;
+export function DrawerTrigger(input: React_2.ComponentProps<typeof Drawer_2.Trigger>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DropdownMenu(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Root>): JSX.Element;
+export function DropdownMenu(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DropdownMenuCheckboxItem(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem>): JSX.Element;
+export function DropdownMenuCheckboxItem(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DropdownMenuContent(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Content>): JSX.Element;
+export function DropdownMenuContent(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Content>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DropdownMenuGroup(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Group>): JSX.Element;
+export function DropdownMenuGroup(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Group>): React_2.JSX.Element;
 
 // @public (undocumented)
 export function DropdownMenuItem(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Item> & {
     inset?: boolean;
     variant?: "default" | "destructive";
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
 export function DropdownMenuLabel(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Label> & {
     inset?: boolean;
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DropdownMenuPortal(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Portal>): JSX.Element;
+export function DropdownMenuPortal(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Portal>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DropdownMenuRadioGroup(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>): JSX.Element;
+export function DropdownMenuRadioGroup(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DropdownMenuRadioItem(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.RadioItem>): JSX.Element;
+export function DropdownMenuRadioItem(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.RadioItem>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DropdownMenuSeparator(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Separator>): JSX.Element;
+export function DropdownMenuSeparator(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Separator>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DropdownMenuShortcut(input: React_2.ComponentProps<"span">): JSX.Element;
+export function DropdownMenuShortcut(input: React_2.ComponentProps<"span">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DropdownMenuSub(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Sub>): JSX.Element;
+export function DropdownMenuSub(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Sub>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DropdownMenuSubContent(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.SubContent>): JSX.Element;
+export function DropdownMenuSubContent(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.SubContent>): React_2.JSX.Element;
 
 // @public (undocumented)
 export function DropdownMenuSubTrigger(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.SubTrigger> & {
     inset?: boolean;
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DropdownMenuTrigger(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Trigger>): JSX.Element;
+export function DropdownMenuTrigger(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Trigger>): React_2.JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "ErrorBoundaryProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "ErrorBoundaryState" needs to be exported by the entry point index.d.ts
@@ -579,13 +579,13 @@ export const getColumnLabelOverrides: (columns: ResolvedColumnConfig[]) => Colum
 export const getColumnVisibilityDefaults: (columns: ResolvedColumnConfig[]) => Record<string, boolean>;
 
 // @public (undocumented)
-export function HoverCard(input: React_2.ComponentProps<typeof HoverCardPrimitive.Root>): JSX.Element;
+export function HoverCard(input: React_2.ComponentProps<typeof HoverCardPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function HoverCardContent(input: React_2.ComponentProps<typeof HoverCardPrimitive.Content>): JSX.Element;
+export function HoverCardContent(input: React_2.ComponentProps<typeof HoverCardPrimitive.Content>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function HoverCardTrigger(input: React_2.ComponentProps<typeof HoverCardPrimitive.Trigger>): JSX.Element;
+export function HoverCardTrigger(input: React_2.ComponentProps<typeof HoverCardPrimitive.Trigger>): React_2.JSX.Element;
 
 // @public (undocumented)
 export const Icons: {
@@ -608,13 +608,13 @@ export const Icons: {
 // Warning: (ae-forgotten-export) The symbol "InfiniteScrollProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export function InfiniteScroll(input: InfiniteScrollProps): JSX.Element;
+export function InfiniteScroll(input: InfiniteScrollProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export function Input(input: React_2.ComponentProps<"input">): JSX.Element;
+export function Input(input: React_2.ComponentProps<"input">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function Label(input: React_2.ComponentProps<typeof LabelPrimitive.Root>): JSX.Element;
+export function Label(input: React_2.ComponentProps<typeof LabelPrimitive.Root>): React_2.JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "LoadingProps" needs to be exported by the entry point index.d.ts
 //
@@ -648,7 +648,7 @@ export interface MetadataHelpers {
 // Warning: (ae-forgotten-export) The symbol "MetadataUpdateFieldProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const MetadataUpdateField: (input: MetadataUpdateFieldProps) => JSX.Element;
+export const MetadataUpdateField: (input: MetadataUpdateFieldProps) => React_3.JSX.Element;
 
 // @public
 export function moveItem<T>(items: T[], from: number, to: number): T[];
@@ -656,10 +656,10 @@ export function moveItem<T>(items: T[], from: number, to: number): T[];
 // Warning: (ae-forgotten-export) The symbol "MUITableProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export function MUITable<TData extends Record<string, unknown>, TValue>(input: MUITableProps<TData, TValue>): JSX.Element;
+export function MUITable<TData extends Record<string, unknown>, TValue>(input: MUITableProps<TData, TValue>): React_3.JSX.Element;
 
 // @public (undocumented)
-export function NavMain(input: NavMainProps): JSX.Element;
+export function NavMain(input: NavMainProps): React_2.JSX.Element;
 
 // @public (undocumented)
 export type NavMainProps = {
@@ -711,16 +711,16 @@ export const OverflowTooltip: FC<OverflowTooltipProps>;
 export const PageShell: FC<PageShellProps>;
 
 // @public (undocumented)
-export function Popover(input: React_2.ComponentProps<typeof PopoverPrimitive.Root>): JSX.Element;
+export function Popover(input: React_2.ComponentProps<typeof PopoverPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function PopoverAnchor(input: React_2.ComponentProps<typeof PopoverPrimitive.Anchor>): JSX.Element;
+export function PopoverAnchor(input: React_2.ComponentProps<typeof PopoverPrimitive.Anchor>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function PopoverContent(input: React_2.ComponentProps<typeof PopoverPrimitive.Content>): JSX.Element;
+export function PopoverContent(input: React_2.ComponentProps<typeof PopoverPrimitive.Content>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function PopoverTrigger(input: React_2.ComponentProps<typeof PopoverPrimitive.Trigger>): JSX.Element;
+export function PopoverTrigger(input: React_2.ComponentProps<typeof PopoverPrimitive.Trigger>): React_2.JSX.Element;
 
 // @public (undocumented)
 export const resolveColumnLabel: (overrides: ColumnLabelOverrides, columnKey: string, fallbackLabelKey: string, translate: (key: string) => string) => string;
@@ -744,21 +744,24 @@ export interface ResolvedColumnConfig {
 }
 
 // @public
+export type ResolvedThemeMode = "light" | "dark";
+
+// @public
 export function restrictSortingToFields<TData, TValue>(columns: ColumnDef<TData, TValue>[], sortableFields: readonly string[]): ColumnDef<TData, TValue>[];
 
 export { Row }
 
 // @public (undocumented)
-export function ScrollArea(input: React_2.ComponentProps<typeof ScrollAreaPrimitive.Root>): JSX.Element;
+export function ScrollArea(input: React_2.ComponentProps<typeof ScrollAreaPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function ScrollBar(input: React_2.ComponentProps<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>): JSX.Element;
+export function ScrollBar(input: React_2.ComponentProps<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function Select(input: React_2.ComponentProps<typeof SelectPrimitive.Root>): JSX.Element;
+export function Select(input: React_2.ComponentProps<typeof SelectPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SelectContent(input: React_2.ComponentProps<typeof SelectPrimitive.Content>): JSX.Element;
+export function SelectContent(input: React_2.ComponentProps<typeof SelectPrimitive.Content>): React_2.JSX.Element;
 
 // @public (undocumented)
 export interface SelectedElement {
@@ -785,22 +788,22 @@ export interface SelectedElement {
 }
 
 // @public (undocumented)
-export function SelectGroup(input: React_2.ComponentProps<typeof SelectPrimitive.Group>): JSX.Element;
+export function SelectGroup(input: React_2.ComponentProps<typeof SelectPrimitive.Group>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SelectItem(input: React_2.ComponentProps<typeof SelectPrimitive.Item>): JSX.Element;
+export function SelectItem(input: React_2.ComponentProps<typeof SelectPrimitive.Item>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SelectLabel(input: React_2.ComponentProps<typeof SelectPrimitive.Label>): JSX.Element;
+export function SelectLabel(input: React_2.ComponentProps<typeof SelectPrimitive.Label>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SelectScrollDownButton(input: React_2.ComponentProps<typeof SelectPrimitive.ScrollDownButton>): JSX.Element;
+export function SelectScrollDownButton(input: React_2.ComponentProps<typeof SelectPrimitive.ScrollDownButton>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SelectScrollUpButton(input: React_2.ComponentProps<typeof SelectPrimitive.ScrollUpButton>): JSX.Element;
+export function SelectScrollUpButton(input: React_2.ComponentProps<typeof SelectPrimitive.ScrollUpButton>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SelectSeparator(input: React_2.ComponentProps<typeof SelectPrimitive.Separator>): JSX.Element;
+export function SelectSeparator(input: React_2.ComponentProps<typeof SelectPrimitive.Separator>): React_2.JSX.Element;
 
 // @public (undocumented)
 export const SelectSeriesCombobox: (input: {
@@ -812,94 +815,94 @@ export const SelectSeriesCombobox: (input: {
     searchSeries?: (query: React_3.SetStateAction<string>) => void;
     selectedSeries: Series | null | undefined;
     placeholder: string;
-}) => JSX.Element;
+}) => React_3.JSX.Element;
 
 // @public (undocumented)
 export function SelectTrigger(input: React_2.ComponentProps<typeof SelectPrimitive.Trigger> & {
     size?: "sm" | "default";
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SelectValue(input: React_2.ComponentProps<typeof SelectPrimitive.Value>): JSX.Element;
+export function SelectValue(input: React_2.ComponentProps<typeof SelectPrimitive.Value>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function Separator(input: React_2.ComponentProps<typeof SeparatorPrimitive.Root>): JSX.Element;
+export function Separator(input: React_2.ComponentProps<typeof SeparatorPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function Sheet(input: React_2.ComponentProps<typeof DialogPrimitive.Root>): JSX.Element;
+export function Sheet(input: React_2.ComponentProps<typeof DialogPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SheetClose(input: React_2.ComponentProps<typeof DialogPrimitive.Close>): JSX.Element;
+export function SheetClose(input: React_2.ComponentProps<typeof DialogPrimitive.Close>): React_2.JSX.Element;
 
 // @public (undocumented)
 export function SheetContent(input: React_2.ComponentProps<typeof DialogPrimitive.Content> & {
     side?: "top" | "right" | "bottom" | "left";
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SheetDescription(input: React_2.ComponentProps<typeof DialogPrimitive.Description>): JSX.Element;
+export function SheetDescription(input: React_2.ComponentProps<typeof DialogPrimitive.Description>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SheetFooter(input: React_2.ComponentProps<"div">): JSX.Element;
+export function SheetFooter(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SheetHeader(input: React_2.ComponentProps<"div">): JSX.Element;
+export function SheetHeader(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SheetTitle(input: React_2.ComponentProps<typeof DialogPrimitive.Title>): JSX.Element;
+export function SheetTitle(input: React_2.ComponentProps<typeof DialogPrimitive.Title>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SheetTrigger(input: React_2.ComponentProps<typeof DialogPrimitive.Trigger>): JSX.Element;
+export function SheetTrigger(input: React_2.ComponentProps<typeof DialogPrimitive.Trigger>): React_2.JSX.Element;
 
 // @public (undocumented)
 export function Sidebar(input: React_2.ComponentProps<"div"> & {
     side?: "left" | "right";
     variant?: "sidebar" | "floating" | "inset";
     collapsible?: "offcanvas" | "icon" | "none";
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SidebarContent(input: React_2.ComponentProps<"div">): JSX.Element;
+export function SidebarContent(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SidebarFooter(input: React_2.ComponentProps<"div">): JSX.Element;
+export function SidebarFooter(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SidebarGroup(input: React_2.ComponentProps<"div">): JSX.Element;
+export function SidebarGroup(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
 export function SidebarGroupAction(input: React_2.ComponentProps<"button"> & {
     asChild?: boolean;
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SidebarGroupContent(input: React_2.ComponentProps<"div">): JSX.Element;
+export function SidebarGroupContent(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
 export function SidebarGroupLabel(input: React_2.ComponentProps<"div"> & {
     asChild?: boolean;
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SidebarHeader(input: React_2.ComponentProps<"div">): JSX.Element;
+export function SidebarHeader(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SidebarInput(input: React_2.ComponentProps<typeof Input>): JSX.Element;
+export function SidebarInput(input: React_2.ComponentProps<typeof Input>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SidebarInset(input: React_2.ComponentProps<"main">): JSX.Element;
+export function SidebarInset(input: React_2.ComponentProps<"main">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SidebarMenu(input: React_2.ComponentProps<"ul">): JSX.Element;
+export function SidebarMenu(input: React_2.ComponentProps<"ul">): React_2.JSX.Element;
 
 // @public (undocumented)
 export function SidebarMenuAction(input: React_2.ComponentProps<"button"> & {
     asChild?: boolean;
     showOnHover?: boolean;
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SidebarMenuBadge(input: React_2.ComponentProps<"div">): JSX.Element;
+export function SidebarMenuBadge(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "sidebarMenuButtonVariants" needs to be exported by the entry point index.d.ts
 //
@@ -908,44 +911,44 @@ export function SidebarMenuButton(input: React_2.ComponentProps<"button"> & {
     asChild?: boolean;
     isActive?: boolean;
     tooltip?: string | React_2.ComponentProps<typeof TooltipContent>;
-} & VariantProps<typeof sidebarMenuButtonVariants>): JSX.Element;
+} & VariantProps<typeof sidebarMenuButtonVariants>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SidebarMenuItem(input: React_2.ComponentProps<"li">): JSX.Element;
+export function SidebarMenuItem(input: React_2.ComponentProps<"li">): React_2.JSX.Element;
 
 // @public (undocumented)
 export function SidebarMenuSkeleton(input: React_2.ComponentProps<"div"> & {
     showIcon?: boolean;
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SidebarMenuSub(input: React_2.ComponentProps<"ul">): JSX.Element;
+export function SidebarMenuSub(input: React_2.ComponentProps<"ul">): React_2.JSX.Element;
 
 // @public (undocumented)
 export function SidebarMenuSubButton(input: React_2.ComponentProps<"a"> & {
     asChild?: boolean;
     size?: "sm" | "md";
     isActive?: boolean;
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SidebarMenuSubItem(input: React_2.ComponentProps<"li">): JSX.Element;
+export function SidebarMenuSubItem(input: React_2.ComponentProps<"li">): React_2.JSX.Element;
 
 // @public (undocumented)
 export function SidebarProvider(input: React_2.ComponentProps<"div"> & {
     defaultOpen?: boolean;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
-}): JSX.Element;
+}): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SidebarRail(input: React_2.ComponentProps<"button">): JSX.Element;
+export function SidebarRail(input: React_2.ComponentProps<"button">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SidebarSeparator(input: React_2.ComponentProps<typeof Separator>): JSX.Element;
+export function SidebarSeparator(input: React_2.ComponentProps<typeof Separator>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function SidebarTrigger(input: React_2.ComponentProps<typeof Button>): JSX.Element;
+export function SidebarTrigger(input: React_2.ComponentProps<typeof Button>): React_2.JSX.Element;
 
 // @public (undocumented)
 export function Skeleton(input: React.ComponentProps<"div">): JSX.Element;
@@ -992,34 +995,34 @@ export interface SortableListRenderState {
 export { SortingState }
 
 // @public (undocumented)
-export function Switch(input: React_2.ComponentProps<typeof SwitchPrimitive.Root>): JSX.Element;
+export function Switch(input: React_2.ComponentProps<typeof SwitchPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function Table(input: React_2.ComponentProps<"table">): JSX.Element;
+export function Table(input: React_2.ComponentProps<"table">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function TableBody(input: React_2.ComponentProps<"tbody">): JSX.Element;
+export function TableBody(input: React_2.ComponentProps<"tbody">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function TableCaption(input: React_2.ComponentProps<"caption">): JSX.Element;
+export function TableCaption(input: React_2.ComponentProps<"caption">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function TableCell(input: React_2.ComponentProps<"td">): JSX.Element;
+export function TableCell(input: React_2.ComponentProps<"td">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function TableFooter(input: React_2.ComponentProps<"tfoot">): JSX.Element;
+export function TableFooter(input: React_2.ComponentProps<"tfoot">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function TableHead(input: React_2.ComponentProps<"th">): JSX.Element;
+export function TableHead(input: React_2.ComponentProps<"th">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function TableHeader(input: React_2.ComponentProps<"thead">): JSX.Element;
+export function TableHeader(input: React_2.ComponentProps<"thead">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function TableRow(input: React_2.ComponentProps<"tr">): JSX.Element;
+export function TableRow(input: React_2.ComponentProps<"tr">): React_2.JSX.Element;
 
 // @public
-export function TableSidebar<T = unknown>(input: TableSidebarProps<T>): JSX.Element;
+export function TableSidebar<T = unknown>(input: TableSidebarProps<T>): React_3.JSX.Element;
 
 // @public (undocumented)
 export interface TableSidebarProps<T = unknown> {
@@ -1036,19 +1039,33 @@ export interface TableSidebarProps<T = unknown> {
 }
 
 // @public (undocumented)
-export function Tabs(input: React_2.ComponentProps<typeof TabsPrimitive.Root>): JSX.Element;
+export function Tabs(input: React_2.ComponentProps<typeof TabsPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function TabsContent(input: React_2.ComponentProps<typeof TabsPrimitive.Content>): JSX.Element;
+export function TabsContent(input: React_2.ComponentProps<typeof TabsPrimitive.Content>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function TabsList(input: React_2.ComponentProps<typeof TabsPrimitive.List>): JSX.Element;
+export function TabsList(input: React_2.ComponentProps<typeof TabsPrimitive.List>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function TabsTrigger(input: React_2.ComponentProps<typeof TabsPrimitive.Trigger>): JSX.Element;
+export function TabsTrigger(input: React_2.ComponentProps<typeof TabsPrimitive.Trigger>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function Textarea(input: React_2.ComponentProps<"textarea">): JSX.Element;
+export function Textarea(input: React_2.ComponentProps<"textarea">): React_2.JSX.Element;
+
+// @public
+export const THEME_MODE_STORAGE_KEY = "theme";
+
+// @public
+export type ThemeMode = "light" | "dark" | "system";
+
+// @public
+export interface ThemeModeContextValue {
+    resolvedTheme: ResolvedThemeMode;
+    setTheme: (theme: ThemeMode) => void;
+    systemTheme: ResolvedThemeMode;
+    theme: ThemeMode;
+}
 
 // @public
 export function ThemeModeProvider(input: {
@@ -1069,16 +1086,16 @@ export { toast }
 export const Toaster: (input: ToasterProps) => JSX.Element;
 
 // @public (undocumented)
-export function Tooltip(input: React_2.ComponentProps<typeof TooltipPrimitive.Root>): JSX.Element;
+export function Tooltip(input: React_2.ComponentProps<typeof TooltipPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function TooltipContent(input: React_2.ComponentProps<typeof TooltipPrimitive.Content>): JSX.Element;
+export function TooltipContent(input: React_2.ComponentProps<typeof TooltipPrimitive.Content>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function TooltipProvider(input: React_2.ComponentProps<typeof TooltipPrimitive.Provider>): JSX.Element;
+export function TooltipProvider(input: React_2.ComponentProps<typeof TooltipPrimitive.Provider>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function TooltipTrigger(input: React_2.ComponentProps<typeof TooltipPrimitive.Trigger>): JSX.Element;
+export function TooltipTrigger(input: React_2.ComponentProps<typeof TooltipPrimitive.Trigger>): React_2.JSX.Element;
 
 // @public
 export interface UiLinkProps {
@@ -1132,6 +1149,9 @@ export function useSidebarContent(): {
     updateField: string;
     setUpdateField: Dispatch<SetStateAction<string>>;
 };
+
+// @public
+export function useThemeMode(): ThemeModeContextValue;
 
 // @public
 export function useUiRouter(): UiRouterPrimitives;
