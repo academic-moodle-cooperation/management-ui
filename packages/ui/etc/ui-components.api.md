@@ -649,6 +649,9 @@ export interface MetadataHelpers {
 // @public (undocumented)
 export const MetadataUpdateField: (input: MetadataUpdateFieldProps) => JSX.Element;
 
+// @public
+export function moveItem<T>(items: T[], from: number, to: number): T[];
+
 // Warning: (ae-forgotten-export) The symbol "MUITableProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
@@ -945,6 +948,45 @@ export function SidebarTrigger(input: React_2.ComponentProps<typeof Button>): JS
 
 // @public (undocumented)
 export function Skeleton(input: React.ComponentProps<"div">): JSX.Element;
+
+// @public
+export interface SortableItem {
+    // (undocumented)
+    id: string;
+}
+
+// @public
+export function SortableList<T extends SortableItem>(input: SortableListProps<T>): JSX.Element;
+
+// @public
+export interface SortableListMove {
+    // (undocumented)
+    from: number;
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    to: number;
+}
+
+// @public (undocumented)
+export interface SortableListProps<T extends SortableItem> {
+    // (undocumented)
+    className?: string;
+    disabled?: boolean;
+    getItemLabel: (item: T) => string;
+    // (undocumented)
+    itemClassName?: string;
+    items: T[];
+    onReorder: (items: T[], move: SortableListMove) => void;
+    renderItem: (item: T, state: SortableListRenderState) => ReactNode;
+}
+
+// @public (undocumented)
+export interface SortableListRenderState {
+    handle: ReactNode;
+    index: number;
+    isDragging: boolean;
+}
 
 export { SortingState }
 

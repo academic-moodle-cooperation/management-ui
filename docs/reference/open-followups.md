@@ -275,7 +275,7 @@ exports (this PR).
   the point of no return; the **first npm publish** is.
 
   **Still open, and now deadline-bound:** curate `@oc-mui/ui`'s export surface
-  (which of the 262 are SDK, which are host internals) **before** step 2 of the
+  (which of the `./components` exports are SDK, which are host internals) **before** step 2 of the
   [first-release bootstrap](../contribute/release.md#first-release-bootstrap--one-time-checklist).
   After that publish, every removal is a major bump plus a `@deprecated` cycle.
   Also still uncovered: the `./hooks`, `./lib`, `./lib/utils` and
