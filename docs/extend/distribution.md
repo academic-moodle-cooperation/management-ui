@@ -28,6 +28,8 @@ A loaded plugin runs inside the host page and **shares modules** with it. You ca
   shares the complete module, so you get every icon, not a curated subset.
 - `@oc-mui/query`, `@oc-mui/router`, `@oc-mui/utils`, `@oc-mui/i18n`, `@oc-mui/app-runtime`
 
+Not on the list on purpose: `@oc-mui/ui/internal` — the host's own assembly layer (app shell, router primitives, error pages). It is not shared with loaded plugins and not an API contract; a plugin importing it fails at load time.
+
 Authoritative source: [`packages/remote-plugin-loader/src/transform.ts`](../../packages/remote-plugin-loader/src/transform.ts) (`SHARED_MODULE_NAMES`). Adding a name there is a public-API change and needs a changeset.
 
 The plugin's `vite.config.ts` (scaffolded by `pnpm create-plugin`) marks these as `external`. If you add new dependencies, put them in `dependencies` (bundled) — not `peerDependencies` (which only works for already-shared modules).

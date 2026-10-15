@@ -22,6 +22,44 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
  *
  * @type {import("eslint").Linter.Config[]}
  * */
+// Shared by the base rule below and the plugin-scoped block that extends it.
+const restrictedImportPatterns = [
+  {
+    group: [
+      "@oc-mui/ui/src/*",
+      "@oc-mui/ui/components/ui/*",
+      "@oc-mui/ui/components/appshell/components/*",
+    ],
+    message:
+      "Import from stable entrypoints like '@oc-mui/ui/components' or '@oc-mui/ui/lib/utils' instead of deep paths.",
+  },
+  {
+    group: ["@tanstack/react-router", "@tanstack/react-router/*"],
+    message:
+      "Do not import @tanstack/react-router directly. Use @oc-mui/router instead. (Only packages/router/ itself may import @tanstack/react-router.)",
+  },
+  {
+    group: ["@tanstack/react-query", "@tanstack/react-query/*"],
+    message:
+      "Do not import @tanstack/react-query directly. Use @oc-mui/query instead. (Only packages/query/ itself may import @tanstack/react-query.)",
+  },
+  {
+    group: ["react-i18next", "react-i18next/*", "i18next", "i18next/*"],
+    message:
+      "Do not import i18next / react-i18next directly. Use @oc-mui/i18n instead. (Only packages/i18n/ itself may import them.)",
+  },
+  {
+    group: ["jotai", "jotai/*"],
+    message:
+      "Do not import jotai directly. Use @oc-mui/store instead. (Only packages/store/ itself may import jotai.)",
+  },
+  {
+    group: ["@dnd-kit/*"],
+    message:
+      "Do not import @dnd-kit directly. Use SortableList from @oc-mui/ui/components instead. (Only packages/ui/ itself may import @dnd-kit.)",
+  },
+];
+
 export const config = [
   js.configs.recommended,
   eslintConfigPrettier,
@@ -89,47 +127,7 @@ export const config = [
       // corresponding @oc-mui/* package so we can swap implementations
       // later without breaking plugins. The wrapping package itself overrides
       // this rule via its own eslint.config.js.
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            {
-              group: [
-                "@oc-mui/ui/src/*",
-                "@oc-mui/ui/components/ui/*",
-                "@oc-mui/ui/components/appshell/components/*",
-              ],
-              message:
-                "Import from stable entrypoints like '@oc-mui/ui/components' or '@oc-mui/ui/lib/utils' instead of deep paths.",
-            },
-            {
-              group: ["@tanstack/react-router", "@tanstack/react-router/*"],
-              message:
-                "Do not import @tanstack/react-router directly. Use @oc-mui/router instead. (Only packages/router/ itself may import @tanstack/react-router.)",
-            },
-            {
-              group: ["@tanstack/react-query", "@tanstack/react-query/*"],
-              message:
-                "Do not import @tanstack/react-query directly. Use @oc-mui/query instead. (Only packages/query/ itself may import @tanstack/react-query.)",
-            },
-            {
-              group: ["react-i18next", "react-i18next/*", "i18next", "i18next/*"],
-              message:
-                "Do not import i18next / react-i18next directly. Use @oc-mui/i18n instead. (Only packages/i18n/ itself may import them.)",
-            },
-            {
-              group: ["jotai", "jotai/*"],
-              message:
-                "Do not import jotai directly. Use @oc-mui/store instead. (Only packages/store/ itself may import jotai.)",
-            },
-            {
-              group: ["@dnd-kit/*"],
-              message:
-                "Do not import @dnd-kit directly. Use SortableList from @oc-mui/ui/components instead. (Only packages/ui/ itself may import @dnd-kit.)",
-            },
-          ],
-        },
-      ],
+      "no-restricted-imports": ["error", { patterns: restrictedImportPatterns }],
     },
     settings: {
       "import/resolver": {
@@ -274,6 +272,28 @@ export const config = [
       "@typescript-eslint/no-explicit-any": "warn", // Start with warn, can escalate to error later
       // Note: no-floating-promises and no-misused-promises require type information
       // They should be enabled via @oc-mui/eslint-config/type-aware
+    },
+  },
+  // Plugins get the SDK surface only: `@oc-mui/ui/internal` is the host's
+  // assembly layer (app shell, router primitives, error pages, landing page,
+  // theme provider) — not an API contract, not shared with remote-loaded
+  // plugins, free to change with the shell.
+  {
+    files: ["**/plugins/**/*.{ts,tsx}", "**/.local-plugins/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            ...restrictedImportPatterns,
+            {
+              group: ["@oc-mui/ui/internal", "@oc-mui/ui/internal/*"],
+              message:
+                "'@oc-mui/ui/internal' is the host-only surface — plugins use '@oc-mui/ui/components'.",
+            },
+          ],
+        },
+      ],
     },
   },
   // --------------------------------------------------------------------

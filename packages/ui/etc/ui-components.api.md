@@ -17,8 +17,6 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ColumnHelper } from '@tanstack/react-table';
 import { ColumnSort } from '@tanstack/react-table';
 import { Command as Command_2 } from 'cmdk';
-import { Component } from 'react';
-import { ComponentType } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { DatePickerState } from 'react-stately';
 import { DatePickerStateOptions } from 'react-stately';
@@ -28,7 +26,6 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Dispatch } from 'react';
 import { Drawer as Drawer_2 } from 'vaul';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-import { ErrorInfo } from 'react';
 import { FC } from 'react';
 import type { FetchNextPageOptions } from '@oc-mui/query';
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
@@ -177,11 +174,6 @@ export const AppLoader: (input: {
 }) => JSX.Element;
 
 // @public (undocumented)
-export function Appshell(input: {
-    children: React.ReactNode;
-}): JSX.Element;
-
-// @public (undocumented)
 export function Avatar(input: React_2.ComponentProps<typeof AvatarPrimitive.Root>): JSX.Element;
 
 // @public (undocumented)
@@ -230,7 +222,7 @@ export function Button(input: React_2.ComponentProps<"button"> & VariantProps<ty
 
 // @public (undocumented)
 export const buttonVariants: (props?: ({
-    variant?: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
+    variant?: "default" | "link" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
     size?: "default" | "sm" | "lg" | "icon" | null | undefined;
 } & ClassProp) | undefined) => string;
 
@@ -535,43 +527,6 @@ export function DropdownMenuSubTrigger(input: React_2.ComponentProps<typeof Drop
 // @public (undocumented)
 export function DropdownMenuTrigger(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Trigger>): JSX.Element;
 
-// Warning: (ae-forgotten-export) The symbol "ErrorBoundaryProps" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "ErrorBoundaryState" needs to be exported by the entry point index.d.ts
-//
-// @public (undocumented)
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-    constructor(props: ErrorBoundaryProps);
-    // (undocumented)
-    componentDidCatch(error: Error, errorInfo: ErrorInfo): void;
-    // (undocumented)
-    static getDerivedStateFromError(error: Error): ErrorBoundaryState;
-    // (undocumented)
-    render(): ReactNode;
-}
-
-// @public (undocumented)
-export function ErrorPage(input: ErrorPageProps): JSX.Element;
-
-// @public
-export interface ErrorPageProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
-    actions?: ReactNode;
-    code?: ReactNode;
-    description?: ReactNode;
-    details?: ReactNode;
-    title: ReactNode;
-}
-
-// @public (undocumented)
-export function ForbiddenError(input: {
-    onHomeClick?: () => void;
-    onBackClick?: () => void;
-}): JSX.Element;
-
-// Warning: (ae-forgotten-export) The symbol "GeneralErrorProps" needs to be exported by the entry point index.d.ts
-//
-// @public (undocumented)
-export function GeneralError(input: GeneralErrorProps): JSX.Element;
-
 // @public (undocumented)
 export const getColumnLabelOverrides: (columns: ResolvedColumnConfig[]) => ColumnLabelOverrides;
 
@@ -620,11 +575,6 @@ export function Label(input: React_2.ComponentProps<typeof LabelPrimitive.Root>)
 //
 // @public (undocumented)
 export function Loading(input: LoadingProps): JSX.Element;
-
-// @public (undocumented)
-export function MaintenanceError(input?: {
-    onLearnMoreClick?: () => void;
-}): JSX.Element;
 
 // @public (undocumented)
 export interface ManagedACLEntry {
@@ -691,12 +641,6 @@ export type NavMainProps = {
 //
 // @public (undocumented)
 export const normalizeColumnConfigs: (columns: TableColumnItem[] | undefined) => ResolvedColumnConfig[];
-
-// @public (undocumented)
-export function NotFoundError(input: {
-    onBackClick?: () => void;
-    onHomeClick?: () => void;
-}): JSX.Element;
 
 export { OnChangeFn }
 
@@ -1051,11 +995,6 @@ export function TabsTrigger(input: React_2.ComponentProps<typeof TabsPrimitive.T
 export function Textarea(input: React_2.ComponentProps<"textarea">): JSX.Element;
 
 // @public
-export function ThemeModeProvider(input: {
-    children: ReactNode;
-}): JSX.Element;
-
-// @public
 export function ThemeModeToggle(): JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "TimeFieldProps" needs to be exported by the entry point index.d.ts
@@ -1080,43 +1019,6 @@ export function TooltipProvider(input: React_2.ComponentProps<typeof TooltipPrim
 // @public (undocumented)
 export function TooltipTrigger(input: React_2.ComponentProps<typeof TooltipPrimitive.Trigger>): JSX.Element;
 
-// @public
-export interface UiLinkProps {
-    // (undocumented)
-    activeOptions?: {
-        exact?: boolean;
-    };
-    children?: ReactNode | ((state: {
-        isActive: boolean;
-    }) => ReactNode);
-    // (undocumented)
-    className?: string;
-    // (undocumented)
-    target?: string;
-    // (undocumented)
-    title?: string;
-    // (undocumented)
-    to: string;
-}
-
-// @public (undocumented)
-export interface UiRouterPrimitives {
-    Link: ComponentType<UiLinkProps>;
-    usePathname: () => string;
-}
-
-// @public (undocumented)
-export function UiRouterProvider(input: {
-    value: UiRouterPrimitives;
-    children: ReactNode;
-}): JSX.Element;
-
-// @public (undocumented)
-export function UnauthorisedError(input: {
-    onBackClick?: () => void;
-    onHomeClick?: () => void;
-}): JSX.Element;
-
 // @public (undocumented)
 export function useIsMobile(): boolean;
 
@@ -1132,9 +1034,6 @@ export function useSidebarContent(): {
     updateField: string;
     setUpdateField: Dispatch<SetStateAction<string>>;
 };
-
-// @public
-export function useUiRouter(): UiRouterPrimitives;
 
 export { VisibilityState }
 
