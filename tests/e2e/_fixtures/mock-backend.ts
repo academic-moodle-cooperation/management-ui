@@ -45,6 +45,12 @@ export interface MockEvent {
   hasPreview: boolean;
   /** ISO 8601 duration — the UI parses this with tinyduration, not a ms number. */
   duration: string;
+  /**
+   * Player URL on the configured publication channel. Defaults to a mock
+   * player link; `null` models a processed event nobody has published yet
+   * (the Admin UI's empty "Published" column).
+   */
+  publishUrl?: string | null;
 }
 
 export interface MockPlaylistAce {
@@ -204,7 +210,7 @@ const eventNode = (e: MockEvent) => ({
   muiEventInfo: {
     isPublic: true,
     managedAclId: null,
-    publishUrl: `https://example.invalid/play/${e.id}`,
+    publishUrl: e.publishUrl === undefined ? `https://example.invalid/play/${e.id}` : e.publishUrl,
     thumbnailUrl: e.hasPreview ? `https://example.invalid/thumb/${e.id}.jpg` : null,
   },
 });

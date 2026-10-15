@@ -24,6 +24,8 @@ The plugins under [`extension-points/`](./extension-points/) register documentat
 | `table-sidebar:series:tabs` | `tableSidebarExtensionPoints` | Detail-panel tabs on the series table. |
 | `series:table:toolbar-end-actions` | `seriesExtensionPoints` | Buttons in the series-table toolbar. Used by `core-series` for Create Series. |
 | `series:create-series:acl-editor` | `seriesExtensionPoints` | Optional ACL editor in the create-series dialog. |
+| `episodes:table:actions` | `episodesExtensionPoints` | Replacement for the per-row actions cell of the episodes table (`registerComponent`, lowest `order` wins). |
+| `episodes:table:status-indicators` | `episodesExtensionPoints` | Extra states for the episodes status column and the gallery thumbnail overlay (see below). |
 | `upload:acl-editor` | `uploadExtensionPoints` | ACL editor in the upload flow. |
 | `upload:metadata-editor` | `uploadExtensionPoints` | Metadata editor in the upload flow. |
 | `upload:workflow-selector` | `uploadExtensionPoints` | Workflow picker in the upload flow. |
@@ -42,6 +44,31 @@ manager.registerComponent("table-sidebar:episodes:tabs", ExamRecordingsTab, {
 ```
 
 The host resolves the key at render time, so the caption follows a language switch, and it loads the key's namespace itself — the tab's own component may not have mounted yet. A `label` without a `:` is taken as a literal. Omit it and the caption is derived from `key` (`exam-recordings` → "Exam Recordings"), which is what every tab showed before the option existed.
+
+#### Adding a state to the episodes status column
+
+`eventStatus` says whether Opencast finished processing an event; it says nothing about states a deployment's workflow introduces on top — a finished event that still waits for someone to publish it, say. `episodes:table:status-indicators` lets a plugin name such a state. Register an `EpisodeStatusIndicator` (the type is exported from this package):
+
+```ts
+import { CircleAlert } from "lucide-react";
+import type { EpisodeStatusIndicator } from "@oc-mui/plugin-core";
+
+manager.registerObject("episodes:table:status-indicators", "publication-pending", {
+  id: "publication-pending",
+  order: 100,
+  matches: (event) =>
+    event.eventStatus.endsWith("PROCESSED") && !event.muiEventInfo?.publishUrl,
+  icon: CircleAlert,
+  tone: "warning",
+  label: "acme:status.publicationPending",
+  // Optional: where the user resolves the state. The list icon becomes a link
+  // and the gallery thumbnail points here instead of the player.
+  href: (event) => `/editor-ui/index.html?mediaPackageId=${event.id}`,
+  target: "_blank", // the default
+} satisfies EpisodeStatusIndicator);
+```
+
+For every row, `core-episodes` asks each registered indicator (lowest `order` first) whether it `matches` the event. The first one that does replaces the default status icon in the list view's status column, in the indicator's `tone` (`ok`, `info`, `warning`, `error` — the theme's status colours), and covers the gallery thumbnail with the same icon, the way the built-in non-processed states do. `label` follows the tab-label convention above: a translation key the host resolves, or a literal without a colon. A `matches` (or `href`) that throws is logged and skipped, so a faulty plugin cannot blank the table. When no indicator matches, the row shows exactly what it showed before.
 
 ### Centrally consumed extension points
 
