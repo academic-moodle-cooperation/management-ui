@@ -61,6 +61,12 @@ export interface AclEditorProps {
   onManagedAclChange: (managedAclId: string) => void;
   onClose?: (() => void) | undefined;
   disabled?: boolean | undefined;
+  /**
+   * Translation namespace for the editor's own strings. Defaults to the
+   * host's `muitable-sidebar`. A plugin that supplies its own namespace must
+   * provide the `acls.<policyName>` keys in it — otherwise the managed-ACL
+   * select renders the raw key.
+   */
   i18nNamespace?: string | undefined;
 
   /**

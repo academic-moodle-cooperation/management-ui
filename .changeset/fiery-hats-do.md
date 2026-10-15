@@ -5,4 +5,4 @@
 "@oc-mui/ui": minor
 ---
 
-Expanded config and plugins with new config keys for more dynamic configuration
+Download channel and tags are configurable: `app.channel` / `app.tags` select the publication channel and track tags the Episodes download action uses (defaults unchanged: `engage-player` / `engage-download`). The gallery view gains an `isPublic` access column, and `AclEditor` accepts an `i18nNamespace` so a plugin can translate the editor with its own namespace.
