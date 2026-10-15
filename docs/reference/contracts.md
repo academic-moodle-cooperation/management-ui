@@ -109,13 +109,13 @@ Any other module path (subpath imports, deep imports into `src/`) is **not** pub
 ## 3. Theme Contract
 
 **Authoritative document:** [`plugins/styling.md`](../extend/styling.md).
-**Contract version:** 2.0
+**Contract version:** 2.1
 
 ### Summary of guarantees
 
 - The **semantic CSS tokens** listed in the styling contract are stable across 1.x. Adding new tokens is **minor**; removing or renaming is **major**.
-- The **CSS layer order** (`theme, base, components, utilities, plugins`, declared in [`packages/ui/src/styles/globals.css`](../../packages/ui/src/styles/globals.css)) is stable.
-- The **plugin CSS layering rule** is stable: remote/JAR plugin stylesheets are loaded into the `plugins` cascade layer (`@import … layer(plugins)`, done by `@oc-mui/remote-plugin-loader`). Cascade-layer order — not stylesheet load order — determines precedence: plugin utilities win on the plugin's own DOM, while the host's design tokens stay unlayered and therefore always win. Full model: [`plugins/styling.md`](../extend/styling.md#load-order).
+- The **CSS layer order** (`theme, base, plugins, components, utilities`, declared in [`packages/ui/src/styles/globals.css`](../../packages/ui/src/styles/globals.css)) is stable.
+- The **plugin CSS layering rule** is stable: remote/JAR plugin stylesheets are loaded into the `plugins` cascade layer (`@import … layer(plugins)`, done by `@oc-mui/remote-plugin-loader`). Cascade-layer order — not stylesheet load order — determines precedence: plugin utilities beat the host's `base` (preflight) layer, the host's `utilities` layer beats plugin utilities where class names collide (so host chrome never depends on a plugin's sheet), a plugin escalates a colliding rule on its own DOM with `!important` (Tailwind's `!` modifier), and the host's design tokens stay unlayered and therefore always win. Full model: [`plugins/styling.md`](../extend/styling.md#load-order).
 - Orgs provide themes by **overriding token values only** (via CSS custom properties under `:root` and `.dark`). They must not rely on targeting internal class names.
 - **Appearance axis (light/dark/system) is shell-provided and orthogonal to the org theme.** The shell mounts an appearance provider and a header toggle; it applies a `.dark` class on `<html>` that activates the dark token block. A theme should define **both** `:root` (light) and `.dark` (dark) so it looks right in either appearance — the `.dark` block is no longer optional in practice.
 - Plugins must not emit hardcoded color, font, or spacing literals. This will become lint-enforced in Phase 4.
@@ -276,6 +276,7 @@ No contract change is allowed without the changeset - plugins cannot cope with s
 
 ## Changelog
 
+- **2026-10-13:** Theme Contract bumped to 2.1 (minor). The `plugins` cascade layer moves from *after* `utilities` to *between* `base` and `utilities` (`theme, base, plugins, components, utilities`). The 2.0 guarantee "plugin utilities win on the plugin's own DOM" was never in effect: a stray `@tailwindcss/postcss` alpha in the host's PostCSS config rewrote the compiled `@layer` statement and put `plugins` *below* `base`, so plugin utilities lost to the preflight reset (production landing page without padding or heading size). Placing `plugins` last, as declared, breaks host chrome instead — a plugin's plain `.hidden` beats the host's `md:block` on the sidebar. The new order makes plugin utilities beat preflight while host utilities keep precedence on collisions; plugins escalate their own responsive variants with `!important`. The PostCSS config is gone from the host apps and `@oc-mui/ui/postcss.config` is a deprecated no-op.
 - **2026-04-16:** Initial freeze. Manifest 1.0, Runtime API 1.0, Theme 2.0, Config 0.9 (pre-stable).
 - **2026-04-17:** Config Contract promoted to 1.0. Stable keys: `app.theme`, `app.locale`, `app.enabledPlugins`, `config.plugins[pluginId]`, `config.plugins[pluginId].enabled`. Layered merge order (`app:config:defaults` ⊕ base ⊕ `app:config`) and the `definePluginConfig` reader API are now frozen for 1.x. See [Configuration model](./configuration.md).
 - **2026-04-17:** Manifest Contract bumped to 1.1 (minor). New optional field `extensionPoints: string[]` on the top-level manifest, consumed by the contract-test harness in `@oc-mui/plugin-testing` and reserved for marketplace tooling. Runtime loader behaviour is unchanged, so existing 1.0 manifests remain valid. Host `PLUGIN_API_VERSION` bumped from `1.0.0` to `1.1.0` accordingly. Plugin-system now also exports `validatePluginMetadata` and the `PluginContext` React context so that tooling can validate manifests and inject a pre-configured `PluginManager` without reaching into `src/`.

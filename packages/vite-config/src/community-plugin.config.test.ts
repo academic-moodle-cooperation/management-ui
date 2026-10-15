@@ -33,3 +33,28 @@ describe("createCommunityPluginConfig externals", () => {
     expect(isExternal("some-random-lib")).toBe(false);
   });
 });
+
+// The scaffolded plugin.json declares `entry: dist/<name>.mjs` and
+// `css: dist/<name>.css`, and the remote loader falls back to `<name>.css`
+// next to the .mjs. Both only hold if the build names its outputs after the
+// plugin — Vite's default CSS name is derived from package.json instead.
+describe("createCommunityPluginConfig output names", () => {
+  const config = createCommunityPluginConfig({ pluginName: "my-plugin" });
+  const lib = config.build?.lib;
+
+  if (!lib || typeof lib !== "object") {
+    throw new Error("expected build.lib to be configured");
+  }
+
+  it("names the ES module <pluginName>.mjs", () => {
+    const fileName = lib.fileName;
+    if (typeof fileName !== "function") {
+      throw new Error("expected build.lib.fileName to be a function");
+    }
+    expect(fileName("es", "index")).toBe("my-plugin.mjs");
+  });
+
+  it("names the extracted stylesheet <pluginName>.css", () => {
+    expect(lib.cssFileName).toBe("my-plugin");
+  });
+});

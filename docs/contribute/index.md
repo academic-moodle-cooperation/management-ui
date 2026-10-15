@@ -10,6 +10,7 @@ Two pages, in this order:
 
 - [Set up the repo](./setup.md) — clone to a running shell with hot reload, and which backend to point it at.
 - [Your first pull request](./first-pr.md) — find work, pass the gate, write the changeset, open the PR.
+- [Issue workflow](./issue-workflow.md) — where issues are discussed, what the `status::` labels mean, and why PRs say `refs #123` instead of `closes #123`.
 
 ## Look it up
 

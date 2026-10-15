@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 // (this package's vitest config defaults to node; renderHook needs a DOM)
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 // See dateFormat.test.ts — the real modules boot i18next, which cannot run
@@ -47,6 +47,30 @@ describe("useExtensionLabels", () => {
     const entries = [{ key: "acme:exam-recordings", label: "acme:tabs.notLoadedYet" }];
 
     expect(labelsFor(entries)(entries[0]!)).toBe("Exam Recordings");
+  });
+
+  // The sidebar renders before any plugin component mounts; once the
+  // namespace it asked for arrives, the label must flip without a language
+  // switch (the only event `useI18n()` re-renders on).
+  it("re-resolves once the namespace has loaded", async () => {
+    let resolveLoad: () => void = () => {};
+    loadNamespace.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveLoad = resolve;
+        }),
+    );
+    const entries = [{ key: "acme:exam-recordings", label: "acme:tabs.arrivesLater" }];
+    const { result } = renderHook(() => useExtensionLabels(entries));
+
+    expect(result.current(entries[0]!)).toBe("Exam Recordings");
+
+    known.add("acme:tabs.arrivesLater");
+    await act(async () => {
+      resolveLoad();
+    });
+
+    expect(result.current(entries[0]!)).toBe("translated(acme:tabs.arrivesLater)");
   });
 
   it("keeps a label without a namespace as the literal it is", () => {

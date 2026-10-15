@@ -2,7 +2,7 @@
 
 Loads remote ES module plugins by URL: fetch, transform bare imports to `window.__SHARED_MODULES__`, import via blob URL, inject CSS, register GraphQL fragments, and register with the PluginManager.
 
-Plugin CSS is injected before the host shell stylesheets so generic plugin utilities do not accidentally override shared UI. If a plugin needs to intentionally restyle host components, follow the [Theme & styling contract](../../docs/extend/styling.md).
+Plugin CSS is imported into the host's `plugins` cascade layer (`@import … layer(plugins)`), which sits between Tailwind's `base` and `utilities`: a plugin's utilities beat the preflight reset, while the host's utilities keep precedence where class names collide, so a plugin sheet can never hide host chrome. Precedence is decided by layer order, not by when the stylesheet loads. If a plugin needs to intentionally restyle host components, follow the [Theme & styling contract](../../docs/extend/styling.md#load-order).
 
 ## Who uses it
 
@@ -47,6 +47,6 @@ Integration. Depends on `@oc-mui/plugin-system`, `@oc-mui/utils`.
 ## See also
 
 - [`docs/extend/distribution.md`](../../docs/extend/distribution.md) — the four distribution paths and how each uses this loader.
-- [`docs/extend/styling.md`](../../docs/extend/styling.md) — Theme Contract; explains the CSS load-order rule this loader enforces.
+- [`docs/extend/styling.md`](../../docs/extend/styling.md) — Theme Contract; explains the cascade-layer rule this loader implements ([Load order](../../docs/extend/styling.md#load-order)).
 - [`apps/shell/src/services/jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts) — the shell's JAR-loading caller.
 - [`plugins/admin-marketplace/src/services/remote-loader.ts`](../../plugins/admin-marketplace/src/services/remote-loader.ts) — the marketplace's validating wrapper.

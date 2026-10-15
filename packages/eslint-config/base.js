@@ -85,7 +85,7 @@ export const config = [
       // Prevent deep imports into UI internals - use stable exports only.
       //
       // Prevent direct imports of external libraries that we wrap on purpose.
-      // Everything routing/data/state/i18n related must go through the
+      // Everything routing/data/state/i18n/drag-and-drop related must go through the
       // corresponding @oc-mui/* package so we can swap implementations
       // later without breaking plugins. The wrapping package itself overrides
       // this rule via its own eslint.config.js.
@@ -121,6 +121,11 @@ export const config = [
               group: ["jotai", "jotai/*"],
               message:
                 "Do not import jotai directly. Use @oc-mui/store instead. (Only packages/store/ itself may import jotai.)",
+            },
+            {
+              group: ["@dnd-kit/*"],
+              message:
+                "Do not import @dnd-kit directly. Use SortableList from @oc-mui/ui/components instead. (Only packages/ui/ itself may import @dnd-kit.)",
             },
           ],
         },

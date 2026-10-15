@@ -273,7 +273,7 @@ exports (this PR).
   the point of no return; the **first npm publish** is.
 
   **Still open, and now deadline-bound:** curate `@oc-mui/ui`'s export surface
-  (which of the 262 are SDK, which are host internals) **before** step 2 of the
+  (which of the `./components` exports are SDK, which are host internals) **before** step 2 of the
   [first-release bootstrap](../contribute/release.md#first-release-bootstrap--one-time-checklist).
   After that publish, every removal is a major bump plus a `@deprecated` cycle.
   Also still uncovered: the `./hooks`, `./lib`, `./lib/utils` and
@@ -333,3 +333,11 @@ feature for deployments that enable it.
   `packages/remote-plugin-loader/src/loadAndRegister.ts`.
 - **Namespace enforcement** so a loaded remote plugin can only register under its
   own declared namespace (can't hijack another plugin's routes/extension points).
+
+## 10. Plugin CSS isolation
+
+### 10.1 Class-name collisions between the host sheet and a remote plugin's sheet
+
+Since the Theme Contract revision of 2026-10-13 the `plugins` cascade layer sits between `base` and `utilities` (see [`styling.md` → Load order](../extend/styling.md#load-order)). That makes host chrome immune to whatever a plugin ships, at the price that a plugin's responsive variant (`sm:text-6xl`) loses to a host base utility (`text-4xl`) on the plugin's own DOM unless the plugin marks it `!`. Any layer order has one such collision class, because both sheets are complete Tailwind builds that share class names; the symmetric order (`plugins` last) hides the host sidebar through the plugin's plain `.hidden`.
+
+The real fix separates the two namespaces: either the plugin build uses Tailwind's `prefix()` (every plugin class becomes `uv:…`, no overlap with the host, the layer order stops mattering), or `@oc-mui/remote-plugin-loader` fetches the sheet and wraps it in `@scope` on a host-marked plugin root (needs a marker on every slot the host renders a plugin into, and portals escape the scope). Revisit when a second plugin needs `!` escalation, or when the create-plugin template's CSS entry is next touched — the prefix route changes every class string in a plugin, so it wants a migration note in `docs/extend/`.
