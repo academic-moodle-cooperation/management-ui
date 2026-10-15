@@ -56,11 +56,13 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
-      GITLAB_URL: ${{ inputs.gitlab_url || vars.GITLAB_URL }}
-      GITLAB_PROJECT_ID: ${{ inputs.gitlab_project_id || vars.GITLAB_PROJECT_ID }}
+      # Non-secret settings belong in repository *variables*; the secrets fallback only
+      # keeps a repo working whose settings were stored as secrets (values then get masked in logs).
+      GITLAB_URL: ${{ inputs.gitlab_url || vars.GITLAB_URL || secrets.GITLAB_URL }}
+      GITLAB_PROJECT_ID: ${{ inputs.gitlab_project_id || vars.GITLAB_PROJECT_ID || secrets.GITLAB_PROJECT_ID }}
       # Optional: also keep the Status field of the org project in step (needs a token with `project` scope).
       GH_PROJECT_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
-      GITHUB_PROJECT_NUMBER: ${{ inputs.github_project_number || vars.GITHUB_PROJECT_NUMBER }}
+      GH_PROJECT_NUMBER: ${{ inputs.github_project_number || vars.GH_PROJECT_NUMBER || secrets.GH_PROJECT_NUMBER }}
     steps:
       # Always the script from this repository, also when called from another repo.
       - uses: actions/checkout@v4

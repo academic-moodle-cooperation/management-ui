@@ -21,7 +21,7 @@
  * Environment
  *   GITHUB_TOKEN, GITHUB_REPOSITORY (owner/repo)
  *   GITLAB_URL, GITLAB_TOKEN, GITLAB_PROJECT_ID
- *   GH_PROJECT_TOKEN, GITHUB_PROJECT_NUMBER   optional: also set the Status field
+ *   GH_PROJECT_TOKEN, GH_PROJECT_NUMBER   optional: also set the Status field
  *                             of that org project (token needs the `project` scope)
  *   DRY_RUN=1                 print what would change, write nothing
  *
@@ -419,7 +419,7 @@ async function cmdStatusToGithub() {
 // ------------------------------------------- status → GitHub Project field
 
 const PROJECT_TOKEN = process.env.GH_PROJECT_TOKEN ?? "";
-const PROJECT_NUMBER = Number(process.env.GITHUB_PROJECT_NUMBER ?? 0);
+const PROJECT_NUMBER = Number(process.env.GH_PROJECT_NUMBER ?? 0);
 
 /** `status::in-progress` → "In progress" (the option name in the project's Status field). */
 const optionNameFor = (status) => {
@@ -440,7 +440,7 @@ async function ghGraphql(query, variables) {
 /**
  * Keep the Status field of the org project in step with the status:: label.
  * Optional: runs only when GH_PROJECT_TOKEN (a token with `project` scope —
- * the Actions token cannot write org projects) and GITHUB_PROJECT_NUMBER are set.
+ * the Actions token cannot write org projects) and GH_PROJECT_NUMBER are set.
  * Issues missing from the project are added.
  */
 async function syncProjectStatus(glIssues, ghByNumber) {
