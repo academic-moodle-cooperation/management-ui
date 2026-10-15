@@ -79,12 +79,19 @@ jobs:
       # Symbol-drift check: fails when this PR deletes a symbol the prose still
       # names as API. Needs the base branch present to diff against, hence the
       # fetch; on a push to develop there is no PR base, so it is skipped.
+      #
+      # Feature PRs against develop only. A PR into a release line is either a
+      # sync (its content was checked PR by PR on develop; diffing the whole
+      # line delta at once trips the heuristic on prose words such as `core`
+      # or `admin` — every sync so far went red here and was merged over it)
+      # or a line-first fix, which is forward-merged into develop, where this
+      # check runs on it.
       - name: Fetch base branch
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.base_ref == 'develop'
         run: git fetch --no-tags origin "${{ github.base_ref }}"
 
       - name: Docs symbol-drift check
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.base_ref == 'develop'
         run: node scripts/docs-symbol-drift.mjs "origin/${{ github.base_ref }}"
 
   # Fast path job 2: offline link check. `--offline` restricts lychee to
