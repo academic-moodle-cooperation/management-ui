@@ -50,7 +50,7 @@ The shadow issue has the same number as the GitHub issue. Its description starts
 | nightly | `reconcile` | Re-syncs every issue; repairs missed events |
 | manual (`workflow_dispatch`) | `backfill` | Initial import; needs a token that may set issue numbers (Owner) |
 
-Configuration per repository: the secret `GITLAB_TOKEN` (a group access token with `api` scope) and the variables `GITLAB_URL` and `GITLAB_PROJECT_ID`. `DRY_RUN=1` makes every command print its plan without writing, which is the way to test a change locally:
+Configuration per repository: the secret `GITLAB_TOKEN` (a group access token with `api` scope) and the variables `GITLAB_URL` and `GITLAB_PROJECT_ID`. Optionally the secret `GH_PROJECT_TOKEN` (a personal token with the `project` scope; the Actions token cannot write organization projects) and the variable `GITHUB_PROJECT_NUMBER`: then `status-to-github` also sets the Status field of that organization project, adding issues that are not in it yet. The field's options must be named like the statuses above (`In progress`, `Done`, …). `DRY_RUN=1` makes every command print its plan without writing, which is the way to test a change locally:
 
 ```bash
 GITHUB_TOKEN=$(gh auth token) GITHUB_REPOSITORY=owner/repo \

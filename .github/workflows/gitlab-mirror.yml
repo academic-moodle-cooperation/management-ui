@@ -19,8 +19,13 @@ on:
       command:
         type: string
         default: ""
+      github_project_number:
+        type: string
+        default: ""
     secrets:
       GITLAB_TOKEN:
+        required: false
+      GH_PROJECT_TOKEN:
         required: false
   issues:
     types: [opened, edited, closed, reopened, labeled, unlabeled]
@@ -53,6 +58,9 @@ jobs:
       GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
       GITLAB_URL: ${{ inputs.gitlab_url || vars.GITLAB_URL }}
       GITLAB_PROJECT_ID: ${{ inputs.gitlab_project_id || vars.GITLAB_PROJECT_ID }}
+      # Optional: also keep the Status field of the org project in step (needs a token with `project` scope).
+      GH_PROJECT_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
+      GITHUB_PROJECT_NUMBER: ${{ inputs.github_project_number || vars.GITHUB_PROJECT_NUMBER }}
     steps:
       # Always the script from this repository, also when called from another repo.
       - uses: actions/checkout@v4

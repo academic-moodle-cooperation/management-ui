@@ -21,6 +21,8 @@
  * Environment
  *   GITHUB_TOKEN, GITHUB_REPOSITORY (owner/repo)
  *   GITLAB_URL, GITLAB_TOKEN, GITLAB_PROJECT_ID
+ *   GH_PROJECT_TOKEN, GITHUB_PROJECT_NUMBER   optional: also set the Status field
+ *                             of that org project (token needs the `project` scope)
  *   DRY_RUN=1                 print what would change, write nothing
  *
  * Zero dependencies, Node 22+.
@@ -411,6 +413,98 @@ async function cmdStatusToGithub() {
     }
   }
   log(`status-to-github: ${glIssues.length} shadow issues checked, ${changed} changes`);
+  await syncProjectStatus(glIssues, ghByNumber);
+}
+
+// ------------------------------------------- status → GitHub Project field
+
+const PROJECT_TOKEN = process.env.GH_PROJECT_TOKEN ?? "";
+const PROJECT_NUMBER = Number(process.env.GITHUB_PROJECT_NUMBER ?? 0);
+
+/** `status::in-progress` → "In progress" (the option name in the project's Status field). */
+const optionNameFor = (status) => {
+  const s = status.slice("status::".length).replace(/-/g, " ");
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
+async function ghGraphql(query, variables) {
+  const { data } = await request("https://api.github.com/graphql", {
+    method: "POST",
+    headers: { authorization: `Bearer ${PROJECT_TOKEN}` },
+    body: { query, variables },
+  });
+  if (data.errors) throw new Error(`GraphQL: ${JSON.stringify(data.errors).slice(0, 300)}`);
+  return data.data;
+}
+
+/**
+ * Keep the Status field of the org project in step with the status:: label.
+ * Optional: runs only when GH_PROJECT_TOKEN (a token with `project` scope —
+ * the Actions token cannot write org projects) and GITHUB_PROJECT_NUMBER are set.
+ * Issues missing from the project are added.
+ */
+async function syncProjectStatus(glIssues, ghByNumber) {
+  if (!PROJECT_TOKEN || !PROJECT_NUMBER) return;
+  const org = REPO.split("/")[0];
+
+  let project;
+  const items = new Map(); // "owner/repo#n" → { id, status }
+  for (let after = null; ; ) {
+    const d = await ghGraphql(
+      `query($org:String!,$num:Int!,$after:String){ organization(login:$org){ projectV2(number:$num){
+        id field(name:"Status"){ ... on ProjectV2SingleSelectField { id options{ id name } } }
+        items(first:100, after:$after){ pageInfo{ hasNextPage endCursor } nodes{ id
+          fieldValueByName(name:"Status"){ ... on ProjectV2ItemFieldSingleSelectValue { name } }
+          content{ ... on Issue { number repository{ nameWithOwner } } } } } } } }`,
+      { org, num: PROJECT_NUMBER, after },
+    );
+    project = d.organization.projectV2;
+    for (const it of project.items.nodes) {
+      if (it.content?.number) {
+        items.set(`${it.content.repository.nameWithOwner}#${it.content.number}`, {
+          id: it.id,
+          status: it.fieldValueByName?.name ?? null,
+        });
+      }
+    }
+    if (!project.items.pageInfo.hasNextPage) break;
+    after = project.items.pageInfo.endCursor;
+  }
+  const optionId = new Map(project.field.options.map((o) => [o.name, o.id]));
+
+  let changed = 0;
+  for (const s of glIssues) {
+    if (!isMirrorOf(s.iid, s.description)) continue;
+    const issue = ghByNumber.get(s.iid);
+    const status = currentStatus(s);
+    if (!issue || !status) continue;
+    const want = optionNameFor(status);
+    const wantId = optionId.get(want);
+    if (!wantId) {
+      console.warn(`project: no Status option "${want}" — add it to the project`);
+      continue;
+    }
+    let item = items.get(`${REPO}#${s.iid}`);
+    if (!item) {
+      item = await write(`project: add #${s.iid}`, async () => {
+        const d = await ghGraphql(
+          `mutation($p:ID!,$c:ID!){ addProjectV2ItemById(input:{projectId:$p,contentId:$c}){ item{ id } } }`,
+          { p: project.id, c: issue.node_id },
+        );
+        return { id: d.addProjectV2ItemById.item.id, status: null };
+      });
+      if (!item) continue; // dry run
+    }
+    if (item.status === want) continue;
+    await write(`project: #${s.iid} ${item.status ?? "—"} → ${want}`, () =>
+      ghGraphql(
+        `mutation($p:ID!,$i:ID!,$f:ID!,$o:String!){ updateProjectV2ItemFieldValue(input:{projectId:$p,itemId:$i,fieldId:$f,value:{singleSelectOptionId:$o}}){ projectV2Item{ id } } }`,
+        { p: project.id, i: item.id, f: project.field.id, o: wantId },
+      ),
+    );
+    changed++;
+  }
+  log(`project #${PROJECT_NUMBER}: ${changed} status changes`);
 }
 
 // ------------------------------------------------------------- main
