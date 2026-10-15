@@ -178,10 +178,21 @@ The single home for the product-version model (PR/issue templates link here):
 
 1. Branch a feature off `develop`; open a PR back into `develop` **with a changeset** (CI enforces it).
 2. Features accumulate on `develop` along with their changesets.
-3. To release, push the release line — branch `r/NN.x` from `develop` for a new major, or merge `develop` into the existing line.
+3. To release, push the release line — branch `r/NN.x` from `develop` for a new major, or merge `develop` into the existing line. When syncing into an *older* line, leave out what needs a newer Opencast — see [Features that need a newer Opencast major](#features-that-need-a-newer-opencast-major).
 4. On that line, the changesets action opens a **"Version Packages" PR** (version bumps + changelog).
 5. Merge that PR → the action publishes the bumped packages to npm, creates the per-package tags plus the product tag `vNN.x.y`, and cuts a GitHub Release.
 6. Forward-merge the line back toward `develop` so the version bumps flow back.
+
+### Features that need a newer Opencast major
+
+Most changes are Opencast-agnostic and should reach every supported line. Some depend on an API that exists only from a given major on — the first case is playlists (the GraphQL playlist API, Opencast 20+). The everyday loop does not change for them: they land on `develop`, get tested there together with everything else, and ship with the next release of each line that can run them. What changes is the sync into older lines.
+
+1. **Label the PR `ocNN-only`** (e.g. `oc20-only`) when it needs Opencast NN or newer: GraphQL operations the older schema lacks, Java against newer Opencast APIs, UI with no fallback. The label is the one record the person doing the next sync needs — decide it at review time, not when syncing.
+2. **Keep it out of the older line when syncing.** On the sync branch, revert the labelled PRs' merge commits (`git revert -m 1 <merge-sha>`) before opening the sync PR; when exclusions outnumber inclusions, cherry-pick the wanted range instead. Either way, the sync PR lists what was left out.
+3. **The schema guard catches the data layer.** Each line pins its own Opencast major's schema (`packages/query/src/schema.graphql`, see step 3 of [Bugfixes across multiple release lines](#bugfixes-across-multiple-release-lines)), so an operation the older backend lacks fails `pnpm codegen:check` on that line — a forgotten exclusion goes red instead of shipping. UI-only features behind a runtime check are not caught by it; they are not harmful either, and the label keeps them out all the same.
+4. **Gate at runtime where the same build can meet both backends.** The npm SDK is single-stream (only the newest line publishes), so a plugin built against the current SDK may run on an older Opencast. Probe the capability — an introspection such as `__type(name: "Playlist")`, or a `capabilities` flag — and hide the feature with a clear notice rather than letting a request fail.
+
+Features that work on every major need nothing special: no label, and the next `develop → r/NN.x` sync carries them. "Oldest line first" applies to **bugfixes** on a release line, not to features — see [Bugfixes across multiple release lines](#bugfixes-across-multiple-release-lines).
 
 ## Cutting a release
 
