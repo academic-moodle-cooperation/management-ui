@@ -25,8 +25,8 @@
     "@oc-mui/ui-config": "workspace:*",
     "@oc-mui/utils": "workspace:*",
     "@oc-mui/vite-config": "workspace:*",
-    "react": "~19.1.10",
-    "react-dom": "~19.1.10"
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@oc-mui/eslint-config": "workspace:*",

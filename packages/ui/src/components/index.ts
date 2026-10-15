@@ -15,8 +15,16 @@ export * from "./overflow-tooltip";
 export * from "./sortable-list";
 export * from "./appLoader";
 export * from "./acl-editor";
-// ThemeModeProvider is host-only (`@oc-mui/ui/internal`); the toggle stays public.
+// ThemeModeProvider is host-only (`@oc-mui/ui/internal`); the toggle and the
+// hook a plugin may read the resolved mode with stay public.
 export { ThemeModeToggle } from "./theme-mode/ThemeModeToggle";
+export {
+  THEME_MODE_STORAGE_KEY,
+  useThemeMode,
+  type ResolvedThemeMode,
+  type ThemeMode,
+  type ThemeModeContextValue,
+} from "./theme-mode/theme-mode-context";
 
 // Explicitly re-export types for Vite/Rollup compatibility
 // when using 'import type' syntax

@@ -182,7 +182,7 @@ When you must restyle a host or shared component:
 
 ## Dark mode
 
-Light/dark is the **appearance axis**, separate from the org-branding theme (`app.theme`). The shell mounts `ThemeModeProvider` (from `@oc-mui/ui`, wrapping [`next-themes`](https://github.com/pacocoursey/next-themes)) and renders a Light/Dark/System toggle in the header. It defaults to the user's OS preference and persists their choice, applying a `.dark` class on `<html>` that activates the dark token block in `globals.css`.
+Light/dark is the **appearance axis**, separate from the org-branding theme (`app.theme`). The shell mounts `ThemeModeProvider` (from `@oc-mui/ui`, a small in-house provider with no third-party dependency) and renders a Light/Dark/System toggle in the header. It defaults to the user's OS preference and persists their choice in `localStorage` under the key `theme`, applying a `.dark` class on `<html>` that activates the dark token block in `globals.css`. The shell's `index.html` applies that class once more before React mounts, so there is no light flash on first paint. A plugin that needs to know the current appearance (say, to configure a chart library) reads it with `useThemeMode()` from `@oc-mui/ui/components`, which returns `theme` (the choice), `resolvedTheme` (what is applied), `systemTheme` (the OS preference) and `setTheme`.
 
 **Your plugin gets dark mode for free — if you follow the one rule.** Because every semantic token (`--background`, `--primary`, `--sidebar`, …) already has a `.dark` value, a plugin that uses the token-backed utilities (`bg-background`, `text-foreground`, `border-border`, `text-muted-foreground`, …) flips automatically. You do nothing.
 

@@ -688,6 +688,9 @@ export interface ResolvedColumnConfig {
 }
 
 // @public
+export type ResolvedThemeMode = "light" | "dark";
+
+// @public
 export function restrictSortingToFields<TData, TValue>(columns: ColumnDef<TData, TValue>[], sortableFields: readonly string[]): ColumnDef<TData, TValue>[];
 
 export { Row }
@@ -995,6 +998,20 @@ export function TabsTrigger(input: React_2.ComponentProps<typeof TabsPrimitive.T
 export function Textarea(input: React_2.ComponentProps<"textarea">): JSX.Element;
 
 // @public
+export const THEME_MODE_STORAGE_KEY = "theme";
+
+// @public
+export type ThemeMode = "light" | "dark" | "system";
+
+// @public
+export interface ThemeModeContextValue {
+    resolvedTheme: ResolvedThemeMode;
+    setTheme: (theme: ThemeMode) => void;
+    systemTheme: ResolvedThemeMode;
+    theme: ThemeMode;
+}
+
+// @public
 export function ThemeModeToggle(): JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "TimeFieldProps" needs to be exported by the entry point index.d.ts
@@ -1034,6 +1051,9 @@ export function useSidebarContent(): {
     updateField: string;
     setUpdateField: Dispatch<SetStateAction<string>>;
 };
+
+// @public
+export function useThemeMode(): ThemeModeContextValue;
 
 export { VisibilityState }
 
