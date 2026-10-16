@@ -40,3 +40,10 @@ converts the managed-ACL id to the `Long` the mutation input expects,
 relying on `any`, and `MetadataUpdateField` now accepts the field's value in
 whatever scalar type the API delivers it (`value: unknown`) and normalises it
 itself — callers that passed `string | string[]` are unaffected.
+
+`@oc-mui/ui` additionally types `buttonVariants` and `badgeVariants` explicitly
+and exports the aliases it uses (`ButtonVariant`, `ButtonSize`,
+`ButtonVariantProps`, `BadgeVariant`, `BadgeVariantProps`). The accepted values
+are unchanged; the inferred literal unions printed their members in
+machine-dependent order, which made the API report drift between local and CI
+runs.
