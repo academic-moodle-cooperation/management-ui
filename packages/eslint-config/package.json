@@ -38,7 +38,9 @@
     "react-internal.js",
     "type-aware.js",
     "rules/index.js",
-    "rules/graphql-operation-naming.js"
+    "rules/graphql-operation-naming.js",
+    "rules/no-cross-plugin-config.js",
+    "rules/no-palette-classes.js"
   ],
   "dependencies": {
     "@eslint/js": "^9.27.0",
