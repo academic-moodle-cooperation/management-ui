@@ -36,7 +36,8 @@ anything under `plugins/`, `packages/`, or `apps/`.
 - Layer 0 (Core): `utils`, `typescript-config`, `eslint-config`, `tailwind-config`
 
 Published under the `@oc-mui/*` scope. Wrapped libraries are consumed via the
-facade only (`@oc-mui/router`, `@oc-mui/query`, `@oc-mui/i18n`, `@oc-mui/store`),
+facade only (`@oc-mui/router`, `@oc-mui/query`, `@oc-mui/i18n`, `@oc-mui/store`,
+`@oc-mui/ui` for drag-and-drop),
 never directly.
 
 ### Plugins (`plugins/`) — built-in, ship with the repo

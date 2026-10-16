@@ -1,7 +1,8 @@
 import { Suspense } from "react";
 
 import { ComponentResolver } from "@oc-mui/plugin-system";
-import { DefaultLandingPage, AppLoader, Container } from "@oc-mui/ui/components";
+import { AppLoader, Container } from "@oc-mui/ui/components";
+import { DefaultLandingPage } from "@oc-mui/ui/internal";
 
 export const DefaultLandingComponent = () => (
   <Suspense fallback={<AppLoader />}>

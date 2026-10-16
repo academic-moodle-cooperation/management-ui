@@ -11,7 +11,7 @@ Reference — pick the path that matches how your plugin will be operated.
 | **In-tree** | Core plugins shipped with this repo | `plugins/<name>/` | Bundled into `@oc-mui/plugins`, statically imported at app startup |
 | **`.local-plugins/` dev mount** | Dev-time iteration on an org plugin | `.local-plugins/<name>/` (gitignored) | Vite dev server serves the plugin's `dist/`; shell fetches `/local-plugins/manifest.json` |
 | **JAR** | Production deploy with an Opencast backend | One JAR per org plugin in `$OPENCAST_HOME/deploy/` | Backend exposes `/management-tool/ui/config/plugins.json` |
-| **CDN / community registry** | Plugins users install themselves at runtime | Any HTTPS URL serving an ESM bundle | Marketplace "Developer Tools" or the future registry |
+| **CDN / community registry** | Plugins users install themselves at runtime | Any HTTPS URL serving an ESM bundle | Marketplace Discover tab (registry entries, or the advanced URL card) |
 
 All four paths end at the same place: `@oc-mui/remote-plugin-loader` fetches the `.mjs`, rewires its bare imports to shared modules, injects the CSS, and registers the plugin with `PluginManager`. The differences are only in **how the URL list is produced**.
 
@@ -27,6 +27,8 @@ A loaded plugin runs inside the host page and **shares modules** with it. You ca
   hand-drawn `Icons`. For lucide icons import `lucide-react` directly: the host
   shares the complete module, so you get every icon, not a curated subset.
 - `@oc-mui/query`, `@oc-mui/router`, `@oc-mui/utils`, `@oc-mui/i18n`, `@oc-mui/app-runtime`
+
+Not on the list on purpose: `@oc-mui/ui/internal` — the host's own assembly layer (app shell, router primitives, error pages). It is not shared with loaded plugins and not an API contract; a plugin importing it fails at load time.
 
 Authoritative source: [`packages/remote-plugin-loader/src/transform.ts`](../../packages/remote-plugin-loader/src/transform.ts) (`SHARED_MODULE_NAMES`). Adding a name there is a public-API change and needs a changeset.
 
@@ -135,7 +137,7 @@ On the next reload the console shows `Skipping JAR plugin(s) replaced by
 production (which never reads `.local-plugins/`), so it's safe to ship in
 the manifest. Find the scope to use in the backend's
 `/management-tool/ui/config/plugins.json` (`scope` field) or the
-marketplace's "Organization (JAR)" card.
+marketplace's Installed tab (Organization group).
 
 ## Path 3 — JAR (production)
 
@@ -147,7 +149,8 @@ For deployments that already ship an Opencast backend, plugins are packaged as J
 
 ```
 .local-plugins/my-plugin/
-├── package.json, plugin.json, src/, locales/   ← the frontend
+├── package.json, plugin.json, src/             ← the frontend
+├── locales/                                    ← not scaffolded; create it when you add i18nNamespaces
 └── backend/
     ├── pom.xml                                 ← the Maven config
     ├── README.md                               ← build + deploy how-to
@@ -156,6 +159,16 @@ For deployments that already ship an Opencast backend, plugins are packaged as J
 ```
 
 Skip the Maven layout with `--no-pom` for plugins that will only ever be distributed via CDN (Path 4). In-tree plugins (`--in-tree`, scaffolded under `plugins/`) never get a `backend/` — they're bundled into the shell's own JAR rather than shipping as their own.
+
+The scaffolded `plugin.json` already declares where the build puts the bundle, which is what the backend needs to point the shell at it:
+
+```json
+"entry": "dist/my-plugin.mjs",
+"css": "dist/my-plugin.css",
+"locales": "locales"
+```
+
+`entry` is the one that matters: the tracker only emits a `scriptUrl` for a single-module manifest when it is set, and without one the shell has to guess the bundle URL (see "Discovery & load" below). Keep the three in step with `vite.config.ts` if you ever rename the output — `createCommunityPluginConfig({ pluginName })` emits `dist/<pluginName>.mjs` and, when the plugin imports any stylesheet, `dist/<pluginName>.css`. The `--in-tree` scaffold drops these fields: in-tree plugins are compiled into the shell and never go through the tracker.
 
 ### Build
 
@@ -168,7 +181,7 @@ mvn package
 This runs in three steps:
 
 1. **Frontend** — installs Node + pnpm under the plugin root and runs `pnpm install && pnpm run build`, producing `dist/<plugin-id>.mjs` (and optionally `.css`, `assets/`).
-2. **Resource copy** — copies `dist/`, `plugin.json`, and `locales/` into `target/classes/static/plugins/<plugin-id>/`.
+2. **Resource copy** — copies `dist/`, `plugin.json`, and `locales/` into `target/classes/static/plugins/<plugin-id>/`. `dist/` is flattened into that directory (the bundle lands at `static/plugins/<plugin-id>/<plugin-id>.mjs`), which is why the tracker uses only the basename of the manifest's `entry` / `css`.
 3. **OSGi bundle** — packages everything as a JAR with the headers the tracker reads:
 
    | Header | Value | Required? |
@@ -210,13 +223,15 @@ The backend tracks every OSGi bundle carrying the `Management-Plugin` header. Fo
 
 The aggregated list is served at `GET /management-tool/ui/config/plugins.json`, which the shell ([`apps/shell/src/services/jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts)) fetches at boot. Matching `config`-type plugins load first, runtime config is re-merged, then the rest load filtered by `app.enabledPlugins` and `config.plugins[id].enabled`.
 
+For a manifest without a `modules` array (the scaffold's shape), the tracker reads the top-level `type`, `entry`, `css` and `locales`: `scriptUrl` is `Http-Alias` plus the basename of `entry`, `cssUrl` likewise from `css`, and `localesUrl` is `Http-Alias` plus `locales` (or plus `locales` by convention when only `i18nNamespaces` is declared). **No `entry`, no `scriptUrl`.** The plugin still shows up in `plugins.json`, and the shell then guesses `<app base>/static/plugins/<plugin-id>/<plugin-id>.mjs` — a guess that only holds while `api.baseUrl` matches the JAR's `Http-Alias` prefix and the bundle is named after the plugin id. The scaffold declares all three fields so the backend's answer is authoritative; if you hand-write a manifest, `entry` is the field not to forget.
+
 A single JAR can ship multiple `.mjs` entry modules (one folder, many bundles). Declare them in `plugin.json`'s `modules` array; the tracker will emit one entry per module.
 
 See [Configuration model](../reference/configuration.md) for the full filtering model.
 
 ### What the POM does (and doesn't)
 
-The scaffolded POM inherits from `org.opencastproject:base:19-SNAPSHOT` directly. This matches what the Management UI itself does (`apps/shell/pom.xml`). External plugin authors need Opencast's Maven repository reachable from their build environment.
+The scaffolded POM inherits from `org.opencastproject:base:20-SNAPSHOT` directly. This matches what the Management UI itself does (`apps/shell/pom.xml`). External plugin authors need Opencast's Maven repository reachable from their build environment.
 
 The POM:
 
@@ -242,7 +257,7 @@ For plugins distributed publicly:
    ```
 
    Or any CDN/object store that serves with correct CORS headers.
-3. **Install**: Inside the running shell, open the Marketplace → Developer Tools → paste the URL → "Install" persists it in `localStorage`. On reload the marketplace loads it through the same `remote-plugin-loader`.
+3. **Install**: Inside the running shell, open the Marketplace → Discover → "Advanced: load a plugin from a URL" → paste the URL → "Install" persists it in `localStorage`. On reload the marketplace loads it through the same `remote-plugin-loader`.
 
 > **Remote loading is opt-in.** Because Path 4 fetches and executes third-party
 > code at runtime, it is **off by default**. An administrator must enable it in
@@ -258,7 +273,10 @@ For plugins distributed publicly:
 > }
 > ```
 >
-> While disabled, the Community and Developer sections show how to turn it on and
+> HTTPS is required for plugin URLs in production builds; a deployment that
+> itself runs without TLS (a test box, an intranet install) can opt out with
+> `"allowInsecureHttp": true` in the same `remotePlugins` block — leave that
+> off wherever TLS exists. While disabled, the Discover tab shows how to turn it on and
 > the loader refuses every remote load (including previously-installed plugins).
 > Paths 1–3 (bundled, in-tree, JAR) are unaffected. The marketplace routes are
 > also admin-only. Note the allowlist authenticates the *host*, not the code's
@@ -267,7 +285,40 @@ For plugins distributed publicly:
 > would admit every GitHub user's Pages site. To serve plugins from your own
 > GitHub Pages, allow your subdomain explicitly (e.g. `"my-org.github.io"`).
 
-A first-party community registry is planned but not yet shipped.
+### Listing plugins in a registry
+
+Instead of handing every admin a raw URL, a deployment can point the
+marketplace at one or more **plugin registries** — plain static JSON files it
+lists for browsing:
+
+```json
+{
+  "plugins": {
+    "admin-marketplace": {
+      "remotePlugins": {
+        "enabled": true,
+        "allowedDomains": ["cdn.jsdelivr.net"],
+        "registryUrls": ["https://example.org/mui-plugins/registry.json"]
+      }
+    }
+  }
+}
+```
+
+A `registry.json` carries a `plugins` array; the entry format is documented in
+[`registry-fetcher.ts`](../../plugins/admin-marketplace/src/services/registry-fetcher.ts).
+The essentials per entry: `id`, `name`, `description`, `version`, `author`,
+`url` (the `.mjs` bundle), `category`, and optionally
+`workspaceDependencies`/`apiVersion` (compatibility gates) plus
+`localesUrl` + `i18nNamespaces` — set those two so a remote-loaded plugin keeps
+its translations (`<localesUrl>/<namespace>/<language>.json`, the same layout
+the JAR path serves); without them its UI falls back to raw keys.
+
+Listing and loading are gated separately: configuring a registry makes its
+entries *visible*, but Try/Install still require `enabled: true` and a host on
+the `allowedDomains` list. No registry is contacted unless `registryUrls` is
+set (in dev, a local `public/registry.json` is picked up automatically for
+testing the flow).
 
 ## Picking between JAR and CDN
 

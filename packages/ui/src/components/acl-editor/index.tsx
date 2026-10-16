@@ -50,6 +50,8 @@ type UserSearchResult = NonNullable<NonNullable<MuiSearchUserQuery["searchUser"]
  * unexported, the report only says `AclEditor: React.FC<AclEditorProps>` and a
  * change to any prop — required becoming optional, a callback signature
  * changing — slips through unnoticed.
+ * Additionally, the i18nNamespace is used for the ACLs, meaning the supplied namespace must provide
+ * the acls.<policyName> keys, otherwise the translation will render the raw keys.
  */
 export interface AclEditorProps {
   selectedElement?: SelectedElement | null | undefined;
@@ -59,6 +61,13 @@ export interface AclEditorProps {
   onManagedAclChange: (managedAclId: string) => void;
   onClose?: (() => void) | undefined;
   disabled?: boolean | undefined;
+  /**
+   * Translation namespace for the editor's own strings. Defaults to the
+   * host's `muitable-sidebar`. A plugin that supplies its own namespace must
+   * provide the `acls.<policyName>` keys in it — otherwise the managed-ACL
+   * select renders the raw key.
+   */
+  i18nNamespace?: string | undefined;
 
   /**
    * The three below drive the "edit an existing entity, then press Update"
@@ -84,6 +93,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   onManagedAclChange,
   onHasChangesChange = () => {},
   disabled = false,
+  i18nNamespace = "muitable-sidebar",
 }) => {
   // Only UI state is local
   const [open, setOpen] = useState(false);
@@ -97,7 +107,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
   // when the bundle arrived, so the first render in any context that hadn't
   // already loaded it showed bare keys ("accessPolicy", "addUser", …).
   // Naming the namespace here makes react-i18next load it and re-render.
-  const { t } = useI18n("muitable-sidebar");
+  const { t } = useI18n(i18nNamespace);
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useMuiSearchUserQuery({
@@ -273,7 +283,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
                 .filter((policy) => policy != null)
                 .map((policy) => (
                   <SelectItem key={policy.id} value={policy.id}>
-                    {t(`muitable-sidebar:acls.${policy.name}`)}
+                    {t(`${i18nNamespace}:acls.${policy.name}`)}
                   </SelectItem>
                 ))}
             </SelectContent>

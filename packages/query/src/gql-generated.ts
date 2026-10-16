@@ -892,6 +892,8 @@ export type MuiEventsFromSeriesQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<EventOrderByInput>;
   query?: InputMaybe<Scalars['String']['input']>;
+  channel?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>> | InputMaybe<Scalars['String']['input']>>;
 }>;
 
 
@@ -902,6 +904,8 @@ export type MuiGetMyEventsQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<EventOrderByInput>;
   query?: InputMaybe<Scalars['String']['input']>;
+  channel?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>> | InputMaybe<Scalars['String']['input']>>;
 }>;
 
 
@@ -963,6 +967,8 @@ export type MuiUpdateSeriesMutation = { updateSeries: { __typename: 'Series', id
 export type MuiUpdateEventMutationVariables = Exact<{
   eventId: Scalars['String']['input'];
   metadata: CommonEventMetadataInput;
+  channel?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>> | InputMaybe<Scalars['String']['input']>>;
 }>;
 
 
@@ -1124,9 +1130,9 @@ export const MuiEventsDataFragmentDoc = `
   location
   presenters
   startDate
-  publications(channel: "engage-player") {
+  publications(channel: $channel) {
     uri
-    tracks(tags: "engage-download") {
+    tracks(tags: $tags) {
       width
       uri
       tags
@@ -1579,7 +1585,7 @@ useSuspenseMuiGetSeriesNameByIdQuery.getKey = (variables: MuiGetSeriesNameByIdQu
 useMuiGetSeriesNameByIdQuery.fetcher = (variables: MuiGetSeriesNameByIdQueryVariables, options?: RequestInit['headers']) => fetchData<MuiGetSeriesNameByIdQuery, MuiGetSeriesNameByIdQueryVariables>(MuiGetSeriesNameByIdDocument, variables, options);
 
 export const MuiEventsFromSeriesDocument = `
-    query MuiEventsFromSeries($seriesId: String!, $limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String) {
+    query MuiEventsFromSeries($seriesId: String!, $limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String, $channel: String, $tags: [String]) {
   seriesById(id: $seriesId) {
     id
     title
@@ -1633,7 +1639,7 @@ useSuspenseMuiEventsFromSeriesQuery.getKey = (variables: MuiEventsFromSeriesQuer
 useMuiEventsFromSeriesQuery.fetcher = (variables: MuiEventsFromSeriesQueryVariables, options?: RequestInit['headers']) => fetchData<MuiEventsFromSeriesQuery, MuiEventsFromSeriesQueryVariables>(MuiEventsFromSeriesDocument, variables, options);
 
 export const MuiGetMyEventsDocument = `
-    query MuiGetMyEvents($limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String) {
+    query MuiGetMyEvents($limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String, $channel: String, $tags: [String]) {
   currentUser {
     myEvents(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
       totalCount
@@ -2050,7 +2056,7 @@ export const useMuiUpdateSeriesMutation = <
 useMuiUpdateSeriesMutation.fetcher = (variables: MuiUpdateSeriesMutationVariables, options?: RequestInit['headers']) => fetchData<MuiUpdateSeriesMutation, MuiUpdateSeriesMutationVariables>(MuiUpdateSeriesDocument, variables, options);
 
 export const MuiUpdateEventDocument = `
-    mutation MuiUpdateEvent($eventId: String!, $metadata: CommonEventMetadataInput!) {
+    mutation MuiUpdateEvent($eventId: String!, $metadata: CommonEventMetadataInput!, $channel: String, $tags: [String]) {
   mui {
     updateEvent(id: $eventId, metadata: $metadata) {
       ...MuiEventsData

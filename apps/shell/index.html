@@ -19,6 +19,31 @@
     <meta name="description" content="Management UI Core Application" />
 
     <title>Management UI</title>
+
+    <!--
+      Appearance bootstrap. Applies the persisted light/dark choice (or the OS
+      preference) to <html> before the first paint, so a dark-mode user never
+      sees a light flash while React loads. Mirrors ThemeModeProvider from
+      @oc-mui/ui, which reads the same localStorage key ("theme") and takes
+      over once mounted — keep the two in sync.
+    -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var mode =
+            stored === "light" || stored === "dark"
+              ? stored
+              : window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+          document.documentElement.classList.add(mode);
+          document.documentElement.style.colorScheme = mode;
+        } catch (e) {
+          /* storage or matchMedia unavailable: the provider applies it on mount */
+        }
+      })();
+    </script>
   </head>
 
   <body>

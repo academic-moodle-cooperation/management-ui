@@ -201,5 +201,13 @@
   },
   "reset": "Reset",
   "update": "Update",
-  "selectSeries": "Select a series"
+  "selectSeries": "Select a series",
+  "sortableList": {
+    "dragHandle": "Reorder {{label}}",
+    "instructions": "To pick up an item, press space or enter. Use the arrow keys to move it, press space or enter again to drop it, or press escape to cancel.",
+    "pickedUp": "Picked up {{label}}, position {{position}} of {{count}}.",
+    "movedTo": "{{label}} moved to position {{position}} of {{count}}.",
+    "dropped": "{{label}} dropped at position {{position}} of {{count}}.",
+    "cancelled": "Reordering {{label}} cancelled."
+  }
 }
