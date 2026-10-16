@@ -173,7 +173,12 @@ jobs:
         # (JAR-only) line never publishes npm, so its release leg is detected
         # as "no changesets were pending when this run started". Idempotent:
         # skips if the tag already exists (e.g. a re-run).
-        if: steps.changesets.outputs.published == 'true' || (steps.line.outputs.newest == 'false' && steps.line.outputs.pending == 'false')
+        # Runs whenever the line has no pending changesets, i.e. after a Version
+        # PR merged — not only when this very run published to npm. A re-run
+        # after a failed publish step would otherwise never create the product
+        # tag (the step itself skips when the tag already exists, so it is
+        # safe to run on every push).
+        if: steps.line.outputs.pending == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
