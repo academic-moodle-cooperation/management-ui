@@ -15,7 +15,7 @@ import {
   type AnyRoute,
   type AnyRouter,
 } from "@oc-mui/router";
-import { ErrorBoundary } from "@oc-mui/ui/components/errors/general-error";
+import { ErrorBoundary } from "@oc-mui/ui/internal";
 
 import { AppRuntimeProvider, AppRuntimeContextProvider } from "./AppRuntimeProvider";
 
