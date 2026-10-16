@@ -223,7 +223,7 @@ export function Button(input: React_2.ComponentProps<"button"> & VariantProps<ty
 // @public (undocumented)
 export const buttonVariants: (props?: ({
     variant?: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
-    size?: "icon" | "default" | "sm" | "lg" | null | undefined;
+    size?: "default" | "sm" | "lg" | "icon" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public (undocumented)

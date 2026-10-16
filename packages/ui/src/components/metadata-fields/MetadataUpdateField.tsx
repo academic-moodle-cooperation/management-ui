@@ -41,18 +41,39 @@ import {
   Button,
 } from "../ui";
 
-type MetadataUpdateFieldProps = MetadataFieldType & {
-  value: string | string[];
+// `Omit` applied to a union collapses it to the common keys and loses the
+// `type` discriminant, so distribute it over the members by hand.
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+
+// The editor always works on the string form of a field's value, whatever the
+// schema scalar behind it (Long, DateTime, …) — drop the generated `value`
+// before overriding it, otherwise the two intersect into e.g. `number & string`.
+type MetadataUpdateFieldProps = DistributiveOmit<MetadataFieldType, "value"> & {
+  /**
+   * The field's current value — either an edit in progress (`string | string[]`)
+   * or the value as delivered by the API, whose type depends on the field's
+   * scalar (`Long` → `number`, `DateTime` → `string`, …). Normalised to its
+   * string form below.
+   */
+  value: unknown;
   onUpdate: (value: string | string[]) => void;
 };
 
+const toEditableValue = (value: unknown): string | string[] =>
+  Array.isArray(value)
+    ? value.map((item) => (item === null || item === undefined ? "" : String(item)))
+    : value === null || value === undefined
+      ? ""
+      : String(value);
+
 export const MetadataUpdateField = ({
   type,
-  value,
+  value: rawValue,
   listProvider,
   collection,
   onUpdate,
 }: MetadataUpdateFieldProps) => {
+  const value = toEditableValue(rawValue);
   // `collection` is `Maybe<JSON>` in the schema — a backend may omit the
   // option list for a list-backed field. Every read below goes through this,
   // so a missing list renders the "no options" branch instead of throwing.
@@ -210,7 +231,7 @@ export const MetadataUpdateField = ({
               onValueChange={(value) => {
                 onUpdate(value);
               }}
-              value={value}
+              value={typeof value === "string" ? value : ""}
             >
               <SelectTrigger>
                 <SelectValue placeholder={t(`noOptionSelected`)}>
