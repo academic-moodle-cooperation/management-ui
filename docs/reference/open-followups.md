@@ -341,3 +341,26 @@ feature for deployments that enable it.
 Since the Theme Contract revision of 2026-10-13 the `plugins` cascade layer sits between `base` and `utilities` (see [`styling.md` → Load order](../extend/styling.md#load-order)). That makes host chrome immune to whatever a plugin ships, at the price that a plugin's responsive variant (`sm:text-6xl`) loses to a host base utility (`text-4xl`) on the plugin's own DOM unless the plugin marks it `!`. Any layer order has one such collision class, because both sheets are complete Tailwind builds that share class names; the symmetric order (`plugins` last) hides the host sidebar through the plugin's plain `.hidden`.
 
 The real fix separates the two namespaces: either the plugin build uses Tailwind's `prefix()` (every plugin class becomes `uv:…`, no overlap with the host, the layer order stops mattering), or `@oc-mui/remote-plugin-loader` fetches the sheet and wraps it in `@scope` on a host-marked plugin root (needs a marker on every slot the host renders a plugin into, and portals escape the scope). Revisit when a second plugin needs `!` escalation, or when the create-plugin template's CSS entry is next touched — the prefix route changes every class string in a plugin, so it wants a migration note in `docs/extend/`.
+
+## 11. React held at 19.2 — WebKit performance regression in 19.3
+
+**Status:** open (2026-10-16).
+
+Lifting React from the 19.1 hold to 19.3 made the *production* build
+(`vite preview`, which the browser matrix runs against) roughly four times
+slower on WebKit: the matrix went from 150 passed in 2.4 min (webkit +
+tablet-ios) to 11 failed / 28 flaky / 111 passed in 10.2 min, all
+`toBeVisible` timeouts on random tests. Bisected on dispatch runs of
+`matrix.yml`: the same application code with React 19.1 or 19.2 is green,
+with 19.3.1 it is not, so the `ThemeModeProvider` rewrite that came with the
+bump is not involved. Chromium and Firefox are unaffected.
+
+**Current state:** `react` and `react-dom` are pinned to `~19.2.0` in every
+package and in the root `pnpm.overrides` (so every peer resolves to the one
+copy), and Dependabot ignores React minors again.
+
+**To lift the hold:** push a probe branch with the candidate React version,
+run `gh workflow run matrix.yml --ref <branch> -f projects="--project=webkit --project=tablet-ios"`,
+and only drop the override + the Dependabot ignore when that run is green in
+the 2–3 minute range. Worth a minimal reproduction against React upstream
+once the cause is narrowed down.
