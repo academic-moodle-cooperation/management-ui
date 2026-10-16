@@ -174,7 +174,6 @@ export const createQueryClient: () => QueryClient;
 export type CurrentUser = {
     email?: Maybe<Scalars['String']['output']>;
     myEvents: EventList;
-    myPlaylists: PlaylistList;
     mySeries: SeriesList;
     name?: Maybe<Scalars['String']['output']>;
     roles: Array<Maybe<Scalars['String']['output']>>;
@@ -187,14 +186,6 @@ export type CurrentUserMyEventsArgs = {
     limit?: InputMaybe<Scalars['Int']['input']>;
     offset?: InputMaybe<Scalars['Int']['input']>;
     orderBy?: InputMaybe<EventOrderByInput>;
-    query?: InputMaybe<Scalars['String']['input']>;
-};
-
-// @public
-export type CurrentUserMyPlaylistsArgs = {
-    limit?: InputMaybe<Scalars['Int']['input']>;
-    offset?: InputMaybe<Scalars['Int']['input']>;
-    orderBy?: InputMaybe<PlaylistOrderByInput>;
     query?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -247,11 +238,6 @@ export interface DeleteEventPermanentlyResult {
         status?: string | null;
     } | null;
 }
-
-// @public
-export type DeletePlaylistPayload = {
-    id?: Maybe<Scalars['String']['output']>;
-};
 
 // @public (undocumented)
 export type DurationMetadataField = MetadataFieldInterface & {
@@ -345,14 +331,6 @@ export type EventOrderByInput = {
 };
 
 // @public
-export type EventPlaylistEntry = PlaylistEntry & {
-    contentId?: Maybe<Scalars['String']['output']>;
-    event?: Maybe<Event_2>;
-    id?: Maybe<Scalars['Long']['output']>;
-    type?: Maybe<PlaylistEntryType>;
-};
-
-// @public
 export type EventPublicationsArgs = {
     channel?: InputMaybe<Scalars['String']['input']>;
     tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
@@ -385,13 +363,6 @@ export function getAppConfigSync(pluginManager?: PluginManager, baseConfig?: App
 export const getCachedAppConfig: () => Promise<AppConfig>;
 
 export { gql }
-
-// @public
-export type InaccessiblePlaylistEntry = PlaylistEntry & {
-    contentId?: Maybe<Scalars['String']['output']>;
-    id?: Maybe<Scalars['Long']['output']>;
-    type?: Maybe<PlaylistEntryType>;
-};
 
 // @public (undocumented)
 export type Incremental<T> = T | {
@@ -671,10 +642,10 @@ export type MuiEventsDataFragment = {
 };
 
 // @public (undocumented)
-export const MuiEventsDataFragmentDoc = "\n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: \"engage-player\") {\n    uri\n    tracks(tags: \"engage-download\") {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    \n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
+export const MuiEventsDataFragmentDoc = "\n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: $channel) {\n    uri\n    tracks(tags: $tags) {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    \n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
 
 // @public (undocumented)
-export const MuiEventsFromSeriesDocument = "\n    query MuiEventsFromSeries($seriesId: String!, $limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String) {\n  seriesById(id: $seriesId) {\n    id\n    title\n    events(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...MuiEventsData\n      }\n    }\n  }\n}\n    \n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: \"engage-player\") {\n    uri\n    tracks(tags: \"engage-download\") {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    \n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
+export const MuiEventsFromSeriesDocument = "\n    query MuiEventsFromSeries($seriesId: String!, $limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String, $channel: String, $tags: [String]) {\n  seriesById(id: $seriesId) {\n    id\n    title\n    events(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...MuiEventsData\n      }\n    }\n  }\n}\n    \n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: $channel) {\n    uri\n    tracks(tags: $tags) {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    \n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
 
 // @public (undocumented)
 export type MuiEventsFromSeriesQuery = {
@@ -732,6 +703,8 @@ export type MuiEventsFromSeriesQueryVariables = Exact<{
     offset?: InputMaybe<Scalars['Int']['input']>;
     orderBy?: InputMaybe<EventOrderByInput>;
     query?: InputMaybe<Scalars['String']['input']>;
+    channel?: InputMaybe<Scalars['String']['input']>;
+    tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>> | InputMaybe<Scalars['String']['input']>>;
 }>;
 
 // @public (undocumented)
@@ -1135,7 +1108,7 @@ export type MuiGetManagedAclsWithSeriesIdQueryVariables = Exact<{
 }>;
 
 // @public (undocumented)
-export const MuiGetMyEventsDocument = "\n    query MuiGetMyEvents($limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String) {\n  currentUser {\n    myEvents(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...MuiEventsData\n      }\n    }\n  }\n}\n    \n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: \"engage-player\") {\n    uri\n    tracks(tags: \"engage-download\") {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    \n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
+export const MuiGetMyEventsDocument = "\n    query MuiGetMyEvents($limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String, $channel: String, $tags: [String]) {\n  currentUser {\n    myEvents(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...MuiEventsData\n      }\n    }\n  }\n}\n    \n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: $channel) {\n    uri\n    tracks(tags: $tags) {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    \n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
 
 // @public (undocumented)
 export type MuiGetMyEventsQuery = {
@@ -1190,6 +1163,8 @@ export type MuiGetMyEventsQueryVariables = Exact<{
     offset?: InputMaybe<Scalars['Int']['input']>;
     orderBy?: InputMaybe<EventOrderByInput>;
     query?: InputMaybe<Scalars['String']['input']>;
+    channel?: InputMaybe<Scalars['String']['input']>;
+    tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>> | InputMaybe<Scalars['String']['input']>>;
 }>;
 
 // @public (undocumented)
@@ -1597,7 +1572,7 @@ export type MuiUpdateEventAclMutationVariables = Exact<{
 }>;
 
 // @public (undocumented)
-export const MuiUpdateEventDocument = "\n    mutation MuiUpdateEvent($eventId: String!, $metadata: CommonEventMetadataInput!) {\n  mui {\n    updateEvent(id: $eventId, metadata: $metadata) {\n      ...MuiEventsData\n    }\n  }\n}\n    \n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: \"engage-player\") {\n    uri\n    tracks(tags: \"engage-download\") {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    \n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
+export const MuiUpdateEventDocument = "\n    mutation MuiUpdateEvent($eventId: String!, $metadata: CommonEventMetadataInput!, $channel: String, $tags: [String]) {\n  mui {\n    updateEvent(id: $eventId, metadata: $metadata) {\n      ...MuiEventsData\n    }\n  }\n}\n    \n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: $channel) {\n    uri\n    tracks(tags: $tags) {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    \n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
 
 // @public (undocumented)
 export type MuiUpdateEventMutation = {
@@ -1647,6 +1622,8 @@ export type MuiUpdateEventMutation = {
 export type MuiUpdateEventMutationVariables = Exact<{
     eventId: Scalars['String']['input'];
     metadata: CommonEventMetadataInput;
+    channel?: InputMaybe<Scalars['String']['input']>;
+    tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>> | InputMaybe<Scalars['String']['input']>>;
 }>;
 
 // @public (undocumented)
@@ -1730,23 +1707,13 @@ export type MuiUserQueryVariables = Exact<{
 
 // @public (undocumented)
 export type Mutation = {
-    createPlaylist?: Maybe<Playlist>;
     createSeries: Series;
     deleteEvent?: Maybe<DeleteEventPayload>;
-    deletePlaylist?: Maybe<DeletePlaylistPayload>;
     mui?: Maybe<MuiMutation>;
     updateEvent: Event_2;
     updateEventAcl: Event_2;
-    updatePlaylist?: Maybe<Playlist>;
     updateSeries: Series;
     updateSeriesAcl: Series;
-};
-
-// @public (undocumented)
-export type MutationCreatePlaylistArgs = {
-    acl: AccessControlListInput;
-    entries?: InputMaybe<Array<InputMaybe<PlaylistEntryInput>>>;
-    metadata: PlaylistMetadataInput;
 };
 
 // @public (undocumented)
@@ -1761,11 +1728,6 @@ export type MutationDeleteEventArgs = {
 };
 
 // @public (undocumented)
-export type MutationDeletePlaylistArgs = {
-    id: Scalars['String']['input'];
-};
-
-// @public (undocumented)
 export type MutationUpdateEventAclArgs = {
     acl: AccessControlListInput;
     id: Scalars['String']['input'];
@@ -1776,14 +1738,6 @@ export type MutationUpdateEventArgs = {
     acl?: InputMaybe<AccessControlListInput>;
     id: Scalars['String']['input'];
     metadata: CommonEventMetadataInput;
-};
-
-// @public (undocumented)
-export type MutationUpdatePlaylistArgs = {
-    acl?: InputMaybe<AccessControlListInput>;
-    entries?: InputMaybe<Array<InputMaybe<PlaylistEntryInput>>>;
-    id: Scalars['String']['input'];
-    metadata?: InputMaybe<PlaylistMetadataInput>;
 };
 
 // @public (undocumented)
@@ -1825,66 +1779,6 @@ export type PageInfo = {
 export function pickAcceptedFields<T extends Record<string, unknown>>(metadata: T, accepted: ReadonlySet<string> | undefined): T;
 
 // @public
-export type Playlist = {
-    accessControlEntries?: Maybe<Array<Maybe<PlaylistAccessControlEntry>>>;
-    creator?: Maybe<Scalars['String']['output']>;
-    description?: Maybe<Scalars['String']['output']>;
-    entries?: Maybe<Array<Maybe<PlaylistEntry>>>;
-    id: Scalars['ID']['output'];
-    title?: Maybe<Scalars['String']['output']>;
-    updated?: Maybe<Scalars['DateTime']['output']>;
-};
-
-// @public
-export type PlaylistAccessControlEntry = {
-    action?: Maybe<Scalars['String']['output']>;
-    allow?: Maybe<Scalars['Boolean']['output']>;
-    role?: Maybe<Scalars['String']['output']>;
-};
-
-// @public
-export type PlaylistEntry = {
-    contentId?: Maybe<Scalars['String']['output']>;
-    id?: Maybe<Scalars['Long']['output']>;
-    type?: Maybe<PlaylistEntryType>;
-};
-
-// @public
-export type PlaylistEntryInput = {
-    contentId: Scalars['String']['input'];
-    type: PlaylistEntryType;
-};
-
-// @public
-export enum PlaylistEntryType {
-    Event = "EVENT",
-    Inaccessible = "INACCESSIBLE"
-}
-
-// @public
-export type PlaylistList = {
-    nodes: Array<Maybe<Playlist>>;
-    pageInfo: OffsetPageInfo;
-    totalCount: Scalars['Long']['output'];
-};
-
-// @public
-export type PlaylistMetadataInput = {
-    description?: InputMaybe<Scalars['String']['input']>;
-    title?: InputMaybe<Scalars['String']['input']>;
-};
-
-// @public
-export type PlaylistOrderByInput = {
-    creator?: InputMaybe<OrderDirection>;
-    deletionDate?: InputMaybe<OrderDirection>;
-    description?: InputMaybe<OrderDirection>;
-    organization?: InputMaybe<OrderDirection>;
-    title?: InputMaybe<OrderDirection>;
-    updated?: InputMaybe<OrderDirection>;
-};
-
-// @public
 export interface PluginConfigReader<T extends z.ZodTypeAny> {
     // (undocumented)
     readonly defaults: z.infer<T>;
@@ -1918,13 +1812,11 @@ export type PublicationTracksArgs = {
 // @public (undocumented)
 export type Query = {
     allEvents: EventList;
-    allPlaylists: PlaylistList;
     allSeries: SeriesList;
     currentUser: CurrentUser;
     eventById?: Maybe<Event_2>;
     listProvider: ListProvider;
     managedAcls: ManagedAccessControlListCatalogue;
-    playlistById?: Maybe<Playlist>;
     searchUser: UserList;
     seriesById?: Maybe<Series>;
 };
@@ -1935,14 +1827,6 @@ export type QueryAllEventsArgs = {
     limit?: InputMaybe<Scalars['Int']['input']>;
     offset?: InputMaybe<Scalars['Int']['input']>;
     orderBy?: InputMaybe<EventOrderByInput>;
-    query?: InputMaybe<Scalars['String']['input']>;
-};
-
-// @public (undocumented)
-export type QueryAllPlaylistsArgs = {
-    limit?: InputMaybe<Scalars['Int']['input']>;
-    offset?: InputMaybe<Scalars['Int']['input']>;
-    orderBy?: InputMaybe<PlaylistOrderByInput>;
     query?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1979,11 +1863,6 @@ export type QueryManagedAclsArgs = {
     offset?: InputMaybe<Scalars['Int']['input']>;
     orderBy?: InputMaybe<ManagedAclOrderByInput>;
     query?: InputMaybe<Scalars['String']['input']>;
-};
-
-// @public (undocumented)
-export type QueryPlaylistByIdArgs = {
-    id: Scalars['String']['input'];
 };
 
 // Warning: (ae-forgotten-export) The symbol "AppQueryProviderProps" needs to be exported by the entry point index.d.ts
@@ -2155,6 +2034,8 @@ export function useAppConfig(): {
     downloadBaseUrl?: string | undefined;
     matomo: MatomoConfig;
     app: {
+    tags?: string | string[];
+    channel?: string;
     locale: string;
     HtmlDocumentTitle: string;
     logoUrl?: string;
@@ -2225,6 +2106,8 @@ export const useMuiEventsFromSeriesQuery: {
         offset?: InputMaybe<Scalars["Int"]["input"]>;
         orderBy?: InputMaybe<EventOrderByInput>;
         query?: InputMaybe<Scalars["String"]["input"]>;
+        channel?: InputMaybe<Scalars["String"]["input"]>;
+        tags?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>> | InputMaybe<Scalars["String"]["input"]>>;
     }>)[];
     fetcher(variables: MuiEventsFromSeriesQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiEventsFromSeriesQuery>;
 };
@@ -2294,6 +2177,8 @@ export const useMuiGetMyEventsQuery: {
         offset?: InputMaybe<Scalars["Int"]["input"]>;
         orderBy?: InputMaybe<EventOrderByInput>;
         query?: InputMaybe<Scalars["String"]["input"]>;
+        channel?: InputMaybe<Scalars["String"]["input"]>;
+        tags?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>> | InputMaybe<Scalars["String"]["input"]>>;
     }>)[];
     fetcher(variables?: MuiGetMyEventsQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetMyEventsQuery>;
 };
@@ -2386,6 +2271,8 @@ export const useMuiUpdateEventMutation: {
     <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiUpdateEventMutation, TError, MuiUpdateEventMutationVariables, TContext>): UseMutationResult<MuiUpdateEventMutation, TError, Exact<{
     eventId: Scalars["String"]["input"];
     metadata: CommonEventMetadataInput;
+    channel?: InputMaybe<Scalars["String"]["input"]>;
+    tags?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>> | InputMaybe<Scalars["String"]["input"]>>;
     }>, TContext>;
     fetcher(variables: MuiUpdateEventMutationVariables, options?: RequestInit["headers"]): () => Promise<MuiUpdateEventMutation>;
 };
@@ -2481,6 +2368,8 @@ export const useSuspenseMuiEventsFromSeriesQuery: {
         offset?: InputMaybe<Scalars["Int"]["input"]>;
         orderBy?: InputMaybe<EventOrderByInput>;
         query?: InputMaybe<Scalars["String"]["input"]>;
+        channel?: InputMaybe<Scalars["String"]["input"]>;
+        tags?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>> | InputMaybe<Scalars["String"]["input"]>>;
     }>)[];
 };
 
@@ -2544,6 +2433,8 @@ export const useSuspenseMuiGetMyEventsQuery: {
         offset?: InputMaybe<Scalars["Int"]["input"]>;
         orderBy?: InputMaybe<EventOrderByInput>;
         query?: InputMaybe<Scalars["String"]["input"]>;
+        channel?: InputMaybe<Scalars["String"]["input"]>;
+        tags?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>> | InputMaybe<Scalars["String"]["input"]>>;
     }>)[];
 };
 

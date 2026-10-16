@@ -14,12 +14,8 @@ import { PluginProvider } from "@oc-mui/plugin-system";
 import { AppProviders } from "@oc-mui/providers";
 import { useAppConfig, QueryProvider } from "@oc-mui/query";
 import { type AnyRouter, Link as RouterLink, useRouterState } from "@oc-mui/router";
-import {
-  AppLoader,
-  ThemeModeProvider,
-  UiRouterProvider,
-  type UiRouterPrimitives,
-} from "@oc-mui/ui/components";
+import { AppLoader } from "@oc-mui/ui/components";
+import { ThemeModeProvider, UiRouterProvider, type UiRouterPrimitives } from "@oc-mui/ui/internal";
 
 import { ConfigLoadError } from "./components/ConfigLoadError";
 import { DynamicRouterProvider } from "./components/DynamicRouterProvider";

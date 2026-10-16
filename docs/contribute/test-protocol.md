@@ -237,10 +237,12 @@ The three modes documented in `docs/extend/distribution.md`.
 | 8.1 | `pnpm create-plugin trial-default` | Creates `.local-plugins/trial-default/` with the frontend + `backend/` Maven layout. |
 | 8.2 | `pnpm create-plugin trial-no-pom --no-pom` | Creates `.local-plugins/trial-no-pom/` with no `backend/`. |
 | 8.3 | `pnpm create-plugin trial-in-tree --in-tree` | Creates `plugins/trial-in-tree/`; no `backend/`. |
+| 8.3a | Inspect each scaffold's `plugin.json` (also `pnpm create-plugin trial-app --template app --no-pom`) | The `.local-plugins/` scaffolds declare `"entry": "dist/<name>.mjs"`, `"css": "dist/<name>.css"` and `"locales": "locales"` — the fields the backend tracker turns into `scriptUrl` / `cssUrl` / `localesUrl` for a JAR. The `--in-tree` scaffold carries none of them. All pass `node scripts/validate-plugins.mjs <path>`. |
 | 8.4 | `pnpm --filter @oc-mui/plugin-trial-default test:contract` | Passes on first run. (The placeholder `app:header-logo` registration is intentional.) |
 | 8.5 | `pnpm --filter @oc-mui/plugin-trial-default check-types` | Passes. |
+| 8.5a | Add `import "./probe.css"` (any stylesheet) to `src/index.ts`, then `pnpm --filter @oc-mui/plugin-trial-default build` | `dist/` contains `trial-default.mjs` **and** `trial-default.css` — the names `plugin.json`'s `entry` / `css` point at. (`createCommunityPluginConfig` sets Vite's `cssFileName`; without it the sheet would be `plugin-trial-default.css`.) |
 | 8.6 | Plugin's `plugin.json` declares `workspaceDependencies` with `Mui` prefix expectation in the README's "Conventions" section | Confirms the scaffold communicates the GraphQL naming + shared-deps contracts. |
-| 8.7 | After test, delete the trial plugins | `rm -rf .local-plugins/trial-default .local-plugins/trial-no-pom plugins/trial-in-tree` |
+| 8.7 | After test, delete the trial plugins | `rm -rf .local-plugins/trial-default .local-plugins/trial-no-pom .local-plugins/trial-app plugins/trial-in-tree` |
 
 ## Section 9 — `.local-plugins/` dev-time loading
 
@@ -316,8 +318,8 @@ Push your working branch to GitHub (any branch name works for this check).
 | 14.7 | Source-file link (e.g. `[packages/plugin-system/](../../packages/plugin-system/)`) | Routes to the GitHub URL, opens in a new tab. |
 | 14.8 | `pnpm docs:build` | Builds without errors; `docs/.vitepress/dist/` populated. |
 | 14.9 | Run the **Deploy docs** workflow (Actions → Run workflow) | Pages site updates within ~3 min at `https://academic-moodle-cooperation.github.io/management-ui/`. |
-| 14.10 | View-source on any built page | `<meta name="robots" content="noindex, nofollow">` is present. (Pre-1.0 guard. Goes away at the go-public flip.) |
-| 14.11 | `curl https://academic-moodle-cooperation.github.io/management-ui/robots.txt` | Returns `Disallow: /`. (Pre-1.0 guard.) |
+| 14.10 | View-source on any built page | **No** `noindex` robots meta — the site is public and must stay indexable. |
+| 14.11 | `curl https://academic-moodle-cooperation.github.io/management-ui/robots.txt` | Permissive (`Disallow:` empty) — no crawler block. |
 
 ## Section 15 — Authentication (depends on backend)  ⏺ REC
 
@@ -332,12 +334,13 @@ Push your working branch to GitHub (any branch name works for this check).
 
 You're cleared to go public. Most of the former "Phase 6d flip" is already in its end state — `.changeset/config.json` has `"access": "public"`, the SDK packages carry no `private` flag, and the docs site deploys on push to `develop` — so what remains is:
 
-1. Open a PR that flips the two search-indexing guards:
-   - Deletes `docs/public/robots.txt`'s `Disallow: /` (replace with empty `Disallow:`).
-   - Removes the `noindex` meta entry from `docs/.vitepress/config.mts`.
-2. Merge. One one-time repo setting accompanies this (not a PR): Settings →
+1. Merge the flip-day PR (it flips the two search-indexing guards —
+   robots.txt and the `noindex` meta — plus the footer's About link and the
+   README's docs/CI references, and inverts `verify-docs.sh`'s §14.10/§14.11
+   checks to assert the public state).
+2. One one-time repo setting accompanies this (not a PR): Settings →
    Pages → Source must be "GitHub Actions", or the deploy job errors — the
-   full flip list lives in the go-public checklist (§8.3).
+   full flip list lives in the go-public checklist (§8.3 and issue #302).
 3. Cut the first release from the release line — the workflow-driven flow in [`release.md` → Cutting a release](./release.md#cutting-a-release) publishes to npm (after the one-time [first-release bootstrap](./release.md#first-release-bootstrap--one-time-checklist); there is no manual `changeset publish` step).
 4. Announce.
 

@@ -4,7 +4,6 @@
 
 ```ts
 
-import { JSX } from 'react/jsx-runtime';
 import { default as React_2 } from 'react';
 import { ReactNode } from 'react';
 
@@ -68,7 +67,7 @@ export const ComponentLoader: React_2.FC<{
 // Warning: (ae-forgotten-export) The symbol "ComponentResolverProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const ComponentResolver: <P extends object>(input: ComponentResolverProps<P>) => JSX.Element | null;
+export const ComponentResolver: <P extends object>(input: ComponentResolverProps<P>) => React_2.JSX.Element | null;
 
 // @public
 export const createAppRegistryPlugin: () => AppRegistryPlugin;

@@ -58,7 +58,7 @@ The plugin runtime is split into six orthogonal contracts, all versioned indepen
 |----------|-----------|-------------------|
 | Manifest | 1.1 | The fields in `plugin.json` |
 | Runtime API | 1.1 | The `createPlugin`/`PluginManager` surface |
-| Theme | 2.0 | Semantic CSS tokens, layer order |
+| Theme | 2.1 | Semantic CSS tokens, layer order |
 | Config | 1.0 | The `AppConfig` layer model + `definePluginConfig` reader |
 | Shared Runtime Dependencies | 1.0 | Which packages the host provides to plugins, at which majors |
 | GraphQL Operation Naming | 1.0 | Namespace-prefixed operation and fragment names |

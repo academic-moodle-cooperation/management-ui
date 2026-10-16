@@ -52,9 +52,23 @@ export const useExtensionLabels = (
   // rather than on every render (the array is rebuilt each time).
   const namespaceKey = [...new Set(namespaces)].sort().join(",");
 
+  // `useI18n()` re-renders on a language switch, not on a namespace arriving,
+  // so a host that renders before the plugin's own component has mounted
+  // (the sidebar, say) would keep the derived fallback forever. Bump a
+  // counter once the namespaces are in, so the labels resolve for real.
+  const [, setLoadedGeneration] = React.useState(0);
+
   React.useEffect(() => {
     if (!namespaceKey) return;
-    namespaceKey.split(",").forEach((namespace) => void loadNamespace(namespace, i18n.language));
+    let cancelled = false;
+    void Promise.all(
+      namespaceKey.split(",").map((namespace) => loadNamespace(namespace, i18n.language)),
+    ).then(() => {
+      if (!cancelled) setLoadedGeneration((generation) => generation + 1);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [namespaceKey, i18n.language]);
 
   return (entry) => {

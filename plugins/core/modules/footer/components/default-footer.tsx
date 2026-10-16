@@ -1,7 +1,6 @@
 import React from "react";
 
 import { usePluginTranslation } from "@oc-mui/i18n";
-import { Link } from "@oc-mui/router";
 
 // Injected at build time via Vite `define` (see apps/shell/vite.config.ts).
 // `typeof` guards keep this rendering sensibly when the define is absent
@@ -37,12 +36,16 @@ const DefaultFooter: React.FC = () => {
         ) : null}
       </span>
       <span className="text-sm text-muted-foreground">© {new Date().getFullYear()}</span>
-      <Link
-        to="/"
+      {/* Points home while the repo was private and the docs 404'd (#300);
+          now the published docs site. */}
+      <a
+        href="https://academic-moodle-cooperation.github.io/management-ui/"
+        target="_blank"
+        rel="noopener noreferrer"
         className="text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         {t("core-footer:about")}
-      </Link>
+      </a>
     </div>
   );
 };

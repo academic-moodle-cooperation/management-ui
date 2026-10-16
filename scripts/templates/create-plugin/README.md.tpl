@@ -22,6 +22,13 @@ pnpm --filter @oc-mui/plugin-__PLUGIN_NAME__ test:contract
    - Fill in `description` and `author`.
    - Adjust `type` (e.g. `app`, `header`, `sidebar`, `theme`).
    - Update `extensionPoints` to match what `initialize()` actually registers.
+   - `.local-plugins/` scaffolds only: leave `entry`, `css` and `locales`
+     as they are unless you rename the build output. They tell Opencast's
+     plugin tracker where the built bundle lives inside the JAR
+     (`dist/__PLUGIN_NAME__.mjs`, `dist/__PLUGIN_NAME__.css`, and the
+     `locales/` directory). Without `entry` the backend emits no
+     `scriptUrl` and the shell has to guess the bundle URL. In-tree
+     plugins (`--in-tree`) compile into the shell and carry none of these.
 3. Run `pnpm test:contract` from this directory after every change.
 4. Read [AGENTS.md](https://github.com/academic-moodle-cooperation/management-ui/blob/HEAD/AGENTS.md) (in the repo root) for the full plugin
    authoring rules.
