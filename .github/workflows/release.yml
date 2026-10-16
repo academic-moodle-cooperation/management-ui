@@ -86,13 +86,19 @@ jobs:
           # >= 22.14.0 is required for npm Trusted Publishing (OIDC).
           node-version: "22"
           cache: "pnpm"
-          registry-url: "https://registry.npmjs.org"
+          # No registry-url: it writes an .npmrc whose _authToken references
+          # NODE_AUTH_TOKEN, which does not exist here (publishing is OIDC).
+          # npm still publishes tokenless, but with that dangling token every
+          # `npm view` inside `changeset publish` fails, so changesets believes
+          # nothing is published yet, republishes every package, and the run
+          # fails on "cannot publish over previously published versions" after
+          # the genuinely new package already went out (second release, 20.1.1).
 
       - name: Upgrade npm for OIDC trusted publishing
         # Trusted publishing needs npm >= 11.5.1; Node 22 ships npm 10.x, so the
         # `changeset publish` step (which shells out to `npm publish`) would
         # otherwise use too old an npm to exchange the OIDC token.
-        run: npm install -g npm@latest
+        run: npm install -g npm@11 # NOT @latest: npm 12 wraps `npm info --json` in an array, which changesets cannot read (second release, 20.1.1)
 
       - name: Determine release-line role
         id: line
@@ -167,7 +173,12 @@ jobs:
         # (JAR-only) line never publishes npm, so its release leg is detected
         # as "no changesets were pending when this run started". Idempotent:
         # skips if the tag already exists (e.g. a re-run).
-        if: steps.changesets.outputs.published == 'true' || (steps.line.outputs.newest == 'false' && steps.line.outputs.pending == 'false')
+        # Runs whenever the line has no pending changesets, i.e. after a Version
+        # PR merged — not only when this very run published to npm. A re-run
+        # after a failed publish step would otherwise never create the product
+        # tag (the step itself skips when the tag already exists, so it is
+        # safe to run on every push).
+        if: steps.line.outputs.pending == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
