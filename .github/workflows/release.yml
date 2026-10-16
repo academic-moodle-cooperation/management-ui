@@ -98,7 +98,7 @@ jobs:
         # Trusted publishing needs npm >= 11.5.1; Node 22 ships npm 10.x, so the
         # `changeset publish` step (which shells out to `npm publish`) would
         # otherwise use too old an npm to exchange the OIDC token.
-        run: npm install -g npm@latest
+        run: npm install -g npm@11 # NOT @latest: npm 12 wraps `npm info --json` in an array, which changesets cannot read (second release, 20.1.1)
 
       - name: Determine release-line role
         id: line
