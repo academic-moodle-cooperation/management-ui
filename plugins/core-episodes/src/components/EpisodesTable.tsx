@@ -187,6 +187,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
               typeof field === "object" &&
               "value" in field &&
               field.value !== undefined &&
+              field.value !== null &&
               field.id &&
               !isReadOnly(field.id) &&
               // The server's own flag, distinct from the config helper above:
@@ -195,7 +196,10 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
               // them is a hard ValidationError (#280).
               !("readOnly" in field && field.readOnly === true)
             ) {
-              formattedData[key] = field.value;
+              // List fields arrive as `Array<string | null>`; the editor works on strings.
+              formattedData[key] = Array.isArray(field.value)
+                ? field.value.map((item) => item ?? "")
+                : field.value;
             }
           });
 

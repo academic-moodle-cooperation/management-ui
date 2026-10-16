@@ -209,12 +209,17 @@ export const AclEditor: React.FC<AclEditorProps> = ({
       managedAclId: managedAclId || undefined,
       entries: entries as ACLEntry[],
     };
+    // `ManagedAcl.id` is an `ID` (string) while `AccessControlListInput.managedAclId`
+    // is a `Long` — convert at the mutation boundary, and keep omitting the key
+    // (rather than sending `null`) when no managed ACL is selected.
+    const managedAclInput =
+      aclData.managedAclId !== undefined ? { managedAclId: Number(aclData.managedAclId) } : {};
 
     if (selectedElement?.__typename === "Event") {
       updateEventAcl.mutate(
         {
           eventId: selectedElement.id,
-          acl: { managedAclId: aclData.managedAclId, entries: aclData.entries },
+          acl: { ...managedAclInput, entries: aclData.entries },
         },
         {
           onSuccess: () => {
@@ -233,7 +238,7 @@ export const AclEditor: React.FC<AclEditorProps> = ({
       updateSeriesAcl.mutate(
         {
           seriesId: selectedElement.id,
-          acl: { managedAclId: aclData.managedAclId, entries: aclData.entries },
+          acl: { ...managedAclInput, entries: aclData.entries },
         },
         {
           onSuccess: () => {

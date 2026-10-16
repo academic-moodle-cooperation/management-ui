@@ -9,64 +9,78 @@ export const MetadataField = ({ type, listProvider, collection, value }: Metadat
   // send a list-backed field without its option list (observed on a real
   // deployment for a read-only series field). Reading it unguarded threw
   // `Object.keys(undefined)` and took down the whole info panel.
-  function getKeyByValue(object: Record<string, string> | null | undefined, value: string) {
-    if (!object) return undefined;
-    return Object.keys(object).find((key) => object[key] === value);
+  // The `JSON` scalar is opaque (`unknown`); a collection, when present, is a
+  // label → value map.
+  function getKeyByValue(object: unknown, value: unknown) {
+    if (!object || typeof object !== "object") return undefined;
+    const record = object as Record<string, unknown>;
+    return Object.keys(record).find((key) => record[key] === value);
   }
+
+  // `value` is the union of every field variant's scalar — string, string
+  // list, Long, DateTime, JSON … — so render through its string form and only
+  // reach for the structured value where a branch needs it.
+  const displayValue = Array.isArray(value)
+    ? value.join(",")
+    : value === null || value === undefined
+      ? ""
+      : String(value);
 
   if (listProvider === "SERIES") {
     // Without the collection we cannot resolve the id to a title — show the
     // raw value rather than an empty field.
     return (
-      <div className="text-sm text-foreground">{getKeyByValue(collection, value) ?? value}</div>
+      <div className="text-sm text-foreground">
+        {getKeyByValue(collection, value) ?? displayValue}
+      </div>
     );
   } else if (listProvider === "LANGUAGES") {
     return (
       <div className="text-sm text-foreground">
-        {value !== null && value !== "" ? t(`languages.${value}`) : t(`noOptionSelected`)}
+        {displayValue !== "" ? t(`languages.${displayValue}`) : t(`noOptionSelected`)}
       </div>
     );
   } else if (listProvider === "LICENSES") {
     return (
       <div className="text-sm text-foreground">
-        {value !== null && value !== "" ? t(`licences.${value}`) : t(`noOptionSelected`)}
+        {displayValue !== "" ? t(`licences.${displayValue}`) : t(`noOptionSelected`)}
       </div>
     );
   }
 
-  if (value && value?.toString().length > 0) {
-    let metadataElement = <>{value}</>;
+  if (displayValue.length > 0) {
+    let metadataElement = <>{displayValue}</>;
     switch (type) {
       case "TEXT":
-        metadataElement = <>{value}</>;
+        metadataElement = <>{displayValue}</>;
         break;
       case "TEXT_LONG":
-        metadataElement = <div className="whitespace-pre-wrap">{value}</div>;
+        metadataElement = <div className="whitespace-pre-wrap">{displayValue}</div>;
         break;
       case "MIXED_TEXT":
         metadataElement = (
           <div className="whitespace-pre">
             <>
-              {(typeof value === "string" ? value.split(",") : value).map((item: string) => (
-                <>{item + "\n"}</>
+              {(Array.isArray(value) ? value : displayValue.split(",")).map((item) => (
+                <>{(item ?? "") + "\n"}</>
               ))}
             </>
           </div>
         );
         break;
       case "DATE":
-        metadataElement = <>{formatDate(value)}</>;
+        metadataElement = <>{formatDate(displayValue)}</>;
         break;
       case "START_DATE":
         // Format START_DATE consistently with DATE (medium date, short time)
-        metadataElement = <>{formatDate(value)}</>;
+        metadataElement = <>{formatDate(displayValue)}</>;
         break;
       case "DURATION":
-        metadataElement = <>{parseDuration(value)}</>;
+        metadataElement = <>{parseDuration(displayValue)}</>;
         break;
 
       default:
-        metadataElement = <>{value}</>;
+        metadataElement = <>{displayValue}</>;
         break;
     }
     return <div className="text-sm text-foreground">{metadataElement}</div>;

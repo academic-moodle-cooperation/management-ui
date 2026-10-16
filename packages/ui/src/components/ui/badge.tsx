@@ -1,10 +1,21 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import type { ClassProp } from "class-variance-authority/types";
 import * as React from "react";
 
 import { cn } from "../../lib/utils";
 
-const badgeVariants = cva(
+export type BadgeVariant = "default" | "secondary" | "destructive" | "outline";
+
+/** The variant axis `badgeVariants` and `Badge` accept. */
+export type BadgeVariantProps = {
+  variant?: BadgeVariant | null | undefined;
+};
+
+// Typed explicitly for the same reason as `buttonVariants` (see button.tsx):
+// an inferred literal union prints in machine-dependent member order and
+// makes the API report drift between local and CI runs.
+const badgeVariants: (props?: BadgeVariantProps & ClassProp) => string = cva(
   "inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden",
   {
     variants: {
