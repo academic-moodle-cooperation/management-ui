@@ -526,6 +526,8 @@ fragment MuiPlaylistEntryData on PlaylistEntry {
       id
       title
       duration
+      startDate
+      created
       seriesId
       seriesName
       eventStatus
