@@ -17,21 +17,21 @@ overrides:
   ws@>=8.0.0 <9.0.0: 8.21.0
   seroval: '>=1.4.1'
   rollup: '>=4.59.0'
-  immutable@>=3.0.0 <4.0.0: '>=3.8.4'
+  immutable@>=3.0.0 <4.0.0: '>=3.8.4 <4.0.0'
   flatted: '>=3.4.2'
   '@types/node': ^25.0.6
   '@tanstack/react-router-devtools': 1.125.6
   '@tanstack/router-devtools-core': 1.125.4
   react: ~19.2.0
   react-dom: ~19.2.0
-  js-yaml@>=3.0.0 <4.0.0: '>=3.15.2'
+  js-yaml@>=3.0.0 <4.0.0: '>=3.15.2 <4.0.0'
   vitest@>=4.0.0 <4.2.0: '>=4.1.11 <4.2.0'
   '@vitest/mocker@>=4.0.0 <4.2.0': '>=4.1.11 <4.2.0'
-  handlebars@>=3.0.0 <=4.7.9: '>=4.7.10'
-  '@humanfs/node@<0.16.8': '>=0.16.8'
-  fflate@>=0.8.0 <0.8.3: '>=0.8.3'
+  handlebars@>=3.0.0 <=4.7.9: '>=4.7.10 <5.0.0'
+  '@humanfs/node@<0.16.8': '>=0.16.8 <1.0.0'
+  fflate@>=0.8.0 <0.8.3: '>=0.8.3 <0.9.0'
   '@graphql-tools/utils@<=12.0.0': '>=12.0.1'
-  vue@>=3.0.0 <4.0.0: '>=3.5.42'
+  vue@>=3.0.0 <4.0.0: '>=3.5.42 <4.0.0'
   ajv@>=6.0.0 <7.0.0: '>=6.14.0 <7.0.0'
 
 importers:
@@ -4403,7 +4403,7 @@ packages:
     engines: {node: ^18.0.0 || >=20.0.0}
     peerDependencies:
       vite: '>=6.4.3 <7.0.0'
-      vue: '>=3.5.42'
+      vue: '>=3.5.42 <4.0.0'
 
   '@vitest/coverage-v8@4.1.12':
     resolution: {integrity: sha512-6S7/iVknKglLAxMFxQGNppBI0iqJS2NgM6FBxavitj7KaDq/vywOWGf6dGu7F2L1Qy0G6S3uTp7aGshHrzK8JA==}
@@ -5331,6 +5331,11 @@ packages:
     resolution: {integrity: sha512-j6PAQ2uUr79PZhBjP5C5fhl8e39FmRnOjsD5lGnWrFU8i2G776tBK7+nP8KuQUTTyAZUwfQqXAgrVH5MbH9CYQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  esprima@4.0.1:
+    resolution: {integrity: sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A==}
+    engines: {node: '>=4'}
+    hasBin: true
+
   esquery@1.6.0:
     resolution: {integrity: sha512-ca9pw9fomFcKPvFLXhBKUK90ZvGibiGOvRJNbjljY7s7uq/5YO4BOzcYtJqExdx99rF6aAcnRxHmcUHcz6sQsg==}
     engines: {node: '>=0.10'}
@@ -5929,6 +5934,10 @@ packages:
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
+
+  js-yaml@3.15.2:
+    resolution: {integrity: sha512-6EuL879VkRA+1Cz578mKMiKvjPNEuk6+r1JaFzoSWejZmtf7xWbIyw1e3KkxlkzTIt9Taw6JBhEppG7utc1P+w==}
+    hasBin: true
 
   js-yaml@4.3.2:
     resolution: {integrity: sha512-SFNOvSJ+Dgf/9An904Yx+CgSlIPCkIpao4qo51lpee25TIRejdH3rhR4EZMGoNx3/TP3O+wzWuiTFl4sqbltzA==}
@@ -11925,6 +11934,8 @@ snapshots:
       acorn-jsx: 5.3.2(acorn@8.16.0)
       eslint-visitor-keys: 4.2.1
 
+  esprima@4.0.1: {}
+
   esquery@1.6.0:
     dependencies:
       estraverse: 5.3.0
@@ -12549,6 +12560,11 @@ snapshots:
   js-tokens@10.0.0: {}
 
   js-tokens@4.0.0: {}
+
+  js-yaml@3.15.2:
+    dependencies:
+      argparse: 1.0.10
+      esprima: 4.0.1
 
   js-yaml@4.3.2:
     dependencies:
@@ -13198,7 +13214,7 @@ snapshots:
   read-yaml-file@1.1.0:
     dependencies:
       graceful-fs: 4.2.11
-      js-yaml: 4.3.2
+      js-yaml: 3.15.2
       pify: 4.0.1
       strip-bom: 3.0.0
 
