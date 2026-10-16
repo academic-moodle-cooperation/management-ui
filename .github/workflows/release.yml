@@ -144,6 +144,59 @@ jobs:
           test -f packages/vite-config/dist/plugin.config.js || (echo "vite-config dist files missing" && exit 1)
           pnpm turbo run build build:types
 
+      - name: Forward-merge gate (older lines only)
+        # The one silent trap of the multi-line flow: releasing an OLDER line
+        # before its changesets reached the newer lines. The Version PR deletes
+        # the .changeset files it consumes; forward-merging that deletion later
+        # makes the newer lines ship the change WITHOUT a bump or changelog
+        # entry. version-pr-guard.yml checks this on the Version PR, but PRs
+        # opened with the workflow token get no workflow runs, so this is the
+        # enforced copy: it runs on the push that merged the Version PR and
+        # aborts BEFORE anything is tagged or published.
+        if: steps.line.outputs.newest == 'false' && steps.line.outputs.pending == 'false'
+        run: |
+          BRANCH="${GITHUB_REF_NAME}"
+          THIS_MAJOR="$(echo "${BRANCH}" | sed -n 's|^r/\([0-9]\{1,\}\)\.x$|\1|p')"
+          # Changesets consumed by the commit just pushed (the Version PR merge):
+          # the .changeset/*.md files it deleted relative to its first parent.
+          CONSUMED="$(git diff --name-only --diff-filter=D HEAD~1 HEAD -- '.changeset/*.md' | grep -v README || true)"
+          if [ -z "${CONSUMED}" ]; then
+            echo "This push consumed no changesets — nothing to gate."
+            exit 0
+          fi
+          NEWER_LINES="$(git ls-remote --heads origin 'r/*' \
+            | sed -n 's|.*refs/heads/\(r/[0-9]\{1,\}\.x\)$|\1|p' \
+            | awk -F'[/.]' -v m="${THIS_MAJOR}" '$2 > m {print $0}')"
+          MISSING=0
+          for line in ${NEWER_LINES}; do
+            git fetch origin "${line}" --quiet
+            for f in ${CONSUMED}; do
+              # Line-only changesets never travel upward by design: an EMPTY
+              # changeset (no package in its front matter, e.g. the placeholder
+              # a post-release sync needs) and one whose text carries the
+              # `line-only` marker (a line's own schema pin, say).
+              CONTENT="$(git show "HEAD~1:${f}")"
+              DECLARED="$(printf '%s\n' "${CONTENT}" | awk '/^---$/{c++; next} c==1' | grep -c ':' || true)"
+              if [ "${DECLARED}" = "0" ] || printf '%s\n' "${CONTENT}" | grep -qi 'line-only'; then
+                echo "${f}: line-only changeset — not expected on ${line}."
+                continue
+              fi
+              # Present on the newer line, or already consumed there (it was in
+              # that line's history at some point) — both mean it got there.
+              if git cat-file -e "origin/${line}:${f}" 2>/dev/null \
+                 || [ -n "$(git log -1 --format=%h "origin/${line}" -- "${f}")" ]; then
+                continue
+              fi
+              echo "::error::${f} never reached ${line}. Releasing r/${THIS_MAJOR}.x now would carry its deletion upward and ship the change there without a version bump."
+              MISSING=1
+            done
+          done
+          if [ "${MISSING}" -ne 0 ]; then
+            echo "Forward-merge r/${THIS_MAJOR}.x upward first (oldest line to newest), then re-run."
+            exit 1
+          fi
+          echo "Every consumed changeset reached the newer line(s) — safe to release."
+
       - name: Create Version PR or publish
         id: changesets
         uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
