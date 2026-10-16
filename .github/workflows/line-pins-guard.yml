@@ -46,7 +46,9 @@ jobs:
             FAIL=1
           fi
           for f in pom.xml scripts/templates/create-plugin-maven/pom.xml.tpl; do
-            PIN="$(grep -o -m1 '[0-9]\{1,\}-SNAPSHOT' "$f" | sed 's/-SNAPSHOT//')"
+            # The Opencast parent version is the <version> inside <parent>; the
+            # file's own artifact version (e.g. 1.0-SNAPSHOT) comes earlier.
+            PIN="$(sed -n '/<parent>/,/<\/parent>/p' "$f" | grep -o '[0-9]\{1,\}-SNAPSHOT' | head -1 | sed 's/-SNAPSHOT//')"
             if [ "${PIN}" != "${LINE_MAJOR}" ]; then
               echo "::error file=${f}::Opencast parent version is ${PIN}-SNAPSHOT, expected ${LINE_MAJOR}-SNAPSHOT on r/${LINE_MAJOR}.x."
               FAIL=1
