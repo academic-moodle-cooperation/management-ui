@@ -13,7 +13,7 @@
   <groupId>org.amc.management</groupId>
   <artifactId>management-ui</artifactId>
   <packaging>pom</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>19.0.1</version>
 
   <name>Opencast Management UI</name>
   <description>The Opencast Management UI is an additional module for Opencast to allow video management related tasks.</description>
