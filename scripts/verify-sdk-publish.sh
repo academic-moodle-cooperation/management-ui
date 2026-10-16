@@ -91,7 +91,10 @@ done
 echo "==> 4/5 Scaffolding a consumer plugin OUTSIDE the workspace"
 mkdir -p "$CONSUMER/src"
 printf '//localhost:4873/:_authToken=smoke\nregistry=%s/\n' "$REGISTRY" > "$CONSUMER/.npmrc"
-cat > "$CONSUMER/package.json" <<'EOF'
+# The consumer asks for the versions the workspace is about to publish, so a
+# major bump of a package does not strand the smoke test on a stale range.
+ver() { node -e "process.stdout.write('^' + require('$ROOT/$1/package.json').version)"; }
+cat > "$CONSUMER/package.json" <<EOF
 {
   "name": "sdk-smoke-plugin",
   "version": "0.0.0",
@@ -99,13 +102,13 @@ cat > "$CONSUMER/package.json" <<'EOF'
   "type": "module",
   "scripts": { "test": "vitest run" },
   "dependencies": {
-    "@oc-mui/plugin-system": "^1.0.0",
-    "@oc-mui/utils": "^1.0.0",
-    "@oc-mui/ui": "^1.0.0"
+    "@oc-mui/plugin-system": "$(ver packages/plugin-system)",
+    "@oc-mui/utils": "$(ver packages/utils)",
+    "@oc-mui/ui": "$(ver packages/ui)"
   },
   "devDependencies": {
-    "@oc-mui/plugin-testing": "^1.0.0",
-    "@oc-mui/typescript-config": "^1.0.0",
+    "@oc-mui/plugin-testing": "$(ver packages/plugin-testing)",
+    "@oc-mui/typescript-config": "$(ver packages/typescript-config)",
     "@types/node": "^25.0.6",
     "@types/react": "^19.0.0",
     "react": "^19.1.0",
