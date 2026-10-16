@@ -34,6 +34,10 @@ const config: CodegenConfig = {
         exposeQueryKeys: true,
         addSuspenseQuery: true,
         skipTypename: true,
+        // Fragments on interfaces (PlaylistEntry) generate one sub-type per
+        // implementation; export them so consumers can name the narrowed
+        // member instead of re-deriving it with Extract<>.
+        exportFragmentSpreadSubTypes: true,
         useTypeImports: true,
         // typescript-operations >= 6 is self-contained: it re-emits every
         // input type and enum an operation names, which duplicates the
