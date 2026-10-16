@@ -1,0 +1,65 @@
+name: Line pins guard
+# Guards the line-local files of a release line (issue #443).
+#
+# r/NN.x differs from develop and from the other lines in a handful of files
+# that are properties of the line, not changes to merge: `VERSION`, the
+# Opencast parent version in `pom.xml` and the scaffold template, and the
+# pinned GraphQL schema. A conflict-free merge from develop or from an older
+# line silently overwrites them (see release.md, "Resolve version metadata
+# toward the newer line"). This check fails any PR against r/NN.x whose head
+# moves the line's major — the one signal every such accident leaves behind.
+#
+# Version PRs (head `changeset-release/*`) legitimately bump VERSION within the
+# major (19.0.0 -> 19.1.0); they are allowed as long as the major stays.
+on:
+  pull_request:
+    branches: ["r/**"]
+permissions:
+  contents: read
+jobs:
+  guard:
+    name: Line pins match the line
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Check VERSION, pom pins and schema against the line
+        run: |
+          BASE="${{ github.base_ref }}"
+          LINE_MAJOR="$(echo "${BASE}" | sed -n 's|^r/\([0-9]\{1,\}\)\.x$|\1|p')"
+          if [ -z "${LINE_MAJOR}" ]; then
+            echo "Base ${BASE} is not an r/NN.x line — nothing to guard."
+            exit 0
+          fi
+          FAIL=0
+          HEAD_VERSION="$(cat VERSION)"
+          HEAD_MAJOR="${HEAD_VERSION%%.*}"
+          if [ "${HEAD_MAJOR}" != "${LINE_MAJOR}" ]; then
+            echo "::error file=VERSION::VERSION is ${HEAD_VERSION} but this PR targets r/${LINE_MAJOR}.x — the merge carried another line's pins."
+            FAIL=1
+          fi
+          git fetch origin "${BASE}" --quiet
+          if ! [[ "${{ github.head_ref }}" == changeset-release/* ]] \
+             && ! git diff --quiet "origin/${BASE}" HEAD -- VERSION; then
+            echo "::error file=VERSION::VERSION changed in a non-release PR against r/${LINE_MAJOR}.x (base $(git show "origin/${BASE}:VERSION"), head ${HEAD_VERSION}). Only the Version PR may bump it."
+            FAIL=1
+          fi
+          for f in pom.xml scripts/templates/create-plugin-maven/pom.xml.tpl; do
+            # The Opencast parent version is the <version> inside <parent>; the
+            # file's own artifact version (e.g. 1.0-SNAPSHOT) comes earlier.
+            PIN="$(sed -n '/<parent>/,/<\/parent>/p' "$f" | grep -o '[0-9]\{1,\}-SNAPSHOT' | head -1 | sed 's/-SNAPSHOT//')"
+            if [ "${PIN}" != "${LINE_MAJOR}" ]; then
+              echo "::error file=${f}::Opencast parent version is ${PIN}-SNAPSHOT, expected ${LINE_MAJOR}-SNAPSHOT on r/${LINE_MAJOR}.x."
+              FAIL=1
+            fi
+          done
+          SCHEMA=packages/query/src/schema.graphql
+          if ! git diff --quiet "origin/${BASE}" HEAD -- "${SCHEMA}"; then
+            echo "::warning file=${SCHEMA}::The pinned schema changes in this PR. Fine for a deliberate schema refresh on this line; wrong if a merge took another line's schema — check that codegen:check is green on this line."
+          fi
+          if [ "${FAIL}" = "1" ]; then
+            echo "Restore the line-local files from origin/${BASE} (VERSION, pom.xml, the scaffold template, the schema and its codegen output) and re-run codegen — see docs/contribute/release.md."
+            exit 1
+          fi
+          echo "Line pins match r/${LINE_MAJOR}.x: VERSION ${HEAD_VERSION}, pom ${LINE_MAJOR}-SNAPSHOT."
