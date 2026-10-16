@@ -34,11 +34,29 @@ const config: CodegenConfig = {
         exposeQueryKeys: true,
         addSuspenseQuery: true,
         skipTypename: true,
-        // Fragments on interfaces (PlaylistEntry) generate one sub-type per
-        // implementation; export them so consumers can name the narrowed
-        // member instead of re-deriving it with Extract<>.
-        exportFragmentSpreadSubTypes: true,
         useTypeImports: true,
+        // typescript-operations >= 6 is self-contained: it re-emits every
+        // input type and enum an operation names, which duplicates the
+        // declarations the `typescript` plugin already writes into this same
+        // file. Pointing `importSchemaTypesFrom` at the output file tells it
+        // the schema types live "elsewhere" (here), so it emits neither the
+        // duplicates nor an import — the bare references resolve against the
+        // `typescript` plugin's declarations above them.
+        importSchemaTypesFrom: "./src/gql-generated.ts",
+        // Without this the plugin would prefix every such reference with
+        // `Types.` and add `import type * as Types from './gql-generated'` —
+        // a self-import. An empty namespace keeps the references bare.
+        namespacedImportName: "",
+        // Custom scalars default to `unknown` since typescript@6 (was `any`).
+        // Map them to what the backend actually puts on the wire: RFC-3339
+        // timestamps and ISO-8601 durations as strings, Long as a JSON number,
+        // JSON as an opaque value the consumer narrows itself.
+        scalars: {
+          DateTime: "string",
+          Duration: "string",
+          JSON: "unknown",
+          Long: "number",
+        },
         fetcher: {
           func: "./fetcher#fetchData",
         },
