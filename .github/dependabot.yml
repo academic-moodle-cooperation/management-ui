@@ -42,6 +42,17 @@ updates:
       # @tanstack/react-router in @oc-mui/router — a deliberate bump, not a
       # routine one.
       - dependency-name: "@tanstack/router-devtools"
+      # React 19.3 makes the production build roughly four times slower on
+      # WebKit (Safari, iPad): the browser matrix went from 150 passed in
+      # 2.4 min to 11 failed / 28 flaky in 10 min, bisected to the 19.3 bump
+      # alone (same code on 19.1 and 19.2 is green). Held at 19.2 via
+      # pnpm.overrides until a React release fixes it; re-test by dispatching
+      # matrix.yml with --project=webkit --project=tablet-ios on a probe
+      # branch before lifting this. See docs/reference/open-followups.md §11.
+      - dependency-name: "react"
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-minor"]
     # Majors stay individual PRs so a breaking bump is reviewed on its own.
     commit-message:
       prefix: "chore(deps)"

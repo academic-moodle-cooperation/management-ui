@@ -73,6 +73,8 @@
     "eslint-plugin-import": "^2.32.0",
     "jsdom": "^27.4.0",
     "prettier": "^3.9.10",
+    "react": "~19.2.0",
+    "react-dom": "~19.2.0",
     "turbo": "^2.11.7",
     "typescript": "5.8.2",
     "vitepress": "^1.6.4",
@@ -104,7 +106,9 @@
       "flatted": ">=3.4.2",
       "@types/node": "^25.0.6",
       "@tanstack/react-router-devtools": "1.125.6",
-      "@tanstack/router-devtools-core": "1.125.4"
+      "@tanstack/router-devtools-core": "1.125.4",
+      "react": "~19.2.0",
+      "react-dom": "~19.2.0"
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",
