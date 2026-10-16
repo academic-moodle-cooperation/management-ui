@@ -8,6 +8,11 @@ jobs:
   changeset-present:
     name: Changeset present
     runs-on: ubuntu-latest
+    # Forward merges (r/19.x -> r/20.x) and closing merges (r/20.x -> develop)
+    # carry version bumps whose changesets the release already consumed, so
+    # "packages changed, no changeset" is the expected shape there, not a
+    # mistake. The merge-tree probe before merging such a PR is the review.
+    if: ${{ !startsWith(github.head_ref, 'r/') }}
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
