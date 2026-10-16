@@ -593,6 +593,28 @@ test("[VID-10] [VID-12] the gallery keeps the data and links the preview", async
   await expect(page.locator('a[href*="/play/"]').first()).toBeVisible();
 });
 
+test("a processed video nobody has published is not linked to a player", async ({ page }) => {
+  // Opencast reports PROCESSED as soon as the workflow finished — also for a
+  // workflow that stops before publishing. Such a video has no publishUrl, so
+  // the gallery thumbnail must not pretend to be a link (it used to render
+  // `href=""`, which reloaded the list on click); see #406.
+  await installMockBackend(page, {
+    events: [makeEvent({ title: "Unveröffentlicht", publishUrl: null })],
+  });
+  await page.goto("/management-ui/episodes");
+  await expect(page.getByRole("cell", { name: "Unveröffentlicht" })).toBeVisible({
+    timeout: 15_000,
+  });
+
+  await layoutToggle(page).click();
+  await expect(page.locator('img[src*="thumb"]').first()).toBeVisible({ timeout: 10_000 });
+
+  await expect(page.locator('img[src*="thumb"]').first().locator("xpath=ancestor::a")).toHaveCount(
+    0,
+  );
+  await expect(page.locator('a[href=""]')).toHaveCount(0);
+});
+
 test("[VID-33] [VID-34] [VID-36] the actions menu and the direct actions work", async ({
   page,
 }) => {

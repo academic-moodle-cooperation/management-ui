@@ -25,7 +25,7 @@ don't need any of this: see the lighter options in
 | The UI itself | `http://127.0.0.1:3000/management-ui/` | `pnpm dev` in this repo |
 
 > **Version note.** The backend bundles currently build against
-> `org.opencastproject:base:19-SNAPSHOT`, so the branch you need is Opencast
+> `org.opencastproject:base:20-SNAPSHOT`, so the branch you need is Opencast
 > **`r/20.x`** — not `develop`, which has already moved on to the next major
 > version. (Targeting an Opencast major is not cosmetic: the OSGi
 > `Import-Package` ranges are baked into the JARs at compile time, so a bundle
@@ -122,7 +122,7 @@ curl -s http://localhost:9200 | head -3   # should answer with version JSON
 
 (The `:Z` volume label matters on SELinux distros like Fedora.)
 
-## 2. Build and start Opencast 19
+## 2. Build and start Opencast 20
 
 ```bash
 git clone --branch r/20.x --recurse-submodules \
@@ -136,7 +136,7 @@ cd opencast-dist-allinone
 
 `--recurse-submodules` is not optional: `modules/admin`, `modules/editor` and
 `modules/studio` are git submodules, and the build fails without them. `mvn
-install` (rather than `package`) is what puts the `19-SNAPSHOT` artifacts into
+install` (rather than `package`) is what puts the `20-SNAPSHOT` artifacts into
 `~/.m2` for step 3.
 
 Enable the GraphQL plugin — in
@@ -196,7 +196,7 @@ git clone https://github.com/academic-moodle-cooperation/management-ui.git
 ```
 
 Then build the backend bundles (the Opencast build above already put the
-`19-SNAPSHOT` parent into `~/.m2`). `OPENCAST_DIST` is the directory you
+`20-SNAPSHOT` parent into `~/.m2`). `OPENCAST_DIST` is the directory you
 unpacked in step 2 — with the clone layout used above, that is
 `~/opencast/build/opencast-dist-allinone`:
 

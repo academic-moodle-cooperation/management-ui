@@ -1,6 +1,6 @@
 # @oc-mui/ui
 
-Shared component library built on Tailwind CSS v4 and Radix UI primitives (via shadcn/ui). Atomic components (Button, Card, Input, …) plus composed building blocks (app shell, datatable, metadata fields, ACL editor, date picker).
+Shared component library built on Tailwind CSS v4, Radix UI primitives (via shadcn/ui) and `@dnd-kit` for drag-and-drop. Atomic components (Button, Card, Input, …) plus composed building blocks (app shell, datatable, metadata fields, ACL editor, date picker, sortable list, …).
 
 This is the only place plugins should source UI components — the Theme Contract guarantees consistent styling, and bundling your own shadcn copies breaks org theming.
 
@@ -22,11 +22,12 @@ Plugin authors import from the **subpath exports** — never the package root �
 
 | Subpath | What it provides |
 |---------|------------------|
-| `@oc-mui/ui/components` | Atomic + composed components (Button, Card, Table, DataTable, AppShell, …). |
+| `@oc-mui/ui/components` | Atomic + composed components (Button, Card, Table, DataTable, PageShell, NavMain, …) — the plugin SDK surface, tracked in `etc/ui-components.api.md`. |
 | `@oc-mui/ui/components/icons` | `lucide-react` icons re-exported with a stable surface (Home, Video, ExternalLink, …). |
 | `@oc-mui/ui/lib` | Utility helpers (`resolveFirstAssetUrl`, …). |
 | `@oc-mui/ui/lib/utils` | The `cn()` class-merging helper. |
 | `@oc-mui/ui/hooks` | `useIsMobile`, `useClickOutside`. |
+| `@oc-mui/ui/internal` | **Host-only** assembly layer: `Appshell`, the router primitives (`UiRouterProvider`), `DefaultLandingPage`, the error pages, `ThemeModeProvider`. Not part of the SDK, no API report, not shared with remote plugins, lint-forbidden inside `plugins/`. |
 | `@oc-mui/ui/styles`, `@oc-mui/ui/globals.css` | The semantic-token CSS. Imported once by the shell. |
 | `@oc-mui/ui/config-primitives` | Building blocks for plugin config UIs. |
 | `@oc-mui/ui/postcss.config` | **Deprecated, no-op.** Tailwind runs through `@tailwindcss/vite` (wired by `@oc-mui/vite-config`); a host needs no PostCSS config. Kept as an empty config for one major cycle. |
@@ -43,6 +44,7 @@ The library is split between **atomic shadcn components** (under `src/components
 | `AclEditor` | Access-control-list editor. |
 | `DatePicker`, `DateTimePicker` | Calendar input. |
 | `InfiniteScroll` | Sentinel-driven incremental loading. |
+| `SortableList` | Vertically sortable list with a drag handle, full keyboard reordering, and screen-reader announcements; `moveItem` for non-drag moves. |
 | `Container`, `AppHeading`, `OverflowTooltip`, `DebouncedInput` | General-purpose layout/UX. |
 
 ## Theme

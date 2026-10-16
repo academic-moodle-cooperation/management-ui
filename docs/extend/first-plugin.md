@@ -18,7 +18,8 @@ This scaffolds under `.local-plugins/hello/` (gitignored — where org and commu
 
 ```
 .local-plugins/hello/
-├── plugin.json              # type: "app", extensionPoints: apps:definitions + sidebar:nav-items
+├── plugin.json              # type: "app", extensionPoints: apps:definitions + sidebar:nav-items,
+│                            # entry/css/locales: where the JAR build puts the bundle (see Distribution)
 ├── backend/                 # Maven/JAR layout — ignore for now, used when you ship
 ├── package.json, tsconfig.json, vite.config.ts, vitest.config.ts, vitest.setup.ts, eslint.config.js, README.md
 └── src/

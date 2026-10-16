@@ -28,6 +28,8 @@ A loaded plugin runs inside the host page and **shares modules** with it. You ca
   shares the complete module, so you get every icon, not a curated subset.
 - `@oc-mui/query`, `@oc-mui/router`, `@oc-mui/utils`, `@oc-mui/i18n`, `@oc-mui/app-runtime`
 
+Not on the list on purpose: `@oc-mui/ui/internal` — the host's own assembly layer (app shell, router primitives, error pages). It is not shared with loaded plugins and not an API contract; a plugin importing it fails at load time.
+
 Authoritative source: [`packages/remote-plugin-loader/src/transform.ts`](../../packages/remote-plugin-loader/src/transform.ts) (`SHARED_MODULE_NAMES`). Adding a name there is a public-API change and needs a changeset.
 
 The plugin's `vite.config.ts` (scaffolded by `pnpm create-plugin`) marks these as `external`. If you add new dependencies, put them in `dependencies` (bundled) — not `peerDependencies` (which only works for already-shared modules).
@@ -147,7 +149,8 @@ For deployments that already ship an Opencast backend, plugins are packaged as J
 
 ```
 .local-plugins/my-plugin/
-├── package.json, plugin.json, src/, locales/   ← the frontend
+├── package.json, plugin.json, src/             ← the frontend
+├── locales/                                    ← not scaffolded; create it when you add i18nNamespaces
 └── backend/
     ├── pom.xml                                 ← the Maven config
     ├── README.md                               ← build + deploy how-to
@@ -156,6 +159,16 @@ For deployments that already ship an Opencast backend, plugins are packaged as J
 ```
 
 Skip the Maven layout with `--no-pom` for plugins that will only ever be distributed via CDN (Path 4). In-tree plugins (`--in-tree`, scaffolded under `plugins/`) never get a `backend/` — they're bundled into the shell's own JAR rather than shipping as their own.
+
+The scaffolded `plugin.json` already declares where the build puts the bundle, which is what the backend needs to point the shell at it:
+
+```json
+"entry": "dist/my-plugin.mjs",
+"css": "dist/my-plugin.css",
+"locales": "locales"
+```
+
+`entry` is the one that matters: the tracker only emits a `scriptUrl` for a single-module manifest when it is set, and without one the shell has to guess the bundle URL (see "Discovery & load" below). Keep the three in step with `vite.config.ts` if you ever rename the output — `createCommunityPluginConfig({ pluginName })` emits `dist/<pluginName>.mjs` and, when the plugin imports any stylesheet, `dist/<pluginName>.css`. The `--in-tree` scaffold drops these fields: in-tree plugins are compiled into the shell and never go through the tracker.
 
 ### Build
 
@@ -168,7 +181,7 @@ mvn package
 This runs in three steps:
 
 1. **Frontend** — installs Node + pnpm under the plugin root and runs `pnpm install && pnpm run build`, producing `dist/<plugin-id>.mjs` (and optionally `.css`, `assets/`).
-2. **Resource copy** — copies `dist/`, `plugin.json`, and `locales/` into `target/classes/static/plugins/<plugin-id>/`.
+2. **Resource copy** — copies `dist/`, `plugin.json`, and `locales/` into `target/classes/static/plugins/<plugin-id>/`. `dist/` is flattened into that directory (the bundle lands at `static/plugins/<plugin-id>/<plugin-id>.mjs`), which is why the tracker uses only the basename of the manifest's `entry` / `css`.
 3. **OSGi bundle** — packages everything as a JAR with the headers the tracker reads:
 
    | Header | Value | Required? |
@@ -210,13 +223,15 @@ The backend tracks every OSGi bundle carrying the `Management-Plugin` header. Fo
 
 The aggregated list is served at `GET /management-tool/ui/config/plugins.json`, which the shell ([`apps/shell/src/services/jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts)) fetches at boot. Matching `config`-type plugins load first, runtime config is re-merged, then the rest load filtered by `app.enabledPlugins` and `config.plugins[id].enabled`.
 
+For a manifest without a `modules` array (the scaffold's shape), the tracker reads the top-level `type`, `entry`, `css` and `locales`: `scriptUrl` is `Http-Alias` plus the basename of `entry`, `cssUrl` likewise from `css`, and `localesUrl` is `Http-Alias` plus `locales` (or plus `locales` by convention when only `i18nNamespaces` is declared). **No `entry`, no `scriptUrl`.** The plugin still shows up in `plugins.json`, and the shell then guesses `<app base>/static/plugins/<plugin-id>/<plugin-id>.mjs` — a guess that only holds while `api.baseUrl` matches the JAR's `Http-Alias` prefix and the bundle is named after the plugin id. The scaffold declares all three fields so the backend's answer is authoritative; if you hand-write a manifest, `entry` is the field not to forget.
+
 A single JAR can ship multiple `.mjs` entry modules (one folder, many bundles). Declare them in `plugin.json`'s `modules` array; the tracker will emit one entry per module.
 
 See [Configuration model](../reference/configuration.md) for the full filtering model.
 
 ### What the POM does (and doesn't)
 
-The scaffolded POM inherits from `org.opencastproject:base:19-SNAPSHOT` directly. This matches what the Management UI itself does (`apps/shell/pom.xml`). External plugin authors need Opencast's Maven repository reachable from their build environment.
+The scaffolded POM inherits from `org.opencastproject:base:20-SNAPSHOT` directly. This matches what the Management UI itself does (`apps/shell/pom.xml`). External plugin authors need Opencast's Maven repository reachable from their build environment.
 
 The POM:
 

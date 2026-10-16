@@ -1,18 +1,6 @@
-# Pre-1.0 — the doc site is built but not publicly announced yet. Discourage
-# all crawlers from indexing it until the project is ready for public traffic.
-#
-# The deploy trigger is already active: .github/workflows/docs.yml deploys on
-# every push to develop (plus manual workflow_dispatch). This file is one of
-# the two remaining noindex guards — the other is the `noindex` meta tag in
-# docs/.vitepress/config.mts. Both flip together when going public:
-#
-# 1. Edit this file:
-#       User-agent: *
-#       Disallow:
-# 2. Remove the `noindex` meta tag set in docs/.vitepress/config.mts.
-#
-# The full go-public checklist (including the one-time GitHub Pages setting)
-# lives in docs/reference/open-followups.md §8.3.
+# The docs site is public. This file and the (removed) noindex meta tag in
+# docs/.vitepress/config.mts flipped together when the repo went public —
+# history and the one-time GitHub Pages setting: docs/reference/open-followups.md §8.3.
 
 User-agent: *
-Disallow: /
+Disallow:
