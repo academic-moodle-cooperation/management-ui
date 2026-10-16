@@ -211,6 +211,8 @@ export type CurrentUser = {
   email?: Maybe<Scalars['String']['output']>;
   /** A list of events under the owner. */
   myEvents: EventList;
+  /** A list of playlists owned by the current user. */
+  myPlaylists: PlaylistList;
   /** A list of series under the owner. */
   mySeries: SeriesList;
   name?: Maybe<Scalars['String']['output']>;
@@ -227,6 +229,15 @@ export type CurrentUserMyEventsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<EventOrderByInput>;
+  query?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+/** Represents the current user. */
+export type CurrentUserMyPlaylistsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<PlaylistOrderByInput>;
   query?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -258,6 +269,12 @@ export type DeleteEventPayload = {
   id?: Maybe<Scalars['String']['output']>;
   /** The deletion status of the event. */
   status?: Maybe<EventRemovalResult>;
+};
+
+/** The payload returned after deleting a playlist, containing the ID of the deleted playlist. */
+export type DeletePlaylistPayload = {
+  /** A unique identifier of the deleted playlist. */
+  id?: Maybe<Scalars['String']['output']>;
 };
 
 export type DurationMetadataField = MetadataFieldInterface & {
@@ -369,6 +386,14 @@ export type EventOrderByInput = {
   workflowState?: InputMaybe<OrderDirection>;
 };
 
+/** An entry in a playlist. */
+export type EventPlaylistEntry = PlaylistEntry & {
+  contentId?: Maybe<Scalars['String']['output']>;
+  event?: Maybe<Event>;
+  id?: Maybe<Scalars['Long']['output']>;
+  type?: Maybe<PlaylistEntryType>;
+};
+
 export enum EventRemovalResult {
   /** GENERAL_FAILURE */
   GeneralFailure = 'GENERAL_FAILURE',
@@ -379,6 +404,13 @@ export enum EventRemovalResult {
   /** SUCCESS */
   Success = 'SUCCESS'
 }
+
+/** An entry in a playlist. */
+export type InaccessiblePlaylistEntry = PlaylistEntry & {
+  contentId?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['Long']['output']>;
+  type?: Maybe<PlaylistEntryType>;
+};
 
 export type IntMetadataField = MetadataFieldInterface & {
   collection?: Maybe<Scalars['JSON']['output']>;
@@ -526,19 +558,32 @@ export type MuiSeriesInfo = {
 };
 
 export type Mutation = {
+  /** Create playlist from metadata, entries and acl */
+  createPlaylist?: Maybe<Playlist>;
   /** Create series with metadata and acl */
   createSeries: Series;
   /** Delete event */
   deleteEvent?: Maybe<DeleteEventPayload>;
+  /** Delete playlist */
+  deletePlaylist?: Maybe<DeletePlaylistPayload>;
   mui?: Maybe<MuiMutation>;
   /** Update event metadata */
   updateEvent: Event;
   /** Update event acl */
   updateEventAcl: Event;
+  /** Update playlist with metadata, entries and acl */
+  updatePlaylist?: Maybe<Playlist>;
   /** Update series metadata and optional the acl */
   updateSeries: Series;
   /** Update series acl */
   updateSeriesAcl: Series;
+};
+
+
+export type MutationCreatePlaylistArgs = {
+  acl: AccessControlListInput;
+  entries?: InputMaybe<Array<InputMaybe<PlaylistEntryInput>>>;
+  metadata: PlaylistMetadataInput;
 };
 
 
@@ -553,6 +598,11 @@ export type MutationDeleteEventArgs = {
 };
 
 
+export type MutationDeletePlaylistArgs = {
+  id: Scalars['String']['input'];
+};
+
+
 export type MutationUpdateEventArgs = {
   acl?: InputMaybe<AccessControlListInput>;
   id: Scalars['String']['input'];
@@ -563,6 +613,14 @@ export type MutationUpdateEventArgs = {
 export type MutationUpdateEventAclArgs = {
   acl: AccessControlListInput;
   id: Scalars['String']['input'];
+};
+
+
+export type MutationUpdatePlaylistArgs = {
+  acl?: InputMaybe<AccessControlListInput>;
+  entries?: InputMaybe<Array<InputMaybe<PlaylistEntryInput>>>;
+  id: Scalars['String']['input'];
+  metadata?: InputMaybe<PlaylistMetadataInput>;
 };
 
 
@@ -606,6 +664,68 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['String']['output']>;
 };
 
+/** A playlist of events. */
+export type Playlist = {
+  accessControlEntries?: Maybe<Array<Maybe<PlaylistAccessControlEntry>>>;
+  creator?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  entries?: Maybe<Array<Maybe<PlaylistEntry>>>;
+  id: Scalars['ID']['output'];
+  title?: Maybe<Scalars['String']['output']>;
+  updated?: Maybe<Scalars['DateTime']['output']>;
+};
+
+/** An access control entry for a playlist. */
+export type PlaylistAccessControlEntry = {
+  action?: Maybe<Scalars['String']['output']>;
+  allow?: Maybe<Scalars['Boolean']['output']>;
+  role?: Maybe<Scalars['String']['output']>;
+};
+
+/** An entry in a playlist. */
+export type PlaylistEntry = {
+  contentId?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['Long']['output']>;
+  type?: Maybe<PlaylistEntryType>;
+};
+
+/** Input type for a playlist entry. */
+export type PlaylistEntryInput = {
+  contentId: Scalars['String']['input'];
+  type: PlaylistEntryType;
+};
+
+/** The type of a playlist entry. */
+export enum PlaylistEntryType {
+  /** EVENT */
+  Event = 'EVENT',
+  /** INACCESSIBLE */
+  Inaccessible = 'INACCESSIBLE'
+}
+
+/** A list of playlists */
+export type PlaylistList = {
+  nodes: Array<Maybe<Playlist>>;
+  pageInfo: OffsetPageInfo;
+  totalCount: Scalars['Long']['output'];
+};
+
+/** Input type for playlist metadata, including title and description. */
+export type PlaylistMetadataInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Fields to sort playlists by. The order of the sort is the same as the order of the fields. */
+export type PlaylistOrderByInput = {
+  creator?: InputMaybe<OrderDirection>;
+  deletionDate?: InputMaybe<OrderDirection>;
+  description?: InputMaybe<OrderDirection>;
+  organization?: InputMaybe<OrderDirection>;
+  title?: InputMaybe<OrderDirection>;
+  updated?: InputMaybe<OrderDirection>;
+};
+
 export type Publication = {
   channel?: Maybe<Scalars['String']['output']>;
   flavor?: Maybe<Scalars['String']['output']>;
@@ -624,6 +744,8 @@ export type PublicationTracksArgs = {
 export type Query = {
   /** Returns event list */
   allEvents: EventList;
+  /** Returns playlist list */
+  allPlaylists: PlaylistList;
   /** Returns series list */
   allSeries: SeriesList;
   /** The current user */
@@ -634,6 +756,8 @@ export type Query = {
   listProvider: ListProvider;
   /** A list of managed access control lists */
   managedAcls: ManagedAccessControlListCatalogue;
+  /** Returns a playlist by id */
+  playlistById?: Maybe<Playlist>;
   /** Search for users */
   searchUser: UserList;
   /** Returns a series by id */
@@ -646,6 +770,14 @@ export type QueryAllEventsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<EventOrderByInput>;
+  query?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryAllPlaylistsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<PlaylistOrderByInput>;
   query?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -677,6 +809,11 @@ export type QueryManagedAclsArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<ManagedAclOrderByInput>;
   query?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryPlaylistByIdArgs = {
+  id: Scalars['String']['input'];
 };
 
 
@@ -997,6 +1134,71 @@ export type MuiUpdateSeriesAclMutationVariables = Exact<{
 
 export type MuiUpdateSeriesAclMutation = { updateSeriesAcl: { muiSeriesInfo?: { managedAclId?: any | null } | null } };
 
+export type MuiPlaylistEntryData_EventPlaylistEntry_Fragment = { __typename: 'EventPlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null, event?: { id: string, title: string, duration?: any | null, seriesId?: string | null, seriesName?: string | null, eventStatus: string, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } | null };
+
+export type MuiPlaylistEntryData_InaccessiblePlaylistEntry_Fragment = { __typename: 'InaccessiblePlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null };
+
+export type MuiPlaylistEntryDataFragment = MuiPlaylistEntryData_EventPlaylistEntry_Fragment | MuiPlaylistEntryData_InaccessiblePlaylistEntry_Fragment;
+
+export type MuiPlaylistDataFragment = { __typename: 'Playlist', id: string, title?: string | null, description?: string | null, creator?: string | null, updated?: any | null, accessControlEntries?: Array<{ role?: string | null, action?: string | null, allow?: boolean | null } | null> | null, entries?: Array<{ __typename: 'EventPlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null, event?: { id: string, title: string, duration?: any | null, seriesId?: string | null, seriesName?: string | null, eventStatus: string, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } | null } | { __typename: 'InaccessiblePlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null } | null> | null };
+
+export type MuiGetMyPlaylistsQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<PlaylistOrderByInput>;
+  query?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type MuiGetMyPlaylistsQuery = { currentUser: { myPlaylists: { totalCount: any, nodes: Array<{ __typename: 'Playlist', id: string, title?: string | null, description?: string | null, creator?: string | null, updated?: any | null, accessControlEntries?: Array<{ role?: string | null, action?: string | null, allow?: boolean | null } | null> | null, entries?: Array<{ __typename: 'EventPlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null, event?: { id: string, title: string, duration?: any | null, seriesId?: string | null, seriesName?: string | null, eventStatus: string, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } | null } | { __typename: 'InaccessiblePlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null } | null> | null } | null> } } };
+
+export type MuiGetPlaylistByIdQueryVariables = Exact<{
+  playlistId: Scalars['String']['input'];
+}>;
+
+
+export type MuiGetPlaylistByIdQuery = { playlistById?: { __typename: 'Playlist', id: string, title?: string | null, description?: string | null, creator?: string | null, updated?: any | null, accessControlEntries?: Array<{ role?: string | null, action?: string | null, allow?: boolean | null } | null> | null, entries?: Array<{ __typename: 'EventPlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null, event?: { id: string, title: string, duration?: any | null, seriesId?: string | null, seriesName?: string | null, eventStatus: string, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } | null } | { __typename: 'InaccessiblePlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null } | null> | null } | null };
+
+export type MuiCreatePlaylistMutationVariables = Exact<{
+  metadata: PlaylistMetadataInput;
+  entries?: InputMaybe<Array<InputMaybe<PlaylistEntryInput>> | InputMaybe<PlaylistEntryInput>>;
+  acl: AccessControlListInput;
+}>;
+
+
+export type MuiCreatePlaylistMutation = { createPlaylist?: { __typename: 'Playlist', id: string, title?: string | null, description?: string | null, creator?: string | null, updated?: any | null, accessControlEntries?: Array<{ role?: string | null, action?: string | null, allow?: boolean | null } | null> | null, entries?: Array<{ __typename: 'EventPlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null, event?: { id: string, title: string, duration?: any | null, seriesId?: string | null, seriesName?: string | null, eventStatus: string, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } | null } | { __typename: 'InaccessiblePlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null } | null> | null } | null };
+
+export type MuiUpdatePlaylistMetadataMutationVariables = Exact<{
+  playlistId: Scalars['String']['input'];
+  metadata: PlaylistMetadataInput;
+}>;
+
+
+export type MuiUpdatePlaylistMetadataMutation = { updatePlaylist?: { __typename: 'Playlist', id: string, title?: string | null, description?: string | null, creator?: string | null, updated?: any | null, accessControlEntries?: Array<{ role?: string | null, action?: string | null, allow?: boolean | null } | null> | null, entries?: Array<{ __typename: 'EventPlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null, event?: { id: string, title: string, duration?: any | null, seriesId?: string | null, seriesName?: string | null, eventStatus: string, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } | null } | { __typename: 'InaccessiblePlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null } | null> | null } | null };
+
+export type MuiUpdatePlaylistEntriesMutationVariables = Exact<{
+  playlistId: Scalars['String']['input'];
+  entries: Array<InputMaybe<PlaylistEntryInput>> | InputMaybe<PlaylistEntryInput>;
+}>;
+
+
+export type MuiUpdatePlaylistEntriesMutation = { updatePlaylist?: { __typename: 'Playlist', id: string, title?: string | null, description?: string | null, creator?: string | null, updated?: any | null, accessControlEntries?: Array<{ role?: string | null, action?: string | null, allow?: boolean | null } | null> | null, entries?: Array<{ __typename: 'EventPlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null, event?: { id: string, title: string, duration?: any | null, seriesId?: string | null, seriesName?: string | null, eventStatus: string, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } | null } | { __typename: 'InaccessiblePlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null } | null> | null } | null };
+
+export type MuiUpdatePlaylistAclMutationVariables = Exact<{
+  playlistId: Scalars['String']['input'];
+  acl: AccessControlListInput;
+}>;
+
+
+export type MuiUpdatePlaylistAclMutation = { updatePlaylist?: { __typename: 'Playlist', id: string, title?: string | null, description?: string | null, creator?: string | null, updated?: any | null, accessControlEntries?: Array<{ role?: string | null, action?: string | null, allow?: boolean | null } | null> | null, entries?: Array<{ __typename: 'EventPlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null, event?: { id: string, title: string, duration?: any | null, seriesId?: string | null, seriesName?: string | null, eventStatus: string, muiEventInfo?: { isPublic?: boolean | null, managedAclId?: any | null, publishUrl?: string | null, thumbnailUrl?: string | null } | null } | null } | { __typename: 'InaccessiblePlaylistEntry', id?: any | null, contentId?: string | null, type?: PlaylistEntryType | null } | null> | null } | null };
+
+export type MuiDeletePlaylistMutationVariables = Exact<{
+  playlistId: Scalars['String']['input'];
+}>;
+
+
+export type MuiDeletePlaylistMutation = { deletePlaylist?: { id?: string | null } | null };
+
 
 export const MuiCurrentUserFieldsFragmentDoc = `
     fragment MuiCurrentUserFields on CurrentUser {
@@ -1180,6 +1382,48 @@ export const MuiSeriesAclDataFragmentDoc = `
   }
 }
     `;
+export const MuiPlaylistEntryDataFragmentDoc = `
+    fragment MuiPlaylistEntryData on PlaylistEntry {
+  __typename
+  id
+  contentId
+  type
+  ... on EventPlaylistEntry {
+    event {
+      id
+      title
+      duration
+      seriesId
+      seriesName
+      eventStatus
+      muiEventInfo {
+        isPublic
+        managedAclId
+        publishUrl
+        thumbnailUrl
+      }
+    }
+  }
+}
+    `;
+export const MuiPlaylistDataFragmentDoc = `
+    fragment MuiPlaylistData on Playlist {
+  __typename
+  id
+  title
+  description
+  creator
+  updated
+  accessControlEntries {
+    role
+    action
+    allow
+  }
+  entries {
+    ...MuiPlaylistEntryData
+  }
+}
+    ${MuiPlaylistEntryDataFragmentDoc}`;
 export const MuiUserDocument = `
     query MuiUser {
   currentUser {
@@ -2160,3 +2404,222 @@ export const useMuiUpdateSeriesAclMutation = <
 
 
 useMuiUpdateSeriesAclMutation.fetcher = (variables: MuiUpdateSeriesAclMutationVariables, options?: RequestInit['headers']) => fetchData<MuiUpdateSeriesAclMutation, MuiUpdateSeriesAclMutationVariables>(MuiUpdateSeriesAclDocument, variables, options);
+
+export const MuiGetMyPlaylistsDocument = `
+    query MuiGetMyPlaylists($limit: Int, $offset: Int, $orderBy: PlaylistOrderByInput, $query: String) {
+  currentUser {
+    myPlaylists(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {
+      totalCount
+      nodes {
+        ...MuiPlaylistData
+      }
+    }
+  }
+}
+    ${MuiPlaylistDataFragmentDoc}`;
+
+export const useMuiGetMyPlaylistsQuery = <
+      TData = MuiGetMyPlaylistsQuery,
+      TError = unknown
+    >(
+      variables?: MuiGetMyPlaylistsQueryVariables,
+      options?: Omit<UseQueryOptions<MuiGetMyPlaylistsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetMyPlaylistsQuery, TError, TData>['queryKey'] }
+    ): UseQueryResult<TData, TError> => {
+    
+    return useQuery<MuiGetMyPlaylistsQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['MuiGetMyPlaylists'] : ['MuiGetMyPlaylists', variables],
+    queryFn: fetchData<MuiGetMyPlaylistsQuery, MuiGetMyPlaylistsQueryVariables>(MuiGetMyPlaylistsDocument, variables),
+    ...options
+  }
+    )};
+
+useMuiGetMyPlaylistsQuery.getKey = (variables?: MuiGetMyPlaylistsQueryVariables) => variables === undefined ? ['MuiGetMyPlaylists'] : ['MuiGetMyPlaylists', variables];
+
+export const useSuspenseMuiGetMyPlaylistsQuery = <
+      TData = MuiGetMyPlaylistsQuery,
+      TError = unknown
+    >(
+      variables?: MuiGetMyPlaylistsQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<MuiGetMyPlaylistsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetMyPlaylistsQuery, TError, TData>['queryKey'] }
+    ): UseSuspenseQueryResult<TData, TError> => {
+    
+    return useSuspenseQuery<MuiGetMyPlaylistsQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['MuiGetMyPlaylistsSuspense'] : ['MuiGetMyPlaylistsSuspense', variables],
+    queryFn: fetchData<MuiGetMyPlaylistsQuery, MuiGetMyPlaylistsQueryVariables>(MuiGetMyPlaylistsDocument, variables),
+    ...options
+  }
+    )};
+
+useSuspenseMuiGetMyPlaylistsQuery.getKey = (variables?: MuiGetMyPlaylistsQueryVariables) => variables === undefined ? ['MuiGetMyPlaylistsSuspense'] : ['MuiGetMyPlaylistsSuspense', variables];
+
+
+useMuiGetMyPlaylistsQuery.fetcher = (variables?: MuiGetMyPlaylistsQueryVariables, options?: RequestInit['headers']) => fetchData<MuiGetMyPlaylistsQuery, MuiGetMyPlaylistsQueryVariables>(MuiGetMyPlaylistsDocument, variables, options);
+
+export const MuiGetPlaylistByIdDocument = `
+    query MuiGetPlaylistById($playlistId: String!) {
+  playlistById(id: $playlistId) {
+    ...MuiPlaylistData
+  }
+}
+    ${MuiPlaylistDataFragmentDoc}`;
+
+export const useMuiGetPlaylistByIdQuery = <
+      TData = MuiGetPlaylistByIdQuery,
+      TError = unknown
+    >(
+      variables: MuiGetPlaylistByIdQueryVariables,
+      options?: Omit<UseQueryOptions<MuiGetPlaylistByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MuiGetPlaylistByIdQuery, TError, TData>['queryKey'] }
+    ): UseQueryResult<TData, TError> => {
+    
+    return useQuery<MuiGetPlaylistByIdQuery, TError, TData>(
+      {
+    queryKey: ['MuiGetPlaylistById', variables],
+    queryFn: fetchData<MuiGetPlaylistByIdQuery, MuiGetPlaylistByIdQueryVariables>(MuiGetPlaylistByIdDocument, variables),
+    ...options
+  }
+    )};
+
+useMuiGetPlaylistByIdQuery.getKey = (variables: MuiGetPlaylistByIdQueryVariables) => ['MuiGetPlaylistById', variables];
+
+export const useSuspenseMuiGetPlaylistByIdQuery = <
+      TData = MuiGetPlaylistByIdQuery,
+      TError = unknown
+    >(
+      variables: MuiGetPlaylistByIdQueryVariables,
+      options?: Omit<UseSuspenseQueryOptions<MuiGetPlaylistByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseSuspenseQueryOptions<MuiGetPlaylistByIdQuery, TError, TData>['queryKey'] }
+    ): UseSuspenseQueryResult<TData, TError> => {
+    
+    return useSuspenseQuery<MuiGetPlaylistByIdQuery, TError, TData>(
+      {
+    queryKey: ['MuiGetPlaylistByIdSuspense', variables],
+    queryFn: fetchData<MuiGetPlaylistByIdQuery, MuiGetPlaylistByIdQueryVariables>(MuiGetPlaylistByIdDocument, variables),
+    ...options
+  }
+    )};
+
+useSuspenseMuiGetPlaylistByIdQuery.getKey = (variables: MuiGetPlaylistByIdQueryVariables) => ['MuiGetPlaylistByIdSuspense', variables];
+
+
+useMuiGetPlaylistByIdQuery.fetcher = (variables: MuiGetPlaylistByIdQueryVariables, options?: RequestInit['headers']) => fetchData<MuiGetPlaylistByIdQuery, MuiGetPlaylistByIdQueryVariables>(MuiGetPlaylistByIdDocument, variables, options);
+
+export const MuiCreatePlaylistDocument = `
+    mutation MuiCreatePlaylist($metadata: PlaylistMetadataInput!, $entries: [PlaylistEntryInput], $acl: AccessControlListInput!) {
+  createPlaylist(metadata: $metadata, entries: $entries, acl: $acl) {
+    ...MuiPlaylistData
+  }
+}
+    ${MuiPlaylistDataFragmentDoc}`;
+
+export const useMuiCreatePlaylistMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<MuiCreatePlaylistMutation, TError, MuiCreatePlaylistMutationVariables, TContext>) => {
+    
+    return useMutation<MuiCreatePlaylistMutation, TError, MuiCreatePlaylistMutationVariables, TContext>(
+      {
+    mutationKey: ['MuiCreatePlaylist'],
+    mutationFn: (variables?: MuiCreatePlaylistMutationVariables) => fetchData<MuiCreatePlaylistMutation, MuiCreatePlaylistMutationVariables>(MuiCreatePlaylistDocument, variables)(),
+    ...options
+  }
+    )};
+
+
+useMuiCreatePlaylistMutation.fetcher = (variables: MuiCreatePlaylistMutationVariables, options?: RequestInit['headers']) => fetchData<MuiCreatePlaylistMutation, MuiCreatePlaylistMutationVariables>(MuiCreatePlaylistDocument, variables, options);
+
+export const MuiUpdatePlaylistMetadataDocument = `
+    mutation MuiUpdatePlaylistMetadata($playlistId: String!, $metadata: PlaylistMetadataInput!) {
+  updatePlaylist(id: $playlistId, metadata: $metadata) {
+    ...MuiPlaylistData
+  }
+}
+    ${MuiPlaylistDataFragmentDoc}`;
+
+export const useMuiUpdatePlaylistMetadataMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<MuiUpdatePlaylistMetadataMutation, TError, MuiUpdatePlaylistMetadataMutationVariables, TContext>) => {
+    
+    return useMutation<MuiUpdatePlaylistMetadataMutation, TError, MuiUpdatePlaylistMetadataMutationVariables, TContext>(
+      {
+    mutationKey: ['MuiUpdatePlaylistMetadata'],
+    mutationFn: (variables?: MuiUpdatePlaylistMetadataMutationVariables) => fetchData<MuiUpdatePlaylistMetadataMutation, MuiUpdatePlaylistMetadataMutationVariables>(MuiUpdatePlaylistMetadataDocument, variables)(),
+    ...options
+  }
+    )};
+
+
+useMuiUpdatePlaylistMetadataMutation.fetcher = (variables: MuiUpdatePlaylistMetadataMutationVariables, options?: RequestInit['headers']) => fetchData<MuiUpdatePlaylistMetadataMutation, MuiUpdatePlaylistMetadataMutationVariables>(MuiUpdatePlaylistMetadataDocument, variables, options);
+
+export const MuiUpdatePlaylistEntriesDocument = `
+    mutation MuiUpdatePlaylistEntries($playlistId: String!, $entries: [PlaylistEntryInput]!) {
+  updatePlaylist(id: $playlistId, entries: $entries) {
+    ...MuiPlaylistData
+  }
+}
+    ${MuiPlaylistDataFragmentDoc}`;
+
+export const useMuiUpdatePlaylistEntriesMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<MuiUpdatePlaylistEntriesMutation, TError, MuiUpdatePlaylistEntriesMutationVariables, TContext>) => {
+    
+    return useMutation<MuiUpdatePlaylistEntriesMutation, TError, MuiUpdatePlaylistEntriesMutationVariables, TContext>(
+      {
+    mutationKey: ['MuiUpdatePlaylistEntries'],
+    mutationFn: (variables?: MuiUpdatePlaylistEntriesMutationVariables) => fetchData<MuiUpdatePlaylistEntriesMutation, MuiUpdatePlaylistEntriesMutationVariables>(MuiUpdatePlaylistEntriesDocument, variables)(),
+    ...options
+  }
+    )};
+
+
+useMuiUpdatePlaylistEntriesMutation.fetcher = (variables: MuiUpdatePlaylistEntriesMutationVariables, options?: RequestInit['headers']) => fetchData<MuiUpdatePlaylistEntriesMutation, MuiUpdatePlaylistEntriesMutationVariables>(MuiUpdatePlaylistEntriesDocument, variables, options);
+
+export const MuiUpdatePlaylistAclDocument = `
+    mutation MuiUpdatePlaylistAcl($playlistId: String!, $acl: AccessControlListInput!) {
+  updatePlaylist(id: $playlistId, acl: $acl) {
+    ...MuiPlaylistData
+  }
+}
+    ${MuiPlaylistDataFragmentDoc}`;
+
+export const useMuiUpdatePlaylistAclMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<MuiUpdatePlaylistAclMutation, TError, MuiUpdatePlaylistAclMutationVariables, TContext>) => {
+    
+    return useMutation<MuiUpdatePlaylistAclMutation, TError, MuiUpdatePlaylistAclMutationVariables, TContext>(
+      {
+    mutationKey: ['MuiUpdatePlaylistAcl'],
+    mutationFn: (variables?: MuiUpdatePlaylistAclMutationVariables) => fetchData<MuiUpdatePlaylistAclMutation, MuiUpdatePlaylistAclMutationVariables>(MuiUpdatePlaylistAclDocument, variables)(),
+    ...options
+  }
+    )};
+
+
+useMuiUpdatePlaylistAclMutation.fetcher = (variables: MuiUpdatePlaylistAclMutationVariables, options?: RequestInit['headers']) => fetchData<MuiUpdatePlaylistAclMutation, MuiUpdatePlaylistAclMutationVariables>(MuiUpdatePlaylistAclDocument, variables, options);
+
+export const MuiDeletePlaylistDocument = `
+    mutation MuiDeletePlaylist($playlistId: String!) {
+  deletePlaylist(id: $playlistId) {
+    id
+  }
+}
+    `;
+
+export const useMuiDeletePlaylistMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<MuiDeletePlaylistMutation, TError, MuiDeletePlaylistMutationVariables, TContext>) => {
+    
+    return useMutation<MuiDeletePlaylistMutation, TError, MuiDeletePlaylistMutationVariables, TContext>(
+      {
+    mutationKey: ['MuiDeletePlaylist'],
+    mutationFn: (variables?: MuiDeletePlaylistMutationVariables) => fetchData<MuiDeletePlaylistMutation, MuiDeletePlaylistMutationVariables>(MuiDeletePlaylistDocument, variables)(),
+    ...options
+  }
+    )};
+
+
+useMuiDeletePlaylistMutation.fetcher = (variables: MuiDeletePlaylistMutationVariables, options?: RequestInit['headers']) => fetchData<MuiDeletePlaylistMutation, MuiDeletePlaylistMutationVariables>(MuiDeletePlaylistDocument, variables, options);

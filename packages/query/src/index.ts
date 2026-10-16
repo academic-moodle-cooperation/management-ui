@@ -52,6 +52,9 @@ export type {
   MuiGetSeriesByIdInputFieldsQuery,
   MuiSeriesDataFragment,
   MuiGetMySeriesNameAndIdQuery,
+  MuiPlaylistDataFragment,
+  MuiPlaylistEntryDataFragment,
+  MuiGetMyPlaylistsQuery,
 } from "./gql-generated";
 
 export type MetadataFieldType =
