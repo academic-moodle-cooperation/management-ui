@@ -1,5 +1,20 @@
 # @oc-mui/plugin-core-series
 
+## 1.2.1
+
+### Patch Changes
+
+- Updated dependencies [bbbdf68]
+  - @oc-mui/query@2.0.1
+  - @oc-mui/i18n@1.1.0
+  - @oc-mui/plugin-system@1.2.0
+  - @oc-mui/providers@3.0.1
+  - @oc-mui/router@1.1.2
+  - @oc-mui/store@1.1.1
+  - @oc-mui/ui@2.0.1
+  - @oc-mui/ui-config@2.0.0
+  - @oc-mui/utils@1.2.0
+
 ## 1.2.0
 
 ### Minor Changes

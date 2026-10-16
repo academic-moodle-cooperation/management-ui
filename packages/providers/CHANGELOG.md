@@ -1,5 +1,16 @@
 # @oc-mui/providers
 
+## 3.0.1
+
+### Patch Changes
+
+- Updated dependencies [bbbdf68]
+  - @oc-mui/query@2.0.1
+  - @oc-mui/app-runtime@1.0.3
+  - @oc-mui/plugin-system@1.2.0
+  - @oc-mui/router@1.1.2
+  - @oc-mui/ui@2.0.1
+
 ## 3.0.0
 
 ### Patch Changes
