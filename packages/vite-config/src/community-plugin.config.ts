@@ -107,6 +107,8 @@ const DEFAULT_EXTERNALS: (string | RegExp)[] = [
  * Creates a Vite configuration for building a community plugin.
  *
  * The resulting bundle is an ES module that:
+ * - Is written to `<outDir>/<pluginName>.mjs`, with any imported styles
+ *   extracted to `<outDir>/<pluginName>.css`
  * - Exports a default plugin object (createPlugin result)
  * - Optionally exports __injected_fragments__ for GraphQL extension
  * - Does NOT include React or workspace packages (external)
@@ -134,6 +136,12 @@ export function createCommunityPluginConfig(options: CreateCommunityPluginConfig
     entry: path.resolve(process.cwd(), entry),
     name: pluginName.replace(/-/g, "_"), // Convert kebab-case to snake_case for UMD name
     fileName: (format) => `${pluginName}.${format === "es" ? "mjs" : "js"}`,
+    // Name the extracted stylesheet after the plugin too. Without this Vite
+    // derives it from package.json's name with the scope stripped
+    // (`plugin-<name>.css` for a scaffolded `@oc-mui/plugin-<name>`), which
+    // is not what the scaffolded plugin.json (`css: dist/<name>.css`), the
+    // Maven POM comments, or the remote loader's `<name>.css` fallback expect.
+    cssFileName: pluginName,
     formats: ["es"], // Only ES modules for dynamic import()
   };
 

@@ -1,24 +1,30 @@
-export * from "./router-context";
 export * from "./appheading";
 export * from "./container";
 export * from "./page-shell";
 export * from "./mui-table";
 export * from "./datatable";
 export * from "./debounced-input";
-export * from "./DefaultLandingPage";
-export * from "./appshell";
 export * from "./ui";
 export * from "./metadata-fields";
-export * from "./errors";
 export * from "./select-series-combobox";
 export * from "./datepicker";
 export { Icons } from "./icons";
 export * from "./datetime-picker";
 export * from "./infinite-scroll";
 export * from "./overflow-tooltip";
+export * from "./sortable-list";
 export * from "./appLoader";
 export * from "./acl-editor";
-export * from "./theme-mode";
+// ThemeModeProvider is host-only (`@oc-mui/ui/internal`); the toggle and the
+// hook a plugin may read the resolved mode with stay public.
+export { ThemeModeToggle } from "./theme-mode/ThemeModeToggle";
+export {
+  THEME_MODE_STORAGE_KEY,
+  useThemeMode,
+  type ResolvedThemeMode,
+  type ThemeMode,
+  type ThemeModeContextValue,
+} from "./theme-mode/theme-mode-context";
 
 // Explicitly re-export types for Vite/Rollup compatibility
 // when using 'import type' syntax

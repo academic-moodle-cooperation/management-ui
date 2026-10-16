@@ -14,7 +14,12 @@
  * skip it if you genuinely only want a frontend/CDN-distributed plugin.
  *
  * `--in-tree` scaffolds never include the Maven layout — those plugins
- * ship as part of the shell's JAR, not their own.
+ * ship as part of the shell's JAR, not their own. For the same reason their
+ * plugin.json drops the JAR-only `entry` / `css` / `locales` fields the
+ * community templates declare: the backend's PluginBundleTracker only sets a
+ * `scriptUrl` for a single-module manifest when `entry` is present. Without
+ * it the shell has to guess `<app base>/static/plugins/<id>/<id>.mjs`, which
+ * breaks as soon as the deployment's base path or bundle name deviates.
  *
  * The scaffolded plugin includes a placeholder `app:header-logo`
  * registration so `pnpm --filter @oc-mui/plugin-<name> test:contract`
@@ -44,6 +49,9 @@ const templateAppDir = resolve(__dirname, "templates", "create-plugin-app");
 const mavenTemplatesDir = resolve(__dirname, "templates", "create-plugin-maven");
 
 const VALID_TEMPLATES = new Set(["minimal", "app"]);
+// Manifest fields that only matter when the plugin ships as its own JAR
+// (see the `--in-tree` note in the header comment).
+const JAR_ONLY_MANIFEST_FIELDS = ["entry", "css", "locales"];
 
 const USAGE = `Usage:
   pnpm create-plugin <plugin-name> [--template <minimal|app>] [--in-tree] [--no-pom]
@@ -207,6 +215,18 @@ if (template === "app") {
 
 if (includeMaven) {
   await copyTemplates(mavenTemplatesDir, mavenTemplatesDir, join(targetDir, "backend"));
+}
+
+// The community templates declare where the built bundle lives inside the
+// JAR (`entry` / `css` / `locales`) — the backend tracker needs `entry` to
+// emit an authoritative `scriptUrl`. In-tree plugins are compiled into the shell and
+// registered through `plugins/index.ts`, so those fields have no meaning
+// there; strip them to keep the in-tree manifest identical to its siblings.
+if (isInTree) {
+  const manifestPath = join(targetDir, "plugin.json");
+  const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+  for (const field of JAR_ONLY_MANIFEST_FIELDS) delete manifest[field];
+  await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
 }
 
 const skipInstall = flags.has("--no-install");

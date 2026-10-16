@@ -158,9 +158,8 @@ Self-contained in [`testing.md` → Follow-ups](../contribute/testing.md#follow-
 1. E2E suites per feature — residue only (the protocol-driven specs cover the main flows; convert the remaining hand-run protocol steps).
 2. Coverage gates — extend to the apps (seven packages already enforce thresholds).
 3. Playground-as-isolated-plugin-runner.
-4. Marketplace metadata cleanup (move from hard-coded map to `extensionPoints` manifest).
-5. Visual regression — data screens + promote to CI (default + alternate-theme baselines are committed).
-6. Remote turbo cache to share artefacts across CI jobs.
+4. Visual regression — data screens + promote to CI (default + alternate-theme baselines are committed).
+5. Remote turbo cache to share artefacts across CI jobs.
 
 ---
 
@@ -197,15 +196,13 @@ PR-3a restructured `docs/` from 40 files to 20, rewrote the plugin-author and op
 
 The deploy trigger is **already active**: [`.github/workflows/docs.yml`](../../.github/workflows/docs.yml) deploys the site on every push to `develop` (plus manual `workflow_dispatch`) — there is no `main` branch in this repo. **Current blocker: GitHub Actions billing** — while it's unresolved no workflow runs at all, so no deploy happens; the moment billing is restored the site starts updating on merge with zero further edits.
 
-Until the project is ready for public traffic the site stays **discouraged from indexing**. Exactly three things remain for go-public:
+Items 1 and 2 of the original three-step go-public list (the robots.txt crawler block and the `noindex` meta tag in the VitePress config) were flipped together in the flip-day PR — merged the day the repo went public. One step remains:
 
 | # | What | Where | Change |
 |---|------|-------|--------|
-| 1 | Crawler block | [`docs/public/robots.txt`](../../docs/public/robots.txt) | `Disallow: /` → `Disallow:` (empty — allows everything). |
-| 2 | `noindex` meta tag | [`docs/.vitepress/config.mts`](../../docs/.vitepress/config.mts) | Remove the `<meta name="robots" content="noindex, nofollow">` entry from the `head` array. |
 | 3 | One-time GitHub setting | Repo **Settings → Pages** | Set source to **GitHub Actions** (not "Deploy from a branch"). The workflow's `actions/deploy-pages` step errors out until this is set. |
 
-**When to revisit**: alongside the go-public flip (see [`test-protocol.md`](../contribute/test-protocol.md)'s closing section). Flip 1 and 2 together — the combo is belt-and-suspenders (robots.txt is advisory; the meta tag is what most search engines actually obey, so flipping only one leaves the other gating). Item 3 can be done earlier: with the guards in place, a manual `workflow_dispatch` deploy is safe any time — the URL exists, but search engines stay away.
+**When to revisit**: on flip day, together with merging the flip-day PR (#302 has the complete day-of checklist).
 
 ### 8.4 Source-link rewriting is heuristic-based
 
@@ -276,7 +273,7 @@ exports (this PR).
   the point of no return; the **first npm publish** is.
 
   **Still open, and now deadline-bound:** curate `@oc-mui/ui`'s export surface
-  (which of the 262 are SDK, which are host internals) **before** step 2 of the
+  (which of the `./components` exports are SDK, which are host internals) **before** step 2 of the
   [first-release bootstrap](../contribute/release.md#first-release-bootstrap--one-time-checklist).
   After that publish, every removal is a major bump plus a `@deprecated` cycle.
   Also still uncovered: the `./hooks`, `./lib`, `./lib/utils` and
@@ -336,3 +333,11 @@ feature for deployments that enable it.
   `packages/remote-plugin-loader/src/loadAndRegister.ts`.
 - **Namespace enforcement** so a loaded remote plugin can only register under its
   own declared namespace (can't hijack another plugin's routes/extension points).
+
+## 10. Plugin CSS isolation
+
+### 10.1 Class-name collisions between the host sheet and a remote plugin's sheet
+
+Since the Theme Contract revision of 2026-10-13 the `plugins` cascade layer sits between `base` and `utilities` (see [`styling.md` → Load order](../extend/styling.md#load-order)). That makes host chrome immune to whatever a plugin ships, at the price that a plugin's responsive variant (`sm:text-6xl`) loses to a host base utility (`text-4xl`) on the plugin's own DOM unless the plugin marks it `!`. Any layer order has one such collision class, because both sheets are complete Tailwind builds that share class names; the symmetric order (`plugins` last) hides the host sidebar through the plugin's plain `.hidden`.
+
+The real fix separates the two namespaces: either the plugin build uses Tailwind's `prefix()` (every plugin class becomes `uv:…`, no overlap with the host, the layer order stops mattering), or `@oc-mui/remote-plugin-loader` fetches the sheet and wraps it in `@scope` on a host-marked plugin root (needs a marker on every slot the host renders a plugin into, and portals escape the scope). Revisit when a second plugin needs `!` escalation, or when the create-plugin template's CSS entry is next touched — the prefix route changes every class string in a plugin, so it wants a migration note in `docs/extend/`.

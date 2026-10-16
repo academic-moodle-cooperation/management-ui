@@ -189,12 +189,14 @@ export async function loadAndRegister(
         const styleId = `plugin-css-${remotePlugin.name.replace(/[^a-z0-9]/gi, "-")}`;
         document.getElementById(styleId)?.remove();
         // Load the plugin's stylesheet into the `plugins` cascade layer, which
-        // the host declares AFTER Tailwind's `utilities` (see @oc-mui/ui's
-        // globals.css). This lets the plugin's own utilities win on its own DOM
-        // instead of losing to host base utilities by load order, while keeping
-        // every plugin's CSS in one predictable layer so it can't reorder host
-        // chrome. The `layer` attribute on <link> isn't shipped in browsers yet,
-        // so we use a <style> with `@import … layer()`, which is widely supported.
+        // the host declares between Tailwind's `base` and `utilities` (see
+        // @oc-mui/ui's globals.css for the full rationale). Above `base`, the
+        // plugin's own utilities beat the preflight reset; below `utilities`,
+        // the host's classes keep precedence where names collide, so a plugin
+        // sheet can never hide host chrome. Plugins escalate their own
+        // responsive variants with `!important` when needed. The `layer`
+        // attribute on <link> isn't shipped in browsers yet, so we use a
+        // <style> with `@import … layer()`, which is widely supported.
         const style = document.createElement("style");
         style.id = styleId;
         style.textContent = `@import url(${JSON.stringify(cssUrl)}) layer(plugins);`;

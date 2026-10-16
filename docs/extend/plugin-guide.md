@@ -36,7 +36,7 @@ export default myPlugin;
 
 `apps:definitions` (route + component) and `sidebar:nav-items` (the left-nav entry linking to it) are the pair that puts a screen on the map; `app:config:defaults` carries your config slice. `app:header-logo` is the minimal scaffold's placeholder and is **not rendered by the default shell** — swap it for `apps:definitions` for anything visible.
 
-Header actions, footer slots, table-row detail panels, and the upload and ACL editors are catalogued in [`plugins/core/README.md`](../../plugins/core/README.md); the `AppDefinition` fields beyond the required four are in [`AGENTS.md`](../../AGENTS.md#extension-points--the-four-youll-usually-touch).
+Header actions, footer slots, table-row detail panels, extra states for the episodes status column, and the upload and ACL editors are catalogued in [`plugins/core/README.md`](../../plugins/core/README.md); the `AppDefinition` fields beyond the required four are in [`AGENTS.md`](../../AGENTS.md#extension-points--the-four-youll-usually-touch).
 
 ## A config slice your deployment can override
 
