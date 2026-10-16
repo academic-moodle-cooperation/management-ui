@@ -188,9 +188,15 @@ export function Badge(input: React_2.ComponentProps<"span"> & VariantProps<typeo
 }): React_2.JSX.Element;
 
 // @public (undocumented)
-export const badgeVariants: (props?: ({
-    variant?: "default" | "destructive" | "outline" | "secondary" | null | undefined;
-} & ClassProp) | undefined) => string;
+export type BadgeVariant = "default" | "secondary" | "destructive" | "outline";
+
+// @public
+export type BadgeVariantProps = {
+    variant?: BadgeVariant | null | undefined;
+};
+
+// @public (undocumented)
+export const badgeVariants: (props?: BadgeVariantProps & ClassProp) => string;
 
 // @public (undocumented)
 export function Breadcrumb(input: React_2.ComponentProps<"nav">): React_2.JSX.Element;
@@ -221,10 +227,19 @@ export function Button(input: React_2.ComponentProps<"button"> & VariantProps<ty
 }): React_2.JSX.Element;
 
 // @public (undocumented)
-export const buttonVariants: (props?: ({
-    variant?: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
-    size?: "icon" | "default" | "sm" | "lg" | null | undefined;
-} & ClassProp) | undefined) => string;
+export type ButtonSize = "default" | "sm" | "lg" | "icon";
+
+// @public (undocumented)
+export type ButtonVariant = "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+
+// @public
+export type ButtonVariantProps = {
+    variant?: ButtonVariant | null | undefined;
+    size?: ButtonSize | null | undefined;
+};
+
+// @public (undocumented)
+export const buttonVariants: (props?: ButtonVariantProps & ClassProp) => string;
 
 // @public (undocumented)
 export function Calendar(input: React_2.ComponentProps<typeof DayPicker>): React_2.JSX.Element;

@@ -28,7 +28,21 @@ import {
   useEpisodeStatusIndicator,
 } from "./EpisodeStatus";
 
-const event = (overrides: Partial<MuiEventsDataFragment> = {}): MuiEventsDataFragment =>
+type EventInfo = NonNullable<MuiEventsDataFragment["muiEventInfo"]>;
+type EventOverrides = Partial<Omit<MuiEventsDataFragment, "muiEventInfo">> & {
+  muiEventInfo?: Partial<EventInfo>;
+};
+
+const baseEventInfo: EventInfo = {
+  isPublic: true,
+  managedAclId: null,
+  publishUrl: "https://example.invalid/play/1",
+  thumbnailUrl: null,
+};
+
+// Nullable fragment fields are required-with-`null` in the generated types, so
+// `muiEventInfo` overrides are merged over a complete base instead of replacing it.
+const event = ({ muiEventInfo, ...overrides }: EventOverrides = {}): MuiEventsDataFragment =>
   ({
     __typename: "Event",
     id: "event-1",
@@ -36,7 +50,7 @@ const event = (overrides: Partial<MuiEventsDataFragment> = {}): MuiEventsDataFra
     eventStatus: "EVENTS.EVENTS.STATUS.PROCESSED",
     hasPreview: true,
     publications: [],
-    muiEventInfo: { isPublic: true, publishUrl: "https://example.invalid/play/1" },
+    muiEventInfo: { ...baseEventInfo, ...muiEventInfo },
     ...overrides,
   }) as MuiEventsDataFragment;
 
