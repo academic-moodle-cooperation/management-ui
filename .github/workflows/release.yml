@@ -86,7 +86,13 @@ jobs:
           # >= 22.14.0 is required for npm Trusted Publishing (OIDC).
           node-version: "22"
           cache: "pnpm"
-          registry-url: "https://registry.npmjs.org"
+          # No registry-url: it writes an .npmrc whose _authToken references
+          # NODE_AUTH_TOKEN, which does not exist here (publishing is OIDC).
+          # npm still publishes tokenless, but with that dangling token every
+          # `npm view` inside `changeset publish` fails, so changesets believes
+          # nothing is published yet, republishes every package, and the run
+          # fails on "cannot publish over previously published versions" after
+          # the genuinely new package already went out (second release, 20.1.1).
 
       - name: Upgrade npm for OIDC trusted publishing
         # Trusted publishing needs npm >= 11.5.1; Node 22 ships npm 10.x, so the
