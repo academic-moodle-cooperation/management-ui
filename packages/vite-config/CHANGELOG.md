@@ -1,5 +1,37 @@
 # @oc-mui/vite-config
 
+## 1.1.1
+
+### Patch Changes
+
+- 087db83: `createCommunityPluginConfig` now names the extracted stylesheet after the plugin (`dist/<pluginName>.css`), matching the `.mjs` next to it. Vite's default derived the name from `package.json` instead (`dist/plugin-<name>.css` for a scaffolded `@oc-mui/plugin-<name>`), so a JAR's `cssUrl` — and the remote loader's `<name>.css` fallback — pointed at a file that did not exist. If a plugin's `plugin.json` hard-codes the old `plugin-<name>.css` name in its `css` field, update it to `dist/<name>.css`.
+- Dependency maintenance: the October minor/patch group (47 packages) — the Radix primitives, react-aria/react-stately, Tailwind 4.3, zod 4.6, graphql-request 7.4, Playwright 1.64, api-extractor 7.59, typescript-eslint 8.71 and the rest. No code changes.
+
+  Three bumps from the group are deliberately not taken, each with the reason recorded next to the pin:
+
+  - **React stays on 19.1** (`pnpm.overrides` + root dev dependencies so every peer resolves to the same copy). React ≥ 19.2 logs a console error for the theme `<script>` that `next-themes` 0.4.6 renders, and the E2E smoke test asserts zero console errors; upstream is unresolved (pacocoursey/next-themes #385/#387/#397). Lifted once the theme provider no longer renders a script.
+  - **`@tanstack/router-devtools` stays on 1.125**, together with `react-router-devtools` and `router-devtools-core`: the devtools import `@tanstack/router-core` internals and only work with the router minor they shipped with; the newer versions broke Vite's pre-bundling and with it the dev server.
+  - **`@types/node` is pinned to the workspace's `^25`** across the tree: optional `@types/node` peers otherwise resolve to the newest major in packages that declare none, which splits Vite into two type-incompatible instances.
+
+- 3b40cfc: Documentation-only: correct package READMEs against the code (docs overhaul Phase 1).
+- 6f83e29: Serve root-level plugin locales from the `.local-plugins` dev mount. Locale discovery (dev-server manifest + middleware) and the shell's static-copy targets now honor the canonical `<plugin>/locales/<namespace>/<lng>.json` layout — relocatable via `plugin.json`'s `locales` field — in addition to the multi-module `modules/<module>/locales/` layout, so scaffolded plugins get their translations in the dev shell without mirroring files into `modules/`. When both layouts ship the same namespace, the root-level files win.
+- 9fb57a9: SDK metadata fixes from the standalone-consumption findings (#291)
+
+  - `@oc-mui/eslint-config` now declares `eslint-import-resolver-typescript`
+    as a real dependency. It only existed at the monorepo root, so standalone
+    consumers got ~50 "invalid interface loaded as resolver" warnings that
+    failed `--max-warnings 0`.
+  - `@oc-mui/vite-config` treats `vite` as a peerDependency instead of a
+    dependency: the consumer's own vite must be the one the config plugs
+    into, not a second nested copy that can drift from their CLI.
+
+- Updated dependencies [3b40cfc]
+- Updated dependencies [31c19e7]
+- Updated dependencies [9db8ada]
+- Updated dependencies [a36e731]
+- Updated dependencies [2044d7f]
+  - @oc-mui/utils@1.2.0
+
 ## 1.1.0
 
 ### Minor Changes
