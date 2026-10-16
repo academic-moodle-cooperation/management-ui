@@ -28,7 +28,7 @@ export const GalleryVideoCell: React.FC<{ event: MuiEventsDataFragment }> = ({ e
       ? { href: publishUrl, target: "_blank" as const }
       : null;
   const thumbnail = event.muiEventInfo?.thumbnailUrl;
-  const parsedDuration = parseDuration(event.duration);
+  const parsedDuration = parseDuration(event.duration ?? undefined);
   const duration = !parsedDuration || parsedDuration === "00:00:00" ? "∞" : parsedDuration;
 
   const thumbnailContent = (
