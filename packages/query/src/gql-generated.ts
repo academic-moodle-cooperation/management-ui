@@ -1145,7 +1145,7 @@ export type MuiUpdateSeriesAclMutationVariables = Exact<{
 
 export type MuiUpdateSeriesAclMutation = { updateSeriesAcl: { muiSeriesInfo: { managedAclId: number | null } | null } };
 
-export type MuiPlaylistEntryData_EventPlaylistEntry_Fragment = { __typename: 'EventPlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null, event: { id: string, title: string, duration: string | null, seriesId: string | null, seriesName: string | null, eventStatus: string, muiEventInfo: { isPublic: boolean | null, managedAclId: number | null, publishUrl: string | null, thumbnailUrl: string | null } | null } | null };
+export type MuiPlaylistEntryData_EventPlaylistEntry_Fragment = { __typename: 'EventPlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null, event: { id: string, title: string, duration: string | null, startDate: string | null, created: string | null, seriesId: string | null, seriesName: string | null, eventStatus: string, muiEventInfo: { isPublic: boolean | null, managedAclId: number | null, publishUrl: string | null, thumbnailUrl: string | null } | null } | null };
 
 export type MuiPlaylistEntryData_InaccessiblePlaylistEntry_Fragment = { __typename: 'InaccessiblePlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null };
 
@@ -1155,7 +1155,7 @@ export type MuiPlaylistEntryDataFragment =
 ;
 
 export type MuiPlaylistDataFragment = { __typename: 'Playlist', id: string, title: string | null, description: string | null, creator: string | null, updated: string | null, accessControlEntries: Array<{ role: string | null, action: string | null, allow: boolean | null } | null> | null, entries: Array<
-    | { __typename: 'EventPlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null, event: { id: string, title: string, duration: string | null, seriesId: string | null, seriesName: string | null, eventStatus: string, muiEventInfo: { isPublic: boolean | null, managedAclId: number | null, publishUrl: string | null, thumbnailUrl: string | null } | null } | null }
+    | { __typename: 'EventPlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null, event: { id: string, title: string, duration: string | null, startDate: string | null, created: string | null, seriesId: string | null, seriesName: string | null, eventStatus: string, muiEventInfo: { isPublic: boolean | null, managedAclId: number | null, publishUrl: string | null, thumbnailUrl: string | null } | null } | null }
     | { __typename: 'InaccessiblePlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null }
    | null> | null };
 
@@ -1168,7 +1168,7 @@ export type MuiGetMyPlaylistsQueryVariables = Exact<{
 
 
 export type MuiGetMyPlaylistsQuery = { currentUser: { myPlaylists: { totalCount: number, nodes: Array<{ __typename: 'Playlist', id: string, title: string | null, description: string | null, creator: string | null, updated: string | null, accessControlEntries: Array<{ role: string | null, action: string | null, allow: boolean | null } | null> | null, entries: Array<
-          | { __typename: 'EventPlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null, event: { id: string, title: string, duration: string | null, seriesId: string | null, seriesName: string | null, eventStatus: string, muiEventInfo: { isPublic: boolean | null, managedAclId: number | null, publishUrl: string | null, thumbnailUrl: string | null } | null } | null }
+          | { __typename: 'EventPlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null, event: { id: string, title: string, duration: string | null, startDate: string | null, created: string | null, seriesId: string | null, seriesName: string | null, eventStatus: string, muiEventInfo: { isPublic: boolean | null, managedAclId: number | null, publishUrl: string | null, thumbnailUrl: string | null } | null } | null }
           | { __typename: 'InaccessiblePlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null }
          | null> | null } | null> } } };
 
@@ -1178,7 +1178,7 @@ export type MuiGetPlaylistByIdQueryVariables = Exact<{
 
 
 export type MuiGetPlaylistByIdQuery = { playlistById: { __typename: 'Playlist', id: string, title: string | null, description: string | null, creator: string | null, updated: string | null, accessControlEntries: Array<{ role: string | null, action: string | null, allow: boolean | null } | null> | null, entries: Array<
-      | { __typename: 'EventPlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null, event: { id: string, title: string, duration: string | null, seriesId: string | null, seriesName: string | null, eventStatus: string, muiEventInfo: { isPublic: boolean | null, managedAclId: number | null, publishUrl: string | null, thumbnailUrl: string | null } | null } | null }
+      | { __typename: 'EventPlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null, event: { id: string, title: string, duration: string | null, startDate: string | null, created: string | null, seriesId: string | null, seriesName: string | null, eventStatus: string, muiEventInfo: { isPublic: boolean | null, managedAclId: number | null, publishUrl: string | null, thumbnailUrl: string | null } | null } | null }
       | { __typename: 'InaccessiblePlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null }
      | null> | null } | null };
 
@@ -1190,7 +1190,7 @@ export type MuiCreatePlaylistMutationVariables = Exact<{
 
 
 export type MuiCreatePlaylistMutation = { createPlaylist: { __typename: 'Playlist', id: string, title: string | null, description: string | null, creator: string | null, updated: string | null, accessControlEntries: Array<{ role: string | null, action: string | null, allow: boolean | null } | null> | null, entries: Array<
-      | { __typename: 'EventPlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null, event: { id: string, title: string, duration: string | null, seriesId: string | null, seriesName: string | null, eventStatus: string, muiEventInfo: { isPublic: boolean | null, managedAclId: number | null, publishUrl: string | null, thumbnailUrl: string | null } | null } | null }
+      | { __typename: 'EventPlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null, event: { id: string, title: string, duration: string | null, startDate: string | null, created: string | null, seriesId: string | null, seriesName: string | null, eventStatus: string, muiEventInfo: { isPublic: boolean | null, managedAclId: number | null, publishUrl: string | null, thumbnailUrl: string | null } | null } | null }
       | { __typename: 'InaccessiblePlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null }
      | null> | null } | null };
 
@@ -1201,7 +1201,7 @@ export type MuiUpdatePlaylistMetadataMutationVariables = Exact<{
 
 
 export type MuiUpdatePlaylistMetadataMutation = { updatePlaylist: { __typename: 'Playlist', id: string, title: string | null, description: string | null, creator: string | null, updated: string | null, accessControlEntries: Array<{ role: string | null, action: string | null, allow: boolean | null } | null> | null, entries: Array<
-      | { __typename: 'EventPlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null, event: { id: string, title: string, duration: string | null, seriesId: string | null, seriesName: string | null, eventStatus: string, muiEventInfo: { isPublic: boolean | null, managedAclId: number | null, publishUrl: string | null, thumbnailUrl: string | null } | null } | null }
+      | { __typename: 'EventPlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null, event: { id: string, title: string, duration: string | null, startDate: string | null, created: string | null, seriesId: string | null, seriesName: string | null, eventStatus: string, muiEventInfo: { isPublic: boolean | null, managedAclId: number | null, publishUrl: string | null, thumbnailUrl: string | null } | null } | null }
       | { __typename: 'InaccessiblePlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null }
      | null> | null } | null };
 
@@ -1212,7 +1212,7 @@ export type MuiUpdatePlaylistEntriesMutationVariables = Exact<{
 
 
 export type MuiUpdatePlaylistEntriesMutation = { updatePlaylist: { __typename: 'Playlist', id: string, title: string | null, description: string | null, creator: string | null, updated: string | null, accessControlEntries: Array<{ role: string | null, action: string | null, allow: boolean | null } | null> | null, entries: Array<
-      | { __typename: 'EventPlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null, event: { id: string, title: string, duration: string | null, seriesId: string | null, seriesName: string | null, eventStatus: string, muiEventInfo: { isPublic: boolean | null, managedAclId: number | null, publishUrl: string | null, thumbnailUrl: string | null } | null } | null }
+      | { __typename: 'EventPlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null, event: { id: string, title: string, duration: string | null, startDate: string | null, created: string | null, seriesId: string | null, seriesName: string | null, eventStatus: string, muiEventInfo: { isPublic: boolean | null, managedAclId: number | null, publishUrl: string | null, thumbnailUrl: string | null } | null } | null }
       | { __typename: 'InaccessiblePlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null }
      | null> | null } | null };
 
@@ -1223,7 +1223,7 @@ export type MuiUpdatePlaylistAclMutationVariables = Exact<{
 
 
 export type MuiUpdatePlaylistAclMutation = { updatePlaylist: { __typename: 'Playlist', id: string, title: string | null, description: string | null, creator: string | null, updated: string | null, accessControlEntries: Array<{ role: string | null, action: string | null, allow: boolean | null } | null> | null, entries: Array<
-      | { __typename: 'EventPlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null, event: { id: string, title: string, duration: string | null, seriesId: string | null, seriesName: string | null, eventStatus: string, muiEventInfo: { isPublic: boolean | null, managedAclId: number | null, publishUrl: string | null, thumbnailUrl: string | null } | null } | null }
+      | { __typename: 'EventPlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null, event: { id: string, title: string, duration: string | null, startDate: string | null, created: string | null, seriesId: string | null, seriesName: string | null, eventStatus: string, muiEventInfo: { isPublic: boolean | null, managedAclId: number | null, publishUrl: string | null, thumbnailUrl: string | null } | null } | null }
       | { __typename: 'InaccessiblePlaylistEntry', id: number | null, contentId: string | null, type: PlaylistEntryType | null }
      | null> | null } | null };
 
@@ -1432,6 +1432,8 @@ export const MuiPlaylistEntryDataFragmentDoc = `
       id
       title
       duration
+      startDate
+      created
       seriesId
       seriesName
       eventStatus
@@ -1472,6 +1474,8 @@ export const MuiPlaylistDataFragmentDoc = `
       id
       title
       duration
+      startDate
+      created
       seriesId
       seriesName
       eventStatus
@@ -2774,6 +2778,8 @@ export const MuiGetMyPlaylistsDocument = `
       id
       title
       duration
+      startDate
+      created
       seriesId
       seriesName
       eventStatus
@@ -2858,6 +2864,8 @@ export const MuiGetPlaylistByIdDocument = `
       id
       title
       duration
+      startDate
+      created
       seriesId
       seriesName
       eventStatus
@@ -2942,6 +2950,8 @@ export const MuiCreatePlaylistDocument = `
       id
       title
       duration
+      startDate
+      created
       seriesId
       seriesName
       eventStatus
@@ -3003,6 +3013,8 @@ export const MuiUpdatePlaylistMetadataDocument = `
       id
       title
       duration
+      startDate
+      created
       seriesId
       seriesName
       eventStatus
@@ -3064,6 +3076,8 @@ export const MuiUpdatePlaylistEntriesDocument = `
       id
       title
       duration
+      startDate
+      created
       seriesId
       seriesName
       eventStatus
@@ -3125,6 +3139,8 @@ export const MuiUpdatePlaylistAclDocument = `
       id
       title
       duration
+      startDate
+      created
       seriesId
       seriesName
       eventStatus
