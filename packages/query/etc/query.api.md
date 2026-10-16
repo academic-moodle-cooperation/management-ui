@@ -347,7 +347,7 @@ export enum EventRemovalResult {
 // @public (undocumented)
 export type EventSortableField = (typeof EVENT_SORTABLE_FIELDS)[number];
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export type Exact<T extends {
     [key: string]: unknown;
 }> = {
@@ -364,7 +364,7 @@ export const getCachedAppConfig: () => Promise<AppConfig>;
 
 export { gql }
 
-// @public (undocumented)
+// @public
 export type Incremental<T> = T | {
     [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never;
 };
@@ -454,19 +454,19 @@ export type LongMetadataField = MetadataFieldInterface & {
     value?: Maybe<Scalars['Long']['output']>;
 };
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export type MakeEmpty<T extends {
     [key: string]: unknown;
 }, K extends keyof T> = {
     [_ in K]?: never;
 };
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
     [SubKey in K]: Maybe<T[SubKey]>;
 };
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
     [SubKey in K]?: Maybe<T[SubKey]>;
 };
@@ -511,35 +511,37 @@ export type MetadataFieldInterface = {
 export type MetadataFieldType = StringMetadataField | IntMetadataField | DateTimeMetadataField | DurationMetadataField | JsonMetadataField | ListMetadataField | LongMetadataField;
 
 // @public (undocumented)
-export const MuiCreateSeriesDocument = "\n    mutation MuiCreateSeries($acl: AccessControlListInput!, $metadata: CommonSeriesMetadataInput!) {\n  createSeries(acl: $acl, metadata: $metadata) {\n    ...MuiSeriesData\n  }\n}\n    \n    fragment MuiSeriesData on Series {\n  __typename\n  id\n  contributors\n  created\n  creator\n  description\n  title\n  events {\n    nodes {\n      id\n      title\n      eventStatus\n    }\n    totalCount\n  }\n  muiSeriesInfo {\n    isPublic\n    managedAclId\n  }\n  ...MuiSeriesFields\n}\n    \n    fragment MuiSeriesFields on Series {\n  __typename\n}\n    ";
+export const MuiCreateSeriesDocument = "\n    mutation MuiCreateSeries($acl: AccessControlListInput!, $metadata: CommonSeriesMetadataInput!) {\n  createSeries(acl: $acl, metadata: $metadata) {\n    ...MuiSeriesData\n  }\n}\n    fragment MuiSeriesFields on Series {\n  __typename\n}\nfragment MuiSeriesData on Series {\n  __typename\n  id\n  contributors\n  created\n  creator\n  description\n  title\n  events {\n    nodes {\n      id\n      title\n      eventStatus\n    }\n    totalCount\n  }\n  muiSeriesInfo {\n    isPublic\n    managedAclId\n  }\n  ...MuiSeriesFields\n}";
 
 // @public (undocumented)
 export type MuiCreateSeriesMutation = {
     createSeries: {
         __typename: 'Series';
         id: string;
-        contributors?: Array<string | null> | null;
-        created?: string | null;
-        creator?: string | null;
-        description?: string | null;
+        contributors: Array<string | null> | null;
+        created: string | null;
+        creator: string | null;
+        description: string | null;
         title: string;
         events: {
-            totalCount: any;
+            totalCount: number;
             nodes: Array<{
                 id: string;
                 title: string;
                 eventStatus: string;
             } | null>;
         };
-        muiSeriesInfo?: {
-            isPublic?: boolean | null;
-            managedAclId?: any | null;
+        muiSeriesInfo: {
+            isPublic: boolean | null;
+            managedAclId: number | null;
         } | null;
     };
 };
 
+// Warning: (ae-forgotten-export) The symbol "Exact_2" needs to be exported by the entry point index.d.ts
+//
 // @public (undocumented)
-export type MuiCreateSeriesMutationVariables = Exact<{
+export type MuiCreateSeriesMutationVariables = Exact_2<{
     acl: AccessControlListInput;
     metadata: CommonSeriesMetadataInput;
 }>;
@@ -557,16 +559,16 @@ export const MuiDeleteEventDocument = "\n    mutation MuiDeleteEvent($eventId: S
 
 // @public (undocumented)
 export type MuiDeleteEventMutation = {
-    mui?: {
-        deleteEvent?: {
-            id?: string | null;
+    mui: {
+        deleteEvent: {
+            id: string | null;
         } | null;
     } | null;
 };
 
 // @public (undocumented)
-export type MuiDeleteEventMutationVariables = Exact<{
-    eventId: Scalars['String']['input'];
+export type MuiDeleteEventMutationVariables = Exact_2<{
+    eventId: string;
 }>;
 
 // @public (undocumented)
@@ -587,12 +589,12 @@ export type MuiEventInfo = {
 
 // @public (undocumented)
 export type MuiEventsAclDataFragment = {
-    eventById?: {
+    eventById: {
         acl: {
-            users?: Array<{
-                role?: string | null;
-                label?: string | null;
-                action?: Array<string | null> | null;
+            users: Array<{
+                role: string | null;
+                label: string | null;
+                action: Array<string | null> | null;
             } | null> | null;
         };
     } | null;
@@ -604,92 +606,92 @@ export const MuiEventsAclDataFragmentDoc = "\n    fragment MuiEventsAclData on Q
 // @public (undocumented)
 export type MuiEventsDataFragment = {
     __typename: 'Event';
-    contributors?: Array<string | null> | null;
-    seriesName?: string | null;
-    seriesId?: string | null;
+    contributors: Array<string | null> | null;
+    seriesName: string | null;
+    seriesId: string | null;
     title: string;
-    creator?: string | null;
-    created?: any | null;
-    description?: string | null;
-    displayableStatus?: string | null;
+    creator: string | null;
+    created: string | null;
+    description: string | null;
+    displayableStatus: string | null;
     eventStatus: string;
-    duration?: any | null;
+    duration: string | null;
     hasPreview: boolean;
     id: string;
-    location?: string | null;
-    presenters?: Array<string | null> | null;
-    startDate?: any | null;
-    publications?: Array<{
-        uri?: string | null;
-        tracks?: Array<{
-            width?: number | null;
-            uri?: string | null;
-            tags?: Array<string | null> | null;
-            mimeType?: string | null;
-            logicalName?: string | null;
-            isLive?: boolean | null;
-            height?: number | null;
-            frameRate?: number | null;
-            flavor?: string | null;
+    location: string | null;
+    presenters: Array<string | null> | null;
+    startDate: string | null;
+    publications: Array<{
+        uri: string | null;
+        tracks: Array<{
+            width: number | null;
+            uri: string | null;
+            tags: Array<string | null> | null;
+            mimeType: string | null;
+            logicalName: string | null;
+            isLive: boolean | null;
+            height: number | null;
+            frameRate: number | null;
+            flavor: string | null;
         } | null> | null;
     } | null> | null;
-    muiEventInfo?: {
-        isPublic?: boolean | null;
-        managedAclId?: any | null;
-        publishUrl?: string | null;
-        thumbnailUrl?: string | null;
+    muiEventInfo: {
+        isPublic: boolean | null;
+        managedAclId: number | null;
+        publishUrl: string | null;
+        thumbnailUrl: string | null;
     } | null;
 };
 
 // @public (undocumented)
-export const MuiEventsDataFragmentDoc = "\n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: $channel) {\n    uri\n    tracks(tags: $tags) {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    \n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
+export const MuiEventsDataFragmentDoc = "\n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: $channel) {\n    uri\n    tracks(tags: $tags) {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    fragment MuiEventFields on Event {\n  __typename\n}";
 
 // @public (undocumented)
-export const MuiEventsFromSeriesDocument = "\n    query MuiEventsFromSeries($seriesId: String!, $limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String, $channel: String, $tags: [String]) {\n  seriesById(id: $seriesId) {\n    id\n    title\n    events(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...MuiEventsData\n      }\n    }\n  }\n}\n    \n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: $channel) {\n    uri\n    tracks(tags: $tags) {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    \n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
+export const MuiEventsFromSeriesDocument = "\n    query MuiEventsFromSeries($seriesId: String!, $limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String, $channel: String, $tags: [String]) {\n  seriesById(id: $seriesId) {\n    id\n    title\n    events(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...MuiEventsData\n      }\n    }\n  }\n}\n    fragment MuiEventFields on Event {\n  __typename\n}\nfragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: $channel) {\n    uri\n    tracks(tags: $tags) {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}";
 
 // @public (undocumented)
 export type MuiEventsFromSeriesQuery = {
-    seriesById?: {
+    seriesById: {
         id: string;
         title: string;
         events: {
-            totalCount: any;
+            totalCount: number;
             nodes: Array<{
                 __typename: 'Event';
-                contributors?: Array<string | null> | null;
-                seriesName?: string | null;
-                seriesId?: string | null;
+                contributors: Array<string | null> | null;
+                seriesName: string | null;
+                seriesId: string | null;
                 title: string;
-                creator?: string | null;
-                created?: any | null;
-                description?: string | null;
-                displayableStatus?: string | null;
+                creator: string | null;
+                created: string | null;
+                description: string | null;
+                displayableStatus: string | null;
                 eventStatus: string;
-                duration?: any | null;
+                duration: string | null;
                 hasPreview: boolean;
                 id: string;
-                location?: string | null;
-                presenters?: Array<string | null> | null;
-                startDate?: any | null;
-                publications?: Array<{
-                    uri?: string | null;
-                    tracks?: Array<{
-                        width?: number | null;
-                        uri?: string | null;
-                        tags?: Array<string | null> | null;
-                        mimeType?: string | null;
-                        logicalName?: string | null;
-                        isLive?: boolean | null;
-                        height?: number | null;
-                        frameRate?: number | null;
-                        flavor?: string | null;
+                location: string | null;
+                presenters: Array<string | null> | null;
+                startDate: string | null;
+                publications: Array<{
+                    uri: string | null;
+                    tracks: Array<{
+                        width: number | null;
+                        uri: string | null;
+                        tags: Array<string | null> | null;
+                        mimeType: string | null;
+                        logicalName: string | null;
+                        isLive: boolean | null;
+                        height: number | null;
+                        frameRate: number | null;
+                        flavor: string | null;
                     } | null> | null;
                 } | null> | null;
-                muiEventInfo?: {
-                    isPublic?: boolean | null;
-                    managedAclId?: any | null;
-                    publishUrl?: string | null;
-                    thumbnailUrl?: string | null;
+                muiEventInfo: {
+                    isPublic: boolean | null;
+                    managedAclId: number | null;
+                    publishUrl: string | null;
+                    thumbnailUrl: string | null;
                 } | null;
             } | null>;
         };
@@ -697,14 +699,14 @@ export type MuiEventsFromSeriesQuery = {
 };
 
 // @public (undocumented)
-export type MuiEventsFromSeriesQueryVariables = Exact<{
-    seriesId: Scalars['String']['input'];
-    limit?: InputMaybe<Scalars['Int']['input']>;
-    offset?: InputMaybe<Scalars['Int']['input']>;
-    orderBy?: InputMaybe<EventOrderByInput>;
-    query?: InputMaybe<Scalars['String']['input']>;
-    channel?: InputMaybe<Scalars['String']['input']>;
-    tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>> | InputMaybe<Scalars['String']['input']>>;
+export type MuiEventsFromSeriesQueryVariables = Exact_2<{
+    seriesId: string;
+    limit?: number | null | undefined;
+    offset?: number | null | undefined;
+    orderBy?: EventOrderByInput | null | undefined;
+    query?: string | null | undefined;
+    channel?: string | null | undefined;
+    tags?: Array<string | null | undefined> | string | null | undefined;
 }>;
 
 // @public (undocumented)
@@ -717,15 +719,15 @@ export type MuiGetAllManagedAclsQuery = {
             name: string;
             id: string;
             acl: {
-                entries?: Array<{
-                    role?: string | null;
-                    action?: Array<string | null> | null;
+                entries: Array<{
+                    role: string | null;
+                    action: Array<string | null> | null;
                 } | {
-                    role?: string | null;
-                    action?: Array<string | null> | null;
+                    role: string | null;
+                    action: Array<string | null> | null;
                 } | {
-                    role?: string | null;
-                    action?: Array<string | null> | null;
+                    role: string | null;
+                    action: Array<string | null> | null;
                 } | null> | null;
             };
         } | null>;
@@ -733,22 +735,22 @@ export type MuiGetAllManagedAclsQuery = {
 };
 
 // @public (undocumented)
-export type MuiGetAllManagedAclsQueryVariables = Exact<{
+export type MuiGetAllManagedAclsQueryVariables = Exact_2<{
     [key: string]: never;
 }>;
 
 // @public (undocumented)
 export type MuiGetDateTimeInputFieldsMetaDataFragment = {
-    collectionId?: string | null;
-    collection?: any | null;
-    id?: string | null;
-    label?: string | null;
-    listProvider?: string | null;
-    order?: number | null;
-    readOnly?: boolean | null;
-    required?: boolean | null;
-    type?: Type | null;
-    value?: any | null;
+    collectionId: string | null;
+    collection: unknown;
+    id: string | null;
+    label: string | null;
+    listProvider: string | null;
+    order: number | null;
+    readOnly: boolean | null;
+    required: boolean | null;
+    type: Type | null;
+    value: string | null;
 };
 
 // @public (undocumented)
@@ -756,16 +758,16 @@ export const MuiGetDateTimeInputFieldsMetaDataFragmentDoc = "\n    fragment MuiG
 
 // @public (undocumented)
 export type MuiGetDurationInputFieldsMetaDataFragment = {
-    collectionId?: string | null;
-    collection?: any | null;
-    id?: string | null;
-    label?: string | null;
-    listProvider?: string | null;
-    order?: number | null;
-    readOnly?: boolean | null;
-    required?: boolean | null;
-    type?: Type | null;
-    value?: any | null;
+    collectionId: string | null;
+    collection: unknown;
+    id: string | null;
+    label: string | null;
+    listProvider: string | null;
+    order: number | null;
+    readOnly: boolean | null;
+    required: boolean | null;
+    type: Type | null;
+    value: string | null;
 };
 
 // @public (undocumented)
@@ -775,238 +777,238 @@ export const MuiGetDurationInputFieldsMetaDataFragmentDoc = "\n    fragment MuiG
 export const MuiGetEventByIdDocument = "\n    query MuiGetEventById($eventId: String!) {\n  eventById(id: $eventId) {\n    id\n    title\n  }\n}\n    ";
 
 // @public (undocumented)
-export const MuiGetEventByIdInputFieldsDocument = "\n    query MuiGetEventByIdInputFields($eventId: String!) {\n  eventById(id: $eventId) {\n    commonMetadataV2 {\n      contributor {\n        ...MuiGetListInputFieldsMetaData\n      }\n      created {\n        ...MuiGetDateTimeInputFieldsMetaData\n      }\n      creator {\n        ...MuiGetListInputFieldsMetaData\n      }\n      description {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      duration {\n        ...MuiGetDurationInputFieldsMetaData\n      }\n      identifier {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      isPartOf {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      language {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      license {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      location {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      publisher {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      rightsHolder {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      source {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      startDate {\n        ...MuiGetDateTimeInputFieldsMetaData\n      }\n      subject {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      title {\n        ...MuiGetStringInputFieldsMetaData\n      }\n    }\n  }\n}\n    \n    fragment MuiGetListInputFieldsMetaData on ListMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    \n\n    fragment MuiGetDateTimeInputFieldsMetaData on DateTimeMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    \n\n    fragment MuiGetStringInputFieldsMetaData on StringMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    \n\n    fragment MuiGetDurationInputFieldsMetaData on DurationMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
+export const MuiGetEventByIdInputFieldsDocument = "\n    query MuiGetEventByIdInputFields($eventId: String!) {\n  eventById(id: $eventId) {\n    commonMetadataV2 {\n      contributor {\n        ...MuiGetListInputFieldsMetaData\n      }\n      created {\n        ...MuiGetDateTimeInputFieldsMetaData\n      }\n      creator {\n        ...MuiGetListInputFieldsMetaData\n      }\n      description {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      duration {\n        ...MuiGetDurationInputFieldsMetaData\n      }\n      identifier {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      isPartOf {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      language {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      license {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      location {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      publisher {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      rightsHolder {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      source {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      startDate {\n        ...MuiGetDateTimeInputFieldsMetaData\n      }\n      subject {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      title {\n        ...MuiGetStringInputFieldsMetaData\n      }\n    }\n  }\n}\n    fragment MuiGetListInputFieldsMetaData on ListMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\nfragment MuiGetStringInputFieldsMetaData on StringMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\nfragment MuiGetDurationInputFieldsMetaData on DurationMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\nfragment MuiGetDateTimeInputFieldsMetaData on DateTimeMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}";
 
 // @public (undocumented)
 export type MuiGetEventByIdInputFieldsQuery = {
-    eventById?: {
+    eventById: {
         commonMetadataV2: {
-            contributor?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: Array<string | null> | null;
+            contributor: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: Array<string | null> | null;
             } | null;
-            created?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: any | null;
+            created: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            creator?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: Array<string | null> | null;
+            creator: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: Array<string | null> | null;
             } | null;
-            description?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            description: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            duration?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: any | null;
+            duration: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            identifier?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            identifier: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            isPartOf?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            isPartOf: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            language?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            language: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            license?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            license: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            location?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            location: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            publisher?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            publisher: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            rightsHolder?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            rightsHolder: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            source?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            source: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            startDate?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: any | null;
+            startDate: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            subject?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            subject: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            title?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            title: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
         };
     } | null;
 };
 
 // @public (undocumented)
-export type MuiGetEventByIdInputFieldsQueryVariables = Exact<{
-    eventId: Scalars['String']['input'];
+export type MuiGetEventByIdInputFieldsQueryVariables = Exact_2<{
+    eventId: string;
 }>;
 
 // @public (undocumented)
 export type MuiGetEventByIdQuery = {
-    eventById?: {
+    eventById: {
         id: string;
         title: string;
     } | null;
 };
 
 // @public (undocumented)
-export type MuiGetEventByIdQueryVariables = Exact<{
-    eventId: Scalars['String']['input'];
+export type MuiGetEventByIdQueryVariables = Exact_2<{
+    eventId: string;
 }>;
 
 // @public (undocumented)
 export type MuiGetInputFieldsMetaDataFragment = {
-    collectionId?: string | null;
-    collection?: any | null;
-    id?: string | null;
-    label?: string | null;
-    listProvider?: string | null;
-    order?: number | null;
-    readOnly?: boolean | null;
-    required?: boolean | null;
-    type?: Type | null;
-    value?: any | null;
+    collectionId: string | null;
+    collection: unknown;
+    id: string | null;
+    label: string | null;
+    listProvider: string | null;
+    order: number | null;
+    readOnly: boolean | null;
+    required: boolean | null;
+    type: Type | null;
+    value: unknown;
 };
 
 // @public (undocumented)
@@ -1014,23 +1016,23 @@ export const MuiGetInputFieldsMetaDataFragmentDoc = "\n    fragment MuiGetInputF
 
 // @public (undocumented)
 export type MuiGetListInputFieldsMetaDataFragment = {
-    collectionId?: string | null;
-    collection?: any | null;
-    id?: string | null;
-    label?: string | null;
-    listProvider?: string | null;
-    order?: number | null;
-    readOnly?: boolean | null;
-    required?: boolean | null;
-    type?: Type | null;
-    value?: Array<string | null> | null;
+    collectionId: string | null;
+    collection: unknown;
+    id: string | null;
+    label: string | null;
+    listProvider: string | null;
+    order: number | null;
+    readOnly: boolean | null;
+    required: boolean | null;
+    type: Type | null;
+    value: Array<string | null> | null;
 };
 
 // @public (undocumented)
 export const MuiGetListInputFieldsMetaDataFragmentDoc = "\n    fragment MuiGetListInputFieldsMetaData on ListMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
 
 // @public (undocumented)
-export const MuiGetManagedAclsWithEventIdDocument = "\n    query MuiGetManagedAclsWithEventId($id: String!) {\n  managedAcls {\n    nodes {\n      name\n      id\n      acl {\n        entries {\n          role\n          action\n        }\n      }\n    }\n  }\n  ...MuiEventsAclData\n}\n    \n    fragment MuiEventsAclData on Query {\n  eventById(id: $id) {\n    acl {\n      users {\n        role\n        label\n        action\n      }\n    }\n  }\n}\n    ";
+export const MuiGetManagedAclsWithEventIdDocument = "\n    query MuiGetManagedAclsWithEventId($id: String!) {\n  managedAcls {\n    nodes {\n      name\n      id\n      acl {\n        entries {\n          role\n          action\n        }\n      }\n    }\n  }\n  ...MuiEventsAclData\n}\n    fragment MuiEventsAclData on Query {\n  eventById(id: $id) {\n    acl {\n      users {\n        role\n        label\n        action\n      }\n    }\n  }\n}";
 
 // @public (undocumented)
 export type MuiGetManagedAclsWithEventIdQuery = {
@@ -1039,37 +1041,37 @@ export type MuiGetManagedAclsWithEventIdQuery = {
             name: string;
             id: string;
             acl: {
-                entries?: Array<{
-                    role?: string | null;
-                    action?: Array<string | null> | null;
+                entries: Array<{
+                    role: string | null;
+                    action: Array<string | null> | null;
                 } | {
-                    role?: string | null;
-                    action?: Array<string | null> | null;
+                    role: string | null;
+                    action: Array<string | null> | null;
                 } | {
-                    role?: string | null;
-                    action?: Array<string | null> | null;
+                    role: string | null;
+                    action: Array<string | null> | null;
                 } | null> | null;
             };
         } | null>;
     };
-    eventById?: {
+    eventById: {
         acl: {
-            users?: Array<{
-                role?: string | null;
-                label?: string | null;
-                action?: Array<string | null> | null;
+            users: Array<{
+                role: string | null;
+                label: string | null;
+                action: Array<string | null> | null;
             } | null> | null;
         };
     } | null;
 };
 
 // @public (undocumented)
-export type MuiGetManagedAclsWithEventIdQueryVariables = Exact<{
-    id: Scalars['String']['input'];
+export type MuiGetManagedAclsWithEventIdQueryVariables = Exact_2<{
+    id: string;
 }>;
 
 // @public (undocumented)
-export const MuiGetManagedAclsWithSeriesIdDocument = "\n    query MuiGetManagedAclsWithSeriesId($id: String!) {\n  managedAcls {\n    nodes {\n      name\n      id\n      acl {\n        entries {\n          role\n          action\n        }\n      }\n    }\n  }\n  ...MuiSeriesAclData\n}\n    \n    fragment MuiSeriesAclData on Query {\n  seriesById(id: $id) {\n    acl {\n      users {\n        role\n        label\n        action\n      }\n    }\n  }\n}\n    ";
+export const MuiGetManagedAclsWithSeriesIdDocument = "\n    query MuiGetManagedAclsWithSeriesId($id: String!) {\n  managedAcls {\n    nodes {\n      name\n      id\n      acl {\n        entries {\n          role\n          action\n        }\n      }\n    }\n  }\n  ...MuiSeriesAclData\n}\n    fragment MuiSeriesAclData on Query {\n  seriesById(id: $id) {\n    acl {\n      users {\n        role\n        label\n        action\n      }\n    }\n  }\n}";
 
 // @public (undocumented)
 export type MuiGetManagedAclsWithSeriesIdQuery = {
@@ -1078,79 +1080,79 @@ export type MuiGetManagedAclsWithSeriesIdQuery = {
             name: string;
             id: string;
             acl: {
-                entries?: Array<{
-                    role?: string | null;
-                    action?: Array<string | null> | null;
+                entries: Array<{
+                    role: string | null;
+                    action: Array<string | null> | null;
                 } | {
-                    role?: string | null;
-                    action?: Array<string | null> | null;
+                    role: string | null;
+                    action: Array<string | null> | null;
                 } | {
-                    role?: string | null;
-                    action?: Array<string | null> | null;
+                    role: string | null;
+                    action: Array<string | null> | null;
                 } | null> | null;
             };
         } | null>;
     };
-    seriesById?: {
+    seriesById: {
         acl: {
-            users?: Array<{
-                role?: string | null;
-                label?: string | null;
-                action?: Array<string | null> | null;
+            users: Array<{
+                role: string | null;
+                label: string | null;
+                action: Array<string | null> | null;
             } | null> | null;
         };
     } | null;
 };
 
 // @public (undocumented)
-export type MuiGetManagedAclsWithSeriesIdQueryVariables = Exact<{
-    id: Scalars['String']['input'];
+export type MuiGetManagedAclsWithSeriesIdQueryVariables = Exact_2<{
+    id: string;
 }>;
 
 // @public (undocumented)
-export const MuiGetMyEventsDocument = "\n    query MuiGetMyEvents($limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String, $channel: String, $tags: [String]) {\n  currentUser {\n    myEvents(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...MuiEventsData\n      }\n    }\n  }\n}\n    \n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: $channel) {\n    uri\n    tracks(tags: $tags) {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    \n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
+export const MuiGetMyEventsDocument = "\n    query MuiGetMyEvents($limit: Int, $offset: Int, $orderBy: EventOrderByInput, $query: String, $channel: String, $tags: [String]) {\n  currentUser {\n    myEvents(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...MuiEventsData\n      }\n    }\n  }\n}\n    fragment MuiEventFields on Event {\n  __typename\n}\nfragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: $channel) {\n    uri\n    tracks(tags: $tags) {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}";
 
 // @public (undocumented)
 export type MuiGetMyEventsQuery = {
     currentUser: {
         myEvents: {
-            totalCount: any;
+            totalCount: number;
             nodes: Array<{
                 __typename: 'Event';
-                contributors?: Array<string | null> | null;
-                seriesName?: string | null;
-                seriesId?: string | null;
+                contributors: Array<string | null> | null;
+                seriesName: string | null;
+                seriesId: string | null;
                 title: string;
-                creator?: string | null;
-                created?: any | null;
-                description?: string | null;
-                displayableStatus?: string | null;
+                creator: string | null;
+                created: string | null;
+                description: string | null;
+                displayableStatus: string | null;
                 eventStatus: string;
-                duration?: any | null;
+                duration: string | null;
                 hasPreview: boolean;
                 id: string;
-                location?: string | null;
-                presenters?: Array<string | null> | null;
-                startDate?: any | null;
-                publications?: Array<{
-                    uri?: string | null;
-                    tracks?: Array<{
-                        width?: number | null;
-                        uri?: string | null;
-                        tags?: Array<string | null> | null;
-                        mimeType?: string | null;
-                        logicalName?: string | null;
-                        isLive?: boolean | null;
-                        height?: number | null;
-                        frameRate?: number | null;
-                        flavor?: string | null;
+                location: string | null;
+                presenters: Array<string | null> | null;
+                startDate: string | null;
+                publications: Array<{
+                    uri: string | null;
+                    tracks: Array<{
+                        width: number | null;
+                        uri: string | null;
+                        tags: Array<string | null> | null;
+                        mimeType: string | null;
+                        logicalName: string | null;
+                        isLive: boolean | null;
+                        height: number | null;
+                        frameRate: number | null;
+                        flavor: string | null;
                     } | null> | null;
                 } | null> | null;
-                muiEventInfo?: {
-                    isPublic?: boolean | null;
-                    managedAclId?: any | null;
-                    publishUrl?: string | null;
-                    thumbnailUrl?: string | null;
+                muiEventInfo: {
+                    isPublic: boolean | null;
+                    managedAclId: number | null;
+                    publishUrl: string | null;
+                    thumbnailUrl: string | null;
                 } | null;
             } | null>;
         };
@@ -1158,17 +1160,17 @@ export type MuiGetMyEventsQuery = {
 };
 
 // @public (undocumented)
-export type MuiGetMyEventsQueryVariables = Exact<{
-    limit?: InputMaybe<Scalars['Int']['input']>;
-    offset?: InputMaybe<Scalars['Int']['input']>;
-    orderBy?: InputMaybe<EventOrderByInput>;
-    query?: InputMaybe<Scalars['String']['input']>;
-    channel?: InputMaybe<Scalars['String']['input']>;
-    tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>> | InputMaybe<Scalars['String']['input']>>;
+export type MuiGetMyEventsQueryVariables = Exact_2<{
+    limit?: number | null | undefined;
+    offset?: number | null | undefined;
+    orderBy?: EventOrderByInput | null | undefined;
+    query?: string | null | undefined;
+    channel?: string | null | undefined;
+    tags?: Array<string | null | undefined> | string | null | undefined;
 }>;
 
 // @public (undocumented)
-export const MuiGetMySeriesDocument = "\n    query MuiGetMySeries($limit: Int, $offset: Int, $orderBy: SeriesOrderByInput, $query: String) {\n  currentUser {\n    mySeries(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...MuiSeriesData\n      }\n    }\n  }\n}\n    \n    fragment MuiSeriesData on Series {\n  __typename\n  id\n  contributors\n  created\n  creator\n  description\n  title\n  events {\n    nodes {\n      id\n      title\n      eventStatus\n    }\n    totalCount\n  }\n  muiSeriesInfo {\n    isPublic\n    managedAclId\n  }\n  ...MuiSeriesFields\n}\n    \n    fragment MuiSeriesFields on Series {\n  __typename\n}\n    ";
+export const MuiGetMySeriesDocument = "\n    query MuiGetMySeries($limit: Int, $offset: Int, $orderBy: SeriesOrderByInput, $query: String) {\n  currentUser {\n    mySeries(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...MuiSeriesData\n      }\n    }\n  }\n}\n    fragment MuiSeriesFields on Series {\n  __typename\n}\nfragment MuiSeriesData on Series {\n  __typename\n  id\n  contributors\n  created\n  creator\n  description\n  title\n  events {\n    nodes {\n      id\n      title\n      eventStatus\n    }\n    totalCount\n  }\n  muiSeriesInfo {\n    isPublic\n    managedAclId\n  }\n  ...MuiSeriesFields\n}";
 
 // @public (undocumented)
 export const MuiGetMySeriesNameAndIdDocument = "\n    query MuiGetMySeriesNameAndId($limit: Int, $offset: Int, $orderBy: SeriesOrderByInput, $query: String) {\n  currentUser {\n    mySeries(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      nodes {\n        id\n        title\n      }\n    }\n  }\n}\n    ";
@@ -1186,37 +1188,37 @@ export type MuiGetMySeriesNameAndIdQuery = {
 };
 
 // @public (undocumented)
-export type MuiGetMySeriesNameAndIdQueryVariables = Exact<{
-    limit?: InputMaybe<Scalars['Int']['input']>;
-    offset?: InputMaybe<Scalars['Int']['input']>;
-    orderBy?: InputMaybe<SeriesOrderByInput>;
-    query?: InputMaybe<Scalars['String']['input']>;
+export type MuiGetMySeriesNameAndIdQueryVariables = Exact_2<{
+    limit?: number | null | undefined;
+    offset?: number | null | undefined;
+    orderBy?: SeriesOrderByInput | null | undefined;
+    query?: string | null | undefined;
 }>;
 
 // @public (undocumented)
 export type MuiGetMySeriesQuery = {
     currentUser: {
         mySeries: {
-            totalCount: any;
+            totalCount: number;
             nodes: Array<{
                 __typename: 'Series';
                 id: string;
-                contributors?: Array<string | null> | null;
-                created?: string | null;
-                creator?: string | null;
-                description?: string | null;
+                contributors: Array<string | null> | null;
+                created: string | null;
+                creator: string | null;
+                description: string | null;
                 title: string;
                 events: {
-                    totalCount: any;
+                    totalCount: number;
                     nodes: Array<{
                         id: string;
                         title: string;
                         eventStatus: string;
                     } | null>;
                 };
-                muiSeriesInfo?: {
-                    isPublic?: boolean | null;
-                    managedAclId?: any | null;
+                muiSeriesInfo: {
+                    isPublic: boolean | null;
+                    managedAclId: number | null;
                 } | null;
             } | null>;
         };
@@ -1224,147 +1226,147 @@ export type MuiGetMySeriesQuery = {
 };
 
 // @public (undocumented)
-export type MuiGetMySeriesQueryVariables = Exact<{
-    limit?: InputMaybe<Scalars['Int']['input']>;
-    offset?: InputMaybe<Scalars['Int']['input']>;
-    orderBy?: InputMaybe<SeriesOrderByInput>;
-    query?: InputMaybe<Scalars['String']['input']>;
+export type MuiGetMySeriesQueryVariables = Exact_2<{
+    limit?: number | null | undefined;
+    offset?: number | null | undefined;
+    orderBy?: SeriesOrderByInput | null | undefined;
+    query?: string | null | undefined;
 }>;
 
 // @public (undocumented)
-export const MuiGetSeriesByIdInputFieldsDocument = "\n    query MuiGetSeriesByIdInputFields($seriesId: String!) {\n  seriesById(id: $seriesId) {\n    commonMetadataV2 {\n      contributor {\n        ...MuiGetListInputFieldsMetaData\n      }\n      title {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      subject {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      rightsHolder {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      publisher {\n        ...MuiGetListInputFieldsMetaData\n      }\n      license {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      language {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      identifier {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      description {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      creator {\n        ...MuiGetListInputFieldsMetaData\n      }\n    }\n  }\n}\n    \n    fragment MuiGetListInputFieldsMetaData on ListMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    \n\n    fragment MuiGetStringInputFieldsMetaData on StringMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\n    ";
+export const MuiGetSeriesByIdInputFieldsDocument = "\n    query MuiGetSeriesByIdInputFields($seriesId: String!) {\n  seriesById(id: $seriesId) {\n    commonMetadataV2 {\n      contributor {\n        ...MuiGetListInputFieldsMetaData\n      }\n      title {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      subject {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      rightsHolder {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      publisher {\n        ...MuiGetListInputFieldsMetaData\n      }\n      license {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      language {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      identifier {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      description {\n        ...MuiGetStringInputFieldsMetaData\n      }\n      creator {\n        ...MuiGetListInputFieldsMetaData\n      }\n    }\n  }\n}\n    fragment MuiGetListInputFieldsMetaData on ListMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}\nfragment MuiGetStringInputFieldsMetaData on StringMetadataField {\n  collectionId\n  collection\n  id\n  label\n  listProvider\n  order\n  readOnly\n  required\n  type\n  value\n}";
 
 // @public (undocumented)
 export type MuiGetSeriesByIdInputFieldsQuery = {
-    seriesById?: {
+    seriesById: {
         commonMetadataV2: {
-            contributor?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: Array<string | null> | null;
+            contributor: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: Array<string | null> | null;
             } | null;
-            title?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            title: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            subject?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            subject: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            rightsHolder?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            rightsHolder: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            publisher?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: Array<string | null> | null;
+            publisher: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: Array<string | null> | null;
             } | null;
-            license?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            license: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            language?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            language: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            identifier?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            identifier: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            description?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: string | null;
+            description: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: string | null;
             } | null;
-            creator?: {
-                collectionId?: string | null;
-                collection?: any | null;
-                id?: string | null;
-                label?: string | null;
-                listProvider?: string | null;
-                order?: number | null;
-                readOnly?: boolean | null;
-                required?: boolean | null;
-                type?: Type | null;
-                value?: Array<string | null> | null;
+            creator: {
+                collectionId: string | null;
+                collection: unknown;
+                id: string | null;
+                label: string | null;
+                listProvider: string | null;
+                order: number | null;
+                readOnly: boolean | null;
+                required: boolean | null;
+                type: Type | null;
+                value: Array<string | null> | null;
             } | null;
         };
     } | null;
 };
 
 // @public (undocumented)
-export type MuiGetSeriesByIdInputFieldsQueryVariables = Exact<{
-    seriesId: Scalars['String']['input'];
+export type MuiGetSeriesByIdInputFieldsQueryVariables = Exact_2<{
+    seriesId: string;
 }>;
 
 // @public (undocumented)
@@ -1372,19 +1374,19 @@ export const MuiGetSeriesInfoDocument = "\n    query MuiGetSeriesInfo($seriesId:
 
 // @public (undocumented)
 export type MuiGetSeriesInfoQuery = {
-    seriesById?: {
-        contributors?: Array<string | null> | null;
-        created?: string | null;
-        creator?: string | null;
-        description?: string | null;
+    seriesById: {
+        contributors: Array<string | null> | null;
+        created: string | null;
+        creator: string | null;
+        description: string | null;
         id: string;
-        license?: string | null;
-        organizers?: Array<string | null> | null;
-        publishers?: Array<string | null> | null;
-        rightsHolder?: string | null;
+        license: string | null;
+        organizers: Array<string | null> | null;
+        publishers: Array<string | null> | null;
+        rightsHolder: string | null;
         title: string;
         events: {
-            totalCount: any;
+            totalCount: number;
             nodes: Array<{
                 id: string;
             } | null>;
@@ -1393,8 +1395,8 @@ export type MuiGetSeriesInfoQuery = {
 };
 
 // @public (undocumented)
-export type MuiGetSeriesInfoQueryVariables = Exact<{
-    seriesId: Scalars['String']['input'];
+export type MuiGetSeriesInfoQueryVariables = Exact_2<{
+    seriesId: string;
 }>;
 
 // @public (undocumented)
@@ -1402,28 +1404,28 @@ export const MuiGetSeriesNameByIdDocument = "\n    query MuiGetSeriesNameById($s
 
 // @public (undocumented)
 export type MuiGetSeriesNameByIdQuery = {
-    seriesById?: {
+    seriesById: {
         title: string;
     } | null;
 };
 
 // @public (undocumented)
-export type MuiGetSeriesNameByIdQueryVariables = Exact<{
-    seriesId: Scalars['String']['input'];
+export type MuiGetSeriesNameByIdQueryVariables = Exact_2<{
+    seriesId: string;
 }>;
 
 // @public (undocumented)
 export type MuiGetStringInputFieldsMetaDataFragment = {
-    collectionId?: string | null;
-    collection?: any | null;
-    id?: string | null;
-    label?: string | null;
-    listProvider?: string | null;
-    order?: number | null;
-    readOnly?: boolean | null;
-    required?: boolean | null;
-    type?: Type | null;
-    value?: string | null;
+    collectionId: string | null;
+    collection: unknown;
+    id: string | null;
+    label: string | null;
+    listProvider: string | null;
+    order: number | null;
+    readOnly: boolean | null;
+    required: boolean | null;
+    type: Type | null;
+    value: string | null;
 };
 
 // @public (undocumented)
@@ -1465,44 +1467,44 @@ export type MuiMutationUpdateSeriesArgs = {
 };
 
 // @public (undocumented)
-export const MuiSearchUserDocument = "\n    query MuiSearchUser($limit: Int, $offset: Int, $query: String!) {\n  searchUser(limit: $limit, offset: $offset, query: $query) {\n    totalCount\n    nodes {\n      email\n      name\n      provider\n      roles\n      userRole\n      username\n      ...MuiUserFields\n    }\n    pageInfo {\n      limit\n      offset\n      pageCount\n    }\n  }\n}\n    \n    fragment MuiUserFields on User {\n  __typename\n}\n    ";
+export const MuiSearchUserDocument = "\n    query MuiSearchUser($limit: Int, $offset: Int, $query: String!) {\n  searchUser(limit: $limit, offset: $offset, query: $query) {\n    totalCount\n    nodes {\n      email\n      name\n      provider\n      roles\n      userRole\n      username\n      ...MuiUserFields\n    }\n    pageInfo {\n      limit\n      offset\n      pageCount\n    }\n  }\n}\n    fragment MuiUserFields on User {\n  __typename\n}";
 
 // @public (undocumented)
 export type MuiSearchUserQuery = {
     searchUser: {
-        totalCount: any;
+        totalCount: number;
         nodes: Array<{
             __typename: 'User';
-            email?: string | null;
-            name?: string | null;
-            provider?: string | null;
+            email: string | null;
+            name: string | null;
+            provider: string | null;
             roles: Array<string | null>;
             userRole: string;
-            username?: string | null;
+            username: string | null;
         } | null>;
         pageInfo: {
-            limit: any;
-            offset: any;
-            pageCount: any;
+            limit: number;
+            offset: number;
+            pageCount: number;
         };
     };
 };
 
 // @public (undocumented)
-export type MuiSearchUserQueryVariables = Exact<{
-    limit?: InputMaybe<Scalars['Int']['input']>;
-    offset?: InputMaybe<Scalars['Int']['input']>;
-    query: Scalars['String']['input'];
+export type MuiSearchUserQueryVariables = Exact_2<{
+    limit?: number | null | undefined;
+    offset?: number | null | undefined;
+    query: string;
 }>;
 
 // @public (undocumented)
 export type MuiSeriesAclDataFragment = {
-    seriesById?: {
+    seriesById: {
         acl: {
-            users?: Array<{
-                role?: string | null;
-                label?: string | null;
-                action?: Array<string | null> | null;
+            users: Array<{
+                role: string | null;
+                label: string | null;
+                action: Array<string | null> | null;
             } | null> | null;
         };
     } | null;
@@ -1515,27 +1517,27 @@ export const MuiSeriesAclDataFragmentDoc = "\n    fragment MuiSeriesAclData on Q
 export type MuiSeriesDataFragment = {
     __typename: 'Series';
     id: string;
-    contributors?: Array<string | null> | null;
-    created?: string | null;
-    creator?: string | null;
-    description?: string | null;
+    contributors: Array<string | null> | null;
+    created: string | null;
+    creator: string | null;
+    description: string | null;
     title: string;
     events: {
-        totalCount: any;
+        totalCount: number;
         nodes: Array<{
             id: string;
             title: string;
             eventStatus: string;
         } | null>;
     };
-    muiSeriesInfo?: {
-        isPublic?: boolean | null;
-        managedAclId?: any | null;
+    muiSeriesInfo: {
+        isPublic: boolean | null;
+        managedAclId: number | null;
     } | null;
 };
 
 // @public (undocumented)
-export const MuiSeriesDataFragmentDoc = "\n    fragment MuiSeriesData on Series {\n  __typename\n  id\n  contributors\n  created\n  creator\n  description\n  title\n  events {\n    nodes {\n      id\n      title\n      eventStatus\n    }\n    totalCount\n  }\n  muiSeriesInfo {\n    isPublic\n    managedAclId\n  }\n  ...MuiSeriesFields\n}\n    \n    fragment MuiSeriesFields on Series {\n  __typename\n}\n    ";
+export const MuiSeriesDataFragmentDoc = "\n    fragment MuiSeriesData on Series {\n  __typename\n  id\n  contributors\n  created\n  creator\n  description\n  title\n  events {\n    nodes {\n      id\n      title\n      eventStatus\n    }\n    totalCount\n  }\n  muiSeriesInfo {\n    isPublic\n    managedAclId\n  }\n  ...MuiSeriesFields\n}\n    fragment MuiSeriesFields on Series {\n  __typename\n}";
 
 // @public (undocumented)
 export type MuiSeriesFieldsFragment = {
@@ -1556,74 +1558,74 @@ export const MuiUpdateEventAclDocument = "\n    mutation MuiUpdateEventAcl($even
 
 // @public (undocumented)
 export type MuiUpdateEventAclMutation = {
-    mui?: {
+    mui: {
         updateEventAcl: {
-            muiEventInfo?: {
-                managedAclId?: any | null;
+            muiEventInfo: {
+                managedAclId: number | null;
             } | null;
         };
     } | null;
 };
 
 // @public (undocumented)
-export type MuiUpdateEventAclMutationVariables = Exact<{
-    eventId: Scalars['String']['input'];
+export type MuiUpdateEventAclMutationVariables = Exact_2<{
+    eventId: string;
     acl: AccessControlListInput;
 }>;
 
 // @public (undocumented)
-export const MuiUpdateEventDocument = "\n    mutation MuiUpdateEvent($eventId: String!, $metadata: CommonEventMetadataInput!, $channel: String, $tags: [String]) {\n  mui {\n    updateEvent(id: $eventId, metadata: $metadata) {\n      ...MuiEventsData\n    }\n  }\n}\n    \n    fragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: $channel) {\n    uri\n    tracks(tags: $tags) {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}\n    \n    fragment MuiEventFields on Event {\n  __typename\n}\n    ";
+export const MuiUpdateEventDocument = "\n    mutation MuiUpdateEvent($eventId: String!, $metadata: CommonEventMetadataInput!, $channel: String, $tags: [String]) {\n  mui {\n    updateEvent(id: $eventId, metadata: $metadata) {\n      ...MuiEventsData\n    }\n  }\n}\n    fragment MuiEventFields on Event {\n  __typename\n}\nfragment MuiEventsData on Event {\n  __typename\n  contributors\n  seriesName\n  seriesId\n  title\n  creator\n  created\n  description\n  displayableStatus\n  eventStatus\n  duration\n  hasPreview\n  id\n  location\n  presenters\n  startDate\n  publications(channel: $channel) {\n    uri\n    tracks(tags: $tags) {\n      width\n      uri\n      tags\n      mimeType\n      logicalName\n      isLive\n      height\n      frameRate\n      flavor\n    }\n  }\n  hasPreview\n  muiEventInfo {\n    isPublic\n    managedAclId\n    publishUrl\n    thumbnailUrl\n  }\n  ...MuiEventFields\n}";
 
 // @public (undocumented)
 export type MuiUpdateEventMutation = {
-    mui?: {
+    mui: {
         updateEvent: {
             __typename: 'Event';
-            contributors?: Array<string | null> | null;
-            seriesName?: string | null;
-            seriesId?: string | null;
+            contributors: Array<string | null> | null;
+            seriesName: string | null;
+            seriesId: string | null;
             title: string;
-            creator?: string | null;
-            created?: any | null;
-            description?: string | null;
-            displayableStatus?: string | null;
+            creator: string | null;
+            created: string | null;
+            description: string | null;
+            displayableStatus: string | null;
             eventStatus: string;
-            duration?: any | null;
+            duration: string | null;
             hasPreview: boolean;
             id: string;
-            location?: string | null;
-            presenters?: Array<string | null> | null;
-            startDate?: any | null;
-            publications?: Array<{
-                uri?: string | null;
-                tracks?: Array<{
-                    width?: number | null;
-                    uri?: string | null;
-                    tags?: Array<string | null> | null;
-                    mimeType?: string | null;
-                    logicalName?: string | null;
-                    isLive?: boolean | null;
-                    height?: number | null;
-                    frameRate?: number | null;
-                    flavor?: string | null;
+            location: string | null;
+            presenters: Array<string | null> | null;
+            startDate: string | null;
+            publications: Array<{
+                uri: string | null;
+                tracks: Array<{
+                    width: number | null;
+                    uri: string | null;
+                    tags: Array<string | null> | null;
+                    mimeType: string | null;
+                    logicalName: string | null;
+                    isLive: boolean | null;
+                    height: number | null;
+                    frameRate: number | null;
+                    flavor: string | null;
                 } | null> | null;
             } | null> | null;
-            muiEventInfo?: {
-                isPublic?: boolean | null;
-                managedAclId?: any | null;
-                publishUrl?: string | null;
-                thumbnailUrl?: string | null;
+            muiEventInfo: {
+                isPublic: boolean | null;
+                managedAclId: number | null;
+                publishUrl: string | null;
+                thumbnailUrl: string | null;
             } | null;
         };
     } | null;
 };
 
 // @public (undocumented)
-export type MuiUpdateEventMutationVariables = Exact<{
-    eventId: Scalars['String']['input'];
+export type MuiUpdateEventMutationVariables = Exact_2<{
+    eventId: string;
     metadata: CommonEventMetadataInput;
-    channel?: InputMaybe<Scalars['String']['input']>;
-    tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>> | InputMaybe<Scalars['String']['input']>>;
+    channel?: string | null | undefined;
+    tags?: Array<string | null | undefined> | string | null | undefined;
 }>;
 
 // @public (undocumented)
@@ -1632,54 +1634,54 @@ export const MuiUpdateSeriesAclDocument = "\n    mutation MuiUpdateSeriesAcl($se
 // @public (undocumented)
 export type MuiUpdateSeriesAclMutation = {
     updateSeriesAcl: {
-        muiSeriesInfo?: {
-            managedAclId?: any | null;
+        muiSeriesInfo: {
+            managedAclId: number | null;
         } | null;
     };
 };
 
 // @public (undocumented)
-export type MuiUpdateSeriesAclMutationVariables = Exact<{
-    seriesId: Scalars['String']['input'];
+export type MuiUpdateSeriesAclMutationVariables = Exact_2<{
+    seriesId: string;
     acl: AccessControlListInput;
 }>;
 
 // @public (undocumented)
-export const MuiUpdateSeriesDocument = "\n    mutation MuiUpdateSeries($seriesId: String!, $metadata: CommonSeriesMetadataInput!) {\n  updateSeries(id: $seriesId, metadata: $metadata) {\n    ...MuiSeriesData\n  }\n}\n    \n    fragment MuiSeriesData on Series {\n  __typename\n  id\n  contributors\n  created\n  creator\n  description\n  title\n  events {\n    nodes {\n      id\n      title\n      eventStatus\n    }\n    totalCount\n  }\n  muiSeriesInfo {\n    isPublic\n    managedAclId\n  }\n  ...MuiSeriesFields\n}\n    \n    fragment MuiSeriesFields on Series {\n  __typename\n}\n    ";
+export const MuiUpdateSeriesDocument = "\n    mutation MuiUpdateSeries($seriesId: String!, $metadata: CommonSeriesMetadataInput!) {\n  updateSeries(id: $seriesId, metadata: $metadata) {\n    ...MuiSeriesData\n  }\n}\n    fragment MuiSeriesFields on Series {\n  __typename\n}\nfragment MuiSeriesData on Series {\n  __typename\n  id\n  contributors\n  created\n  creator\n  description\n  title\n  events {\n    nodes {\n      id\n      title\n      eventStatus\n    }\n    totalCount\n  }\n  muiSeriesInfo {\n    isPublic\n    managedAclId\n  }\n  ...MuiSeriesFields\n}";
 
 // @public (undocumented)
 export type MuiUpdateSeriesMutation = {
     updateSeries: {
         __typename: 'Series';
         id: string;
-        contributors?: Array<string | null> | null;
-        created?: string | null;
-        creator?: string | null;
-        description?: string | null;
+        contributors: Array<string | null> | null;
+        created: string | null;
+        creator: string | null;
+        description: string | null;
         title: string;
         events: {
-            totalCount: any;
+            totalCount: number;
             nodes: Array<{
                 id: string;
                 title: string;
                 eventStatus: string;
             } | null>;
         };
-        muiSeriesInfo?: {
-            isPublic?: boolean | null;
-            managedAclId?: any | null;
+        muiSeriesInfo: {
+            isPublic: boolean | null;
+            managedAclId: number | null;
         } | null;
     };
 };
 
 // @public (undocumented)
-export type MuiUpdateSeriesMutationVariables = Exact<{
-    seriesId: Scalars['String']['input'];
+export type MuiUpdateSeriesMutationVariables = Exact_2<{
+    seriesId: string;
     metadata: CommonSeriesMetadataInput;
 }>;
 
 // @public (undocumented)
-export const MuiUserDocument = "\n    query MuiUser {\n  currentUser {\n    email\n    name\n    username\n    userRole\n    ...MuiCurrentUserFields\n  }\n}\n    \n    fragment MuiCurrentUserFields on CurrentUser {\n  __typename\n}\n    ";
+export const MuiUserDocument = "\n    query MuiUser {\n  currentUser {\n    email\n    name\n    username\n    userRole\n    ...MuiCurrentUserFields\n  }\n}\n    fragment MuiCurrentUserFields on CurrentUser {\n  __typename\n}";
 
 // @public (undocumented)
 export type MuiUserFieldsFragment = {
@@ -1693,15 +1695,15 @@ export const MuiUserFieldsFragmentDoc = "\n    fragment MuiUserFields on User {\
 export type MuiUserQuery = {
     currentUser: {
         __typename: 'CurrentUser';
-        email?: string | null;
-        name?: string | null;
-        username?: string | null;
+        email: string | null;
+        name: string | null;
+        username: string | null;
         userRole: string;
     };
 };
 
 // @public (undocumented)
-export type MuiUserQueryVariables = Exact<{
+export type MuiUserQueryVariables = Exact_2<{
     [key: string]: never;
 }>;
 
@@ -1905,20 +1907,20 @@ export type Scalars = {
         output: number;
     };
     DateTime: {
-        input: any;
-        output: any;
+        input: string;
+        output: string;
     };
     Duration: {
-        input: any;
-        output: any;
+        input: string;
+        output: string;
     };
     JSON: {
-        input: any;
-        output: any;
+        input: unknown;
+        output: unknown;
     };
     Long: {
-        input: any;
-        output: any;
+        input: number;
+        output: number;
     };
 };
 
@@ -2080,7 +2082,7 @@ export { useInfiniteQuery }
 
 // @public (undocumented)
 export const useMuiCreateSeriesMutation: {
-    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiCreateSeriesMutation, TError, MuiCreateSeriesMutationVariables, TContext>): UseMutationResult<MuiCreateSeriesMutation, TError, Exact<{
+    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiCreateSeriesMutation, TError, MuiCreateSeriesMutationVariables, TContext>): UseMutationResult<MuiCreateSeriesMutation, TError, Exact_2<{
     acl: AccessControlListInput;
     metadata: CommonSeriesMetadataInput;
     }>, TContext>;
@@ -2089,8 +2091,8 @@ export const useMuiCreateSeriesMutation: {
 
 // @public (undocumented)
 export const useMuiDeleteEventMutation: {
-    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiDeleteEventMutation, TError, MuiDeleteEventMutationVariables, TContext>): UseMutationResult<MuiDeleteEventMutation, TError, Exact<{
-    eventId: Scalars["String"]["input"];
+    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiDeleteEventMutation, TError, MuiDeleteEventMutationVariables, TContext>): UseMutationResult<MuiDeleteEventMutation, TError, Exact_2<{
+    eventId: string;
     }>, TContext>;
     fetcher(variables: MuiDeleteEventMutationVariables, options?: RequestInit["headers"]): () => Promise<MuiDeleteEventMutation>;
 };
@@ -2100,14 +2102,14 @@ export const useMuiEventsFromSeriesQuery: {
     <TData = MuiEventsFromSeriesQuery, TError = unknown>(variables: MuiEventsFromSeriesQueryVariables, options?: Omit<UseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>["queryKey"];
     }): UseQueryResult<TData, TError>;
-    getKey(variables: MuiEventsFromSeriesQueryVariables): (string | Exact<{
-        seriesId: Scalars["String"]["input"];
-        limit?: InputMaybe<Scalars["Int"]["input"]>;
-        offset?: InputMaybe<Scalars["Int"]["input"]>;
-        orderBy?: InputMaybe<EventOrderByInput>;
-        query?: InputMaybe<Scalars["String"]["input"]>;
-        channel?: InputMaybe<Scalars["String"]["input"]>;
-        tags?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>> | InputMaybe<Scalars["String"]["input"]>>;
+    getKey(variables: MuiEventsFromSeriesQueryVariables): (string | Exact_2<{
+        seriesId: string;
+        limit?: number | null | undefined;
+        offset?: number | null | undefined;
+        orderBy?: EventOrderByInput | null | undefined;
+        query?: string | null | undefined;
+        channel?: string | null | undefined;
+        tags?: Array<string | null | undefined> | string | null | undefined;
     }>)[];
     fetcher(variables: MuiEventsFromSeriesQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiEventsFromSeriesQuery>;
 };
@@ -2117,7 +2119,7 @@ export const useMuiGetAllManagedAclsQuery: {
     <TData = MuiGetAllManagedAclsQuery, TError = unknown>(variables?: MuiGetAllManagedAclsQueryVariables, options?: Omit<UseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>["queryKey"];
     }): UseQueryResult<TData, TError>;
-    getKey(variables?: MuiGetAllManagedAclsQueryVariables): (string | Exact<{
+    getKey(variables?: MuiGetAllManagedAclsQueryVariables): (string | Exact_2<{
         [key: string]: never;
     }>)[];
     fetcher(variables?: MuiGetAllManagedAclsQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetAllManagedAclsQuery>;
@@ -2128,8 +2130,8 @@ export const useMuiGetEventByIdInputFieldsQuery: {
     <TData = MuiGetEventByIdInputFieldsQuery, TError = unknown>(variables: MuiGetEventByIdInputFieldsQueryVariables, options?: Omit<UseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>["queryKey"];
     }): UseQueryResult<TData, TError>;
-    getKey(variables: MuiGetEventByIdInputFieldsQueryVariables): (string | Exact<{
-        eventId: Scalars["String"]["input"];
+    getKey(variables: MuiGetEventByIdInputFieldsQueryVariables): (string | Exact_2<{
+        eventId: string;
     }>)[];
     fetcher(variables: MuiGetEventByIdInputFieldsQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetEventByIdInputFieldsQuery>;
 };
@@ -2139,8 +2141,8 @@ export const useMuiGetEventByIdQuery: {
     <TData = MuiGetEventByIdQuery, TError = unknown>(variables: MuiGetEventByIdQueryVariables, options?: Omit<UseQueryOptions<MuiGetEventByIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetEventByIdQuery, TError, TData>["queryKey"];
     }): UseQueryResult<TData, TError>;
-    getKey(variables: MuiGetEventByIdQueryVariables): (string | Exact<{
-        eventId: Scalars["String"]["input"];
+    getKey(variables: MuiGetEventByIdQueryVariables): (string | Exact_2<{
+        eventId: string;
     }>)[];
     fetcher(variables: MuiGetEventByIdQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetEventByIdQuery>;
 };
@@ -2150,8 +2152,8 @@ export const useMuiGetManagedAclsWithEventIdQuery: {
     <TData = MuiGetManagedAclsWithEventIdQuery, TError = unknown>(variables: MuiGetManagedAclsWithEventIdQueryVariables, options?: Omit<UseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>["queryKey"];
     }): UseQueryResult<TData, TError>;
-    getKey(variables: MuiGetManagedAclsWithEventIdQueryVariables): (string | Exact<{
-        id: Scalars["String"]["input"];
+    getKey(variables: MuiGetManagedAclsWithEventIdQueryVariables): (string | Exact_2<{
+        id: string;
     }>)[];
     fetcher(variables: MuiGetManagedAclsWithEventIdQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetManagedAclsWithEventIdQuery>;
 };
@@ -2161,8 +2163,8 @@ export const useMuiGetManagedAclsWithSeriesIdQuery: {
     <TData = MuiGetManagedAclsWithSeriesIdQuery, TError = unknown>(variables: MuiGetManagedAclsWithSeriesIdQueryVariables, options?: Omit<UseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>["queryKey"];
     }): UseQueryResult<TData, TError>;
-    getKey(variables: MuiGetManagedAclsWithSeriesIdQueryVariables): (string | Exact<{
-        id: Scalars["String"]["input"];
+    getKey(variables: MuiGetManagedAclsWithSeriesIdQueryVariables): (string | Exact_2<{
+        id: string;
     }>)[];
     fetcher(variables: MuiGetManagedAclsWithSeriesIdQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetManagedAclsWithSeriesIdQuery>;
 };
@@ -2172,13 +2174,13 @@ export const useMuiGetMyEventsQuery: {
     <TData = MuiGetMyEventsQuery, TError = unknown>(variables?: MuiGetMyEventsQueryVariables, options?: Omit<UseQueryOptions<MuiGetMyEventsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetMyEventsQuery, TError, TData>["queryKey"];
     }): UseQueryResult<TData, TError>;
-    getKey(variables?: MuiGetMyEventsQueryVariables): (string | Exact<{
-        limit?: InputMaybe<Scalars["Int"]["input"]>;
-        offset?: InputMaybe<Scalars["Int"]["input"]>;
-        orderBy?: InputMaybe<EventOrderByInput>;
-        query?: InputMaybe<Scalars["String"]["input"]>;
-        channel?: InputMaybe<Scalars["String"]["input"]>;
-        tags?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>> | InputMaybe<Scalars["String"]["input"]>>;
+    getKey(variables?: MuiGetMyEventsQueryVariables): (string | Exact_2<{
+        limit?: number | null | undefined;
+        offset?: number | null | undefined;
+        orderBy?: EventOrderByInput | null | undefined;
+        query?: string | null | undefined;
+        channel?: string | null | undefined;
+        tags?: Array<string | null | undefined> | string | null | undefined;
     }>)[];
     fetcher(variables?: MuiGetMyEventsQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetMyEventsQuery>;
 };
@@ -2188,11 +2190,11 @@ export const useMuiGetMySeriesNameAndIdQuery: {
     <TData = MuiGetMySeriesNameAndIdQuery, TError = unknown>(variables?: MuiGetMySeriesNameAndIdQueryVariables, options?: Omit<UseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>["queryKey"];
     }): UseQueryResult<TData, TError>;
-    getKey(variables?: MuiGetMySeriesNameAndIdQueryVariables): (string | Exact<{
-        limit?: InputMaybe<Scalars["Int"]["input"]>;
-        offset?: InputMaybe<Scalars["Int"]["input"]>;
-        orderBy?: InputMaybe<SeriesOrderByInput>;
-        query?: InputMaybe<Scalars["String"]["input"]>;
+    getKey(variables?: MuiGetMySeriesNameAndIdQueryVariables): (string | Exact_2<{
+        limit?: number | null | undefined;
+        offset?: number | null | undefined;
+        orderBy?: SeriesOrderByInput | null | undefined;
+        query?: string | null | undefined;
     }>)[];
     fetcher(variables?: MuiGetMySeriesNameAndIdQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetMySeriesNameAndIdQuery>;
 };
@@ -2202,11 +2204,11 @@ export const useMuiGetMySeriesQuery: {
     <TData = MuiGetMySeriesQuery, TError = unknown>(variables?: MuiGetMySeriesQueryVariables, options?: Omit<UseQueryOptions<MuiGetMySeriesQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetMySeriesQuery, TError, TData>["queryKey"];
     }): UseQueryResult<TData, TError>;
-    getKey(variables?: MuiGetMySeriesQueryVariables): (string | Exact<{
-        limit?: InputMaybe<Scalars["Int"]["input"]>;
-        offset?: InputMaybe<Scalars["Int"]["input"]>;
-        orderBy?: InputMaybe<SeriesOrderByInput>;
-        query?: InputMaybe<Scalars["String"]["input"]>;
+    getKey(variables?: MuiGetMySeriesQueryVariables): (string | Exact_2<{
+        limit?: number | null | undefined;
+        offset?: number | null | undefined;
+        orderBy?: SeriesOrderByInput | null | undefined;
+        query?: string | null | undefined;
     }>)[];
     fetcher(variables?: MuiGetMySeriesQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetMySeriesQuery>;
 };
@@ -2216,8 +2218,8 @@ export const useMuiGetSeriesByIdInputFieldsQuery: {
     <TData = MuiGetSeriesByIdInputFieldsQuery, TError = unknown>(variables: MuiGetSeriesByIdInputFieldsQueryVariables, options?: Omit<UseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>["queryKey"];
     }): UseQueryResult<TData, TError>;
-    getKey(variables: MuiGetSeriesByIdInputFieldsQueryVariables): (string | Exact<{
-        seriesId: Scalars["String"]["input"];
+    getKey(variables: MuiGetSeriesByIdInputFieldsQueryVariables): (string | Exact_2<{
+        seriesId: string;
     }>)[];
     fetcher(variables: MuiGetSeriesByIdInputFieldsQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetSeriesByIdInputFieldsQuery>;
 };
@@ -2227,8 +2229,8 @@ export const useMuiGetSeriesInfoQuery: {
     <TData = MuiGetSeriesInfoQuery, TError = unknown>(variables: MuiGetSeriesInfoQueryVariables, options?: Omit<UseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>["queryKey"];
     }): UseQueryResult<TData, TError>;
-    getKey(variables: MuiGetSeriesInfoQueryVariables): (string | Exact<{
-        seriesId: Scalars["String"]["input"];
+    getKey(variables: MuiGetSeriesInfoQueryVariables): (string | Exact_2<{
+        seriesId: string;
     }>)[];
     fetcher(variables: MuiGetSeriesInfoQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetSeriesInfoQuery>;
 };
@@ -2238,8 +2240,8 @@ export const useMuiGetSeriesNameByIdQuery: {
     <TData = MuiGetSeriesNameByIdQuery, TError = unknown>(variables: MuiGetSeriesNameByIdQueryVariables, options?: Omit<UseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>["queryKey"];
     }): UseQueryResult<TData, TError>;
-    getKey(variables: MuiGetSeriesNameByIdQueryVariables): (string | Exact<{
-        seriesId: Scalars["String"]["input"];
+    getKey(variables: MuiGetSeriesNameByIdQueryVariables): (string | Exact_2<{
+        seriesId: string;
     }>)[];
     fetcher(variables: MuiGetSeriesNameByIdQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiGetSeriesNameByIdQuery>;
 };
@@ -2249,18 +2251,18 @@ export const useMuiSearchUserQuery: {
     <TData = MuiSearchUserQuery, TError = unknown>(variables: MuiSearchUserQueryVariables, options?: Omit<UseQueryOptions<MuiSearchUserQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiSearchUserQuery, TError, TData>["queryKey"];
     }): UseQueryResult<TData, TError>;
-    getKey(variables: MuiSearchUserQueryVariables): (string | Exact<{
-        limit?: InputMaybe<Scalars["Int"]["input"]>;
-        offset?: InputMaybe<Scalars["Int"]["input"]>;
-        query: Scalars["String"]["input"];
+    getKey(variables: MuiSearchUserQueryVariables): (string | Exact_2<{
+        limit?: number | null | undefined;
+        offset?: number | null | undefined;
+        query: string;
     }>)[];
     fetcher(variables: MuiSearchUserQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiSearchUserQuery>;
 };
 
 // @public (undocumented)
 export const useMuiUpdateEventAclMutation: {
-    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiUpdateEventAclMutation, TError, MuiUpdateEventAclMutationVariables, TContext>): UseMutationResult<MuiUpdateEventAclMutation, TError, Exact<{
-    eventId: Scalars["String"]["input"];
+    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiUpdateEventAclMutation, TError, MuiUpdateEventAclMutationVariables, TContext>): UseMutationResult<MuiUpdateEventAclMutation, TError, Exact_2<{
+    eventId: string;
     acl: AccessControlListInput;
     }>, TContext>;
     fetcher(variables: MuiUpdateEventAclMutationVariables, options?: RequestInit["headers"]): () => Promise<MuiUpdateEventAclMutation>;
@@ -2268,19 +2270,19 @@ export const useMuiUpdateEventAclMutation: {
 
 // @public (undocumented)
 export const useMuiUpdateEventMutation: {
-    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiUpdateEventMutation, TError, MuiUpdateEventMutationVariables, TContext>): UseMutationResult<MuiUpdateEventMutation, TError, Exact<{
-    eventId: Scalars["String"]["input"];
+    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiUpdateEventMutation, TError, MuiUpdateEventMutationVariables, TContext>): UseMutationResult<MuiUpdateEventMutation, TError, Exact_2<{
+    eventId: string;
     metadata: CommonEventMetadataInput;
-    channel?: InputMaybe<Scalars["String"]["input"]>;
-    tags?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>> | InputMaybe<Scalars["String"]["input"]>>;
+    channel?: string | null | undefined;
+    tags?: Array<string | null | undefined> | string | null | undefined;
     }>, TContext>;
     fetcher(variables: MuiUpdateEventMutationVariables, options?: RequestInit["headers"]): () => Promise<MuiUpdateEventMutation>;
 };
 
 // @public (undocumented)
 export const useMuiUpdateSeriesAclMutation: {
-    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiUpdateSeriesAclMutation, TError, MuiUpdateSeriesAclMutationVariables, TContext>): UseMutationResult<MuiUpdateSeriesAclMutation, TError, Exact<{
-    seriesId: Scalars["String"]["input"];
+    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiUpdateSeriesAclMutation, TError, MuiUpdateSeriesAclMutationVariables, TContext>): UseMutationResult<MuiUpdateSeriesAclMutation, TError, Exact_2<{
+    seriesId: string;
     acl: AccessControlListInput;
     }>, TContext>;
     fetcher(variables: MuiUpdateSeriesAclMutationVariables, options?: RequestInit["headers"]): () => Promise<MuiUpdateSeriesAclMutation>;
@@ -2288,8 +2290,8 @@ export const useMuiUpdateSeriesAclMutation: {
 
 // @public (undocumented)
 export const useMuiUpdateSeriesMutation: {
-    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiUpdateSeriesMutation, TError, MuiUpdateSeriesMutationVariables, TContext>): UseMutationResult<MuiUpdateSeriesMutation, TError, Exact<{
-    seriesId: Scalars["String"]["input"];
+    <TError = unknown, TContext = unknown>(options?: UseMutationOptions<MuiUpdateSeriesMutation, TError, MuiUpdateSeriesMutationVariables, TContext>): UseMutationResult<MuiUpdateSeriesMutation, TError, Exact_2<{
+    seriesId: string;
     metadata: CommonSeriesMetadataInput;
     }>, TContext>;
     fetcher(variables: MuiUpdateSeriesMutationVariables, options?: RequestInit["headers"]): () => Promise<MuiUpdateSeriesMutation>;
@@ -2300,7 +2302,7 @@ export const useMuiUserQuery: {
     <TData = MuiUserQuery, TError = unknown>(variables?: MuiUserQueryVariables, options?: Omit<UseQueryOptions<MuiUserQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseQueryOptions<MuiUserQuery, TError, TData>["queryKey"];
     }): UseQueryResult<TData, TError>;
-    getKey(variables?: MuiUserQueryVariables): (string | Exact<{
+    getKey(variables?: MuiUserQueryVariables): (string | Exact_2<{
         [key: string]: never;
     }>)[];
     fetcher(variables?: MuiUserQueryVariables, options?: RequestInit["headers"]): () => Promise<MuiUserQuery>;
@@ -2362,14 +2364,14 @@ export const useSuspenseMuiEventsFromSeriesQuery: {
     <TData = MuiEventsFromSeriesQuery, TError = unknown>(variables: MuiEventsFromSeriesQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiEventsFromSeriesQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: MuiEventsFromSeriesQueryVariables): (string | Exact<{
-        seriesId: Scalars["String"]["input"];
-        limit?: InputMaybe<Scalars["Int"]["input"]>;
-        offset?: InputMaybe<Scalars["Int"]["input"]>;
-        orderBy?: InputMaybe<EventOrderByInput>;
-        query?: InputMaybe<Scalars["String"]["input"]>;
-        channel?: InputMaybe<Scalars["String"]["input"]>;
-        tags?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>> | InputMaybe<Scalars["String"]["input"]>>;
+    getKey(variables: MuiEventsFromSeriesQueryVariables): (string | Exact_2<{
+        seriesId: string;
+        limit?: number | null | undefined;
+        offset?: number | null | undefined;
+        orderBy?: EventOrderByInput | null | undefined;
+        query?: string | null | undefined;
+        channel?: string | null | undefined;
+        tags?: Array<string | null | undefined> | string | null | undefined;
     }>)[];
 };
 
@@ -2378,7 +2380,7 @@ export const useSuspenseMuiGetAllManagedAclsQuery: {
     <TData = MuiGetAllManagedAclsQuery, TError = unknown>(variables?: MuiGetAllManagedAclsQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetAllManagedAclsQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables?: MuiGetAllManagedAclsQueryVariables): (string | Exact<{
+    getKey(variables?: MuiGetAllManagedAclsQueryVariables): (string | Exact_2<{
         [key: string]: never;
     }>)[];
 };
@@ -2388,8 +2390,8 @@ export const useSuspenseMuiGetEventByIdInputFieldsQuery: {
     <TData = MuiGetEventByIdInputFieldsQuery, TError = unknown>(variables: MuiGetEventByIdInputFieldsQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetEventByIdInputFieldsQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: MuiGetEventByIdInputFieldsQueryVariables): (string | Exact<{
-        eventId: Scalars["String"]["input"];
+    getKey(variables: MuiGetEventByIdInputFieldsQueryVariables): (string | Exact_2<{
+        eventId: string;
     }>)[];
 };
 
@@ -2398,8 +2400,8 @@ export const useSuspenseMuiGetEventByIdQuery: {
     <TData = MuiGetEventByIdQuery, TError = unknown>(variables: MuiGetEventByIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetEventByIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetEventByIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: MuiGetEventByIdQueryVariables): (string | Exact<{
-        eventId: Scalars["String"]["input"];
+    getKey(variables: MuiGetEventByIdQueryVariables): (string | Exact_2<{
+        eventId: string;
     }>)[];
 };
 
@@ -2408,8 +2410,8 @@ export const useSuspenseMuiGetManagedAclsWithEventIdQuery: {
     <TData = MuiGetManagedAclsWithEventIdQuery, TError = unknown>(variables: MuiGetManagedAclsWithEventIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetManagedAclsWithEventIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: MuiGetManagedAclsWithEventIdQueryVariables): (string | Exact<{
-        id: Scalars["String"]["input"];
+    getKey(variables: MuiGetManagedAclsWithEventIdQueryVariables): (string | Exact_2<{
+        id: string;
     }>)[];
 };
 
@@ -2418,8 +2420,8 @@ export const useSuspenseMuiGetManagedAclsWithSeriesIdQuery: {
     <TData = MuiGetManagedAclsWithSeriesIdQuery, TError = unknown>(variables: MuiGetManagedAclsWithSeriesIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetManagedAclsWithSeriesIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: MuiGetManagedAclsWithSeriesIdQueryVariables): (string | Exact<{
-        id: Scalars["String"]["input"];
+    getKey(variables: MuiGetManagedAclsWithSeriesIdQueryVariables): (string | Exact_2<{
+        id: string;
     }>)[];
 };
 
@@ -2428,13 +2430,13 @@ export const useSuspenseMuiGetMyEventsQuery: {
     <TData = MuiGetMyEventsQuery, TError = unknown>(variables?: MuiGetMyEventsQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetMyEventsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetMyEventsQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables?: MuiGetMyEventsQueryVariables): (string | Exact<{
-        limit?: InputMaybe<Scalars["Int"]["input"]>;
-        offset?: InputMaybe<Scalars["Int"]["input"]>;
-        orderBy?: InputMaybe<EventOrderByInput>;
-        query?: InputMaybe<Scalars["String"]["input"]>;
-        channel?: InputMaybe<Scalars["String"]["input"]>;
-        tags?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>> | InputMaybe<Scalars["String"]["input"]>>;
+    getKey(variables?: MuiGetMyEventsQueryVariables): (string | Exact_2<{
+        limit?: number | null | undefined;
+        offset?: number | null | undefined;
+        orderBy?: EventOrderByInput | null | undefined;
+        query?: string | null | undefined;
+        channel?: string | null | undefined;
+        tags?: Array<string | null | undefined> | string | null | undefined;
     }>)[];
 };
 
@@ -2443,11 +2445,11 @@ export const useSuspenseMuiGetMySeriesNameAndIdQuery: {
     <TData = MuiGetMySeriesNameAndIdQuery, TError = unknown>(variables?: MuiGetMySeriesNameAndIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetMySeriesNameAndIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables?: MuiGetMySeriesNameAndIdQueryVariables): (string | Exact<{
-        limit?: InputMaybe<Scalars["Int"]["input"]>;
-        offset?: InputMaybe<Scalars["Int"]["input"]>;
-        orderBy?: InputMaybe<SeriesOrderByInput>;
-        query?: InputMaybe<Scalars["String"]["input"]>;
+    getKey(variables?: MuiGetMySeriesNameAndIdQueryVariables): (string | Exact_2<{
+        limit?: number | null | undefined;
+        offset?: number | null | undefined;
+        orderBy?: SeriesOrderByInput | null | undefined;
+        query?: string | null | undefined;
     }>)[];
 };
 
@@ -2456,11 +2458,11 @@ export const useSuspenseMuiGetMySeriesQuery: {
     <TData = MuiGetMySeriesQuery, TError = unknown>(variables?: MuiGetMySeriesQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetMySeriesQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetMySeriesQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables?: MuiGetMySeriesQueryVariables): (string | Exact<{
-        limit?: InputMaybe<Scalars["Int"]["input"]>;
-        offset?: InputMaybe<Scalars["Int"]["input"]>;
-        orderBy?: InputMaybe<SeriesOrderByInput>;
-        query?: InputMaybe<Scalars["String"]["input"]>;
+    getKey(variables?: MuiGetMySeriesQueryVariables): (string | Exact_2<{
+        limit?: number | null | undefined;
+        offset?: number | null | undefined;
+        orderBy?: SeriesOrderByInput | null | undefined;
+        query?: string | null | undefined;
     }>)[];
 };
 
@@ -2469,8 +2471,8 @@ export const useSuspenseMuiGetSeriesByIdInputFieldsQuery: {
     <TData = MuiGetSeriesByIdInputFieldsQuery, TError = unknown>(variables: MuiGetSeriesByIdInputFieldsQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetSeriesByIdInputFieldsQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: MuiGetSeriesByIdInputFieldsQueryVariables): (string | Exact<{
-        seriesId: Scalars["String"]["input"];
+    getKey(variables: MuiGetSeriesByIdInputFieldsQueryVariables): (string | Exact_2<{
+        seriesId: string;
     }>)[];
 };
 
@@ -2479,8 +2481,8 @@ export const useSuspenseMuiGetSeriesInfoQuery: {
     <TData = MuiGetSeriesInfoQuery, TError = unknown>(variables: MuiGetSeriesInfoQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetSeriesInfoQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: MuiGetSeriesInfoQueryVariables): (string | Exact<{
-        seriesId: Scalars["String"]["input"];
+    getKey(variables: MuiGetSeriesInfoQueryVariables): (string | Exact_2<{
+        seriesId: string;
     }>)[];
 };
 
@@ -2489,8 +2491,8 @@ export const useSuspenseMuiGetSeriesNameByIdQuery: {
     <TData = MuiGetSeriesNameByIdQuery, TError = unknown>(variables: MuiGetSeriesNameByIdQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiGetSeriesNameByIdQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: MuiGetSeriesNameByIdQueryVariables): (string | Exact<{
-        seriesId: Scalars["String"]["input"];
+    getKey(variables: MuiGetSeriesNameByIdQueryVariables): (string | Exact_2<{
+        seriesId: string;
     }>)[];
 };
 
@@ -2499,10 +2501,10 @@ export const useSuspenseMuiSearchUserQuery: {
     <TData = MuiSearchUserQuery, TError = unknown>(variables: MuiSearchUserQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiSearchUserQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiSearchUserQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables: MuiSearchUserQueryVariables): (string | Exact<{
-        limit?: InputMaybe<Scalars["Int"]["input"]>;
-        offset?: InputMaybe<Scalars["Int"]["input"]>;
-        query: Scalars["String"]["input"];
+    getKey(variables: MuiSearchUserQueryVariables): (string | Exact_2<{
+        limit?: number | null | undefined;
+        offset?: number | null | undefined;
+        query: string;
     }>)[];
 };
 
@@ -2511,7 +2513,7 @@ export const useSuspenseMuiUserQuery: {
     <TData = MuiUserQuery, TError = unknown>(variables?: MuiUserQueryVariables, options?: Omit<UseSuspenseQueryOptions<MuiUserQuery, TError, TData>, "queryKey"> & {
         queryKey?: UseSuspenseQueryOptions<MuiUserQuery, TError, TData>["queryKey"];
     }): UseSuspenseQueryResult<TData, TError>;
-    getKey(variables?: MuiUserQueryVariables): (string | Exact<{
+    getKey(variables?: MuiUserQueryVariables): (string | Exact_2<{
         [key: string]: never;
     }>)[];
 };
