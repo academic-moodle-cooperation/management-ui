@@ -6,6 +6,12 @@
 // tag = product version = JAR version (issue #236):
 // v19.0.1 ships management-ui-graphql-19.0.1.jar.
 //
+// It also derives the OPENCAST major pins from VERSION's major (issue #443):
+// the `org.opencastproject:base` parent version and `<opencast.version>` in
+// every pom, plus the scaffold template. Those used to be hand-maintained
+// line-local files; now a line differs from develop in VERSION only and
+// `pnpm line:derive` (this script) regenerates everything that follows from it.
+//
 // Why not `mvn versions:set`: resolving the `org.opencastproject:base` parent
 // is impossible on the CI runner — Opencast publishes no release artifacts to
 // Maven Central (see #242 / open-followups §9.2). This script edits the poms
@@ -41,6 +47,27 @@ const currentVersion = m[1];
 const poms = execFileSync("git", ["ls-files", "pom.xml", "**/pom.xml"], { encoding: "utf8" })
   .split("\n")
   .filter((p) => p && !p.includes("templates/"));
+
+// --- Opencast major pins (derived from VERSION's major) ---------------------
+const targetMajor = targetVersion.split(".")[0];
+const snapshot = `${targetMajor}-SNAPSHOT`;
+const pinFiles = [...poms, "scripts/templates/create-plugin-maven/pom.xml.tpl"];
+let pinned = 0;
+for (const f of pinFiles) {
+  const before = read(f);
+  // The parent block's <version> and the <opencast.version> property name the
+  // Opencast major; the project's own version never has the -SNAPSHOT form.
+  const after = before
+    .replace(/(<parent>[\s\S]*?<artifactId>base<\/artifactId>[\s\S]*?<version>)\d+-SNAPSHOT(<\/version>)/, `$1${snapshot}$2`)
+    .replace(/(<opencast\.version>)\d+-SNAPSHOT(<\/opencast\.version>)/g, `$1${snapshot}$2`);
+  if (after !== before) {
+    writeFileSync(new URL(f, repoRoot), after);
+    pinned++;
+  }
+}
+if (pinned > 0) {
+  console.log(`update-maven-versions: Opencast major pinned to ${snapshot} in ${pinned} file(s).`);
+}
 
 // Consistency check runs in the no-op case too: every pom must carry the
 // project version exactly once, or something is drifting and we say so.
