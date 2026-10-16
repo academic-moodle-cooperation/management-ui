@@ -496,7 +496,7 @@ importers:
         specifier: workspace:*
         version: link:../plugin-system
       '@oc-mui/query':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../query
       '@oc-mui/router':
         specifier: workspace:*
