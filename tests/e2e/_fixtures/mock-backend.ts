@@ -53,6 +53,23 @@ export interface MockEvent {
   publishUrl?: string | null;
 }
 
+export interface MockPlaylistAce {
+  role: string;
+  action: string;
+  allow: boolean;
+}
+
+export interface MockPlaylist {
+  id: string;
+  title: string;
+  description: string;
+  creator: string;
+  updated: string;
+  /** Ordered event ids. An id with no matching MockEvent renders as inaccessible. */
+  entries: string[];
+  acl: MockPlaylistAce[];
+}
+
 export interface RecordedCall {
   operationName: string;
   variables: Record<string, unknown>;
@@ -67,6 +84,7 @@ export interface IngestCall {
 export interface MockBackend {
   series: MockSeries[];
   events: MockEvent[];
+  playlists: MockPlaylist[];
   /** Every GraphQL operation served, in order. */
   calls: RecordedCall[];
   /** Every /ingest/* request served, in order. */
@@ -86,6 +104,7 @@ export interface MockBackend {
 
 let seriesSeq = 0;
 let eventSeq = 0;
+let playlistSeq = 0;
 
 export function makeSeries(overrides: Partial<MockSeries> = {}): MockSeries {
   seriesSeq += 1;
@@ -125,10 +144,30 @@ export function makeEvent(overrides: Partial<MockEvent> = {}): MockEvent {
   };
 }
 
+export function makePlaylist(overrides: Partial<MockPlaylist> = {}): MockPlaylist {
+  playlistSeq += 1;
+  return {
+    id: `playlist-${playlistSeq}`,
+    title: `Playlist ${playlistSeq}`,
+    description: `Playlist-Beschreibung ${playlistSeq}`,
+    creator: "Test Creator",
+    updated: `2026-03-${String(28 - (playlistSeq % 28)).padStart(2, "0")}T10:00:00Z`,
+    entries: [],
+    // The creator's per-user role, read+write — what the stock Opencast
+    // players write, and what `myPlaylists` (ACL-filtered) needs to list it.
+    acl: [
+      { role: "ROLE_USER_TESTER", action: "read", allow: true },
+      { role: "ROLE_USER_TESTER", action: "write", allow: true },
+    ],
+    ...overrides,
+  };
+}
+
 /** Reset the id counters so a spec file's seeds are reproducible. */
 export function resetSeeds(): void {
   seriesSeq = 0;
   eventSeq = 0;
+  playlistSeq = 0;
 }
 
 const seriesNode = (s: MockSeries) => ({
@@ -175,6 +214,51 @@ const eventNode = (e: MockEvent) => ({
     thumbnailUrl: e.hasPreview ? `https://example.invalid/thumb/${e.id}.jpg` : null,
   },
 });
+
+/**
+ * `PlaylistEntry` is an interface: an entry whose event the current user can
+ * read comes back as `EventPlaylistEntry` with the event inline, anything
+ * else as `InaccessiblePlaylistEntry`. The mock models "accessible" as "the
+ * event exists in the seeded list".
+ */
+const playlistNode = (p: MockPlaylist, events: MockEvent[]) => ({
+  __typename: "Playlist",
+  id: p.id,
+  title: p.title,
+  description: p.description,
+  creator: p.creator,
+  updated: p.updated,
+  accessControlEntries: p.acl.map((ace) => ({ ...ace })),
+  entries: p.entries.map((contentId, index) => {
+    const event = events.find((e) => e.id === contentId);
+    return event
+      ? {
+          __typename: "EventPlaylistEntry",
+          id: index + 1,
+          contentId,
+          type: "EVENT",
+          event: {
+            id: event.id,
+            title: event.title,
+            duration: event.duration,
+            seriesId: event.seriesId,
+            seriesName: event.seriesName,
+            eventStatus: event.eventStatus,
+            muiEventInfo: eventNode(event).muiEventInfo,
+          },
+        }
+      : { __typename: "InaccessiblePlaylistEntry", id: index + 1, contentId, type: "INACCESSIBLE" };
+  }),
+});
+
+/** `AccessControlListInput` → the flat `accessControlEntries` shape a playlist stores. */
+const aclInputToEntries = (acl: unknown): MockPlaylistAce[] => {
+  const entries =
+    (acl as { entries?: { role?: string; action?: string[] }[] } | null)?.entries ?? [];
+  return entries.flatMap((entry) =>
+    (entry.action ?? []).map((action) => ({ role: entry.role ?? "", action, allow: true })),
+  );
+};
 
 /**
  * The edit mask is driven by `commonMetadataV2`, not by the list row: the
@@ -256,6 +340,7 @@ type AppConfig = typeof defaultConfig;
 export interface MockBackendOptions {
   series?: MockSeries[];
   events?: MockEvent[];
+  playlists?: MockPlaylist[];
   config?: AppConfig;
   user?: { username: string; name: string; email: string; roles: string[] } | null;
   /** Hold /ingest/addTrack open this long, so the progress UI stays observable. */
@@ -275,6 +360,7 @@ export async function installMockBackend(
   const backend: MockBackend = {
     series: options.series ?? [],
     events: options.events ?? [],
+    playlists: options.playlists ?? [],
     calls: [],
     ingestCalls: [],
     trackUploadDelayMs: options.trackUploadDelayMs ?? 0,
@@ -551,6 +637,84 @@ export async function installMockBackend(
         return respond({ mui: { deleteEvent: removed ? { id: removed.id } : null } });
       }
 
+      // ── Playlists (Opencast 20) ─────────────────────────────────────────
+      // `updatePlaylist` is a patch on the real backend: metadata, entries and
+      // acl are each applied only when sent, and entries replaces the whole
+      // list. The three update operations below mirror that one-concern split.
+      case "MuiGetMyPlaylists": {
+        const filtered = backend.playlists.filter((p) =>
+          matchesQuery([p.title, p.description, p.creator], variables["query"]),
+        );
+        const ordered = applyOrderBy(
+          filtered as unknown as Record<string, unknown>[],
+          variables["orderBy"],
+        ) as unknown as MockPlaylist[];
+        const page_ = paginate(ordered, variables);
+        return respond({
+          currentUser: {
+            myPlaylists: {
+              totalCount: page_.totalCount,
+              nodes: page_.nodes.map((p) => playlistNode(p, backend.events)),
+            },
+          },
+        });
+      }
+      case "MuiGetPlaylistById": {
+        const target = backend.playlists.find((p) => p.id === variables["playlistId"]);
+        return respond({ playlistById: target ? playlistNode(target, backend.events) : null });
+      }
+      case "MuiCreatePlaylist": {
+        const metadata = (variables["metadata"] ?? {}) as { title?: string; description?: string };
+        const entries = ((variables["entries"] ?? []) as { contentId: string }[]).map(
+          (entry) => entry.contentId,
+        );
+        const created = makePlaylist({
+          title: metadata.title ?? "",
+          description: metadata.description ?? "",
+          creator: user?.name ?? "Test Creator",
+          updated: new Date().toISOString(),
+          entries,
+          acl: aclInputToEntries(variables["acl"]),
+        });
+        backend.playlists.push(created);
+        return respond({ createPlaylist: playlistNode(created, backend.events) });
+      }
+      case "MuiUpdatePlaylistMetadata": {
+        const target = backend.playlists.find((p) => p.id === variables["playlistId"]);
+        const metadata = (variables["metadata"] ?? {}) as {
+          title?: string | null;
+          description?: string | null;
+        };
+        if (target) {
+          if (metadata.title != null) target.title = metadata.title;
+          if (metadata.description != null) target.description = metadata.description;
+          target.updated = new Date().toISOString();
+        }
+        return respond({ updatePlaylist: target ? playlistNode(target, backend.events) : null });
+      }
+      case "MuiUpdatePlaylistEntries": {
+        const target = backend.playlists.find((p) => p.id === variables["playlistId"]);
+        if (target) {
+          target.entries = ((variables["entries"] ?? []) as { contentId: string }[]).map(
+            (entry) => entry.contentId,
+          );
+          target.updated = new Date().toISOString();
+        }
+        return respond({ updatePlaylist: target ? playlistNode(target, backend.events) : null });
+      }
+      case "MuiUpdatePlaylistAcl": {
+        const target = backend.playlists.find((p) => p.id === variables["playlistId"]);
+        if (target) {
+          target.acl = aclInputToEntries(variables["acl"]);
+          target.updated = new Date().toISOString();
+        }
+        return respond({ updatePlaylist: target ? playlistNode(target, backend.events) : null });
+      }
+      case "MuiDeletePlaylist": {
+        const index = backend.playlists.findIndex((p) => p.id === variables["playlistId"]);
+        const removed = index >= 0 ? backend.playlists.splice(index, 1)[0] : undefined;
+        return respond({ deletePlaylist: removed ? { id: removed.id } : null });
+      }
       // Everything else the shell probes during boot (ACLs, metadata field
       // definitions, per-item detail queries) is not what these specs assert on.
       default:

@@ -1,5 +1,47 @@
 # @oc-mui/ui-config
 
+## 2.0.0
+
+### Major Changes
+
+- 3f02712: Remove `app.appName` — it was never rendered anywhere
+
+  Nothing read the key: not the shell, not the in-tree plugins, not the org
+  plugins (univie/tuwien). It sat in the public `AppConfig` type suggesting a
+  capability that did not exist (#266). Removing it now is free; after the first
+  npm publish it would require a deprecation cycle.
+
+  The document title continues to come from `app.HtmlDocumentTitle`, the header
+  branding from `app.logoUrl` / `app.orgLogoUrl` and the theme. Deployment
+  `config.json` files that still carry `appName` keep working — unknown keys are
+  ignored by the config merge.
+
+  `@oc-mui/query` is bumped alongside because its public surface re-exposes the
+  `AppConfig` type (via `useAppConfig`), so the field removal is observable
+  through it as well.
+
+### Minor Changes
+
+- a446b51: Download channel and tags are configurable: `app.channel` / `app.tags` select the publication channel and track tags the Episodes download action uses (defaults unchanged: `engage-player` / `engage-download`). The gallery view gains an `isPublic` access column, and `AclEditor` accepts an `i18nNamespace` so a plugin can translate the editor with its own namespace.
+
+### Patch Changes
+
+- Dependency maintenance: the October minor/patch group (47 packages) — the Radix primitives, react-aria/react-stately, Tailwind 4.3, zod 4.6, graphql-request 7.4, Playwright 1.64, api-extractor 7.59, typescript-eslint 8.71 and the rest. No code changes.
+
+  Three bumps from the group are deliberately not taken, each with the reason recorded next to the pin:
+
+  - **React stays on 19.1** (`pnpm.overrides` + root dev dependencies so every peer resolves to the same copy). React ≥ 19.2 logs a console error for the theme `<script>` that `next-themes` 0.4.6 renders, and the E2E smoke test asserts zero console errors; upstream is unresolved (pacocoursey/next-themes #385/#387/#397). Lifted once the theme provider no longer renders a script.
+  - **`@tanstack/router-devtools` stays on 1.125**, together with `react-router-devtools` and `router-devtools-core`: the devtools import `@tanstack/router-core` internals and only work with the router minor they shipped with; the newer versions broke Vite's pre-bundling and with it the dev server.
+  - **`@types/node` is pinned to the workspace's `^25`** across the tree: optional `@types/node` peers otherwise resolve to the newest major in packages that declare none, which splits Vite into two type-incompatible instances.
+
+- 2044d7f: Move the `build:types` incremental state file (`tsconfig.build.tsbuildinfo`) into `dist-types/` so it lives and dies with the declaration output it describes. Previously the state file sat at the package root, outside the turbo `dist-types/**` cache outputs: a stale state file next to a deleted/partial `dist-types/` made `tsc` skip emission entirely, and turbo then cached the empty `dist-types/` — poisoning the (worktree-shared) build cache and breaking `check-types` repo-wide with `TS7016` errors on later "cache hit" runs (#258).
+- 8b4dacf: Fix the `-DdeployTo` config copy: `packages/ui-config/pom.xml` copied a
+  `src/config.json` that does not exist, with `failonerror="false"` — so
+  deployments silently ended up without the default
+  `etc/ui-config/mh_default_org/management-ui/config.json`. The copy now sources
+  the canonical shell default (`apps/shell/public/ui/config/management-ui/config.json`)
+  and fails the build loudly if that file is ever missing.
+
 ## 1.0.1
 
 ### Patch Changes
