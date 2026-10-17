@@ -1,5 +1,12 @@
 # @oc-mui/plugin-system
 
+## 1.2.1
+
+### Patch Changes
+
+- Updated dependencies [b1d5f78]
+  - @oc-mui/utils@1.3.0
+
 ## 1.2.0
 
 ### Minor Changes

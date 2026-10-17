@@ -1,5 +1,14 @@
 # @oc-mui/ui
 
+## 2.0.1
+
+### Patch Changes
+
+- Updated dependencies [b1d5f78]
+  - @oc-mui/query@2.0.1
+  - @oc-mui/utils@1.3.0
+  - @oc-mui/plugin-system@1.2.1
+
 ## 2.0.0
 
 ### Major Changes
