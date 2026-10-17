@@ -1,16 +1,5 @@
 # @oc-mui/plugins
 
-## 1.0.3
-
-### Patch Changes
-
-- @oc-mui/plugin-admin-marketplace@1.2.1
-- @oc-mui/plugin-core-episodes@1.2.1
-- @oc-mui/plugin-core-series@1.2.1
-- @oc-mui/plugin-core-upload@1.1.2
-- @oc-mui/plugin-example@1.0.2
-- @oc-mui/plugin-core@1.1.1
-
 ## 1.0.2
 
 ### Patch Changes

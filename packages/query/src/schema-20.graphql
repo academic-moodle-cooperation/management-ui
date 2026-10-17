@@ -1,0 +1,908 @@
+# Opencast GraphQL schema, committed as codegen's input.
+#
+# Taken from: Opencast 20.0.0.SNAPSHOT
+# Refreshed:  2026-08-18
+#
+# Codegen reads THIS FILE (see src/codegen.ts) — regenerating types needs no
+# running backend. To update the schema from a live Opencast instead:
+#   pnpm --filter @oc-mui/query schema:refresh
+# then review the diff and commit it together with the regenerated output.
+#
+# Caveat: Opencast's *MetadataInput types are per-organisation — catalog
+# fields configured readOnly on the source instance are absent from them.
+# Refresh only from an instance whose catalog configuration matches what the
+# UI should support (docs/extend/graphql-field.md has the full story).
+#
+# Post-refresh adjustment (2026-08-18): the source instance's organisation
+# config marks the episode presenters/location and the series organizers
+# readOnly, which removes `creator`/`location` from CommonEventMetadataInput
+# and `creator` from CommonSeriesMetadataInput. They are restored below to
+# vanilla Opencast's defaults, so the SDK keeps the superset input surface —
+# per-organisation restrictions are a runtime concern (the UI honors the
+# server's readOnly field flags; see #278/#280/#285). Re-apply this when
+# refreshing from an instance with the same restriction, or refresh from a
+# vanilla-configured instance and drop this note.
+
+"""
+This directive is used to specify the authorization level required to access a field.
+"""
+directive @rolesAllowed(
+  """The role required to access the field."""
+  roles: [String] = null
+) on FIELD_DEFINITION
+
+type AccessControlGenericItem implements AccessControlItem {
+  action: [String]
+  role: String
+}
+
+type AccessControlGroupItem implements AccessControlItem {
+  action: [String]
+  role: String
+}
+
+interface AccessControlItem {
+  action: [String]
+  role: String
+}
+
+input AccessControlItemInput {
+  action: [String]
+  role: String
+}
+
+"""Access control list"""
+type AccessControlList {
+  entries: [AccessControlItem]
+  users: [AccessControlUserItem]
+}
+
+input AccessControlListInput {
+  entries: [AccessControlItemInput]!
+  managedAclId: Long
+}
+
+type AccessControlUserItem implements AccessControlItem {
+  action: [String]
+  label: String
+  role: String
+}
+
+type CommonEventMetadata {
+  """EVENTS.EVENTS.DETAILS.METADATA.DURATION"""
+  duration: Duration
+
+  """EVENTS.EVENTS.DETAILS.METADATA.SERIES"""
+  isPartOf: String
+
+  """EVENTS.EVENTS.DETAILS.METADATA.LOCATION"""
+  location: String
+
+  """EVENTS.EVENTS.DETAILS.METADATA.PRESENTERS"""
+  creator: [String]
+
+  """EVENTS.EVENTS.DETAILS.METADATA.TITLE"""
+  title: String!
+
+  """EVENTS.EVENTS.DETAILS.METADATA.START_DATE"""
+  startDate: DateTime
+
+  """EVENTS.EVENTS.DETAILS.METADATA.SUBJECT"""
+  subject: String
+
+  """EVENTS.EVENTS.DETAILS.METADATA.SOURCE"""
+  source: String
+
+  """EVENTS.EVENTS.DETAILS.METADATA.DESCRIPTION"""
+  description: String
+
+  """EVENTS.EVENTS.DETAILS.METADATA.LANGUAGE"""
+  language: String
+
+  """EVENTS.EVENTS.DETAILS.METADATA.LICENSE"""
+  license: String
+
+  """EVENTS.EVENTS.DETAILS.METADATA.ID"""
+  identifier: String
+
+  """EVENTS.EVENTS.DETAILS.METADATA.RIGHTS"""
+  rightsHolder: String
+
+  """EVENTS.EVENTS.DETAILS.METADATA.CONTRIBUTORS"""
+  contributor: [String]
+
+  """EVENTS.EVENTS.DETAILS.METADATA.CREATED"""
+  created: DateTime
+
+  """EVENTS.EVENTS.DETAILS.METADATA.PUBLISHER"""
+  publisher: String
+}
+
+input CommonEventMetadataInput {
+  """EVENTS.EVENTS.DETAILS.METADATA.TITLE"""
+  title: String!
+
+  """EVENTS.EVENTS.DETAILS.METADATA.DESCRIPTION"""
+  description: String
+
+  """EVENTS.EVENTS.DETAILS.METADATA.START_DATE"""
+  startDate: DateTime
+
+  """EVENTS.EVENTS.DETAILS.METADATA.SERIES"""
+  isPartOf: String
+
+  """EVENTS.EVENTS.DETAILS.METADATA.LICENSE"""
+  license: String
+
+  """EVENTS.EVENTS.DETAILS.METADATA.CONTRIBUTORS"""
+  contributor: [String]
+
+  """EVENTS.EVENTS.DETAILS.METADATA.LANGUAGE"""
+  language: String
+
+  """EVENTS.EVENTS.DETAILS.METADATA.RIGHTS"""
+  rightsHolder: String
+
+  """EVENTS.EVENTS.DETAILS.METADATA.SOURCE"""
+  source: String
+
+  """EVENTS.EVENTS.DETAILS.METADATA.SUBJECT"""
+  subject: String
+
+  """EVENTS.EVENTS.DETAILS.METADATA.DURATION"""
+  duration: Duration
+
+  # Restored — see the "Post-refresh adjustment" note in the header.
+  """EVENTS.EVENTS.DETAILS.METADATA.PRESENTERS"""
+  creator: [String]
+
+  # Restored — see the "Post-refresh adjustment" note in the header.
+  """EVENTS.EVENTS.DETAILS.METADATA.LOCATION"""
+  location: String
+}
+
+type CommonEventMetadataV2 {
+  """EVENTS.EVENTS.DETAILS.METADATA.CREATED"""
+  created: DateTimeMetadataField
+
+  """EVENTS.EVENTS.DETAILS.METADATA.PRESENTERS"""
+  creator: ListMetadataField
+
+  """EVENTS.EVENTS.DETAILS.METADATA.LOCATION"""
+  location: StringMetadataField
+
+  """EVENTS.EVENTS.DETAILS.METADATA.DURATION"""
+  duration: DurationMetadataField
+
+  """EVENTS.EVENTS.DETAILS.METADATA.RIGHTS"""
+  rightsHolder: StringMetadataField
+
+  """EVENTS.EVENTS.DETAILS.METADATA.SERIES"""
+  isPartOf: StringMetadataField
+
+  """EVENTS.EVENTS.DETAILS.METADATA.LANGUAGE"""
+  language: StringMetadataField
+
+  """EVENTS.EVENTS.DETAILS.METADATA.LICENSE"""
+  license: StringMetadataField
+
+  """EVENTS.EVENTS.DETAILS.METADATA.CONTRIBUTORS"""
+  contributor: ListMetadataField
+
+  """EVENTS.EVENTS.DETAILS.METADATA.START_DATE"""
+  startDate: DateTimeMetadataField
+
+  """EVENTS.EVENTS.DETAILS.METADATA.PUBLISHER"""
+  publisher: StringMetadataField
+
+  """EVENTS.EVENTS.DETAILS.METADATA.DESCRIPTION"""
+  description: StringMetadataField
+
+  """EVENTS.EVENTS.DETAILS.METADATA.TITLE"""
+  title: StringMetadataField
+
+  """EVENTS.EVENTS.DETAILS.METADATA.SUBJECT"""
+  subject: StringMetadataField
+
+  """EVENTS.EVENTS.DETAILS.METADATA.SOURCE"""
+  source: StringMetadataField
+
+  """EVENTS.EVENTS.DETAILS.METADATA.ID"""
+  identifier: StringMetadataField
+}
+
+input CommonSeriesMetadataInput {
+  """EVENTS.SERIES.DETAILS.METADATA.SUBJECT"""
+  subject: String
+
+  """EVENTS.SERIES.DETAILS.METADATA.LANGUAGE"""
+  language: String
+
+  """EVENTS.SERIES.DETAILS.METADATA.PUBLISHERS"""
+  publisher: [String]
+
+  """EVENTS.SERIES.DETAILS.METADATA.RIGHTS"""
+  rightsHolder: String
+
+  """EVENTS.SERIES.DETAILS.METADATA.DESCRIPTION"""
+  description: String
+
+  """EVENTS.SERIES.DETAILS.METADATA.LICENSE"""
+  license: String
+
+  """EVENTS.SERIES.DETAILS.METADATA.CONTRIBUTORS"""
+  contributor: [String]
+
+  """EVENTS.SERIES.DETAILS.METADATA.TITLE"""
+  title: String!
+
+  # Restored — see the "Post-refresh adjustment" note in the header.
+  """EVENTS.SERIES.DETAILS.METADATA.ORGANIZERS"""
+  creator: [String]
+}
+
+type CommonSeriesMetadataV2 {
+  """EVENTS.SERIES.DETAILS.METADATA.SUBJECT"""
+  subject: StringMetadataField
+
+  """EVENTS.SERIES.DETAILS.METADATA.ORGANIZERS"""
+  creator: ListMetadataField
+
+  """EVENTS.SERIES.DETAILS.METADATA.CONTRIBUTORS"""
+  contributor: ListMetadataField
+
+  """EVENTS.SERIES.DETAILS.METADATA.DESCRIPTION"""
+  description: StringMetadataField
+
+  """EVENTS.SERIES.DETAILS.METADATA.TITLE"""
+  title: StringMetadataField
+
+  """EVENTS.SERIES.DETAILS.METADATA.LANGUAGE"""
+  language: StringMetadataField
+
+  """EVENTS.SERIES.DETAILS.METADATA.RIGHTS"""
+  rightsHolder: StringMetadataField
+
+  """EVENTS.SERIES.DETAILS.METADATA.PUBLISHERS"""
+  publisher: ListMetadataField
+
+  """EVENTS.SERIES.DETAILS.METADATA.ID"""
+  identifier: StringMetadataField
+
+  """EVENTS.SERIES.DETAILS.METADATA.LICENSE"""
+  license: StringMetadataField
+}
+
+"""Represents the current user."""
+type CurrentUser {
+  email: String
+  name: String
+
+  """A list of roles assigned to the user."""
+  roles: [String]!
+
+  """The role of the user."""
+  userRole: String!
+  username: String
+
+  """A list of series under the owner."""
+  mySeries(limit: Int, offset: Int, query: String, orderBy: SeriesOrderByInput): SeriesList!
+
+  """A list of playlists owned by the current user."""
+  myPlaylists(limit: Int, offset: Int, query: String, orderBy: PlaylistOrderByInput): PlaylistList!
+
+  """A list of events under the owner."""
+  myEvents(limit: Int, offset: Int, query: String, orderBy: EventOrderByInput): EventList!
+}
+
+"""A slightly refined version of RFC-3339 compliant DateTime Scalar"""
+scalar DateTime
+
+type DateTimeMetadataField implements MetadataFieldInterface {
+  collection: JSON
+  collectionId: String
+  id: String
+  label: String
+  listProvider: String
+  order: Int
+  readOnly: Boolean
+  required: Boolean
+  type: Type
+  value: DateTime
+}
+
+"""DeleteEventPayload"""
+type DeleteEventPayload {
+  """A unique identifier for the client performing the mutation."""
+  id: String
+
+  """The deletion status of the event."""
+  status: EventRemovalResult
+}
+
+"""
+The payload returned after deleting a playlist, containing the ID of the deleted playlist.
+"""
+type DeletePlaylistPayload {
+  """A unique identifier of the deleted playlist."""
+  id: String
+}
+
+"""A slightly refined version of RFC-3339 compliant DateTime Scalar"""
+scalar Duration
+
+type DurationMetadataField implements MetadataFieldInterface {
+  collection: JSON
+  collectionId: String
+  id: String
+  label: String
+  listProvider: String
+  order: Int
+  readOnly: Boolean
+  required: Boolean
+  type: Type
+  value: Duration
+}
+
+"""A Event."""
+type Event {
+  """Common metadata of the event."""
+  commonMetadata: CommonEventMetadata!
+
+  """Common metadata of the event."""
+  commonMetadataV2: CommonEventMetadataV2!
+  contributors: [String]
+  created: DateTime
+  creator: String
+  description: String
+  displayableStatus: String
+  duration: Duration
+  endDate: DateTime
+  eventStatus: String!
+  hasPreview: Boolean!
+  id: ID!
+  license: String
+  location: String
+  presenters: [String]
+
+  """Return publications filterable by channel and tags"""
+  publications(channel: String, tags: [String]): [Publication]
+  publisher: String
+  series: Series
+  seriesId: String
+  seriesName: String
+  startDate: DateTime
+  technicalEndTime: String
+  technicalStartTime: String
+  title: String!
+  acl: AccessControlList!
+  muiEventInfo: MuiEventInfo
+}
+
+"""Filter options for events"""
+enum EventFilter {
+  """RECORDING_FAILURE"""
+  RECORDING_FAILURE
+
+  """PENDING"""
+  PENDING
+
+  """RECORDING"""
+  RECORDING
+
+  """PAUSED"""
+  PAUSED
+
+  """INGESTING"""
+  INGESTING
+
+  """PROCESSING_FAILURE"""
+  PROCESSING_FAILURE
+
+  """SCHEDULED"""
+  SCHEDULED
+
+  """PROCESSING_CANCELLED"""
+  PROCESSING_CANCELLED
+
+  """PROCESSING"""
+  PROCESSING
+
+  """PROCESSED"""
+  PROCESSED
+}
+
+"""Filter options for events"""
+input EventFilterByInput {
+  """Filter by published state"""
+  published: Boolean
+
+  """Filter by series"""
+  seriesId: String
+
+  """Filter by event status"""
+  status: EventFilter
+}
+
+"""A list of events"""
+type EventList {
+  nodes: [Event]!
+  pageInfo: OffsetPageInfo!
+  totalCount: Long!
+}
+
+"""Ordering options for events"""
+input EventOrderByInput {
+  created: OrderDirection
+  endDate: OrderDirection
+  eventStatus: OrderDirection
+  location: OrderDirection
+  presenters: OrderDirection
+  seriesName: OrderDirection
+  startDate: OrderDirection
+  technicalEndTime: OrderDirection
+  technicalStartTime: OrderDirection
+  title: OrderDirection
+  workflowState: OrderDirection
+}
+
+"""An entry in a playlist."""
+type EventPlaylistEntry implements PlaylistEntry {
+  contentId: String
+  event: Event
+  id: Long
+  type: PlaylistEntryType
+}
+
+enum EventRemovalResult {
+  """SUCCESS"""
+  SUCCESS
+
+  """GENERAL_FAILURE"""
+  GENERAL_FAILURE
+
+  """NOT_FOUND"""
+  NOT_FOUND
+
+  """RETRACTING"""
+  RETRACTING
+}
+
+"""An entry in a playlist."""
+type InaccessiblePlaylistEntry implements PlaylistEntry {
+  contentId: String
+  id: Long
+  type: PlaylistEntryType
+}
+
+type IntMetadataField implements MetadataFieldInterface {
+  collection: JSON
+  collectionId: String
+  id: String
+  label: String
+  listProvider: String
+  order: Int
+  readOnly: Boolean
+  required: Boolean
+  type: Type
+  value: String
+}
+
+"""A JSON scalar"""
+scalar JSON
+
+type JsonMetadataField implements MetadataFieldInterface {
+  collection: JSON
+  collectionId: String
+  id: String
+  label: String
+  listProvider: String
+  order: Int
+  readOnly: Boolean
+  required: Boolean
+  type: Type
+  value: JSON
+}
+
+type ListMetadataField implements MetadataFieldInterface {
+  collection: JSON
+  collectionId: String
+  id: String
+  label: String
+  listProvider: String
+  order: Int
+  readOnly: Boolean
+  required: Boolean
+  type: Type
+  value: [String]
+}
+
+"""A list provider"""
+type ListProvider {
+  nodes: [ListProviderEntry]
+  translatable: Boolean
+}
+
+type ListProviderEntry {
+  key: String
+  value: String
+}
+
+"""A 64-bit signed integer"""
+scalar Long
+
+type LongMetadataField implements MetadataFieldInterface {
+  collection: JSON
+  collectionId: String
+  id: String
+  label: String
+  listProvider: String
+  order: Int
+  readOnly: Boolean
+  required: Boolean
+  type: Type
+  value: Long
+}
+
+"""A list of ACLs"""
+type ManagedAccessControlListCatalogue {
+  nodes: [ManagedAcl]!
+  pageInfo: OffsetPageInfo!
+  totalCount: Long!
+}
+
+type ManagedAcl {
+  acl: AccessControlList!
+  id: ID!
+  name: String!
+  organizationId: String!
+}
+
+"""Ordering options for managed ACLs"""
+input ManagedAclOrderByInput {
+  name: OrderDirection
+}
+
+"""
+The metadata field interface provides common fields for all metadata fields.
+"""
+interface MetadataFieldInterface {
+  collection: JSON
+  collectionId: String
+  id: String
+  label: String
+  listProvider: String
+  order: Int
+  readOnly: Boolean
+  required: Boolean
+  type: Type
+}
+
+type MuiEventInfo {
+  isPublic: Boolean
+  managedAclId: Long
+  publishUrl: String
+  thumbnailUrl: String
+}
+
+type MuiMutation {
+  """Delete event"""
+  deleteEvent(id: String!): DeleteEventPayload
+
+  """Update event metadata"""
+  updateEvent(id: String!, metadata: CommonEventMetadataInput!, acl: AccessControlListInput, publishChanges: Boolean = true): Event!
+
+  """Update event acl"""
+  updateEventAcl(id: String!, acl: AccessControlListInput!, publishChanges: Boolean = true): Event!
+
+  """Update series metadata"""
+  updateSeries(id: String!, metadata: CommonSeriesMetadataInput!, acl: AccessControlListInput): Boolean!
+}
+
+type MuiSeriesInfo {
+  isPublic: Boolean
+  managedAclId: Long
+}
+
+type Mutation {
+  """Delete event"""
+  deleteEvent(id: String!): DeleteEventPayload
+
+  """Update event metadata"""
+  updateEvent(id: String!, metadata: CommonEventMetadataInput!, acl: AccessControlListInput): Event!
+
+  """Update event acl"""
+  updateEventAcl(id: String!, acl: AccessControlListInput!): Event!
+  mui: MuiMutation
+
+  """Create series with metadata and acl"""
+  createSeries(metadata: CommonSeriesMetadataInput!, acl: AccessControlListInput!): Series!
+
+  """Update series metadata and optional the acl"""
+  updateSeries(id: String!, metadata: CommonSeriesMetadataInput!, acl: AccessControlListInput): Series!
+
+  """Update series acl"""
+  updateSeriesAcl(id: String!, acl: AccessControlListInput!): Series!
+
+  """Create playlist from metadata, entries and acl"""
+  createPlaylist(metadata: PlaylistMetadataInput!, entries: [PlaylistEntryInput], acl: AccessControlListInput!): Playlist
+
+  """Delete playlist"""
+  deletePlaylist(id: String!): DeletePlaylistPayload
+
+  """Update playlist with metadata, entries and acl"""
+  updatePlaylist(id: String!, metadata: PlaylistMetadataInput, entries: [PlaylistEntryInput], acl: AccessControlListInput): Playlist
+}
+
+type OffsetPageInfo {
+  limit: Long!
+  offset: Long!
+  pageCount: Long!
+}
+
+"""The direction of the order"""
+enum OrderDirection {
+  """NONE"""
+  NONE
+
+  """ASC"""
+  ASC
+
+  """DESC"""
+  DESC
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+"""A playlist of events."""
+type Playlist {
+  accessControlEntries: [PlaylistAccessControlEntry]
+  creator: String
+  description: String
+  entries: [PlaylistEntry]
+  id: ID!
+  title: String
+  updated: DateTime
+}
+
+"""An access control entry for a playlist."""
+type PlaylistAccessControlEntry {
+  action: String
+  allow: Boolean
+  role: String
+}
+
+"""An entry in a playlist."""
+interface PlaylistEntry {
+  contentId: String
+  id: Long
+  type: PlaylistEntryType
+}
+
+"""Input type for a playlist entry."""
+input PlaylistEntryInput {
+  contentId: String!
+  type: PlaylistEntryType!
+}
+
+"""The type of a playlist entry."""
+enum PlaylistEntryType {
+  """EVENT"""
+  EVENT
+
+  """INACCESSIBLE"""
+  INACCESSIBLE
+}
+
+"""A list of playlists"""
+type PlaylistList {
+  nodes: [Playlist]!
+  pageInfo: OffsetPageInfo!
+  totalCount: Long!
+}
+
+"""Input type for playlist metadata, including title and description."""
+input PlaylistMetadataInput {
+  description: String
+  title: String
+}
+
+"""
+Fields to sort playlists by. The order of the sort is the same as the order of the fields.
+"""
+input PlaylistOrderByInput {
+  creator: OrderDirection
+  deletionDate: OrderDirection
+  description: OrderDirection
+  organization: OrderDirection
+  title: OrderDirection
+  updated: OrderDirection
+}
+
+type Publication {
+  channel: String
+  flavor: String
+  mimeType: String
+  tags: [String]
+
+  """Return tracks filterable by tags"""
+  tracks(tags: [String]): [Track]
+  uri: String
+}
+
+type Query {
+  """Returns playlist list"""
+  allPlaylists(limit: Int, offset: Int, query: String, orderBy: PlaylistOrderByInput): PlaylistList!
+
+  """Returns a playlist by id"""
+  playlistById(id: String!): Playlist
+
+  """The current user"""
+  currentUser: CurrentUser!
+
+  """Search for users"""
+  searchUser(limit: Int, offset: Int, query: String): UserList!
+
+  """Returns event list"""
+  allEvents(limit: Int, offset: Int, query: String, orderBy: EventOrderByInput, filterBy: EventFilterByInput): EventList!
+
+  """Returns a event by id"""
+  eventById(id: String!): Event
+
+  """Returns list provider"""
+  listProvider(
+    name: String!
+    limit: Int
+    offset: Int
+    filter: String
+
+    """Exchange"""
+    inverse: Boolean = false
+  ): ListProvider!
+
+  """A list of managed access control lists"""
+  managedAcls(limit: Int, offset: Int, query: String, orderBy: ManagedAclOrderByInput): ManagedAccessControlListCatalogue!
+
+  """Returns series list"""
+  allSeries(limit: Int, offset: Int, query: String, orderBy: SeriesOrderByInput): SeriesList!
+
+  """Returns a series by id"""
+  seriesById(id: String!): Series
+}
+
+"""A series of episodes."""
+type Series {
+  """Common metadata of the series."""
+  commonMetadataV2: CommonSeriesMetadataV2!
+  contributors: [String]
+  created: String
+  creator: String
+  description: String
+
+  """A list of events under the owner."""
+  events(limit: Int, offset: Int, query: String, orderBy: EventOrderByInput): EventList!
+  id: ID!
+  license: String
+  organizers: [String]
+  publishers: [String]
+  rightsHolder: String
+  title: String!
+  muiSeriesInfo: MuiSeriesInfo
+  acl: AccessControlList!
+}
+
+"""A list of series"""
+type SeriesList {
+  nodes: [Series]!
+  pageInfo: OffsetPageInfo!
+  totalCount: Long!
+}
+
+"""
+Fields to sort series by. The order of the sort is the same as the order of the fields.
+"""
+input SeriesOrderByInput {
+  contributors: OrderDirection
+  created: OrderDirection
+  creator: OrderDirection
+  description: OrderDirection
+  language: OrderDirection
+  license: OrderDirection
+  publishers: OrderDirection
+  rightHolder: OrderDirection
+  subject: OrderDirection
+  title: OrderDirection
+}
+
+type StringMetadataField implements MetadataFieldInterface {
+  collection: JSON
+  collectionId: String
+  id: String
+  label: String
+  listProvider: String
+  order: Int
+  readOnly: Boolean
+  required: Boolean
+  type: Type
+  value: String
+}
+
+type Track {
+  flavor: String
+  frameRate: Float
+  height: Int
+  isLive: Boolean
+  logicalName: String
+  mimeType: String
+  tags: [String]
+  uri: String
+  width: Int
+}
+
+enum Type {
+  """BOOLEAN"""
+  BOOLEAN
+
+  """DATE"""
+  DATE
+
+  """DURATION"""
+  DURATION
+
+  """ITERABLE_TEXT"""
+  ITERABLE_TEXT
+
+  """MIXED_TEXT"""
+  MIXED_TEXT
+
+  """ORDERED_TEXT"""
+  ORDERED_TEXT
+
+  """LONG"""
+  LONG
+
+  """START_DATE"""
+  START_DATE
+
+  """START_TIME"""
+  START_TIME
+
+  """TEXT"""
+  TEXT
+
+  """TEXT_LONG"""
+  TEXT_LONG
+}
+
+type User {
+  email: String
+  name: String
+  provider: String
+
+  """A list of roles assigned to the user."""
+  roles: [String]!
+
+  """The role of the user."""
+  userRole: String!
+  username: String
+}
+
+"""A list of users"""
+type UserList {
+  nodes: [User]!
+  pageInfo: OffsetPageInfo!
+  totalCount: Long!
+}

@@ -501,4 +501,3 @@ mutation MuiUpdateSeriesAcl($seriesId: String!, $acl: AccessControlListInput!) {
     }
   }
 }
-

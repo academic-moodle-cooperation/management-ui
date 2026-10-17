@@ -1,19 +1,5 @@
 # @oc-mui/plugin-core-upload
 
-## 1.1.2
-
-### Patch Changes
-
-- Updated dependencies [bbbdf68]
-  - @oc-mui/query@2.0.1
-  - @oc-mui/i18n@1.1.0
-  - @oc-mui/plugin-system@1.2.0
-  - @oc-mui/router@1.1.2
-  - @oc-mui/store@1.1.1
-  - @oc-mui/ui@2.0.1
-  - @oc-mui/utils@1.2.0
-  - @oc-mui/plugin-core@1.1.1
-
 ## 1.1.1
 
 ### Patch Changes

@@ -1,17 +1,5 @@
 # @oc-mui/plugin-admin-marketplace
 
-## 1.2.1
-
-### Patch Changes
-
-- Updated dependencies [bbbdf68]
-  - @oc-mui/query@2.0.1
-  - @oc-mui/i18n@1.1.0
-  - @oc-mui/plugin-system@1.2.0
-  - @oc-mui/remote-plugin-loader@1.1.0
-  - @oc-mui/ui@2.0.1
-  - @oc-mui/utils@1.2.0
-
 ## 1.2.0
 
 ### Minor Changes
