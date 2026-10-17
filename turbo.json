@@ -12,6 +12,7 @@
     "NODE_ENV",
     "VITE_PROXY_TARGET",
     "GRAPHQL_ENDPOINT",
+    "OPENCAST_MAJOR",
     "GRAPHQL_HEADERS",
     "npm_package_name",
     "VITE_INSTITUTION_WEBSITE",

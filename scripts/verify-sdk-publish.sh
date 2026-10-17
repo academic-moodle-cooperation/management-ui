@@ -102,15 +102,26 @@ cat > "$CONSUMER/package.json" <<EOF
   "type": "module",
   "scripts": { "test": "vitest run" },
   "dependencies": {
+    "@oc-mui/app-runtime": "$(ver packages/app-runtime)",
+    "@oc-mui/i18n": "$(ver packages/i18n)",
+    "@oc-mui/plugin-core": "$(ver plugins/core)",
     "@oc-mui/plugin-system": "$(ver packages/plugin-system)",
-    "@oc-mui/utils": "$(ver packages/utils)",
-    "@oc-mui/ui": "$(ver packages/ui)"
+    "@oc-mui/query": "$(ver packages/query)",
+    "@oc-mui/router": "$(ver packages/router)",
+    "@oc-mui/store": "$(ver packages/store)",
+    "@oc-mui/ui": "$(ver packages/ui)",
+    "@oc-mui/ui-config": "$(ver packages/ui-config)",
+    "@oc-mui/utils": "$(ver packages/utils)"
   },
   "devDependencies": {
+    "@oc-mui/eslint-config": "$(ver packages/eslint-config)",
     "@oc-mui/plugin-testing": "$(ver packages/plugin-testing)",
     "@oc-mui/typescript-config": "$(ver packages/typescript-config)",
+    "@oc-mui/vite-config": "$(ver packages/vite-config)",
     "@types/node": "^25.0.6",
     "@types/react": "^19.0.0",
+    "eslint": "^9.0.0",
+    "vite": "^6.4.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "jsdom": "^27.4.0",
@@ -126,6 +137,21 @@ cat > "$CONSUMER/tsconfig.json" <<'EOF'
   "include": ["src"]
 }
 EOF
+# The SDK's React packages import their stylesheets; outside Vite, Node cannot
+# load .css. Let Vitest transform the SDK packages (deps.inline) so those
+# imports resolve the way they do in a real plugin build.
+cat > "$CONSUMER/vitest.config.ts" <<'EOF'
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  test: {
+    environment: "jsdom",
+    // Matched against the resolved module path (…/node_modules/.pnpm/@oc-mui+ui@…),
+    // so no start anchor.
+    server: { deps: { inline: [/@oc-mui[/+]/] } },
+  },
+});
+EOF
 cat > "$CONSUMER/src/index.ts" <<'EOF'
 import { createPlugin } from "@oc-mui/plugin-system";
 import { logger } from "@oc-mui/utils";
@@ -140,6 +166,60 @@ export const smokePlugin = createPlugin({
   },
   activate() {},
   deactivate() {},
+});
+EOF
+# Every published JS entry point is imported once, as a consumer would. This
+# is what catches a tarball that forgets a file: `files` in eslint-config
+# once omitted two rule modules its own index imports — install passed,
+# every external consumer crashed on load (fixed in 1.1.1).
+cat > "$CONSUMER/src/exports.test.ts" <<'EOF'
+// @vitest-environment node
+import { describe, expect, it } from "vitest";
+
+// Literal specifiers so Vite resolves and transforms the packages (their
+// stylesheet imports need that); the eslint-config entries ship no type
+// declarations, so they are loaded through a string instead — a literal
+// import of them would fail the type-check.
+const typed: Array<[string, () => Promise<Record<string, unknown>>]> = [
+  ["@oc-mui/app-runtime", () => import("@oc-mui/app-runtime")],
+  ["@oc-mui/i18n", () => import("@oc-mui/i18n")],
+  ["@oc-mui/plugin-core", () => import("@oc-mui/plugin-core")],
+  ["@oc-mui/plugin-system", () => import("@oc-mui/plugin-system")],
+  ["@oc-mui/plugin-testing", () => import("@oc-mui/plugin-testing")],
+  ["@oc-mui/query", () => import("@oc-mui/query")],
+  ["@oc-mui/router", () => import("@oc-mui/router")],
+  ["@oc-mui/store", () => import("@oc-mui/store")],
+  ["@oc-mui/ui", () => import("@oc-mui/ui")],
+  ["@oc-mui/ui/components", () => import("@oc-mui/ui/components")],
+  ["@oc-mui/ui/hooks", () => import("@oc-mui/ui/hooks")],
+  ["@oc-mui/ui/internal", () => import("@oc-mui/ui/internal")],
+  ["@oc-mui/ui-config", () => import("@oc-mui/ui-config")],
+  ["@oc-mui/utils", () => import("@oc-mui/utils")],
+  ["@oc-mui/vite-config", () => import("@oc-mui/vite-config")],
+];
+const untyped = [
+  "@oc-mui/eslint-config/base",
+  "@oc-mui/eslint-config/react-internal",
+  "@oc-mui/eslint-config/type-aware",
+];
+// Entry points that are deliberately empty (side effects or docs only).
+const knownEmpty = new Set(["@oc-mui/ui"]);
+
+describe("every published entry point loads", () => {
+  for (const [name, load] of typed) {
+    it(name, async () => {
+      const mod = await load();
+      if (!knownEmpty.has(name)) {
+        expect(Object.keys(mod).length, `${name} exports nothing`).toBeGreaterThan(0);
+      }
+    });
+  }
+  for (const name of untyped) {
+    it(name, async () => {
+      const mod = (await import(/* @vite-ignore */ name)) as Record<string, unknown>;
+      expect(Object.keys(mod).length, `${name} exports nothing`).toBeGreaterThan(0);
+    });
+  }
 });
 EOF
 cat > "$CONSUMER/src/smoke.test.ts" <<'EOF'

@@ -70,6 +70,9 @@ export default defineConfig(({ mode }) => {
   baseConfig.define = {
     ...(baseConfig.define ?? {}),
     __APP_VERSION__: JSON.stringify(resolveAppVersion()),
+    // The Opencast major this build targets = VERSION's major. The shell
+    // publishes it at boot (setOpencastMajor) so plugins can gate features.
+    __OPENCAST_MAJOR__: JSON.stringify(Number(resolveAppVersion().split(".")[0])),
     __GIT_COMMIT__: JSON.stringify(resolveGitCommit()),
   };
 

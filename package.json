@@ -55,7 +55,8 @@
     "docs:screenshots": "playwright test --config=playwright.docs.config.ts",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "codegen:check": "pnpm --filter @oc-mui/query codegen && git diff --exit-code -- packages/query/src/gql-generated.ts packages/query/src/schema-input-fields.generated.ts && pnpm --filter @oc-mui/query test:consumer-types"
+    "codegen:check": "pnpm --filter @oc-mui/query schema:validate && pnpm --filter @oc-mui/query codegen && git diff --exit-code -- packages/query/src/gql-generated.ts packages/query/src/schema-input-fields.generated.ts && pnpm --filter @oc-mui/query test:consumer-types",
+    "line:derive": "node scripts/update-maven-versions.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.0",
