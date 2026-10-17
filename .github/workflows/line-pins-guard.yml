@@ -4,7 +4,7 @@ name: Line pins guard
 # r/NN.x differs from develop and from the other lines in a handful of files
 # that are properties of the line, not changes to merge: `VERSION`, the
 # Opencast parent version in `pom.xml` and the scaffold template, and the
-# pinned GraphQL schema. A conflict-free merge from develop or from an older
+# (the GraphQL schemas are shared, one file per major — #443). A conflict-free merge from develop or from an older
 # line silently overwrites them (see release.md, "Resolve version metadata
 # toward the newer line"). This check fails any PR against r/NN.x whose head
 # moves the line's major — the one signal every such accident leaves behind.
@@ -54,12 +54,8 @@ jobs:
               FAIL=1
             fi
           done
-          SCHEMA=packages/query/src/schema.graphql
-          if ! git diff --quiet "origin/${BASE}" HEAD -- "${SCHEMA}"; then
-            echo "::warning file=${SCHEMA}::The pinned schema changes in this PR. Fine for a deliberate schema refresh on this line; wrong if a merge took another line's schema — check that codegen:check is green on this line."
-          fi
           if [ "${FAIL}" = "1" ]; then
-            echo "Restore the line-local files from origin/${BASE} (VERSION, pom.xml, the scaffold template, the schema and its codegen output) and re-run codegen — see docs/contribute/release.md."
+            echo "Restore VERSION from origin/${BASE} and run pnpm line:derive (it stamps the pom pins from VERSION) — see docs/contribute/release.md."
             exit 1
           fi
           echo "Line pins match r/${LINE_MAJOR}.x: VERSION ${HEAD_VERSION}, pom ${LINE_MAJOR}-SNAPSHOT."

@@ -66,7 +66,7 @@ Shared operations live in [`packages/query/src/queries.graphql`](../../packages/
 
 ## 6. Refresh the committed schema, then run codegen
 
-Codegen reads the **committed schema** — [`packages/query/src/schema.graphql`](../../packages/query/src/schema.graphql) — so regenerating types needs **no running backend**:
+Codegen reads the **committed schema of the newest supported Opencast major** — [`packages/query/src/schema-20.graphql`](../../packages/query/src/schema-20.graphql); the older majors sit next to it and `pnpm --filter @oc-mui/query schema:validate` keeps them strict subsets — so regenerating types needs **no running backend**:
 
 ```bash
 pnpm --filter @oc-mui/query codegen
@@ -79,7 +79,7 @@ cp .env.example .env      # then set GRAPHQL_ENDPOINT to your backend
 pnpm --filter @oc-mui/query schema:refresh
 ```
 
-Review the `schema.graphql` diff before regenerating: it should contain exactly the backend change you expect. The file's header records which Opencast version it was taken from. Two things to know when the diff surprises you: type *order* follows the source instance's introspection order, and Opencast's `*MetadataInput` types are **per-organisation** — a catalog field configured `readOnly` on the source instance is absent from them, so refresh from an instance whose catalog configuration matches what the UI should support.
+Review the `schema-<major>.graphql` diff before regenerating: it should contain exactly the backend change you expect. The file's header records which Opencast version it was taken from. Two things to know when the diff surprises you: type *order* follows the source instance's introspection order, and Opencast's `*MetadataInput` types are **per-organisation** — a catalog field configured `readOnly` on the source instance is absent from them, so refresh from an instance whose catalog configuration matches what the UI should support.
 
 CI regenerates from the committed schema and fails on any diff (`pnpm codegen:check`, also part of `pnpm verify`), so committed inputs and outputs can no longer drift apart ([#355](https://github.com/academic-moodle-cooperation/management-ui/issues/355) was exactly that class of bug).
 

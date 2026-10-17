@@ -61,7 +61,7 @@ For the exhaustive list, see [`etc/query.api.md`](./etc/query.api.md).
 
 ## Code generation
 
-Two source files in this package are **generated from the committed schema** — [`src/schema.graphql`](./src/schema.graphql) — and committed to the repo, so the rest of the workspace (and CI) builds *and regenerates* without a backend:
+Two source files in this package are **generated from the committed schemas** — one per supported Opencast major, [`src/schema-19.graphql`](./src/schema-19.graphql) and [`src/schema-20.graphql`](./src/schema-20.graphql); codegen uses the newest, and `pnpm --filter @oc-mui/query schema:validate` proves the older ones are strict subsets and that every document is valid where it may run — and committed to the repo, so the rest of the workspace (and CI) builds *and regenerates* without a backend:
 
 | Generated file | Produced by | Contains |
 |----------------|-------------|----------|
@@ -79,11 +79,12 @@ pnpm --filter @oc-mui/query codegen
 When the **backend schema** changed, refresh the committed SDL first — this is the deliberate, reviewed step that does need a backend (endpoint from the repo-root `.env`):
 
 ```bash
-pnpm --filter @oc-mui/query schema:refresh   # updates src/schema.graphql — review the diff!
+pnpm --filter @oc-mui/query schema:refresh   # updates src/schema-<major>.graphql (major from VERSION, or OPENCAST_MAJOR=21) — review the diff!
+pnpm --filter @oc-mui/query schema:validate  # superset contract + every document against every schema
 pnpm --filter @oc-mui/query codegen
 ```
 
-`schema.graphql`'s header records which Opencast version it was taken from. Mind that Opencast's `*MetadataInput` types are per-organisation (readOnly catalog fields are absent from them) — refresh from an instance whose catalog configuration matches what the UI should support. If `schema-input-fields.generated.ts` changes, `src/sortableFields.test.ts` may need its pinned expectations updated — that test failing is the intended signal that the set of sortable/filterable fields shifted.
+Each `schema-<major>.graphql` header records which Opencast version it was taken from. Operations that only a newer major can answer go into `src/queries.oc<major>.graphql` (today: the playlist operations in `queries.oc20.graphql`); gate their hooks in a plugin with `supportsOpencastMajor(20)` from `@oc-mui/utils`. Mind that Opencast's `*MetadataInput` types are per-organisation (readOnly catalog fields are absent from them) — refresh from an instance whose catalog configuration matches what the UI should support. If `schema-input-fields.generated.ts` changes, `src/sortableFields.test.ts` may need its pinned expectations updated — that test failing is the intended signal that the set of sortable/filterable fields shifted.
 
 The schema's custom scalars are mapped explicitly in the codegen config — `DateTime` and `Duration` to `string`, `Long` to `number`, `JSON` to `unknown` — matching what the backend puts on the wire. Nullable result fields are generated as required-with-`null` (`title: string | null`), not optional; only `@skip`/`@include`/`@defer` make a field optional.
 

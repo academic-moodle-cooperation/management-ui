@@ -1,7 +1,7 @@
 // refresh-schema.mjs — pull the GraphQL SDL from a live Opencast and commit it.
 //
 // The schema is an INPUT to codegen, not an artifact: codegen itself reads the
-// committed `src/schema.graphql` and never talks to a backend. Refreshing the
+// committed `src/schema-<major>.graphql` and never talks to a backend. Refreshing the
 // file is the deliberate, reviewed step you take when the backend's schema
 // changed ("Opencast gained a field") — run this, read the diff, commit it
 // together with the regenerated output.
@@ -27,7 +27,15 @@ import { fileURLToPath } from "node:url";
 import { buildClientSchema, getIntrospectionQuery, printSchema } from "graphql";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const target = join(__dirname, "schema.graphql");
+// One SDL per Opencast major: schema-<major>.graphql. The major defaults to
+// the line's VERSION (repo root) and can be overridden: OPENCAST_MAJOR=21.
+const versionFile = join(__dirname, "..", "..", "..", "VERSION");
+const lineMajor = (process.env["OPENCAST_MAJOR"] || readFileSync(versionFile, "utf-8").trim()).split(".")[0];
+if (!/^\d+$/.test(lineMajor)) {
+  console.error(`refresh-schema: cannot determine the Opencast major (got "${lineMajor}")`);
+  process.exit(1);
+}
+const target = join(__dirname, `schema-${lineMajor}.graphql`);
 
 const endpoint = process.env["GRAPHQL_ENDPOINT"] || "http://127.0.0.1:8080/graphql";
 const headers = process.env["GRAPHQL_HEADERS"] ? JSON.parse(process.env["GRAPHQL_HEADERS"]) : {};
@@ -95,6 +103,6 @@ const previous = (() => {
 writeFileSync(target, header + sdl + "\n", "utf-8");
 console.log(
   previous === header + sdl + "\n"
-    ? `✅ schema.graphql unchanged (Opencast ${version})`
-    : `✅ schema.graphql refreshed from Opencast ${version} — review the diff, then regenerate: pnpm --filter @oc-mui/query codegen`,
+    ? `✅ schema-${lineMajor}.graphql unchanged (Opencast ${version})`
+    : `✅ schema-${lineMajor}.graphql refreshed from Opencast ${version} — review the diff, then run: pnpm --filter @oc-mui/query schema:validate && pnpm --filter @oc-mui/query codegen`,
 );
