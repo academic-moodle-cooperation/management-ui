@@ -33,8 +33,11 @@ An issue closed on GitHub for another reason (duplicate, not planned) closes the
 | Title, description, open/closed | GitHub | GitHub → planning tool, overwritten there |
 | Labels without a `::` scope (`bug`, `enhancement`, …) | GitHub | GitHub → planning tool |
 | Every scoped label (`status::…`, any other `x::y`) | planning tool | `status::` → GitHub as a read-only label |
-| Comments | both, separately | never copied in either direction |
+| Comments on GitHub | GitHub | copied into the shadow issue as read-only notes, updated when edited |
+| Notes written in the planning tool | planning tool | never copied back |
 | Epic, iteration, weight, milestone, assignee | planning tool | never copied |
+
+GitHub comments appear in the shadow issue as notes headed "GitHub-Kommentar von @user am <date>" with a link back; they carry a hidden `<!-- gh-comment <id> -->` marker so an edit on GitHub updates the note instead of adding a second one. Replying to such a note in the planning tool reaches nobody on GitHub.
 
 The shadow issue has the same number as the GitHub issue. Its description starts with a banner linking back to GitHub and a hidden marker (`<!-- gh-mirror owner/repo#123 -->`); the mirror refuses to touch an issue without that marker. `#123` and `@user` references in the body are rewritten to GitHub links, because the same text would point at a different issue or person in the planning tool.
 
@@ -46,7 +49,7 @@ The logic is one script, [`.github/scripts/gitlab-mirror/mirror.mjs`](https://gi
 | --- | --- |
 | `issue <n> <action>` | Upserts one shadow issue (GitHub `issues` event) |
 | `pr <n> <action>` | Status transition + a note with the PR link (GitHub `pull_request` event) |
-| `reconcile` | Re-syncs every issue, or only those updated within `SINCE` (e.g. `SINCE=30m`) |
+| `reconcile` | Re-syncs every issue (fields and comments), or only those updated within `SINCE` (e.g. `SINCE=30m`) |
 | `pr-sync` | Polling variant of `pr`: every PR updated within `SINCE`; a hidden marker in the note keeps it from applying twice |
 | `status-to-github` | Copies `status::` labels to GitHub, closes GitHub issues on `done`, optionally sets the project Status field |
 | `backfill` | Initial import; needs a token that may set issue numbers (Owner) |
