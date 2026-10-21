@@ -22,7 +22,7 @@ Every issue carries exactly one `status::…` label. On GitHub the label is info
 | `status::deploying` | Approved, delivery scheduled | Delivered |
 | `status::done` | Delivered. The mirror closes the GitHub issue | — |
 
-Two transitions are automatic and driven by pull request events: a PR that references an issue moves it to `in-progress` when opened, and to `testing` when merged (clearing the assignee, so testers see the issue as unclaimed). All other transitions are made by people on the planning board.
+Two transitions are automatic and driven by pull request events: a PR that references an issue with a keyword (`refs #123`, `fixes #123`, `closes #123`, `resolves #123`, or a branch name containing the number) moves it to `in-progress` when opened, and to `testing` when merged. A bare `#123` in prose is not a reference (clearing the assignee, so testers see the issue as unclaimed). All other transitions are made by people on the planning board.
 
 An issue closed on GitHub for another reason (duplicate, not planned) closes the shadow issue too; its status label stays as it was. Reopening on GitHub puts it back to `triage`.
 
