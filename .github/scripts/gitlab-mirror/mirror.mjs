@@ -383,10 +383,17 @@ async function cmdBackfill() {
 
 // ------------------------------------------------------------ PR → status
 
+/**
+ * Issues a PR works on: only keyword references (`refs #123`, `fixes #123`,
+ * `closes #123`, `resolves #123`, also `owner/repo#123`) and the branch name.
+ * A bare `#123` in prose ("same bug as #123") is NOT a reference — it once
+ * moved an unrelated issue to in-progress.
+ */
 function issueNumbersFromPr(pr) {
   const found = new Set();
   const text = `${pr.title}\n${pr.body ?? ""}`;
-  for (const m of text.matchAll(/(?:^|[\s(])#(\d+)\b/g)) found.add(Number(m[1]));
+  const keyword = /\b(?:refs?|references|fix(?:es|ed)?|close[sd]?|resolve[sd]?)\s*:?\s*(?:[\w.-]+\/[\w.-]+)?#(\d+)\b/gi;
+  for (const m of text.matchAll(keyword)) found.add(Number(m[1]));
   const branch = pr.head?.ref ?? "";
   const b = branch.match(/(?:^|\/)(?:issue-?)?(\d+)(?:[-_]|$)/);
   if (b) found.add(Number(b[1]));
