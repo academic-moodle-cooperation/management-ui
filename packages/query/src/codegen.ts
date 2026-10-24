@@ -1,11 +1,15 @@
 import type { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
-  // The committed SDL is the single schema input — regenerating needs no
-  // running backend, and CI can regenerate-and-compare to catch drift.
-  // Refreshing the SDL from a live Opencast is the separate, reviewed step:
-  // `pnpm --filter @oc-mui/query schema:refresh` (src/refresh-schema.mjs).
-  schema: "./src/schema.graphql",
+  // One committed SDL per supported Opencast major (schema-19.graphql,
+  // schema-20.graphql, …). Codegen always runs against the NEWEST one: the
+  // schemas form a strict superset chain, so the generated types serve every
+  // release line and the generated file is identical on all of them.
+  // `pnpm schema:validate` (src/validate-schemas.mjs) enforces the superset
+  // property and validates every document against every schema it must work
+  // with; `codegen:check` runs both. Refreshing an SDL from a live Opencast is
+  // the separate, reviewed step: `pnpm schema:refresh` (src/refresh-schema.mjs).
+  schema: "./src/schema-20.graphql",
   overwrite: true,
   documents: "./src/**/*.graphql",
   emitLegacyCommonJSImports: false,

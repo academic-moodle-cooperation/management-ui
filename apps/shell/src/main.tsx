@@ -16,11 +16,17 @@ import { useAppConfig, QueryProvider } from "@oc-mui/query";
 import { type AnyRouter, Link as RouterLink, useRouterState } from "@oc-mui/router";
 import { AppLoader } from "@oc-mui/ui/components";
 import { ThemeModeProvider, UiRouterProvider, type UiRouterPrimitives } from "@oc-mui/ui/internal";
+import { setOpencastMajor } from "@oc-mui/utils";
 
 import { ConfigLoadError } from "./components/ConfigLoadError";
 import { DynamicRouterProvider } from "./components/DynamicRouterProvider";
 import { PluginInitializer } from "./components/PluginInitializer";
 import { exposeSharedModules } from "./shared/sharedModules";
+
+// Build-time constant from vite.config (VERSION's major); plugins read it via
+// getOpencastMajor() / supportsOpencastMajor() from @oc-mui/utils.
+declare const __OPENCAST_MAJOR__: number;
+if (typeof __OPENCAST_MAJOR__ !== "undefined") setOpencastMajor(__OPENCAST_MAJOR__);
 
 // Expose shared modules early for community plugins
 exposeSharedModules();

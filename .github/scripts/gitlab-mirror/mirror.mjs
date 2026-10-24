@@ -4,9 +4,11 @@
  * status feedback channel GitLab → GitHub.
  *
  * Ownership rules (see docs/contribute/issue-workflow.md):
- *   GitHub owns   title, description, non-scoped labels, open/closed.
- *   GitLab owns   every scoped label (`status::…`, any other `x::y`), notes,
+ *   GitHub owns   title, description, non-scoped labels, open/closed, comments.
+ *   GitLab owns   every scoped label (`status::…`, any other `x::y`), its own notes,
  *                 epics, iterations, weight, milestones, assignees.
+ *   GitHub comments are copied into the shadow issue as read-only notes (marked
+ *   with a hidden `<!-- gh-comment <id> -->`); nothing is ever copied back.
  *   The mirror never touches what GitLab owns. The status channel only
  *   copies the `status::` label back to GitHub as a read-only label and
  *   closes the GitHub issue on `status::done`.
@@ -191,7 +193,7 @@ function shadowDescription(issue) {
   const author = issue.user?.login ?? "unknown";
   const banner = [
     `> **Spiegel von GitHub [${ref}](${issue.html_url})** · Titel, Beschreibung, Labels und Offen/Geschlossen kommen von GitHub und werden hier überschrieben.`,
-    `> Antworten an den Reporter gehören auf GitHub. Interne Notizen, Epic, Iteration und Weight werden hier gepflegt.`,
+    `> GitHub-Kommentare werden hierher kopiert, nur zum Lesen. Antworten an den Reporter gehören auf GitHub. Interne Notizen, Epic, Iteration und Weight werden hier gepflegt.`,
     `> Angelegt von [@${author}](https://github.com/${author}) am ${String(issue.created_at).slice(0, 10)}`,
   ].join("\n");
   return `${banner}\n\n${MARKER(issue.number)}\n\n${rewriteBody(issue.body ?? "")}`.trimEnd();
@@ -282,10 +284,69 @@ async function upsertIssue(issue, action) {
   return "updated";
 }
 
+// ------------------------------------------------ comments → GitLab notes
+
+const COMMENT_MARKER = (id) => `<!-- gh-comment ${id} -->`;
+
+function noteBody(c) {
+  const when = String(c.created_at).slice(0, 10);
+  const edited = c.updated_at && c.updated_at.slice(0, 16) !== c.created_at.slice(0, 16) ? ", bearbeitet" : "";
+  return [
+    `**GitHub-Kommentar von [@${c.user.login}](https://github.com/${c.user.login}) am ${when}${edited}** · [auf GitHub antworten](${c.html_url})`,
+    "",
+    rewriteBody(c.body ?? ""),
+    "",
+    COMMENT_MARKER(c.id),
+  ].join("\n");
+}
+
+/**
+ * Copy the GitHub comments of one issue into its shadow issue as notes.
+ * One way: a note is created once per comment id and updated when the comment
+ * was edited; GitLab's own notes are never touched, nothing goes back.
+ */
+async function syncComments(issue) {
+  const n = issue.number;
+  if (!issue.comments) return 0; // no comments on GitHub, nothing to copy
+  const [comments, notes] = await Promise.all([
+    ghAll(`repos/${REPO}/issues/${n}/comments`),
+    glAll(`projects/${PID}/issues/${n}/notes`),
+  ]);
+  const byId = new Map();
+  for (const note of notes) {
+    const m = /<!-- gh-comment (\d+) -->/.exec(note.body ?? "");
+    if (m) byId.set(Number(m[1]), note);
+  }
+  let changed = 0;
+  for (const c of comments) {
+    const body = noteBody(c);
+    const note = byId.get(c.id);
+    if (!note) {
+      await write(`#${n}: copy comment by @${c.user.login} (${String(c.created_at).slice(0, 10)})`, () =>
+        gl(`projects/${PID}/issues/${n}/notes`, { method: "POST", body: { body } }),
+      );
+      changed++;
+    } else if ((note.body ?? "").trim() !== body.trim()) {
+      await write(`#${n}: update copied comment by @${c.user.login}`, () =>
+        gl(`projects/${PID}/issues/${n}/notes/${note.id}`, { method: "PUT", body: { body } }),
+      );
+      changed++;
+    }
+  }
+  return changed;
+}
+
+/** Fields + comments of one issue; returns the field result and the number of copied/updated comments. */
+async function syncIssue(issue, action) {
+  const result = await upsertIssue(issue, action);
+  const comments = result === "skipped" || issue.pull_request ? 0 : await syncComments(issue);
+  return { result, comments };
+}
+
 async function cmdIssue(number, action) {
   const issue = await gh(`repos/${REPO}/issues/${number}`);
-  const result = await upsertIssue(issue, action);
-  log(`#${number}: ${result}`);
+  const { result, comments } = await syncIssue(issue, action);
+  log(`#${number}: ${result}, ${comments} comments copied`);
 }
 
 async function allGhIssues(since) {
@@ -298,30 +359,41 @@ async function cmdReconcile() {
   const issues = await allGhIssues(SINCE);
   if (SINCE) log(`reconcile: issues updated since ${SINCE.toISOString()}`);
   const tally = {};
+  let comments = 0;
   for (const issue of issues) {
-    const r = await upsertIssue(issue);
-    tally[r] = (tally[r] ?? 0) + 1;
+    const s = await syncIssue(issue);
+    tally[s.result] = (tally[s.result] ?? 0) + 1;
+    comments += s.comments;
   }
-  log(`reconcile: ${issues.length} issues`, tally);
+  log(`reconcile: ${issues.length} issues`, tally, `${comments} comments copied`);
 }
 
 async function cmdBackfill() {
   const issues = await allGhIssues();
   log(`backfill: ${issues.length} GitHub issues → GitLab project ${PID}`);
   const tally = {};
+  let comments = 0;
   for (const issue of issues) {
-    const r = await upsertIssue(issue);
-    tally[r] = (tally[r] ?? 0) + 1;
+    const s = await syncIssue(issue);
+    tally[s.result] = (tally[s.result] ?? 0) + 1;
+    comments += s.comments;
   }
-  log("backfill done", tally);
+  log("backfill done", tally, `${comments} comments copied`);
 }
 
 // ------------------------------------------------------------ PR → status
 
+/**
+ * Issues a PR works on: only keyword references (`refs #123`, `fixes #123`,
+ * `closes #123`, `resolves #123`, also `owner/repo#123`) and the branch name.
+ * A bare `#123` in prose ("same bug as #123") is NOT a reference — it once
+ * moved an unrelated issue to in-progress.
+ */
 function issueNumbersFromPr(pr) {
   const found = new Set();
   const text = `${pr.title}\n${pr.body ?? ""}`;
-  for (const m of text.matchAll(/(?:^|[\s(])#(\d+)\b/g)) found.add(Number(m[1]));
+  const keyword = /\b(?:refs?|references|fix(?:es|ed)?|close[sd]?|resolve[sd]?)\s*:?\s*(?:[\w.-]+\/[\w.-]+)?#(\d+)\b/gi;
+  for (const m of text.matchAll(keyword)) found.add(Number(m[1]));
   const branch = pr.head?.ref ?? "";
   const b = branch.match(/(?:^|\/)(?:issue-?)?(\d+)(?:[-_]|$)/);
   if (b) found.add(Number(b[1]));
