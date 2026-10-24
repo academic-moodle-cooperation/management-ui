@@ -61,9 +61,7 @@
       "editVideo": "Edit Video",
       "play": "Play Video",
       "download": "Download",
-      "delete": "Delete Video",
-      "moveToTrash": "Move to trash",
-      "deletePermanently": "Delete permanently",
+      "delete": "Delete video",
       "flavor": {
         "presentation": "Display",
         "presenter": "Camera",
@@ -77,20 +75,12 @@
       "changesSaved": "Changes have been saved!",
       "changesFailed": "Changes failed to save!",
       "fieldRequiredEmpty": "Required field is empty",
-      "trashSuccess": "The video has been moved to the trash!",
-      "trashError": "The video could not be moved to the trash!",
-      "deleteSuccess": "The video has been permanently deleted!",
-      "deleteError": "The video could not be deleted!"
-    },
-    "trashDialogue": {
-      "heading": "Move video to trash?",
-      "text": "Move the video {{title}} to the trash? It will be hidden from users and can be restored or permanently deleted by an administrator."
+      "deleteSuccess": "The video has been deleted.",
+      "deleteError": "The video could not be deleted."
     },
     "deleteDialogue": {
-      "heading": "Delete Video permanently?",
-      "text": "Do you really want to delete the video {{title}} <strong>permanently</strong> and <strong>irreversibly</strong>? All publications of this video will be invalidated.",
-      "cancel": "Cancel",
-      "delete": "Delete"
+      "heading": "Delete video?",
+      "text": "Are you sure you want to delete the video {{title}}?"
     },
     "status": {
       "pending": "Processing pending",
