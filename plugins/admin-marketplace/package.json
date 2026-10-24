@@ -20,7 +20,7 @@
     "@oc-mui/remote-plugin-loader": "workspace:*",
     "@oc-mui/ui": "workspace:*",
     "@oc-mui/utils": "workspace:*",
-    "lucide-react": "^0.417.0",
+    "lucide-react": "^1.61.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
