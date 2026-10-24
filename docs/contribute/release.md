@@ -183,6 +183,29 @@ The single home for the product-version model (PR/issue templates link here):
 5. Merge that PR → the action publishes the bumped packages to npm, creates the per-package tags plus the product tag `vNN.x.y`, and cuts a GitHub Release.
 6. Forward-merge the line back toward `develop` so the version bumps flow back.
 
+### The preview stage — testing a change before it reaches `develop`
+
+`develop` is what staging runs, so it must only receive changes that have already been looked at. Anything a human should see first goes through the **preview stage**:
+
+| Stage | Branch | Environment | Content |
+|---|---|---|---|
+| Development | feature branch, PR | your dev server (`pnpm dev` against the test box) | one change |
+| **Preview** | `preview` | the test box | `develop` plus every open PR labelled `preview` |
+| Staging | `develop` | staging | everything merged and reviewed |
+| Production | tag `vNN.x.y` on `r/NN.x` | production | released versions only |
+
+`preview` is a **throwaway build target, not a branch anyone works on**: it is regenerated as `develop` (`main` in the plugins repository) plus the PRs that carry the `preview` label, built on the test box, and never merged anywhere. When the test is done, the PR merges into `develop` as usual and the label comes off.
+
+Rebuilding it by hand (until the workflow does it):
+
+```bash
+git checkout -B preview origin/develop
+for b in <pr-branch> …; do git merge --no-ff --no-edit "origin/$b"; done   # conflicts here mean the candidates conflict — fix them in the PRs
+git push -f origin HEAD:preview
+```
+
+Two candidates that conflict with each other show up here, before either reaches `develop`. A PR that is not visible in the UI (workflows, docs, dependency maintenance) skips the stage and merges directly.
+
 ### Features that need a newer Opencast major
 
 Most changes are Opencast-agnostic and should reach every supported line. Some depend on an API that exists only from a given major on — the first case is playlists (the GraphQL playlist API, Opencast 20+). The everyday loop does not change for them: they land on `develop`, get tested there together with everything else, and ship with the next release of each line that can run them. What changes is the sync into older lines.
