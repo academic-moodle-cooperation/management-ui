@@ -540,7 +540,7 @@ export type MetadataFieldInterface = {
 export type MetadataFieldType = StringMetadataField | IntMetadataField | DateTimeMetadataField | DurationMetadataField | JsonMetadataField | ListMetadataField | LongMetadataField;
 
 // @public (undocumented)
-export const MuiCreatePlaylistDocument = "\n    mutation MuiCreatePlaylist($metadata: PlaylistMetadataInput!, $entries: [PlaylistEntryInput], $acl: AccessControlListInput!) {\n  createPlaylist(metadata: $metadata, entries: $entries, acl: $acl) {\n    ...MuiPlaylistData\n  }\n}\n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}\nfragment MuiPlaylistData on Playlist {\n  __typename\n  id\n  title\n  description\n  creator\n  updated\n  accessControlEntries {\n    role\n    action\n    allow\n  }\n  entries {\n    ...MuiPlaylistEntryData\n  }\n}";
+export const MuiCreatePlaylistDocument = "\n    mutation MuiCreatePlaylist($metadata: PlaylistMetadataInput!, $entries: [PlaylistEntryInput], $acl: AccessControlListInput!) {\n  createPlaylist(metadata: $metadata, entries: $entries, acl: $acl) {\n    ...MuiPlaylistData\n  }\n}\n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      startDate\n      created\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}\nfragment MuiPlaylistData on Playlist {\n  __typename\n  id\n  title\n  description\n  creator\n  updated\n  accessControlEntries {\n    role\n    action\n    allow\n  }\n  entries {\n    ...MuiPlaylistEntryData\n  }\n}";
 
 // @public (undocumented)
 export type MuiCreatePlaylistMutation = {
@@ -563,6 +563,8 @@ export type MuiCreatePlaylistMutation = {
             type: PlaylistEntryType | null;
             event: {
                 id: string;
+                startDate: string | null;
+                created: string | null;
                 title: string;
                 duration: string | null;
                 seriesId: string | null;
@@ -1266,7 +1268,7 @@ export type MuiGetMyEventsQueryVariables = Exact_2<{
 }>;
 
 // @public (undocumented)
-export const MuiGetMyPlaylistsDocument = "\n    query MuiGetMyPlaylists($limit: Int, $offset: Int, $orderBy: PlaylistOrderByInput, $query: String) {\n  currentUser {\n    myPlaylists(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...MuiPlaylistData\n      }\n    }\n  }\n}\n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}\nfragment MuiPlaylistData on Playlist {\n  __typename\n  id\n  title\n  description\n  creator\n  updated\n  accessControlEntries {\n    role\n    action\n    allow\n  }\n  entries {\n    ...MuiPlaylistEntryData\n  }\n}";
+export const MuiGetMyPlaylistsDocument = "\n    query MuiGetMyPlaylists($limit: Int, $offset: Int, $orderBy: PlaylistOrderByInput, $query: String) {\n  currentUser {\n    myPlaylists(limit: $limit, offset: $offset, orderBy: $orderBy, query: $query) {\n      totalCount\n      nodes {\n        ...MuiPlaylistData\n      }\n    }\n  }\n}\n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      startDate\n      created\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}\nfragment MuiPlaylistData on Playlist {\n  __typename\n  id\n  title\n  description\n  creator\n  updated\n  accessControlEntries {\n    role\n    action\n    allow\n  }\n  entries {\n    ...MuiPlaylistEntryData\n  }\n}";
 
 // @public (undocumented)
 export type MuiGetMyPlaylistsQuery = {
@@ -1292,6 +1294,8 @@ export type MuiGetMyPlaylistsQuery = {
                     type: PlaylistEntryType | null;
                     event: {
                         id: string;
+                        startDate: string | null;
+                        created: string | null;
                         title: string;
                         duration: string | null;
                         seriesId: string | null;
@@ -1388,7 +1392,7 @@ export type MuiGetMySeriesQueryVariables = Exact_2<{
 }>;
 
 // @public (undocumented)
-export const MuiGetPlaylistByIdDocument = "\n    query MuiGetPlaylistById($playlistId: String!) {\n  playlistById(id: $playlistId) {\n    ...MuiPlaylistData\n  }\n}\n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}\nfragment MuiPlaylistData on Playlist {\n  __typename\n  id\n  title\n  description\n  creator\n  updated\n  accessControlEntries {\n    role\n    action\n    allow\n  }\n  entries {\n    ...MuiPlaylistEntryData\n  }\n}";
+export const MuiGetPlaylistByIdDocument = "\n    query MuiGetPlaylistById($playlistId: String!) {\n  playlistById(id: $playlistId) {\n    ...MuiPlaylistData\n  }\n}\n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      startDate\n      created\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}\nfragment MuiPlaylistData on Playlist {\n  __typename\n  id\n  title\n  description\n  creator\n  updated\n  accessControlEntries {\n    role\n    action\n    allow\n  }\n  entries {\n    ...MuiPlaylistEntryData\n  }\n}";
 
 // @public (undocumented)
 export type MuiGetPlaylistByIdQuery = {
@@ -1411,6 +1415,8 @@ export type MuiGetPlaylistByIdQuery = {
             type: PlaylistEntryType | null;
             event: {
                 id: string;
+                startDate: string | null;
+                created: string | null;
                 title: string;
                 duration: string | null;
                 seriesId: string | null;
@@ -1690,6 +1696,8 @@ export type MuiPlaylistDataFragment = {
         type: PlaylistEntryType | null;
         event: {
             id: string;
+            startDate: string | null;
+            created: string | null;
             title: string;
             duration: string | null;
             seriesId: string | null;
@@ -1711,7 +1719,7 @@ export type MuiPlaylistDataFragment = {
 };
 
 // @public (undocumented)
-export const MuiPlaylistDataFragmentDoc = "\n    fragment MuiPlaylistData on Playlist {\n  __typename\n  id\n  title\n  description\n  creator\n  updated\n  accessControlEntries {\n    role\n    action\n    allow\n  }\n  entries {\n    ...MuiPlaylistEntryData\n  }\n}\n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}";
+export const MuiPlaylistDataFragmentDoc = "\n    fragment MuiPlaylistData on Playlist {\n  __typename\n  id\n  title\n  description\n  creator\n  updated\n  accessControlEntries {\n    role\n    action\n    allow\n  }\n  entries {\n    ...MuiPlaylistEntryData\n  }\n}\n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      startDate\n      created\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}";
 
 // @public (undocumented)
 export type MuiPlaylistEntryData_EventPlaylistEntry_Fragment = {
@@ -1721,6 +1729,8 @@ export type MuiPlaylistEntryData_EventPlaylistEntry_Fragment = {
     type: PlaylistEntryType | null;
     event: {
         id: string;
+        startDate: string | null;
+        created: string | null;
         title: string;
         duration: string | null;
         seriesId: string | null;
@@ -1747,7 +1757,7 @@ export type MuiPlaylistEntryData_InaccessiblePlaylistEntry_Fragment = {
 export type MuiPlaylistEntryDataFragment = MuiPlaylistEntryData_EventPlaylistEntry_Fragment | MuiPlaylistEntryData_InaccessiblePlaylistEntry_Fragment;
 
 // @public (undocumented)
-export const MuiPlaylistEntryDataFragmentDoc = "\n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}\n    ";
+export const MuiPlaylistEntryDataFragmentDoc = "\n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      startDate\n      created\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}\n    ";
 
 // @public (undocumented)
 export const MuiSearchUserDocument = "\n    query MuiSearchUser($limit: Int, $offset: Int, $query: String!) {\n  searchUser(limit: $limit, offset: $offset, query: $query) {\n    totalCount\n    nodes {\n      email\n      name\n      provider\n      roles\n      userRole\n      username\n      ...MuiUserFields\n    }\n    pageInfo {\n      limit\n      offset\n      pageCount\n    }\n  }\n}\n    fragment MuiUserFields on User {\n  __typename\n}";
@@ -1912,7 +1922,7 @@ export type MuiUpdateEventMutationVariables = Exact_2<{
 }>;
 
 // @public (undocumented)
-export const MuiUpdatePlaylistAclDocument = "\n    mutation MuiUpdatePlaylistAcl($playlistId: String!, $acl: AccessControlListInput!) {\n  updatePlaylist(id: $playlistId, acl: $acl) {\n    ...MuiPlaylistData\n  }\n}\n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}\nfragment MuiPlaylistData on Playlist {\n  __typename\n  id\n  title\n  description\n  creator\n  updated\n  accessControlEntries {\n    role\n    action\n    allow\n  }\n  entries {\n    ...MuiPlaylistEntryData\n  }\n}";
+export const MuiUpdatePlaylistAclDocument = "\n    mutation MuiUpdatePlaylistAcl($playlistId: String!, $acl: AccessControlListInput!) {\n  updatePlaylist(id: $playlistId, acl: $acl) {\n    ...MuiPlaylistData\n  }\n}\n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      startDate\n      created\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}\nfragment MuiPlaylistData on Playlist {\n  __typename\n  id\n  title\n  description\n  creator\n  updated\n  accessControlEntries {\n    role\n    action\n    allow\n  }\n  entries {\n    ...MuiPlaylistEntryData\n  }\n}";
 
 // @public (undocumented)
 export type MuiUpdatePlaylistAclMutation = {
@@ -1935,6 +1945,8 @@ export type MuiUpdatePlaylistAclMutation = {
             type: PlaylistEntryType | null;
             event: {
                 id: string;
+                startDate: string | null;
+                created: string | null;
                 title: string;
                 duration: string | null;
                 seriesId: string | null;
@@ -1963,7 +1975,7 @@ export type MuiUpdatePlaylistAclMutationVariables = Exact_2<{
 }>;
 
 // @public (undocumented)
-export const MuiUpdatePlaylistEntriesDocument = "\n    mutation MuiUpdatePlaylistEntries($playlistId: String!, $entries: [PlaylistEntryInput]!) {\n  updatePlaylist(id: $playlistId, entries: $entries) {\n    ...MuiPlaylistData\n  }\n}\n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}\nfragment MuiPlaylistData on Playlist {\n  __typename\n  id\n  title\n  description\n  creator\n  updated\n  accessControlEntries {\n    role\n    action\n    allow\n  }\n  entries {\n    ...MuiPlaylistEntryData\n  }\n}";
+export const MuiUpdatePlaylistEntriesDocument = "\n    mutation MuiUpdatePlaylistEntries($playlistId: String!, $entries: [PlaylistEntryInput]!) {\n  updatePlaylist(id: $playlistId, entries: $entries) {\n    ...MuiPlaylistData\n  }\n}\n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      startDate\n      created\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}\nfragment MuiPlaylistData on Playlist {\n  __typename\n  id\n  title\n  description\n  creator\n  updated\n  accessControlEntries {\n    role\n    action\n    allow\n  }\n  entries {\n    ...MuiPlaylistEntryData\n  }\n}";
 
 // @public (undocumented)
 export type MuiUpdatePlaylistEntriesMutation = {
@@ -1986,6 +1998,8 @@ export type MuiUpdatePlaylistEntriesMutation = {
             type: PlaylistEntryType | null;
             event: {
                 id: string;
+                startDate: string | null;
+                created: string | null;
                 title: string;
                 duration: string | null;
                 seriesId: string | null;
@@ -2014,7 +2028,7 @@ export type MuiUpdatePlaylistEntriesMutationVariables = Exact_2<{
 }>;
 
 // @public (undocumented)
-export const MuiUpdatePlaylistMetadataDocument = "\n    mutation MuiUpdatePlaylistMetadata($playlistId: String!, $metadata: PlaylistMetadataInput!) {\n  updatePlaylist(id: $playlistId, metadata: $metadata) {\n    ...MuiPlaylistData\n  }\n}\n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}\nfragment MuiPlaylistData on Playlist {\n  __typename\n  id\n  title\n  description\n  creator\n  updated\n  accessControlEntries {\n    role\n    action\n    allow\n  }\n  entries {\n    ...MuiPlaylistEntryData\n  }\n}";
+export const MuiUpdatePlaylistMetadataDocument = "\n    mutation MuiUpdatePlaylistMetadata($playlistId: String!, $metadata: PlaylistMetadataInput!) {\n  updatePlaylist(id: $playlistId, metadata: $metadata) {\n    ...MuiPlaylistData\n  }\n}\n    fragment MuiPlaylistEntryData on PlaylistEntry {\n  __typename\n  id\n  contentId\n  type\n  ... on EventPlaylistEntry {\n    event {\n      id\n      startDate\n      created\n      title\n      duration\n      seriesId\n      seriesName\n      eventStatus\n      muiEventInfo {\n        isPublic\n        managedAclId\n        publishUrl\n        thumbnailUrl\n      }\n    }\n  }\n}\nfragment MuiPlaylistData on Playlist {\n  __typename\n  id\n  title\n  description\n  creator\n  updated\n  accessControlEntries {\n    role\n    action\n    allow\n  }\n  entries {\n    ...MuiPlaylistEntryData\n  }\n}";
 
 // @public (undocumented)
 export type MuiUpdatePlaylistMetadataMutation = {
@@ -2037,6 +2051,8 @@ export type MuiUpdatePlaylistMetadataMutation = {
             type: PlaylistEntryType | null;
             event: {
                 id: string;
+                startDate: string | null;
+                created: string | null;
                 title: string;
                 duration: string | null;
                 seriesId: string | null;
