@@ -221,7 +221,7 @@ test("[VID-38] Delete runs the configured delete workflow, and Cancel really can
 
   // Rejecting must leave everything alone — "bei Ablehnung darf nichts passieren."
   await openDeleteDialog();
-  await expect(page.getByRole("heading", { name: /^delete video\?$/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^delete video$/i })).toBeVisible();
   await expect(page.getByRole("dialog")).toContainText(/are you sure you want to delete the video/i);
   await page.getByRole("button", { name: /^cancel$/i }).click();
   await expect(page.getByRole("dialog")).toBeHidden();

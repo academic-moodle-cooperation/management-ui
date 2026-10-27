@@ -9,7 +9,7 @@ The action lives in a video row's **Actions** column — as an icon in the row, 
 Available to everyone who may edit the recording, in every status.
 
 1. On **Videos**, choose **Delete video** in the row's *Actions*.
-2. Confirm in **Delete video?** — *"Are you sure you want to delete the video …?"* — with **Delete**; **Cancel** leaves everything as it was.
+2. Confirm in **Delete video** — *"Are you sure you want to delete the video …?"* — with **Delete**; **Cancel** leaves everything as it was.
 3. **The video has been deleted.** in green confirms it, and the row leaves your list.
 4. **The video could not be deleted.** in red means nothing was removed — see below.
 

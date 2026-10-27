@@ -79,7 +79,7 @@
       "fieldRequiredEmpty": "Leeres Pflichtfeld"
     },
     "deleteDialogue": {
-      "heading": "Video löschen?",
+      "heading": "Video löschen",
       "text": "Möchten Sie das Video {{title}} wirklich löschen?"
     },
     "status": {

@@ -79,7 +79,7 @@
       "deleteError": "The video could not be deleted."
     },
     "deleteDialogue": {
-      "heading": "Delete video?",
+      "heading": "Delete video",
       "text": "Are you sure you want to delete the video {{title}}?"
     },
     "status": {
