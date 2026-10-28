@@ -18,7 +18,7 @@ name: Release
 # publishes the @oc-mui/* packages. The TypeScript is identical across lines
 # (they differ only in build metadata), so letting every line publish would
 # race the same package versions onto npm. Older lines still get their
-# Version PR, per-package git tags (`changeset tag`), the product tag and a
+# Version PR, per-package git tags (`changeset git-tag`), the product tag and a
 # GitHub Release — they ship as JARs, not through npm. The "which line am I"
 # check is computed below from the live list of r/* branches.
 #
@@ -199,24 +199,31 @@ jobs:
 
       - name: Create Version PR or publish
         id: changesets
-        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
+        # v2 of the action (Changesets CLI 3): inputs renamed (version-script,
+        # publish-script, commit-message, pr-title), the token is an input, and
+        # the Version branch is pushed through the GitHub API instead of the
+        # git CLI. Published-package detection reads the CHANGESETS_OUTPUT file
+        # the CLI writes, so `pnpm changeset:publish` must stay a plain
+        # `changeset publish` (env is inherited). Migration: #367.
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
-          version: pnpm changeset:version
+          version-script: pnpm changeset:version
           # Runs on the merged Version PR when no changesets remain. Only the
           # newest line publishes npm (which also creates the per-package git
-          # tags). An older line must NOT run `changeset tag` either: both
+          # tags). An older line must NOT run `changeset git-tag` either: both
           # lines carry the SAME package versions (the TS is identical), and a
           # git tag name can exist only once — whichever line released second
           # would fail pushing colliding tags. Older lines therefore get only
-          # their product tag + GitHub Release (next step).
-          publish: ${{ steps.line.outputs.newest == 'true' && 'pnpm changeset:publish' || 'node -e "console.log(String.raw`JAR-only line - npm publish and package tags are the newest line s job.`)"' }}
-          commit: "chore(release): version packages"
-          title: "chore(release): version packages"
-        env:
-          # GITHUB_TOKEN is for the changesets action (push the Version branch +
-          # open its PR). Publishing itself is tokenless: npm authenticates to
-          # the registry via the OIDC `id-token` granted above - no NPM_TOKEN.
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # their product tag + GitHub Release (next step). The placeholder
+          # script writes no Changesets output file, which the action reports
+          # as a warning ("no GitHub releases / tags") — expected on that leg.
+          publish-script: ${{ steps.line.outputs.newest == 'true' && 'pnpm changeset:publish' || 'node -e "console.log(String.raw`JAR-only line - npm publish and package tags are the newest line s job.`)"' }}
+          commit-message: "chore(release): version packages"
+          pr-title: "chore(release): version packages"
+          # For the action only (push the Version branch + open its PR).
+          # Publishing itself is tokenless: npm authenticates to the registry
+          # via the OIDC `id-token` granted above - no NPM_TOKEN.
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Product tag + GitHub Release
         # Creates the ops-facing product tag (v<VERSION file>, e.g. v19.0.0)
