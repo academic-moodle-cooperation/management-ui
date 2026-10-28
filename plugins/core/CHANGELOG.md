@@ -1,5 +1,20 @@
 # @oc-mui/plugin-core
 
+## 1.1.1
+
+### Patch Changes
+
+- Updated dependencies [e2e7814]
+- Updated dependencies [cb41e18]
+- Updated dependencies [da2cb2a]
+- Updated dependencies [b1d5f78]
+- Updated dependencies [312f77a]
+  - @oc-mui/query@2.1.0
+  - @oc-mui/ui@2.0.1
+  - @oc-mui/plugin-system@1.3.0
+  - @oc-mui/i18n@1.1.0
+  - @oc-mui/router@1.1.2
+
 ## 1.1.0
 
 ### Minor Changes

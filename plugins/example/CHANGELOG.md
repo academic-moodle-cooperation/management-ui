@@ -1,5 +1,14 @@
 # @oc-mui/plugin-example
 
+## 1.0.3
+
+### Patch Changes
+
+- Updated dependencies [b1d5f78]
+- Updated dependencies [312f77a]
+  - @oc-mui/utils@1.3.0
+  - @oc-mui/plugin-system@1.3.0
+
 ## 1.0.2
 
 ### Patch Changes

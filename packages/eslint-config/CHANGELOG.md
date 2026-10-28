@@ -1,5 +1,16 @@
 # @oc-mui/eslint-config
 
+## 1.1.2
+
+### Patch Changes
+
+- e2e7814: Dependency maintenance (Dependabot group, 2026-10-19): minor and patch updates
+  of 25 packages — the Radix UI primitives behind `@oc-mui/ui`, `zod`,
+  `@tanstack/react-query-devtools`, `typescript-eslint`, `@graphql-eslint`,
+  `eslint-plugin-turbo`, `turbo`, `@playwright/test` and
+  `@testing-library/user-event`. No API or behaviour change intended.
+- cb41e18: Dependency maintenance: minor/patch bumps of `typescript-eslint`, `eslint-plugin-turbo` and `@tanstack/react-query-devtools`.
+
 ## 1.1.1
 
 ### Patch Changes
