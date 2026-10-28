@@ -205,6 +205,9 @@ importers:
       react-dom:
         specifier: ~19.2.0
         version: 19.2.9(react@19.2.9)
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
     devDependencies:
       '@oc-mui/eslint-config':
         specifier: workspace:*
