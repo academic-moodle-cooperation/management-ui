@@ -267,7 +267,13 @@ async function upsertIssue(issue, action) {
 
   const keptScoped = existing.labels.filter(isScoped);
   const wantLabels = [...new Set([...ghLabels, ...keptScoped])];
-  if (action === "reopened") {
+  // A reopen resets the status to triage. In polling mode (`reconcile` with
+  // SINCE) there is no event action, so detect it from the states: GitHub is
+  // open while the shadow is still closed. Without this the shadow kept
+  // `status::done`, and the next `status-to-github` closed the GitHub issue
+  // again two minutes after someone had reopened it.
+  const reopened = action === "reopened" || (issue.state === "open" && existing.state === "closed");
+  if (reopened) {
     wantLabels.splice(0, wantLabels.length, ...wantLabels.filter((l) => !isStatus(l)), STATUS.triage);
   }
   const body = {};
