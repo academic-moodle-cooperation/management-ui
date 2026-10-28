@@ -21,6 +21,7 @@ A loaded plugin runs inside the host page and **shares modules** with it. You ca
 
 - `react`, `react-dom`, `react/jsx-runtime`
 - `lucide-react`
+- `zod` (the schema library `definePluginConfig` takes — the host shares one copy)
 - `@oc-mui/plugin-system`
 - `@oc-mui/ui/components`, `@oc-mui/ui/components/icons`, `@oc-mui/ui/lib`, `@oc-mui/ui/lib/utils`
   — note that `@oc-mui/ui/components/icons` carries only `@oc-mui/ui`'s own
