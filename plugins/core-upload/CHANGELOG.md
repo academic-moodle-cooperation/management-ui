@@ -1,5 +1,28 @@
 # @oc-mui/plugin-core-upload
 
+## 1.1.2
+
+### Patch Changes
+
+- e2e7814: Dependency maintenance (Dependabot group, 2026-10-19): minor and patch updates
+  of 25 packages — the Radix UI primitives behind `@oc-mui/ui`, `zod`,
+  `@tanstack/react-query-devtools`, `typescript-eslint`, `@graphql-eslint`,
+  `eslint-plugin-turbo`, `turbo`, `@playwright/test` and
+  `@testing-library/user-event`. No API or behaviour change intended.
+- Updated dependencies [e2e7814]
+- Updated dependencies [cb41e18]
+- Updated dependencies [da2cb2a]
+- Updated dependencies [b1d5f78]
+- Updated dependencies [312f77a]
+  - @oc-mui/query@2.1.0
+  - @oc-mui/ui@2.0.1
+  - @oc-mui/utils@1.3.0
+  - @oc-mui/plugin-system@1.3.0
+  - @oc-mui/i18n@1.1.0
+  - @oc-mui/router@1.1.2
+  - @oc-mui/store@1.1.1
+  - @oc-mui/plugin-core@1.1.1
+
 ## 1.1.1
 
 ### Patch Changes
