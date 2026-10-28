@@ -16,6 +16,7 @@ describe("SHARED_RUNTIME_MAJORS", () => {
       "react-dom": 19,
       "react/jsx-runtime": 19,
       "lucide-react": 0,
+      zod: 4,
       "@oc-mui/plugin-system": 1,
       "@oc-mui/app-runtime": 1,
       "@oc-mui/ui": 1,
