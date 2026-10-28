@@ -83,7 +83,7 @@
   },
   "packageManager": "pnpm@10.28.0",
   "engines": {
-    "node": ">=20"
+    "node": ">=22.11"
   },
   "dependencies": {
     "lucide-react": "^0.417.0"
