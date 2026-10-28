@@ -17,12 +17,13 @@ Every issue carries exactly one `status::…` label. On GitHub the label is info
 | `status::backlog` | Ready for development | Scheduled into an iteration or an epic |
 | `status::planned` | Scheduled, up next | A pull request references the issue (automatic) |
 | `status::in-progress` | Being implemented | The pull request is merged (automatic) |
-| `status::testing` | Development done, test planned or running | Test passed; otherwise back to in-progress |
+| `status::deploy to test` | Merged into `develop`, waiting for the next staging deploy. The deployer's to-do list | The build is on staging; the deployer moves the card to testing |
+| `status::testing` | On staging, ready to be tested | Test passed; otherwise back to in-progress |
 | `status::review` | Test done, final check by the product owner | Approved; otherwise back to in-progress |
 | `status::deploying` | Approved, delivery scheduled | Delivered |
 | `status::done` | Delivered. The mirror closes the GitHub issue | — |
 
-Two transitions are automatic and driven by pull request events: a PR that references an issue with a keyword (`refs #123`, `fixes #123`, `closes #123`, `resolves #123`, or a branch name containing the number) moves it to `in-progress` when opened, and to `testing` when merged. A bare `#123` in prose is not a reference (clearing the assignee, so testers see the issue as unclaimed). All other transitions are made by people on the planning board.
+Two transitions are automatic and driven by pull request events: a PR that references an issue with a keyword (`refs #123`, `fixes #123`, `closes #123`, `resolves #123`, or a branch name containing the number) moves it to `in-progress` when opened, and to `deploy to test` when merged. A bare `#123` in prose is not a reference (clearing the assignee, so testers see the issue as unclaimed). All other transitions are made by people on the planning board.
 
 An issue closed on GitHub for another reason (duplicate, not planned) closes the shadow issue too; its status label stays as it was. Reopening on GitHub puts it back to `triage` (also in polling mode, where the mirror detects the reopen from the states: GitHub open, shadow still closed).
 
