@@ -58,7 +58,7 @@
     "@oc-mui/eslint-config": "workspace:*",
     "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.8.0",
-    "typescript": "~5.5.4",
+    "typescript": "~6.0.3",
     "vite": "^6.3.5",
     "vitest": "^4.0.17"
   }
