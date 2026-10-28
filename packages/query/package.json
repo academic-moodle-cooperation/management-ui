@@ -53,7 +53,7 @@
     "test:consumer-types": "node type-tests/check-emitted.mjs && tsc -p type-tests/tsconfig.json"
   },
   "dependencies": {
-    "@tanstack/react-query-devtools": "^5.104.3",
+    "@tanstack/react-query-devtools": "^5.104.5",
     "@oc-mui/plugin-system": "workspace:*",
     "@oc-mui/ui-config": "workspace:*",
     "@oc-mui/utils": "workspace:*",
