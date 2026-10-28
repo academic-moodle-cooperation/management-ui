@@ -29,8 +29,10 @@ export const SHARED_RUNTIME_MAJORS: Readonly<Record<string, number>> = Object.fr
   "react-dom": 19,
   "react/jsx-runtime": 19,
 
-  // The lone external library exposed today
+  // External libraries exposed by the host
   "lucide-react": 0,
+  // zod 4: `definePluginConfig` schemas. Added 2026-10-28 (minor).
+  zod: 4,
 
   // Workspace packages — all 1.x for the OSS-readiness line
   "@oc-mui/plugin-system": 1,
