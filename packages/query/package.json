@@ -53,13 +53,13 @@
     "test:consumer-types": "node type-tests/check-emitted.mjs && tsc -p type-tests/tsconfig.json"
   },
   "dependencies": {
-    "@tanstack/react-query-devtools": "^5.104.1",
+    "@tanstack/react-query-devtools": "^5.104.5",
     "@oc-mui/plugin-system": "workspace:*",
     "@oc-mui/ui-config": "workspace:*",
     "@oc-mui/utils": "workspace:*",
     "graphql": "^16.9.0",
     "graphql-request": "^7.4.0",
-    "zod": "^4.6.5"
+    "zod": "^4.6.7"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

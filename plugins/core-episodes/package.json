@@ -24,7 +24,7 @@
     "@oc-mui/ui-config": "workspace:*",
     "@oc-mui/utils": "workspace:*",
     "lucide-react": "^0.417.0",
-    "zod": "^4.6.5"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@oc-mui/eslint-config": "workspace:*",
