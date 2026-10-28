@@ -99,8 +99,11 @@ const DEFAULT_EXTERNALS: (string | RegExp)[] = [
   // packages. Keep this in sync if the scope ever changes again.
   /^@oc-mui\//,
 
-  // Common UI libraries that host provides
+  // Common libraries that host provides
   "lucide-react",
+  // zod: shared since SDK plugin-system 1.3 — the host exposes one copy
+  // for `definePluginConfig` schemas.
+  "zod",
 ];
 
 /**

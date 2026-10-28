@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.amc.management.assemblies</groupId>
     <artifactId>management-assemblies</artifactId>
-    <version>20.1.1</version>
+    <version>19.0.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 

@@ -13,7 +13,8 @@ name: Preview packages (pkg.pr.new)
 #   https://github.com/apps/pkg-pr-new
 # pkg.pr.new checks the App against $GITHUB_REPOSITORY (the repo the job runs
 # on), so install it wherever you want previews. Until then the publish step is
-# rejected — but it's `continue-on-error`, so it never fails the PR. No npm
+# rejected and the job FAILS — on purpose: a rejected or failed preview publish
+# used to hide behind `continue-on-error` and read as a green check. No npm
 # account or token is involved; pkg.pr.new is a preview CDN, not npm.
 #
 # Note: pkg.pr.new SKIPS `private: true` packages. The SDK is `private` pre-1.0,
@@ -86,10 +87,8 @@ jobs:
           packages/tailwind-config
 
       - name: Publish preview packages
-        # Optional convenience job — never fail the PR if pkg.pr.new isn't set up
-        # on this repo (App not installed, etc.). The PR comment (or its absence)
-        # is the real signal.
-        continue-on-error: true
+        # Fails the job when pkg.pr.new rejects the publish (App not installed,
+        # CDN error). The check is not required for merging, but it is visible.
         # Only the 15 publishable SDK packages — not the feature plugins or
         # host-only infra. Keep this list in sync with the SDK set documented in
         # docs/contribute/release.md ("What gets published").
