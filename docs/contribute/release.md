@@ -37,11 +37,11 @@ The set is decided **forward-looking**: it covers what a plugin author can legit
 | `@oc-mui/remote-plugin-loader` | host-side mechanism for loading remote plugins; an author writes a plugin, the host loads it |
 | `@oc-mui/providers` | app-level provider composition; authors reach the same wiring through `@oc-mui/app-runtime`'s standalone wrappers. Promote it only if we commit to authors composing providers by hand. |
 
-> The SDK packages carry full npm metadata (`description`, `repository`, `author`, `keywords`, `publishConfig.access = public`) and a per-package `LICENSE`, and are publishable: the `private` flags were dropped in the publish flip (PR #210). The only remaining one-time step is the [first-release bootstrap](#first-release-bootstrap--one-time-checklist).
+> The SDK packages carry full npm metadata (`description`, `repository`, `author`, `keywords`, `publishConfig.access = public`) and a per-package `LICENSE`, and are publishable: the `private` flags were dropped in the publish flip (PR #210). The one-time [first-release bootstrap](#first-release-bootstrap--one-time-checklist) ran on 2026-10-16.
 
 ### Publish-readiness checklist (the work before the flip)
 
-Making the packages npm-installable was tracked as the following list — all of it is done; only the [first-release bootstrap](#first-release-bootstrap--one-time-checklist) remains:
+Making the packages npm-installable was tracked as the following list — all of it is done, including the one-time [first-release bootstrap](#first-release-bootstrap--one-time-checklist) (2026-10-16):
 
 - [x] **Metadata + per-package `LICENSE`** on the 15 SDK packages.
 - [x] **React → `peerDependencies`** on `plugin-system`, `app-runtime`, `plugin-testing` (avoids duplicate-React in a consumer install).
@@ -183,6 +183,29 @@ The single home for the product-version model (PR/issue templates link here):
 5. Merge that PR → the action publishes the bumped packages to npm, creates the per-package tags plus the product tag `vNN.x.y`, and cuts a GitHub Release.
 6. Forward-merge the line back toward `develop` so the version bumps flow back.
 
+### The preview stage — testing a change before it reaches `develop`
+
+`develop` is what staging runs, so it must only receive changes that have already been looked at. Anything a human should see first goes through the **preview stage**:
+
+| Stage | Branch | Environment | Content |
+|---|---|---|---|
+| Development | feature branch, PR | your dev server (`pnpm dev` against the test box) | one change |
+| **Preview** | `preview` | the test box | `develop` plus every open PR labelled `preview` |
+| Staging | `develop` | staging | everything merged and reviewed |
+| Production | tag `vNN.x.y` on `r/NN.x` | production | released versions only |
+
+`preview` is a **throwaway build target, not a branch anyone works on**: it is regenerated as `develop` (`main` in the plugins repository) plus the PRs that carry the `preview` label, built on the test box, and never merged anywhere. When the test is done, the PR merges into `develop` as usual and the label comes off.
+
+Rebuilding it by hand (until the workflow does it):
+
+```bash
+git checkout -B preview origin/develop
+for b in <pr-branch> …; do git merge --no-ff --no-edit "origin/$b"; done   # conflicts here mean the candidates conflict — fix them in the PRs
+git push -f origin HEAD:preview
+```
+
+Two candidates that conflict with each other show up here, before either reaches `develop`. A PR that is not visible in the UI (workflows, docs, dependency maintenance) skips the stage and merges directly.
+
 ### Features that need a newer Opencast major
 
 Most changes are Opencast-agnostic and should reach every supported line. Some depend on an API that exists only from a given major on — the first case is playlists (the GraphQL playlist API, Opencast 20+). The everyday loop does not change for them: they land on `develop`, get tested there together with everything else, and ship with the next release of each line that can run them. What changes is the sync into older lines.
@@ -232,6 +255,8 @@ The one wrinkle is the **first publish of each package**: OIDC cannot create a p
 ## First-release bootstrap — one-time checklist
 
 > Run this **once**, before the first release ever cut from a release line. Everything here is manual by necessity; after step 4 the repo never publishes off-CI again. Every step needs maintainer rights (npm account with publish access, GitHub repo admin) — none of it can be done from CI or by an agent.
+>
+> **Done on 2026-10-16** from `r/20.x` (recorded in [#236](https://github.com/academic-moodle-cooperation/management-ui/issues/236)): the 15 packages were first-published by hand, the Trusted Publishers configured, and the first CI release `v20.1.0` ran tokenless. The checklist stays here as the procedure for the first publish of any *new* SDK package; the boxes below are the template, not the status.
 
 **Preconditions**
 
