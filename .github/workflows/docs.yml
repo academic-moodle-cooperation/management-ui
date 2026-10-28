@@ -43,10 +43,14 @@ permissions:
   pages: write
   id-token: write
 
-# Allow only one concurrent deploy; cancel in-progress builds when a newer
-# commit lands so the live site never lags behind for long.
+# One run per ref: a newer commit on the same branch/PR cancels the older
+# build, so the live site never lags behind for long. The group is keyed by
+# ref on purpose — a single shared group made every push to develop cancel
+# the PR builds that happened to be running at the same time (they showed up
+# as red "Deploy to GitHub Pages" checks on unrelated PRs). Pushes and manual
+# dispatches on develop still share one group, so deploys stay serialized.
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

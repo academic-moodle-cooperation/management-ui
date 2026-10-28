@@ -241,6 +241,8 @@ const playlistNode = (p: MockPlaylist, events: MockEvent[]) => ({
             id: event.id,
             title: event.title,
             duration: event.duration,
+            startDate: event.startDate,
+            created: event.created,
             seriesId: event.seriesId,
             seriesName: event.seriesName,
             eventStatus: event.eventStatus,

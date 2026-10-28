@@ -255,7 +255,7 @@ cleanup + override pruning (PR #223), GitHub Actions SHA-pinning + Dependabot
 (PR #224), marketplace remote-loading opt-in (PR #225), dist-canonical package
 exports (this PR).
 
-### 9.1 Before the first npm publish
+### 9.1 ✅ Done — before the first npm publish
 
 - **peerDependencies shape.** ✅ Done in PR #227 — wrapped libraries in the
   facades and `react`/`react-dom` in the four in-tree plugins are
@@ -265,23 +265,25 @@ exports (this PR).
   `app-runtime`, `utils`, `plugin-testing`). `@oc-mui/ui` followed in PR #268
   (`./components`, 262 exports).
 
-  **The planned sequencing was skipped, deliberately.** The note here used to
-  say the curation pass should come *before* the initial snapshot, so the
-  report wouldn't enshrine exports about to be removed. The baseline landed
-  first anyway: nothing is published yet, so removing an export costs a
-  regenerated report and a changeset — not a major bump. The snapshot is not
-  the point of no return; the **first npm publish** is.
-
-  **Still open, and now deadline-bound:** curate `@oc-mui/ui`'s export surface
-  (which of the `./components` exports are SDK, which are host internals) **before** step 2 of the
-  [first-release bootstrap](../contribute/release.md#first-release-bootstrap--one-time-checklist).
-  After that publish, every removal is a major bump plus a `@deprecated` cycle.
-  Also still uncovered: the `./hooks`, `./lib`, `./lib/utils` and
-  `./config-primitives` entry points (`etc/ui.api.md` exists but is empty —
-  `src/index.ts` exports nothing).
-- **npm org bootstrap (manual, on npmjs.com).** First-publish each `@oc-mui/*`
-  package via `pnpm publish` while logged in, then configure per-package Trusted
-  Publishers. See [`release.yml`](../../.github/workflows/release.yml).
+- **Curate `@oc-mui/ui`'s export surface.** ✅ Done in PR #426, before the
+  first publish — the point of no return this entry used to warn about. The
+  host assembly layer (`Appshell`, the router primitives, the error pages,
+  `ThemeModeProvider`) moved to a new `@oc-mui/ui/internal` entry that carries
+  no API report, is not shared with remote-loaded plugins, and is forbidden to
+  `plugins/` by lint; `./components` went from 240 to 226 exports, each
+  remaining one either used by a plugin today or a generic primitive.
+  `./hooks` has its own report since PR #308 (`etc/ui-hooks.api.md`).
+  The published surface is the one we intend to keep: any further removal is
+  now a major bump plus a `@deprecated` cycle
+  ([Deprecations](../contribute/release.md#deprecations)).
+- **npm org bootstrap (manual, on npmjs.com).** ✅ Done 2026-10-16 from
+  `r/20.x`: the 15 SDK packages were first-published by hand, each got a
+  Trusted Publisher, and the first CI release (`v20.1.0`) ran tokenless with
+  provenance; the `0.0.0-stage` placeholders npm creates on first publish are
+  deprecated. The
+  [first-release bootstrap](../contribute/release.md#first-release-bootstrap--one-time-checklist)
+  stays in the docs as the procedure for any future first publish of a new
+  package.
 
 ### 9.2 Wave 2 — cleanup / quality
 
@@ -364,3 +366,11 @@ run `gh workflow run matrix.yml --ref <branch> -f projects="--project=webkit --p
 and only drop the override + the Dependabot ignore when that run is green in
 the 2–3 minute range. Worth a minimal reproduction against React upstream
 once the cause is narrowed down.
+
+## 12. The plugin-serving HTTP path still says `/management-tool/`
+
+**Status:** parked by decision (2026-08-18, re-confirmed 2026-10-28) — won't-fix on the current release lines.
+
+The JAR-plugin list is served at `/management-tool/ui/config/plugins.json`, the last functional reference to the product's old name (the Maven module identity was renamed in #220). The path is hardcoded in four places that have to change together: the backend endpoint ([`PluginEndpoint.java`](../../backend/management-config/src/main/java/org/opencastproject/management/ui/config/rest/PluginEndpoint.java): `@Path` and `opencast.service.path`), the shell's [`jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts) (`PLUGINS_JSON_PATH`), `@oc-mui/ui-config`'s `productionAppPluginUrl` default, and the dev proxy in `@oc-mui/vite-config`. There is no redirect, so the rename breaks every deployed `config.json` that names the old path and needs backend, frontend and deployment config to flip in one coordinated release — a cosmetic gain for a breaking cost.
+
+**When to revisit:** the next breaking window — the first release line for a new Opencast major on which config compatibility may be broken (2.0 / OC 21 at the earliest). Whoever cuts that line: [#221](https://github.com/academic-moodle-cooperation/management-ui/issues/221) has the full file list (incl. the E2E mocks, specs and docs that name the path) and the migration notes.
