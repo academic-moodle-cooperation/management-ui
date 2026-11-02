@@ -188,10 +188,8 @@ export function createCommunityPluginConfig(options: CreateCommunityPluginConfig
           // Preserve export names
           exports: "named",
 
-          // Generate clean output
-          generatedCode: {
-            constBindings: true,
-          },
+          // (Rollup's `generatedCode.constBindings` is gone: Vite 8 bundles with
+          // Rolldown, which always emits const bindings.)
 
           // Global names for external dependencies (for potential UMD builds)
           globals: {

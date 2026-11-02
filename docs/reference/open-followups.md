@@ -117,7 +117,9 @@ The Shared Runtime Dependencies contract (`@oc-mui/plugin-system`'s `SHARED_RUNT
 - ✅ **`.local-plugins/` dev** — the dev server surfaces each plugin's `workspaceDependencies` (read from `plugin.json`) into `/local-plugins/manifest.json` ([`local-plugins-dev.ts`](../../packages/vite-config/src/plugins/local-plugins-dev.ts)); the shell gates each entry via `passesSharedDependencyGate` ([`sharedDepsGate.ts`](../../apps/shell/src/services/sharedDepsGate.ts)) in `PluginInitializer` before loading.
 - ⏳ **JAR** — the same gate is applied to backend entries, and [`jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts) reads `workspaceDependencies` when present. **Residual:** the backend's aggregated `plugins.json` doesn't carry `workspaceDependencies` per plugin yet, so the gate is a no-op for JAR plugins until then. Chosen option (a) — backend embeds the field per plugin in `plugins.json` (forward-compatible; the shell already consumes it). The alternative (b, loader fetches `<pluginDir>/plugin.json`) remains open if the backend change is undesirable.
 
-- **When to revisit**: the JAR residual when the backend `plugins.json` producer is next touched (Opencast-side). Everything in-repo is done.
+- ⏳ **Table drift (since v20.1.0)** — `@oc-mui/ui`, `@oc-mui/query` and `@oc-mui/ui-config` are published as 2.x, but `SHARED_RUNTIME_MAJORS` still lists them at 1, so the gate rejects a truthful `^2` declaration. Documented in [Contracts §5](./contracts.md#5-shared-runtime-dependencies) as *known drift*; community plugins leave the three names out of `workspaceDependencies` for now, and the scaffold templates no longer declare `@oc-mui/ui`. Lifting the three entries to 2 is a `@oc-mui/plugin-system` major (likely with a `PLUGIN_API_VERSION` flip) and is to be bundled with the next host major rather than shipped alone.
+
+- **When to revisit**: the JAR residual when the backend `plugins.json` producer is next touched (Opencast-side); the table drift at the next `@oc-mui/plugin-system` major.
 
 ### 5.4 Deep-link return after SSO login
 
@@ -307,8 +309,11 @@ exports (this PR).
   job; either wire it up or replace it with a maintained checker.
 - **Major-version migrations** (each its own PR): `i18next` 23→26 + `react-i18next`
   (also clears the last *runtime* `pnpm audit` item, `i18next-http-backend`),
-  `zustand` 4→5, `react-day-picker` 8→10, `lucide-react` 0.417→1.x, and the app's
-  `vite` 6→7 (clears the residual `vite` audit highs).
+  `zustand` 4→5, `react-day-picker` 8→10. ✅ `vite` 6→8, `typescript` 5→6 and
+  `jsdom` 27→30 landed 2026-11-02 (#469, #480, #470). `lucide-react` 0.x→1.x is
+  **not** a routine major: it is a shared runtime dependency, so the bump is a
+  `@oc-mui/plugin-system` major and ships with the table lift in #505; Dependabot
+  ignores lucide majors until then.
 - **Retarget the backend to a released Opencast.** The `backend/` bundles build
   against `org.opencastproject:base:20-SNAPSHOT`, so external contributors must
   compile Opencast `r/20.x` from source before they can build or deploy them
