@@ -2586,7 +2586,7 @@ export function useAppConfig(): {
     error: Error | null;
     isFetched: boolean;
     refetch: (options?: RefetchOptions) => Promise<QueryObserverResult<    {
-    [x: string]: unknown;
+    [key: string]: unknown;
     productionConfigUrl: string;
     productionAppPluginUrl: string;
     downloadBaseUrl?: string | undefined;

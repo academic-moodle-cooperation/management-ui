@@ -117,7 +117,9 @@ The Shared Runtime Dependencies contract (`@oc-mui/plugin-system`'s `SHARED_RUNT
 - ✅ **`.local-plugins/` dev** — the dev server surfaces each plugin's `workspaceDependencies` (read from `plugin.json`) into `/local-plugins/manifest.json` ([`local-plugins-dev.ts`](../../packages/vite-config/src/plugins/local-plugins-dev.ts)); the shell gates each entry via `passesSharedDependencyGate` ([`sharedDepsGate.ts`](../../apps/shell/src/services/sharedDepsGate.ts)) in `PluginInitializer` before loading.
 - ⏳ **JAR** — the same gate is applied to backend entries, and [`jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts) reads `workspaceDependencies` when present. **Residual:** the backend's aggregated `plugins.json` doesn't carry `workspaceDependencies` per plugin yet, so the gate is a no-op for JAR plugins until then. Chosen option (a) — backend embeds the field per plugin in `plugins.json` (forward-compatible; the shell already consumes it). The alternative (b, loader fetches `<pluginDir>/plugin.json`) remains open if the backend change is undesirable.
 
-- **When to revisit**: the JAR residual when the backend `plugins.json` producer is next touched (Opencast-side). Everything in-repo is done.
+- ⏳ **Table drift (since v20.1.0)** — `@oc-mui/ui`, `@oc-mui/query` and `@oc-mui/ui-config` are published as 2.x, but `SHARED_RUNTIME_MAJORS` still lists them at 1, so the gate rejects a truthful `^2` declaration. Documented in [Contracts §5](./contracts.md#5-shared-runtime-dependencies) as *known drift*; community plugins leave the three names out of `workspaceDependencies` for now, and the scaffold templates no longer declare `@oc-mui/ui`. Lifting the three entries to 2 is a `@oc-mui/plugin-system` major (likely with a `PLUGIN_API_VERSION` flip) and is to be bundled with the next host major rather than shipped alone.
+
+- **When to revisit**: the JAR residual when the backend `plugins.json` producer is next touched (Opencast-side); the table drift at the next `@oc-mui/plugin-system` major.
 
 ### 5.4 Deep-link return after SSO login
 

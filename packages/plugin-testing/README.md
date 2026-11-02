@@ -57,7 +57,7 @@ describe("my-plugin contract", () => {
 | Method | Intent |
 | --- | --- |
 | `expectActivated()` | The plugin is in `manager.plugins` after `register()`. |
-| `expectRegistered([...eps])` | Each listed extension point has ≥ 1 entry. |
+| `expectRegistered([...eps])` | Each listed extension point has ≥ 1 entry — an object (`registerObject`) or a component (`registerComponent`). |
 | `expectAllManifestRegistrationsSucceed()` | Same as above, fed by `manifest.extensionPoints`. |
 | `expectI18nKeyParity(locales?)` | Every locale under each `i18nNamespaces` folder exposes the same flattened key set. |
 | `expectCleanRender({ render? })` | No `console.error` / `console.warn` since the last call (optionally renders a React tree first). |
