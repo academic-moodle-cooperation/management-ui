@@ -6,7 +6,7 @@ import { logger } from "@oc-mui/utils";
 
 import { marketplaceV2Config } from "./config";
 import { loadTrials } from "./services/trials";
-import { Discover } from "./views/Discover";
+import { Marketplace } from "./views/Marketplace";
 
 const log = logger.child({ component: "admin-marketplace-v2" });
 
@@ -39,7 +39,7 @@ export const adminMarketplaceV2Plugin = createPlugin({
       name: "Marketplace v2",
       routePath: "/admin/marketplace-v2",
       requiredRoles: MARKETPLACE_ROLES,
-      component: Discover,
+      component: Marketplace,
     });
 
     manager.registerObject("sidebar:nav-items", "marketplace-v2", {

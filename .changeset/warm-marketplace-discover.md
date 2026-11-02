@@ -20,6 +20,10 @@ Features so far:
   optional integrity pinning (`try.requireIntegrity` to make it mandatory).
   There is deliberately no permanent install — permanence goes through the
   deployment path.
+- **Library** — the deployment's plugin inventory, one row per namespace,
+  grouped by status (active / trials / available but disabled) with origin,
+  module types, version, a read-only newer-in-registry hint, and the exact
+  `app.enabledPlugins` value to copy. Read-only by design.
 
 The registry document gains three optional fields: `tagline` (one-line pitch
 for cards), `accentColor` (tile/artwork color), and `integrity` (SRI hash of

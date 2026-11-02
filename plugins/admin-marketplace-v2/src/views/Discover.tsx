@@ -8,7 +8,6 @@ import { PluginRow, taglineOf } from "../components/PluginRow";
 import { TrialBanner } from "../components/TrialBanner";
 import { TryConfirmDialog } from "../components/TryConfirmDialog";
 import { marketplaceV2Config } from "../config";
-import { useCatalog } from "../hooks/useCatalog";
 import {
   endTrial,
   getTrialErrors,
@@ -17,6 +16,7 @@ import {
   startTrial,
 } from "../services/trials";
 
+import type { CatalogState } from "../hooks/useCatalog";
 import type { RegistryCategory, RegistryPlugin } from "../services/registry";
 import type { FC } from "react";
 
@@ -57,9 +57,14 @@ function matches(plugin: RegistryPlugin, query: string, category: RegistryCatego
   return haystack.includes(q);
 }
 
-const Discover: FC = () => {
+interface DiscoverProps {
+  /** Shared with the Library tab so the catalog is fetched once per page. */
+  catalog: CatalogState;
+}
+
+const Discover: FC<DiscoverProps> = ({ catalog }) => {
   const cfg = marketplaceV2Config.use();
-  const { plugins, loading, error, reload } = useCatalog();
+  const { plugins, loading, error, reload } = catalog;
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<RegistryCategory | "all">("all");
   const [selected, setSelected] = useState<RegistryPlugin | null>(null);

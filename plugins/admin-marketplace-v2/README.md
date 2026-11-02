@@ -28,6 +28,18 @@ SRI `integrity` hash, the fetched bytes must match or the load aborts
 (verified inside `@oc-mui/remote-plugin-loader`, no second fetch);
 `requireIntegrity: true` refuses unpinned entries entirely.
 
+**Library** (second tab, `#library`): the deployment's plugin inventory —
+one row per namespace, grouped by status (*Active* · *Trials* · *Available
+but disabled*), with origin (Built-in / Deployment JAR / Local dev / Trial /
+Shell), module types, version, and a read-only "Registry: x.y.z" hint when the
+catalog knows a newer version. Deliberately no toggles: enabling a plugin for
+the whole organisation is a deployment step, so every row shows and copies the
+exact `app.enabledPlugins` value (the namespace) and explains which of the
+shell's two gates (`app.enabledPlugins`, `config.plugins.<ns>.enabled`) keeps a
+present plugin off. Sources: `manager.plugins`, the shell-injected
+`marketplace.getAllPlugins`, `/management-tool/ui/config/plugins.json`, the
+dev `.local-plugins` manifest, and this tab's trials.
+
 Config slice (`config.plugins["admin-marketplace-v2"]`):
 
 ```json

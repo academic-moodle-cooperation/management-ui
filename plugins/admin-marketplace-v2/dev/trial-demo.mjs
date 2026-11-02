@@ -1,6 +1,7 @@
 // Minimal remote plugin used to exercise the marketplace-v2 Try gesture in dev.
-import { createPlugin } from "@oc-mui/plugin-system";
 import { createElement } from "react";
+
+import { createPlugin } from "@oc-mui/plugin-system";
 
 const TrialDemoPage = () =>
   createElement(

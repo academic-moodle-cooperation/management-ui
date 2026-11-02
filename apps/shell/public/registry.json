@@ -12,7 +12,7 @@
       "author": { "name": "Local Dev" },
       "url": "http://127.0.0.1:4600/plugins/trial-demo.mjs",
       "category": "experimental",
-      "integrity": "sha384-RCT7WYMO8Dp7N1vrRCAGU6D6kbfK2svtl3iz1nwOqQLXY71aR3tSXZDXtJcfDPhu",
+      "integrity": "sha384-JTyEvd8D0a2JmCJf0Ir/zMBQvZTYdkbzwqWPAyflIR4jptRfZuv9kap9G6Isy28I",
       "tags": ["local-dev", "trial-test"]
     },
     {
