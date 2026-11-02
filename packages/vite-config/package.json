@@ -46,12 +46,12 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
-    "@vitejs/plugin-react-swc": "^3.9.0",
+    "@vitejs/plugin-react-swc": "^4.3.3",
     "@oc-mui/utils": "workspace:*",
     "vite-plugin-static-copy": "^1.0.6"
   },
   "peerDependencies": {
-    "vite": "^6.3.5"
+    "vite": "^6.3.5 || ^7.0.0 || ^8.0.0"
   },
   "devDependencies": {
     "@types/node": "^25.0.6",
@@ -59,7 +59,7 @@
     "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.8.0",
     "typescript": "~6.0.3",
-    "vite": "^6.3.5",
+    "vite": "^8.3.5",
     "vitest": "^4.0.17"
   }
 }
