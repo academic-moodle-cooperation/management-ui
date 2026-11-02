@@ -20,7 +20,7 @@
     "@oc-mui/utils": "workspace:*",
     "lucide-react": "^0.417.0",
     "react": "^19.1.0",
-    "zod": "^4.3.6"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -30,7 +30,7 @@
     "@oc-mui/typescript-config": "workspace:*",
     "@oc-mui/vite-config": "workspace:*",
     "eslint": "^9.20.0",
-    "typescript": "^5.3.3",
+    "typescript": "^6.0.3",
     "vite": "^6.3.5",
     "vitest": "^4.0.17"
   }
