@@ -1,7 +1,9 @@
 import { Compass, LibraryBig } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { TrialBanner } from "../components/TrialBanner";
 import { useCatalog } from "../hooks/useCatalog";
+import { getTrialErrors, getTrials } from "../services/trials";
 
 import { Discover } from "./Discover";
 import { Library } from "./Library";
@@ -22,6 +24,9 @@ function tabFromHash(): Tab {
 const Marketplace: FC = () => {
   const [tab, setTab] = useState<Tab>(tabFromHash);
   const catalog = useCatalog();
+  // Trials only change via full page reloads, so a render-time read is stable.
+  const [trials] = useState(getTrials);
+  const [trialErrors] = useState(getTrialErrors);
 
   useEffect(() => {
     const onHash = (): void => setTab(tabFromHash());
@@ -63,6 +68,12 @@ const Marketplace: FC = () => {
           })}
         </div>
       </div>
+
+      {trials.length > 0 && (
+        <div className="mx-auto max-w-5xl px-8 pt-5">
+          <TrialBanner trials={trials} errors={trialErrors} />
+        </div>
+      )}
 
       {tab === "explore" ? (
         <Discover catalog={catalog} />

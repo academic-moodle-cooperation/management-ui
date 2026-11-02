@@ -3,6 +3,8 @@ import { useState } from "react";
 
 import { Button, toast } from "@oc-mui/ui/components";
 
+import { endTrial } from "../services/trials";
+
 import { PluginTile } from "./PluginTile";
 
 import type { InventoryItem, InventoryOrigin } from "../services/inventory";
@@ -27,13 +29,16 @@ const ORIGIN_CATEGORY: Record<InventoryOrigin, "feature" | "integration" | "util
 
 interface LibraryRowProps {
   item: InventoryItem;
+  /** Offered for present-but-disabled plugins: preview in this tab only. */
+  onTry?: (item: InventoryItem) => void;
 }
 
 /**
  * One inventory line. Read-only on purpose; the one interaction is copying
  * the namespace — the exact `app.enabledPlugins` value an operator needs.
  */
-const LibraryRow: FC<LibraryRowProps> = ({ item }) => {
+const LibraryRow: FC<LibraryRowProps> = ({ item, onTry }) => {
+  const canTry = item.status === "disabled" && item.origin !== "shell" && Boolean(onTry);
   const [copied, setCopied] = useState(false);
   const tileSource = item.registryEntry ?? { category: ORIGIN_CATEGORY[item.origin] };
 
@@ -60,7 +65,8 @@ const LibraryRow: FC<LibraryRowProps> = ({ item }) => {
           </span>
           {item.status === "trial" && (
             <span className="flex items-center gap-1 rounded-md bg-ok/15 px-1.5 py-0.5 text-[10.5px] font-semibold text-ok">
-              <FlaskConical className="size-3" /> this tab
+              <FlaskConical className="size-3" />
+              {item.trialKind === "local" ? "previewing · this tab" : "this tab"}
             </span>
           )}
           {item.registryNewer && (
@@ -106,16 +112,28 @@ const LibraryRow: FC<LibraryRowProps> = ({ item }) => {
         )}
       </div>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        className="self-center text-muted-foreground"
-        onClick={copyNamespace}
-        title="Copy the app.enabledPlugins value"
-      >
-        {copied ? <Check className="size-3.5 text-ok" /> : <Copy className="size-3.5" />}
-        <span className="text-xs">Copy namespace</span>
-      </Button>
+      <div className="flex items-center gap-1.5 self-center">
+        {canTry && onTry && (
+          <Button variant="outline" size="sm" onClick={() => onTry(item)} title="Preview in this tab only">
+            <FlaskConical className="size-3.5" /> Try
+          </Button>
+        )}
+        {item.status === "trial" && (
+          <Button variant="outline" size="sm" onClick={() => endTrial(item.namespace)} title="Unload it from this tab (reloads)">
+            End trial
+          </Button>
+        )}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground"
+          onClick={copyNamespace}
+          title="Copy the app.enabledPlugins value"
+        >
+          {copied ? <Check className="size-3.5 text-ok" /> : <Copy className="size-3.5" />}
+          <span className="text-xs">Copy namespace</span>
+        </Button>
+      </div>
     </div>
   );
 };

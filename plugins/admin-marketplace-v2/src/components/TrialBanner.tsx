@@ -45,7 +45,12 @@ const TrialBanner: FC<TrialBannerProps> = ({ trials, errors }) => {
                 <span className="size-1.5 shrink-0 rounded-full bg-ok" />
               )}
               <span className="font-medium">{trial.name}</span>
-              <span className="font-mono text-xs text-muted-foreground">v{trial.version}</span>
+              {trial.version && (
+                <span className="font-mono text-xs text-muted-foreground">v{trial.version}</span>
+              )}
+              <span className="text-xs text-muted-foreground">
+                {trial.kind === "local" ? "deployed here · previewing" : "from registry"}
+              </span>
               {error && (
                 <span className="min-w-0 truncate text-xs text-error" title={error}>
                   {error}

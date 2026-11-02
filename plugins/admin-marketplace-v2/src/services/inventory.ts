@@ -42,6 +42,8 @@ export interface InventoryItem {
   registryNewer?: string;
   /** Bundle URL for JAR / local / trial entries. */
   url?: string;
+  /** For trials: a registry bundle, or a preview of a deployed-but-disabled plugin. */
+  trialKind?: "remote" | "local";
 }
 
 /** The slice of AppConfig the inventory reads — structural, to stay decoupled. */
@@ -129,6 +131,7 @@ export function disabledReasonFor(
 interface Draft {
   origin: InventoryOrigin;
   namespace: string;
+  trialKind?: "remote" | "local";
   displayName?: string;
   types: Set<string>;
   versions: Set<string>;
@@ -158,9 +161,18 @@ export function buildInventory(sources: InventorySources): InventoryItem[] {
   for (const trial of trials) {
     const d = draft("trial", trial.id);
     d.displayName = trial.name;
-    d.versions.add(trial.version);
-    d.url = trial.url;
+    d.trialKind = trial.kind;
+    if (trial.version) d.versions.add(trial.version);
+    if (trial.kind === "remote") d.url = trial.url;
     d.registeredAny = true;
+    // A local preview's modules are registered under its namespace — show them.
+    for (const [name, p] of registered) {
+      const parts = splitName(name);
+      if (parts.namespace === trial.id) {
+        if (parts.type) d.types.add(parts.type);
+        d.versions.add(p.version);
+      }
+    }
     explained.add(trial.id);
   }
 
@@ -246,6 +258,7 @@ export function buildInventory(sources: InventorySources): InventoryItem[] {
       ...(reason && { disabledReason: reason }),
       ...(entry && { registryEntry: entry }),
       ...(d.url !== undefined && { url: d.url }),
+      ...(d.trialKind && { trialKind: d.trialKind }),
     };
     if (entry && version && isNewerVersion(entry.version, version)) {
       item.registryNewer = entry.version;

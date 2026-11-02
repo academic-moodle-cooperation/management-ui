@@ -40,6 +40,15 @@ present plugin off. Sources: `manager.plugins`, the shell-injected
 `marketplace.getAllPlugins`, `/management-tool/ui/config/plugins.json`, the
 dev `.local-plugins` manifest, and this tab's trials.
 
+The Library has exactly one gesture, and it is the same word as in Explore:
+**Try** on a present-but-disabled plugin previews it **in this tab only**. No
+code is fetched — the plugin is already deployed; the marketplace records the
+namespace through `@oc-mui/plugin-system`'s preview contract
+(`addPluginPreview`, `sessionStorage`) and reloads, and the shell's
+`PluginInitializer` treats previewed namespaces as enabled at every load gate
+(bundled, JAR, `.local-plugins`). Typical use: look at a plugin on staging
+before deciding to list it in `app.enabledPlugins` for everyone.
+
 Config slice (`config.plugins["admin-marketplace-v2"]`):
 
 ```json

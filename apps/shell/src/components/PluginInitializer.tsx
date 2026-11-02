@@ -7,6 +7,7 @@ import {
   createRendererPlugin,
   usePluginManager,
   type Plugin,
+  readPluginPreviews,
 } from "@oc-mui/plugin-system";
 import type { AppConfig } from "@oc-mui/query";
 import { getAppConfigSync } from "@oc-mui/query";
@@ -69,10 +70,19 @@ const parsePluginName = (name: string): { namespace: string; type: string } => {
   return { namespace: namespace || "unknown", type: type || "unknown" };
 };
 
+/**
+ * Namespaces previewed in this tab (sessionStorage, written by the marketplace's
+ * Try gesture for present-but-disabled plugins). Populated once per boot in
+ * initializePlugins; honoured by every load gate below so a preview behaves
+ * exactly like an enabled plugin — for this tab only.
+ */
+let previewNamespaces = new Set<string>();
+
 const matchesEnabledNamespace = (
   entry: { namespace?: string | undefined },
   enabledNamespaces: Set<string>,
 ): boolean => {
+  if (entry.namespace !== undefined && previewNamespaces.has(entry.namespace)) return true;
   if (enabledNamespaces.size === 0) return true;
   if (entry.namespace === undefined) return true;
   return enabledNamespaces.has(entry.namespace);
@@ -193,6 +203,14 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
 
         // 5. Get localStorage overrides for plugin enable/disable
         const overrides = getPluginOverrides();
+
+        // 5b. Tab-scoped previews: treated as enabled at every gate below.
+        previewNamespaces = new Set(readPluginPreviews());
+        if (previewNamespaces.size > 0) {
+          logger.info("PluginInitializer: previewing plugins in this tab (sessionStorage)", {
+            namespaces: [...previewNamespaces],
+          });
+        }
         const hasOverrides = Object.keys(overrides.overrides).length > 0;
         if (hasOverrides) {
           logger.info("PluginInitializer: Applying plugin overrides from localStorage", {
@@ -283,7 +301,11 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
             );
             if (!namespaceEnabled) continue;
 
-            if (pluginNamespace && !isPluginEnabledAtRuntime(mergedConfig, pluginNamespace)) {
+            if (
+              pluginNamespace &&
+              !previewNamespaces.has(pluginNamespace) &&
+              !isPluginEnabledAtRuntime(mergedConfig, pluginNamespace)
+            ) {
               logger.info(
                 `PluginInitializer: Skipping "${plugin.name}" - disabled via config.plugins.${pluginNamespace}.enabled`,
               );

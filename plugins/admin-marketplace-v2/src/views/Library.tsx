@@ -1,9 +1,12 @@
 import { Info } from "lucide-react";
+import { useState } from "react";
 
 import { Skeleton } from "@oc-mui/ui/components";
 
 import { LibraryRow } from "../components/LibraryRow";
+import { TryConfirmDialog } from "../components/TryConfirmDialog";
 import { useInventory } from "../hooks/useInventory";
+import { startLocalTrial } from "../services/trials";
 
 import type { InventoryItem, InventoryStatus } from "../services/inventory";
 import type { RegistryPlugin } from "../services/registry";
@@ -33,6 +36,7 @@ const GROUPS: Array<{ status: InventoryStatus; title: string; hint: string }> = 
  */
 const Library: FC<LibraryProps> = ({ catalog }) => {
   const { items, loading } = useInventory(catalog);
+  const [tryCandidate, setTryCandidate] = useState<InventoryItem | null>(null);
 
   if (loading) {
     return (
@@ -87,13 +91,26 @@ const Library: FC<LibraryProps> = ({ catalog }) => {
             ) : (
               <div className="space-y-2">
                 {group.map((item) => (
-                  <LibraryRow key={item.key} item={item} />
+                  <LibraryRow key={item.key} item={item} onTry={setTryCandidate} />
                 ))}
               </div>
             )}
           </section>
         );
       })}
+
+      <TryConfirmDialog
+        plugin={tryCandidate ? { ...tryCandidate, name: tryCandidate.displayName } : null}
+        mode="local"
+        onConfirm={(item) =>
+          startLocalTrial({
+            namespace: item.namespace,
+            name: item.displayName,
+            ...(item.version !== undefined && { version: item.version }),
+          })
+        }
+        onCancel={() => setTryCandidate(null)}
+      />
     </div>
   );
 };

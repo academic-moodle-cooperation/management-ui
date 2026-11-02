@@ -15,6 +15,7 @@
  */
 
 import { registerPluginI18nNamespaces } from "@oc-mui/i18n";
+import { addPluginPreview, removePluginPreview, writePluginPreviews } from "@oc-mui/plugin-system";
 import type { PluginManager } from "@oc-mui/plugin-system";
 import { loadAndRegister } from "@oc-mui/remote-plugin-loader";
 import { logger } from "@oc-mui/utils";
@@ -29,19 +30,35 @@ const log = logger.child({ component: "marketplace-v2/trials" });
 const TRIALS_KEY = "mui.marketplace-v2.trials";
 const ERRORS_KEY = "mui.marketplace-v2.trial-errors";
 
-/** The slice of a registry entry a trial needs to replay at boot. */
-export interface Trial {
+interface TrialBase {
   id: string;
   name: string;
   version: string;
+  startedAt: string;
+}
+
+/** A registry bundle loaded ephemerally into this tab (the Explore gesture). */
+export interface RemoteTrial extends TrialBase {
+  kind: "remote";
   url: string;
   integrity?: string;
   workspaceDependencies?: Record<string, string>;
   apiVersion?: string;
   localesUrl?: string;
   i18nNamespaces?: string[];
-  startedAt: string;
 }
+
+/**
+ * A plugin already present on the deployment but switched off by config,
+ * previewed in this tab (the Library gesture). No code is fetched by us: the
+ * host honours the namespace via `@oc-mui/plugin-system`'s preview contract.
+ * `id` is the namespace.
+ */
+export interface LocalTrial extends TrialBase {
+  kind: "local";
+}
+
+export type Trial = RemoteTrial | LocalTrial;
 
 function readJson<T>(key: string, fallback: T): T {
   try {
@@ -53,7 +70,12 @@ function readJson<T>(key: string, fallback: T): T {
 }
 
 export function getTrials(): Trial[] {
-  return readJson<Trial[]>(TRIALS_KEY, []);
+  // Entries written before `kind` existed are remote trials.
+  return readJson<Array<Partial<Trial> & { url?: string }>>(TRIALS_KEY, []).flatMap((t) =>
+    t.id && t.name && t.version && t.startedAt
+      ? [{ ...t, kind: t.kind ?? "remote" } as Trial]
+      : [],
+  );
 }
 
 export function isTrialActive(pluginId: string): boolean {
@@ -80,6 +102,7 @@ function writeErrors(errors: Record<string, string>): void {
 export function startTrial(plugin: RegistryPlugin): void {
   const trials = getTrials().filter((t) => t.id !== plugin.id);
   trials.push({
+    kind: "remote",
     id: plugin.id,
     name: plugin.name,
     version: plugin.version,
@@ -95,9 +118,29 @@ export function startTrial(plugin: RegistryPlugin): void {
   window.location.reload();
 }
 
+/**
+ * Preview a plugin that is present on this deployment but disabled by config:
+ * record the trial, register the namespace with the host's preview contract,
+ * and reload so it goes through the boot path like an enabled plugin.
+ */
+export function startLocalTrial(plugin: { namespace: string; name: string; version?: string }): void {
+  const trials = getTrials().filter((t) => t.id !== plugin.namespace);
+  trials.push({
+    kind: "local",
+    id: plugin.namespace,
+    name: plugin.name,
+    version: plugin.version ?? "",
+    startedAt: new Date().toISOString(),
+  });
+  writeTrials(trials);
+  addPluginPreview(plugin.namespace);
+  window.location.reload();
+}
+
 /** End one trial (or all) and reload to unload the code. */
 export function endTrial(pluginId: string): void {
   writeTrials(getTrials().filter((t) => t.id !== pluginId));
+  removePluginPreview(pluginId);
   const errors = getTrialErrors();
   delete errors[pluginId];
   writeErrors(errors);
@@ -107,6 +150,7 @@ export function endTrial(pluginId: string): void {
 export function endAllTrials(): void {
   sessionStorage.removeItem(TRIALS_KEY);
   sessionStorage.removeItem(ERRORS_KEY);
+  writePluginPreviews([]);
   window.location.reload();
 }
 
@@ -122,6 +166,10 @@ export async function loadTrials(manager: PluginManager, cfg: TryConfig): Promis
   const errors: Record<string, string> = {};
 
   for (const trial of trials) {
+    // Local previews are loaded by the host itself (preview contract); nothing
+    // to fetch here. Whether it actually registered shows in the Library.
+    if (trial.kind === "local") continue;
+
     const gate = validateTryPlugin(trial, cfg);
     if (!gate.valid) {
       errors[trial.id] = gate.error ?? "Blocked by deployment policy.";

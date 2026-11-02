@@ -5,16 +5,9 @@ import { Button, Input, Skeleton } from "@oc-mui/ui/components";
 
 import { DetailDialog } from "../components/DetailDialog";
 import { PluginRow, taglineOf } from "../components/PluginRow";
-import { TrialBanner } from "../components/TrialBanner";
 import { TryConfirmDialog } from "../components/TryConfirmDialog";
 import { marketplaceV2Config } from "../config";
-import {
-  endTrial,
-  getTrialErrors,
-  getTrials,
-  isTrialActive,
-  startTrial,
-} from "../services/trials";
+import { endTrial, isTrialActive, startTrial } from "../services/trials";
 
 import type { CatalogState } from "../hooks/useCatalog";
 import type { RegistryCategory, RegistryPlugin } from "../services/registry";
@@ -70,10 +63,6 @@ const Discover: FC<DiscoverProps> = ({ catalog }) => {
   const [selected, setSelected] = useState<RegistryPlugin | null>(null);
   const [tryCandidate, setTryCandidate] = useState<RegistryPlugin | null>(null);
 
-  // Trials only change via full page reloads, so a render-time read is stable.
-  const [trials] = useState(getTrials);
-  const [trialErrors] = useState(getTrialErrors);
-
   const visible = useMemo(
     () => plugins.filter((p) => matches(p, query, category)),
     [plugins, query, category],
@@ -118,12 +107,6 @@ const Discover: FC<DiscoverProps> = ({ catalog }) => {
       </div>
 
       <div className="mx-auto max-w-5xl px-8">
-        {/* ---- Active trials ---- */}
-        {trials.length > 0 && (
-          <div className="pt-5">
-            <TrialBanner trials={trials} errors={trialErrors} />
-          </div>
-        )}
 
         {/* ---- Toolbar: filters + search ---- */}
         <div className="flex flex-wrap items-center gap-2 py-5">

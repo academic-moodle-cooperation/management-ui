@@ -114,10 +114,24 @@ describe("buildInventory", () => {
     expect(byNs["reports"]).toMatchObject({ origin: "jar", status: "disabled", disabledReason: "not-in-enabledPlugins" });
   });
 
+  it("shows a local preview as a trial with the modules it registered", () => {
+    const example = plugin("example:header", "1.0.0");
+    const items = buildInventory(
+      sources({
+        registered: new Map([[example.name, example]]),
+        bundled: [example],
+        trials: [{ kind: "local", id: "example", name: "Example", version: "1.0.0", startedAt: "" }],
+        config: { app: { enabledPlugins: ["core"] } },
+      }),
+    );
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({ origin: "trial", status: "trial", trialKind: "local", types: ["header"] });
+  });
+
   it("groups trials separately and never duplicates them as bundled/jar", () => {
     const items = buildInventory(
       sources({
-        trials: [{ id: "demo", name: "Demo", version: "1.0.0", url: "https://x/y.mjs", startedAt: "" }],
+        trials: [{ kind: "remote", id: "demo", name: "Demo", version: "1.0.0", url: "https://x/y.mjs", startedAt: "" }],
         jars: [{ name: "demo", namespace: "demo", url: "https://x/y.mjs" }],
       }),
     );

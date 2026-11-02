@@ -23,7 +23,9 @@ Features so far:
 - **Library** — the deployment's plugin inventory, one row per namespace,
   grouped by status (active / trials / available but disabled) with origin,
   module types, version, a read-only newer-in-registry hint, and the exact
-  `app.enabledPlugins` value to copy. Read-only by design.
+  `app.enabledPlugins` value to copy. Read-only by design — except for one
+  gesture: **Try** on a present-but-disabled plugin previews it in this tab
+  only (via `@oc-mui/plugin-system`'s preview contract; no code is fetched).
 
 The registry document gains three optional fields: `tagline` (one-line pitch
 for cards), `accentColor` (tile/artwork color), and `integrity` (SRI hash of
