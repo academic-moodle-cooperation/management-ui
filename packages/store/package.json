@@ -75,7 +75,7 @@
     "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.9.0",
     "tsup": "^8.5.0",
-    "typescript": "~5.5.4",
+    "typescript": "~6.0.3",
     "vitest": "^4.0.17",
     "@testing-library/react": "^16.3.3",
     "jsdom": "^27.4.0"
