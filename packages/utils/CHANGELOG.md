@@ -1,5 +1,16 @@
 # @oc-mui/utils
 
+## 1.3.1
+
+### Patch Changes
+
+- 25ad329: Dependency maintenance: TypeScript 5.5 → 6.0. The `tsconfig.json` files drop
+  the now-deprecated `baseUrl` (every `paths` entry was already relative to the
+  config file), `@oc-mui/vite-config` sets `rootDir` explicitly, and the
+  packages that side-effect-import a stylesheet without resolving `vite/client`
+  declare `*.css` themselves, since TypeScript 6 rejects unresolved side-effect
+  imports by default.
+
 ## 1.3.0
 
 ### Minor Changes
