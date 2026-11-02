@@ -28,6 +28,13 @@ The Manifest 1.1 and Runtime API 1.1 contracts are **mechanically verified** by 
 
 The JSON Schema at the path above is the single source of truth. The runtime validator enforces the subset needed for loading; the schema is what editors and the registry validate against.
 
+**Two accepted shapes of the same manifest.** The schema describes one file, but it is read by two consumers that look at different parts of it:
+
+- **Single-module manifest** — the shape `pnpm create-plugin` scaffolds and the contract-test harness reads (`readPluginManifest` in `@oc-mui/plugin-testing`). The plugin is one bundle; `extensionPoints: string[]` (manifest 1.1) declares what `initialize()` populates, and `i18nNamespaces` / `locales` sit at the top level.
+- **Multi-module manifest** — the same file with a `modules[]` array, used by organisation plugins that ship several independently activatable units (an app, a sidebar, a footer, …) in one JAR. Each entry carries `id`, `type`, `entry` (required) plus optional `css`, `locales`, `i18nNamespaces`; top-level `locales` / `i18nNamespaces` act as defaults for every module. The backend's `PluginBundleTracker` (`backend/management-config`) turns each entry into one line of `plugins.json`, with the id `<manifest id>/<module id>` and the name `<manifest name>:<module type>`. When `modules[]` is present the root-level `entry`, `css` and `type` are ignored.
+
+Both shapes validate against the schema and both load at runtime through the same loader; the contract test only exercises the first (one `index.ts` per harness run). A multi-module plugin can still ship a contract test per module by pointing a harness at each module's entry.
+
 **Stability rules:**
 
 - **Required fields** (`id`, `name`, `version`, `description`, `author`, `namespace`) are frozen. They will not be removed or semantically changed within the 1.x API.
@@ -147,7 +154,7 @@ Breaking changes to any of these are **major**. Adding new optional top-level ke
 ## 5. Shared Runtime Dependencies
 
 **Authoritative source:** [`packages/plugin-system/src/sharedRuntime.ts`](../../packages/plugin-system/src/sharedRuntime.ts) (`SHARED_RUNTIME_MAJORS`).
-**Contract version:** 1.0.
+**Contract version:** 1.1.
 
 The host loads exactly one copy of certain packages into the page and shares them with every plugin via `window.__SHARED_MODULES__`. Plugins must consume the host's copy — bundling a different major into the plugin's own `.mjs` causes two React contexts in the same tree, broken hooks, and mismatched `@oc-mui/*` types.
 
@@ -161,6 +168,7 @@ Each name below is shared at the specified major. Patches and minors of a shared
 | `react-dom` | 19 |
 | `react/jsx-runtime` | 19 |
 | `lucide-react` | 0 |
+| `zod` | 4 |
 | `@oc-mui/plugin-system` | 1 |
 | `@oc-mui/app-runtime` | 1 |
 | `@oc-mui/ui` | 1 |
@@ -172,6 +180,8 @@ Each name below is shared at the specified major. Patches and minors of a shared
 | `@oc-mui/ui-config` | 1 |
 
 The runtime list is exported as `SHARED_RUNTIME_MAJORS` from `@oc-mui/plugin-system`. **Known gap:** it is *not* identical to `SHARED_MODULE_NAMES` in [`@oc-mui/remote-plugin-loader`](../../packages/remote-plugin-loader/src/transform.ts), the list of imports the loader actually rewires to `window.__SHARED_MODULES__`. Two entries — `@oc-mui/store` and `@oc-mui/ui-config` — pass the compatibility gate but are **not** rewired, so a plugin importing them ends up bundling its own copy; do not rely on them being host-provided. `@oc-mui/ui` is rewired only through its subpaths (`@oc-mui/ui/components`, `@oc-mui/ui/components/icons`, `@oc-mui/ui/lib`, `@oc-mui/ui/lib/utils`), never the bare specifier.
+
+**Known drift (since v20.1.0):** the published majors of three entries no longer match the table. `@oc-mui/ui`, `@oc-mui/query` and `@oc-mui/ui-config` ship as **2.x** on npm (and in this workspace), while the table — and therefore the gate — still says **1**. Lifting the three entries to 2 is a major bump of `@oc-mui/plugin-system` (see *Versioning rules* below) and will be bundled with the next planned host major instead of shipping on its own. Until then a plugin that compiles against `@oc-mui/ui@^2` or `@oc-mui/query@^2` must **not** declare those names in `workspaceDependencies`: a `^2` declaration is rejected by the gate (`"Plugin requires @oc-mui/ui major 2, host provides 1"`), and a `^1` declaration would be a lie. Leave them out — the loader still rewires the imports to the host's copy, the declaration only feeds the gate — and declare the entries whose majors do match (`react`, `@oc-mui/plugin-system`, `@oc-mui/utils`, `@oc-mui/router`, `@oc-mui/i18n`). The scaffold templates follow this rule. Re-add the three names once the table reads 2.
 
 ### What plugins must do
 
@@ -276,6 +286,8 @@ No contract change is allowed without the changeset - plugins cannot cope with s
 
 ## Changelog
 
+- **2026-11-02:** Documentation errata — no contract change. §5 now records the **known drift** between `SHARED_RUNTIME_MAJORS` (still 1 for `@oc-mui/ui`, `@oc-mui/query`, `@oc-mui/ui-config`) and the published 2.x majors of those packages, and tells plugin authors to leave the three names out of `workspaceDependencies` until the table is lifted (a `@oc-mui/plugin-system` major, bundled with the next host major). The `pnpm create-plugin` templates no longer declare `@oc-mui/ui`.
+- **2026-10-28:** Shared Runtime Dependencies Contract bumped to 1.1 (minor). `zod` (major 4) joins `SHARED_RUNTIME_MAJORS`, `SHARED_MODULE_NAMES` and the plugin build's default externals: `definePluginConfig` takes a zod schema, so plugins already had to agree with the host on zod; now they consume the host's copy instead of bundling their own. Plugins built before this keep working (same major). §1 now documents the two accepted manifest shapes (single-module with `extensionPoints`, multi-module with `modules[]`); no schema change.
 - **2026-10-13:** Theme Contract bumped to 2.1 (minor). The `plugins` cascade layer moves from *after* `utilities` to *between* `base` and `utilities` (`theme, base, plugins, components, utilities`). The 2.0 guarantee "plugin utilities win on the plugin's own DOM" was never in effect: a stray `@tailwindcss/postcss` alpha in the host's PostCSS config rewrote the compiled `@layer` statement and put `plugins` *below* `base`, so plugin utilities lost to the preflight reset (production landing page without padding or heading size). Placing `plugins` last, as declared, breaks host chrome instead — a plugin's plain `.hidden` beats the host's `md:block` on the sidebar. The new order makes plugin utilities beat preflight while host utilities keep precedence on collisions; plugins escalate their own responsive variants with `!important`. The PostCSS config is gone from the host apps and `@oc-mui/ui/postcss.config` is a deprecated no-op.
 - **2026-04-16:** Initial freeze. Manifest 1.0, Runtime API 1.0, Theme 2.0, Config 0.9 (pre-stable).
 - **2026-04-17:** Config Contract promoted to 1.0. Stable keys: `app.theme`, `app.locale`, `app.enabledPlugins`, `config.plugins[pluginId]`, `config.plugins[pluginId].enabled`. Layered merge order (`app:config:defaults` ⊕ base ⊕ `app:config`) and the `definePluginConfig` reader API are now frozen for 1.x. See [Configuration model](./configuration.md).

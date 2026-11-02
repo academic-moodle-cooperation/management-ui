@@ -19,6 +19,10 @@ export const SHARED_MODULE_NAMES = [
   "react-dom",
   "react/jsx-runtime",
   "lucide-react",
+  // `definePluginConfig` takes a zod schema, so zod is part of the plugin
+  // contract. Sharing the host's copy keeps one zod per page and lets the
+  // compatibility gate catch a plugin built against another major.
+  "zod",
   "@oc-mui/plugin-system",
   "@oc-mui/ui/components",
   "@oc-mui/ui/components/icons",

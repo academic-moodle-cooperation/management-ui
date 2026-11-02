@@ -19,6 +19,12 @@
  *   (which controls which imports are rewritten to `window.__SHARED_MODULES__`).
  * - The actually-installed majors in the workspace.
  *
+ * KNOWN DRIFT (since v20.1.0): `@oc-mui/ui`, `@oc-mui/query` and
+ * `@oc-mui/ui-config` are published (and installed here) as 2.x while this
+ * table still says 1. Lifting them is a major bump of this package and is
+ * deliberately deferred to the next host major; until then plugins leave the
+ * three names out of `workspaceDependencies`. See docs/reference/contracts.md §5.
+ *
  * The export shape is a `Record<string, number>` of major numbers, not full
  * semvers, because the only thing the host promises is the *major*. Patches
  * and minors of a shared dep can roll forward freely within the same major.
@@ -29,8 +35,10 @@ export const SHARED_RUNTIME_MAJORS: Readonly<Record<string, number>> = Object.fr
   "react-dom": 19,
   "react/jsx-runtime": 19,
 
-  // The lone external library exposed today
+  // External libraries exposed by the host
   "lucide-react": 0,
+  // zod 4: `definePluginConfig` schemas. Added 2026-10-28 (minor).
+  zod: 4,
 
   // Workspace packages — all 1.x for the OSS-readiness line
   "@oc-mui/plugin-system": 1,
