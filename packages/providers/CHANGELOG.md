@@ -1,5 +1,31 @@
 # @oc-mui/providers
 
+## 4.0.1
+
+### Patch Changes
+
+- 25ad329: Dependency maintenance: TypeScript 5.5 → 6.0. The `tsconfig.json` files drop
+  the now-deprecated `baseUrl` (every `paths` entry was already relative to the
+  config file), `@oc-mui/vite-config` sets `rootDir` explicitly, and the
+  packages that side-effect-import a stylesheet without resolving `vite/client`
+  declare `*.css` themselves, since TypeScript 6 rejects unresolved side-effect
+  imports by default.
+- 36c0360: Dependency maintenance: Vite 6 → 8 (Rolldown-based), with
+  `@vitejs/plugin-react-swc` 4 and `@vitejs/plugin-react` 5.2 as the matching
+  plugin majors. `@oc-mui/vite-config` accepts `vite` 6, 7 or 8 as its peer and
+  drops the Rollup-only `generatedCode.constBindings` output option (Rolldown
+  always emits const bindings). The `pnpm create-plugin` templates scaffold
+  against Vite 8.
+- Updated dependencies
+- Updated dependencies [25ad329]
+- Updated dependencies [36c0360]
+- Updated dependencies [55bd01a]
+  - @oc-mui/plugin-system@1.3.1
+  - @oc-mui/query@2.1.1
+  - @oc-mui/router@1.1.3
+  - @oc-mui/ui@2.0.2
+  - @oc-mui/app-runtime@1.0.4
+
 ## 4.0.0
 
 ### Patch Changes
