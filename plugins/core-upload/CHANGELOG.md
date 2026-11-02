@@ -1,5 +1,30 @@
 # @oc-mui/plugin-core-upload
 
+## 1.1.3
+
+### Patch Changes
+
+- 25ad329: Dependency maintenance: TypeScript 5.5 → 6.0. The `tsconfig.json` files drop
+  the now-deprecated `baseUrl` (every `paths` entry was already relative to the
+  config file), `@oc-mui/vite-config` sets `rootDir` explicitly, and the
+  packages that side-effect-import a stylesheet without resolving `vite/client`
+  declare `*.css` themselves, since TypeScript 6 rejects unresolved side-effect
+  imports by default.
+- Updated dependencies [265974b]
+- Updated dependencies
+- Updated dependencies [25ad329]
+- Updated dependencies [36c0360]
+- Updated dependencies [55bd01a]
+- Updated dependencies [6bc9234]
+  - @oc-mui/i18n@1.1.1
+  - @oc-mui/plugin-system@1.3.1
+  - @oc-mui/query@2.1.1
+  - @oc-mui/router@1.1.3
+  - @oc-mui/store@1.1.2
+  - @oc-mui/ui@2.0.2
+  - @oc-mui/utils@1.3.1
+  - @oc-mui/plugin-core@1.1.2
+
 ## 1.1.2
 
 ### Patch Changes
