@@ -309,8 +309,11 @@ exports (this PR).
   job; either wire it up or replace it with a maintained checker.
 - **Major-version migrations** (each its own PR): `i18next` 23→26 + `react-i18next`
   (also clears the last *runtime* `pnpm audit` item, `i18next-http-backend`),
-  `zustand` 4→5, `react-day-picker` 8→10, `lucide-react` 0.417→1.x, and the app's
-  `vite` 6→7 (clears the residual `vite` audit highs).
+  `zustand` 4→5, `react-day-picker` 8→10. ✅ `vite` 6→8, `typescript` 5→6 and
+  `jsdom` 27→30 landed 2026-11-02 (#469, #480, #470). `lucide-react` 0.x→1.x is
+  **not** a routine major: it is a shared runtime dependency, so the bump is a
+  `@oc-mui/plugin-system` major and ships with the table lift in #505; Dependabot
+  ignores lucide majors until then.
 - **Retarget the backend to a released Opencast.** The `backend/` bundles build
   against `org.opencastproject:base:20-SNAPSHOT`, so external contributors must
   compile Opencast `r/20.x` from source before they can build or deploy them
