@@ -4,7 +4,7 @@
 
 ```ts
 
-import { AnyContext } from '@tanstack/react-router';
+import { AnyContext } from '@tanstack/router-core';
 import { AnyRoute } from '@tanstack/react-router';
 import { AnyRouter } from '@tanstack/react-router';
 import { createRootRoute } from '@tanstack/react-router';
@@ -16,7 +16,7 @@ import { Navigate } from '@tanstack/react-router';
 import { Outlet } from '@tanstack/react-router';
 import { default as React_2 } from 'react';
 import { redirect } from '@tanstack/react-router';
-import { ResolveParams } from '@tanstack/react-router';
+import { ResolveParams } from '@tanstack/router-core';
 import { RootRoute } from '@tanstack/react-router';
 import { Route } from '@tanstack/react-router';
 import { RouteComponent } from '@tanstack/react-router';

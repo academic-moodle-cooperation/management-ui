@@ -17,7 +17,6 @@
   "workspaceDependencies": {
     "react": "^19.0.0",
     "@oc-mui/plugin-system": "^1.0.0",
-    "@oc-mui/ui": "^1.0.0",
     "@oc-mui/utils": "^1.0.0"
   },
   "extensionPoints": [

@@ -1,7 +1,6 @@
 {
   "extends": "../typescript-config/react-library.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/*"]
