@@ -1,5 +1,36 @@
 # @oc-mui/i18n
 
+## 1.1.1
+
+### Patch Changes
+
+- 265974b: The delete confirmation for a video is headed **Delete video** / **Video
+  löschen** without a trailing question mark; the question stays in the dialog
+  text ("Are you sure you want to delete the video …?").
+- Dependency maintenance: jsdom 27 → 30 (test environment only).
+- 25ad329: Dependency maintenance: TypeScript 5.5 → 6.0. The `tsconfig.json` files drop
+  the now-deprecated `baseUrl` (every `paths` entry was already relative to the
+  config file), `@oc-mui/vite-config` sets `rootDir` explicitly, and the
+  packages that side-effect-import a stylesheet without resolving `vite/client`
+  declare `*.css` themselves, since TypeScript 6 rejects unresolved side-effect
+  imports by default.
+- 36c0360: Dependency maintenance: Vite 6 → 8 (Rolldown-based), with
+  `@vitejs/plugin-react-swc` 4 and `@vitejs/plugin-react` 5.2 as the matching
+  plugin majors. `@oc-mui/vite-config` accepts `vite` 6, 7 or 8 as its peer and
+  drops the Rollup-only `generatedCode.constBindings` output option (Rolldown
+  always emits const bindings). The `pnpm create-plugin` templates scaffold
+  against Vite 8.
+- 6bc9234: The episodes table offers one delete action for every role. The admin-only
+  "Delete permanently" entry (the index-level removal) is gone from the UI; the
+  remaining **Delete video** action runs the deployment's configured delete
+  workflow (`mui.deleteEvent`, typically a trash series) and confirms with
+  "Delete video — Are you sure you want to delete the video …?" (Delete /
+  Cancel). Translation keys renamed accordingly: `episodesTable.action.delete`,
+  `episodesTable.deleteDialogue.{heading,text}`,
+  `episodesTable.notification.{deleteSuccess,deleteError}`; the `moveToTrash`,
+  `deletePermanently`, `trashDialogue` and `trash*` notification keys are
+  removed.
+
 ## 1.1.0
 
 ### Minor Changes
