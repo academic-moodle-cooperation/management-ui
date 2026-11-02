@@ -85,6 +85,15 @@ const LibraryRow: FC<LibraryRowProps> = ({ item, onTry }) => {
             <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[11.5px] text-foreground">
               {item.namespace}
             </code>
+            <button
+              type="button"
+              onClick={copyNamespace}
+              title="Copy — this is the app.enabledPlugins value"
+              aria-label="Copy namespace"
+              className="rounded p-0.5 text-muted-foreground/70 transition-colors hover:bg-muted hover:text-foreground"
+            >
+              {copied ? <Check className="size-3 text-ok" /> : <Copy className="size-3" />}
+            </button>
           </span>
           {item.types.length > 0 && (
             <span className="font-mono">
@@ -123,16 +132,6 @@ const LibraryRow: FC<LibraryRowProps> = ({ item, onTry }) => {
             End trial
           </Button>
         )}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-muted-foreground"
-          onClick={copyNamespace}
-          title="Copy the app.enabledPlugins value"
-        >
-          {copied ? <Check className="size-3.5 text-ok" /> : <Copy className="size-3.5" />}
-          <span className="text-xs">Copy namespace</span>
-        </Button>
       </div>
     </div>
   );
