@@ -39,7 +39,7 @@
   <parent>
     <groupId>org.opencastproject</groupId>
     <artifactId>base</artifactId>
-    <version>20-SNAPSHOT</version>
+    <version>19-SNAPSHOT</version>
   </parent>
 
   <!--
