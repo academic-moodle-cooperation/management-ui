@@ -1,0 +1,167 @@
+import { BadgeCheck, ExternalLink, FlaskConical, ShieldCheck } from "lucide-react";
+
+import {
+  Badge,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@oc-mui/ui/components";
+
+import { accentFor } from "../lib/palette";
+
+import { PluginTile } from "./PluginTile";
+
+import type { RegistryPlugin } from "../services/registry";
+import type { FC } from "react";
+
+interface DetailDialogProps {
+  plugin: RegistryPlugin | null;
+  onClose: () => void;
+  /** Try gesture available for this entry (deployment opt-in + not a theme). */
+  canTry?: boolean;
+  /** A trial of this plugin is active in this tab. */
+  trialActive?: boolean;
+  onTry?: (plugin: RegistryPlugin) => void;
+  onEndTrial?: (pluginId: string) => void;
+}
+
+function formatDate(iso?: string): string | null {
+  if (!iso) return null;
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return null;
+  return date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+}
+
+/**
+ * Read-only plugin detail: identity, provenance, metadata, description.
+ * No Try/Install here yet — those gestures are separate features.
+ */
+const DetailDialog: FC<DetailDialogProps> = ({
+  plugin,
+  onClose,
+  canTry,
+  trialActive,
+  onTry,
+  onEndTrial,
+}) => {
+  if (!plugin) return null;
+
+  const accent = accentFor(plugin);
+  const updated = formatDate(plugin.lastUpdated);
+
+  const meta: Array<{ label: string; value: string; mono?: boolean }> = [
+    { label: "Version", value: plugin.version, mono: true },
+    { label: "Category", value: plugin.category },
+    ...(plugin.license ? [{ label: "License", value: plugin.license }] : []),
+    ...(updated ? [{ label: "Updated", value: updated }] : []),
+  ];
+
+  return (
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="overflow-hidden p-0 sm:max-w-xl">
+        {/* Accent band gives the dialog the plugin's identity without imagery. */}
+        <div
+          aria-hidden
+          className="h-20"
+          style={{
+            background: `linear-gradient(135deg, ${accent}, color-mix(in oklab, ${accent} 55%, black))`,
+          }}
+        />
+        <div className="px-6 pb-6">
+          <DialogHeader className="text-left">
+            <div className="-mt-9 flex items-end gap-4">
+              <div className="rounded-2xl bg-background p-1 shadow-md">
+                <PluginTile plugin={plugin} size={64} />
+              </div>
+              <div className="min-w-0 pb-1">
+                <DialogTitle className="flex items-center gap-2 font-heading text-xl">
+                  <span className="truncate">{plugin.name}</span>
+                  {plugin.verified && (
+                    <BadgeCheck aria-label="Verified" className="size-4.5 shrink-0 text-primary" />
+                  )}
+                  {plugin.integrity && (
+                    <span title="Integrity-pinned: only the exact reviewed build will execute.">
+                      <ShieldCheck className="size-4 shrink-0 text-muted-foreground" />
+                    </span>
+                  )}
+                </DialogTitle>
+                <DialogDescription className="mt-0.5">
+                  by {plugin.author.name}
+                </DialogDescription>
+              </div>
+              <div className="ml-auto self-end pb-1">
+                {trialActive ? (
+                  <span className="flex items-center gap-2">
+                    <span className="flex items-center gap-1.5 rounded-lg bg-ok/15 px-2.5 py-1.5 text-xs font-semibold text-ok">
+                      <FlaskConical className="size-3.5" /> Trial active
+                    </span>
+                    {onEndTrial && (
+                      <Button variant="outline" size="sm" onClick={() => onEndTrial(plugin.id)}>
+                        End trial
+                      </Button>
+                    )}
+                  </span>
+                ) : canTry && onTry ? (
+                  <Button size="sm" onClick={() => onTry(plugin)}>
+                    <FlaskConical className="size-3.5" /> Try
+                  </Button>
+                ) : null}
+              </div>
+            </div>
+          </DialogHeader>
+
+          <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-4">
+            {meta.map((entry) => (
+              <div key={entry.label} className="bg-card px-3.5 py-2.5">
+                <dt className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+                  {entry.label}
+                </dt>
+                <dd className={`mt-0.5 text-sm font-medium ${entry.mono ? "font-mono text-[13px]" : ""}`}>
+                  {entry.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+
+          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+            {plugin.description}
+          </p>
+
+          {plugin.tags && plugin.tags.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-1.5">
+              {plugin.tags.map((tag) => (
+                <Badge key={tag} variant="outline" className="text-muted-foreground">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          )}
+
+          {(plugin.repositoryUrl || plugin.homepageUrl) && (
+            <div className="mt-5 flex gap-2">
+              {plugin.repositoryUrl && (
+                <Button asChild variant="outline" size="sm">
+                  <a href={plugin.repositoryUrl} target="_blank" rel="noreferrer">
+                    Repository <ExternalLink className="size-3.5" />
+                  </a>
+                </Button>
+              )}
+              {plugin.homepageUrl && (
+                <Button asChild variant="outline" size="sm">
+                  <a href={plugin.homepageUrl} target="_blank" rel="noreferrer">
+                    Homepage <ExternalLink className="size-3.5" />
+                  </a>
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export { DetailDialog };

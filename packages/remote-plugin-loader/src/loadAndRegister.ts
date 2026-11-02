@@ -15,6 +15,7 @@ import {
 } from "@oc-mui/plugin-system";
 import { logger } from "@oc-mui/utils";
 
+import { verifyIntegrity } from "./integrity";
 import { transformModuleSource } from "./transform";
 
 const remoteLoaderLogger = logger.child({ component: "RemotePluginLoader" });
@@ -36,6 +37,13 @@ export interface LoadOptions {
    * can keep it for discovery (e.g. marketplace "disabled" list).
    */
   skipPluginNames?: Set<string>;
+  /**
+   * SRI-style integrity string (`sha256-|sha384-|sha512-<base64>`) the fetched
+   * bundle bytes must match. Verified on the raw bytes before any transform or
+   * import — a mismatch (or a malformed value) aborts the load. When set, the
+   * *registry* decides which code runs, not the host serving the bundle.
+   */
+  integrity?: string;
 }
 
 /** Result of loading a plugin. */
@@ -62,6 +70,7 @@ interface LoadedModule {
 async function loadWithTransformation(
   url: string,
   forceReload: boolean,
+  integrity?: string,
 ): Promise<LoadedModule> {
   const sharedModules = (window as unknown as { __SHARED_MODULES__?: Record<string, unknown> })
     .__SHARED_MODULES__;
@@ -108,7 +117,21 @@ async function loadWithTransformation(
     );
   }
 
-  const source = await response.text();
+  // Read raw bytes first: integrity is verified on the exact artifact as
+  // fetched, before our own (trusted) import transform touches the source.
+  const rawBytes = await response.arrayBuffer();
+  if (integrity !== undefined) {
+    const check = await verifyIntegrity(rawBytes, integrity);
+    if (!check.ok) {
+      throw new Error(
+        `Integrity check failed for ${url}: expected ${integrity}, fetched content is ${check.actual}. ` +
+          "The served bundle does not match the pinned build — refusing to execute it.",
+      );
+    }
+    remoteLoaderLogger.debug(`Integrity verified for ${url}`, { integrity });
+  }
+
+  const source = new TextDecoder().decode(rawBytes);
   const transformed = transformModuleSource(source, url);
 
   const isDevForBlob =
@@ -153,7 +176,7 @@ export async function loadAndRegister(
 
   try {
     remoteLoaderLogger.debug(`Loading plugin from ${url}`, { forceReload });
-    const module = await loadWithTransformation(url, forceReload);
+    const module = await loadWithTransformation(url, forceReload, options?.integrity);
 
     const remotePlugin: Plugin = module.default;
     if (!remotePlugin || typeof remotePlugin.initialize !== "function") {

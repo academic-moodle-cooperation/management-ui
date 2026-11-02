@@ -1,0 +1,100 @@
+/**
+ * Ember — warm, calm, showcase-grade.
+ *
+ * Born from the marketplace redesign studies: warm anthracite dark with a
+ * terracotta primary (the "V4 hybrid" look), and a warm-paper light mode.
+ * Generous radius, soft diffuse shadows, quiet borders — chrome recedes,
+ * content and artwork carry the color. Ships both light (:root) and dark
+ * (.dark); system font stacks only.
+ */
+:root {
+  --theme-name: "Ember";
+
+  /* --- Structure: soft radius, airy spacing, diffuse warm shadows --- */
+  --radius: 0.75rem;
+  --font-heading: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --spacing-card: 1.25rem;
+  --spacing-relaxed: 1.125rem;
+  --shadow-sm: 0 1px 3px 0 rgb(60 45 30 / 0.07);
+  --shadow-md: 0 4px 14px -3px rgb(60 45 30 / 0.12);
+  --shadow-lg: 0 14px 32px -8px rgb(60 45 30 / 0.16);
+  --shadow-card: 0 2px 10px -3px rgb(60 45 30 / 0.09);
+  --shadow-sidebar: 1px 0 0 0 rgb(60 45 30 / 0.05);
+
+  /* --- Color: warm paper light --- */
+  --background: oklch(0.96 0.012 85);
+  --foreground: oklch(0.25 0.01 75);
+  --card: oklch(0.985 0.007 90);
+  --card-foreground: oklch(0.25 0.01 75);
+  --popover: oklch(0.985 0.007 90);
+  --popover-foreground: oklch(0.25 0.01 75);
+
+  --primary: oklch(0.58 0.13 40);
+  --primary-foreground: oklch(0.98 0.008 85);
+  --secondary: oklch(0.93 0.012 85);
+  --secondary-foreground: oklch(0.32 0.012 75);
+  --muted: oklch(0.925 0.012 85);
+  --muted-foreground: oklch(0.55 0.02 80);
+  --accent: oklch(0.92 0.03 45);
+  --accent-foreground: oklch(0.45 0.12 40);
+
+  --border: oklch(0.89 0.018 85);
+  --input: oklch(0.87 0.02 85);
+  --ring: oklch(0.58 0.13 40);
+
+  --sidebar: oklch(0.94 0.014 85);
+  --sidebar-foreground: oklch(0.30 0.012 75);
+  --sidebar-primary: oklch(0.58 0.13 40);
+  --sidebar-primary-foreground: oklch(0.98 0.008 85);
+  --sidebar-accent: oklch(0.905 0.016 85);
+  --sidebar-accent-foreground: oklch(0.28 0.012 75);
+  --sidebar-border: oklch(0.885 0.018 85);
+  --sidebar-ring: oklch(0.58 0.13 40);
+  --color-footer: oklch(0.93 0.012 85);
+
+  --chart-1: oklch(0.62 0.13 40);
+  --chart-2: oklch(0.58 0.11 255);
+  --chart-3: oklch(0.62 0.11 130);
+  --chart-4: oklch(0.55 0.12 320);
+  --chart-5: oklch(0.72 0.12 80);
+}
+
+.dark {
+  /* --- Color: warm anthracite (the V4 marketplace look) --- */
+  --background: oklch(0.22 0.006 80);
+  --foreground: oklch(0.94 0.007 85);
+  --card: oklch(0.255 0.006 80);
+  --card-foreground: oklch(0.94 0.007 85);
+  --popover: oklch(0.255 0.006 80);
+  --popover-foreground: oklch(0.94 0.007 85);
+
+  --primary: oklch(0.68 0.12 40);
+  --primary-foreground: oklch(0.99 0.005 85);
+  --secondary: oklch(0.29 0.006 80);
+  --secondary-foreground: oklch(0.94 0.007 85);
+  --muted: oklch(0.285 0.006 80);
+  --muted-foreground: oklch(0.72 0.012 85);
+  --accent: oklch(0.315 0.007 80);
+  --accent-foreground: oklch(0.94 0.007 85);
+
+  --border: oklch(0.32 0.007 80);
+  --input: oklch(0.34 0.008 80);
+  --ring: oklch(0.68 0.12 40);
+
+  --sidebar: oklch(0.195 0.005 80);
+  --sidebar-foreground: oklch(0.92 0.007 85);
+  --sidebar-primary: oklch(0.68 0.12 40);
+  --sidebar-primary-foreground: oklch(0.99 0.005 85);
+  --sidebar-accent: oklch(0.27 0.006 80);
+  --sidebar-accent-foreground: oklch(0.92 0.007 85);
+  --sidebar-border: oklch(0.29 0.006 80);
+  --sidebar-ring: oklch(0.68 0.12 40);
+  --color-footer: oklch(0.255 0.006 80);
+
+  --chart-1: oklch(0.70 0.13 40);
+  --chart-2: oklch(0.70 0.10 255);
+  --chart-3: oklch(0.72 0.11 130);
+  --chart-4: oklch(0.66 0.11 320);
+  --chart-5: oklch(0.78 0.12 80);
+}

@@ -298,6 +298,12 @@ The essentials per entry: `id`, `name`, `description`, `version`, `author`,
 `localesUrl` + `i18nNamespaces` — set those two so a remote-loaded plugin keeps
 its translations (`<localesUrl>/<namespace>/<language>.json`, the same layout
 the JAR path serves); without them its UI falls back to raw keys.
+Three further optional fields are read by the marketplace v2 catalog:
+`tagline` (one-line pitch for catalog cards), `accentColor` (any CSS color for
+the entry's tile artwork), and `integrity` (an SRI-style hash of the exact
+bundle bytes, e.g. `sha384-<base64>` — when present, v2's Try gesture refuses
+a bundle that doesn't match, and deployments can require pinning via
+`try.requireIntegrity`). All have fallbacks, so omitting them is fine.
 
 Listing and loading are gated separately: configuring a registry makes its
 entries *visible*, but Try/Install still require `enabled: true` and a host on

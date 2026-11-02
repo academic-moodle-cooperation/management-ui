@@ -1,12 +1,26 @@
 {
   "version": "1.0.0",
   "name": "Management UI Community Plugin Registry",
-  "description": "Registry for community-developed plugins. In development, this file is used when present. In production, the Marketplace fetches from the configured registry URL(s).",
+  "description": "Registry for community-developed plugins. In development, this file is used when present. In production, the Marketplace fetches from the configured registry URL(s). Entries whose id starts with 'demo-' are catalog-only showcase data for developing the marketplace UI — their bundle URLs are intentionally not loadable.",
   "plugins": [
+    {
+      "id": "trial-demo-local",
+      "name": "Trial Demo (Local Dev)",
+      "description": "Local test bundle for the Try gesture, served by plugins/admin-marketplace-v2/dev/stub-backend.mjs (see that plugin's README).",
+      "tagline": "Ephemeral test plugin served by the local stub backend.",
+      "version": "1.0.0",
+      "author": { "name": "Local Dev" },
+      "url": "http://127.0.0.1:4600/plugins/trial-demo.mjs",
+      "category": "experimental",
+      "integrity": "sha384-RCT7WYMO8Dp7N1vrRCAGU6D6kbfK2svtl3iz1nwOqQLXY71aR3tSXZDXtJcfDPhu",
+      "tags": ["local-dev", "trial-test"]
+    },
     {
       "id": "audience-poll-local-dev",
       "name": "Audience Poll (Local Dev)",
       "description": "Local development build of the Audience Poll plugin.",
+      "tagline": "Slide-synced live polls your viewers answer from any device.",
+      "accentColor": "#C2591F",
       "version": "0.1.0-dev",
       "author": {
         "name": "Management UI Team"
@@ -19,6 +33,122 @@
         "@oc-mui/ui": ">=1.0.0",
         "@oc-mui/query": ">=1.0.0"
       }
+    },
+    {
+      "id": "demo-auto-captions",
+      "name": "Auto Captions",
+      "description": "Every processed recording gets a caption track automatically. A side-by-side editor lets staff correct the transcript with a keyboard-only flow, and one click publishes it to the player. Supports per-series glossaries for domain vocabulary.",
+      "tagline": "Speech-to-text on every upload — edit, translate, publish.",
+      "accentColor": "#2760C2",
+      "version": "4.1.2",
+      "author": { "name": "Access Lab" },
+      "url": "https://registry.invalid/demo/auto-captions.mjs",
+      "category": "feature",
+      "verified": true,
+      "license": "Apache-2.0",
+      "lastUpdated": "2026-08-03",
+      "tags": ["captions", "accessibility", "transcription"]
+    },
+    {
+      "id": "demo-viewer-analytics",
+      "name": "Viewer Analytics",
+      "description": "A dashboard that answers the questions people actually ask: which recordings get watched, how far viewers get, and when engagement drops off. All data is aggregated and anonymized on ingestion — no individual viewer tracking, ever.",
+      "tagline": "Who watched what, and where they stopped. Privacy-first.",
+      "accentColor": "#5F3BB8",
+      "version": "3.0.1",
+      "author": { "name": "Metricsmith" },
+      "url": "https://registry.invalid/demo/viewer-analytics.mjs",
+      "category": "feature",
+      "verified": true,
+      "license": "MIT",
+      "lastUpdated": "2026-07-28",
+      "tags": ["analytics", "dashboard", "privacy"]
+    },
+    {
+      "id": "demo-quiz-overlays",
+      "name": "Quiz Overlays",
+      "description": "Embed multiple-choice checkpoints at any timestamp. Playback pauses until the viewer answers, and results export as CSV per series.",
+      "tagline": "In-video checkpoints that pause playback until answered.",
+      "accentColor": "#B87B14",
+      "version": "1.8.0",
+      "author": { "name": "Community Guild" },
+      "url": "https://registry.invalid/demo/quiz-overlays.mjs",
+      "category": "feature",
+      "license": "MIT",
+      "lastUpdated": "2026-08-09",
+      "tags": ["quiz", "engagement", "player"]
+    },
+    {
+      "id": "demo-lms-sync",
+      "name": "LMS Sync",
+      "description": "Connects series to LMS courses over LTI 1.3. Enrollments drive permissions, and quiz results from compatible plugins flow back to the gradebook.",
+      "tagline": "Series appear in your LMS courses automatically.",
+      "accentColor": "#3F4EB8",
+      "version": "5.2.0",
+      "author": { "name": "Bridge Works" },
+      "url": "https://registry.invalid/demo/lms-sync.mjs",
+      "category": "integration",
+      "verified": true,
+      "license": "Apache-2.0",
+      "lastUpdated": "2026-07-30",
+      "tags": ["lms", "lti", "grades"]
+    },
+    {
+      "id": "demo-speech-search",
+      "name": "Speech Search",
+      "description": "Full-text search across every transcript in your library. Results deep-link to the exact second the phrase is spoken.",
+      "tagline": "Search the spoken word, jump straight to the moment.",
+      "accentColor": "#2286B0",
+      "version": "1.2.1",
+      "author": { "name": "Access Lab" },
+      "url": "https://registry.invalid/demo/speech-search.mjs",
+      "category": "utility",
+      "verified": true,
+      "license": "MIT",
+      "lastUpdated": "2026-08-14",
+      "tags": ["search", "transcripts", "accessibility"]
+    },
+    {
+      "id": "demo-slide-detection",
+      "name": "Slide Detection",
+      "description": "Computer vision over the presentation track detects slide transitions and generates a navigable chapter list — plus OCR'd slide text feeding into search.",
+      "tagline": "Finds slide changes and builds chapter markers from them.",
+      "version": "0.4.0",
+      "author": { "name": "Vision Collective" },
+      "url": "https://registry.invalid/demo/slide-detection.mjs",
+      "category": "experimental",
+      "license": "MIT",
+      "lastUpdated": "2026-08-19",
+      "tags": ["chapters", "computer-vision", "ocr"]
+    },
+    {
+      "id": "demo-theme-midnight",
+      "name": "Midnight",
+      "description": "Restyles the whole interface for dark environments: dimmed chrome, high-contrast focus states, and player controls that don't glow in a dark room.",
+      "tagline": "A deep-blue dark theme tuned for control-room lighting.",
+      "accentColor": "#181C33",
+      "version": "1.4.0",
+      "author": { "name": "Nocturne Studio" },
+      "url": "https://registry.invalid/demo/theme-midnight.css",
+      "category": "theme",
+      "verified": true,
+      "license": "MIT",
+      "lastUpdated": "2026-08-01",
+      "tags": ["theme", "dark"]
+    },
+    {
+      "id": "demo-theme-meadow",
+      "name": "Meadow",
+      "description": "Bright surfaces, soft shadows, and a green accent — designed for daylight offices and projector demos.",
+      "tagline": "A light, friendly theme with generous contrast.",
+      "accentColor": "#557D33",
+      "version": "1.0.3",
+      "author": { "name": "Nocturne Studio" },
+      "url": "https://registry.invalid/demo/theme-meadow.css",
+      "category": "theme",
+      "license": "MIT",
+      "lastUpdated": "2026-08-08",
+      "tags": ["theme", "light"]
     }
   ]
 }
