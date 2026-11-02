@@ -33,6 +33,12 @@
   "MD041": false,
   // Emphasis style (*/_) consistency: pure style, not worth the churn.
   "MD049": false,
+  // Table pipe alignment (added in markdownlint 0.41): would force a reformat
+  // of every table in the repo and fights hand-aligned prose tables. Style, not
+  // a defect. Note the CI action (markdownlint-cli2-action) ships a newer
+  // markdownlint than the locally pinned `pnpm docs:lint`; rules disabled here
+  // apply to both.
+  "MD060": false,
 
   // ---- Kept, but tuned ------------------------------------------------------
   // Duplicate headings are only a defect among siblings (same parent section);

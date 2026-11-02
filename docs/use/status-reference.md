@@ -4,6 +4,8 @@ For everyone wondering why an action is unavailable. Afterwards you'll know what
 
 Every recording carries exactly one status. It appears as an icon in the **Status** column of [the video list](./find-a-video.md) — hover it to read the label. In gallery view the same symbol sits on the thumbnail of anything that is not finished.
 
+Your deployment may add icons of its own on top of the nine below — a finished recording that still awaits publication, for instance. Hover the icon; the label says what it means.
+
 ## The nine values
 
 | Status | What it means | Metadata editable? |

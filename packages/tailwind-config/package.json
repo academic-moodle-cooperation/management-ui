@@ -1,6 +1,6 @@
 {
   "name": "@oc-mui/tailwind-config",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Shared Tailwind CSS preset (shadcn design tokens) so plugins style consistently with the Opencast Management UI host.",
   "author": "Academic Moodle Cooperation",
   "homepage": "https://github.com/academic-moodle-cooperation/management-ui/tree/HEAD/packages/tailwind-config#readme",
@@ -43,10 +43,10 @@
     "@oc-mui/eslint-config": "workspace:*",
     "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.27.0",
-    "typescript": "~5.5.4"
+    "typescript": "~6.0.3"
   },
   "dependencies": {
-    "tailwindcss": "^4.1.7",
+    "tailwindcss": "^4.3.3",
     "tailwindcss-animate": "^1.0.7"
   }
 }

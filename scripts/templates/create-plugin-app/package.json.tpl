@@ -26,7 +26,7 @@
     "@oc-mui/vite-config": "workspace:*",
     "eslint": "^9.20.0",
     "typescript": "^5.3.3",
-    "vite": "^6.3.5",
+    "vite": "^8.3.5",
     "vitest": "^4.0.17"
   }
 }

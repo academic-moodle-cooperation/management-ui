@@ -42,7 +42,7 @@ One local-vs-CI difference worth knowing when an `e2e` failure won't reproduce: 
 
 ### `Changeset` ([`.github/workflows/changeset.yml`](../../.github/workflows/changeset.yml))
 
-`pnpm changeset:status` against the PR's base branch. Fails if a versioned package is touched without a changeset.
+`pnpm changeset:status` against the PR's base branch. Fails if a versioned package is touched without a changeset. Skipped when the PR's head is a release line (`r/**`): forward and closing merges carry version bumps whose changesets the release already consumed.
 
 ## Reproducing failures
 

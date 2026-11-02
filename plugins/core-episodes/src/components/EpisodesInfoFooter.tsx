@@ -10,6 +10,8 @@ import type { MuiGetEventByIdInputFieldsQuery, MuiEventsDataFragment } from "@oc
 import { Button, toast } from "@oc-mui/ui/components";
 import { normalizeMetadataObject, logger } from "@oc-mui/utils";
 
+import { useEventFilterParams } from "../hooks";
+
 type EpisodesUpdateData = {
   [T: string]: string | string[];
 };
@@ -43,6 +45,8 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
   currentEpisode,
 }) => {
   const { t } = useI18n();
+
+  const eventFilterParams = useEventFilterParams();
 
   // The org's input type may accept fewer fields than our types know (a
   // catalog-config readOnly field is absent from it, and sending it is a hard
@@ -189,6 +193,7 @@ const EpisodesInfoFooter: React.FC<EpisodesInfoFooterProps> = ({
         {
           eventId: selectedEpisodeId,
           metadata: finalMetadata as { title: string; [key: string]: unknown },
+          ...eventFilterParams,
         },
         {
           onSuccess: () => {

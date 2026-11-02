@@ -16,12 +16,6 @@ updates:
           - "*"
     commit-message:
       prefix: "chore(ci)"
-    ignore:
-      # v2 is a breaking rewrite of the inputs/token handling our release.yml
-      # relies on; the migration is deliberate work, tracked in #367. Without
-      # this, the group PR re-proposes the major every week.
-      - dependency-name: "changesets/action"
-        update-types: ["version-update:semver-major"]
 
   # npm dependencies across the pnpm workspace. Security updates matter most
   # here; routine bumps arrive as one weekly PR per dependency group.
@@ -34,6 +28,33 @@ updates:
         patterns:
           - "*"
         update-types: ["minor", "patch"]
+    ignore:
+      # The router devtools import internals of @tanstack/router-core and only
+      # work with the router minor they were released for; bumping them alone
+      # (1.125 → 1.167 in the October group) broke Vite's pre-bundling and
+      # with it the dev server and the E2E suite. They move together with
+      # @tanstack/react-router in @oc-mui/router — a deliberate bump, not a
+      # routine one.
+      - dependency-name: "@tanstack/router-devtools"
+      # React 19.3 makes the production build roughly four times slower on
+      # WebKit (Safari, iPad): the browser matrix went from 150 passed in
+      # 2.4 min to 11 failed / 28 flaky in 10 min, bisected to the 19.3 bump
+      # alone (same code on 19.1 and 19.2 is green). Held at 19.2 via
+      # pnpm.overrides until a React release fixes it; re-test by dispatching
+      # matrix.yml with --project=webkit --project=tablet-ios on a probe
+      # branch before lifting this. See docs/reference/open-followups.md §11.
+      - dependency-name: "react"
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-minor"]
+      # lucide-react is a shared runtime dependency: the host provides it to
+      # every plugin and SHARED_RUNTIME_MAJORS pins its major (currently 0).
+      # Going to 1.x changes the host-provided major, which the contract
+      # classifies as a major of @oc-mui/plugin-system, so it ships bundled
+      # with the next host major (#505) rather than as a routine bump. Updates
+      # within 0.x still arrive normally.
+      - dependency-name: "lucide-react"
+        update-types: ["version-update:semver-major"]
     # Majors stay individual PRs so a breaking bump is reviewed on its own.
     commit-message:
       prefix: "chore(deps)"

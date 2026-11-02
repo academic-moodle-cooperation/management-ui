@@ -4,20 +4,19 @@
 
 ```ts
 
-import { AnyContext } from '@tanstack/react-router';
+import { AnyContext } from '@tanstack/router-core';
 import { AnyRoute } from '@tanstack/react-router';
 import { AnyRouter } from '@tanstack/react-router';
 import { createRootRoute } from '@tanstack/react-router';
 import { createRoute } from '@tanstack/react-router';
 import { createRouter } from '@tanstack/react-router';
-import { JSX } from 'react/jsx-runtime';
 import { Link } from '@tanstack/react-router';
 import type { MuiUserQuery } from '@oc-mui/query';
 import { Navigate } from '@tanstack/react-router';
 import { Outlet } from '@tanstack/react-router';
 import { default as React_2 } from 'react';
 import { redirect } from '@tanstack/react-router';
-import { ResolveParams } from '@tanstack/react-router';
+import { ResolveParams } from '@tanstack/router-core';
 import { RootRoute } from '@tanstack/react-router';
 import { Route } from '@tanstack/react-router';
 import { RouteComponent } from '@tanstack/react-router';
@@ -100,7 +99,7 @@ export function createProtectedComponentFactory(defaultOptions: {
 export function createProtectedRouteComponent(Component: React_2.ComponentType, protectionOptions?: Parameters<typeof withAuthProtection>[1], suspenseProps?: {
     fallback?: React_2.ReactNode;
 }): {
-    (): JSX.Element;
+    (): React_2.JSX.Element;
     displayName: string;
 };
 

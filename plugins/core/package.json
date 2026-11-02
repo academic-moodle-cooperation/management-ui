@@ -1,6 +1,6 @@
 {
   "name": "@oc-mui/plugin-core",
-  "version": "1.0.1",
+  "version": "1.1.2",
   "description": "Core infrastructure plugin: shared extension-point identifiers and defaults that every Opencast Management UI plugin may import.",
   "author": "Academic Moodle Cooperation",
   "homepage": "https://github.com/academic-moodle-cooperation/management-ui/tree/HEAD/plugins/core#readme",
@@ -43,21 +43,21 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@oc-mui/plugin-system": "workspace:*",
-    "@oc-mui/ui": "workspace:*",
     "@oc-mui/i18n": "workspace:*",
+    "@oc-mui/plugin-system": "workspace:*",
     "@oc-mui/query": "workspace:*",
-    "@oc-mui/router": "workspace:*"
+    "@oc-mui/router": "workspace:*",
+    "@oc-mui/ui": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
-    "react": "^19.1.0",
     "@types/node": "^25.0.6",
     "@types/react": "^18.0.0 || ^19.0.0",
     "eslint": "^9.9.0",
+    "react": "~19.2.0",
     "tsup": "^8.5.0",
-    "typescript": "~5.5.4"
+    "typescript": "~6.0.3"
   }
 }

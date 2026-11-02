@@ -326,7 +326,7 @@ const SeriesTable = () => {
           manualPagination={true}
           pageSize={pageSize}
           setPageSize={setPageSize}
-          pageCount={Math.ceil(data?.currentUser.mySeries.totalCount / pageSize || 0)}
+          pageCount={Math.ceil((data?.currentUser.mySeries.totalCount ?? 0) / pageSize || 0)}
           pageIndex={pageIndex}
           setPageIndex={setPageIndex}
           totalRows={data?.currentUser.mySeries.totalCount || 0}

@@ -23,6 +23,7 @@ describe("transformModuleSource", () => {
     expect(SHARED_MODULE_NAMES).toContain("react");
     expect(SHARED_MODULE_NAMES).toContain("react-dom");
     expect(SHARED_MODULE_NAMES).toContain("@oc-mui/plugin-system");
+    expect(SHARED_MODULE_NAMES).toContain("zod");
   });
 
   it("returns source unchanged when __SHARED_MODULES__ is missing", () => {

@@ -25,7 +25,8 @@
  * recover without a full page reload once the backend is back up.
  */
 import { useTranslation } from "@oc-mui/i18n";
-import { Button, ErrorPage } from "@oc-mui/ui/components";
+import { Button } from "@oc-mui/ui/components";
+import { ErrorPage } from "@oc-mui/ui/internal";
 
 export interface ConfigLoadErrorProps {
   /** Error thrown by the config fetch (the `error` returned by `useAppConfig`). */

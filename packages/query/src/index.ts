@@ -6,6 +6,7 @@ import type {
   JsonMetadataField,
   ListMetadataField,
   LongMetadataField,
+  Maybe,
 } from "./gql-generated";
 
 // Public query API. This is the stable facade; plugin authors and apps must
@@ -42,6 +43,18 @@ export * from "./client";
 export * from "./gql-generated";
 export * from "./sortableFields";
 
+// The generator (typescript-operations >= 6) no longer exports these helper
+// types; `Exact` is still emitted but kept internal. Hand-written copies keep
+// the public surface intact for one deprecation cycle.
+/** @deprecated Internal codegen helper, no longer generated. Write the mapped type inline. Removed in the next major. */
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+/** @deprecated Internal codegen helper, no longer generated. Use `Omit<T, K> & { [P in K]?: T[P] | null }`. Removed in the next major. */
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+/** @deprecated Internal codegen helper, no longer generated. Use `Omit<T, K> & { [P in K]: T[P] | null }`. Removed in the next major. */
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+/** @deprecated Internal codegen helper, no longer generated. Use `{ [P in K]?: never }`. Removed in the next major. */
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+
 // Explicitly re-export commonly used types for Vite/Rollup compatibility
 // when using 'import type' syntax
 export type {
@@ -52,6 +65,9 @@ export type {
   MuiGetSeriesByIdInputFieldsQuery,
   MuiSeriesDataFragment,
   MuiGetMySeriesNameAndIdQuery,
+  MuiPlaylistDataFragment,
+  MuiPlaylistEntryDataFragment,
+  MuiGetMyPlaylistsQuery,
 } from "./gql-generated";
 
 export type MetadataFieldType =

@@ -16,7 +16,8 @@ import {
   type AnyRoute,
   type AnyRouter,
 } from "@oc-mui/router";
-import { AppLoader, ErrorBoundary, NotFoundError } from "@oc-mui/ui/components";
+import { AppLoader } from "@oc-mui/ui/components";
+import { ErrorBoundary, NotFoundError } from "@oc-mui/ui/internal";
 import { logger } from "@oc-mui/utils";
 
 import { createCommonRoutes } from "../shared/commonRoutes";

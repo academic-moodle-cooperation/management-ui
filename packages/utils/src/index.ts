@@ -146,5 +146,6 @@ export { resolveDownloadUrl } from "./downloadUrl.js";
 export { logger, Logger } from "./logger.js";
 export { normalizeMetadataValue, normalizeMetadataObject } from "./normalizeMetadata.js";
 export { getEventStatus, isEventProcessing, hasProcessingEvents } from "./eventStatus.js";
+export { getOpencastMajor, setOpencastMajor, supportsOpencastMajor } from "./opencastMajor.js";
 
 export type { LogLevel, LogContext } from "./logger.js";

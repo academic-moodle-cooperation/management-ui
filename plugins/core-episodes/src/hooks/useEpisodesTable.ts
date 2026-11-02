@@ -14,6 +14,7 @@ import { hasProcessingEvents, isEventProcessing } from "@oc-mui/utils";
 import { GALLERY_SORT_FIELD_BY_COLUMN } from "../columns";
 import { useSidebarStore } from "../stores/sidebarStore";
 
+import { useEventFilterParams } from "./useEventFilterParams";
 import { useTableState } from "./useTableState";
 
 import type { TableBaseState } from "./useTableState";
@@ -92,6 +93,7 @@ function episodesTableReducer(
   }
 }
 
+
 /**
  * Custom hook for managing episodes table state and data fetching
  */
@@ -102,6 +104,7 @@ export function useEpisodesTable(seriesId?: string) {
     episodesTableReducer,
     "episodes",
   );
+  const eventFilterParams = useEventFilterParams();
 
   // Use the sidebar content hook for metadata operations
   const sidebarContent = useSidebarContent();
@@ -142,6 +145,7 @@ export function useEpisodesTable(seriesId?: string) {
       offset,
       ...(orderBy !== undefined && { orderBy }),
       ...(queryFilter !== undefined && { query: queryFilter }),
+      ...eventFilterParams,
     },
     {
       enabled: !seriesId, // Only enabled when no seriesId is provided
@@ -160,6 +164,7 @@ export function useEpisodesTable(seriesId?: string) {
       offset,
       ...(orderBy !== undefined && { orderBy }),
       ...(queryFilter !== undefined && { query: queryFilter }),
+      ...eventFilterParams,
     },
     {
       enabled: Boolean(seriesId), // Only enabled when seriesId is provided

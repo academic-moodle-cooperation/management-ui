@@ -117,7 +117,9 @@ The Shared Runtime Dependencies contract (`@oc-mui/plugin-system`'s `SHARED_RUNT
 - ✅ **`.local-plugins/` dev** — the dev server surfaces each plugin's `workspaceDependencies` (read from `plugin.json`) into `/local-plugins/manifest.json` ([`local-plugins-dev.ts`](../../packages/vite-config/src/plugins/local-plugins-dev.ts)); the shell gates each entry via `passesSharedDependencyGate` ([`sharedDepsGate.ts`](../../apps/shell/src/services/sharedDepsGate.ts)) in `PluginInitializer` before loading.
 - ⏳ **JAR** — the same gate is applied to backend entries, and [`jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts) reads `workspaceDependencies` when present. **Residual:** the backend's aggregated `plugins.json` doesn't carry `workspaceDependencies` per plugin yet, so the gate is a no-op for JAR plugins until then. Chosen option (a) — backend embeds the field per plugin in `plugins.json` (forward-compatible; the shell already consumes it). The alternative (b, loader fetches `<pluginDir>/plugin.json`) remains open if the backend change is undesirable.
 
-- **When to revisit**: the JAR residual when the backend `plugins.json` producer is next touched (Opencast-side). Everything in-repo is done.
+- ⏳ **Table drift (since v20.1.0)** — `@oc-mui/ui`, `@oc-mui/query` and `@oc-mui/ui-config` are published as 2.x, but `SHARED_RUNTIME_MAJORS` still lists them at 1, so the gate rejects a truthful `^2` declaration. Documented in [Contracts §5](./contracts.md#5-shared-runtime-dependencies) as *known drift*; community plugins leave the three names out of `workspaceDependencies` for now, and the scaffold templates no longer declare `@oc-mui/ui`. Lifting the three entries to 2 is a `@oc-mui/plugin-system` major (likely with a `PLUGIN_API_VERSION` flip) and is to be bundled with the next host major rather than shipped alone.
+
+- **When to revisit**: the JAR residual when the backend `plugins.json` producer is next touched (Opencast-side); the table drift at the next `@oc-mui/plugin-system` major.
 
 ### 5.4 Deep-link return after SSO login
 
@@ -196,15 +198,13 @@ PR-3a restructured `docs/` from 40 files to 20, rewrote the plugin-author and op
 
 The deploy trigger is **already active**: [`.github/workflows/docs.yml`](../../.github/workflows/docs.yml) deploys the site on every push to `develop` (plus manual `workflow_dispatch`) — there is no `main` branch in this repo. **Current blocker: GitHub Actions billing** — while it's unresolved no workflow runs at all, so no deploy happens; the moment billing is restored the site starts updating on merge with zero further edits.
 
-Until the project is ready for public traffic the site stays **discouraged from indexing**. Exactly three things remain for go-public:
+Items 1 and 2 of the original three-step go-public list (the robots.txt crawler block and the `noindex` meta tag in the VitePress config) were flipped together in the flip-day PR — merged the day the repo went public. One step remains:
 
 | # | What | Where | Change |
 |---|------|-------|--------|
-| 1 | Crawler block | [`docs/public/robots.txt`](../../docs/public/robots.txt) | `Disallow: /` → `Disallow:` (empty — allows everything). |
-| 2 | `noindex` meta tag | [`docs/.vitepress/config.mts`](../../docs/.vitepress/config.mts) | Remove the `<meta name="robots" content="noindex, nofollow">` entry from the `head` array. |
 | 3 | One-time GitHub setting | Repo **Settings → Pages** | Set source to **GitHub Actions** (not "Deploy from a branch"). The workflow's `actions/deploy-pages` step errors out until this is set. |
 
-**When to revisit**: alongside the go-public flip (see [`test-protocol.md`](../contribute/test-protocol.md)'s closing section). Flip 1 and 2 together — the combo is belt-and-suspenders (robots.txt is advisory; the meta tag is what most search engines actually obey, so flipping only one leaves the other gating). Item 3 can be done earlier: with the guards in place, a manual `workflow_dispatch` deploy is safe any time — the URL exists, but search engines stay away.
+**When to revisit**: on flip day, together with merging the flip-day PR (#302 has the complete day-of checklist).
 
 ### 8.4 Source-link rewriting is heuristic-based
 
@@ -257,7 +257,7 @@ cleanup + override pruning (PR #223), GitHub Actions SHA-pinning + Dependabot
 (PR #224), marketplace remote-loading opt-in (PR #225), dist-canonical package
 exports (this PR).
 
-### 9.1 Before the first npm publish
+### 9.1 ✅ Done — before the first npm publish
 
 - **peerDependencies shape.** ✅ Done in PR #227 — wrapped libraries in the
   facades and `react`/`react-dom` in the four in-tree plugins are
@@ -267,23 +267,25 @@ exports (this PR).
   `app-runtime`, `utils`, `plugin-testing`). `@oc-mui/ui` followed in PR #268
   (`./components`, 262 exports).
 
-  **The planned sequencing was skipped, deliberately.** The note here used to
-  say the curation pass should come *before* the initial snapshot, so the
-  report wouldn't enshrine exports about to be removed. The baseline landed
-  first anyway: nothing is published yet, so removing an export costs a
-  regenerated report and a changeset — not a major bump. The snapshot is not
-  the point of no return; the **first npm publish** is.
-
-  **Still open, and now deadline-bound:** curate `@oc-mui/ui`'s export surface
-  (which of the 262 are SDK, which are host internals) **before** step 2 of the
-  [first-release bootstrap](../contribute/release.md#first-release-bootstrap--one-time-checklist).
-  After that publish, every removal is a major bump plus a `@deprecated` cycle.
-  Also still uncovered: the `./hooks`, `./lib`, `./lib/utils` and
-  `./config-primitives` entry points (`etc/ui.api.md` exists but is empty —
-  `src/index.ts` exports nothing).
-- **npm org bootstrap (manual, on npmjs.com).** First-publish each `@oc-mui/*`
-  package via `pnpm publish` while logged in, then configure per-package Trusted
-  Publishers. See [`release.yml`](../../.github/workflows/release.yml).
+- **Curate `@oc-mui/ui`'s export surface.** ✅ Done in PR #426, before the
+  first publish — the point of no return this entry used to warn about. The
+  host assembly layer (`Appshell`, the router primitives, the error pages,
+  `ThemeModeProvider`) moved to a new `@oc-mui/ui/internal` entry that carries
+  no API report, is not shared with remote-loaded plugins, and is forbidden to
+  `plugins/` by lint; `./components` went from 240 to 226 exports, each
+  remaining one either used by a plugin today or a generic primitive.
+  `./hooks` has its own report since PR #308 (`etc/ui-hooks.api.md`).
+  The published surface is the one we intend to keep: any further removal is
+  now a major bump plus a `@deprecated` cycle
+  ([Deprecations](../contribute/release.md#deprecations)).
+- **npm org bootstrap (manual, on npmjs.com).** ✅ Done 2026-10-16 from
+  `r/20.x`: the 15 SDK packages were first-published by hand, each got a
+  Trusted Publisher, and the first CI release (`v20.1.0`) ran tokenless with
+  provenance; the `0.0.0-stage` placeholders npm creates on first publish are
+  deprecated. The
+  [first-release bootstrap](../contribute/release.md#first-release-bootstrap--one-time-checklist)
+  stays in the docs as the procedure for any future first publish of a new
+  package.
 
 ### 9.2 Wave 2 — cleanup / quality
 
@@ -307,8 +309,11 @@ exports (this PR).
   job; either wire it up or replace it with a maintained checker.
 - **Major-version migrations** (each its own PR): `i18next` 23→26 + `react-i18next`
   (also clears the last *runtime* `pnpm audit` item, `i18next-http-backend`),
-  `zustand` 4→5, `react-day-picker` 8→10, `lucide-react` 0.417→1.x, and the app's
-  `vite` 6→7 (clears the residual `vite` audit highs).
+  `zustand` 4→5, `react-day-picker` 8→10. ✅ `vite` 6→8, `typescript` 5→6 and
+  `jsdom` 27→30 landed 2026-11-02 (#469, #480, #470). `lucide-react` 0.x→1.x is
+  **not** a routine major: it is a shared runtime dependency, so the bump is a
+  `@oc-mui/plugin-system` major and ships with the table lift in #505; Dependabot
+  ignores lucide majors until then.
 - **Retarget the backend to a released Opencast.** The `backend/` bundles build
   against `org.opencastproject:base:20-SNAPSHOT`, so external contributors must
   compile Opencast `r/20.x` from source before they can build or deploy them
@@ -335,3 +340,42 @@ feature for deployments that enable it.
   `packages/remote-plugin-loader/src/loadAndRegister.ts`.
 - **Namespace enforcement** so a loaded remote plugin can only register under its
   own declared namespace (can't hijack another plugin's routes/extension points).
+
+## 10. Plugin CSS isolation
+
+### 10.1 Class-name collisions between the host sheet and a remote plugin's sheet
+
+Since the Theme Contract revision of 2026-10-13 the `plugins` cascade layer sits between `base` and `utilities` (see [`styling.md` → Load order](../extend/styling.md#load-order)). That makes host chrome immune to whatever a plugin ships, at the price that a plugin's responsive variant (`sm:text-6xl`) loses to a host base utility (`text-4xl`) on the plugin's own DOM unless the plugin marks it `!`. Any layer order has one such collision class, because both sheets are complete Tailwind builds that share class names; the symmetric order (`plugins` last) hides the host sidebar through the plugin's plain `.hidden`.
+
+The real fix separates the two namespaces: either the plugin build uses Tailwind's `prefix()` (every plugin class becomes `uv:…`, no overlap with the host, the layer order stops mattering), or `@oc-mui/remote-plugin-loader` fetches the sheet and wraps it in `@scope` on a host-marked plugin root (needs a marker on every slot the host renders a plugin into, and portals escape the scope). Revisit when a second plugin needs `!` escalation, or when the create-plugin template's CSS entry is next touched — the prefix route changes every class string in a plugin, so it wants a migration note in `docs/extend/`.
+
+## 11. React held at 19.2 — WebKit performance regression in 19.3
+
+**Status:** open (2026-10-16).
+
+Lifting React from the 19.1 hold to 19.3 made the *production* build
+(`vite preview`, which the browser matrix runs against) roughly four times
+slower on WebKit: the matrix went from 150 passed in 2.4 min (webkit +
+tablet-ios) to 11 failed / 28 flaky / 111 passed in 10.2 min, all
+`toBeVisible` timeouts on random tests. Bisected on dispatch runs of
+`matrix.yml`: the same application code with React 19.1 or 19.2 is green,
+with 19.3.1 it is not, so the `ThemeModeProvider` rewrite that came with the
+bump is not involved. Chromium and Firefox are unaffected.
+
+**Current state:** `react` and `react-dom` are pinned to `~19.2.0` in every
+package and in the root `pnpm.overrides` (so every peer resolves to the one
+copy), and Dependabot ignores React minors again.
+
+**To lift the hold:** push a probe branch with the candidate React version,
+run `gh workflow run matrix.yml --ref <branch> -f projects="--project=webkit --project=tablet-ios"`,
+and only drop the override + the Dependabot ignore when that run is green in
+the 2–3 minute range. Worth a minimal reproduction against React upstream
+once the cause is narrowed down.
+
+## 12. The plugin-serving HTTP path still says `/management-tool/`
+
+**Status:** parked by decision (2026-08-18, re-confirmed 2026-10-28) — won't-fix on the current release lines.
+
+The JAR-plugin list is served at `/management-tool/ui/config/plugins.json`, the last functional reference to the product's old name (the Maven module identity was renamed in #220). The path is hardcoded in four places that have to change together: the backend endpoint ([`PluginEndpoint.java`](../../backend/management-config/src/main/java/org/opencastproject/management/ui/config/rest/PluginEndpoint.java): `@Path` and `opencast.service.path`), the shell's [`jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts) (`PLUGINS_JSON_PATH`), `@oc-mui/ui-config`'s `productionAppPluginUrl` default, and the dev proxy in `@oc-mui/vite-config`. There is no redirect, so the rename breaks every deployed `config.json` that names the old path and needs backend, frontend and deployment config to flip in one coordinated release — a cosmetic gain for a breaking cost.
+
+**When to revisit:** the next breaking window — the first release line for a new Opencast major on which config compatibility may be broken (2.0 / OC 21 at the earliest). Whoever cuts that line: [#221](https://github.com/academic-moodle-cooperation/management-ui/issues/221) has the full file list (incl. the E2E mocks, specs and docs that name the path) and the migration notes.

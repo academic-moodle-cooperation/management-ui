@@ -240,7 +240,7 @@ const DefaultLandingPage: FC = () => {
     { value: `v${APP_VERSION}` },
     { label: "Manifest", value: "1.1" },
     { label: "Runtime API", value: "1.0" },
-    { label: "Theme", value: "2.0" },
+    { label: "Theme", value: "2.1" },
     { label: "Config", value: "1.0" },
     { label: "ECL", value: "2.0" },
   ];

@@ -1,35 +1,17 @@
-## Summary
+## What and why
 
-<!-- One or two sentences: what does this PR do, and why? -->
+<!-- One or two sentences. Link the issue. -->
 
-## Type of change
+## Release lines
 
-- [ ] 🚀 Feature
-- [ ] 🐛 Bug fix
-- [ ] 🧹 Refactor
-- [ ] 📝 Docs
-- [ ] 🧪 Tests / CI
-- [ ] 🔧 Tooling / build
+<!-- Pick one — see docs/contribute/release.md → Branching model. -->
 
-## Before-merge checklist
+- [ ] Opencast-agnostic: the next `develop → r/NN.x` sync carries it to every supported line.
+- [ ] Needs Opencast NN or newer: labelled `ocNN-only` (release.md → *Features that need a newer Opencast major*).
+- [ ] Bugfix landed on a release line: forward-merge chain (release.md → *Bugfixes across multiple release lines*).
 
-- [ ] `pnpm verify` passes locally — the canonical gate; the step list lives in [AGENTS.md → Pre-push gate](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/AGENTS.md#pre-push-gate--pnpm-verify).
-- [ ] If *any* versioned package changed (every package under `packages/*` and `plugins/*`, private ones included): a [Changeset](https://github.com/changesets/changesets) is **committed** (`pnpm changeset`). PRs touching only the top-level `docs/` tree, `.github/`, or root config touch no package and need none — but a `README.md` *inside* `packages/*` or `plugins/*` is part of that versioned package and does need one (`pnpm changeset --empty` if there is nothing to tell consumers). The authoritative rule and its only exemptions: [AGENTS.md → Versioning](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/AGENTS.md#versioning--changesets-every-versioned-package-and-public-api-changes).
-- [ ] If a `@oc-mui/*` package's public API surface changed: `pnpm api-check` regenerated, the diff in `etc/<pkg>.api.md` is intentional and committed.
-- [ ] Docs this PR makes stale are updated in the same PR.
-- [ ] [AGENTS.md](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/AGENTS.md) rules followed for any plugin work (extension points in `plugin.json`, contract test up to date, no cross-plugin or cross-app imports).
-- [ ] **Reviewer:** base branch matches the oldest affected Opencast major (`r/NN.x` for released-line fixes, `develop` for next-major work — see [Releases & versioning](https://github.com/academic-moodle-cooperation/management-ui/blob/develop/docs/contribute/release.md)).
+## Pre-flight
 
-## Stacked / linked PRs
-
-<!-- If this PR depends on or stacks on another, link it here. GitHub will
-     auto-retarget after the parent merges. -->
-
-## Screenshots (if applicable)
-
-<!-- Drag-and-drop UI changes here. -->
-
-## Notes for reviewers
-
-<!-- Anything reviewers should look at extra-carefully — risky edges, deliberate
-     deferrals, areas you'd like a second opinion on. -->
+- [ ] Changeset committed for every versioned package touched; `pnpm api-check` run if a public `@oc-mui/*` surface changed.
+- [ ] Docs that name what this changes are updated in this PR (AGENTS.md → pre-flight item 8).
+- [ ] `pnpm verify` green locally.

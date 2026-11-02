@@ -50,6 +50,16 @@ The packaged JAR carries OSGi headers:
 
 The tracker then reads `static/plugins/__PLUGIN_NAME__/plugin.json` (copied from your plugin root) to discover the plugin's modules and i18n namespaces. It emits the result in `plugins.json`, which the Management UI shell fetches at boot to load each plugin's `.mjs`.
 
+For a single-module plugin like this scaffold, the manifest's top-level fields tell the tracker which files to point the shell at:
+
+| `plugin.json` field | Scaffolded value | Becomes in `plugins.json` |
+|---------------------|------------------|---------------------------|
+| `entry` | `dist/__PLUGIN_NAME__.mjs` | `scriptUrl` = `<Http-Alias>/__PLUGIN_NAME__.mjs` |
+| `css` | `dist/__PLUGIN_NAME__.css` | `cssUrl` = `<Http-Alias>/__PLUGIN_NAME__.css` |
+| `locales` | `locales` | `localesUrl` = `<Http-Alias>/locales` (used once `i18nNamespaces` is non-empty) |
+
+Only the **basename** of `entry` / `css` is used, because the resource copy above flattens `dist/` into `static/plugins/__PLUGIN_NAME__/`. **`entry` is the field that matters:** without it the tracker lists the plugin but emits no `scriptUrl`, and the shell falls back to guessing `<app base>/static/plugins/__PLUGIN_NAME__/__PLUGIN_NAME__.mjs` — which only works while the deployment's base path matches the `Http-Alias` prefix and the bundle is named after the plugin id. A missing `.css` file is harmless — the shell ignores a stylesheet that does not resolve.
+
 ## Don't
 
 - **Don't move this `backend/` directory** without also updating the relative paths in `pom.xml` (`${project.basedir}/..` is hardcoded as the plugin root).

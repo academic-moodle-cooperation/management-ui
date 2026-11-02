@@ -1,5 +1,8 @@
 {
   "$schema": "https://turborepo.com/schema.json",
+  // turbo ≥ 2.11 otherwise injects a managed "agent guidance" block into
+  // AGENTS.md whenever it detects an AI agent. AGENTS.md is hand-written.
+  "agentGuidance": false,
   "ui": "stream",
   "concurrency": "30",
   "globalEnv": [
@@ -9,6 +12,7 @@
     "NODE_ENV",
     "VITE_PROXY_TARGET",
     "GRAPHQL_ENDPOINT",
+    "OPENCAST_MAJOR",
     "GRAPHQL_HEADERS",
     "npm_package_name",
     "VITE_INSTITUTION_WEBSITE",

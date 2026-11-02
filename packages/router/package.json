@@ -1,6 +1,6 @@
 {
   "name": "@oc-mui/router",
-  "version": "1.1.0",
+  "version": "1.1.3",
   "description": "Routing facade (TanStack Router) for the Opencast Management UI and its plugins.",
   "author": "Academic Moodle Cooperation",
   "homepage": "https://github.com/academic-moodle-cooperation/management-ui/tree/HEAD/packages/router#readme",
@@ -64,10 +64,10 @@
     "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.9.0",
     "tsup": "^8.5.0",
-    "typescript": "~5.5.4",
-    "vite": "^6.3.5",
+    "typescript": "~6.0.3",
+    "vite": "^8.3.5",
     "vitest": "^4.0.17",
-    "@testing-library/react": "^16.3.1",
-    "jsdom": "^27.4.0"
+    "@testing-library/react": "^16.3.3",
+    "jsdom": "^30.1.3"
   }
 }

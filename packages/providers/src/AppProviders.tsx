@@ -8,7 +8,7 @@ import {
   RouterProvider,
   type AnyRouter,
 } from "@oc-mui/router";
-import { ErrorBoundary } from "@oc-mui/ui/components/errors/general-error";
+import { ErrorBoundary } from "@oc-mui/ui/internal";
 
 interface AppProvidersProps {
   router: AnyRouter;

@@ -20,6 +20,9 @@ export function deepMerge<T extends Record<string, unknown>>(target: T, ...sourc
 // @public
 export function getEventStatus(eventStatus: string | undefined | null): string | null;
 
+// @public (undocumented)
+export function getOpencastMajor(): number | undefined;
+
 // @public
 export function hasProcessingEvents(events: Array<{
     eventStatus?: string | null;
@@ -73,7 +76,13 @@ export function resolveFirstAssetUrl(candidates: Array<string | undefined>, fall
 export { serializeDuration }
 
 // @public
+export function setOpencastMajor(major: number): void;
+
+// @public
 export const sha256: (input: string) => Promise<string>;
+
+// @public
+export function supportsOpencastMajor(min: number, assumeWhenUnknown?: boolean): boolean;
 
 // (No @packageDocumentation comment for this package)
 

@@ -1,6 +1,6 @@
 {
   "name": "@oc-mui/vite-config",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "description": "Shared Vite build configuration for the Opencast Management UI and standalone community plugins.",
   "author": "Academic Moodle Cooperation",
   "homepage": "https://github.com/academic-moodle-cooperation/management-ui/tree/HEAD/packages/vite-config#readme",
@@ -45,21 +45,21 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.7",
-    "@vitejs/plugin-react-swc": "^3.9.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react-swc": "^4.3.3",
     "@oc-mui/utils": "workspace:*",
     "vite-plugin-static-copy": "^1.0.6"
   },
   "peerDependencies": {
-    "vite": "^6.3.5"
+    "vite": "^6.3.5 || ^7.0.0 || ^8.0.0"
   },
   "devDependencies": {
     "@types/node": "^25.0.6",
     "@oc-mui/eslint-config": "workspace:*",
     "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.8.0",
-    "typescript": "~5.5.4",
-    "vite": "^6.3.5",
+    "typescript": "~6.0.3",
+    "vite": "^8.3.5",
     "vitest": "^4.0.17"
   }
 }

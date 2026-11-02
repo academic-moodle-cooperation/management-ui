@@ -1,1 +1,0 @@
-export { default } from "@oc-mui/ui/postcss.config";

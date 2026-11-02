@@ -115,9 +115,18 @@ Defined in [`packages/ui/src/styles/globals.css`](../../packages/ui/src/styles/g
 
 ## Load order
 
-Remote/JAR plugin CSS is loaded into the **`plugins` cascade layer**, which the host declares *after* Tailwind's `utilities` layer (in `@oc-mui/ui`'s `globals.css`). So a plugin's own utilities win on the plugin's own DOM — a normal responsive heading like `text-4xl sm:text-6xl` renders as authored — instead of losing to the host's base utilities by load order. Because every plugin ships into this one layer, and utility definitions are deterministic, plugins still can't reorder host chrome.
+Remote/JAR plugin CSS is loaded into the **`plugins` cascade layer**, which the host declares *between* Tailwind's `base` and `utilities` layers (in `@oc-mui/ui`'s `globals.css`: `theme, base, plugins, components, utilities`). Two consequences:
 
-This is automatic; you don't do anything. The `@layer plugins` block below is only for the rarer case of restyling a *host or shared* component from your plugin.
+- **Your utilities beat the host's preflight reset.** Tailwind's `base` layer zeroes every margin and padding and makes `h1` inherit its font size. Because `plugins` sits above `base`, your `mt-10`, `sm:py-40` or `sm:text-6xl` apply even on a deployment whose host build never generated those classes.
+- **The host's utilities beat yours where class names collide.** Your build is a *complete* Tailwind sheet, and the host's DOM uses the same class names. If `plugins` sat above `utilities`, your plain `.hidden` would beat the host's `md:block` on the sidebar wrapper and the sidebar would disappear. Host chrome must never depend on what a plugin ships, so `utilities` stays on top.
+
+The price of the second rule shows up only on your own DOM, and only when a responsive variant that *only your sheet* generated competes with a base utility the host also has — `text-4xl sm:text-6xl` renders at 4xl when the host ships `.text-4xl` but not `.sm:text-6xl`. Layers beat specificity, so a more specific selector in your sheet does not help. Escalate with Tailwind's important modifier instead:
+
+```tsx
+<h1 className="text-4xl sm:text-6xl!">…</h1>
+```
+
+An `!important` declaration inverts the layer order, and it only ever matches your own class names, so it cannot reach host chrome. Use it for the handful of responsive variants that matter, not as a default.
 
 > **Why the order matters more than it looks.** Several complete Tailwind builds
 > reach the page — the `@oc-mui/ui` stylesheet ships one scanning `packages/ui`,
@@ -131,16 +140,19 @@ This is automatic; you don't do anything. The `@layer plugins` block below is on
 > a superset.
 >
 > That ordering rule governs the **host's own** stylesheets among themselves.
-> Your plugin's build is exempt from it: the loader wraps your CSS in `@layer
-> plugins`, and the host declares that layer after Tailwind's `utilities`. Layer
-> order is resolved before load order, so your utilities win on your own DOM no
-> matter which sheet lands first — you do not need to position your build
-> relative to the host's.
+> Between the host and your plugin, cascade-layer order is resolved before load
+> order, so you do not need to position your build relative to the host's — the
+> `plugins` layer decides, as described above.
+>
+> One more trap, on the host side: a `postcss.config.*` that adds
+> `@tailwindcss/postcss` on top of `@tailwindcss/vite` runs Tailwind twice and
+> can rewrite the `@layer` statement. The host ships no PostCSS config for that
+> reason (`@oc-mui/ui/postcss.config` is a deprecated no-op).
 
-The implied entry point for plugin CSS (the layer names match the host's declaration in [`packages/ui/src/styles/globals.css`](../../packages/ui/src/styles/globals.css)):
+The implied entry point for plugin CSS (the layer names match the host's declaration in [`packages/ui/src/styles/globals.css`](../../packages/ui/src/styles/globals.css)). Note that the loader nests your whole sheet inside the host's `plugins` layer, so a `@layer` statement in your sheet only orders rules *within* your sheet; it cannot move your rules relative to the host's layers:
 
 ```css
-@layer theme, base, components, utilities, plugins;
+@layer theme, base, plugins, components, utilities;
 
 @import "tailwindcss/theme" layer(theme);
 @import "tailwindcss/utilities" layer(utilities);
@@ -157,6 +169,7 @@ When you must restyle a host or shared component:
 1. Wrap the area in a plugin-specific root class or `data-` attribute.
 2. Put the override in a scoped rule inside `@layer plugins`.
 3. Prefer changing theme tokens over component-level CSS.
+4. If the host sets the same property through a utility class on that element, the override needs `!important` — the host's `utilities` layer sits above `plugins` (see [Load order](#load-order)).
 
 ```css
 @layer plugins {
@@ -169,7 +182,7 @@ When you must restyle a host or shared component:
 
 ## Dark mode
 
-Light/dark is the **appearance axis**, separate from the org-branding theme (`app.theme`). The shell mounts `ThemeModeProvider` (from `@oc-mui/ui`, wrapping [`next-themes`](https://github.com/pacocoursey/next-themes)) and renders a Light/Dark/System toggle in the header. It defaults to the user's OS preference and persists their choice, applying a `.dark` class on `<html>` that activates the dark token block in `globals.css`.
+Light/dark is the **appearance axis**, separate from the org-branding theme (`app.theme`). The shell mounts `ThemeModeProvider` (from `@oc-mui/ui`, a small in-house provider with no third-party dependency) and renders a Light/Dark/System toggle in the header. It defaults to the user's OS preference and persists their choice in `localStorage` under the key `theme`, applying a `.dark` class on `<html>` that activates the dark token block in `globals.css`. The shell's `index.html` applies that class once more before React mounts, so there is no light flash on first paint. A plugin that needs to know the current appearance (say, to configure a chart library) reads it with `useThemeMode()` from `@oc-mui/ui/components`, which returns `theme` (the choice), `resolvedTheme` (what is applied), `systemTheme` (the OS preference) and `setTheme`.
 
 **Your plugin gets dark mode for free — if you follow the one rule.** Because every semantic token (`--background`, `--primary`, `--sidebar`, …) already has a `.dark` value, a plugin that uses the token-backed utilities (`bg-background`, `text-foreground`, `border-border`, `text-muted-foreground`, …) flips automatically. You do nothing.
 

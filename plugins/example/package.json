@@ -1,6 +1,6 @@
 {
   "name": "@oc-mui/plugin-example",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "license": "ECL-2.0",
   "type": "module",
   "private": true,
@@ -21,7 +21,7 @@
     "@oc-mui/plugin-testing": "workspace:*",
     "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.9.0",
-    "typescript": "~5.5.4",
+    "typescript": "~6.0.3",
     "vitest": "^4.0.17"
   }
 }

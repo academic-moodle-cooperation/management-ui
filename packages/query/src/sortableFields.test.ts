@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { EVENT_SORTABLE_FIELDS, SERIES_SORTABLE_FIELDS } from "./sortableFields";
+import {
+  EVENT_SORTABLE_FIELDS,
+  PLAYLIST_SORTABLE_FIELDS,
+  SERIES_SORTABLE_FIELDS,
+} from "./sortableFields";
 
 // These lists are generated from the GraphQL schema (see
 // codegen-plugins/input-field-names.mjs → schema-input-fields.generated.ts,
@@ -58,5 +62,18 @@ describe("SERIES_SORTABLE_FIELDS", () => {
     // Documents the asymmetry that confused us during the bug hunt.
     expect(SERIES_SORTABLE_FIELDS).toContain("description");
     expect(SERIES_SORTABLE_FIELDS).toContain("contributors");
+  });
+});
+
+describe("PLAYLIST_SORTABLE_FIELDS", () => {
+  it("matches the backend's PlaylistOrderByInput fields", () => {
+    expect([...PLAYLIST_SORTABLE_FIELDS].sort()).toEqual(
+      ["creator", "deletionDate", "description", "organization", "title", "updated"].sort(),
+    );
+  });
+
+  it("does not include the entry count or duration (derived client-side, not orderable)", () => {
+    expect(PLAYLIST_SORTABLE_FIELDS).not.toContain("entries");
+    expect(PLAYLIST_SORTABLE_FIELDS).not.toContain("duration");
   });
 });

@@ -1,5 +1,79 @@
 # @oc-mui/plugin-system
 
+## 1.3.1
+
+### Patch Changes
+
+- Dependency maintenance: jsdom 27 → 30 (test environment only).
+- 25ad329: Dependency maintenance: TypeScript 5.5 → 6.0. The `tsconfig.json` files drop
+  the now-deprecated `baseUrl` (every `paths` entry was already relative to the
+  config file), `@oc-mui/vite-config` sets `rootDir` explicitly, and the
+  packages that side-effect-import a stylesheet without resolving `vite/client`
+  declare `*.css` themselves, since TypeScript 6 rejects unresolved side-effect
+  imports by default.
+- 36c0360: Dependency maintenance: Vite 6 → 8 (Rolldown-based), with
+  `@vitejs/plugin-react-swc` 4 and `@vitejs/plugin-react` 5.2 as the matching
+  plugin majors. `@oc-mui/vite-config` accepts `vite` 6, 7 or 8 as its peer and
+  drops the Rollup-only `generatedCode.constBindings` output option (Rolldown
+  always emits const bindings). The `pnpm create-plugin` templates scaffold
+  against Vite 8.
+- 55bd01a: Document the known drift between `SHARED_RUNTIME_MAJORS` (still 1 for
+  `@oc-mui/ui`, `@oc-mui/query`, `@oc-mui/ui-config`) and the published 2.x
+  majors of those packages in the source comment; no runtime change. Plugins
+  should leave the three names out of `workspaceDependencies` until the table
+  is lifted with the next host major.
+- Updated dependencies [25ad329]
+  - @oc-mui/utils@1.3.1
+
+## 1.3.0
+
+### Minor Changes
+
+- 312f77a: `zod` (major 4) is now a shared runtime dependency: the host exposes one copy, the remote-plugin loader rewires `zod` imports to it, and `createCommunityPluginConfig` externalizes it by default. `definePluginConfig` takes a zod schema, so plugins already had to agree with the host on zod; they now consume the host's copy instead of bundling their own. Plugins built before this keep working (same major). Shared Runtime Dependencies Contract 1.0 → 1.1.
+
+### Patch Changes
+
+- Updated dependencies [b1d5f78]
+  - @oc-mui/utils@1.3.0
+
+## 1.2.0
+
+### Minor Changes
+
+- 3f6bf7d: Let a plugin supply the label for the sidebar tab it contributes.
+
+  The host derived the visible caption from the registration key by string surgery (`acme:exam-recordings` → "Exam Recordings"), so it could never be translated and leaked the internal key naming into the UI. `registerComponent` now accepts an optional `label`: a translation key, following the same convention as `sidebar:nav-items` titles. The host resolves it at render time, so the caption follows a language switch, and it loads the key's namespace itself — the tab's own component may not have mounted yet.
+
+  Additive and backwards compatible: registrations without a `label` keep the derived caption. The resolution ships in `@oc-mui/i18n` as `useExtensionLabels` (plus `deriveLabelFromKey`).
+
+### Patch Changes
+
+- Dependency maintenance: the October minor/patch group (47 packages) — the Radix primitives, react-aria/react-stately, Tailwind 4.3, zod 4.6, graphql-request 7.4, Playwright 1.64, api-extractor 7.59, typescript-eslint 8.71 and the rest. No code changes.
+
+  Three bumps from the group are deliberately not taken, each with the reason recorded next to the pin:
+
+  - **React stays on 19.1** (`pnpm.overrides` + root dev dependencies so every peer resolves to the same copy). React ≥ 19.2 logs a console error for the theme `<script>` that `next-themes` 0.4.6 renders, and the E2E smoke test asserts zero console errors; upstream is unresolved (pacocoursey/next-themes #385/#387/#397). Lifted once the theme provider no longer renders a script.
+  - **`@tanstack/router-devtools` stays on 1.125**, together with `react-router-devtools` and `router-devtools-core`: the devtools import `@tanstack/router-core` internals and only work with the router minor they shipped with; the newer versions broke Vite's pre-bundling and with it the dev server.
+  - **`@types/node` is pinned to the workspace's `^25`** across the tree: optional `@types/node` peers otherwise resolve to the newest major in packages that declare none, which splits Vite into two type-incompatible instances.
+
+- 3b40cfc: Documentation-only: correct package READMEs against the code (docs overhaul Phase 1).
+- 2fbe7c9: Hold React at `~19.2.0` (down from `^19.3.0`). React 19.3 makes the production
+  build roughly four times slower on WebKit (Safari, iPad) — the browser matrix
+  went from all-green in 2.4 min to 11 failed / 28 flaky in 10 min, bisected to
+  the 19.3 bump alone. `react` and `react-dom` are pinned in every package and in
+  the root `pnpm.overrides` so the workspace keeps resolving to a single copy;
+  Dependabot ignores React minors until the hold is lifted (see
+  `docs/reference/open-followups.md` §11). Peer ranges and public APIs are
+  unchanged.
+- a007934: React lifted from the 19.1 hold to `^19.3.0`. The `pnpm.overrides` pinning `react`, `react-dom`, `@types/react` and `@types/react-dom` to 19.1 are removed together with the Dependabot ignore for React minors; the workspace resolves to a single React copy without the workspace-root dev dependencies the hold had needed. Peer ranges (`^18.0.0 || ^19.0.0`) are unchanged. API reports regenerated: `@types/react` 19.3 spells JSX return types as `React.JSX.Element`, a rendering change only.
+- 2044d7f: Move the `build:types` incremental state file (`tsconfig.build.tsbuildinfo`) into `dist-types/` so it lives and dies with the declaration output it describes. Previously the state file sat at the package root, outside the turbo `dist-types/**` cache outputs: a stale state file next to a deleted/partial `dist-types/` made `tsc` skip emission entirely, and turbo then cached the empty `dist-types/` — poisoning the (worktree-shared) build cache and breaking `check-types` repo-wide with `TS7016` errors on later "cache hit" runs (#258).
+- Updated dependencies [3b40cfc]
+- Updated dependencies [31c19e7]
+- Updated dependencies [9db8ada]
+- Updated dependencies [a36e731]
+- Updated dependencies [2044d7f]
+  - @oc-mui/utils@1.2.0
+
 ## 1.1.0
 
 ### Minor Changes

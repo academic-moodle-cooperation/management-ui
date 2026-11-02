@@ -1,5 +1,61 @@
 # @oc-mui/utils
 
+## 1.3.1
+
+### Patch Changes
+
+- 25ad329: Dependency maintenance: TypeScript 5.5 → 6.0. The `tsconfig.json` files drop
+  the now-deprecated `baseUrl` (every `paths` entry was already relative to the
+  config file), `@oc-mui/vite-config` sets `rootDir` explicitly, and the
+  packages that side-effect-import a stylesheet without resolving `vite/client`
+  declare `*.css` themselves, since TypeScript 6 rejects unresolved side-effect
+  imports by default.
+
+## 1.3.0
+
+### Minor Changes
+
+- b1d5f78: The GraphQL schema is no longer a per-release-line file. `@oc-mui/query` commits
+  one SDL per supported Opencast major (`schema-19.graphql`, `schema-20.graphql`),
+  generates its code from the newest one, and `pnpm schema:validate` enforces
+  that each schema is a strict superset of the previous major's and that every
+  document is valid against every schema it may meet (`queries.graphql`) or
+  against the majors it is written for (`queries.oc20.graphql`, the playlist
+  operations). The generated code is unchanged. `@oc-mui/utils` gains
+  `getOpencastMajor()`, `setOpencastMajor()` and `supportsOpencastMajor(min)`:
+  the shell publishes the major its build targets, and a plugin gates features
+  that need a newer backend with it instead of the code being reverted per line.
+
+## 1.2.0
+
+### Minor Changes
+
+- 31c19e7: fix(episodes): keep the file extension on downloaded tracks
+
+  The download link handed the raw event title to the browser's `download`
+  attribute. A title containing a dot (`Vorlesung 3.2 Einführung`) was read as
+  already carrying an extension, so the file was saved without `.mp4` and
+  Windows reported an unknown format.
+
+  Adds `buildDownloadFileName` to `@oc-mui/utils`, which appends the real
+  extension — taken from the track path, falling back to its MIME type — and
+  strips characters Windows rejects in file names.
+
+### Patch Changes
+
+- 3b40cfc: Documentation-only: correct package READMEs against the code (docs overhaul Phase 1).
+- 9db8ada: `parseDuration` no longer throws on non-ISO input
+
+  A single event whose `duration` was not valid ISO 8601 (e.g. a raw
+  millisecond number) threw inside the table cell renderer, and the nearest
+  error boundary unmounted the entire Videos page (#253). `parseDuration`
+  now returns the raw value for input tinyduration cannot parse — one odd
+  cell instead of a dead module. Valid durations format as before;
+  undefined/empty still yields `00:00:00` (rendered as ∞ by callers).
+
+- a36e731: `sha256` no longer throws on plain-HTTP deployments: when `crypto.subtle` is unavailable (insecure contexts), it falls back to a stable cyrb53-based hex hash instead of crashing the caller (#309). The helper's contract is unchanged — non-cryptographic cache keys / stable ids; the fallback output is shorter and not SHA-256.
+- 2044d7f: Move the `build:types` incremental state file (`tsconfig.build.tsbuildinfo`) into `dist-types/` so it lives and dies with the declaration output it describes. Previously the state file sat at the package root, outside the turbo `dist-types/**` cache outputs: a stale state file next to a deleted/partial `dist-types/` made `tsc` skip emission entirely, and turbo then cached the empty `dist-types/` — poisoning the (worktree-shared) build cache and breaking `check-types` repo-wide with `TS7016` errors on later "cache hit" runs (#258).
+
 ## 1.1.0
 
 ### Minor Changes

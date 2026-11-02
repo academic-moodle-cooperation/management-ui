@@ -37,17 +37,17 @@ The set is decided **forward-looking**: it covers what a plugin author can legit
 | `@oc-mui/remote-plugin-loader` | host-side mechanism for loading remote plugins; an author writes a plugin, the host loads it |
 | `@oc-mui/providers` | app-level provider composition; authors reach the same wiring through `@oc-mui/app-runtime`'s standalone wrappers. Promote it only if we commit to authors composing providers by hand. |
 
-> The SDK packages carry full npm metadata (`description`, `repository`, `author`, `keywords`, `publishConfig.access = public`) and a per-package `LICENSE`, and are publishable: the `private` flags were dropped in the publish flip (PR #210). The only remaining one-time step is the [first-release bootstrap](#first-release-bootstrap--one-time-checklist).
+> The SDK packages carry full npm metadata (`description`, `repository`, `author`, `keywords`, `publishConfig.access = public`) and a per-package `LICENSE`, and are publishable: the `private` flags were dropped in the publish flip (PR #210). The one-time [first-release bootstrap](#first-release-bootstrap--one-time-checklist) ran on 2026-10-16.
 
 ### Publish-readiness checklist (the work before the flip)
 
-Making the packages npm-installable was tracked as the following list — all of it is done; only the [first-release bootstrap](#first-release-bootstrap--one-time-checklist) remains:
+Making the packages npm-installable was tracked as the following list — all of it is done, including the one-time [first-release bootstrap](#first-release-bootstrap--one-time-checklist) (2026-10-16):
 
 - [x] **Metadata + per-package `LICENSE`** on the 15 SDK packages.
 - [x] **React → `peerDependencies`** on `plugin-system`, `app-runtime`, `plugin-testing` (avoids duplicate-React in a consumer install).
 - [x] **`exports` → built `dist/` + `files` allowlist** for every SDK package, so consumers get compiled JS, not raw `.ts`/`.tsx`. Pattern: tsup builds ESM JS → `dist/`; `tsc` emits `.d.ts` → `dist-types/` (also feeds api-extractor); package `exports` point **directly at `dist`** (dist-canonical; the former src/`publishConfig` indirection and the `development` condition were removed so published and local resolution can never diverge — the shell dev server resolves workspace sources via its own Vite aliases instead). All 15 SDK packages now ship `dist` (the 3 config packages ship source intentionally with a `files` allowlist). _Styling for external consumers works out of the box: `@oc-mui/ui`'s `globals.css` self-scans its own dist (so component classes are generated) and ships the design tokens + fonts, and Tailwind v4 auto-scans the consumer's project — so a plugin author just needs `@import "@oc-mui/ui/globals.css"`. The previous monorepo-specific `@source` globs (apps/plugins/.local-plugins) were moved out of the shared stylesheet into the shell's own Tailwind entry ([`apps/shell/src/app.css`](../../apps/shell/src/app.css)); verified against the visual-regression baselines (pixel-identical) and a real external Tailwind build._
-- [x] **Verdaccio publish-smoke-test (the acceptance gate).** [`scripts/verify-sdk-publish.sh`](../../scripts/verify-sdk-publish.sh) (run via `pnpm test:sdk-publish`, CI: [`.github/workflows/sdk-publish.yml`](../../.github/workflows/sdk-publish.yml)) builds the SDK, strips `private`, publishes all 15 packages to a throwaway Verdaccio registry, then in a consumer project **outside the workspace** installs the SDK from that registry and runs a type-check (against the shipped `.d.ts`) + a runtime smoke test (against the shipped JS) of a real `createPlugin` plugin. This is the real proof that "a plugin can install and build against our packages without the monorepo." Everything is torn down on exit and the `private` flags restored from git.
-- [x] **`pkg.pr.new` per-PR preview packages.** [`.github/workflows/preview-packages.yml`](../../.github/workflows/preview-packages.yml) publishes preview builds of the 15 SDK packages to the [pkg.pr.new](https://pkg.pr.new) CDN on each PR, and comments the install URLs, so anyone (e.g. a backend/plugin author) can `pnpm add https://pkg.pr.new/@oc-mui/<pkg>@<sha>` and test the exact artifacts from a branch before a permanent npm publish. It packs with `pnpm` (same pack path as a real publish) and rewrites workspace deps to sibling preview URLs, so the whole `@oc-mui` graph resolves from the CDN. pkg.pr.new **skips `private: true` packages**; the workflow still carries a strip-`private` step from the pre-flip era, which is vestigial today (no SDK package carries `private` anymore — the step is a harmless no-op kept as a guard; the runner checkout is throwaway). **One-time setup (maintainer):** install the [pkg.pr.new GitHub App](https://github.com/apps/pkg-pr-new) on the repo running the workflow — pkg.pr.new checks the App against `$GITHUB_REPOSITORY`, so install it wherever you want previews. Until it's installed the publish step is rejected, but it's `continue-on-error` so it never fails the PR. (No npm token; pkg.pr.new is a preview CDN, not npm.)
+- [x] **Verdaccio publish-smoke-test (the acceptance gate).** [`scripts/verify-sdk-publish.sh`](../../scripts/verify-sdk-publish.sh) (run via `pnpm test:sdk-publish`, CI: [`.github/workflows/sdk-publish.yml`](../../.github/workflows/sdk-publish.yml)) builds the SDK, strips `private`, publishes all 15 packages to a throwaway Verdaccio registry, then in a consumer project **outside the workspace** installs the SDK from that registry and runs a type-check (against the shipped `.d.ts`) + a runtime smoke test (against the shipped JS) of a real `createPlugin` plugin, and imports **every published entry point** once (a `files` field that forgets a module its own index imports passes the install and crashes every consumer — that is what this catches). This is the real proof that "a plugin can install and build against our packages without the monorepo." Everything is torn down on exit and the `private` flags restored from git.
+- [x] **`pkg.pr.new` per-PR preview packages.** [`.github/workflows/preview-packages.yml`](../../.github/workflows/preview-packages.yml) publishes preview builds of the 15 SDK packages to the [pkg.pr.new](https://pkg.pr.new) CDN on each PR, and comments the install URLs, so anyone (e.g. a backend/plugin author) can `pnpm add https://pkg.pr.new/@oc-mui/<pkg>@<sha>` and test the exact artifacts from a branch before a permanent npm publish. It packs with `pnpm` (same pack path as a real publish) and rewrites workspace deps to sibling preview URLs, so the whole `@oc-mui` graph resolves from the CDN. pkg.pr.new **skips `private: true` packages**; the workflow still carries a strip-`private` step from the pre-flip era, which is vestigial today (no SDK package carries `private` anymore — the step is a harmless no-op kept as a guard; the runner checkout is throwaway). **One-time setup (maintainer):** install the [pkg.pr.new GitHub App](https://github.com/apps/pkg-pr-new) on the repo running the workflow — pkg.pr.new checks the App against `$GITHUB_REPOSITORY`, so install it wherever you want previews. Until it's installed the publish step is rejected and the job fails — deliberately visible, so a broken preview publish is never mistaken for a green check. (No npm token; pkg.pr.new is a preview CDN, not npm.)
 
 Both closing tasks of the exports→dist effort are now in place — Verdaccio for the all-in-one acceptance gate, pkg.pr.new for low-friction per-branch testing. Together they are the standing answer to "can we test against staged packages before publishing?" — **yes**.
 
@@ -93,6 +93,24 @@ For an intentionally release-noteless change to a versioned package (a JSDoc typ
 ```bash
 pnpm changeset --empty
 ```
+
+### Dependabot pull requests
+
+Dependabot opens grouped npm bumps and single major bumps. The changeset gate
+treats them like any other PR — and that is deliberate: a dependency bump
+inside a published package *is* a change consumers may notice (a bumped
+peer range, a changed type signature in the API report). Before merging a
+Dependabot npm PR, a maintainer therefore:
+
+1. runs `pnpm api-check` on the branch and commits any regenerated
+   `etc/<pkg>.api.md` (judge the diff — a changed public signature is a
+   release note, not noise),
+2. adds a changeset: `patch` for runtime dependencies of published packages,
+   `pnpm changeset add --empty` when only dev/build tooling moved,
+3. pushes both to the Dependabot branch (Dependabot stops rebasing a PR that
+   carries human commits, which is fine).
+
+GitHub Actions bumps touch no versioned package and pass the gate as-is.
 
 ## API surface drift detection
 
@@ -160,10 +178,43 @@ The single home for the product-version model (PR/issue templates link here):
 
 1. Branch a feature off `develop`; open a PR back into `develop` **with a changeset** (CI enforces it).
 2. Features accumulate on `develop` along with their changesets.
-3. To release, push the release line — branch `r/NN.x` from `develop` for a new major, or merge `develop` into the existing line.
+3. To release, push the release line — branch `r/NN.x` from `develop` for a new major, or merge `develop` into the existing line. When syncing into an *older* line, leave out what needs a newer Opencast — see [Features that need a newer Opencast major](#features-that-need-a-newer-opencast-major).
 4. On that line, the changesets action opens a **"Version Packages" PR** (version bumps + changelog).
 5. Merge that PR → the action publishes the bumped packages to npm, creates the per-package tags plus the product tag `vNN.x.y`, and cuts a GitHub Release.
 6. Forward-merge the line back toward `develop` so the version bumps flow back.
+
+### The preview stage — testing a change before it reaches `develop`
+
+`develop` is what staging runs, so it must only receive changes that have already been looked at. Anything a human should see first goes through the **preview stage**:
+
+| Stage | Branch | Environment | Content |
+|---|---|---|---|
+| Development | feature branch, PR | your dev server (`pnpm dev` against the test box) | one change |
+| **Preview** | `preview` | the test box | `develop` plus every open PR labelled `preview` |
+| Staging | `develop` | staging | everything merged and reviewed |
+| Production | tag `vNN.x.y` on `r/NN.x` | production | released versions only |
+
+`preview` is a **throwaway build target, not a branch anyone works on**: it is regenerated as `develop` (`main` in the plugins repository) plus the PRs that carry the `preview` label, built on the test box, and never merged anywhere. When the test is done, the PR merges into `develop` as usual and the label comes off.
+
+Rebuilding it by hand (until the workflow does it):
+
+```bash
+git checkout -B preview origin/develop
+for b in <pr-branch> …; do git merge --no-ff --no-edit "origin/$b"; done   # conflicts here mean the candidates conflict — fix them in the PRs
+git push -f origin HEAD:preview
+```
+
+Two candidates that conflict with each other show up here, before either reaches `develop`. A PR that is not visible in the UI (workflows, docs, dependency maintenance) skips the stage and merges directly.
+
+### Features that need a newer Opencast major
+
+Most changes are Opencast-agnostic and should reach every supported line. Some depend on an API that exists only from a given major on — the first case is playlists (the GraphQL playlist API, Opencast 20+). The everyday loop does not change for them: they land on `develop`, get tested there together with everything else, and ship with the next release of each line that can run them. What changes is the sync into older lines.
+
+1. **The schema is the contract, and it is shared.** `packages/query` commits one SDL per supported major (`schema-19.graphql`, `schema-20.graphql`, …) on every branch; codegen runs against the newest one, so the generated code is identical on every line. `pnpm schema:validate` (part of `codegen:check`) enforces that each schema is a strict superset of the previous major's and that every document is valid against every schema it may meet.
+2. **Put major-specific operations in `queries.ocNN.graphql`.** A document that only an Opencast NN backend can answer (the playlist operations, `queries.oc20.graphql`) lives in a file named after that major; the validator checks it against that major and newer only. Everything in `queries.graphql` must work on every supported major.
+3. **Gate at build/run time, never by reverting.** The shell publishes the major it was built for (`VERSION`'s major, via `setOpencastMajor`); a plugin asks `supportsOpencastMajor(20)` from `@oc-mui/utils` before it uses a major-specific hook and hides the feature with a clear notice otherwise. Java code against newer Opencast APIs lives in the backend bundle, which is built per major anyway. Nothing is reverted on a sync branch any more: the same code ships on every line, the older backend simply never receives the operations it lacks.
+
+Features that work on every major need nothing special: no label, and the next `develop → r/NN.x` sync carries them. "Oldest line first" applies to **bugfixes** on a release line, not to features — see [Bugfixes across multiple release lines](#bugfixes-across-multiple-release-lines).
 
 ## Cutting a release
 
@@ -174,10 +225,14 @@ Before any release — and especially before the first public 1.0 cut or any maj
 The automation lives in [`.github/workflows/release.yml`](../../.github/workflows/release.yml), which runs the [`changesets/action`](https://github.com/changesets/action) on every push to an **`r/**`** release line (see [Branching model](#branching-model)). It can also be started manually via `workflow_dispatch`, but a branch guard in the workflow makes it a no-op unless it runs on an `r/` branch — dispatching it from `develop` does nothing. The release flow:
 
 1. **Push the release line `r/NN.x`** (branch from `develop`, or update an existing line). On the push, the action opens (or updates) a **"Version Packages" PR** against that line that aggregates the pending `.changeset/*.md` files into version bumps and changelog updates.
-2. **Review and merge the Version Packages PR.** This commits the version bumps, regenerated changelogs, and consumes the `.changeset/*.md` files.
+2. **Review and merge the Version Packages PR.** This commits the version bumps, regenerated changelogs, and consumes the `.changeset/*.md` files. The PR is opened with the workflow token, so **no CI workflows run on it** (only `version-pr-guard.yml`, which runs on every Version PR); the merge decision rests on the line's own CI being green, which the PR does not change — it touches only versions, changelogs and the product version stamps.
 3. **The action publishes.** When that merge lands and no changesets remain, the same workflow runs `pnpm changeset:publish`, which calls `npm publish` for every bumped package and creates matching per-package git tags, plus the product tag `vNN.x.y` and a GitHub Release. Then forward-merge the release line back toward `develop`.
 
+The workflow runs `changesets/action` v2 on top of Changesets CLI 3 (since 2026-10-28). CLI 3 needs Node 22.11 or newer, which is why the root `engines` floor moved from 20 to 22.11 (Node 20 reached end of life in April 2026) and every workflow runs on Node 22. Two consequences of that pair worth knowing: `privatePackages` in `.changeset/config.json` keeps private packages versioned but untagged (CLI 3 would otherwise stop versioning them, which breaks the "every package is versioned" rule above), and `changeset version` now exits non-zero when nothing is pending, so never chain it into a script that must succeed on an empty queue.
+
 There is no manual `pnpm publish` step — the single exception is the one-time [first-release bootstrap](#first-release-bootstrap--one-time-checklist), which has to run before the first release because OIDC cannot create a package that does not exist yet. If a release goes sideways, deprecate the bad version with `npm deprecate` rather than unpublishing.
+
+If a manual publish is ever unavoidable (a registry incident, a bootstrap of a brand-new package), publish only from a **fresh clone of the release line at the tagged commit**, after `pnpm install --frozen-lockfile && pnpm build` — never from a working checkout with local edits, uncommitted changesets or a stale `dist/`. A stale local build once packed an SDK whose `dist/` did not match its sources; a fresh checkout is the only guard against that.
 
 ## Bugfixes across multiple release lines
 
@@ -186,9 +241,9 @@ Like Opencast, we support the newest release lines in parallel (Opencast itself 
 1. **Fix the oldest affected line.** PR (fix + changeset, usually `patch`) against e.g. `r/18.x`, merge it there.
 2. **Forward-merge before releasing** — `r/18.x → r/19.x → r/20.x → develop`, one PR each, merged as **merge commits** (never squash — squash diverges the histories permanently). Two pieces of automation carry this rule so nobody has to remember it:
    - `forward-merge.yml` opens (or refreshes) the PR to the next line up on every `r/**` push, so the pending chain is always visible.
-   - `version-pr-guard.yml` blocks an older line's Version PR while any changeset it would consume is missing on a newer line — the failure mode it prevents is silent: releasing first carries the changeset **deletion** upward, and the fix ships on the newer line without a version bump or changelog entry.
+   - the **forward-merge gate** in `release.yml` aborts an older line's release, on the push that merged its Version PR and before anything is tagged or published, while any changeset that PR consumed never reached a newer line (`version-pr-guard.yml` expresses the same rule on the Version PR itself, but PRs opened with the workflow token get no workflow runs, so the release-time gate is the enforced one). Two kinds of changeset are exempt because they never travel upward by design: an **empty** changeset (no package in its front matter — the placeholder a post-release sync into an older line needs to satisfy `Changeset present`) and one whose text contains the marker `line-only` (a line's own schema pin, for example); write that word into any changeset that must stay on one line — the failure mode it prevents is silent: releasing first carries the changeset **deletion** upward, and the fix ships on the newer line without a version bump or changelog entry.
    Forward-merging *before* any line's Version PR is merged carries the **changeset file** to every line, so each line's own Version PR consumes its own copy and produces that line's patch release (e.g. `1.0.3` on the 18-line and `2.1.1` on the 19-line, each with the fix in its changelog).
-3. **Resolve version metadata toward the newer line.** Forward merges conflict in `package.json` versions, `CHANGELOG.md`s, and `VERSION`: always keep the **target (newer) line's** values and take only the fix itself. The same rule covers the committed GraphQL schema and its outputs (`packages/query/src/schema.graphql`, `gql-generated.ts`, `schema-input-fields.generated.ts`): each line pins **its own Opencast major's** schema, so on conflict keep the target line's schema and rerun `pnpm --filter @oc-mui/query codegen` — `codegen:check` then proves the result is consistent. `VERSION` is per-line by design (`18.5.1` on `r/18.x`, `19.2.0` on `r/19.x`) and is bumped **automatically** inside the Version PR, which also stamps the Maven/JAR versions — see [Release lines and the product version](#release-lines-and-the-product-version).
+3. **Resolve version metadata toward the newer line.** Forward merges conflict in `package.json` versions, `CHANGELOG.md`s, and `VERSION`: always keep the **target (newer) line's** values and take only the fix itself. The GraphQL schemas and the generated code are **not** line-local any more (one SDL per major, generated from the newest — see [Features that need a newer Opencast major](#features-that-need-a-newer-opencast-major)); they merge like any other file. The Opencast parent version in the poms and the scaffold template follow `VERSION`'s major: after restoring `VERSION`, run `pnpm line:derive` and the pins are right again. `VERSION` is per-line by design (`18.5.1` on `r/18.x`, `19.2.0` on `r/19.x`) and is bumped **automatically** inside the Version PR, which also stamps the Maven/JAR versions — see [Release lines and the product version](#release-lines-and-the-product-version). Two traps to know: a merge into a line is often **conflict-free and still wrong** — the first `develop → r/NN.x` sync after a closing merge (`r/NN.x → develop`) finds develop already *containing* the line and silently takes develop's version of every line-local file, so compare the merge result against the target line (`git diff --name-status` right after the raw merge) before trusting it; and `line-pins-guard.yml` fails any PR against `r/NN.x` whose `VERSION` major or Opencast parent version does not match the line, so such a merge cannot land unnoticed (tracked for a structural fix in #443).
 4. **Release each line independently** by merging its Version PR whenever that line wants to ship. There is no required ordering between lines.
 5. **Only the newest line publishes npm — and only it creates package tags.** `release.yml` computes the newest existing `r/NN.x` at run time: the newest line runs `changeset publish` (npm + per-package git tags, npm-tagged `latest` — correct by construction). An **older line touches neither npm nor the package tags**: the lines carry identical package versions, and a git tag name can exist only once — so an older line's release leg produces only its product tag (`vNN.x.y`) and GitHub Release. Older lines ship as JARs. No manual `npm dist-tag` repointing exists anymore.
 6. **Every line rebuilds its own backend bundles.** The Maven bundles (`management-ui-config`, `management-ui-graphql`, `management-ui-core`) bake their OSGi `Import-Package` ranges in at compile time, so a JAR built against one Opencast major refuses to start on the next (`missing requirement … osgi.wiring.package=org.opencastproject.assetmanager.api version>=19.0.0 !(>=20.0.0)`). Each line therefore ships its own JARs, built from that line's `org.opencastproject:base` parent. The npm packages carry no such constraint — that asymmetry is exactly why the two artifact families are versioned differently.
@@ -197,13 +252,15 @@ Like Opencast, we support the newest release lines in parallel (Opencast itself 
 
 ## npm authentication: tokenless via Trusted Publishing (OIDC)
 
-There is **no `NPM_TOKEN` secret**. The release workflow authenticates to npm with a short-lived [OIDC](https://docs.npmjs.com/trusted-publishers) identity token (it has `id-token: write`), so there is no long-lived credential to leak or rotate, and provenance attestations are generated automatically. OIDC publishing needs **npm ≥ 11.5.1 and Node ≥ 22.14.0** on the runner — the workflow's Setup Node (`node-version: 22`) + `npm install -g npm@latest` steps guarantee this.
+There is **no `NPM_TOKEN` secret**. The release workflow authenticates to npm with a short-lived [OIDC](https://docs.npmjs.com/trusted-publishers) identity token (it has `id-token: write`), so there is no long-lived credential to leak or rotate, and provenance attestations are generated automatically. OIDC publishing needs **npm ≥ 11.5.1 and Node ≥ 22.14.0** on the runner — the workflow's Setup Node (`node-version: 22`) + `npm install -g npm@11` steps guarantee this. The major is pinned on purpose: npm 12 changed the shape of `npm info --json` (an array instead of an object), which makes `changeset publish` believe nothing is published yet and republish every package — the 20.1.1 release failed exactly that way. Lift the pin only after checking that Changesets reads the new shape.
 
 The one wrinkle is the **first publish of each package**: OIDC cannot create a package that does not exist yet, and a package cannot have a trusted publisher configured until it exists ([npm/cli#8544](https://github.com/npm/cli/issues/8544), still open). That makes the very first publish a one-time manual bootstrap — the checklist below. Every release after it is workflow-only and tokenless.
 
 ## First-release bootstrap — one-time checklist
 
 > Run this **once**, before the first release ever cut from a release line. Everything here is manual by necessity; after step 4 the repo never publishes off-CI again. Every step needs maintainer rights (npm account with publish access, GitHub repo admin) — none of it can be done from CI or by an agent.
+>
+> **Done on 2026-10-16** from `r/20.x` (recorded in [#236](https://github.com/academic-moodle-cooperation/management-ui/issues/236)): the 15 packages were first-published by hand, the Trusted Publishers configured, and the first CI release `v20.1.0` ran tokenless. The checklist stays here as the procedure for the first publish of any *new* SDK package; the boxes below are the template, not the status.
 
 **Preconditions**
 
@@ -235,13 +292,16 @@ The one wrinkle is the **first publish of each package**: OIDC cannot create a p
 
 **3. Configure a Trusted Publisher per package**
 
-- [ ] For **each** published package on npmjs.com: *Package → Settings → Trusted Publisher → GitHub Actions*, naming this repo and `.github/workflows/release.yml`. A package without one falls back to token auth, which does not exist here — its next release fails.
+- [ ] For **each** published package on npmjs.com: *Package → Settings → Trusted Publisher → GitHub Actions*, naming this repo and `.github/workflows/release.yml`. Tick **Allow `npm publish`** under *Allowed actions*: npm's newer *staged publishing* (CI stages, a maintainer promotes) is the recommended mode, but Changesets runs a plain `npm publish`, so without the tick the release is rejected. Revisit once Changesets supports staging. Leave `npm dist-tag` unticked. A package without one falls back to token auth, which does not exist here — its next release fails.
 
 **4. Verify the tokenless path before relying on it**
 
 - [ ] Cut a throwaway patch release on the release line (an `--empty` changeset is enough) and confirm the workflow publishes without a token, and that the product tag `v$(cat VERSION)` + GitHub Release appear.
 
 **5. Afterwards**
+
+- [ ] npm creates a `0.0.0-stage` placeholder version for every new package at creation time (a 300-byte tarball, not installable in any useful sense). `latest` points at the real version, but deprecate the placeholders so nobody trips over them: `npm deprecate @oc-mui/<pkg>@0.0.0-stage "placeholder created by npm on first publish; use the latest version"` (one per package, needs 2FA).
+- [ ] Rewrite the first product release's notes by hand: with no earlier tag to compare against, GitHub generates them from the whole repository history, and an `@scope` in an old PR title (e.g. `@workspace/*`) is parsed as a user mention and shows a stranger as a contributor. From the second release on the range is tag-to-tag and the notes are right as generated; keep package scopes in PR titles in backticks anyway.
 
 - [ ] Delete nothing and unpublish nothing — a bad version gets `npm deprecate`, not an unpublish.
 - [ ] Update this checklist's status in [#236](https://github.com/academic-moodle-cooperation/management-ui/issues/236) and close it.

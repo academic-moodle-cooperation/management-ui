@@ -160,7 +160,7 @@ A plugin must **not** import from:
 
 - `apps/shell` or `apps/playground` — apps consume plugins, not the other way around
 - any other plugin under `plugins/<name>/*` or `.local-plugins/<name>/*` — communicate via extension points instead
-- A library that has been wrapped behind a `@oc-mui/*` facade (e.g., import `@oc-mui/router`, never `@tanstack/react-router` directly; same for `@tanstack/react-query` → `@oc-mui/query`, `i18next` → `@oc-mui/i18n`, `jotai` → `@oc-mui/store`)
+- A library that has been wrapped behind a `@oc-mui/*` facade (e.g., import `@oc-mui/router`, never `@tanstack/react-router` directly; same for `@tanstack/react-query` → `@oc-mui/query`, `i18next` → `@oc-mui/i18n`, `jotai` → `@oc-mui/store`, `@dnd-kit/*` → `SortableList` from `@oc-mui/ui`)
 
 The wrapper rule is enforced by `no-restricted-imports` in `@oc-mui/eslint-config/base.js`. The cross-plugin and cross-app rules are enforced by `eslint-plugin-boundaries` rules in the same config — see the comment block in `packages/eslint-config/base.js` for the full element/rule matrix. The boundaries rule today catches cross-plugin imports written as relative paths (`../../<other-plugin>/...`); workspace-package imports (`@oc-mui/plugin-<other>`) are not caught yet because of a resolver gap, tracked as a follow-up.
 

@@ -1,6 +1,6 @@
 // Post-processing for the codegen output — runs as part of `pnpm codegen`.
 //
-// Two mechanical fixes the generator cannot be configured into:
+// Three mechanical fixes the generator cannot be configured into:
 //
 // 1. `useTypeImports: true` incorrectly makes `fetchData` a type import even
 //    though it is a function used as a value.
@@ -15,6 +15,17 @@
 //    explicitly keeps tsc from ever naming `NoInfer`. The suspense hooks get
 //    the same treatment for symmetry — their emit happens to be clean today,
 //    but only as an artifact of tanstack's current overload shapes.
+//
+// 3. typescript-react-query >= 7 hard-codes `documentMode: "string"`, which
+//    wraps every `Mui…Document` / `Mui…FragmentDoc` in a `TypedDocumentString`
+//    (a `String` subclass carrying result/variables generics — emitted here as
+//    `<unknown, unknown>`, so it types nothing) and imports
+//    `DocumentTypeDecoration` from @graphql-typed-document-node/core. That is a
+//    runtime shape change for a public export: `===` against a string fails
+//    and graphql-request's `client.request()` prints the object as an AST.
+//    Unwrapping back to the plain template literal keeps the constants what
+//    they always were and avoids the extra dependency.
+//
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -56,9 +67,29 @@ try {
     process.exit(1);
   }
 
+  // `new TypedDocumentString(\`…\`)` → `\`…\``. Fragment docs carry a second
+  // `{"fragmentName": …}` argument, dropped too. GraphQL text contains no
+  // backticks, so `[^\`]*` spans exactly one document.
+  const documents = (content.match(/new TypedDocumentString\(`/g) ?? []).length;
+  content = content.replace(/new TypedDocumentString\((`[^`]*`)(?:,\s*\{[^}]*\})?\)/g, "$1");
+  content = content.replace(
+    /^export class TypedDocumentString<TResult, TVariables>\n[\s\S]*?\n}\n/m,
+    "",
+  );
+  content = content.replace(
+    /^import type \{ DocumentTypeDecoration \} from ['"]@graphql-typed-document-node\/core['"];\n/m,
+    "",
+  );
+  if (documents === 0 || /TypedDocumentString|DocumentTypeDecoration/.test(content)) {
+    console.error(
+      `❌ Unwrapped ${documents} documents but TypedDocumentString remnants remain (or none were found) — adjust fix-fetcher-import.mjs to the new codegen output.`,
+    );
+    process.exit(1);
+  }
+
   writeFileSync(generatedFile, content, "utf-8");
   console.log(
-    `✅ Post-processed gql-generated.ts (fetchData import; ${queryHooks} query + ${suspenseHooks} suspense hooks annotated)`,
+    `✅ Post-processed gql-generated.ts (fetchData import; ${queryHooks} query + ${suspenseHooks} suspense hooks annotated; ${documents} documents unwrapped to plain strings)`,
   );
 } catch (error) {
   console.error("❌ Error post-processing gql-generated.ts:", error);

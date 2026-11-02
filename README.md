@@ -3,6 +3,7 @@
 A modular, plugin-first admin interface for [Opencast](https://opencast.org). A thin shell hosts routing, auth, and layout; every visible feature — episodes, series, upload, marketplace — ships as a plugin. Organisations customize by adding plugins and themes, not by forking.
 
 [![License: ECL 2.0](https://img.shields.io/badge/License-ECL_2.0-blue.svg)](LICENSE)
+[![CI](https://github.com/academic-moodle-cooperation/management-ui/actions/workflows/test.yml/badge.svg?branch=develop)](https://github.com/academic-moodle-cooperation/management-ui/actions/workflows/test.yml)
 
 ## Where to start
 
@@ -14,7 +15,7 @@ A modular, plugin-first admin interface for [Opencast](https://opencast.org). A 
 | **Build a plugin** | [Extend it](docs/extend/index.md) — your own screens in the shell, contract test green. |
 | **Contribute to this repo** | [Contribute](docs/contribute/index.md) — the dev loop, the gate, and everything to land your first PR. |
 
-Full documentation lives in [`docs/`](docs/index.md) and renders as the [docs site](https://academic-moodle-cooperation.github.io/management-ui/) (Pages deploys are currently dormant — browse `docs/` on GitHub meanwhile). Architecture tour: [`docs/reference/architecture.md`](docs/reference/architecture.md). For AI agents and tooling: [`AGENTS.md`](AGENTS.md) (operational rules) and [`llms.txt`](llms.txt).
+Full documentation lives in [`docs/`](docs/index.md) and renders as the [docs site](https://academic-moodle-cooperation.github.io/management-ui/). Architecture tour: [`docs/reference/architecture.md`](docs/reference/architecture.md). For AI agents and tooling: [`AGENTS.md`](AGENTS.md) (operational rules) and [`llms.txt`](llms.txt).
 
 ## Quick start
 

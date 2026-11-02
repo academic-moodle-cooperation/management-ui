@@ -30,6 +30,8 @@ interface AppConfig {
   app: {
     // Language the UI starts in. A default, not a lock: a user's own pick
     // from the language switcher is remembered and wins on later visits.
+    channel?: string,
+    tags?: string | string[],
     locale: string;
     HtmlDocumentTitle: string; // <title> of the document
     logoUrl?: string;
@@ -76,16 +78,16 @@ interface AppConfig {
 
 ### What the top-level keys mean
 
-| Key | What it does |
-| --- | --- |
+| Key | What it does                                                                                                                                                                                                                                 |
+| --- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `productionConfigUrl` | Where the shell fetches `config.json` from. Default `/ui/config/management-ui/config.json`. Read from the **baked-in** `defaultConfig`, *not* from the fetched file — so a deployment cannot relocate its own config path via `config.json`. |
-| `productionAppPluginUrl` | Where the shell fetches the deployed-plugin manifest (`plugins.json`). |
-| `downloadBaseUrl` | Optional base URL for media downloads. |
-| `matomo` | Matomo analytics settings (`enabled: false` by default). |
-| `api` | API endpoints: `baseUrl`, `graphqlEndpoint`. |
-| `app.*` | Shell settings: `theme`, `locale`, the `enabledPlugins` ship filter, and the branding keys `HtmlDocumentTitle`, `logoUrl`, `orgLogoUrl`, `faviconUrl`. |
-| `auth.*` | Where the shell sends users to log in / out — see below. |
-| `plugins[id]` | A per-plugin slice, owned by that plugin. |
+| `productionAppPluginUrl` | Where the shell fetches the deployed-plugin manifest (`plugins.json`).                                                                                                                                                                       |
+| `downloadBaseUrl` | Optional base URL for media downloads.                                                                                                                                                                                                       |
+| `matomo` | Matomo analytics settings (`enabled: false` by default).                                                                                                                                                                                     |
+| `api` | API endpoints: `baseUrl`, `graphqlEndpoint`.                                                                                                                                                                                                 |
+| `app.*` | Shell settings: `channel`,`tags` for setting the download channels in Opencast, `theme`, `locale`, the `enabledPlugins` ship filter, and the branding keys `HtmlDocumentTitle`, `logoUrl`, `orgLogoUrl`, `faviconUrl`.                       |
+| `auth.*` | Where the shell sends users to log in / out — see below.                                                                                                                                                                                     |
+| `plugins[id]` | A per-plugin slice, owned by that plugin.                                                                                                                                                                                                    |
 
 `auth.loginUrl` / `auth.logoutUrl` apply in production; `auth.loginUrlDev` /
 `auth.logoutUrlDev` are optional overrides used when running `pnpm dev`, and
@@ -250,7 +252,7 @@ Each entry is `{ "<columnId>": { "show": bool, "label"?: string, "labelKey"?: st
 
 ### Gallery: combined cells or single columns
 
-The gallery's column pool contains **both** presentations. Two combined cells — `video` (thumbnail + title + description + duration + status) and `dateAndLocation` — plus every single-value list column and a standalone `thumbnail`. Which of them show is just visibility, so one deployment keeps the combined look while another splits it, with no second view implementation:
+The gallery's column pool contains **both** presentations. Two combined cells — `video` (thumbnail + title + description + duration + status) and `dateAndLocation` — plus every single-value list column and a standalone `thumbnail`, additionally a column `isPublic` for showing the status . Which of them show is just visibility, so one deployment keeps the combined look while another splits it, with no second view implementation:
 
 ```jsonc
 // Default (no config): the combined look —
@@ -265,6 +267,7 @@ The gallery's column pool contains **both** presentations. Two combined cells �
       { "startDate": { "show": true } },
       { "duration": { "show": true } },
       { "eventStatus": { "show": true } },
+      { "isPublic": { "show": true } },
       { "actions": { "show": true } }
     ]
   }

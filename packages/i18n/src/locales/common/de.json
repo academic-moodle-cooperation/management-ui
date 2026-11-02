@@ -201,5 +201,13 @@
   },
   "reset": "Zurücksetzen",
   "update": "Aktualisieren",
-  "selectSeries": "Serie auswählen"
+  "selectSeries": "Serie auswählen",
+  "sortableList": {
+    "dragHandle": "{{label}} verschieben",
+    "instructions": "Zum Aufnehmen Leertaste oder Eingabetaste drücken. Mit den Pfeiltasten verschieben, zum Ablegen erneut Leertaste oder Eingabetaste drücken, Escape bricht ab.",
+    "pickedUp": "{{label}} aufgenommen, Position {{position}} von {{count}}.",
+    "movedTo": "{{label}} auf Position {{position}} von {{count}} verschoben.",
+    "dropped": "{{label}} an Position {{position}} von {{count}} abgelegt.",
+    "cancelled": "Verschieben von {{label}} abgebrochen."
+  }
 }
