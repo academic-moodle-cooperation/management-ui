@@ -60,6 +60,9 @@ const STATUS = {
   backlog: "status::backlog",
   planned: "status::planned",
   inProgress: "status::in-progress",
+  // Merged into develop, waiting for the next staging deploy. The deployer
+  // moves the card to testing once the build is on staging.
+  deployToTest: "status::deploy to test",
   testing: "status::testing",
   review: "status::review",
   deploying: "status::deploying",
@@ -412,15 +415,15 @@ const currentStatus = (glIssue) => glIssue.labels.find(isStatus);
 const TRANSITIONS = {
   prOpened: {
     to: STATUS.inProgress,
-    from: [STATUS.triage, STATUS.backlog, STATUS.planned, STATUS.testing, STATUS.review],
+    from: [STATUS.triage, STATUS.backlog, STATUS.planned, STATUS.deployToTest, STATUS.testing, STATUS.review],
     note: (pr) => `PR [#${pr.number}](${pr.html_url}) geöffnet von @${pr.user.login} → **In progress**`,
     marker: (pr) => `<!-- pr-event ${pr.number} opened -->`,
   },
   prMerged: {
-    to: STATUS.testing,
+    to: STATUS.deployToTest,
     from: [STATUS.triage, STATUS.backlog, STATUS.planned, STATUS.inProgress],
     note: (pr) =>
-      `PR [#${pr.number}](${pr.html_url}) gemerged → **Testing**. Bereit zum Test, Zuständigkeit wurde geleert.`,
+      `PR [#${pr.number}](${pr.html_url}) gemerged → **Deploy to test**. Wartet auf den nächsten Staging-Deploy; danach bitte auf Testing schieben. Zuständigkeit wurde geleert.`,
     marker: (pr) => `<!-- pr-event ${pr.number} merged -->`,
     clearAssignees: true,
   },

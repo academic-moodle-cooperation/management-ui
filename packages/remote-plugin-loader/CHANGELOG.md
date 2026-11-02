@@ -1,5 +1,18 @@
 # @oc-mui/remote-plugin-loader
 
+## 1.2.0
+
+### Minor Changes
+
+- 312f77a: `zod` (major 4) is now a shared runtime dependency: the host exposes one copy, the remote-plugin loader rewires `zod` imports to it, and `createCommunityPluginConfig` externalizes it by default. `definePluginConfig` takes a zod schema, so plugins already had to agree with the host on zod; they now consume the host's copy instead of bundling their own. Plugins built before this keep working (same major). Shared Runtime Dependencies Contract 1.0 → 1.1.
+
+### Patch Changes
+
+- Updated dependencies [b1d5f78]
+- Updated dependencies [312f77a]
+  - @oc-mui/utils@1.3.0
+  - @oc-mui/plugin-system@1.3.0
+
 ## 1.1.0
 
 ### Minor Changes

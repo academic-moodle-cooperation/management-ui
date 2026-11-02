@@ -1,5 +1,39 @@
 # @oc-mui/query
 
+## 2.1.0
+
+### Minor Changes
+
+- da2cb2a: The playlist entry fragment (`MuiPlaylistEntryData`) now selects the event's
+  `startDate` and `created` as well, so a playlist UI can show when each
+  entry was recorded and offer "order by recording date". Additive: existing
+  consumers of `MuiPlaylistDataFragment` / `MuiGetPlaylistByIdQuery` see two
+  new nullable fields on the entry's `event`.
+
+### Patch Changes
+
+- e2e7814: Dependency maintenance (Dependabot group, 2026-10-19): minor and patch updates
+  of 25 packages — the Radix UI primitives behind `@oc-mui/ui`, `zod`,
+  `@tanstack/react-query-devtools`, `typescript-eslint`, `@graphql-eslint`,
+  `eslint-plugin-turbo`, `turbo`, `@playwright/test` and
+  `@testing-library/user-event`. No API or behaviour change intended.
+- cb41e18: Dependency maintenance: minor/patch bumps of `typescript-eslint`, `eslint-plugin-turbo` and `@tanstack/react-query-devtools`.
+- b1d5f78: The GraphQL schema is no longer a per-release-line file. `@oc-mui/query` commits
+  one SDL per supported Opencast major (`schema-19.graphql`, `schema-20.graphql`),
+  generates its code from the newest one, and `pnpm schema:validate` enforces
+  that each schema is a strict superset of the previous major's and that every
+  document is valid against every schema it may meet (`queries.graphql`) or
+  against the majors it is written for (`queries.oc20.graphql`, the playlist
+  operations). The generated code is unchanged. `@oc-mui/utils` gains
+  `getOpencastMajor()`, `setOpencastMajor()` and `supportsOpencastMajor(min)`:
+  the shell publishes the major its build targets, and a plugin gates features
+  that need a newer backend with it instead of the code being reverted per line.
+- Updated dependencies [b1d5f78]
+- Updated dependencies [312f77a]
+  - @oc-mui/utils@1.3.0
+  - @oc-mui/plugin-system@1.3.0
+  - @oc-mui/ui-config@2.0.0
+
 ## 2.0.0
 
 ### Major Changes
