@@ -155,8 +155,14 @@ export async function loadPluginInHarness(
     }
     const empties: string[] = [];
     for (const ep of extensionPoints) {
-      const items = manager.getObjects(ep) ?? [];
-      if (items.length === 0) empties.push(ep);
+      // A point is populated by either registry: data via `registerObject`
+      // (apps, nav items, config defaults, …) or React components via
+      // `registerComponent` (actions cells, header slots, …). Counting only
+      // the object registry made every component-only point look empty.
+      const objects = manager.getObjects(ep) ?? [];
+      const components =
+        manager.executeFunction<unknown[]>("renderer.getComponents", ep) ?? [];
+      if (objects.length === 0 && components.length === 0) empties.push(ep);
     }
     if (empties.length > 0) {
       throw new Error(
