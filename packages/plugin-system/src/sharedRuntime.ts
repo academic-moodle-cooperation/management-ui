@@ -19,6 +19,12 @@
  *   (which controls which imports are rewritten to `window.__SHARED_MODULES__`).
  * - The actually-installed majors in the workspace.
  *
+ * KNOWN DRIFT (since v20.1.0): `@oc-mui/ui`, `@oc-mui/query` and
+ * `@oc-mui/ui-config` are published (and installed here) as 2.x while this
+ * table still says 1. Lifting them is a major bump of this package and is
+ * deliberately deferred to the next host major; until then plugins leave the
+ * three names out of `workspaceDependencies`. See docs/reference/contracts.md §5.
+ *
  * The export shape is a `Record<string, number>` of major numbers, not full
  * semvers, because the only thing the host promises is the *major*. Patches
  * and minors of a shared dep can roll forward freely within the same major.
