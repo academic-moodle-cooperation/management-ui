@@ -49,6 +49,17 @@ namespace through `@oc-mui/plugin-system`'s preview contract
 (bundled, JAR, `.local-plugins`). Typical use: look at a plugin on staging
 before deciding to list it in `app.enabledPlugins` for everyone.
 
+**Themes** (Explore → *Themes*, and the Themes section under *All*): every
+theme this deployment could apply — shipped showcase themes (listed in
+`apps/shell/public/plugins/themes/index.json`), org themes next to deployed
+or local plugins (probed at the conventional CSS paths), and registry entries
+of category `theme`. **Try** applies a theme *immediately in this tab* (CSS
+needs no boot path), survives a refresh via a `sessionStorage` marker, and
+ends with one click or with the tab. Same-origin themes are trusted; registry
+CSS goes through the Try gates (it can pull remote fonts/images). A theme
+becomes permanent only via `app.theme` — the row shows that value to copy;
+the Library shows which theme is active for everyone.
+
 Config slice (`config.plugins["admin-marketplace-v2"]`):
 
 ```json

@@ -25,8 +25,9 @@ interface TryConfirmDialogProps<T extends TrySubject> {
   /**
    * `remote`: a registry bundle will be downloaded and executed.
    * `local`: a plugin already deployed here (but switched off) is previewed.
+   * `theme`: a CSS theme is applied in this tab — immediately, no reload.
    */
-  mode?: "remote" | "local";
+  mode?: "remote" | "local" | "theme";
   onConfirm: (plugin: T) => void;
   onCancel: () => void;
 }
@@ -58,7 +59,20 @@ function TryConfirmDialog<T extends TrySubject>({
           <AlertDialogTitle>Try “{plugin.name}” in this tab?</AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="space-y-3 pt-1 text-sm">
-              {mode === "local" ? (
+              {mode === "theme" ? (
+                <p className="flex gap-2.5">
+                  <ShieldCheck className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                  <span>
+                    A theme only changes colors, fonts and spacing. It is applied{" "}
+                    <b className="font-medium text-foreground">immediately, in this tab</b> — no reload.
+                    {host && (
+                      <>
+                        {" "}The stylesheet comes from <b className="font-medium text-foreground">{host}</b>.
+                      </>
+                    )}
+                  </span>
+                </p>
+              ) : mode === "local" ? (
                 <p className="flex gap-2.5">
                   <ShieldCheck className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
                   <span>
@@ -101,17 +115,19 @@ function TryConfirmDialog<T extends TrySubject>({
                   <b className="font-medium text-foreground">only in this tab</b> and ends when you close it.
                 </span>
               </p>
-              <p className="flex gap-2.5">
-                <RefreshCw className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                <span>The page reloads to activate it.</span>
-              </p>
+              {mode !== "theme" && (
+                <p className="flex gap-2.5">
+                  <RefreshCw className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                  <span>The page reloads to activate it.</span>
+                </p>
+              )}
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={() => onConfirm(plugin)}>
-            Try it — reload page
+            {mode === "theme" ? "Try it" : "Try it — reload page"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

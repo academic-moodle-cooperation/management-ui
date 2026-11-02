@@ -226,10 +226,12 @@ A theme is a CSS file that overrides token values — color **and** structure (r
 
 | Theme kind | Location | Applied via |
 | --- | --- | --- |
-| Shipped showcase themes | `apps/shell/public/plugins/themes/<name>.css` | marketplace **and** `app.theme` |
+| Shipped showcase themes | `apps/shell/public/plugins/themes/<name>.css`, listed in `index.json` next to them | marketplace **and** `app.theme` |
 | Org themes (dev) | `.local-plugins/<org>/themes/<org>.css` | `app.theme` |
 | Org themes (prod) | the org's JAR, served at `/static/plugins/<org>/<org>.css` | `app.theme` |
 
+> When you add or remove a shipped theme, update `apps/shell/public/plugins/themes/index.json` as well — the marketplace lists shipped themes from that file (id, name, tagline, author); the CSS itself is never parsed for metadata.
+>
 > Theme CSS **must be served as a raw `text/css` static file**. A `.css` under a *source* dir (e.g. `plugins/themes/`) is returned by Vite as a JS module (dev) or the SPA `index.html` fallback (build), so a `<link rel="stylesheet">` "loads" it (200) but applies nothing. That's why shipped themes live under `public/`. The default baseline (`apps/shell/src/themes/default.css`) is the one exception — it's `import`ed directly by the shell, not loaded by name.
 
 ## Review checklist

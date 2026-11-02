@@ -26,6 +26,10 @@ Features so far:
   `app.enabledPlugins` value to copy. Read-only by design — except for one
   gesture: **Try** on a present-but-disabled plugin previews it in this tab
   only (via `@oc-mui/plugin-system`'s preview contract; no code is fetched).
+- **Theme try-on** — shipped, org and registry themes in one list; Try
+  applies a theme instantly in this tab (no reload), one click ends it; the
+  `app.theme` value to make it permanent is shown. Shipped themes are listed
+  from `apps/shell/public/plugins/themes/index.json`.
 
 The registry document gains three optional fields: `tagline` (one-line pitch
 for cards), `accentColor` (tile/artwork color), and `integrity` (SRI hash of

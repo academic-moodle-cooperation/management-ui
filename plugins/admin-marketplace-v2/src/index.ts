@@ -5,6 +5,8 @@ import { getCachedAppConfig } from "@oc-mui/query";
 import { logger } from "@oc-mui/utils";
 
 import { marketplaceV2Config } from "./config";
+import { restoreThemePreview } from "./services/themePreview";
+import { canPreviewTheme } from "./services/themes";
 import { loadTrials } from "./services/trials";
 import { Marketplace } from "./views/Marketplace";
 
@@ -65,6 +67,9 @@ export const adminMarketplaceV2Plugin = createPlugin({
       );
     }
     const cfg = marketplaceV2Config.read(appConfig);
+    // A theme previewed in this tab survives a refresh; registry CSS is
+    // re-checked against the Try gates, same-origin themes are trusted.
+    restoreThemePreview((preview) => canPreviewTheme(preview, cfg.try).ok);
     await loadTrials(manager, cfg.try);
   },
 

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import { TrialBanner } from "../components/TrialBanner";
 import { useCatalog } from "../hooks/useCatalog";
+import { useThemePreview } from "../hooks/useThemePreview";
 import { getTrialErrors, getTrials } from "../services/trials";
 
 import { Discover } from "./Discover";
@@ -27,6 +28,7 @@ const Marketplace: FC = () => {
   // Trials only change via full page reloads, so a render-time read is stable.
   const [trials] = useState(getTrials);
   const [trialErrors] = useState(getTrialErrors);
+  const themePreview = useThemePreview();
 
   useEffect(() => {
     const onHash = (): void => setTab(tabFromHash());
@@ -69,9 +71,9 @@ const Marketplace: FC = () => {
         </div>
       </div>
 
-      {trials.length > 0 && (
+      {(trials.length > 0 || themePreview) && (
         <div className="mx-auto max-w-5xl px-8 pt-5">
-          <TrialBanner trials={trials} errors={trialErrors} />
+          <TrialBanner trials={trials} errors={trialErrors} themePreview={themePreview} />
         </div>
       )}
 

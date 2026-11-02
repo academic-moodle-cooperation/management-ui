@@ -1,11 +1,14 @@
-import { Info } from "lucide-react";
+import { Info, Palette } from "lucide-react";
 import { useState } from "react";
 
-import { Skeleton } from "@oc-mui/ui/components";
+import { useAppConfig } from "@oc-mui/query";
+import { Button, Skeleton } from "@oc-mui/ui/components";
 
 import { LibraryRow } from "../components/LibraryRow";
 import { TryConfirmDialog } from "../components/TryConfirmDialog";
 import { useInventory } from "../hooks/useInventory";
+import { useThemePreview } from "../hooks/useThemePreview";
+import { endThemePreview } from "../services/themePreview";
 import { startLocalTrial } from "../services/trials";
 
 import type { InventoryItem, InventoryStatus } from "../services/inventory";
@@ -37,6 +40,10 @@ const GROUPS: Array<{ status: InventoryStatus; title: string; hint: string }> = 
 const Library: FC<LibraryProps> = ({ catalog }) => {
   const { items, loading } = useInventory(catalog);
   const [tryCandidate, setTryCandidate] = useState<InventoryItem | null>(null);
+  const { config } = useAppConfig();
+  const activeTheme =
+    ((config as unknown as { app?: { theme?: string } } | undefined)?.app?.theme ?? "default") || "default";
+  const themePreview = useThemePreview();
 
   if (loading) {
     return (
@@ -70,6 +77,25 @@ const Library: FC<LibraryProps> = ({ catalog }) => {
           (every row has a copy button for that value). A plugin can additionally be switched off at
           runtime via <code className="font-mono">config.plugins.&lt;namespace&gt;.enabled: false</code>.
         </p>
+      </div>
+
+      <div className="mb-8 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-border bg-card px-4 py-3 text-sm">
+        <Palette className="size-4 shrink-0 text-muted-foreground" />
+        <span className="font-semibold">Theme</span>
+        <span className="text-muted-foreground">
+          active for everyone: <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[11.5px] text-foreground">{activeTheme}</code>
+          <span className="ml-1.5 text-xs">(via <code className="font-mono">app.theme</code>)</span>
+        </span>
+        {themePreview && (
+          <>
+            <span className="flex items-center gap-1 rounded-md bg-warning/15 px-1.5 py-0.5 text-[10.5px] font-semibold text-warning">
+              previewing {themePreview.name} · this tab
+            </span>
+            <Button variant="outline" size="sm" className="ml-auto h-7 px-2.5 text-xs" onClick={endThemePreview}>
+              End preview
+            </Button>
+          </>
+        )}
       </div>
 
       {GROUPS.map(({ status, title, hint }) => {

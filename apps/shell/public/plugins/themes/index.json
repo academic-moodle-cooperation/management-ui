@@ -1,0 +1,52 @@
+{
+  "$comment": "Shipped showcase themes, one entry per <id>.css in this directory. Read by the marketplace to list and preview them; `app.theme: \"<id>\"` applies one permanently. Keep in sync when adding or removing a theme file.",
+  "themes": [
+    {
+      "id": "aurora",
+      "name": "Aurora",
+      "tagline": "Modern, vivid, rounded",
+      "author": "Management UI Core"
+    },
+    {
+      "id": "ember",
+      "name": "Ember",
+      "tagline": "Warm, calm, showcase-grade",
+      "author": "Management UI Core"
+    },
+    {
+      "id": "example",
+      "name": "Example",
+      "author": "Management UI Core"
+    },
+    {
+      "id": "forest-sage",
+      "name": "Forest Sage",
+      "tagline": "Organic, calm, rounded",
+      "author": "Management UI Core"
+    },
+    {
+      "id": "heritage-burgundy",
+      "name": "Heritage Burgundy",
+      "tagline": "Refined, luxe, restrained",
+      "author": "Management UI Core"
+    },
+    {
+      "id": "modern-slate",
+      "name": "Modern Slate & Teal",
+      "tagline": "Contemporary, tech-forward, airy",
+      "author": "Management UI Core"
+    },
+    {
+      "id": "oxford-navy",
+      "name": "Oxford Navy",
+      "tagline": "Traditional, editorial, formal",
+      "author": "Management UI Core"
+    },
+    {
+      "id": "press",
+      "name": "Press",
+      "tagline": "Editorial, high-contrast, flat",
+      "author": "Management UI Core"
+    }
+  ]
+}

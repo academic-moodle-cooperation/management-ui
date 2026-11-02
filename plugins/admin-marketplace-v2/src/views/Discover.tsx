@@ -5,8 +5,13 @@ import { Button, Input, Skeleton } from "@oc-mui/ui/components";
 
 import { DetailDialog } from "../components/DetailDialog";
 import { PluginRow, taglineOf } from "../components/PluginRow";
+import { ThemeRow } from "../components/ThemeRow";
 import { TryConfirmDialog } from "../components/TryConfirmDialog";
 import { marketplaceV2Config } from "../config";
+import { useThemePreview } from "../hooks/useThemePreview";
+import { useThemes } from "../hooks/useThemes";
+import { startThemePreview } from "../services/themePreview";
+import { canPreviewTheme, type ThemeCandidate } from "../services/themes";
 import { endTrial, isTrialActive, startTrial } from "../services/trials";
 
 import type { CatalogState } from "../hooks/useCatalog";
@@ -35,6 +40,8 @@ const CATEGORY_FILTERS: Array<{ key: RegistryCategory | "all"; label: string }> 
 ];
 
 function matches(plugin: RegistryPlugin, query: string, category: RegistryCategory | "all"): boolean {
+  // Themes are listed by the themes section (all sources), never as plugin rows.
+  if (plugin.category === "theme") return false;
   if (category !== "all" && plugin.category !== category) return false;
   const q = query.trim().toLowerCase();
   if (!q) return true;
@@ -62,16 +69,25 @@ const Discover: FC<DiscoverProps> = ({ catalog }) => {
   const [category, setCategory] = useState<RegistryCategory | "all">("all");
   const [selected, setSelected] = useState<RegistryPlugin | null>(null);
   const [tryCandidate, setTryCandidate] = useState<RegistryPlugin | null>(null);
+  const [themeCandidate, setThemeCandidate] = useState<ThemeCandidate | null>(null);
+  const themes = useThemes(plugins);
+  const themePreview = useThemePreview();
+
+  const visibleThemes = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return themes.themes.filter(
+      (t) => !q || `${t.name} ${t.tagline ?? ""} ${t.author ?? ""}`.toLowerCase().includes(q),
+    );
+  }, [themes.themes, query]);
+  const showThemes = category === "all" || category === "theme";
+  const showPlugins = category !== "theme";
 
   const visible = useMemo(
     () => plugins.filter((p) => matches(p, query, category)),
     [plugins, query, category],
   );
 
-  // Themes restyle the app rather than extending it — their try-on story is a
-  // separate feature; the plugin Try gesture doesn't apply to them.
-  const canTry = (plugin: RegistryPlugin): boolean =>
-    cfg.try.enabled && plugin.category !== "theme";
+  const canTry = (): boolean => cfg.try.enabled;
 
   const requestTry = (plugin: RegistryPlugin): void => {
     setSelected(null);
@@ -159,7 +175,7 @@ const Discover: FC<DiscoverProps> = ({ catalog }) => {
               <RefreshCw className="size-3.5" /> Try again
             </Button>
           </div>
-        ) : visible.length === 0 ? (
+        ) : showPlugins && visible.length === 0 && !(showThemes && visibleThemes.length > 0) ? (
           <div className="py-20 text-center">
             <p className="font-heading text-lg font-semibold">
               {plugins.length === 0 ? "No registries configured." : "Nothing found."}
@@ -171,25 +187,58 @@ const Discover: FC<DiscoverProps> = ({ catalog }) => {
             </p>
           </div>
         ) : (
-          <div className="grid gap-x-10 gap-y-1 pb-16 md:grid-cols-2">
-            {visible.map((plugin) => (
-              <PluginRow
-                key={plugin.id}
-                plugin={plugin}
-                onOpen={setSelected}
-                canTry={canTry(plugin)}
-                trialActive={isTrialActive(plugin.id)}
-                onTry={requestTry}
-              />
-            ))}
-          </div>
+          showPlugins && (
+            <div className="grid gap-x-10 gap-y-1 pb-10 md:grid-cols-2">
+              {visible.map((plugin) => (
+                <PluginRow
+                  key={plugin.id}
+                  plugin={plugin}
+                  onOpen={setSelected}
+                  canTry={canTry()}
+                  trialActive={isTrialActive(plugin.id)}
+                  onTry={requestTry}
+                />
+              ))}
+            </div>
+          )
+        )}
+
+        {/* ---- Themes: all sources, Try applies instantly ---- */}
+        {showThemes && !themes.loading && (
+          <section className="pb-16">
+            <div className="mb-2 flex items-baseline gap-2.5">
+              <h2 className="font-heading text-base font-semibold">Themes</h2>
+              <span className="font-mono text-xs text-muted-foreground">{visibleThemes.length}</span>
+              <span className="text-xs text-muted-foreground">
+                — restyle the whole interface; Try applies instantly in this tab
+              </span>
+            </div>
+            {visibleThemes.length === 0 ? (
+              <p className="rounded-xl border border-dashed border-border px-4 py-5 text-sm text-muted-foreground">
+                No themes found.
+              </p>
+            ) : (
+              <div className="grid gap-x-10 gap-y-1 md:grid-cols-2">
+                {visibleThemes.map((theme) => (
+                  <ThemeRow
+                    key={theme.id}
+                    theme={theme}
+                    isActive={theme.configValue !== undefined && theme.configValue === themes.activeConfigValue}
+                    isPreviewing={themePreview?.id === theme.id}
+                    can={canPreviewTheme(theme, cfg.try)}
+                    onTry={setThemeCandidate}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
         )}
       </div>
 
       <DetailDialog
         plugin={selected}
         onClose={() => setSelected(null)}
-        canTry={selected ? canTry(selected) : false}
+        canTry={selected ? canTry() : false}
         trialActive={selected ? isTrialActive(selected.id) : false}
         onTry={requestTry}
         onEndTrial={endTrial}
@@ -198,6 +247,15 @@ const Discover: FC<DiscoverProps> = ({ catalog }) => {
         plugin={tryCandidate}
         onConfirm={startTrial}
         onCancel={() => setTryCandidate(null)}
+      />
+      <TryConfirmDialog
+        plugin={themeCandidate}
+        mode="theme"
+        onConfirm={(theme) => {
+          startThemePreview({ id: theme.id, name: theme.name, url: theme.url, source: theme.source });
+          setThemeCandidate(null);
+        }}
+        onCancel={() => setThemeCandidate(null)}
       />
     </div>
   );
