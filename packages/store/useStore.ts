@@ -49,7 +49,15 @@ export type Store = {
   deleteUpload: (id: number) => void;
   resetUpload: () => void;
   updateFile: (updateFileInfo: UploadFileBlob) => void;
-  fileUploaded: (uploadFile: UploadFileBlob, pending: UploadFileBlob[]) => void;
+  /**
+   * Marks `uploadFile` as finished: clears `next`, drops it from `pending` and
+   * appends it to `uploaded`.
+   *
+   * @param _pending - Deprecated and ignored since 1.2: the remaining list is
+   *   derived from the store. Passing a list captured when the upload started
+   *   wrote stale state back once other uploads had finished in between.
+   */
+  fileUploaded: (uploadFile: UploadFileBlob, _pending?: UploadFileBlob[]) => void;
   filesUploaded: () => void;
   setUploadError: (uploadError: Error) => void;
 };
@@ -112,18 +120,25 @@ const store = (set: (state: (state: Store) => void) => void, get: () => Store) =
     });
   },
 
-  fileUploaded: (uploadFile: UploadFileBlob, pending: UploadFileBlob[]) => {
-    const updateFileIndex = get().zustandupload?.files.findIndex(
-      (fileItem) => fileItem?.id === uploadFile.id,
-    );
-
+  fileUploaded: (uploadFile: UploadFileBlob) => {
     return set((state: Store) => {
+      const { files, pending, uploaded } = state.zustandupload;
+
       state.zustandupload.next = null;
-      state.zustandupload.pending = pending;
-      state.zustandupload.uploaded = [
-        ...state.zustandupload.uploaded,
-        state.zustandupload.files[updateFileIndex] as UploadFileBlob,
-      ];
+      // Derived from the store, never taken from the caller: a `pending` list captured
+      // when the upload started is stale by the time it finishes if other uploads
+      // completed in between, and writing it back resurrected files already done.
+      state.zustandupload.pending = pending.filter((f) => f && f.id !== uploadFile.id);
+
+      // Never append a hole. The file may be gone from `files` by now (a late
+      // completion after `filesUploaded` cleared the list); the old `files[-1]`
+      // lookup then persisted `undefined`, which crashed every later render of the
+      // uploaded list until the session storage was cleared by hand.
+      const finished = files.find((f) => f?.id === uploadFile.id) ?? uploadFile;
+      const alreadyListed = uploaded.some((f) => f?.id === uploadFile.id);
+      state.zustandupload.uploaded = alreadyListed
+        ? uploaded.filter(Boolean)
+        : [...uploaded.filter(Boolean), finished];
     });
   },
   filesUploaded: () => {
@@ -148,6 +163,23 @@ export const useStore = create<Store>()(
   persist<Store>(immer(store), {
     name: "upload-store",
     getStorage: () => sessionStorage,
+    // Drop holes a previous session may have persisted into the lists (see
+    // `fileUploaded`); a `null` entry would otherwise crash the upload list on
+    // every render, with no way to recover from inside the UI.
+    merge: (persisted, current) => {
+      const slice = (persisted as Partial<Store> | undefined)?.zustandupload;
+      if (!slice) return current;
+      return {
+        ...current,
+        zustandupload: {
+          ...current.zustandupload,
+          ...slice,
+          files: (slice.files ?? []).filter(Boolean),
+          pending: (slice.pending ?? []).filter(Boolean),
+          uploaded: (slice.uploaded ?? []).filter(Boolean),
+        },
+      };
+    },
   }),
 );
 
