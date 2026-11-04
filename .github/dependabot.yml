@@ -47,6 +47,14 @@ updates:
         update-types: ["version-update:semver-minor"]
       - dependency-name: "react-dom"
         update-types: ["version-update:semver-minor"]
+      # lucide-react is a shared runtime dependency: the host provides it to
+      # every plugin and SHARED_RUNTIME_MAJORS pins its major (currently 0).
+      # Going to 1.x changes the host-provided major, which the contract
+      # classifies as a major of @oc-mui/plugin-system, so it ships bundled
+      # with the next host major (#505) rather than as a routine bump. Updates
+      # within 0.x still arrive normally.
+      - dependency-name: "lucide-react"
+        update-types: ["version-update:semver-major"]
     # Majors stay individual PRs so a breaking bump is reviewed on its own.
     commit-message:
       prefix: "chore(deps)"

@@ -1,6 +1,6 @@
 {
   "name": "@oc-mui/remote-plugin-loader",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "license": "ECL-2.0",
   "private": true,
   "type": "module",
@@ -22,7 +22,7 @@
     "@oc-mui/eslint-config": "workspace:*",
     "@oc-mui/typescript-config": "workspace:*",
     "eslint": "^9.9.0",
-    "typescript": "~5.5.4",
+    "typescript": "~6.0.3",
     "vitest": "^4.0.17"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@oc-mui/ui",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "React UI component library (shadcn/ui + Tailwind) for the Opencast Management UI and its plugins.",
   "author": "Academic Moodle Cooperation",
   "homepage": "https://github.com/academic-moodle-cooperation/management-ui/tree/HEAD/packages/ui#readme",
@@ -142,11 +142,11 @@
     "@types/react": "^18.0.0 || ^19.0.0",
     "@types/react-dom": "^18.0.0 || ^19.0.0",
     "eslint": "^9.9.0",
-    "jsdom": "^27.4.0",
+    "jsdom": "^30.1.3",
     "react": "~19.2.0",
     "tailwindcss": "^4.3.3",
     "tsup": "^8.5.0",
-    "typescript": "~5.5.4",
+    "typescript": "~6.0.3",
     "vitest": "^4.0.17"
   },
   "peerDependencies": {

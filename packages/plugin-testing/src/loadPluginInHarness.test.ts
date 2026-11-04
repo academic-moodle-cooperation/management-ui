@@ -95,6 +95,24 @@ describe("loadPluginInHarness", () => {
       );
     });
 
+    it("counts component registrations, not only objects", async () => {
+      // Actions cells, header slots and the like are populated via
+      // registerComponent; they land in the renderer registry, which the
+      // check used to ignore — every such point read as "did not register".
+      const Slot = () => null;
+      harness = await loadPluginInHarness(
+        makeFakePlugin({
+          initialize(manager) {
+            manager.registerComponent("episodes:table:actions", Slot, { key: "fake-actions" });
+          },
+        }),
+        { manifest: makeFakeManifest({ extensionPoints: ["episodes:table:actions"] }) },
+      );
+      expect(() => harness!.expectAllManifestRegistrationsSucceed()).not.toThrow();
+      expect(() => harness!.expectRegistered(["episodes:table:actions"])).not.toThrow();
+      expect(() => harness!.expectRegistered(["apps:definitions"])).toThrow(/apps:definitions/);
+    });
+
     it("fails loudly when the manifest omits extensionPoints", async () => {
       harness = await loadPluginInHarness(makeFakePlugin(), {
         manifest: makeFakeManifest(),

@@ -1,6 +1,6 @@
 {
   "name": "@oc-mui/query",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Data-fetching and plugin-config facade (TanStack Query) for the Opencast Management UI and its plugins.",
   "author": "Academic Moodle Cooperation",
   "homepage": "https://github.com/academic-moodle-cooperation/management-ui/tree/HEAD/packages/query#readme",
@@ -77,9 +77,9 @@
     "@oc-mui/typescript-config": "workspace:*",
     "dotenv-cli": "^8.0.0",
     "eslint": "^9.9.0",
-    "jsdom": "^27.4.0",
+    "jsdom": "^30.1.3",
     "tsup": "^8.5.0",
-    "typescript": "~5.5.4",
+    "typescript": "~6.0.3",
     "vitest": "^4.0.17"
   }
 }

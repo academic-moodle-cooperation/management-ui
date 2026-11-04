@@ -1,6 +1,6 @@
 {
   "name": "@oc-mui/plugin-admin-marketplace",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "license": "ECL-2.0",
   "private": true,
   "type": "module",
@@ -30,7 +30,7 @@
     "@types/react": "^18.0.0 || ^19.0.0",
     "eslint": "^9.20.0",
     "react": "~19.2.0",
-    "typescript": "^5.3.3",
+    "typescript": "^6.0.3",
     "vitest": "^4.0.17"
   },
   "peerDependencies": {

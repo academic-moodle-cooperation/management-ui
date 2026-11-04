@@ -1,7 +1,6 @@
 {
   "extends": "@oc-mui/typescript-config/react-application.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "composite": false,
     "skipLibCheck": true,
     "paths": {
