@@ -1,5 +1,15 @@
 # @oc-mui/plugins
 
+## 1.0.5
+
+### Patch Changes
+
+- Updated dependencies [59814cc]
+- Updated dependencies [3f6c7da]
+  - @oc-mui/plugin-core-upload@1.1.4
+  - @oc-mui/plugin-core-episodes@1.3.1
+  - @oc-mui/plugin-core-series@1.2.3
+
 ## 1.0.4
 
 ### Patch Changes
