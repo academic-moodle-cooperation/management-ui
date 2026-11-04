@@ -1,5 +1,12 @@
 # @oc-mui/plugin-core-episodes
 
+## 1.3.1
+
+### Patch Changes
+
+- Updated dependencies [3f6c7da]
+  - @oc-mui/store@1.2.0
+
 ## 1.3.0
 
 ### Minor Changes
