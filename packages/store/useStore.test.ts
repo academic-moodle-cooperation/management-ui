@@ -443,6 +443,42 @@ describe("useStore", () => {
       expect(slice.uploaded.map((f) => f.id)).toEqual([1]);
       expect(slice.seriesId).toBe("series-123");
     });
+
+    it("fills in lists a persisted slice is missing", async () => {
+      realSessionStorage.setItem(
+        "upload-store",
+        JSON.stringify({ state: { zustandupload: { seriesId: "series-9" } }, version: 0 }),
+      );
+
+      await useStore.persist.rehydrate();
+
+      const slice = useStore.getState().zustandupload;
+      expect(slice.seriesId).toBe("series-9");
+      expect(slice.files).toEqual([]);
+      expect(slice.pending).toEqual([]);
+      expect(slice.uploaded).toEqual([]);
+    });
+
+    it("keeps the current state when nothing usable was persisted", async () => {
+      const { result } = renderHook(() => useStore());
+      act(() => {
+        result.current.setUpload({
+          files: [],
+          seriesId: "series-current",
+          pending: [],
+          next: null,
+          uploading: false,
+          uploaded: [],
+          status: "idle",
+          uploadError: null,
+        });
+      });
+      realSessionStorage.setItem("upload-store", JSON.stringify({ state: {}, version: 0 }));
+
+      await useStore.persist.rehydrate();
+
+      expect(useStore.getState().zustandupload.seriesId).toBe("series-current");
+    });
   });
 
   describe("filesUploaded", () => {
