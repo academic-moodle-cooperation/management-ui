@@ -1,5 +1,12 @@
 # @oc-mui/plugin-core-series
 
+## 1.2.3
+
+### Patch Changes
+
+- Updated dependencies [3f6c7da]
+  - @oc-mui/store@1.2.0
+
 ## 1.2.2
 
 ### Patch Changes
