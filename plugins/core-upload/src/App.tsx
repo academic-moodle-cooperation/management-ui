@@ -38,6 +38,7 @@ import { EmptyState } from "./components/EmptyState";
 import { UploadList } from "./components/UploadList";
 import { uploadConfig } from "./config";
 import { useFileHandler } from "./uploadservice/fileHandler";
+import { claimUpload, releaseUpload } from "./uploadservice/inFlight";
 import { initializeProgressInterval } from "./uploadservice/onProgress";
 import { opencastUpload } from "./uploadservice/opencastUpload";
 
@@ -173,9 +174,13 @@ export const App = () => {
   }, [routeSubPath, seriesList]);
 
   useEffect(() => {
+    // `null` is the pre-route initial value. Writing it into the store blanked the
+    // series of an upload that was still running while this app re-mounted (route
+    // change and back), and the churn re-fired the upload effect below.
+    if (selectedSeriesId === null || selectedSeriesId === zustandupload.seriesId) return;
     setUpload({
       ...zustandupload,
-      seriesId: selectedSeriesId || "",
+      seriesId: selectedSeriesId,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSeriesId]);
@@ -224,10 +229,12 @@ export const App = () => {
       const fileStatus = zustandupload?.files.find((fileItem) => fileItem?.id === next.id)?.status;
 
       if (fileStatus === "aborted") {
-        const prev = next;
-        const pending = zustandupload.pending.slice(1);
-        fileUploaded(prev, pending);
+        fileUploaded(next);
       } else {
+        // The upload outlives this component: it keeps running while the user is on
+        // another route, and this effect fires again on re-mount (and on every
+        // change of its deps) with `next` still set. Only the first claim starts it.
+        if (!claimUpload(next.id)) return;
         opencastUpload(
           next,
           seriesId,
@@ -248,9 +255,7 @@ export const App = () => {
           aclData,
         )
           .then(() => {
-            const prev = next;
-            const pending = zustandupload.pending.slice(1);
-            fileUploaded(prev, pending);
+            fileUploaded(next);
           })
           .catch((error) => {
             setFileWaitingList((prevState) => {
@@ -278,25 +283,22 @@ export const App = () => {
               status: "error",
             });
 
-            const prev = next;
-            const pending = zustandupload.pending.slice(1);
-            fileUploaded(prev, pending);
+            fileUploaded(next);
 
             toast.error(t("upload:toast.error"));
             if (error instanceof Error) {
               setUploadError(error as Error);
             }
+          })
+          .finally(() => {
+            releaseUpload(next.id);
           });
       }
     }
+    // `user` is a dep so an upload that was queued before the user query resolved
+    // still starts; `claimUpload` keeps the extra runs from starting it twice.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    zustandupload?.pending,
-    zustandupload?.next,
-    zustandupload?.seriesId,
-    // dispatch,
-    // user,
-  ]);
+  }, [zustandupload?.pending, zustandupload?.next, zustandupload?.seriesId, user]);
 
   useEffect(() => {
     if (!zustandupload.pending.length && zustandupload.uploading) {
