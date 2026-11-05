@@ -60,8 +60,17 @@ export interface RegistryPlugin {
   url: string;
   /** Plugin category */
   category: RegistryCategory;
-  /** Icon name (from lucide-react) */
+  /**
+   * Lucide icon name for the tile (`BarChart3` or `bar-chart-3`). Optional:
+   * without it the tile shows a per-category default, then the initial.
+   */
   icon?: string;
+  /**
+   * Screenshots for cards and the detail view — same shape as the manifest's
+   * `screenshots`. Only loaded from this origin or an allowlisted host
+   * (`try.allowedDomains`), otherwise the generated artwork stays.
+   */
+  screenshots?: Array<{ url: string; caption?: string }>;
   /** Repository URL */
   repositoryUrl?: string;
   /** Homepage URL */

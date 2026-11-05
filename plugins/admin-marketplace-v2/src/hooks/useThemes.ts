@@ -7,6 +7,7 @@ import {
   collectThemes,
   discoverOrgThemes,
   fetchShippedThemes,
+  fetchThemeSwatches,
   type ThemeCandidate,
 } from "../services/themes";
 
@@ -36,7 +37,16 @@ export function useThemes(catalog: RegistryPlugin[]): ThemesState {
         fetchLocalEntries(),
       ]);
       const orgThemes = await discoverOrgThemes(jars, locals);
-      if (!cancelled) setFound({ themes: collectThemes({ shipped, orgThemes, catalog }), loading: false });
+      const themes = collectThemes({ shipped, orgThemes, catalog });
+      // Swatches come from the CSS itself — same-origin sources only.
+      const withSwatches = await Promise.all(
+        themes.map(async (t) => {
+          if (t.source === "registry") return t;
+          const swatch = await fetchThemeSwatches(t.url);
+          return swatch ? { ...t, swatch } : t;
+        }),
+      );
+      if (!cancelled) setFound({ themes: withSwatches, loading: false });
     })();
     return () => {
       cancelled = true;

@@ -65,6 +65,7 @@ Config slice (`config.plugins["admin-marketplace-v2"]`):
 ```json
 {
   "registryUrls": ["https://example.org/mui-plugins/registry.json"],
+  "featured": ["some-plugin-id", "another-plugin-id"],
   "try": {
     "enabled": false,
     "allowedDomains": ["cdn.jsdelivr.net", "raw.githubusercontent.com"],
@@ -78,19 +79,29 @@ In dev, the local `apps/shell/public/registry.json` is used as a fallback so
 the catalog renders without any external registry. Entries there whose id
 starts with `demo-` are catalog-only showcase data.
 
+`featured` lists registry ids (in order) that get the Explore tab's big
+cards; empty hides the section. Curation is a deployment decision for now — a
+registry-side flag may follow once the central registry has a review process.
+
 ## Registry additions
 
 The registry entry format ([`src/services/registry.ts`](src/services/registry.ts))
-adds two optional showcase fields over v1: `tagline` (one-line pitch) and
-`accentColor` (tile color). Both fall back gracefully; v1 registries stay
+reads the presentational fields the plugin manifest (1.2) defines, so an
+author declares them once: `tagline` (one-line pitch), `accentColor` (tile and
+artwork color), `icon` (Lucide name; per-category default otherwise) and
+`screenshots` (`[{ url, caption? }]`, loaded only from this origin or a
+`try.allowedDomains` host — the generated artwork is the fallback). Plus
+`integrity` for pinning. Everything falls back gracefully; v1 registries stay
 fully compatible.
 
 ## Styling
 
 Pure semantic tokens — no hardcoded colors. The intended look ships as the
 **Ember** showcase theme (`apps/shell/public/plugins/themes/ember.css`, warm
-anthracite dark / warm paper light); the view degrades gracefully under every
-other theme.
+anthracite dark / warm paper light, the host's bundled Geist); the view
+degrades gracefully under every other theme. Artwork is generated from the
+entry's accent (tile gradient, mock UI thumbnail, theme swatch parsed from the
+theme's own CSS) — honest about being generated, and no image assets to host.
 
 ## Local demo setup
 

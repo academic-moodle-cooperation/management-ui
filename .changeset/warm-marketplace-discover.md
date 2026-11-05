@@ -31,6 +31,15 @@ Features so far:
   `app.theme` value to make it permanent is shown. Shipped themes are listed
   from `apps/shell/public/plugins/themes/index.json`.
 
-The registry document gains three optional fields: `tagline` (one-line pitch
-for cards), `accentColor` (tile/artwork color), and `integrity` (SRI hash of
-the bundle). All have fallbacks; existing registries stay fully compatible.
+- **V4 look** — the design studies' layout, brought over with tokens only:
+  one header line (wordmark, Explore · Library with count and update dot,
+  search), hero, category pills, **Featured** cards (ids curated per
+  deployment via `featured`), plugin rows, theme cards whose swatch is parsed
+  from the theme's own CSS. Tiles show a Lucide icon from `icon` (per-category
+  default otherwise) on the accent gradient; the "Try it" pill and the green
+  state pill follow the studies.
+
+The registry document reads the manifest's presentational fields (`tagline`,
+`accentColor`, `icon`, `screenshots` — the latter loaded only from this origin
+or an allowlisted host) plus `integrity` (SRI hash of the bundle). All have
+fallbacks; existing registries stay fully compatible.

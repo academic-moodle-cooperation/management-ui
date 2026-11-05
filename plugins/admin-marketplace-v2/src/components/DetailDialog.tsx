@@ -1,4 +1,4 @@
-import { BadgeCheck, ExternalLink, FlaskConical, ShieldCheck } from "lucide-react";
+import { BadgeCheck, Check, ExternalLink, ShieldCheck } from "lucide-react";
 
 import {
   Badge,
@@ -10,8 +10,10 @@ import {
   DialogTitle,
 } from "@oc-mui/ui/components";
 
-import { accentFor } from "../lib/palette";
+import { accentFor, tileGradient } from "../lib/palette";
 
+import { ActionPill } from "./ActionPill";
+import { Artwork, pluginPalette, variantFor } from "./Artwork";
 import { PluginTile } from "./PluginTile";
 
 import type { RegistryPlugin } from "../services/registry";
@@ -26,6 +28,8 @@ interface DetailDialogProps {
   trialActive?: boolean;
   onTry?: (plugin: RegistryPlugin) => void;
   onEndTrial?: (pluginId: string) => void;
+  /** A screenshot the deployment may load, or null for generated artwork. */
+  image?: string | null;
 }
 
 function formatDate(iso?: string): string | null {
@@ -46,6 +50,7 @@ const DetailDialog: FC<DetailDialogProps> = ({
   trialActive,
   onTry,
   onEndTrial,
+  image = null,
 }) => {
   if (!plugin) return null;
 
@@ -62,13 +67,12 @@ const DetailDialog: FC<DetailDialogProps> = ({
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="overflow-hidden p-0 sm:max-w-xl">
-        {/* Accent band gives the dialog the plugin's identity without imagery. */}
-        <div
-          aria-hidden
-          className="h-20"
-          style={{
-            background: `linear-gradient(135deg, ${accent}, color-mix(in oklab, ${accent} 55%, black))`,
-          }}
+        {/* The card's artwork, wider: the dialog opens on the same picture the card showed. */}
+        <Artwork
+          palette={pluginPalette(accent, tileGradient(plugin))}
+          image={image}
+          variant={variantFor(plugin.id)}
+          shape="hero"
         />
         <div className="px-6 pb-6">
           <DialogHeader className="text-left">
@@ -95,19 +99,13 @@ const DetailDialog: FC<DetailDialogProps> = ({
               <div className="ml-auto self-end pb-1">
                 {trialActive ? (
                   <span className="flex items-center gap-2">
-                    <span className="flex items-center gap-1.5 rounded-lg bg-ok/15 px-2.5 py-1.5 text-xs font-semibold text-ok">
-                      <FlaskConical className="size-3.5" /> Trial active
-                    </span>
-                    {onEndTrial && (
-                      <Button variant="outline" size="sm" onClick={() => onEndTrial(plugin.id)}>
-                        End trial
-                      </Button>
-                    )}
+                    <ActionPill tone="ok">
+                      Trial active <Check className="size-3.5" strokeWidth={2.6} />
+                    </ActionPill>
+                    {onEndTrial && <ActionPill onClick={() => onEndTrial(plugin.id)}>End trial</ActionPill>}
                   </span>
                 ) : canTry && onTry ? (
-                  <Button size="sm" onClick={() => onTry(plugin)}>
-                    <FlaskConical className="size-3.5" /> Try
-                  </Button>
+                  <ActionPill onClick={() => onTry(plugin)}>Try it</ActionPill>
                 ) : null}
               </div>
             </div>

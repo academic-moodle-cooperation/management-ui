@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { validateTryPlugin, validateTryUrl } from "./security";
+import { isAllowedAssetUrl, validateTryPlugin, validateTryUrl } from "./security";
 
 import type { TryConfig } from "../config";
 
@@ -83,5 +83,18 @@ describe("validateTryPlugin", () => {
   it("propagates URL failures", () => {
     const result = validateTryPlugin(entry({ url: "https://example.org/x.mjs" }), cfg());
     expect(result.valid).toBe(false);
+  });
+});
+
+describe("isAllowedAssetUrl", () => {
+  it("allows images on an allowlisted host over https", () => {
+    expect(isAllowedAssetUrl("https://cdn.jsdelivr.net/gh/org/repo/shot.png", cfg())).toBe(true);
+    expect(isAllowedAssetUrl("https://sub.cdn.jsdelivr.net/shot.png", cfg())).toBe(true);
+  });
+
+  it("refuses other hosts, odd schemes and unparsable values", () => {
+    expect(isAllowedAssetUrl("https://images.example.org/shot.png", cfg())).toBe(false);
+    expect(isAllowedAssetUrl("javascript:alert(1)", cfg())).toBe(false);
+    expect(isAllowedAssetUrl("not a url", cfg())).toBe(false);
   });
 });

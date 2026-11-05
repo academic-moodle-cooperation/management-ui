@@ -1,7 +1,6 @@
-import { BadgeCheck, FlaskConical } from "lucide-react";
+import { BadgeCheck, Check } from "lucide-react";
 
-import { Button } from "@oc-mui/ui/components";
-
+import { ActionPill } from "./ActionPill";
 import { PluginTile } from "./PluginTile";
 
 import type { RegistryPlugin } from "../services/registry";
@@ -25,9 +24,10 @@ export function taglineOf(plugin: Pick<RegistryPlugin, "tagline" | "description"
 }
 
 /**
- * Catalog list row: tile, name + verified mark, author, version, tagline —
- * plus the Try gesture when the deployment has enabled it. Try is the only
- * action; there is no install (permanence goes through the ops path).
+ * Catalog list row (V4's community row): tile, name + verified mark, author,
+ * version, tagline — plus the Try gesture when the deployment has enabled it.
+ * Try is the only action; there is no install (permanence goes through the
+ * ops path).
  */
 const PluginRow: FC<PluginRowProps> = ({ plugin, onOpen, canTry, trialActive, onTry }) => {
   return (
@@ -41,40 +41,31 @@ const PluginRow: FC<PluginRowProps> = ({ plugin, onOpen, canTry, trialActive, on
           onOpen(plugin);
         }
       }}
-      className="grid w-full cursor-pointer grid-cols-[auto_1fr_auto] items-start gap-x-3.5 gap-y-1 rounded-xl p-3 text-left transition-colors hover:bg-card"
+      className="grid w-full cursor-pointer grid-cols-[auto_1fr_auto] items-start gap-x-3.5 gap-y-1.5 rounded-xl px-3 py-3.5 text-left transition-colors hover:bg-card"
     >
       <PluginTile plugin={plugin} />
       <span className="min-w-0">
-        <span className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+        <span className="flex items-center gap-1.5 text-[14.5px] font-semibold text-foreground">
           <span className="truncate">{plugin.name}</span>
           {plugin.verified && (
-            <BadgeCheck aria-label="Verified" className="size-3.5 shrink-0 text-primary" />
+            <BadgeCheck aria-label="Verified" className="size-3.5 shrink-0 text-muted-foreground" />
           )}
         </span>
-        <span className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
+        <span className="mt-0.5 flex items-center gap-2.5 text-[12.5px] text-muted-foreground">
           <span className="truncate">{plugin.author.name}</span>
-          <span className="shrink-0 font-mono">v{plugin.version}</span>
+          <span className="shrink-0 font-mono text-xs">v{plugin.version}</span>
         </span>
       </span>
       <span className="self-center">
         {trialActive ? (
-          <span className="flex items-center gap-1.5 rounded-lg bg-ok/15 px-2.5 py-1.5 text-xs font-semibold text-ok">
-            <FlaskConical className="size-3.5" /> Trial active
-          </span>
+          <ActionPill tone="ok">
+            Trial active <Check className="size-3.5" strokeWidth={2.6} />
+          </ActionPill>
         ) : canTry && onTry ? (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              onTry(plugin);
-            }}
-          >
-            Try
-          </Button>
+          <ActionPill onClick={() => onTry(plugin)}>Try it</ActionPill>
         ) : null}
       </span>
-      <span className="col-start-2 col-span-2 line-clamp-2 text-[13px] leading-snug text-muted-foreground">
+      <span className="col-span-2 col-start-2 line-clamp-2 text-[13px] leading-[1.45] text-muted-foreground">
         {taglineOf(plugin)}
       </span>
     </div>

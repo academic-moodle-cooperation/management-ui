@@ -1,10 +1,11 @@
 import { ArrowUpCircle, Check, Copy, FlaskConical } from "lucide-react";
 import { useState } from "react";
 
-import { Button, toast } from "@oc-mui/ui/components";
+import { toast } from "@oc-mui/ui/components";
 
 import { endTrial } from "../services/trials";
 
+import { ActionPill } from "./ActionPill";
 import { PluginTile } from "./PluginTile";
 
 import type { InventoryItem, InventoryOrigin } from "../services/inventory";
@@ -123,14 +124,14 @@ const LibraryRow: FC<LibraryRowProps> = ({ item, onTry }) => {
 
       <div className="flex items-center gap-1.5 self-center">
         {canTry && onTry && (
-          <Button variant="outline" size="sm" onClick={() => onTry(item)} title="Preview in this tab only">
-            <FlaskConical className="size-3.5" /> Try
-          </Button>
+          <ActionPill onClick={() => onTry(item)} title="Preview in this tab only">
+            <FlaskConical className="size-3.5" /> Try it
+          </ActionPill>
         )}
         {item.status === "trial" && (
-          <Button variant="outline" size="sm" onClick={() => endTrial(item.namespace)} title="Unload it from this tab (reloads)">
+          <ActionPill onClick={() => endTrial(item.namespace)} title="Unload it from this tab (reloads)">
             End trial
-          </Button>
+          </ActionPill>
         )}
       </div>
     </div>

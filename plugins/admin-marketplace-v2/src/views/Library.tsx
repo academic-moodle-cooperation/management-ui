@@ -6,17 +6,17 @@ import { Button, Skeleton } from "@oc-mui/ui/components";
 
 import { LibraryRow } from "../components/LibraryRow";
 import { TryConfirmDialog } from "../components/TryConfirmDialog";
-import { useInventory } from "../hooks/useInventory";
 import { useThemePreview } from "../hooks/useThemePreview";
 import { endThemePreview } from "../services/themePreview";
 import { startLocalTrial } from "../services/trials";
 
+import type { InventoryState } from "../hooks/useInventory";
 import type { InventoryItem, InventoryStatus } from "../services/inventory";
-import type { RegistryPlugin } from "../services/registry";
 import type { FC } from "react";
 
 interface LibraryProps {
-  catalog: RegistryPlugin[];
+  /** Loaded by the page (the header's Library count reads it too). */
+  inventory: InventoryState;
 }
 
 const GROUPS: Array<{ status: InventoryStatus; title: string; hint: string }> = [
@@ -37,8 +37,8 @@ const GROUPS: Array<{ status: InventoryStatus; title: string; hint: string }> = 
  * present-but-disabled plugins, and org-wide enabling stays a deployment
  * decision, which is why every row shows the exact config value to copy.
  */
-const Library: FC<LibraryProps> = ({ catalog }) => {
-  const { items, loading } = useInventory(catalog);
+const Library: FC<LibraryProps> = ({ inventory }) => {
+  const { items, loading } = inventory;
   const [tryCandidate, setTryCandidate] = useState<InventoryItem | null>(null);
   const { config } = useAppConfig();
   const activeTheme =

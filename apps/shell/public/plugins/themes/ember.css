@@ -5,15 +5,14 @@
  * terracotta primary (the "V4 hybrid" look), and a warm-paper light mode.
  * Generous radius, soft diffuse shadows, quiet borders — chrome recedes,
  * content and artwork carry the color. Ships both light (:root) and dark
- * (.dark); system font stacks only.
+ * (.dark). Sets no `--font-*`: it inherits the host's bundled Geist, which
+ * is the typeface the studies were designed in.
  */
 :root {
   --theme-name: "Ember";
 
   /* --- Structure: soft radius, airy spacing, diffuse warm shadows --- */
   --radius: 0.75rem;
-  --font-heading: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --spacing-card: 1.25rem;
   --spacing-relaxed: 1.125rem;
   --shadow-sm: 0 1px 3px 0 rgb(60 45 30 / 0.07);

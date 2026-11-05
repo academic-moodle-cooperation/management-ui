@@ -48,6 +48,26 @@ function isHostnameAllowed(hostname: string, cfg: TryConfig): boolean {
   );
 }
 
+/**
+ * May a catalog image (screenshot) be loaded from `url`? Same-origin assets
+ * are trusted as deployed; anything else must sit on an allowlisted host (and
+ * on HTTPS in production). Images execute nothing, but loading one still
+ * tells its host who is browsing — the allowlist keeps that bounded to hosts
+ * the deployment already trusts for code.
+ */
+export function isAllowedAssetUrl(url: string, cfg: TryConfig): boolean {
+  let parsed: URL;
+  try {
+    parsed = new URL(url, typeof window !== "undefined" ? window.location.href : undefined);
+  } catch {
+    return false;
+  }
+  if (typeof window !== "undefined" && parsed.origin === window.location.origin) return true;
+  if (!["http:", "https:"].includes(parsed.protocol)) return false;
+  if (parsed.protocol === "http:" && !isDevelopment() && !cfg.allowInsecureHttp) return false;
+  return isHostnameAllowed(parsed.hostname, cfg);
+}
+
 /** Validate a bundle URL against protocol, HTTPS policy, and the allowlist. */
 export function validateTryUrl(url: string, cfg: TryConfig): ValidationResult {
   const warnings: string[] = [];

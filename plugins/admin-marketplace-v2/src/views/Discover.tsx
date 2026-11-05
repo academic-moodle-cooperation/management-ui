@@ -1,25 +1,31 @@
-import { RefreshCw, Search } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { Button, Input, Skeleton } from "@oc-mui/ui/components";
+import { Button, Skeleton } from "@oc-mui/ui/components";
 
 import { DetailDialog } from "../components/DetailDialog";
+import { FeaturedCard } from "../components/FeaturedCard";
 import { PluginRow, taglineOf } from "../components/PluginRow";
-import { ThemeRow } from "../components/ThemeRow";
+import { SectionHeader } from "../components/SectionHeader";
+import { ThemeCard } from "../components/ThemeCard";
 import { TryConfirmDialog } from "../components/TryConfirmDialog";
 import { marketplaceV2Config } from "../config";
 import { useThemePreview } from "../hooks/useThemePreview";
 import { useThemes } from "../hooks/useThemes";
+import { isAllowedAssetUrl } from "../services/security";
 import { startThemePreview } from "../services/themePreview";
 import { canPreviewTheme, type ThemeCandidate } from "../services/themes";
 import { endTrial, isTrialActive, startTrial } from "../services/trials";
 
 import type { CatalogState } from "../hooks/useCatalog";
 import type { RegistryCategory, RegistryPlugin } from "../services/registry";
-import type { FC } from "react";
+import type { FC, ReactElement } from "react";
 
 /**
- * Discover — the catalog view of the v2 marketplace.
+ * Discover — the catalog view of the v2 marketplace, in V4's shape: hero,
+ * category pills, then Featured cards (curated by the deployment), the
+ * plugin rows, and the theme cards. A search or a category filter collapses
+ * that into one results section.
  *
  * Job (per INTENT.md): show what exists, invitingly — plus exactly one
  * gesture, **Try**: an ephemeral, tab-scoped trial behind a consent dialog.
@@ -60,12 +66,16 @@ function matches(plugin: RegistryPlugin, query: string, category: RegistryCatego
 interface DiscoverProps {
   /** Shared with the Library tab so the catalog is fetched once per page. */
   catalog: CatalogState;
+  /** The header search — owned by the page so it works from either tab. */
+  query: string;
 }
 
-const Discover: FC<DiscoverProps> = ({ catalog }) => {
+const CARD_GRID = "grid grid-cols-2 gap-[18px] lg:grid-cols-4";
+const ROW_GRID = "grid gap-x-10 gap-y-1 md:grid-cols-2";
+
+const Discover: FC<DiscoverProps> = ({ catalog, query }) => {
   const cfg = marketplaceV2Config.use();
   const { plugins, loading, error, reload } = catalog;
-  const [query, setQuery] = useState("");
   const [category, setCategory] = useState<RegistryCategory | "all">("all");
   const [selected, setSelected] = useState<RegistryPlugin | null>(null);
   const [tryCandidate, setTryCandidate] = useState<RegistryPlugin | null>(null);
@@ -73,26 +83,79 @@ const Discover: FC<DiscoverProps> = ({ catalog }) => {
   const themes = useThemes(plugins);
   const themePreview = useThemePreview();
 
+  const filtering = query.trim() !== "" || category !== "all";
+  const showThemes = category === "all" || category === "theme";
+  const showPlugins = category !== "theme";
+
   const visibleThemes = useMemo(() => {
     const q = query.trim().toLowerCase();
     return themes.themes.filter(
       (t) => !q || `${t.name} ${t.tagline ?? ""} ${t.author ?? ""}`.toLowerCase().includes(q),
     );
   }, [themes.themes, query]);
-  const showThemes = category === "all" || category === "theme";
-  const showPlugins = category !== "theme";
 
   const visible = useMemo(
     () => plugins.filter((p) => matches(p, query, category)),
     [plugins, query, category],
   );
 
-  const canTry = (): boolean => cfg.try.enabled;
+  const featured = useMemo(() => {
+    const byId = new Map(plugins.map((p) => [p.id, p]));
+    return cfg.featured
+      .map((id) => byId.get(id))
+      .filter((p): p is RegistryPlugin => p !== undefined && p.category !== "theme");
+  }, [plugins, cfg.featured]);
+
+  const canTry = cfg.try.enabled;
+  /** The first screenshot this deployment may load, else generated artwork. */
+  const screenshotFor = (plugin: RegistryPlugin): string | null =>
+    plugin.screenshots?.find((s) => isAllowedAssetUrl(s.url, cfg.try))?.url ?? null;
 
   const requestTry = (plugin: RegistryPlugin): void => {
     setSelected(null);
     setTryCandidate(plugin);
   };
+
+  const rows = (list: RegistryPlugin[]): ReactElement => (
+    <div className={ROW_GRID}>
+      {list.map((plugin) => (
+        <PluginRow
+          key={plugin.id}
+          plugin={plugin}
+          onOpen={setSelected}
+          canTry={canTry}
+          trialActive={isTrialActive(plugin.id)}
+          onTry={requestTry}
+        />
+      ))}
+    </div>
+  );
+
+  const themeSection =
+    showThemes && !themes.loading && visibleThemes.length > 0 ? (
+      <section className="pt-8">
+        <SectionHeader
+          title="Themes"
+          count={visibleThemes.length}
+          hint="Restyle the whole interface — Try applies instantly in this tab"
+        />
+        <div className={CARD_GRID}>
+          {visibleThemes.map((theme) => (
+            <ThemeCard
+              key={theme.id}
+              theme={theme}
+              isActive={theme.configValue !== undefined && theme.configValue === themes.activeConfigValue}
+              isPreviewing={themePreview?.id === theme.id}
+              can={canPreviewTheme(theme, cfg.try)}
+              onTry={setThemeCandidate}
+            />
+          ))}
+        </div>
+      </section>
+    ) : null;
+
+  const nothingToShow =
+    (!showPlugins || visible.length === 0) && !(showThemes && visibleThemes.length > 0) && !themes.loading;
 
   return (
     <div className="min-h-full bg-background text-foreground">
@@ -109,23 +172,21 @@ const Discover: FC<DiscoverProps> = ({ catalog }) => {
             ].join(", "),
           }}
         />
-        <div className="relative mx-auto max-w-5xl px-8 py-12 text-center">
-          <h1 className="font-heading text-3xl font-bold tracking-tight text-balance">
+        <div className="relative mx-auto max-w-[1180px] px-8 pt-14 pb-[54px] text-center">
+          <h1 className="mx-auto max-w-2xl font-heading text-[clamp(1.5rem,3.3vw,2.0625rem)] leading-[1.25] font-bold tracking-tight text-balance">
             Discover community-made <span className="text-primary">plugins</span>,{" "}
-            <span className="text-info">themes</span>, and{" "}
-            <span className="text-ok">integrations</span>
+            <span className="text-info">themes</span>, <span className="text-ok">integrations</span>, and more
           </h1>
-          <p className="mt-2.5 text-sm text-muted-foreground">
+          <p className="mt-2.5 text-[14.5px] text-muted-foreground">
             Built by organisations like yours. Try anything in this tab — nothing is installed, and
             permanent changes stay in your hands.
           </p>
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl px-8">
-
-        {/* ---- Toolbar: filters + search ---- */}
-        <div className="flex flex-wrap items-center gap-2 py-5">
+      <div className="mx-auto max-w-[1180px] px-8 pb-16">
+        {/* ---- Category pills ---- */}
+        <div className="flex flex-wrap items-center gap-2 pt-[22px] pb-1">
           {CATEGORY_FILTERS.map((filter) => {
             const active = category === filter.key;
             return (
@@ -135,37 +196,28 @@ const Discover: FC<DiscoverProps> = ({ catalog }) => {
                 onClick={() => setCategory(filter.key)}
                 className={
                   active
-                    ? "rounded-lg bg-foreground px-3.5 py-1.5 text-[13px] font-semibold text-background"
-                    : "rounded-lg border border-border px-3.5 py-1.5 text-[13px] font-semibold text-muted-foreground transition-colors hover:bg-card hover:text-foreground"
+                    ? "rounded-md border border-foreground bg-foreground px-3.5 py-[7px] text-[13px] font-semibold text-background"
+                    : "rounded-md border border-input px-3.5 py-[7px] text-[13px] font-semibold text-muted-foreground transition-colors hover:bg-card hover:text-foreground"
                 }
               >
                 {filter.label}
               </button>
             );
           })}
-          <div className="relative ml-auto w-full sm:w-64">
-            <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search plugins & themes"
-              className="pl-8"
-            />
-          </div>
         </div>
 
         {/* ---- Catalog ---- */}
         {loading ? (
-          <div className="grid gap-x-10 gap-y-2 pb-16 md:grid-cols-2">
-            {Array.from({ length: 6 }, (_, i) => (
-              <div key={i} className="flex gap-3.5 p-3">
-                <Skeleton className="size-11 rounded-xl" />
-                <div className="flex-1 space-y-2 py-0.5">
-                  <Skeleton className="h-4 w-2/5" />
-                  <Skeleton className="h-3 w-4/5" />
+          <div className="pt-8">
+            <div className={CARD_GRID}>
+              {Array.from({ length: 4 }, (_, i) => (
+                <div key={i}>
+                  <Skeleton className="aspect-[16/10.5] rounded-xl" />
+                  <Skeleton className="mt-3 h-4 w-3/5" />
+                  <Skeleton className="mt-1.5 h-3 w-2/5" />
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         ) : error ? (
           <div className="py-20 text-center">
@@ -175,7 +227,7 @@ const Discover: FC<DiscoverProps> = ({ catalog }) => {
               <RefreshCw className="size-3.5" /> Try again
             </Button>
           </div>
-        ) : showPlugins && visible.length === 0 && !(showThemes && visibleThemes.length > 0) ? (
+        ) : nothingToShow ? (
           <div className="py-20 text-center">
             <p className="font-heading text-lg font-semibold">
               {plugins.length === 0 ? "No registries configured." : "Nothing found."}
@@ -186,59 +238,59 @@ const Discover: FC<DiscoverProps> = ({ catalog }) => {
                 : "Try a different search or category — or build it yourself with the plugin SDK."}
             </p>
           </div>
-        ) : (
-          showPlugins && (
-            <div className="grid gap-x-10 gap-y-1 pb-10 md:grid-cols-2">
-              {visible.map((plugin) => (
-                <PluginRow
-                  key={plugin.id}
-                  plugin={plugin}
-                  onOpen={setSelected}
-                  canTry={canTry()}
-                  trialActive={isTrialActive(plugin.id)}
-                  onTry={requestTry}
-                />
-              ))}
-            </div>
-          )
-        )}
-
-        {/* ---- Themes: all sources, Try applies instantly ---- */}
-        {showThemes && !themes.loading && (
-          <section className="pb-16">
-            <div className="mb-2 flex items-baseline gap-2.5">
-              <h2 className="font-heading text-base font-semibold">Themes</h2>
-              <span className="font-mono text-xs text-muted-foreground">{visibleThemes.length}</span>
-              <span className="text-xs text-muted-foreground">
-                — restyle the whole interface; Try applies instantly in this tab
-              </span>
-            </div>
-            {visibleThemes.length === 0 ? (
-              <p className="rounded-xl border border-dashed border-border px-4 py-5 text-sm text-muted-foreground">
-                No themes found.
-              </p>
-            ) : (
-              <div className="grid gap-x-10 gap-y-1 md:grid-cols-2">
-                {visibleThemes.map((theme) => (
-                  <ThemeRow
-                    key={theme.id}
-                    theme={theme}
-                    isActive={theme.configValue !== undefined && theme.configValue === themes.activeConfigValue}
-                    isPreviewing={themePreview?.id === theme.id}
-                    can={canPreviewTheme(theme, cfg.try)}
-                    onTry={setThemeCandidate}
-                  />
-                ))}
-              </div>
+        ) : !filtering ? (
+          <>
+            {featured.length > 0 && (
+              <section className="pt-8">
+                <SectionHeader title="Featured plugins" hint="Picked by this deployment" />
+                <div className={CARD_GRID}>
+                  {featured.map((plugin) => (
+                    <FeaturedCard
+                      key={plugin.id}
+                      plugin={plugin}
+                      image={screenshotFor(plugin)}
+                      onOpen={setSelected}
+                      canTry={canTry}
+                      trialActive={isTrialActive(plugin.id)}
+                      onTry={requestTry}
+                    />
+                  ))}
+                </div>
+              </section>
             )}
-          </section>
+            {visible.length > 0 && (
+              <section className="pt-8">
+                <SectionHeader title="Plugins" count={visible.length} />
+                {rows(visible)}
+              </section>
+            )}
+            {themeSection}
+          </>
+        ) : (
+          <>
+            {showPlugins && visible.length > 0 && (
+              <section className="pt-8">
+                <SectionHeader
+                  title={
+                    query.trim()
+                      ? `Results for “${query.trim()}”`
+                      : (CATEGORY_FILTERS.find((f) => f.key === category)?.label ?? "Results")
+                  }
+                  hint={`${visible.length} ${visible.length === 1 ? "result" : "results"}`}
+                />
+                {rows(visible)}
+              </section>
+            )}
+            {themeSection}
+          </>
         )}
       </div>
 
       <DetailDialog
         plugin={selected}
+        image={selected ? screenshotFor(selected) : null}
         onClose={() => setSelected(null)}
-        canTry={selected ? canTry() : false}
+        canTry={selected ? canTry : false}
         trialActive={selected ? isTrialActive(selected.id) : false}
         onTry={requestTry}
         onEndTrial={endTrial}

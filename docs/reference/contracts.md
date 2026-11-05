@@ -3,7 +3,7 @@
 > **Reference — look it up, don't read it through.** This page is the frozen list of what a plugin may rely on, consulted a section at a time. Task-shaped guidance lives under [Extend](../extend/index.md) and [Contribute](../contribute/index.md).
 
 **Status:** Frozen baseline for the 1.x plugin API.
-**Last Updated:** 2026-08-12
+**Last Updated:** 2026-11-05
 
 This document lists everything a third-party plugin author or downstream app may rely on. Anything not listed here is internal and may change without notice.
 
@@ -24,7 +24,7 @@ The Manifest 1.1 and Runtime API 1.1 contracts are **mechanically verified** by 
 
 **Authoritative schema:** [`packages/plugin-system/src/schemas/plugin.schema.json`](../../packages/plugin-system/src/schemas/plugin.schema.json)
 **Runtime validator:** [`packages/plugin-system/src/utils/pluginMetadataValidator.ts`](../../packages/plugin-system/src/utils/pluginMetadataValidator.ts)
-**Contract version:** 1.1 (see the 2026-04-17 changelog entry; `PLUGIN_API_VERSION` in [`packages/plugin-system/src/apiVersion.ts`](../../packages/plugin-system/src/apiVersion.ts) is `"1.1.0"`)
+**Contract version:** 1.2 (optional presentational fields added 2026-11-05; see the changelog; `PLUGIN_API_VERSION` in [`packages/plugin-system/src/apiVersion.ts`](../../packages/plugin-system/src/apiVersion.ts) is `"1.1.0"`)
 
 The JSON Schema at the path above is the single source of truth. The runtime validator enforces the subset needed for loading; the schema is what editors and the registry validate against.
 
@@ -39,6 +39,7 @@ Both shapes validate against the schema and both load at runtime through the sam
 
 - **Required fields** (`id`, `name`, `version`, `description`, `author`, `namespace`) are frozen. They will not be removed or semantically changed within the 1.x API.
 - **Optional fields** may gain new entries in minor versions. Existing field semantics will not change.
+- **Presentational fields** (`icon`, `tagline`, `accentColor`, `screenshots`) are read by the marketplace only — never by the loader. They carry the same meaning in a `plugin.json` and in a registry entry, so an author declares them once; the registry's review process checks them.
 - Removing or renaming any documented field is a **major** change.
 - Adding a new enum value to `category` is a **minor** change; removing one is **major**.
 - Adding a new top-level field requires both: (a) schema update, (b) runtime validator update, (c) documentation in this file's changelog.
@@ -286,6 +287,7 @@ No contract change is allowed without the changeset - plugins cannot cope with s
 
 ## Changelog
 
+- **2026-11-05:** Plugin Manifest Contract bumped to 1.2 (minor). Two optional, presentational fields join `icon` and `screenshots`: `tagline` (one-line pitch, ≤ 120 chars) and `accentColor` (any CSS color for the marketplace tile/artwork). They mirror the fields the marketplace v2 registry format already read, so one declaration serves both the manifest and a registry entry. The runtime validator type-checks `icon`, `tagline` and `accentColor` as strings when present; no loader behaviour changes and `PLUGIN_API_VERSION` is unchanged.
 - **2026-11-02:** Documentation errata — no contract change. §5 now records the **known drift** between `SHARED_RUNTIME_MAJORS` (still 1 for `@oc-mui/ui`, `@oc-mui/query`, `@oc-mui/ui-config`) and the published 2.x majors of those packages, and tells plugin authors to leave the three names out of `workspaceDependencies` until the table is lifted (a `@oc-mui/plugin-system` major, bundled with the next host major). The `pnpm create-plugin` templates no longer declare `@oc-mui/ui`.
 - **2026-10-28:** Shared Runtime Dependencies Contract bumped to 1.1 (minor). `zod` (major 4) joins `SHARED_RUNTIME_MAJORS`, `SHARED_MODULE_NAMES` and the plugin build's default externals: `definePluginConfig` takes a zod schema, so plugins already had to agree with the host on zod; now they consume the host's copy instead of bundling their own. Plugins built before this keep working (same major). §1 now documents the two accepted manifest shapes (single-module with `extensionPoints`, multi-module with `modules[]`); no schema change.
 - **2026-10-13:** Theme Contract bumped to 2.1 (minor). The `plugins` cascade layer moves from *after* `utilities` to *between* `base` and `utilities` (`theme, base, plugins, components, utilities`). The 2.0 guarantee "plugin utilities win on the plugin's own DOM" was never in effect: a stray `@tailwindcss/postcss` alpha in the host's PostCSS config rewrote the compiled `@layer` statement and put `plugins` *below* `base`, so plugin utilities lost to the preflight reset (production landing page without padding or heading size). Placing `plugins` last, as declared, breaks host chrome instead — a plugin's plain `.hidden` beats the host's `md:block` on the sidebar. The new order makes plugin utilities beat preflight while host utilities keep precedence on collisions; plugins escalate their own responsive variants with `!important`. The PostCSS config is gone from the host apps and `@oc-mui/ui/postcss.config` is a deprecated no-op.

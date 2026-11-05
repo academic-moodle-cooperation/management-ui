@@ -66,6 +66,13 @@ export const marketplaceV2ConfigSchema = z.object({
    * a fallback so the flow works without any external repo.
    */
   registryUrls: z.array(z.string()).default([]),
+  /**
+   * Registry ids shown as the Explore tab's "Featured" cards, in this order.
+   * Curation is a deployment decision for now (a registry-side `featured`
+   * flag may follow once the central registry has a review process). Ids
+   * that resolve to no catalog entry are ignored; empty hides the section.
+   */
+  featured: z.array(z.string()).default([]),
   try: trySchema,
 });
 
@@ -77,6 +84,7 @@ export const marketplaceV2Config = definePluginConfig({
   schema: marketplaceV2ConfigSchema,
   defaults: {
     registryUrls: [],
+    featured: [],
     try: {
       enabled: false,
       allowedDomains: [...DEFAULT_TRY_ALLOWED_DOMAINS],

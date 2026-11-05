@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { canPreviewTheme, collectThemes, orgThemeUrl } from "./themes";
+import { canPreviewTheme, collectThemes, orgThemeUrl, parseThemeSwatches } from "./themes";
 
 import type { TryConfig } from "../config";
 import type { RegistryPlugin } from "./registry";
@@ -56,5 +56,27 @@ describe("canPreviewTheme", () => {
     expect(canPreviewTheme({ source: "registry", url: "https://cdn.jsdelivr.net/t.css" }, cfg({ enabled: false })).ok).toBe(false);
     expect(canPreviewTheme({ source: "registry", url: "https://evil.example/t.css" }, cfg()).ok).toBe(false);
     expect(canPreviewTheme({ source: "registry", url: "https://cdn.jsdelivr.net/t.css" }, cfg()).ok).toBe(true);
+  });
+});
+
+describe("parseThemeSwatches", () => {
+  it("reads the swatch tokens from :root and overlays .dark", () => {
+    const css = `
+      /* a comment with --primary: red; inside */
+      :root { --background: oklch(0.96 0.01 85); --primary: oklch(0.58 0.13 40); --ring: var(--primary); --sidebar: var(--background); }
+      .dark { --background: oklch(0.22 0.006 80); }
+    `;
+    const sw = parseThemeSwatches(css);
+    expect(sw.light).toEqual({
+      background: "oklch(0.96 0.01 85)",
+      primary: "oklch(0.58 0.13 40)",
+      sidebar: "oklch(0.96 0.01 85)",
+    });
+    expect(sw.dark.background).toBe("oklch(0.22 0.006 80)");
+    expect(sw.dark.primary).toBe("oklch(0.58 0.13 40)");
+  });
+
+  it("returns empty sets for CSS without the blocks", () => {
+    expect(parseThemeSwatches(".foo { color: red; }")).toEqual({ light: {}, dark: {} });
   });
 });

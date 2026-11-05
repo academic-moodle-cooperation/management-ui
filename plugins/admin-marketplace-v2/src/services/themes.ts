@@ -33,6 +33,80 @@ export interface ThemeCandidate {
   configValue?: string;
   /** Registry entry (for the detail dialog), registry source only. */
   registryEntry?: RegistryPlugin;
+  /**
+   * The theme's own colors, parsed from its CSS (same-origin sources only —
+   * registry CSS is never fetched for browsing). Drives the swatch artwork.
+   */
+  swatch?: ThemeSwatches;
+}
+
+/** Token values a theme card is drawn with; missing ones fall back to the live theme. */
+export type ThemeSwatch = Partial<
+  Record<"background" | "card" | "primary" | "sidebar" | "muted" | "border", string>
+>;
+export interface ThemeSwatches {
+  light: ThemeSwatch;
+  dark: ThemeSwatch;
+}
+
+const SWATCH_VARS = ["background", "card", "primary", "sidebar", "muted", "border"] as const;
+
+function declarations(block: string): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const m of block.matchAll(/--([a-z0-9-]+)\s*:\s*([^;]+);/gi)) {
+    out[m[1]!] = m[2]!.trim();
+  }
+  return out;
+}
+
+/** One level of `var(--x)` indirection, within the same declaration set. */
+function resolveVar(value: string, vars: Record<string, string>): string {
+  const m = /^var\(--([a-z0-9-]+)\)$/i.exec(value);
+  if (!m) return value;
+  const target = vars[m[1]!];
+  return target && !/^var\(/.test(target) ? target : value;
+}
+
+/**
+ * Pull the swatch tokens out of a theme file: `:root` is the light set,
+ * `.dark` overlays it. Pure string work — the CSS is never applied.
+ */
+export function parseThemeSwatches(css: string): ThemeSwatches {
+  const clean = css.replace(/\/\*[\s\S]*?\*\//g, "");
+  const light: Record<string, string> = {};
+  const dark: Record<string, string> = {};
+  for (const m of clean.matchAll(/(?:^|[}\s,])(:root|\.dark)\s*\{([^}]*)\}/g)) {
+    Object.assign(m[1] === ".dark" ? dark : light, declarations(m[2]!));
+  }
+  const pick = (vars: Record<string, string>): ThemeSwatch => {
+    const out: ThemeSwatch = {};
+    for (const key of SWATCH_VARS) {
+      const value = vars[key];
+      if (value !== undefined) out[key] = resolveVar(value, vars);
+    }
+    return out;
+  };
+  return { light: pick(light), dark: pick({ ...light, ...dark }) };
+}
+
+const swatchCache = new Map<string, Promise<ThemeSwatches | null>>();
+
+/** Fetch + parse a same-origin theme's swatch, once per URL. */
+export function fetchThemeSwatches(url: string): Promise<ThemeSwatches | null> {
+  let pending = swatchCache.get(url);
+  if (!pending) {
+    pending = (async () => {
+      try {
+        const res = await fetch(url);
+        if (!res.ok || !(res.headers.get("content-type") ?? "").includes("text/css")) return null;
+        return parseThemeSwatches(await res.text());
+      } catch {
+        return null;
+      }
+    })();
+    swatchCache.set(url, pending);
+  }
+  return pending;
 }
 
 export interface ShippedThemeEntry {
