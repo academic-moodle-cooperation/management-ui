@@ -15,6 +15,8 @@ interface FeaturedCardProps {
   onOpen: (plugin: RegistryPlugin) => void;
   canTry?: boolean;
   trialActive?: boolean;
+  /** The plugin is deployed here and running — nothing to try. */
+  activeHere?: boolean;
   onTry?: (plugin: RegistryPlugin) => void;
 }
 
@@ -24,7 +26,7 @@ interface FeaturedCardProps {
  * (`featured` in the plugin config); the card itself adds nothing a row
  * doesn't show — it only gives the entry room.
  */
-const FeaturedCard: FC<FeaturedCardProps> = ({ plugin, image, onOpen, canTry, trialActive, onTry }) => (
+const FeaturedCard: FC<FeaturedCardProps> = ({ plugin, image, onOpen, canTry, trialActive, activeHere, onTry }) => (
   <div
     role="button"
     tabIndex={0}
@@ -57,8 +59,8 @@ const FeaturedCard: FC<FeaturedCardProps> = ({ plugin, image, onOpen, canTry, tr
         </div>
       </div>
       <div className="ml-auto shrink-0">
-        {trialActive ? (
-          <ActionPill tone="ok" size="sm">
+        {trialActive || activeHere ? (
+          <ActionPill tone="ok" size="sm" title={activeHere ? "Deployed and enabled here" : "Trial active in this tab"}>
             <Check className="size-3.5" strokeWidth={2.6} />
           </ActionPill>
         ) : canTry && onTry ? (

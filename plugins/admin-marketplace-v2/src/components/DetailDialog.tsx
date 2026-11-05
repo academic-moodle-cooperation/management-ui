@@ -31,6 +31,8 @@ interface DetailDialogProps {
   canTry?: boolean;
   /** A trial of this plugin is active in this tab. */
   trialActive?: boolean;
+  /** The plugin is deployed here and running — nothing to try. */
+  activeHere?: boolean;
   onTry?: (plugin: RegistryPlugin) => void;
   onEndTrial?: (pluginId: string) => void;
   /** A screenshot the deployment may load, or null for generated artwork. */
@@ -99,6 +101,7 @@ const DetailDialog: FC<DetailDialogProps> = ({
   onClose,
   canTry,
   trialActive,
+  activeHere,
   onTry,
   onEndTrial,
   image = null,
@@ -159,6 +162,10 @@ const DetailDialog: FC<DetailDialogProps> = ({
                     </ActionPill>
                     {onEndTrial && <ActionPill onClick={() => onEndTrial(plugin.id)}>End trial</ActionPill>}
                   </span>
+                ) : activeHere ? (
+                  <ActionPill tone="ok" title="Deployed and enabled on this deployment">
+                    Active here <Check className="size-3.5" strokeWidth={2.6} />
+                  </ActionPill>
                 ) : canTry && onTry ? (
                   <ActionPill onClick={() => onTry(plugin)}>Try it</ActionPill>
                 ) : null}
