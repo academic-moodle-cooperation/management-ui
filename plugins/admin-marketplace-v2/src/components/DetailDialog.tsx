@@ -12,8 +12,10 @@ import {
   toast,
 } from "@oc-mui/ui/components";
 
+import { usePaperToken } from "../hooks/usePaperToken";
 import { accentFor, tileGradient } from "../lib/palette";
 import { namespaceOf } from "../services/registry";
+
 
 import { ActionPill } from "./ActionPill";
 import { Artwork, pluginPalette, variantFor } from "./Artwork";
@@ -107,6 +109,7 @@ const DetailDialog: FC<DetailDialogProps> = ({
   image = null,
   presence = new Map(),
 }) => {
+  const paper = usePaperToken();
   if (!plugin) return null;
 
   const accent = accentFor(plugin);
@@ -124,7 +127,7 @@ const DetailDialog: FC<DetailDialogProps> = ({
       <DialogContent className="overflow-hidden p-0 sm:max-w-xl">
         {/* The card's artwork, wider: the dialog opens on the same picture the card showed. */}
         <Artwork
-          palette={pluginPalette(accent, tileGradient(plugin))}
+          palette={pluginPalette(accent, tileGradient(plugin), paper)}
           image={image}
           variant={variantFor(plugin.id)}
           shape="hero"
