@@ -58,6 +58,12 @@ export interface InventoryItem {
    * browser (its installs are keyed by registry id, not namespace).
    */
   browserInstallIds?: string[];
+  /**
+   * Set when this namespace is registered by a module of another deployed
+   * plugin (e.g. `univie-support` from the `univie` JAR): it is switched on
+   * and off with that parent's namespace, not on its own.
+   */
+  moduleOf?: string;
 }
 
 /** An install the previous marketplace (v1) persisted in this browser's localStorage. */
@@ -216,6 +222,7 @@ export function disabledReasonFor(
 interface Draft {
   origin: InventoryOrigin;
   namespace: string;
+  moduleOf?: string;
   trialKind?: "remote" | "local";
   displayName?: string;
   types: Set<string>;
@@ -319,17 +326,27 @@ export function buildInventory(sources: InventorySources): InventoryItem[] {
     explained.add(namespace, "local");
   }
 
-  // 5. Registered but explained by none of the above. Two kinds: the shell's
-  //    own infrastructure plugins (registered under a bare name, no type), and
-  //    plugins the *previous* marketplace installed in this browser — they
-  //    boot from localStorage and carry a `<ns>:<type>` name. Shown either way
-  //    so the list never lies by omission.
+  // 5. Registered but explained by none of the above. Three kinds, checked in
+  //    this order:
+  //    - a module of a deployed plugin that registers under its own namespace
+  //      (`<parent>-<something>:<type>` while the JAR is known as `<parent>`);
+  //    - plugins the *previous* marketplace installed in this browser — they
+  //      boot from localStorage and carry a `<ns>:<type>` name;
+  //    - the shell's own infrastructure plugins (a bare name, no type).
+  //    Shown either way so the list never lies by omission.
   const browserInstalls = sources.browserInstalls ?? [];
+  const parents = [...explainedBy.keys()].sort((a, b) => b.length - a.length);
   for (const [name, plugin] of registered) {
     const { namespace, type } = splitName(name);
     if (explainedBy.has(namespace) || trialIds.has(namespace)) continue;
-    const fromBrowser = type !== undefined && browserInstalls.length > 0;
-    const d = draft(fromBrowser ? "browser" : "shell", namespace);
+    const parent = type !== undefined ? parents.find((p) => namespace.startsWith(`${p}-`)) : undefined;
+    const origin: InventoryOrigin = parent
+      ? explainedBy.get(parent)!
+      : type !== undefined && browserInstalls.length > 0
+        ? "browser"
+        : "shell";
+    const d = draft(origin, namespace);
+    if (parent) d.moduleOf = parent;
     if (type) d.types.add(type);
     d.versions.add(plugin.version);
     d.registeredAny = true;
@@ -372,6 +389,7 @@ export function buildInventory(sources: InventorySources): InventoryItem[] {
       ...(deps && deps.length > 0 && { pluginDependencies: deps }),
       ...(manifest && { manifest }),
       ...(d.origin === "browser" && { browserInstallIds: browserInstalls.map((b) => b.id) }),
+      ...(d.moduleOf && { moduleOf: d.moduleOf }),
     };
     if (entry && version && isNewerVersion(entry.version, version)) {
       item.registryNewer = entry.version;
