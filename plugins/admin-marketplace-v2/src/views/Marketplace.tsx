@@ -1,4 +1,4 @@
-import { Compass, LibraryBig, Search, Store } from "lucide-react";
+import { Compass, LibraryBig, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Input } from "@oc-mui/ui/components";
@@ -22,8 +22,9 @@ function tabFromHash(): Tab {
 
 /**
  * The marketplace page: one route, two tabs (the V4 structure), one header
- * line — wordmark, Explore · Library (with the active count and an
- * attention dot for registry updates), and the search on the right.
+ * line — Explore · Library as underline tabs (with the active count and an
+ * attention dot for registry updates) and the search on the right. No
+ * wordmark: the sidebar already says where you are.
  * The active tab lives in the URL hash so it survives reloads and can be linked.
  */
 const Marketplace: FC = () => {
@@ -54,45 +55,39 @@ const Marketplace: FC = () => {
   return (
     <div className="min-h-full bg-background text-foreground">
       <div className="border-b border-border">
-        <div className="mx-auto flex h-[58px] max-w-[1180px] items-center gap-5 px-8">
-          <div className="flex items-center gap-2.5 text-[15px] font-semibold tracking-tight">
-            <span className="flex size-[26px] items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <Store className="size-3.5" strokeWidth={2.4} />
-            </span>
-            Marketplace
-          </div>
-          <nav className="flex gap-0.5">
-            {(
-              [
-                { key: "explore", label: "Explore", Icon: Compass },
-                { key: "library", label: "Library", Icon: LibraryBig },
-              ] as const
-            ).map(({ key, label, Icon }) => {
-              const active = tab === key;
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => select(key)}
-                  className={`flex items-center gap-2 rounded-md px-3.5 py-[7px] text-[13.5px] font-semibold transition-colors ${
-                    active ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-card hover:text-foreground"
-                  }`}
-                >
-                  <Icon className="size-4" />
-                  {label}
-                  {key === "library" && !inventory.loading && (
-                    <>
-                      <span className="font-mono text-[11px] font-normal text-muted-foreground">{libraryCount}</span>
-                      {libraryAttention && (
-                        <span className="size-[7px] rounded-full bg-primary" title="A newer version is listed in the registry" />
-                      )}
-                    </>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
-          <div className="relative ml-auto w-80 max-w-full">
+        <div className="mx-auto flex max-w-[1180px] items-center gap-1 px-8">
+          {(
+            [
+              { key: "explore", label: "Explore", Icon: Compass },
+              { key: "library", label: "Library", Icon: LibraryBig },
+            ] as const
+          ).map(({ key, label, Icon }) => {
+            const active = tab === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => select(key)}
+                className={`-mb-px flex items-center gap-2 border-b-2 px-3 py-3.5 text-sm transition-colors ${
+                  active
+                    ? "border-primary font-semibold text-foreground"
+                    : "border-transparent font-medium text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Icon className="size-4" />
+                {label}
+                {key === "library" && !inventory.loading && (
+                  <>
+                    <span className="font-mono text-[11px] font-normal text-muted-foreground">{libraryCount}</span>
+                    {libraryAttention && (
+                      <span className="size-[7px] rounded-full bg-primary" title="A newer version is listed in the registry" />
+                    )}
+                  </>
+                )}
+              </button>
+            );
+          })}
+          <div className="relative ml-auto w-80 max-w-full py-2">
             <Search className="absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-muted-foreground/60" />
             <Input
               value={query}
