@@ -13,6 +13,8 @@ interface PluginRowProps {
   canTry?: boolean;
   /** A trial of this plugin is active in this tab. */
   trialActive?: boolean;
+  /** The plugin is deployed here and running — nothing to try. */
+  activeHere?: boolean;
   onTry?: (plugin: RegistryPlugin) => void;
 }
 
@@ -29,7 +31,7 @@ export function taglineOf(plugin: Pick<RegistryPlugin, "tagline" | "description"
  * Try is the only action; there is no install (permanence goes through the
  * ops path).
  */
-const PluginRow: FC<PluginRowProps> = ({ plugin, onOpen, canTry, trialActive, onTry }) => {
+const PluginRow: FC<PluginRowProps> = ({ plugin, onOpen, canTry, trialActive, activeHere, onTry }) => {
   return (
     <div
       role="button"
@@ -60,6 +62,10 @@ const PluginRow: FC<PluginRowProps> = ({ plugin, onOpen, canTry, trialActive, on
         {trialActive ? (
           <ActionPill tone="ok">
             Trial active <Check className="size-3.5" strokeWidth={2.6} />
+          </ActionPill>
+        ) : activeHere ? (
+          <ActionPill tone="ok" title="Deployed and enabled on this deployment">
+            Active here <Check className="size-3.5" strokeWidth={2.6} />
           </ActionPill>
         ) : canTry && onTry ? (
           <ActionPill onClick={() => onTry(plugin)}>Try it</ActionPill>
