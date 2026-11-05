@@ -133,11 +133,13 @@ const DetailDialog: FC<DetailDialogProps> = ({
         <div className="px-6 pb-6">
           <DialogHeader className="text-left">
             {/* `relative` lifts the row above the hero's positioned artwork, or the tile is clipped. */}
-            <div className="relative -mt-9 flex items-end gap-4">
-              <div className="rounded-2xl bg-background p-1 shadow-md">
+            {/* Tile straddles the hero edge; the text starts below it (pt-10 > the 36px overhang). */}
+            <div className="relative -mt-9 flex items-start gap-4">
+              {/* Outer radius = tile radius (25 % of 64 = 16px) + the 4px gap, so the corners stay concentric. */}
+              <div className="rounded-[20px] bg-background p-1 shadow-md">
                 <PluginTile plugin={plugin} size={64} />
               </div>
-              <div className="min-w-0 pb-1">
+              <div className="min-w-0 pt-10">
                 <DialogTitle className="flex items-center gap-2 font-heading text-xl">
                   <span className="truncate">{plugin.name}</span>
                   {plugin.verified && (
@@ -153,7 +155,7 @@ const DetailDialog: FC<DetailDialogProps> = ({
                   by {plugin.author.name}
                 </DialogDescription>
               </div>
-              <div className="ml-auto self-end pb-1">
+              <div className="ml-auto self-start pt-10">
                 {trialActive ? (
                   <span className="flex items-center gap-2">
                     <ActionPill tone="ok">
