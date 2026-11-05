@@ -79,27 +79,7 @@ const LibraryRow: FC<LibraryRowProps> = ({ item, onTry, presence }) => {
               {item.trialKind === "local" ? "previewing · this tab" : "this tab"}
             </span>
           )}
-          {item.moduleOf && (
-          <p className="mt-1.5 text-xs text-muted-foreground">
-            A module of the <code className="font-mono">{item.moduleOf}</code> plugin, registered under its own
-            namespace. It is switched on and off together with{" "}
-            <code className="font-mono">&quot;{item.moduleOf}&quot;</code> in{" "}
-            <code className="font-mono">app.enabledPlugins</code>, not separately.
-          </p>
-        )}
-
-        {item.origin === "browser" && (
-          <p className="mt-1.5 text-xs text-muted-foreground">
-            Installed in this browser by the previous marketplace (localStorage
-            {item.browserInstallIds && item.browserInstallIds.length > 0 && (
-              <>: <code className="font-mono">{item.browserInstallIds.join(", ")}</code></>
-            )}
-            ). It loads on every visit from this browser only — nobody else sees it. Remove it in the
-            previous marketplace&apos;s Library, or clear that key.
-          </p>
-        )}
-
-        {item.status === "paused" && (
+          {item.status === "paused" && (
             <span className="flex items-center gap-1 rounded-md bg-warning/15 px-1.5 py-0.5 text-[10.5px] font-semibold text-warning">
               <PauseCircle className="size-3" /> paused · this tab
             </span>
