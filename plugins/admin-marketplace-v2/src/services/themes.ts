@@ -89,24 +89,10 @@ export function parseThemeSwatches(css: string): ThemeSwatches {
   return { light: pick(light), dark: pick({ ...light, ...dark }) };
 }
 
-const swatchCache = new Map<string, Promise<ThemeSwatches | null>>();
-
-/** Fetch + parse a same-origin theme's swatch, once per URL. */
-export function fetchThemeSwatches(url: string): Promise<ThemeSwatches | null> {
-  let pending = swatchCache.get(url);
-  if (!pending) {
-    pending = (async () => {
-      try {
-        const res = await fetch(url);
-        if (!res.ok || !(res.headers.get("content-type") ?? "").includes("text/css")) return null;
-        return parseThemeSwatches(await res.text());
-      } catch {
-        return null;
-      }
-    })();
-    swatchCache.set(url, pending);
-  }
-  return pending;
+/** Parse a same-origin theme's swatch; the CSS comes from the shared per-URL cache. */
+export async function fetchThemeSwatches(url: string): Promise<ThemeSwatches | null> {
+  const css = await fetchCss(url);
+  return css === null ? null : parseThemeSwatches(css);
 }
 
 export interface ShippedThemeEntry {
@@ -134,14 +120,33 @@ export async function fetchShippedThemes(): Promise<ShippedThemeEntry[]> {
   }
 }
 
+const cssCache = new Map<string, Promise<string | null>>();
+
+/**
+ * Fetch a stylesheet's text once per URL — `null` when the URL doesn't
+ * serve CSS (the SPA fallback answers 200 with HTML). Shared by the probe
+ * and the swatch parser so a theme is downloaded once, not per consumer.
+ */
+export function fetchCss(url: string): Promise<string | null> {
+  let pending = cssCache.get(url);
+  if (!pending) {
+    pending = (async () => {
+      try {
+        const res = await fetch(url, { method: "GET" });
+        if (!res.ok || !(res.headers.get("content-type") ?? "").includes("text/css")) return null;
+        return await res.text();
+      } catch {
+        return null;
+      }
+    })();
+    cssCache.set(url, pending);
+  }
+  return pending;
+}
+
 /** True when `url` serves CSS (the SPA fallback answers 200 with HTML). */
 export async function probeCss(url: string): Promise<boolean> {
-  try {
-    const res = await fetch(url, { method: "GET" });
-    return res.ok && (res.headers.get("content-type") ?? "").includes("text/css");
-  } catch {
-    return false;
-  }
+  return (await fetchCss(url)) !== null;
 }
 
 /** Conventional theme CSS paths for deployed / local plugins. */
@@ -199,10 +204,17 @@ export async function discoverOrgThemes(
   jars: JarEntry[],
   locals: LocalEntry[],
 ): Promise<Array<{ namespace: string; name?: string; source: "jar" | "local"; url: string }>> {
+  // One probe per namespace: a multi-module JAR lists one entry per module.
+  const seen = new Set<string>();
   const candidates = [
     ...jars.map((j) => ({ namespace: j.namespace ?? j.name, name: j.name, source: "jar" as const })),
     ...locals.map((l) => ({ namespace: l.id, name: l.name, source: "local" as const })),
-  ].filter((c) => c.namespace);
+  ].filter((c) => {
+    const key = `${c.source}:${c.namespace}`;
+    if (!c.namespace || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
   const checks = await Promise.all(
     candidates.map(async (c) => {
       const url = orgThemeUrl(c);

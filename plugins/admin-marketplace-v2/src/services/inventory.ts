@@ -331,12 +331,27 @@ function appBase(config: InventoryConfig | undefined): string {
   return (typeof raw === "string" ? raw : "/").replace(/\/$/, "");
 }
 
-/** The deployment's JAR plugin list — same resolution the shell uses. */
-export async function fetchJarEntries(config: InventoryConfig | undefined): Promise<JarEntry[]> {
+const JAR_LIST_TTL_MS = 30_000;
+const jarListCache = new Map<string, { at: number; pending: Promise<JarEntry[]> }>();
+
+/**
+ * The deployment's JAR plugin list — same resolution the shell uses. Cached
+ * briefly per URL: the inventory and the theme list both need it, and their
+ * effects re-run when the merged config settles.
+ */
+export function fetchJarEntries(config: InventoryConfig | undefined): Promise<JarEntry[]> {
   const production = config?.productionAppPluginUrl;
   const url = production?.includes("plugins.json")
     ? production.replace(/\/$/, "")
     : `${appBase(config)}/management-tool/ui/config/plugins.json`;
+  const cached = jarListCache.get(url);
+  if (cached && Date.now() - cached.at < JAR_LIST_TTL_MS) return cached.pending;
+  const pending = fetchJarList(url);
+  jarListCache.set(url, { at: Date.now(), pending });
+  return pending;
+}
+
+async function fetchJarList(url: string): Promise<JarEntry[]> {
   try {
     const res = await fetch(url, { headers: { Accept: "application/json" } });
     if (!res.ok) return [];
@@ -426,9 +441,23 @@ export async function fetchManifests(
     candidates.map(async (c) => {
       if (seen.has(c.namespace)) return;
       seen.add(c.namespace);
+      const showcase = await fetchManifest(manifestUrl(c, config));
+      if (showcase) out.set(c.namespace, showcase);
+    }),
+  );
+  return out;
+}
+
+const manifestCache = new Map<string, Promise<ManifestShowcase | null>>();
+
+/** One request per manifest URL for the page's lifetime. */
+function fetchManifest(url: string): Promise<ManifestShowcase | null> {
+  let pending = manifestCache.get(url);
+  if (!pending) {
+    pending = (async () => {
       try {
-        const res = await fetch(manifestUrl(c, config), { headers: { Accept: "application/json" } });
-        if (!res.ok || !(res.headers.get("content-type") ?? "").includes("json")) return;
+        const res = await fetch(url, { headers: { Accept: "application/json" } });
+        if (!res.ok || !(res.headers.get("content-type") ?? "").includes("json")) return null;
         const raw = (await res.json()) as Record<string, unknown>;
         const showcase: ManifestShowcase = {};
         for (const key of SHOWCASE_KEYS) {
@@ -440,11 +469,12 @@ export async function fetchManifests(
             showcase[key] = value;
           }
         }
-        out.set(c.namespace, showcase);
+        return showcase;
       } catch {
-        /* no manifest served — fine */
+        return null; // no manifest served — fine
       }
-    }),
-  );
-  return out;
+    })();
+    manifestCache.set(url, pending);
+  }
+  return pending;
 }
