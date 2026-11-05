@@ -79,7 +79,16 @@ const LibraryRow: FC<LibraryRowProps> = ({ item, onTry, presence }) => {
               {item.trialKind === "local" ? "previewing · this tab" : "this tab"}
             </span>
           )}
-          {item.origin === "browser" && (
+          {item.moduleOf && (
+          <p className="mt-1.5 text-xs text-muted-foreground">
+            A module of the <code className="font-mono">{item.moduleOf}</code> plugin, registered under its own
+            namespace. It is switched on and off together with{" "}
+            <code className="font-mono">&quot;{item.moduleOf}&quot;</code> in{" "}
+            <code className="font-mono">app.enabledPlugins</code>, not separately.
+          </p>
+        )}
+
+        {item.origin === "browser" && (
           <p className="mt-1.5 text-xs text-muted-foreground">
             Installed in this browser by the previous marketplace (localStorage
             {item.browserInstallIds && item.browserInstallIds.length > 0 && (
@@ -135,6 +144,15 @@ const LibraryRow: FC<LibraryRowProps> = ({ item, onTry, presence }) => {
           presence={presence}
           layout="row"
         />
+
+        {item.moduleOf && (
+          <p className="mt-1.5 text-xs text-muted-foreground">
+            A module of the <code className="font-mono">{item.moduleOf}</code> plugin, registered under its own
+            namespace. It is switched on and off together with{" "}
+            <code className="font-mono">&quot;{item.moduleOf}&quot;</code> in{" "}
+            <code className="font-mono">app.enabledPlugins</code>, not separately.
+          </p>
+        )}
 
         {item.origin === "browser" && (
           <p className="mt-1.5 text-xs text-muted-foreground">
