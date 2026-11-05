@@ -86,17 +86,21 @@ const Artwork: FC<ArtworkProps> = ({ palette, badge, image, variant = "bars", sh
 
 /**
  * Plugin artwork palette (V4): a paper window on the accent gradient, its
- * lines a faint tint of the accent. Paper = the text-on-primary token, which
- * is near-white under every theme — so the window reads as a bright
- * "screenshot" in dark mode too, instead of a dark hole in the gradient.
+ * lines a faint tint of the accent. `paper` is whichever of the two primary
+ * tokens is lighter under the live theme (see `usePaperToken`), so the window
+ * reads as a bright "screenshot" in dark mode too, instead of a dark hole.
  */
-export function pluginPalette(accent: string, backdrop: string): ArtworkPalette {
-  const paper = `color-mix(in oklab, var(--primary-foreground) 96%, ${accent})`;
+export function pluginPalette(
+  accent: string,
+  backdrop: string,
+  paper: "--primary-foreground" | "--primary" = "--primary-foreground",
+): ArtworkPalette {
+  const base = `var(${paper})`;
   return {
     backdrop,
-    window: paper,
-    sidebar: `color-mix(in oklab, var(--primary-foreground) 90%, ${accent})`,
-    line: `color-mix(in oklab, var(--primary-foreground) 82%, ${accent})`,
+    window: `color-mix(in oklab, ${base} 96%, ${accent})`,
+    sidebar: `color-mix(in oklab, ${base} 90%, ${accent})`,
+    line: `color-mix(in oklab, ${base} 82%, ${accent})`,
     accent,
   };
 }

@@ -1,6 +1,8 @@
 import { BadgeCheck, Check } from "lucide-react";
 
+import { usePaperToken } from "../hooks/usePaperToken";
 import { accentFor, tileGradient } from "../lib/palette";
+
 
 import { ActionPill } from "./ActionPill";
 import { Artwork, pluginPalette, variantFor } from "./Artwork";
@@ -26,7 +28,9 @@ interface FeaturedCardProps {
  * (`featured` in the plugin config); the card itself adds nothing a row
  * doesn't show — it only gives the entry room.
  */
-const FeaturedCard: FC<FeaturedCardProps> = ({ plugin, image, onOpen, canTry, trialActive, activeHere, onTry }) => (
+const FeaturedCard: FC<FeaturedCardProps> = ({ plugin, image, onOpen, canTry, trialActive, activeHere, onTry }) => {
+  const paper = usePaperToken();
+  return (
   <div
     role="button"
     tabIndex={0}
@@ -40,7 +44,7 @@ const FeaturedCard: FC<FeaturedCardProps> = ({ plugin, image, onOpen, canTry, tr
     className="group cursor-pointer text-left"
   >
     <Artwork
-      palette={pluginPalette(accentFor(plugin), tileGradient(plugin))}
+      palette={pluginPalette(accentFor(plugin), tileGradient(plugin), paper)}
       badge={plugin}
       image={image}
       variant={variantFor(plugin.id)}
@@ -71,6 +75,7 @@ const FeaturedCard: FC<FeaturedCardProps> = ({ plugin, image, onOpen, canTry, tr
       </div>
     </div>
   </div>
-);
+  );
+};
 
 export { FeaturedCard };
