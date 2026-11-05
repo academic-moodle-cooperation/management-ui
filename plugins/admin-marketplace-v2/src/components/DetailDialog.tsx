@@ -13,6 +13,7 @@ import {
 } from "@oc-mui/ui/components";
 
 import { accentFor, tileGradient } from "../lib/palette";
+import { namespaceOf } from "../services/registry";
 
 import { ActionPill } from "./ActionPill";
 import { Artwork, pluginPalette, variantFor } from "./Artwork";
@@ -43,11 +44,6 @@ function formatDate(iso?: string): string | null {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return null;
   return date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
-}
-
-/** The `app.enabledPlugins` value for a catalog entry. */
-export function namespaceOf(plugin: Pick<RegistryPlugin, "id" | "namespace">): string {
-  return plugin.namespace ?? plugin.id;
 }
 
 /**

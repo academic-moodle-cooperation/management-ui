@@ -1,4 +1,4 @@
-import { Check, CircleDashed, FlaskConical, Minus } from "lucide-react";
+import { Check, CircleDashed, FlaskConical, Minus, PauseCircle } from "lucide-react";
 
 import type { InventoryStatus } from "../services/inventory";
 import type { FC, ReactElement } from "react";
@@ -18,6 +18,7 @@ const DEP_STATE: Record<InventoryStatus | "missing", { label: string; className:
   active: { label: "present", className: "text-ok", Icon: Check },
   trial: { label: "in this tab", className: "text-warning", Icon: FlaskConical },
   disabled: { label: "present, switched off", className: "text-warning", Icon: CircleDashed },
+  paused: { label: "paused in this tab", className: "text-warning", Icon: PauseCircle },
   missing: { label: "not on this deployment", className: "text-muted-foreground", Icon: Minus },
 };
 

@@ -1,4 +1,4 @@
-import { ArrowUpCircle, Check, Copy, FlaskConical } from "lucide-react";
+import { ArrowUpCircle, Check, Copy, FlaskConical, PauseCircle } from "lucide-react";
 import { useState } from "react";
 
 import { toast } from "@oc-mui/ui/components";
@@ -77,6 +77,11 @@ const LibraryRow: FC<LibraryRowProps> = ({ item, onTry, presence }) => {
               {item.trialKind === "local" ? "previewing · this tab" : "this tab"}
             </span>
           )}
+          {item.status === "paused" && (
+            <span className="flex items-center gap-1 rounded-md bg-warning/15 px-1.5 py-0.5 text-[10.5px] font-semibold text-warning">
+              <PauseCircle className="size-3" /> paused · this tab
+            </span>
+          )}
           {item.registryNewer && (
             <span
               className="flex items-center gap-1 rounded-md bg-info/15 px-1.5 py-0.5 text-[10.5px] font-semibold text-info"
@@ -117,6 +122,13 @@ const LibraryRow: FC<LibraryRowProps> = ({ item, onTry, presence }) => {
           presence={presence}
           layout="row"
         />
+
+        {item.status === "paused" && (
+          <p className="mt-1.5 text-xs text-muted-foreground">
+            Enabled for everyone, stepped aside in this tab so a trial can fill its slots. Ending that
+            trial brings it back.
+          </p>
+        )}
 
         {item.status === "disabled" && (
           <p className="mt-1.5 text-xs text-muted-foreground">

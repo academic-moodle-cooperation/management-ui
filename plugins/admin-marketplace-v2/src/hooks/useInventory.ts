@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { usePluginManager } from "@oc-mui/plugin-system";
+import { readPluginPauses, usePluginManager } from "@oc-mui/plugin-system";
 import { useAppConfig } from "@oc-mui/query";
 
 import {
@@ -66,6 +66,7 @@ export function useInventory(catalog: RegistryPlugin[]): InventoryState {
     config: inventoryConfig,
     manifests: remote.manifests,
     livePoints: livePointsByNamespace(manager),
+    paused: new Set(readPluginPauses()),
   });
 
   return { items, loading: false };

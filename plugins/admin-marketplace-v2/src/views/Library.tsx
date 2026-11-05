@@ -7,6 +7,7 @@ import { Button, Skeleton } from "@oc-mui/ui/components";
 import { LibraryRow } from "../components/LibraryRow";
 import { TryConfirmDialog } from "../components/TryConfirmDialog";
 import { useThemePreview } from "../hooks/useThemePreview";
+import { findConflicts } from "../services/conflicts";
 import { endThemePreview } from "../services/themePreview";
 import { startLocalTrial } from "../services/trials";
 
@@ -22,6 +23,7 @@ interface LibraryProps {
 const GROUPS: Array<{ status: InventoryStatus; title: string; hint: string }> = [
   { status: "active", title: "Active", hint: "Running on this deployment right now" },
   { status: "trial", title: "Trials", hint: "Loaded in this tab only — gone when it closes" },
+  { status: "paused", title: "Paused in this tab", hint: "Stepped aside for a trial — back when it ends" },
   {
     status: "disabled",
     title: "Available but disabled",
@@ -101,7 +103,7 @@ const Library: FC<LibraryProps> = ({ inventory }) => {
 
       {GROUPS.map(({ status, title, hint }) => {
         const group = byStatus.get(status) ?? [];
-        if (group.length === 0 && status === "trial") return null;
+        if (group.length === 0 && (status === "trial" || status === "paused")) return null;
         return (
           <section key={status} className="mb-8">
             <div className="mb-3 flex items-baseline gap-2.5">
@@ -129,12 +131,16 @@ const Library: FC<LibraryProps> = ({ inventory }) => {
       <TryConfirmDialog
         plugin={tryCandidate ? { ...tryCandidate, name: tryCandidate.displayName } : null}
         mode="local"
-        onConfirm={(item) =>
-          startLocalTrial({
-            namespace: item.namespace,
-            name: item.displayName,
-            ...(item.version !== undefined && { version: item.version }),
-          })
+        conflicts={tryCandidate ? findConflicts(tryCandidate, items) : []}
+        onConfirm={(item, options) =>
+          startLocalTrial(
+            {
+              namespace: item.namespace,
+              name: item.displayName,
+              ...(item.version !== undefined && { version: item.version }),
+            },
+            options,
+          )
         }
         onCancel={() => setTryCandidate(null)}
       />

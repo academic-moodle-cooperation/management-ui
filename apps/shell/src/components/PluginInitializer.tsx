@@ -7,6 +7,7 @@ import {
   createRendererPlugin,
   usePluginManager,
   type Plugin,
+  readPluginPauses,
   readPluginPreviews,
 } from "@oc-mui/plugin-system";
 import type { AppConfig } from "@oc-mui/query";
@@ -78,10 +79,19 @@ const parsePluginName = (name: string): { namespace: string; type: string } => {
  */
 let previewNamespaces = new Set<string>();
 
+/**
+ * Namespaces paused in this tab (the preview contract's mirror image): enabled
+ * on the deployment, but skipped at every gate here so a trial of a plugin
+ * that fills the same slots can be seen on its own. Written by the marketplace
+ * together with the trial that needs it.
+ */
+let pausedNamespaces = new Set<string>();
+
 const matchesEnabledNamespace = (
   entry: { namespace?: string | undefined },
   enabledNamespaces: Set<string>,
 ): boolean => {
+  if (entry.namespace !== undefined && pausedNamespaces.has(entry.namespace)) return false;
   if (entry.namespace !== undefined && previewNamespaces.has(entry.namespace)) return true;
   if (enabledNamespaces.size === 0) return true;
   if (entry.namespace === undefined) return true;
@@ -209,6 +219,13 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
         if (previewNamespaces.size > 0) {
           logger.info("PluginInitializer: previewing plugins in this tab (sessionStorage)", {
             namespaces: [...previewNamespaces],
+          });
+        }
+        // 5c. Tab-scoped pauses: skipped at every gate below.
+        pausedNamespaces = new Set(readPluginPauses());
+        if (pausedNamespaces.size > 0) {
+          logger.info("PluginInitializer: pausing plugins in this tab (sessionStorage)", {
+            namespaces: [...pausedNamespaces],
           });
         }
         const hasOverrides = Object.keys(overrides.overrides).length > 0;

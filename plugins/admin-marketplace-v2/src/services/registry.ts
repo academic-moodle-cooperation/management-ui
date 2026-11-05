@@ -120,6 +120,11 @@ export interface RegistryPlugin {
   lastUpdated?: string;
 }
 
+/** The `app.enabledPlugins` value for a catalog entry. */
+export function namespaceOf(plugin: Pick<RegistryPlugin, "id" | "namespace">): string {
+  return plugin.namespace ?? plugin.id;
+}
+
 export interface PluginRegistry {
   version: string;
   plugins: RegistryPlugin[];

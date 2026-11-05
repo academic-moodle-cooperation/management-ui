@@ -1,4 +1,4 @@
-import { FlaskConical, Palette, XCircle } from "lucide-react";
+import { FlaskConical, Palette, PauseCircle, XCircle } from "lucide-react";
 
 import { Button } from "@oc-mui/ui/components";
 
@@ -65,6 +65,14 @@ const TrialBanner: FC<TrialBannerProps> = ({ trials, errors, themePreview }) => 
               <span className="text-xs text-muted-foreground">
                 {trial.kind === "local" ? "deployed here · previewing" : "from registry"}
               </span>
+              {trial.paused && trial.paused.length > 0 && (
+                <span
+                  className="flex items-center gap-1 rounded-md bg-warning/15 px-1.5 py-0.5 text-[10.5px] font-semibold text-warning"
+                  title="Paused in this tab for this trial; End trial brings it back"
+                >
+                  <PauseCircle className="size-3" /> pausing {trial.paused.join(", ")}
+                </span>
+              )}
               {error && (
                 <span className="min-w-0 truncate text-xs text-error" title={error}>
                   {error}

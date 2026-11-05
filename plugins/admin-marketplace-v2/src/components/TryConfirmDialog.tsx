@@ -1,4 +1,5 @@
-import { AlertTriangle, RefreshCw, ShieldCheck, Timer } from "lucide-react";
+import { AlertTriangle, PauseCircle, RefreshCw, ShieldCheck, Timer } from "lucide-react";
+import { useState } from "react";
 
 import {
   AlertDialog,
@@ -11,6 +12,7 @@ import {
   AlertDialogTitle,
 } from "@oc-mui/ui/components";
 
+import type { Conflict } from "../services/conflicts";
 import type { ReactElement } from "react";
 
 /** What the dialog needs to describe a trial — a registry entry or a deployed plugin. */
@@ -28,7 +30,12 @@ interface TryConfirmDialogProps<T extends TrySubject> {
    * `theme`: a CSS theme is applied in this tab — immediately, no reload.
    */
   mode?: "remote" | "local" | "theme";
-  onConfirm: (plugin: T) => void;
+  /**
+   * Active plugins that fill the same single slots (footer, landing page, …).
+   * The dialog names them and offers to pause them in this tab for the trial.
+   */
+  conflicts?: Conflict[];
+  onConfirm: (plugin: T, options: { pause: string[] }) => void;
   onCancel: () => void;
 }
 
@@ -40,9 +47,12 @@ interface TryConfirmDialogProps<T extends TrySubject> {
 function TryConfirmDialog<T extends TrySubject>({
   plugin,
   mode = "remote",
+  conflicts = [],
   onConfirm,
   onCancel,
 }: TryConfirmDialogProps<T>): ReactElement | null {
+  // Pausing is the sensible default: without it the two plugins fight per slot.
+  const [pause, setPause] = useState(true);
   if (!plugin) return null;
 
   let host = plugin.url ?? "";
@@ -115,6 +125,38 @@ function TryConfirmDialog<T extends TrySubject>({
                   <b className="font-medium text-foreground">only in this tab</b> and ends when you close it.
                 </span>
               </p>
+              {conflicts.length > 0 && (
+                <div className="rounded-lg border border-warning/40 bg-warning/10 p-3">
+                  <p className="flex gap-2.5">
+                    <AlertTriangle className="mt-0.5 size-4 shrink-0 text-warning" />
+                    <span>
+                      <b className="font-medium text-foreground">Overlaps with what runs here.</b>{" "}
+                      {conflicts.map((c, i) => (
+                        <span key={c.namespace}>
+                          {i > 0 && "; "}
+                          <b className="font-medium text-foreground">{c.displayName}</b> already fills the{" "}
+                          {c.slots.join(", ")}
+                        </span>
+                      ))}
+                      . Two plugins in one slot don&apos;t compose — whichever registers last wins.
+                    </span>
+                  </p>
+                  <label className="mt-2.5 flex cursor-pointer items-start gap-2.5 text-foreground">
+                    <input
+                      type="checkbox"
+                      className="mt-0.5 size-4 accent-primary"
+                      checked={pause}
+                      onChange={(e) => setPause(e.target.checked)}
+                    />
+                    <span>
+                      <PauseCircle className="mr-1 inline size-3.5 text-muted-foreground" />
+                      Pause {conflicts.map((c) => c.displayName).join(" and ")} in this tab while trying —{" "}
+                      <b className="font-medium">End trial</b> brings {conflicts.length === 1 ? "it" : "them"} back.
+                      Nothing changes for anyone else.
+                    </span>
+                  </label>
+                </div>
+              )}
               {mode !== "theme" && (
                 <p className="flex gap-2.5">
                   <RefreshCw className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
@@ -126,7 +168,9 @@ function TryConfirmDialog<T extends TrySubject>({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => onConfirm(plugin)}>
+          <AlertDialogAction
+            onClick={() => onConfirm(plugin, { pause: pause ? conflicts.map((c) => c.namespace) : [] })}
+          >
             {mode === "theme" ? "Try it" : "Try it — reload page"}
           </AlertDialogAction>
         </AlertDialogFooter>

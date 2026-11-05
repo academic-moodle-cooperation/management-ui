@@ -21,7 +21,7 @@ import type { RegistryPlugin } from "./registry";
 import type { Trial } from "./trials";
 
 export type InventoryOrigin = "builtin" | "jar" | "local" | "trial" | "shell";
-export type InventoryStatus = "active" | "trial" | "disabled";
+export type InventoryStatus = "active" | "trial" | "disabled" | "paused";
 
 export interface InventoryItem {
   /** Stable key: `<origin>:<namespace>`. One row per namespace — the unit `app.enabledPlugins` works in. */
@@ -101,6 +101,8 @@ export interface InventorySources {
   manifests?: ReadonlyMap<string, ManifestShowcase>;
   /** Extension points populated at runtime, by namespace (see `pointsByNamespace`). */
   livePoints?: ReadonlyMap<string, string[]>;
+  /** Namespaces paused in this tab (the preview contract's mirror image). */
+  paused?: ReadonlySet<string>;
 }
 
 /* ------------------------------------------------------------------ helpers */
@@ -289,12 +291,22 @@ export function buildInventory(sources: InventorySources): InventoryItem[] {
   for (const [key, d] of drafts) {
     const entry = byId.get(d.namespace);
     const manifest = sources.manifests?.get(d.namespace);
-    const live = sources.livePoints?.get(d.namespace);
+    // Live registrations are the truth for a *running* plugin; for anything not
+    // registered in this tab (disabled, paused) only its own declaration counts —
+    // another plugin may register ids under this namespace.
+    const live = d.registeredAny ? sources.livePoints?.get(d.namespace) : undefined;
     const points = live && live.length > 0 ? live : (manifest?.extensionPoints ?? entry?.extensionPoints);
     const deps = manifest?.pluginDependencies ?? entry?.pluginDependencies;
     const versions = [...d.versions];
     const version = versions.length === 1 ? versions[0] : versions[0];
-    const status: InventoryStatus = d.origin === "trial" ? "trial" : d.registeredAny ? "active" : "disabled";
+    const status: InventoryStatus =
+      d.origin === "trial"
+        ? "trial"
+        : d.registeredAny
+          ? "active"
+          : sources.paused?.has(d.namespace)
+            ? "paused"
+            : "disabled";
     const reason = status === "disabled" ? disabledReasonFor(d.namespace, config) : undefined;
     const item: InventoryItem = {
       key,
