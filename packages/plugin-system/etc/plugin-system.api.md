@@ -8,6 +8,9 @@ import { default as React_2 } from 'react';
 import { ReactNode } from 'react';
 
 // @public (undocumented)
+export function addPluginPause(namespace: string): void;
+
+// @public (undocumented)
 export function addPluginPreview(namespace: string): void;
 
 // @public (undocumented)
@@ -159,6 +162,9 @@ export { Plugin_2 as Plugin }
 // @public
 export const PLUGIN_API_VERSION: "1.1.0";
 
+// @public (undocumented)
+export const PLUGIN_PAUSES_STORAGE_KEY = "mui.plugin-pauses";
+
 // @public
 export const PLUGIN_PREVIEWS_STORAGE_KEY = "mui.plugin-previews";
 
@@ -291,6 +297,9 @@ export interface PluginTypeDefinition {
 }
 
 // @public
+export function readPluginPauses(): string[];
+
+// @public
 export function readPluginPreviews(): string[];
 
 // @public
@@ -317,6 +326,9 @@ export type RegistryObject = {
     data: unknown;
     metadata?: Record<string, unknown> | undefined;
 };
+
+// @public (undocumented)
+export function removePluginPause(namespace: string): void;
 
 // @public (undocumented)
 export function removePluginPreview(namespace: string): void;
@@ -365,6 +377,9 @@ export const useRenderer: () => RendererContextType;
 
 // @public
 export function validatePluginMetadata(metadata: any): PluginMetadataValidationResult;
+
+// @public
+export function writePluginPauses(namespaces: string[]): void;
 
 // @public
 export function writePluginPreviews(namespaces: string[]): void;

@@ -60,6 +60,14 @@ CSS goes through the Try gates (it can pull remote fonts/images). A theme
 becomes permanent only via `app.theme` — the row shows that value to copy;
 the Library shows which theme is active for everyone.
 
+**Overlaps.** Some slots only one plugin can fill — footer, landing page,
+sidebar, header. Before a trial, the dialog names the active plugins that
+already fill the slots the candidate ships (from module types and extension
+points) and offers to **pause** them in this tab: the preview contract's
+mirror image (`mui.plugin-pauses`, honoured by the shell at every load gate).
+End trial lifts the pause; nothing changes for anyone else. The Library lists
+paused plugins in their own group.
+
 Config slice (`config.plugins["admin-marketplace-v2"]`):
 
 ```json

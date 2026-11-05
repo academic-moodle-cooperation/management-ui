@@ -12,6 +12,8 @@ import { TryConfirmDialog } from "../components/TryConfirmDialog";
 import { marketplaceV2Config } from "../config";
 import { useThemePreview } from "../hooks/useThemePreview";
 import { useThemes } from "../hooks/useThemes";
+import { findConflicts } from "../services/conflicts";
+import { namespaceOf } from "../services/registry";
 import { isAllowedAssetUrl } from "../services/security";
 import { startThemePreview } from "../services/themePreview";
 import { canPreviewTheme, type ThemeCandidate } from "../services/themes";
@@ -305,7 +307,15 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
       />
       <TryConfirmDialog
         plugin={tryCandidate}
-        onConfirm={startTrial}
+        conflicts={
+          tryCandidate
+            ? findConflicts(
+                { namespace: namespaceOf(tryCandidate), extensionPoints: tryCandidate.extensionPoints },
+                inventory.items,
+              )
+            : []
+        }
+        onConfirm={(plugin, options) => startTrial(plugin, options)}
         onCancel={() => setTryCandidate(null)}
       />
       <TryConfirmDialog

@@ -45,6 +45,12 @@ Features so far:
   this deployment. Deployed plugins' manifests are read from where the
   backend already serves them.
 
+- **Try with overlap handling** — before a trial, the dialog names the active
+  plugins that fill the same single slots (footer, landing page, sidebar,
+  header) and offers to pause them in this tab via the new pause contract;
+  End trial brings them back. The Library shows paused plugins in their own
+  group.
+
 The registry document reads the manifest's presentational fields (`tagline`,
 `accentColor`, `icon`, `screenshots` — the latter loaded only from this origin
 or an allowlisted host) plus `integrity` (SRI hash of the bundle). All have

@@ -15,7 +15,14 @@
  */
 
 import { registerPluginI18nNamespaces } from "@oc-mui/i18n";
-import { addPluginPreview, removePluginPreview, writePluginPreviews } from "@oc-mui/plugin-system";
+import {
+  addPluginPause,
+  addPluginPreview,
+  removePluginPause,
+  removePluginPreview,
+  writePluginPauses,
+  writePluginPreviews,
+} from "@oc-mui/plugin-system";
 import type { PluginManager } from "@oc-mui/plugin-system";
 import { loadAndRegister } from "@oc-mui/remote-plugin-loader";
 import { logger } from "@oc-mui/utils";
@@ -35,6 +42,16 @@ interface TrialBase {
   name: string;
   version: string;
   startedAt: string;
+  /**
+   * Namespaces paused in this tab for the trial's sake (plugins that fill the
+   * same slots). Restored when the trial ends.
+   */
+  paused?: string[];
+}
+
+export interface TrialOptions {
+  /** Namespaces to pause in this tab while the trial runs. */
+  pause?: string[];
 }
 
 /** A registry bundle loaded ephemerally into this tab (the Explore gesture). */
@@ -99,8 +116,9 @@ function writeErrors(errors: Record<string, string>): void {
  * Record a trial and reload so it loads through the boot path.
  * Caller is responsible for having confirmed with the user first.
  */
-export function startTrial(plugin: RegistryPlugin): void {
+export function startTrial(plugin: RegistryPlugin, options: TrialOptions = {}): void {
   const trials = getTrials().filter((t) => t.id !== plugin.id);
+  const paused = pauseFor(options);
   trials.push({
     kind: "remote",
     id: plugin.id,
@@ -113,9 +131,17 @@ export function startTrial(plugin: RegistryPlugin): void {
     ...(plugin.localesUrl && { localesUrl: plugin.localesUrl }),
     ...(plugin.i18nNamespaces?.length && { i18nNamespaces: plugin.i18nNamespaces }),
     startedAt: new Date().toISOString(),
+    ...(paused.length > 0 && { paused }),
   });
   writeTrials(trials);
   window.location.reload();
+}
+
+/** Register the pauses with the host contract; returns the list recorded on the trial. */
+function pauseFor(options: TrialOptions): string[] {
+  const paused = [...new Set((options.pause ?? []).filter((n) => n.length > 0))];
+  for (const ns of paused) addPluginPause(ns);
+  return paused;
 }
 
 /**
@@ -123,24 +149,39 @@ export function startTrial(plugin: RegistryPlugin): void {
  * record the trial, register the namespace with the host's preview contract,
  * and reload so it goes through the boot path like an enabled plugin.
  */
-export function startLocalTrial(plugin: { namespace: string; name: string; version?: string }): void {
+export function startLocalTrial(
+  plugin: { namespace: string; name: string; version?: string },
+  options: TrialOptions = {},
+): void {
   const trials = getTrials().filter((t) => t.id !== plugin.namespace);
+  const paused = pauseFor(options);
   trials.push({
     kind: "local",
     id: plugin.namespace,
     name: plugin.name,
     version: plugin.version ?? "",
     startedAt: new Date().toISOString(),
+    ...(paused.length > 0 && { paused }),
   });
   writeTrials(trials);
   addPluginPreview(plugin.namespace);
   window.location.reload();
 }
 
-/** End one trial (or all) and reload to unload the code. */
+/**
+ * End one trial and reload to unload the code. Pauses the trial held are
+ * lifted — unless another trial in this tab still needs them.
+ */
 export function endTrial(pluginId: string): void {
-  writeTrials(getTrials().filter((t) => t.id !== pluginId));
+  const all = getTrials();
+  const ending = all.find((t) => t.id === pluginId);
+  const remaining = all.filter((t) => t.id !== pluginId);
+  writeTrials(remaining);
   removePluginPreview(pluginId);
+  const stillNeeded = new Set(remaining.flatMap((t) => t.paused ?? []));
+  for (const ns of ending?.paused ?? []) {
+    if (!stillNeeded.has(ns)) removePluginPause(ns);
+  }
   const errors = getTrialErrors();
   delete errors[pluginId];
   writeErrors(errors);
@@ -151,6 +192,7 @@ export function endAllTrials(): void {
   sessionStorage.removeItem(TRIALS_KEY);
   sessionStorage.removeItem(ERRORS_KEY);
   writePluginPreviews([]);
+  writePluginPauses([]);
   window.location.reload();
 }
 
