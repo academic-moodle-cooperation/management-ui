@@ -1,4 +1,4 @@
-import { ListVideo } from "lucide-react";
+import { GraduationCap, ListVideo } from "lucide-react";
 
 import { CREATE_SERIES_VARIANTS, type CreateSeriesVariant } from "@oc-mui/plugin-core";
 import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
@@ -6,6 +6,7 @@ import { createPlugin, type PluginManager } from "@oc-mui/plugin-system";
 import App from "./App";
 import { CreateSeriesAction } from "./components/CreateSeriesAction";
 import { DefaultCreateSeriesVariant } from "./components/DefaultCreateSeriesVariant";
+import { DemoCourseVariant } from "./components/DemoCourseVariant";
 import { seriesConfig } from "./config";
 
 /**
@@ -48,6 +49,17 @@ export const coreSeriesPlugin = createPlugin({
       order: 100,
       component: CreateSeriesAction,
     });
+
+    // PREVIEW ONLY (see DemoCourseVariant.tsx); disable with
+    // createSeries.variants["demo-course"].enabled = false.
+    manager.registerObject(CREATE_SERIES_VARIANTS, "demo-course", {
+      id: "demo-course",
+      order: 10,
+      label: "LV-Serie (Demo)",
+      description: "Für eine Lehrveranstaltung aus i3v. Titel und Semester werden übernommen.",
+      icon: GraduationCap,
+      component: DemoCourseVariant,
+    } satisfies CreateSeriesVariant);
 
     manager.registerObject(CREATE_SERIES_VARIANTS, "default", {
       id: "default",
