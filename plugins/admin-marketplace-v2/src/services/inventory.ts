@@ -202,7 +202,12 @@ export function buildInventory(sources: InventorySources): InventoryItem[] {
     return d;
   };
   const registeredNamespaces = new Set([...registered.keys()].map((n) => splitName(n).namespace));
-  const explained = new Set<string>();
+  // Which origin first explained a namespace. A later source of a *different*
+  // origin must not create a second row; further entries of the *same* origin
+  // (a multi-module JAR lists one line per module) keep accumulating.
+  const explainedBy = new Map<string, InventoryOrigin>();
+  const explained = { add: (ns: string, origin: InventoryOrigin) => explainedBy.set(ns, origin),
+    has: (ns: string, origin: InventoryOrigin) => explainedBy.has(ns) && explainedBy.get(ns) !== origin };
 
   // 1. Trials — matched by registry id; always grouped under "trial".
   for (const trial of trials) {
@@ -220,7 +225,7 @@ export function buildInventory(sources: InventorySources): InventoryItem[] {
         d.versions.add(p.version);
       }
     }
-    explained.add(trial.id);
+    explained.add(trial.id, "trial");
   }
 
   // 2. Bundled (in-tree) — present whether or not config enables them.
@@ -231,13 +236,13 @@ export function buildInventory(sources: InventorySources): InventoryItem[] {
     if (type) d.types.add(type);
     d.versions.add(plugin.version);
     if (registered.has(plugin.name)) d.registeredAny = true;
-    explained.add(namespace);
+    explained.add(namespace, "builtin");
   }
 
   // 3. JAR plugins from the deployment.
   for (const jar of jars) {
     const namespace = jar.namespace ?? splitName(jar.name).namespace;
-    if (trialIds.has(namespace) || explained.has(namespace)) continue;
+    if (trialIds.has(namespace) || explained.has(namespace, "jar")) continue;
     const d = draft("jar", namespace);
     if (!jar.name.includes(":")) d.displayName = jar.name;
     if (jar.type) d.types.add(jar.type);
@@ -253,13 +258,13 @@ export function buildInventory(sources: InventorySources): InventoryItem[] {
         }
       }
     }
-    explained.add(namespace);
+    explained.add(namespace, "jar");
   }
 
   // 4. `.local-plugins` (dev only).
   for (const local of locals) {
     const namespace = local.id || splitName(local.name).namespace;
-    if (trialIds.has(namespace) || explained.has(namespace)) continue;
+    if (trialIds.has(namespace) || explained.has(namespace, "local")) continue;
     const d = draft("local", namespace);
     if (local.name) d.displayName = local.name;
     d.url = local.url;
@@ -273,14 +278,14 @@ export function buildInventory(sources: InventorySources): InventoryItem[] {
         }
       }
     }
-    explained.add(namespace);
+    explained.add(namespace, "local");
   }
 
   // 5. Registered but explained by none of the above: the shell's own
   //    infrastructure plugins. Shown so the list never lies by omission.
   for (const [name, plugin] of registered) {
     const { namespace, type } = splitName(name);
-    if (explained.has(namespace) || trialIds.has(namespace)) continue;
+    if (explainedBy.has(namespace) || trialIds.has(namespace)) continue;
     const d = draft("shell", namespace);
     if (type) d.types.add(type);
     d.versions.add(plugin.version);

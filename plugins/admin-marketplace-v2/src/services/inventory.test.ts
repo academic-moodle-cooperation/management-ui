@@ -172,3 +172,25 @@ describe("pointsByNamespace", () => {
     expect(map.has("")).toBe(false);
   });
 });
+
+describe("buildInventory — multi-module JARs", () => {
+  it("accumulates every module type of a disabled multi-module JAR into one row", () => {
+    const items = buildInventory({
+      registered: new Map(),
+      bundled: [],
+      jars: ["app", "footer", "header", "landing-page", "sidebar"].map((type) => ({
+        name: `tuwien:${type}`,
+        namespace: "tuwien",
+        type,
+        url: `/static/plugins/tuwien/tuwien.mjs`,
+      })),
+      locals: [],
+      trials: [],
+      catalog: [],
+      config: { app: { enabledPlugins: ["core"] } },
+    });
+    expect(items).toHaveLength(1);
+    expect(items[0]?.types).toEqual(["app", "footer", "header", "landing-page", "sidebar"]);
+    expect(items[0]?.status).toBe("disabled");
+  });
+});
