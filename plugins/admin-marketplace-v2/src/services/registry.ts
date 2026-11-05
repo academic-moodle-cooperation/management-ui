@@ -86,6 +86,16 @@ export interface RegistryPlugin {
   tags?: string[];
   /** Version constraints for workspace packages */
   workspaceDependencies?: Record<string, string>;
+  /**
+   * Extension points the plugin registers at (mirrors the manifest's
+   * `extensionPoints`) — what it plugs into, e.g. `apps:definitions`.
+   */
+  extensionPoints?: string[];
+  /**
+   * Ids of plugins that must be present (mirrors the manifest's
+   * `pluginDependencies`) — a plugin for a plugin declares its host here.
+   */
+  pluginDependencies?: string[];
   /** Base URL the plugin's locale files are served from */
   localesUrl?: string;
   /** Translation namespaces served under `localesUrl` */

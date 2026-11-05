@@ -39,6 +39,12 @@ Features so far:
   default otherwise) on the accent gradient; the "Try it" pill and the green
   state pill follow the studies.
 
+- **Extends / Requires** — the detail view and the Library show which
+  extension points a plugin populates (live registry for running plugins,
+  manifest otherwise) and whether the plugins it depends on are present on
+  this deployment. Deployed plugins' manifests are read from where the
+  backend already serves them.
+
 The registry document reads the manifest's presentational fields (`tagline`,
 `accentColor`, `icon`, `screenshots` — the latter loaded only from this origin
 or an allowlisted host) plus `integrity` (SRI hash of the bundle). All have

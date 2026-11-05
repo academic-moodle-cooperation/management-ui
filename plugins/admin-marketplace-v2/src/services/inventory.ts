@@ -44,6 +44,27 @@ export interface InventoryItem {
   url?: string;
   /** For trials: a registry bundle, or a preview of a deployed-but-disabled plugin. */
   trialKind?: "remote" | "local";
+  /**
+   * Extension points this namespace populates: from the live registry for
+   * anything registered (the truth), else from the manifest's declaration.
+   */
+  extensionPoints?: string[];
+  /** Plugin ids the manifest says must be present. */
+  pluginDependencies?: string[];
+  /** Showcase fields from the plugin's own `plugin.json`, when it is served. */
+  manifest?: ManifestShowcase;
+}
+
+/** The presentational subset of a `plugin.json` the marketplace reads. */
+export interface ManifestShowcase {
+  name?: string;
+  description?: string;
+  tagline?: string;
+  accentColor?: string;
+  icon?: string;
+  category?: string;
+  extensionPoints?: string[];
+  pluginDependencies?: string[];
 }
 
 /** The slice of AppConfig the inventory reads — structural, to stay decoupled. */
@@ -76,6 +97,10 @@ export interface InventorySources {
   trials: Trial[];
   catalog: RegistryPlugin[];
   config: InventoryConfig | undefined;
+  /** Manifests fetched for deployed plugins, by namespace. */
+  manifests?: ReadonlyMap<string, ManifestShowcase>;
+  /** Extension points populated at runtime, by namespace (see `pointsByNamespace`). */
+  livePoints?: ReadonlyMap<string, string[]>;
 }
 
 /* ------------------------------------------------------------------ helpers */
@@ -106,6 +131,26 @@ export function isNewerVersion(candidate: string, current: string): boolean {
   if (a1 !== b1) return a1 > b1;
   if (a2 !== b2) return a2 > b2;
   return a3 > b3;
+}
+
+/**
+ * Which namespace populates which extension points, from the registry's own
+ * ids: `registerObject` prefixes every id with the plugin name
+ * (`<namespace>:<type>`), so the first segment of an id is its namespace.
+ */
+export function pointsByNamespace(
+  types: Array<{ type: string; ids: string[] }>,
+): Map<string, string[]> {
+  const out = new Map<string, Set<string>>();
+  for (const { type, ids } of types) {
+    for (const id of ids) {
+      const namespace = id.split(":")[0];
+      if (!namespace) continue;
+      if (!out.has(namespace)) out.set(namespace, new Set());
+      out.get(namespace)!.add(type);
+    }
+  }
+  return new Map([...out].map(([ns, set]) => [ns, [...set].sort()]));
 }
 
 /** Mirrors the shell's two-level gate: namespace allowlist, then runtime switch. */
@@ -243,6 +288,10 @@ export function buildInventory(sources: InventorySources): InventoryItem[] {
   const items: InventoryItem[] = [];
   for (const [key, d] of drafts) {
     const entry = byId.get(d.namespace);
+    const manifest = sources.manifests?.get(d.namespace);
+    const live = sources.livePoints?.get(d.namespace);
+    const points = live && live.length > 0 ? live : (manifest?.extensionPoints ?? entry?.extensionPoints);
+    const deps = manifest?.pluginDependencies ?? entry?.pluginDependencies;
     const versions = [...d.versions];
     const version = versions.length === 1 ? versions[0] : versions[0];
     const status: InventoryStatus = d.origin === "trial" ? "trial" : d.registeredAny ? "active" : "disabled";
@@ -259,6 +308,9 @@ export function buildInventory(sources: InventorySources): InventoryItem[] {
       ...(entry && { registryEntry: entry }),
       ...(d.url !== undefined && { url: d.url }),
       ...(d.trialKind && { trialKind: d.trialKind }),
+      ...(points && points.length > 0 && { extensionPoints: points }),
+      ...(deps && deps.length > 0 && { pluginDependencies: deps }),
+      ...(manifest && { manifest }),
     };
     if (entry && version && isNewerVersion(entry.version, version)) {
       item.registryNewer = entry.version;
@@ -320,4 +372,79 @@ export async function fetchLocalEntries(): Promise<LocalEntry[]> {
 /** Every bundled plugin the shell knows about, enabled or not. */
 export function bundledPlugins(manager: PluginManager): Plugin[] {
   return manager.executeFunction<Plugin[]>("marketplace.getAllPlugins") ?? [];
+}
+
+/** What is actually registered where, right now (the truth for active plugins). */
+export function livePointsByNamespace(manager: PluginManager): Map<string, string[]> {
+  const types = manager.executeFunction<string[]>("registry.getTypes") ?? [];
+  return pointsByNamespace(
+    types.map((type) => ({
+      type,
+      ids: (manager.executeFunction<Array<{ id: string }>>("registry.getObjects", type) ?? []).map(
+        (o) => o.id,
+      ),
+    })),
+  );
+}
+
+/** Where a deployed plugin's own `plugin.json` is served (same origin). */
+export function manifestUrl(entry: { namespace: string; source: "jar" | "local" }, config: InventoryConfig | undefined): string {
+  const base = entry.source === "jar" ? appBase(config) : (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "");
+  return entry.source === "jar"
+    ? `${base}/static/plugins/${entry.namespace}/plugin.json`
+    : `${base}/local-plugins/${entry.namespace}/plugin.json`;
+}
+
+const SHOWCASE_KEYS: Array<keyof ManifestShowcase> = [
+  "name",
+  "description",
+  "tagline",
+  "accentColor",
+  "icon",
+  "category",
+  "extensionPoints",
+  "pluginDependencies",
+];
+
+/**
+ * Fetch the manifests of deployed plugins — the backend serves each JAR's
+ * `plugin.json` next to its bundle, the dev server does the same for
+ * `.local-plugins`. Missing or unparsable files are simply absent.
+ */
+export async function fetchManifests(
+  jars: JarEntry[],
+  locals: LocalEntry[],
+  config: InventoryConfig | undefined,
+): Promise<Map<string, ManifestShowcase>> {
+  const candidates = [
+    ...jars.map((j) => ({ namespace: j.namespace ?? splitName(j.name).namespace, source: "jar" as const })),
+    ...locals.map((l) => ({ namespace: l.id || splitName(l.name).namespace, source: "local" as const })),
+  ].filter((c) => c.namespace);
+  const seen = new Set<string>();
+  const out = new Map<string, ManifestShowcase>();
+  await Promise.all(
+    candidates.map(async (c) => {
+      if (seen.has(c.namespace)) return;
+      seen.add(c.namespace);
+      try {
+        const res = await fetch(manifestUrl(c, config), { headers: { Accept: "application/json" } });
+        if (!res.ok || !(res.headers.get("content-type") ?? "").includes("json")) return;
+        const raw = (await res.json()) as Record<string, unknown>;
+        const showcase: ManifestShowcase = {};
+        for (const key of SHOWCASE_KEYS) {
+          const value = raw[key];
+          if (value === undefined) continue;
+          if (key === "extensionPoints" || key === "pluginDependencies") {
+            if (Array.isArray(value)) showcase[key] = value.filter((v): v is string => typeof v === "string");
+          } else if (typeof value === "string") {
+            showcase[key] = value;
+          }
+        }
+        out.set(c.namespace, showcase);
+      } catch {
+        /* no manifest served — fine */
+      }
+    }),
+  );
+  return out;
 }

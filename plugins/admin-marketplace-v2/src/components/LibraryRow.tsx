@@ -6,9 +6,10 @@ import { toast } from "@oc-mui/ui/components";
 import { endTrial } from "../services/trials";
 
 import { ActionPill } from "./ActionPill";
+import { ExtendsRequires } from "./ExtendsRequires";
 import { PluginTile } from "./PluginTile";
 
-import type { InventoryItem, InventoryOrigin } from "../services/inventory";
+import type { InventoryItem, InventoryOrigin, InventoryStatus } from "../services/inventory";
 import type { FC } from "react";
 
 const ORIGIN_LABEL: Record<InventoryOrigin, string> = {
@@ -32,16 +33,22 @@ interface LibraryRowProps {
   item: InventoryItem;
   /** Offered for present-but-disabled plugins: preview in this tab only. */
   onTry?: (item: InventoryItem) => void;
+  /** The whole inventory by namespace, for dependency states. */
+  presence: ReadonlyMap<string, InventoryStatus>;
 }
 
 /**
  * One inventory line. Read-only on purpose; the one interaction is copying
  * the namespace — the exact `app.enabledPlugins` value an operator needs.
  */
-const LibraryRow: FC<LibraryRowProps> = ({ item, onTry }) => {
+const LibraryRow: FC<LibraryRowProps> = ({ item, onTry, presence }) => {
   const canTry = item.status === "disabled" && item.origin !== "shell" && Boolean(onTry);
   const [copied, setCopied] = useState(false);
-  const tileSource = item.registryEntry ?? { category: ORIGIN_CATEGORY[item.origin] };
+  // Artwork: the registry entry, else the plugin's own manifest, else a color by origin.
+  const tileSource = item.registryEntry ??
+    (item.manifest
+      ? { ...item.manifest, category: item.manifest.category ?? ORIGIN_CATEGORY[item.origin] }
+      : { category: ORIGIN_CATEGORY[item.origin] });
 
   const copyNamespace = async (): Promise<void> => {
     try {
@@ -103,6 +110,13 @@ const LibraryRow: FC<LibraryRowProps> = ({ item, onTry }) => {
           )}
           {item.version && <span className="font-mono">v{item.version}</span>}
         </div>
+
+        <ExtendsRequires
+          extensionPoints={item.extensionPoints}
+          pluginDependencies={item.pluginDependencies}
+          presence={presence}
+          layout="row"
+        />
 
         {item.status === "disabled" && (
           <p className="mt-1.5 text-xs text-muted-foreground">

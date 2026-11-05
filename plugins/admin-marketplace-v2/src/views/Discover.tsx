@@ -18,6 +18,7 @@ import { canPreviewTheme, type ThemeCandidate } from "../services/themes";
 import { endTrial, isTrialActive, startTrial } from "../services/trials";
 
 import type { CatalogState } from "../hooks/useCatalog";
+import type { InventoryState } from "../hooks/useInventory";
 import type { RegistryCategory, RegistryPlugin } from "../services/registry";
 import type { FC, ReactElement } from "react";
 
@@ -68,12 +69,14 @@ interface DiscoverProps {
   catalog: CatalogState;
   /** The header search — owned by the page so it works from either tab. */
   query: string;
+  /** This deployment's inventory — tells the detail view whether a dependency is present. */
+  inventory: InventoryState;
 }
 
 const CARD_GRID = "grid grid-cols-2 gap-[18px] lg:grid-cols-4";
 const ROW_GRID = "grid gap-x-10 gap-y-1 md:grid-cols-2";
 
-const Discover: FC<DiscoverProps> = ({ catalog, query }) => {
+const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
   const cfg = marketplaceV2Config.use();
   const { plugins, loading, error, reload } = catalog;
   const [category, setCategory] = useState<RegistryCategory | "all">("all");
@@ -107,6 +110,10 @@ const Discover: FC<DiscoverProps> = ({ catalog, query }) => {
   }, [plugins, cfg.featured]);
 
   const canTry = cfg.try.enabled;
+  const presence = useMemo(
+    () => new Map(inventory.items.map((i) => [i.namespace, i.status])),
+    [inventory.items],
+  );
   /** The first screenshot this deployment may load, else generated artwork. */
   const screenshotFor = (plugin: RegistryPlugin): string | null =>
     plugin.screenshots?.find((s) => isAllowedAssetUrl(s.url, cfg.try))?.url ?? null;
@@ -289,6 +296,7 @@ const Discover: FC<DiscoverProps> = ({ catalog, query }) => {
       <DetailDialog
         plugin={selected}
         image={selected ? screenshotFor(selected) : null}
+        presence={presence}
         onClose={() => setSelected(null)}
         canTry={selected ? canTry : false}
         trialActive={selected ? isTrialActive(selected.id) : false}

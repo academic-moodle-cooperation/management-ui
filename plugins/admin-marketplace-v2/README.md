@@ -91,8 +91,10 @@ author declares them once: `namespace` (the `app.enabledPlugins` value the
 detail view shows operators; defaults to the id), `tagline` (one-line pitch), `accentColor` (tile and
 artwork color), `icon` (Lucide name; per-category default otherwise) and
 `screenshots` (`[{ url, caption? }]`, loaded only from this origin or a
-`try.allowedDomains` host — the generated artwork is the fallback). Plus
-`integrity` for pinning. Everything falls back gracefully; v1 registries stay
+`try.allowedDomains` host — the generated artwork is the fallback),
+`extensionPoints` and `pluginDependencies` (shown as "Extends" / "Requires",
+the latter checked against the deployment's inventory). Plus `integrity` for
+pinning. Everything falls back gracefully; v1 registries stay
 fully compatible.
 
 ## Styling

@@ -16,8 +16,10 @@ import { accentFor, tileGradient } from "../lib/palette";
 
 import { ActionPill } from "./ActionPill";
 import { Artwork, pluginPalette, variantFor } from "./Artwork";
+import { ExtendsRequires } from "./ExtendsRequires";
 import { PluginTile } from "./PluginTile";
 
+import type { InventoryStatus } from "../services/inventory";
 import type { RegistryPlugin } from "../services/registry";
 import type { FC } from "react";
 
@@ -32,6 +34,8 @@ interface DetailDialogProps {
   onEndTrial?: (pluginId: string) => void;
   /** A screenshot the deployment may load, or null for generated artwork. */
   image?: string | null;
+  /** This deployment's plugins by namespace — decides whether a dependency is present. */
+  presence?: ReadonlyMap<string, InventoryStatus>;
 }
 
 function formatDate(iso?: string): string | null {
@@ -102,6 +106,7 @@ const DetailDialog: FC<DetailDialogProps> = ({
   onTry,
   onEndTrial,
   image = null,
+  presence = new Map(),
 }) => {
   if (!plugin) return null;
 
@@ -127,7 +132,8 @@ const DetailDialog: FC<DetailDialogProps> = ({
         />
         <div className="px-6 pb-6">
           <DialogHeader className="text-left">
-            <div className="-mt-9 flex items-end gap-4">
+            {/* `relative` lifts the row above the hero's positioned artwork, or the tile is clipped. */}
+            <div className="relative -mt-9 flex items-end gap-4">
               <div className="rounded-2xl bg-background p-1 shadow-md">
                 <PluginTile plugin={plugin} size={64} />
               </div>
@@ -178,6 +184,12 @@ const DetailDialog: FC<DetailDialogProps> = ({
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
             {plugin.description}
           </p>
+
+          <ExtendsRequires
+            extensionPoints={plugin.extensionPoints}
+            pluginDependencies={plugin.pluginDependencies}
+            presence={presence}
+          />
 
           <EnableHint plugin={plugin} />
 

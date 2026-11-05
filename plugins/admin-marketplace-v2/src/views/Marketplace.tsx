@@ -114,7 +114,7 @@ const Marketplace: FC = () => {
       )}
 
       {tab === "explore" ? (
-        <Discover catalog={catalog} query={query} />
+        <Discover catalog={catalog} query={query} inventory={inventory} />
       ) : (
         <div className="mx-auto max-w-[1180px] px-8">
           <Library inventory={inventory} />

@@ -65,6 +65,7 @@ const Library: FC<LibraryProps> = ({ inventory }) => {
   for (const item of items) {
     byStatus.set(item.status, [...(byStatus.get(item.status) ?? []), item]);
   }
+  const presence = new Map(items.map((i) => [i.namespace, i.status]));
 
   return (
     <div className="py-6">
@@ -117,7 +118,7 @@ const Library: FC<LibraryProps> = ({ inventory }) => {
             ) : (
               <div className="space-y-2">
                 {group.map((item) => (
-                  <LibraryRow key={item.key} item={item} onTry={setTryCandidate} />
+                  <LibraryRow key={item.key} item={item} onTry={setTryCandidate} presence={presence} />
                 ))}
               </div>
             )}

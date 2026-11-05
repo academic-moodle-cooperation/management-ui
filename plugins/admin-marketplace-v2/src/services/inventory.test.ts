@@ -7,6 +7,7 @@ import {
   disabledReasonFor,
   humanize,
   isNewerVersion,
+  pointsByNamespace,
   splitName,
   type InventorySources,
 } from "./inventory";
@@ -155,5 +156,19 @@ describe("buildInventory", () => {
     const mystery = plugin("renderer:core");
     const items = buildInventory(sources({ registered: new Map([[mystery.name, mystery]]) }));
     expect(items[0]).toMatchObject({ namespace: "renderer", status: "active", origin: "shell" });
+  });
+});
+
+describe("pointsByNamespace", () => {
+  it("groups extension points by the id's namespace segment", () => {
+    const map = pointsByNamespace([
+      { type: "apps:definitions", ids: ["episodes:app:episodes", "series:app:series"] },
+      { type: "sidebar:nav-items", ids: ["episodes:app:nav", "core:navigation:home"] },
+      { type: "app:footer", ids: [""] },
+    ]);
+    expect(map.get("episodes")).toEqual(["apps:definitions", "sidebar:nav-items"]);
+    expect(map.get("series")).toEqual(["apps:definitions"]);
+    expect(map.get("core")).toEqual(["sidebar:nav-items"]);
+    expect(map.has("")).toBe(false);
   });
 });

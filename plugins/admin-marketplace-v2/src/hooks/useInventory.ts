@@ -8,10 +8,13 @@ import {
   bundledPlugins,
   fetchJarEntries,
   fetchLocalEntries,
+  fetchManifests,
+  livePointsByNamespace,
   type InventoryConfig,
   type InventoryItem,
   type JarEntry,
   type LocalEntry,
+  type ManifestShowcase,
 } from "../services/inventory";
 import { getTrials } from "../services/trials";
 
@@ -29,15 +32,21 @@ export interface InventoryState {
 export function useInventory(catalog: RegistryPlugin[]): InventoryState {
   const manager = usePluginManager();
   const { config } = useAppConfig();
-  const [remote, setRemote] = useState<{ jars: JarEntry[]; locals: LocalEntry[] } | null>(null);
+  const [remote, setRemote] = useState<{
+    jars: JarEntry[];
+    locals: LocalEntry[];
+    manifests: Map<string, ManifestShowcase>;
+  } | null>(null);
 
   const inventoryConfig = config as unknown as InventoryConfig | undefined;
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([fetchJarEntries(inventoryConfig), fetchLocalEntries()]).then(([jars, locals]) => {
-      if (!cancelled) setRemote({ jars, locals });
-    });
+    (async () => {
+      const [jars, locals] = await Promise.all([fetchJarEntries(inventoryConfig), fetchLocalEntries()]);
+      const manifests = await fetchManifests(jars, locals, inventoryConfig);
+      if (!cancelled) setRemote({ jars, locals, manifests });
+    })();
     return () => {
       cancelled = true;
     };
@@ -55,6 +64,8 @@ export function useInventory(catalog: RegistryPlugin[]): InventoryState {
     trials: getTrials(),
     catalog,
     config: inventoryConfig,
+    manifests: remote.manifests,
+    livePoints: livePointsByNamespace(manager),
   });
 
   return { items, loading: false };

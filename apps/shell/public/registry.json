@@ -14,6 +14,10 @@
       },
       "url": "http://127.0.0.1:4600/plugins/trial-demo.mjs",
       "category": "experimental",
+      "extensionPoints": [
+        "apps:definitions",
+        "sidebar:nav-items"
+      ],
       "icon": "FlaskConical",
       "integrity": "sha384-JTyEvd8D0a2JmCJf0Ir/zMBQvZTYdkbzwqWPAyflIR4jptRfZuv9kap9G6Isy28I",
       "tags": [
@@ -33,6 +37,11 @@
       },
       "url": "http://127.0.0.1:3000/management-ui/local-plugins/poll-plugin/poll-plugin.mjs",
       "category": "feature",
+      "extensionPoints": [
+        "apps:definitions",
+        "sidebar:nav-items",
+        "table-sidebar:episodes:tabs"
+      ],
       "icon": "BarChart3",
       "tags": [
         "poll",
@@ -57,6 +66,10 @@
       },
       "url": "https://registry.invalid/demo/auto-captions.mjs",
       "category": "feature",
+      "extensionPoints": [
+        "table-sidebar:episodes:tabs",
+        "episodes:table:status-indicators"
+      ],
       "icon": "Captions",
       "verified": true,
       "license": "Apache-2.0",
@@ -79,6 +92,10 @@
       },
       "url": "https://registry.invalid/demo/viewer-analytics.mjs",
       "category": "feature",
+      "extensionPoints": [
+        "apps:definitions",
+        "sidebar:nav-items"
+      ],
       "icon": "TrendingUp",
       "verified": true,
       "license": "MIT",
@@ -101,6 +118,13 @@
       },
       "url": "https://registry.invalid/demo/quiz-overlays.mjs",
       "category": "feature",
+      "extensionPoints": [
+        "table-sidebar:episodes:tabs"
+      ],
+      "pluginDependencies": [
+        "episodes",
+        "demo-viewer-analytics"
+      ],
       "icon": "CircleHelp",
       "license": "MIT",
       "lastUpdated": "2026-08-09",
@@ -122,6 +146,10 @@
       },
       "url": "https://registry.invalid/demo/lms-sync.mjs",
       "category": "integration",
+      "extensionPoints": [
+        "series:table:toolbar-end-actions",
+        "table-sidebar:series:tabs"
+      ],
       "icon": "RefreshCw",
       "verified": true,
       "license": "Apache-2.0",
@@ -144,6 +172,9 @@
       },
       "url": "https://registry.invalid/demo/speech-search.mjs",
       "category": "utility",
+      "extensionPoints": [
+        "app:header-actions"
+      ],
       "icon": "Search",
       "verified": true,
       "license": "MIT",
@@ -165,6 +196,12 @@
       },
       "url": "https://registry.invalid/demo/slide-detection.mjs",
       "category": "experimental",
+      "extensionPoints": [
+        "episodes:table:status-indicators"
+      ],
+      "pluginDependencies": [
+        "episodes"
+      ],
       "icon": "Presentation",
       "license": "MIT",
       "lastUpdated": "2026-08-19",
