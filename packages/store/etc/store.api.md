@@ -38,7 +38,7 @@ export type Store = {
     deleteUpload: (id: number) => void;
     resetUpload: () => void;
     updateFile: (updateFileInfo: UploadFileBlob) => void;
-    fileUploaded: (uploadFile: UploadFileBlob, pending: UploadFileBlob[]) => void;
+    fileUploaded: (uploadFile: UploadFileBlob, _pending?: UploadFileBlob[]) => void;
     filesUploaded: () => void;
     setUploadError: (uploadError: Error) => void;
 };

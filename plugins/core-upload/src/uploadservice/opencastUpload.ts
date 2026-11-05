@@ -106,9 +106,10 @@ export const opencastUpload = async (
 
   if (!mediaPackage) return;
 
-  const title =
-    selectedFile?.uploadName.replace("%", "%25") ||
-    selectedFile?.name.split(".").slice(0, -1).join(".");
+  // No `%` → `%25` rewrite here any more: the catalog is sent urlencoded (see
+  // `addDcCatalog`), so the browser escapes a percent sign once and Opencast
+  // unescapes it once. Rewriting it by hand would store "100%" as "100%25".
+  const title = selectedFile?.uploadName || selectedFile?.name.split(".").slice(0, -1).join(".");
   const presenter = currentUser.user.name || "";
 
   const aclXml = aclData ? constructAclFromData(aclData) : DEFAULT_ACL_TEMPLATE;
@@ -163,7 +164,18 @@ export const opencastUpload = async (
   await finishIngest({ mediaPackage, uploadSettings }, setUploadError);
 };
 
-const addDcCatalog = async ({
+/**
+ * Attaches the episode Dublin Core catalog to the media package.
+ *
+ * Exported for its test only. The body is `application/x-www-form-urlencoded`
+ * with the catalog XML *unescaped*, not a multipart `FormData`: Opencast hands
+ * multipart form fields to `addDCCatalog` verbatim — it does not URL-decode
+ * them — so a hand-percent-encoded catalog arrived as `%3C%3Fxml…`, failed to
+ * parse ("Content is not allowed in prolog") and answered HTTP 500 (verified
+ * against Opencast 20). A urlencoded body is decoded exactly once by every
+ * Opencast version, so no manual encoding is needed or allowed here.
+ */
+export const addDcCatalog = async ({
   mediaPackage,
   title,
   presenter,
@@ -184,10 +196,10 @@ const addDcCatalog = async ({
   const template = uploadSettings.dcc;
   const dcc = constructDcc(template, { presenter, title, seriesId }, currentUser, location);
 
-  const body = new FormData();
-  body.append("mediaPackage", mediaPackage);
-  body.append("dublinCore", encodeURIComponent(dcc));
-  body.append("flavor", "dublincore/episode");
+  const body = new URLSearchParams();
+  body.set("mediaPackage", mediaPackage);
+  body.set("dublinCore", dcc);
+  body.set("flavor", "dublincore/episode");
 
   return await request("/ingest/addDCCatalog", { method: "post", body }, setUploadError)
     .then((response) => response?.text())

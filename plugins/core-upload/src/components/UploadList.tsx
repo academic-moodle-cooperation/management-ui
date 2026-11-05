@@ -41,7 +41,8 @@ export const UploadList = ({
       role="list"
       className={cn("border border-b divide-y divide-border rounded-lg border-border", className)}
     >
-      {[...files]?.map((fileItem, index) => {
+      {/* `filter(Boolean)`: a hole persisted by an older store version must not take the whole list down. */}
+      {files.filter(Boolean).map((fileItem, index) => {
         const selectedFile = fileItem;
 
         return (
