@@ -315,7 +315,9 @@ The essentials per entry: `id`, `name`, `description`, `version`, `author`,
 its translations (`<localesUrl>/<namespace>/<language>.json`, the same layout
 the JAR path serves); without them its UI falls back to raw keys.
 Further optional fields are read by the marketplace v2 catalog, with the same
-meaning as in a `plugin.json` (manifest 1.2): `tagline` (one-line pitch for
+meaning as in a `plugin.json` (manifest 1.2): `namespace` (the
+`app.enabledPlugins` value the detail view shows operators; the id is assumed
+when absent), `tagline` (one-line pitch for
 cards and rows), `accentColor` (any CSS color for the entry's tile and
 artwork), `icon` (a Lucide icon name; otherwise a per-category default),
 `screenshots` (`[{ "url", "caption"? }]` — shown only when the image is

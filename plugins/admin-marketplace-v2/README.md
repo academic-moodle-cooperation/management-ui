@@ -87,7 +87,8 @@ registry-side flag may follow once the central registry has a review process.
 
 The registry entry format ([`src/services/registry.ts`](src/services/registry.ts))
 reads the presentational fields the plugin manifest (1.2) defines, so an
-author declares them once: `tagline` (one-line pitch), `accentColor` (tile and
+author declares them once: `namespace` (the `app.enabledPlugins` value the
+detail view shows operators; defaults to the id), `tagline` (one-line pitch), `accentColor` (tile and
 artwork color), `icon` (Lucide name; per-category default otherwise) and
 `screenshots` (`[{ url, caption? }]`, loaded only from this origin or a
 `try.allowedDomains` host — the generated artwork is the fallback). Plus

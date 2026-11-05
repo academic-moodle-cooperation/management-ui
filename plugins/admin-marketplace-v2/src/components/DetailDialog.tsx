@@ -1,4 +1,5 @@
-import { BadgeCheck, Check, ExternalLink, ShieldCheck } from "lucide-react";
+import { BadgeCheck, Check, Copy, ExternalLink, ShieldCheck } from "lucide-react";
+import { useState } from "react";
 
 import {
   Badge,
@@ -8,6 +9,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  toast,
 } from "@oc-mui/ui/components";
 
 import { accentFor, tileGradient } from "../lib/palette";
@@ -39,10 +41,59 @@ function formatDate(iso?: string): string | null {
   return date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
 }
 
+/** The `app.enabledPlugins` value for a catalog entry. */
+export function namespaceOf(plugin: Pick<RegistryPlugin, "id" | "namespace">): string {
+  return plugin.namespace ?? plugin.id;
+}
+
 /**
- * Read-only plugin detail: identity, provenance, metadata, description.
- * No Try/Install here yet — those gestures are separate features.
+ * Plugin detail: identity, provenance, metadata, description — and the one
+ * thing an operator needs to make it permanent: the exact config key. Try
+ * is the only action here; install stays a deployment step.
  */
+const EnableHint: FC<{ plugin: RegistryPlugin }> = ({ plugin }) => {
+  const [copied, setCopied] = useState(false);
+  const namespace = namespaceOf(plugin);
+  const snippet = `"app": { "enabledPlugins": [ …, "${namespace}" ] }`;
+  const copy = async (): Promise<void> => {
+    try {
+      await navigator.clipboard.writeText(namespace);
+      setCopied(true);
+      toast(`Copied "${namespace}" — add it to app.enabledPlugins`);
+      setTimeout(() => setCopied(false), 1600);
+    } catch {
+      toast(`Namespace: ${namespace}`);
+    }
+  };
+  return (
+    <div className="mt-5 rounded-xl border border-border bg-card/60 px-4 py-3 text-[13px] leading-relaxed text-muted-foreground">
+      <p className="font-semibold text-foreground">Making it permanent is a deployment step.</p>
+      <p className="mt-1">
+        Try only loads it in this tab. For everyone: deploy the bundle (JAR or hosted file), then
+        list its namespace in the deployment&apos;s <code className="font-mono">config.json</code>:
+      </p>
+      <div className="mt-2 flex items-center gap-2">
+        <code className="min-w-0 flex-1 truncate rounded-md bg-muted px-2.5 py-1.5 font-mono text-[12px] text-foreground">
+          {snippet}
+        </code>
+        <button
+          type="button"
+          onClick={copy}
+          title="Copy the namespace"
+          aria-label="Copy namespace"
+          className="shrink-0 rounded-md border border-border p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
+          {copied ? <Check className="size-3.5 text-ok" /> : <Copy className="size-3.5" />}
+        </button>
+      </div>
+      <p className="mt-1.5 text-xs">
+        Already deployed here but switched off? The Library lists it under &quot;Available but
+        disabled&quot;, with the same value.
+      </p>
+    </div>
+  );
+};
+
 const DetailDialog: FC<DetailDialogProps> = ({
   plugin,
   onClose,
@@ -127,6 +178,8 @@ const DetailDialog: FC<DetailDialogProps> = ({
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
             {plugin.description}
           </p>
+
+          <EnableHint plugin={plugin} />
 
           {plugin.tags && plugin.tags.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-1.5">

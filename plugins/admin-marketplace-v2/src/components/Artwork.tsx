@@ -84,9 +84,21 @@ const Artwork: FC<ArtworkProps> = ({ palette, badge, image, variant = "bars", sh
   </div>
 );
 
-/** Plugin artwork palette: the accent gradient behind the live theme's own surfaces. */
+/**
+ * Plugin artwork palette (V4): a paper window on the accent gradient, its
+ * lines a faint tint of the accent. Paper = the text-on-primary token, which
+ * is near-white under every theme — so the window reads as a bright
+ * "screenshot" in dark mode too, instead of a dark hole in the gradient.
+ */
 export function pluginPalette(accent: string, backdrop: string): ArtworkPalette {
-  return { backdrop, window: "var(--card)", sidebar: "var(--sidebar)", line: "var(--muted)", accent };
+  const paper = `color-mix(in oklab, var(--primary-foreground) 96%, ${accent})`;
+  return {
+    backdrop,
+    window: paper,
+    sidebar: `color-mix(in oklab, var(--primary-foreground) 90%, ${accent})`,
+    line: `color-mix(in oklab, var(--primary-foreground) 82%, ${accent})`,
+    accent,
+  };
 }
 
 export { Artwork };

@@ -38,6 +38,11 @@ export interface RegistryPlugin {
   /** Display name */
   name: string;
   /**
+   * The plugin's `namespace` from its manifest — the value `app.enabledPlugins`
+   * takes. Optional: when absent the id is assumed to be the namespace.
+   */
+  namespace?: string;
+  /**
    * Long-form description (paragraphs, shown on the detail view).
    */
   description: string;
