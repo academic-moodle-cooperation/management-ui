@@ -20,7 +20,7 @@ import type { Plugin, PluginManager } from "@oc-mui/plugin-system";
 import type { RegistryPlugin } from "./registry";
 import type { Trial } from "./trials";
 
-export type InventoryOrigin = "builtin" | "jar" | "local" | "trial" | "shell";
+export type InventoryOrigin = "builtin" | "jar" | "local" | "trial" | "browser" | "shell";
 export type InventoryStatus = "active" | "trial" | "disabled" | "paused";
 
 export interface InventoryItem {
@@ -53,6 +53,48 @@ export interface InventoryItem {
   pluginDependencies?: string[];
   /** Showcase fields from the plugin's own `plugin.json`, when it is served. */
   manifest?: ManifestShowcase;
+  /**
+   * For `browser` origin: the ids the previous marketplace recorded in this
+   * browser (its installs are keyed by registry id, not namespace).
+   */
+  browserInstallIds?: string[];
+  /**
+   * Set when this namespace is registered by a module of another deployed
+   * plugin (e.g. `univie-support` from the `univie` JAR): it is switched on
+   * and off with that parent's namespace, not on its own.
+   */
+  moduleOf?: string;
+}
+
+/** An install the previous marketplace (v1) persisted in this browser's localStorage. */
+export interface BrowserInstall {
+  id: string;
+  url: string;
+  version?: string;
+}
+
+/** localStorage key the previous marketplace uses for its installs. */
+export const V1_INSTALLS_STORAGE_KEY = "installed_remote_plugins";
+
+/**
+ * Installs the previous marketplace made in *this browser*. They load on
+ * every boot like enabled plugins, but live in localStorage — not on the
+ * deployment, not for anyone else. v2 never writes this key.
+ */
+export function readBrowserInstalls(): BrowserInstall[] {
+  try {
+    const raw = typeof localStorage !== "undefined" ? localStorage.getItem(V1_INSTALLS_STORAGE_KEY) : null;
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed.flatMap((e) =>
+      e && typeof e === "object" && typeof (e as BrowserInstall).id === "string" && typeof (e as BrowserInstall).url === "string"
+        ? [e as BrowserInstall]
+        : [],
+    );
+  } catch {
+    return [];
+  }
 }
 
 /** The presentational subset of a `plugin.json` the marketplace reads. */
@@ -103,6 +145,8 @@ export interface InventorySources {
   livePoints?: ReadonlyMap<string, string[]>;
   /** Namespaces paused in this tab (the preview contract's mirror image). */
   paused?: ReadonlySet<string>;
+  /** The previous marketplace's installs in this browser (see `readBrowserInstalls`). */
+  browserInstalls?: readonly BrowserInstall[];
 }
 
 /* ------------------------------------------------------------------ helpers */
@@ -178,6 +222,7 @@ export function disabledReasonFor(
 interface Draft {
   origin: InventoryOrigin;
   namespace: string;
+  moduleOf?: string;
   trialKind?: "remote" | "local";
   displayName?: string;
   types: Set<string>;
@@ -281,12 +326,27 @@ export function buildInventory(sources: InventorySources): InventoryItem[] {
     explained.add(namespace, "local");
   }
 
-  // 5. Registered but explained by none of the above: the shell's own
-  //    infrastructure plugins. Shown so the list never lies by omission.
+  // 5. Registered but explained by none of the above. Three kinds, checked in
+  //    this order:
+  //    - a module of a deployed plugin that registers under its own namespace
+  //      (`<parent>-<something>:<type>` while the JAR is known as `<parent>`);
+  //    - plugins the *previous* marketplace installed in this browser — they
+  //      boot from localStorage and carry a `<ns>:<type>` name;
+  //    - the shell's own infrastructure plugins (a bare name, no type).
+  //    Shown either way so the list never lies by omission.
+  const browserInstalls = sources.browserInstalls ?? [];
+  const parents = [...explainedBy.keys()].sort((a, b) => b.length - a.length);
   for (const [name, plugin] of registered) {
     const { namespace, type } = splitName(name);
     if (explainedBy.has(namespace) || trialIds.has(namespace)) continue;
-    const d = draft("shell", namespace);
+    const parent = type !== undefined ? parents.find((p) => namespace.startsWith(`${p}-`)) : undefined;
+    const origin: InventoryOrigin = parent
+      ? explainedBy.get(parent)!
+      : type !== undefined && browserInstalls.length > 0
+        ? "browser"
+        : "shell";
+    const d = draft(origin, namespace);
+    if (parent) d.moduleOf = parent;
     if (type) d.types.add(type);
     d.versions.add(plugin.version);
     d.registeredAny = true;
@@ -328,6 +388,8 @@ export function buildInventory(sources: InventorySources): InventoryItem[] {
       ...(points && points.length > 0 && { extensionPoints: points }),
       ...(deps && deps.length > 0 && { pluginDependencies: deps }),
       ...(manifest && { manifest }),
+      ...(d.origin === "browser" && { browserInstallIds: browserInstalls.map((b) => b.id) }),
+      ...(d.moduleOf && { moduleOf: d.moduleOf }),
     };
     if (entry && version && isNewerVersion(entry.version, version)) {
       item.registryNewer = entry.version;
@@ -335,7 +397,7 @@ export function buildInventory(sources: InventorySources): InventoryItem[] {
     items.push(item);
   }
 
-  const originRank: Record<InventoryOrigin, number> = { trial: 0, jar: 1, local: 2, builtin: 3, shell: 4 };
+  const originRank: Record<InventoryOrigin, number> = { trial: 0, browser: 1, jar: 2, local: 3, builtin: 4, shell: 5 };
   return items.sort(
     (a, b) => originRank[a.origin] - originRank[b.origin] || a.displayName.localeCompare(b.displayName),
   );

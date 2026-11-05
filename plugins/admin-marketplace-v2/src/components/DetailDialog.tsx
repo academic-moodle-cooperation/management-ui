@@ -12,8 +12,10 @@ import {
   toast,
 } from "@oc-mui/ui/components";
 
+import { usePaperToken } from "../hooks/usePaperToken";
 import { accentFor, tileGradient } from "../lib/palette";
 import { namespaceOf } from "../services/registry";
+
 
 import { ActionPill } from "./ActionPill";
 import { Artwork, pluginPalette, variantFor } from "./Artwork";
@@ -31,6 +33,8 @@ interface DetailDialogProps {
   canTry?: boolean;
   /** A trial of this plugin is active in this tab. */
   trialActive?: boolean;
+  /** The plugin is deployed here and running — nothing to try. */
+  activeHere?: boolean;
   onTry?: (plugin: RegistryPlugin) => void;
   onEndTrial?: (pluginId: string) => void;
   /** A screenshot the deployment may load, or null for generated artwork. */
@@ -99,11 +103,13 @@ const DetailDialog: FC<DetailDialogProps> = ({
   onClose,
   canTry,
   trialActive,
+  activeHere,
   onTry,
   onEndTrial,
   image = null,
   presence = new Map(),
 }) => {
+  const paper = usePaperToken();
   if (!plugin) return null;
 
   const accent = accentFor(plugin);
@@ -121,7 +127,7 @@ const DetailDialog: FC<DetailDialogProps> = ({
       <DialogContent className="overflow-hidden p-0 sm:max-w-xl">
         {/* The card's artwork, wider: the dialog opens on the same picture the card showed. */}
         <Artwork
-          palette={pluginPalette(accent, tileGradient(plugin))}
+          palette={pluginPalette(accent, tileGradient(plugin), paper)}
           image={image}
           variant={variantFor(plugin.id)}
           shape="hero"
@@ -159,6 +165,10 @@ const DetailDialog: FC<DetailDialogProps> = ({
                     </ActionPill>
                     {onEndTrial && <ActionPill onClick={() => onEndTrial(plugin.id)}>End trial</ActionPill>}
                   </span>
+                ) : activeHere ? (
+                  <ActionPill tone="ok" title="Deployed and enabled on this deployment">
+                    Active here <Check className="size-3.5" strokeWidth={2.6} />
+                  </ActionPill>
                 ) : canTry && onTry ? (
                   <ActionPill onClick={() => onTry(plugin)}>Try it</ActionPill>
                 ) : null}

@@ -17,10 +17,12 @@ import { namespaceOf } from "../services/registry";
 import { isAllowedAssetUrl } from "../services/security";
 import { startThemePreview } from "../services/themePreview";
 import { canPreviewTheme, type ThemeCandidate } from "../services/themes";
-import { endTrial, isTrialActive, startTrial } from "../services/trials";
+import { endTrial, isTrialActive, startLocalTrial, startTrial } from "../services/trials";
+import { resolveTryTarget } from "../services/tryTarget";
 
 import type { CatalogState } from "../hooks/useCatalog";
 import type { InventoryState } from "../hooks/useInventory";
+import type { InventoryItem } from "../services/inventory";
 import type { RegistryCategory, RegistryPlugin } from "../services/registry";
 import type { FC, ReactElement } from "react";
 
@@ -84,6 +86,8 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
   const [category, setCategory] = useState<RegistryCategory | "all">("all");
   const [selected, setSelected] = useState<RegistryPlugin | null>(null);
   const [tryCandidate, setTryCandidate] = useState<RegistryPlugin | null>(null);
+  /** A catalog entry whose plugin is deployed here but off: previewed locally, not fetched. */
+  const [localCandidate, setLocalCandidate] = useState<{ plugin: RegistryPlugin; item: InventoryItem } | null>(null);
   const [themeCandidate, setThemeCandidate] = useState<ThemeCandidate | null>(null);
   const themes = useThemes(plugins);
   const themePreview = useThemePreview();
@@ -120,9 +124,16 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
   const screenshotFor = (plugin: RegistryPlugin): string | null =>
     plugin.screenshots?.find((s) => isAllowedAssetUrl(s.url, cfg.try))?.url ?? null;
 
+  const activeHere = (plugin: RegistryPlugin): boolean => {
+    const target = resolveTryTarget(plugin, inventory.items);
+    return target.kind === "present" && target.status === "active";
+  };
+
   const requestTry = (plugin: RegistryPlugin): void => {
     setSelected(null);
-    setTryCandidate(plugin);
+    const target = resolveTryTarget(plugin, inventory.items);
+    if (target.kind === "local") setLocalCandidate({ plugin, item: target.item });
+    else if (target.kind === "remote") setTryCandidate(plugin);
   };
 
   const rows = (list: RegistryPlugin[]): ReactElement => (
@@ -134,6 +145,7 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
           onOpen={setSelected}
           canTry={canTry}
           trialActive={isTrialActive(plugin.id)}
+          activeHere={activeHere(plugin)}
           onTry={requestTry}
         />
       ))}
@@ -261,6 +273,7 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
                       onOpen={setSelected}
                       canTry={canTry}
                       trialActive={isTrialActive(plugin.id)}
+                      activeHere={activeHere(plugin)}
                       onTry={requestTry}
                     />
                   ))}
@@ -302,6 +315,7 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
         onClose={() => setSelected(null)}
         canTry={selected ? canTry : false}
         trialActive={selected ? isTrialActive(selected.id) : false}
+        activeHere={selected ? activeHere(selected) : false}
         onTry={requestTry}
         onEndTrial={endTrial}
       />
@@ -317,6 +331,23 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
         }
         onConfirm={(plugin, options) => startTrial(plugin, options)}
         onCancel={() => setTryCandidate(null)}
+      />
+      <TryConfirmDialog
+        plugin={localCandidate ? { ...localCandidate.plugin, name: localCandidate.plugin.name } : null}
+        mode="local"
+        conflicts={localCandidate ? findConflicts(localCandidate.item, inventory.items) : []}
+        onConfirm={(_plugin, options) => {
+          if (!localCandidate) return;
+          startLocalTrial(
+            {
+              namespace: localCandidate.item.namespace,
+              name: localCandidate.plugin.name,
+              ...(localCandidate.item.version !== undefined && { version: localCandidate.item.version }),
+            },
+            options,
+          );
+        }}
+        onCancel={() => setLocalCandidate(null)}
       />
       <TryConfirmDialog
         plugin={themeCandidate}

@@ -60,6 +60,12 @@ CSS goes through the Try gates (it can pull remote fonts/images). A theme
 becomes permanent only via `app.theme` — the row shows that value to copy;
 the Library shows which theme is active for everyone.
 
+**Catalog entries for deployed plugins.** When a registry entry's id (or
+`namespace`) matches a plugin deployed here, Try it in Explore previews the
+local copy through the preview contract instead of fetching the bundle again,
+and a running copy shows "Active here". This is the multi-tenant shape: JARs
+deployed centrally, listed in the catalog, switched on per tenant.
+
 **Overlaps.** Some slots only one plugin can fill — footer, landing page,
 sidebar, header. Before a trial, the dialog names the active plugins that
 already fill the slots the candidate ships (from module types and extension

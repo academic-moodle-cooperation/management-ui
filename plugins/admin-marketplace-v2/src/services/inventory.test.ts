@@ -194,3 +194,46 @@ describe("buildInventory — multi-module JARs", () => {
     expect(items[0]?.status).toBe("disabled");
   });
 });
+
+describe("buildInventory — previous marketplace's browser installs", () => {
+  const registered = new Map<string, Plugin>([
+    ["registry", { name: "registry", version: "1.0.0", initialize() {} } as unknown as Plugin],
+    ["univie-support:app", { name: "univie-support:app", version: "1.0.0", initialize() {} } as unknown as Plugin],
+  ]);
+  const base = { bundled: [], jars: [], locals: [], trials: [], catalog: [], config: undefined };
+
+  it("labels a typed, unexplained plugin as a browser install when v1 recorded installs", () => {
+    const items = buildInventory({ ...base, registered, browserInstalls: [{ id: "support-ui", url: "https://x/y.mjs" }] });
+    const support = items.find((i) => i.namespace === "univie-support");
+    expect(support?.origin).toBe("browser");
+    expect(support?.browserInstallIds).toEqual(["support-ui"]);
+    expect(items.find((i) => i.namespace === "registry")?.origin).toBe("shell");
+  });
+
+  it("keeps the shell label without v1 records", () => {
+    const items = buildInventory({ ...base, registered });
+    expect(items.find((i) => i.namespace === "univie-support")?.origin).toBe("shell");
+  });
+});
+
+describe("buildInventory — modules registered under their own namespace", () => {
+  it("attributes `<parent>-<x>:<type>` to the deployed parent plugin", () => {
+    const registered = new Map<string, Plugin>([
+      ["univie:app", { name: "univie:app", version: "1.0.0", initialize() {} } as unknown as Plugin],
+      ["univie-support:app", { name: "univie-support:app", version: "1.0.0", initialize() {} } as unknown as Plugin],
+    ]);
+    const items = buildInventory({
+      registered,
+      bundled: [],
+      jars: [{ name: "University of Vienna:app", namespace: "univie", type: "app", url: "/static/plugins/univie/plugin-univie-app.mjs" }],
+      locals: [],
+      trials: [],
+      catalog: [],
+      config: undefined,
+    });
+    const support = items.find((i) => i.namespace === "univie-support");
+    expect(support?.origin).toBe("jar");
+    expect(support?.moduleOf).toBe("univie");
+    expect(support?.status).toBe("active");
+  });
+});

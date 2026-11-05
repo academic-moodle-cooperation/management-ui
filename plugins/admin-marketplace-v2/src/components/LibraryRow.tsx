@@ -17,6 +17,7 @@ const ORIGIN_LABEL: Record<InventoryOrigin, string> = {
   jar: "Deployment (JAR)",
   local: "Local dev",
   trial: "Trial",
+  browser: "This browser",
   shell: "Shell",
 };
 
@@ -26,6 +27,7 @@ const ORIGIN_CATEGORY: Record<InventoryOrigin, "feature" | "integration" | "util
   jar: "integration",
   local: "utility",
   trial: "experimental",
+  browser: "experimental",
   shell: "utility",
 };
 
@@ -122,6 +124,26 @@ const LibraryRow: FC<LibraryRowProps> = ({ item, onTry, presence }) => {
           presence={presence}
           layout="row"
         />
+
+        {item.moduleOf && (
+          <p className="mt-1.5 text-xs text-muted-foreground">
+            A module of the <code className="font-mono">{item.moduleOf}</code> plugin, registered under its own
+            namespace. It is switched on and off together with{" "}
+            <code className="font-mono">&quot;{item.moduleOf}&quot;</code> in{" "}
+            <code className="font-mono">app.enabledPlugins</code>, not separately.
+          </p>
+        )}
+
+        {item.origin === "browser" && (
+          <p className="mt-1.5 text-xs text-muted-foreground">
+            Installed in this browser by the previous marketplace (localStorage
+            {item.browserInstallIds && item.browserInstallIds.length > 0 && (
+              <>: <code className="font-mono">{item.browserInstallIds.join(", ")}</code></>
+            )}
+            ). It loads on every visit from this browser only — nobody else sees it. Remove it in the
+            previous marketplace&apos;s Library, or clear that key.
+          </p>
+        )}
 
         {item.status === "paused" && (
           <p className="mt-1.5 text-xs text-muted-foreground">

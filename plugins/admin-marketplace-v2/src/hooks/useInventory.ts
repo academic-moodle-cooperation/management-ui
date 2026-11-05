@@ -10,6 +10,7 @@ import {
   fetchLocalEntries,
   fetchManifests,
   livePointsByNamespace,
+  readBrowserInstalls,
   type InventoryConfig,
   type InventoryItem,
   type JarEntry,
@@ -67,6 +68,7 @@ export function useInventory(catalog: RegistryPlugin[]): InventoryState {
     manifests: remote.manifests,
     livePoints: livePointsByNamespace(manager),
     paused: new Set(readPluginPauses()),
+    browserInstalls: readBrowserInstalls(),
   });
 
   return { items, loading: false };
