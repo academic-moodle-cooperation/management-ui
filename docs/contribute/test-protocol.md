@@ -157,7 +157,7 @@ Each core plugin's route should mount, render, and react to user input. Backend 
 | # | Plugin | Route | Test |
 |---|--------|-------|------|
 | 3.1 | Episodes | `/episodes` | Table renders. Sorting, filtering, pagination work. Click a row → detail panel. |
-| 3.2 | Series | `/series` | Table renders. "Create series" toolbar action opens dialog. Submitting creates the series; it appears in the list. |
+| 3.2 | Series | `/series` | Table renders. "Create series" next to the page heading (in the toolbar only with `createSeries.placement: "toolbar"`) opens the dialog. Submitting creates the series; it appears in the list. |
 | 3.3 | Upload | `/upload` | Upload-file UI renders. Drag-drop or browse-pick works. Workflow selection shows configured options. |
 | 3.4 | Marketplace | `/admin/marketplace` | Lists registered plugins. Developer Mode section visible (admin role). |
 

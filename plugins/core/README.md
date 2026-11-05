@@ -22,8 +22,9 @@ The plugins under [`extension-points/`](./extension-points/) register documentat
 | `table-sidebar:tabs` | `tableSidebarExtensionPoints` | Detail panels for table rows (generic). |
 | `table-sidebar:episodes:tabs` | `tableSidebarExtensionPoints` | Detail-panel tabs on the episodes table. |
 | `table-sidebar:series:tabs` | `tableSidebarExtensionPoints` | Detail-panel tabs on the series table. |
-| `series:table:toolbar-end-actions` | `seriesExtensionPoints` | Buttons in the series-table toolbar. Used by `core-series` for Create Series. |
-| `series:create-series:acl-editor` | `seriesExtensionPoints` | Optional ACL editor in the create-series dialog. |
+| `series:table:toolbar-end-actions` | `seriesExtensionPoints` | Buttons in the series-table toolbar. `core-series` puts Create Series here when `createSeries.placement` is `"toolbar"`. |
+| `series:create-series:variants` | `seriesExtensionPoints` | Ways to create a series, offered as cards by the create-series dialog (see below). |
+| `series:create-series:acl-editor` | `seriesExtensionPoints` | Optional ACL editor in the default create-series variant. |
 | `episodes:table:actions` | `episodesExtensionPoints` | Replacement for the per-row actions cell of the episodes table (`registerComponent`, lowest `order` wins). |
 | `episodes:table:status-indicators` | `episodesExtensionPoints` | Extra states for the episodes status column and the gallery thumbnail overlay (see below). |
 | `upload:acl-editor` | `uploadExtensionPoints` | ACL editor in the upload flow. |
@@ -69,6 +70,32 @@ manager.registerObject("episodes:table:status-indicators", "publication-pending"
 ```
 
 For every row, `core-episodes` asks each registered indicator (lowest `order` first) whether it `matches` the event. The first one that does replaces the default status icon in the list view's status column, in the indicator's `tone` (`ok`, `info`, `warning`, `error` — the theme's status colours), and covers the gallery thumbnail with the same icon, the way the built-in non-processed states do. `label` follows the tab-label convention above: a translation key the host resolves, or a literal without a colon. A `matches` (or `href`) that throws is logged and skipped, so a faulty plugin cannot blank the table. When no indicator matches, the row shows exactly what it showed before.
+
+#### Adding a way to create a series
+
+The create-series dialog in `core-series` is a shell over `series:create-series:variants`. The plain metadata form is the variant `default`; a plugin adds another kind of series — one bound to a course in the campus system, say, with fixed title and term and a step for subtitles — by registering a `CreateSeriesVariant` (type exported from this package):
+
+```ts
+import { GraduationCap } from "lucide-react";
+import type { CreateSeriesVariant, CreateSeriesVariantProps } from "@oc-mui/plugin-core";
+
+const CourseSeriesVariant = ({ onCreated, onCancel }: CreateSeriesVariantProps) => {
+  // Render the dialog body and footer; call onCreated(seriesId) when done.
+  return null;
+};
+
+manager.registerObject("series:create-series:variants", "acme-course", {
+  id: "acme-course",
+  order: 10,
+  label: "acme:createSeries.course.label",
+  description: "acme:createSeries.course.description",
+  icon: GraduationCap,
+  requiredRoles: ["ROLE_LECTURER"], // optional
+  component: CourseSeriesVariant,
+} satisfies CreateSeriesVariant);
+```
+
+The dialog lists every registered variant the deployment has not disabled (`plugins.series.seriesTable.createSeries.variants.<id>.enabled: false`, which also works for `default`) and whose `requiredRoles`, when set, the user meets. One variant opens directly; several open a chooser of cards first, and the picked variant gets a Back control. The variant owns the dialog body and footer, so a multi-step flow needs no support from the shell; it reports the new series through `onCreated(seriesId)`, after which the shell closes the dialog and refreshes the series list. `label` and `description` follow the tab-label convention above: a translation key the host resolves, or a literal without a colon. The config key for a variant is its `id`, so prefix it with your plugin name.
 
 ### Centrally consumed extension points
 
