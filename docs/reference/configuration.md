@@ -226,6 +226,31 @@ A lint rule that forbids `config.plugins[...]` outside
 `admin-marketplace` case still has to be designed. Until that rule
 lands, treat direct reads as a review-time red flag.
 
+## Creating a series
+
+`plugins.series.seriesTable.createSeries` controls the Create Series button and the ways of creating a series it offers. Each way is a *variant* registered on the `series:create-series:variants` extension point; `core-series` registers the plain metadata form as `default`, org plugins add their own (see [`plugins/core/README.md`](../../plugins/core/README.md#adding-a-way-to-create-a-series)).
+
+```jsonc
+"plugins": {
+  "series": {
+    "seriesTable": {
+      "createSeries": {
+        "enabled": true,              // master switch for the button (default true)
+        "placement": "heading",       // "heading" (default): next to the page title; "toolbar": in the table toolbar
+        "variants": {
+          "default": { "enabled": false },  // hide the core form, e.g. when an org plugin offers its own
+          "acme-course": { "order": 10 }    // reorder a plugin's variant in the chooser
+        }
+      }
+    }
+  }
+}
+```
+
+- Keys under `variants` are the variant ids as registered by the plugins; unknown keys are ignored.
+- With one variant left after these switches the button opens it directly; with several it opens a chooser. With none, the button and the empty-state call to action disappear.
+- A variant's own `requiredRoles` is applied on top: it is hidden from users lacking every listed role.
+
 ## Table columns (episodes & series)
 
 Both table plugins read a per-column config from their slice. The full shape, using episodes as the example (series has the same `columns` mechanics under `plugins.series.seriesTable`, without the `views` split):

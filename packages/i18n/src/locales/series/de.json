@@ -44,7 +44,10 @@
         "title": "Neue Serie erstellen",
         "description": "Erfassen Sie die Metadaten für die neue Serie.",
         "aclPolicyLabel": "Zugriffsrichtlinie",
-        "noPolicy": "Keine Richtlinie"
+        "noPolicy": "Keine Richtlinie",
+        "chooserTitle": "Neue Serie",
+        "chooserDescription": "Welche Art von Serie möchten Sie anlegen?",
+        "back": "Zurück"
       },
       "toast": {
         "success": "Serie wurde erstellt",
@@ -52,6 +55,12 @@
       },
       "validation": {
         "titleRequired": "Titel ist erforderlich"
+      },
+      "variants": {
+        "default": {
+          "label": "Serie",
+          "description": "Metadaten selbst erfassen."
+        }
       }
     },
     "notification": {

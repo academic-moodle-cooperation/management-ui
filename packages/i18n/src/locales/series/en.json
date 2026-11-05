@@ -44,7 +44,10 @@
         "title": "Create new series",
         "description": "Enter metadata for the new series.",
         "aclPolicyLabel": "Access policy",
-        "noPolicy": "No policy"
+        "noPolicy": "No policy",
+        "chooserTitle": "New series",
+        "chooserDescription": "What kind of series do you want to create?",
+        "back": "Back"
       },
       "toast": {
         "success": "Series created",
@@ -52,6 +55,12 @@
       },
       "validation": {
         "titleRequired": "Title is required"
+      },
+      "variants": {
+        "default": {
+          "label": "Series",
+          "description": "Enter the metadata yourself."
+        }
       }
     },
     "notification": {
