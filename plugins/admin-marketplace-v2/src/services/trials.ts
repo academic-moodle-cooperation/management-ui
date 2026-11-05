@@ -87,9 +87,11 @@ function readJson<T>(key: string, fallback: T): T {
 }
 
 export function getTrials(): Trial[] {
-  // Entries written before `kind` existed are remote trials.
+  // Entries written before `kind` existed are remote trials. A deployed plugin
+  // may carry no version at all (plugins.json has none) — an empty string is a
+  // valid trial, not a malformed one; dropping it would hide the End button.
   return readJson<Array<Partial<Trial> & { url?: string }>>(TRIALS_KEY, []).flatMap((t) =>
-    t.id && t.name && t.version && t.startedAt
+    t.id && t.name && typeof t.version === "string" && t.startedAt
       ? [{ ...t, kind: t.kind ?? "remote" } as Trial]
       : [],
   );
