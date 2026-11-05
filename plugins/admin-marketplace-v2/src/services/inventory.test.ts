@@ -215,3 +215,25 @@ describe("buildInventory — previous marketplace's browser installs", () => {
     expect(items.find((i) => i.namespace === "univie-support")?.origin).toBe("shell");
   });
 });
+
+describe("buildInventory — modules registered under their own namespace", () => {
+  it("attributes `<parent>-<x>:<type>` to the deployed parent plugin", () => {
+    const registered = new Map<string, Plugin>([
+      ["univie:app", { name: "univie:app", version: "1.0.0", initialize() {} } as unknown as Plugin],
+      ["univie-support:app", { name: "univie-support:app", version: "1.0.0", initialize() {} } as unknown as Plugin],
+    ]);
+    const items = buildInventory({
+      registered,
+      bundled: [],
+      jars: [{ name: "University of Vienna:app", namespace: "univie", type: "app", url: "/static/plugins/univie/plugin-univie-app.mjs" }],
+      locals: [],
+      trials: [],
+      catalog: [],
+      config: undefined,
+    });
+    const support = items.find((i) => i.namespace === "univie-support");
+    expect(support?.origin).toBe("jar");
+    expect(support?.moduleOf).toBe("univie");
+    expect(support?.status).toBe("active");
+  });
+});
