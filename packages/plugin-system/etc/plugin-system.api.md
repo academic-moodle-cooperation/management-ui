@@ -8,6 +8,9 @@ import { default as React_2 } from 'react';
 import { ReactNode } from 'react';
 
 // @public (undocumented)
+export function addPluginPreview(namespace: string): void;
+
+// @public (undocumented)
 export interface ApiVersionCheckResult {
     // (undocumented)
     compatible: boolean;
@@ -156,6 +159,9 @@ export { Plugin_2 as Plugin }
 // @public
 export const PLUGIN_API_VERSION: "1.1.0";
 
+// @public
+export const PLUGIN_PREVIEWS_STORAGE_KEY = "mui.plugin-previews";
+
 // @public (undocumented)
 export const PLUGIN_TYPES: PluginTypeDefinition[];
 
@@ -244,6 +250,13 @@ export interface PluginOptions {
     version: string;
 }
 
+// @public (undocumented)
+export interface PluginPreviews {
+    namespaces: string[];
+    // (undocumented)
+    version: 1;
+}
+
 // @public
 export interface PluginProps {
     // (undocumented)
@@ -278,6 +291,9 @@ export interface PluginTypeDefinition {
 }
 
 // @public
+export function readPluginPreviews(): string[];
+
+// @public
 export const registerApp: (manager: PluginManager, appDefinition: AppDefinition) => void;
 
 // @public
@@ -301,6 +317,9 @@ export type RegistryObject = {
     data: unknown;
     metadata?: Record<string, unknown> | undefined;
 };
+
+// @public (undocumented)
+export function removePluginPreview(namespace: string): void;
 
 // @public @deprecated (undocumented)
 export const RendererProvider: React_2.FC<{
@@ -346,6 +365,9 @@ export const useRenderer: () => RendererContextType;
 
 // @public
 export function validatePluginMetadata(metadata: any): PluginMetadataValidationResult;
+
+// @public
+export function writePluginPreviews(namespaces: string[]): void;
 
 // (No @packageDocumentation comment for this package)
 

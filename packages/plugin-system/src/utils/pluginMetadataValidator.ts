@@ -90,6 +90,13 @@ export function validatePluginMetadata(
     );
   }
 
+  // Presentational, optional strings (manifest 1.2 added tagline + accentColor).
+  for (const field of ["icon", "tagline", "accentColor"] as const) {
+    if (metadata[field] !== undefined && typeof metadata[field] !== "string") {
+      errors.push(`Field '${field}' must be a string`);
+    }
+  }
+
   if (metadata.apiVersion !== undefined) {
     if (typeof metadata.apiVersion !== "string") {
       errors.push("Field 'apiVersion' must be a string");
