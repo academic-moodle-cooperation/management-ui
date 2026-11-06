@@ -341,7 +341,7 @@ export const CreateSeriesToolbarAction = ({ refetch }: CreateSeriesToolbarAction
         {t("series:seriesTable.createSeries.button")}
       </Button>
 
-      <DialogContent className="max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-h-[85dvh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t("series:seriesTable.createSeries.dialog.title")}</DialogTitle>
           <DialogDescription>
@@ -374,7 +374,7 @@ export const CreateSeriesToolbarAction = ({ refetch }: CreateSeriesToolbarAction
           )}
 
           {(isFieldAccepted("language") || isFieldAccepted("license")) && (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {isFieldAccepted("language") && (
                 <div className="grid gap-2">
                   <Label htmlFor="create-series-language">{t("series:seriesInfo.language")}</Label>
@@ -382,7 +382,7 @@ export const CreateSeriesToolbarAction = ({ refetch }: CreateSeriesToolbarAction
                     value={formState.language}
                     onValueChange={(value) => updateField("language", value)}
                   >
-                    <SelectTrigger id="create-series-language">
+                    <SelectTrigger id="create-series-language" className="w-full">
                       <SelectValue placeholder={t("noOptionSelected")} />
                     </SelectTrigger>
                     <SelectContent className="sidebar-portal-inside">
@@ -403,7 +403,7 @@ export const CreateSeriesToolbarAction = ({ refetch }: CreateSeriesToolbarAction
                     value={formState.license}
                     onValueChange={(value) => updateField("license", value)}
                   >
-                    <SelectTrigger id="create-series-license">
+                    <SelectTrigger id="create-series-license" className="w-full">
                       <SelectValue placeholder={t("noOptionSelected")} />
                     </SelectTrigger>
                     <SelectContent className="sidebar-portal-inside">
@@ -461,7 +461,7 @@ export const CreateSeriesToolbarAction = ({ refetch }: CreateSeriesToolbarAction
           )}
 
           {(isFieldAccepted("subject") || isFieldAccepted("rightsHolder")) && (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {isFieldAccepted("subject") && (
                 <div className="grid gap-2">
                   <Label htmlFor="create-series-subject">{t("series:seriesInfo.subject")}</Label>

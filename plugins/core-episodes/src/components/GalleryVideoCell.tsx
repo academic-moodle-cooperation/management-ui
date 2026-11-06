@@ -80,7 +80,7 @@ export const GalleryVideoCell: React.FC<{ event: MuiEventsDataFragment }> = ({ e
   );
 
   return (
-    <div className="flex items-center h-[125px] w-[500px] space-x-2 group">
+    <div className="flex items-center h-[125px] w-[300px] space-x-2 group sm:w-[500px]">
       <div className="relative my-2 me-2 group overflow-hidden rounded-lg">
         {link ? (
           <a

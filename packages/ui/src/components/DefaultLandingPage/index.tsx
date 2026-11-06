@@ -220,7 +220,7 @@ const Shield: FC<{ label: string; value: string; ok?: boolean }> = ({ label, val
 );
 
 const pill =
-  "inline-flex items-center gap-2 rounded-md border bg-card px-3 py-1.5 text-[12.5px] text-foreground shadow-sm transition-colors hover:bg-muted";
+  "inline-flex max-w-full flex-wrap items-center gap-2 rounded-md border bg-card px-3 py-1.5 text-[12.5px] text-foreground shadow-sm transition-colors hover:bg-muted";
 
 const TAB_TRIGGER =
   "gap-1.5 rounded-md px-3 py-1.5 text-[13px] font-semibold text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm";
@@ -256,18 +256,18 @@ const DefaultLandingPage: FC = () => {
         href={badgeHref}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2.5 rounded-full border bg-card px-1.5 py-1 text-[13px] text-muted-foreground shadow-sm transition-colors hover:text-foreground"
+        className="inline-flex max-w-full items-center gap-2.5 rounded-full border bg-card px-1.5 py-1 text-[13px] text-muted-foreground shadow-sm transition-colors hover:text-foreground"
       >
-        <b className="rounded-full bg-primary px-2.5 py-[3px] text-[11.5px] font-bold text-primary-foreground">
+        <b className="shrink-0 rounded-full bg-primary px-2.5 py-[3px] text-[11.5px] font-bold text-primary-foreground">
           {t("landing.about.badgeNew")}
         </b>
-        <span className="flex items-center gap-1.5 whitespace-nowrap pr-2">
+        <span className="flex min-w-0 items-center gap-1.5 pr-2 sm:whitespace-nowrap">
           {badgeText}
-          <ChevronRight className="size-3" />
+          <ChevronRight className="size-3 shrink-0" />
         </span>
       </a>
 
-      <h1 className="mt-6 font-heading text-5xl font-extrabold leading-[0.98] tracking-tight md:text-7xl">
+      <h1 className="mt-6 font-heading text-[42px] font-extrabold leading-[0.98] tracking-tight sm:text-5xl md:text-7xl">
         Management{" "}
         <span
           className="bg-clip-text text-transparent"
@@ -306,7 +306,7 @@ const DefaultLandingPage: FC = () => {
           t("landing.about.checks.semanticTheming"),
         ].map((label, i) => (
           <span key={label} className="flex items-center gap-2">
-            {i > 0 && <span className="h-3 w-px bg-border" />}
+            {i > 0 && <span className="hidden h-3 w-px bg-border sm:block" />}
             <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
               <Check className="size-3.5 text-ok" />
               {label}
@@ -414,7 +414,7 @@ const DefaultLandingPage: FC = () => {
             <span className="size-[11px] rounded-full bg-[#61c554]" />
             <span className="ml-2 font-mono text-xs text-muted-foreground">management-ui — zsh</span>
           </div>
-          <div className="px-5 py-4 font-mono text-[13px] leading-[1.95] text-foreground">
+          <div className="break-words px-5 py-4 font-mono text-[13px] leading-[1.95] text-foreground">
             <div>
               <span className="font-semibold text-primary">$</span> git clone{" "}
               <span className="text-info underline underline-offset-2">{CLONE_LABEL}</span>
@@ -515,7 +515,7 @@ const DefaultLandingPage: FC = () => {
         {t("landing.starOnGithub")}
       </a>
 
-      <Tabs value={tab} onValueChange={setTab} className="relative my-auto w-full">
+      <Tabs value={tab} onValueChange={setTab} className="relative w-full md:my-auto">
         {/* Centered audience tabs on top */}
         <div className="flex justify-center">
           <TabsList className="h-auto gap-1 rounded-lg border bg-muted p-1">
@@ -537,20 +537,23 @@ const DefaultLandingPage: FC = () => {
         {/* All three panels render as invisible "sizers" so the grid cell stays
             as tall as the tallest one — the tab bar never shifts. The single
             visible panel below just swaps its content on tab change; the visible
-            element itself never toggles, so nothing overlaps on switch. */}
-        <div className="mt-7 grid">
+            element itself never toggles, so nothing overlaps on switch.
+            Not below `md`: panels stack there, so the tallest is several screens
+            high, and the tab bar sits at the top anyway. The explicit track keeps
+            the widest panel from stretching the others past the screen. */}
+        <div className="mt-7 grid grid-cols-[minmax(0,1fr)]">
           {panels.map((p) => (
             <div
               key={`sizer-${p.key}`}
               aria-hidden
-              className="pointer-events-none invisible col-start-1 row-start-1 flex flex-col justify-center"
+              className="pointer-events-none invisible col-start-1 row-start-1 hidden flex-col justify-center md:flex"
             >
               {p.node}
             </div>
           ))}
           <div
             role="tabpanel"
-            className="col-start-1 row-start-1 flex flex-col justify-center outline-none"
+            className="col-start-1 row-start-1 flex flex-col outline-none md:justify-center"
           >
             {panels.find((p) => p.key === tab)?.node}
           </div>

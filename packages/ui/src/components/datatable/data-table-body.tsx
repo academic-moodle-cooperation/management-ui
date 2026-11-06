@@ -2,70 +2,47 @@ import { flexRender } from "@tanstack/react-table";
 
 import { TableBody, TableCell, TableRow } from "../ui";
 
-import { EmptyStateContent } from "./data-table-empty-state";
+import type { Row, Table } from "@tanstack/react-table";
 
-import type { ColumnDef, Row, Table } from "@tanstack/react-table";
-import type { ReactNode } from "react";
-
-interface DataTableBodyProps<TData, TValue> {
+interface DataTableBodyProps<TData> {
   table: Table<TData>;
-  columns: ColumnDef<TData, TValue>[];
   className?: string | undefined;
   selectedId?: string | undefined;
   onClickRowAction?:
     | ((event: React.MouseEvent<HTMLTableRowElement>, row: Row<TData>) => void)
     | undefined;
-  queryFilter?: string | undefined;
-  /** Empty state rendered when there are no rows and no active filter. */
-  emptyState?: ReactNode | undefined;
 }
 
-function DataTableBody<TData extends Record<string, unknown>, TValue>({
+function DataTableBody<TData extends Record<string, unknown>>({
   table,
-  columns,
   className,
   selectedId,
   onClickRowAction,
-  queryFilter,
-  emptyState,
-}: DataTableBodyProps<TData, TValue>) {
+}: DataTableBodyProps<TData>) {
   return (
     <TableBody className={className}>
-      {table.getRowModel().rows?.length ? (
-        table.getRowModel().rows.map((row) => (
-          <TableRow
-            key={row.id}
-            data-state={
-              row.getIsSelected() || (selectedId && row.original["id"] === selectedId)
-                ? "selected"
-                : undefined
-            }
-            onClick={(event) => {
-              table.resetRowSelection();
-              row.toggleSelected(true);
-              onClickRowAction && onClickRowAction(event, row);
-            }}
-            tabIndex={0}
-          >
-            {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id} className={"h-[53px] py-0"}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </TableCell>
-            ))}
-          </TableRow>
-        ))
-      ) : (
-        <TableRow>
-          {/* whitespace-normal: TableCell defaults to nowrap, which plugin-provided
-              empty states would inherit and render as one overflowing line. */}
-          <TableCell colSpan={columns.length} className="h-24 text-center whitespace-normal">
-            <EmptyStateContent
-              {...(queryFilter !== undefined && { queryFilter })}
-              {...(emptyState !== undefined && { emptyState })}
-            />
-          </TableCell>
+      {table.getRowModel().rows.map((row) => (
+        <TableRow
+          key={row.id}
+          data-state={
+            row.getIsSelected() || (selectedId && row.original["id"] === selectedId)
+              ? "selected"
+              : undefined
+          }
+          onClick={(event) => {
+            table.resetRowSelection();
+            row.toggleSelected(true);
+            onClickRowAction && onClickRowAction(event, row);
+          }}
+          tabIndex={0}
+        >
+          {row.getVisibleCells().map((cell) => (
+            <TableCell key={cell.id} className={"h-[53px] py-0"}>
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </TableCell>
+          ))}
         </TableRow>
-      )}
+      ))}
     </TableBody>
   );
 }

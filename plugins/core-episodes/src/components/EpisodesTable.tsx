@@ -322,7 +322,7 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     <Button
       variant="outline"
       size="sm"
-      className="hidden h-8 ml-auto lg:flex"
+      className="h-8 ml-auto"
       onClick={toggleLayout}
     >
       <span className="sr-only">

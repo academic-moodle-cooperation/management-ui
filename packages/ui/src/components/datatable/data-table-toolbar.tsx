@@ -52,7 +52,7 @@ export function DataTableToolbar<TData>({
   };
 
   return (
-    <div className="flex items-center justify-between py-4 gap-2">
+    <div className="flex flex-wrap items-center justify-between py-4 gap-2">
       <div className="flex items-center flex-1 space-x-2">
         <DebouncedInput
           placeholder={t("search")}
