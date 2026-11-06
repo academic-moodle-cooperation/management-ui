@@ -137,6 +137,25 @@ test("the videos table can switch to the gallery on a phone", async ({ page }) =
   await expectNoOverflow(page);
 });
 
+test("the toolbar stays on one line and the pager spans the table", async ({ page }) => {
+  await installMockBackend(page, { events: [makeEvent({ title: "Lecture 1" })] });
+  await page.goto("/management-ui/episodes");
+  const view = page.getByRole("button", { name: /^view$/i });
+  await expect(view).toBeVisible({ timeout: 15_000 });
+  await expectInsideViewport(view);
+
+  const search = (await page.getByPlaceholder(/search/i).boundingBox())!;
+  const reload = (await page.getByRole("button", { name: /reload data/i }).boundingBox())!;
+  expect(Math.abs(reload.y - search.y)).toBeLessThan(4);
+
+  const table = (await page.locator('[data-slot="table-container"]').boundingBox())!;
+  const next = (await page.getByRole("button", { name: /go to next page/i }).boundingBox())!;
+  expect(table.x + table.width - (next.x + next.width)).toBeLessThan(12);
+
+  await view.click();
+  await expectInsideViewport(page.getByRole("menu"));
+});
+
 test("the detail panels fit on the screen", async ({ page }) => {
   const series = makeSeries();
   await installMockBackend(page, {

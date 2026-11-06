@@ -49,7 +49,7 @@ export function DataTablePagination<TData>({
           {totalRows} {t("pagination.rows")} {t("pagination.total")}.
         </div>
       )}
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-3 lg:gap-x-8">
+      <div className="ml-auto flex w-full flex-wrap items-center justify-between gap-x-6 gap-y-3 sm:w-auto lg:gap-x-8">
         <div className="flex items-center space-x-2">
           <p className="hidden whitespace-nowrap text-sm font-normal sm:block">
             {t("pagination.entriesPage")}
@@ -85,7 +85,9 @@ export function DataTablePagination<TData>({
           {/* An empty table has no pages, and `getPageCount()` reports -1 for that. */}
           {t("pagination.of")} {Math.max(table.getPageCount(), 1)}
         </div>
-        <div className="flex items-center space-x-2">
+        {/* `gap`, not `space-x`: that leaves a margin behind the last visible
+            button when the first/last page buttons are hidden. */}
+        <div className="flex items-center gap-2">
           <Button
             variant="outline"
             className="hidden w-8 h-8 p-0 lg:flex"
