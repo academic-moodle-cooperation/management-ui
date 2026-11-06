@@ -18,7 +18,7 @@ const REPO_URL = "https://github.com/academic-moodle-cooperation/management-ui";
 const DefaultFooter: React.FC = () => {
   const { t } = usePluginTranslation(["core-footer"]);
   return (
-    <div className="flex w-full justify-between items-center">
+    <div className="flex w-full flex-wrap justify-between items-center gap-x-4 gap-y-1">
       <span className="text-sm text-muted-foreground">
         Management UI v{APP_VERSION}
         {GIT_COMMIT ? (

@@ -125,7 +125,7 @@ export const CreateSeriesAction = ({ refetch }: CreateSeriesActionProps) => {
         {t("series:seriesTable.createSeries.button")}
       </Button>
 
-      <DialogContent className="max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-h-[85dvh] overflow-y-auto">
         {PickedComponent ? (
           <>
             {!single && (

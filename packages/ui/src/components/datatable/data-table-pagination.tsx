@@ -36,7 +36,7 @@ export function DataTablePagination<TData>({
   const { t } = useI18n();
 
   return (
-    <div className="flex items-center justify-between px-2 py-4">
+    <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 px-2 py-4">
       {/*
         The condition used to be `!totalRows`, which showed the counter only
         when there was nothing to count — and, because this row is
@@ -45,13 +45,15 @@ export function DataTablePagination<TData>({
         total" for genuinely empty tables while showing real counts.
       */}
       {totalRows !== undefined && (
-        <div className="flex-1 text-sm text-muted-foreground">
+        <div className="flex-1 whitespace-nowrap text-sm text-muted-foreground">
           {totalRows} {t("pagination.rows")} {t("pagination.total")}.
         </div>
       )}
-      <div className="flex items-center space-x-6 lg:space-x-8">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3 lg:gap-x-8">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-normal">{t("pagination.entriesPage")}</p>
+          <p className="hidden whitespace-nowrap text-sm font-normal sm:block">
+            {t("pagination.entriesPage")}
+          </p>
           <Select
             value={`${pageSize ? pageSize : table.getState().pagination.pageSize}`}
             onValueChange={(pageSize) => {
@@ -77,10 +79,11 @@ export function DataTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[100px] items-center justify-center text-sm font-normal">
+        <div className="flex min-w-[100px] items-center justify-center whitespace-nowrap text-sm font-normal">
           {t("pagination.page")}{" "}
           {pageIndex !== undefined ? pageIndex + 1 : table.getState().pagination.pageIndex + 1}{" "}
-          {t("pagination.of")} {table.getPageCount()}
+          {/* An empty table has no pages, and `getPageCount()` reports -1 for that. */}
+          {t("pagination.of")} {Math.max(table.getPageCount(), 1)}
         </div>
         <div className="flex items-center space-x-2">
           <Button
