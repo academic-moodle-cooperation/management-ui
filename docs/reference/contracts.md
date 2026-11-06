@@ -153,7 +153,7 @@ What the core promises plugin authors and downstream apps:
   - `config.app.locale: string`
   - `config.app.enabledPlugins: string[]` — flat namespace list; ship filter.
   - `config.plugins[pluginId]` — opaque per-plugin section; plugins own the sub-shape.
-- **Stable runtime switch:** a plugin slice may carry `enabled?: boolean`. The shell loader reads this from the raw slice (before Zod validation) and skips a plugin when it is `=== false`, unless the namespace is previewed in that tab (see [§2](#tab-scoped-previews-and-pauses)).
+- **Stable runtime switch:** a plugin slice may carry `enabled?: boolean`. The shell loader reads this from the raw slice (before Zod validation), looked up by the plugin's namespace, and skips a bundled, JAR or `.local-plugins` plugin when it is `=== false`, unless the namespace is previewed in that tab (see [§2](#tab-scoped-previews-and-pauses)).
 - **Stable layered merge order:** `app:config:defaults` ⊕ (`defaultConfig` ⊕ `config.json`) ⊕ `app:config`. Both the React hook and the sync snapshot apply the same order in dev and prod.
 - **Stable reader surface:** `definePluginConfig({ id, schema, defaults })` from `@oc-mui/query` returns a reader with `{ id, schema, defaults, register, use, read }`. The reader signature is frozen for 1.x.
 
@@ -300,6 +300,7 @@ No contract change is allowed without the changeset - plugins cannot cope with s
 
 ## Changelog
 
+- **2026-11-06:** Bug fix — no contract change. The §4 runtime switch now holds on the JAR and `.local-plugins` paths too, as this document always said: the shell had applied it to bundled plugins only. For that, phase 1 of those paths loads declared config plugins only, which is what [Distribution](../extend/distribution.md) described. §4 now names the lookup key, the namespace. [Architecture](./architecture.md), [Releases & versioning](../contribute/release.md) and [Host upgrades](../extend/host-upgrades.md) no longer call every observable change major: only a breaking one is, as the per-contract rules here already said.
 - **2026-11-06:** Plugin Runtime API bumped to 1.2 (minor), `PLUGIN_API_VERSION` is `"1.2.0"`. New exports for tab-scoped previews and pauses (see [§2](#tab-scoped-previews-and-pauses)), and the object registry builtin gains `registry.getTypes`. Existing plugins are unaffected.
 - **2026-11-05:** Plugin Manifest Contract bumped to 1.2 (minor). Two optional, presentational fields join `icon` and `screenshots`: `tagline` (one-line pitch, ≤ 120 chars) and `accentColor` (any CSS color for the marketplace tile/artwork). They are reserved for marketplace display. The runtime validator type-checks `icon`, `tagline` and `accentColor` as strings when present; no loader behaviour changes.
 - **2026-11-02:** Documentation errata — no contract change. §5 now records the **known drift** between `SHARED_RUNTIME_MAJORS` (still 1 for `@oc-mui/ui`, `@oc-mui/query`, `@oc-mui/ui-config`) and the published 2.x majors of those packages, and tells plugin authors to leave the three names out of `workspaceDependencies` until the table is lifted (a `@oc-mui/plugin-system` major, bundled with the next host major). The `pnpm create-plugin` templates no longer declare `@oc-mui/ui`.
