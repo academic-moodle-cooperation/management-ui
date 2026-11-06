@@ -143,7 +143,7 @@
     },
     "about": {
       "badgeNew": "New",
-      "badgeFrozen": "contracts frozen for the entire 1.x line",
+      "badgeFrozen": "Release notes",
       "lead": "A plugin-first admin interface for Opencast.",
       "tagline": "A thin shell handles routing, auth, and layout. Everything you see — pages, navigation, even the theme — is a plugin you can add, swap, or build yourself.",
       "checks": {
