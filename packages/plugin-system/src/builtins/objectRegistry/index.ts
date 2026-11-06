@@ -38,6 +38,10 @@ export const createObjectRegistryPlugin = (): Plugin => {
         return items;
       });
 
+      // Every type that has (or had) registrations — lets tooling such as the
+      // marketplace walk all extension points without a hardcoded list.
+      manager.addFunction("registry.getTypes", () => Array.from(registryItems.keys()));
+
       // Get a specific object
       manager.addFunction("registry.getObject", (type: string, id: string) => {
         const typeRegistry = registryItems.get(type);
