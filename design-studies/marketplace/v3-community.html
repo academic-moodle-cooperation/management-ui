@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plugin Community — Concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1E1E1E;
+    --bg-raised: #2C2C2C;
+    --bg-hover: #383838;
+    --line: #383838;
+    --line-strong: #4A4A4A;
+    --text: #F5F5F5;
+    --text-soft: #ADADAD;
+    --text-faint: #7D7D7D;
+    --blue: #5AA9FF;
+    --accent: #0C8CE9;
+    --font: "Hanken Grotesk", "Helvetica Neue", sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: var(--font); background: var(--bg); color: var(--text);
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  ::selection { background: rgba(12,140,233,.4); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+
+  /* ---------------- topbar ---------------- */
+  .topbar {
+    height: 56px; border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 40;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(12px);
+  }
+  .topbar-inner {
+    max-width: 1180px; margin: 0 auto; padding: 0 32px;
+    height: 100%; display: flex; align-items: center; gap: 18px;
+  }
+  .logo { display:flex; align-items:center; gap:10px; font-weight: 700; font-size: 15px; }
+  .logo .mk { display:grid; grid-template-columns: 8px 8px; gap: 2px; }
+  .logo .mk i { width:8px; height:8px; border-radius: 2.5px; display:block; }
+  .logo .mk i:nth-child(1){ background:#FF7657; } .logo .mk i:nth-child(2){ background:#5AA9FF; }
+  .logo .mk i:nth-child(3){ background:#7BE07B; } .logo .mk i:nth-child(4){ background:#C89BFF; }
+  .topnav { display:flex; gap: 2px; margin-left: 6px; }
+  .topnav button {
+    font-family: var(--font); font-size: 13.5px; font-weight: 600; color: var(--text-soft);
+    background: none; border: none; cursor: pointer; padding: 7px 13px; border-radius: 8px;
+    transition: all .13s;
+  }
+  .topnav button:hover { color: var(--text); background: var(--bg-raised); }
+  .topnav button.active { color: var(--text); background: var(--bg-hover); }
+  .top-search { margin-left: auto; position: relative; width: 320px; }
+  .top-search svg { position:absolute; left: 12px; top:50%; transform: translateY(-50%); opacity:.5; }
+  .top-search input {
+    width: 100%; height: 36px; background: var(--bg-raised); border: 1px solid transparent;
+    border-radius: 10px; color: var(--text); font-family: var(--font); font-size: 13.5px;
+    padding: 0 14px 0 36px; outline: none; transition: all .15s;
+  }
+  .top-search input::placeholder { color: var(--text-faint); }
+  .top-search input:focus { border-color: var(--accent); background: var(--bg); }
+
+  /* ---------------- hero ---------------- */
+  .hero {
+    position: relative; overflow: hidden;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero::before {
+    content:""; position: absolute; inset: 0;
+    background:
+      radial-gradient(560px 260px at 18% 120%, rgba(255,118,87,.16), transparent 65%),
+      radial-gradient(560px 260px at 82% 120%, rgba(90,169,255,.16), transparent 65%),
+      radial-gradient(400px 220px at 55% -30%, rgba(200,155,255,.13), transparent 65%);
+  }
+  .hero-inner { position: relative; padding: 62px 32px 58px; text-align: center; }
+  .hero h1 {
+    font-size: clamp(24px, 3.4vw, 34px); font-weight: 700; letter-spacing: -0.02em;
+    line-height: 1.25; max-width: 640px; margin: 0 auto;
+  }
+  .hero h1 .c1 { color: #FF9C82; } .hero h1 .c2 { color: #5AA9FF; } .hero h1 .c3 { color: #7BE07B; }
+  .hero p { margin-top: 10px; font-size: 14.5px; color: var(--text-soft); }
+
+  /* ---------------- filter pills ---------------- */
+  .pills { display:flex; gap: 8px; flex-wrap: wrap; padding: 22px 0 6px; }
+  .pillb {
+    display:flex; align-items:center; gap: 8px;
+    font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--text-soft);
+    background: none; border: 1px solid var(--line-strong); border-radius: 10px;
+    padding: 8px 14px; cursor: pointer; transition: all .13s;
+  }
+  .pillb:hover { color: var(--text); background: var(--bg-raised); }
+  .pillb.active { color: var(--text); background: var(--bg-hover); border-color: var(--text-faint); }
+  .pillb .tag {
+    font-size: 10px; font-weight: 700; color: #fff; background: var(--accent);
+    border-radius: 5px; padding: 2px 6px;
+  }
+
+  /* ---------------- sections ---------------- */
+  section { padding-top: 34px; }
+  .sec-h { display:flex; align-items:center; gap: 6px; margin-bottom: 16px; }
+  .sec-h h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+  .sec-h svg { opacity:.5; margin-top: 1px; }
+  .sec-h .right { margin-left:auto; font-size: 13px; color: var(--text-faint); }
+
+  /* list rows (like Figma "Skills") */
+  .rows { display:grid; grid-template-columns: 1fr 1fr; gap: 8px 40px; }
+  @media (max-width: 980px){ .rows { grid-template-columns: 1fr; } }
+  .row {
+    display:grid; grid-template-columns: 44px 1fr auto; gap: 6px 14px;
+    padding: 14px 12px; border-radius: 14px; cursor: pointer; transition: background .13s;
+    animation: fade .35s ease both;
+  }
+  @keyframes fade { from{opacity:0; transform: translateY(5px);} to{opacity:1; transform:none;} }
+  .row:hover { background: var(--bg-raised); }
+  .row .tile {
+    grid-row: 1 / 3; grid-column: 1; width: 44px; height: 44px; border-radius: 11px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
+  }
+  .row-title { font-size: 14.5px; font-weight: 700; display:flex; align-items:center; gap: 6px; }
+  .row-title .vc { width: 13px; height: 13px; color: var(--text-faint); }
+  .row-meta { display:flex; align-items:center; gap: 12px; font-size: 12.5px; color: var(--text-soft); }
+  .avatar {
+    width: 18px; height: 18px; border-radius: 50%; display:inline-flex;
+    align-items:center; justify-content:center;
+    font-size: 9px; font-weight: 800; color: #fff; margin-right: 5px; vertical-align: -4px;
+  }
+  .stat { display:inline-flex; align-items:center; gap: 4px; color: var(--text-faint); }
+  .stat svg { opacity: .8; }
+  .row-desc { grid-column: 2 / 4; font-size: 13px; color: var(--text-soft); line-height: 1.45; }
+  .row-head { grid-row: 1; grid-column: 2; min-width: 0; }
+  .try-btn {
+    grid-row: 1; grid-column: 3; align-self: center;
+    font-family: var(--font); font-size: 12.5px; font-weight: 700;
+    background: var(--bg-hover); color: var(--text); border: 1px solid var(--line-strong);
+    border-radius: 9px; padding: 7px 14px; cursor: pointer; transition: all .13s; white-space: nowrap;
+  }
+  .try-btn:hover { border-color: var(--text-faint); }
+  .try-btn.installed { background: rgba(123,224,123,.14); color: #7BE07B; border-color: transparent; cursor: default; }
+
+  /* media cards */
+  .cards { display:grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  @media (max-width: 1080px){ .cards { grid-template-columns: repeat(2, 1fr); } }
+  .mcard { cursor: pointer; animation: fade .35s ease both; }
+  .thumb {
+    position: relative; aspect-ratio: 16 / 10.5; border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--line); transition: transform .2s cubic-bezier(.22,.8,.34,1), border-color .2s;
+  }
+  .mcard:hover .thumb { transform: translateY(-3px); border-color: var(--line-strong); }
+  .thumb .win {
+    position: absolute; inset: 14% 10% -6% 10%; border-radius: 10px 10px 0 0;
+    background: #FDFDFD; box-shadow: 0 -6px 30px rgba(0,0,0,.3);
+    display: flex; overflow: hidden;
+  }
+  .thumb .win .sb { width: 26%; padding: 8px 7px; display:flex; flex-direction:column; gap: 5px; }
+  .thumb .win .sb i { display:block; height: 6px; border-radius: 3px; background: #E8E8E8; }
+  .thumb .win .sb i:first-child { width: 60%; }
+  .thumb .win .main { flex:1; padding: 8px 9px; display:flex; flex-direction:column; gap: 6px; }
+  .thumb .win .bar-row { display:flex; align-items:flex-end; gap: 4px; flex: 1; padding-top: 4px; }
+  .thumb .win .bar-row i { flex:1; border-radius: 3px 3px 0 0; display:block; }
+  .thumb .win .line { height: 7px; border-radius: 3.5px; background: #ECECEC; }
+  .thumb .win .line.w60 { width: 60%; } .thumb .win .line.w40 { width: 40%; }
+  .thumb .badge-i {
+    position: absolute; top: 10px; left: 10px; width: 30px; height: 30px; border-radius: 8px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 3px 10px rgba(0,0,0,.3), inset 0 0 0 1px rgba(255,255,255,.15);
+  }
+  .badge-i svg { transform: scale(.72); }
+  .mcard-foot { display:flex; align-items:flex-start; gap: 9px; padding: 10px 2px 0; }
+  .mcard-name { font-size: 13.5px; font-weight: 700; display:flex; align-items:center; gap: 5px; }
+  .mcard-name .vc { width: 12px; height: 12px; color: var(--text-faint); }
+  .mcard-sub { font-size: 12px; color: var(--text-faint); margin-top: 2px; display:flex; align-items:center; gap: 10px; }
+  .mcard-foot .get {
+    margin-left:auto; font-family: var(--font); font-size: 12px; font-weight: 700;
+    background: none; border: 1px solid var(--line-strong); color: var(--text);
+    border-radius: 8px; padding: 5px 12px; cursor: pointer; transition: all .13s;
+  }
+  .mcard-foot .get:hover { border-color: var(--text-faint); }
+  .mcard-foot .get.installed { color: #7BE07B; border-color: transparent; background: rgba(123,224,123,.14); cursor: default; }
+
+  .empty { text-align:center; padding: 80px 0; color: var(--text-faint); }
+  .empty b { display:block; font-size: 16px; color: var(--text-soft); margin-bottom: 6px; }
+
+  footer {
+    margin-top: 70px; border-top: 1px solid var(--line); padding: 24px 0 60px;
+    font-size: 12.5px; color: var(--text-faint); display:flex; justify-content:space-between;
+  }
+
+  /* modal */
+  .overlay {
+    position: fixed; inset: 0; z-index: 60; display:none; align-items:flex-start; justify-content:center;
+    background: rgba(0,0,0,.55); backdrop-filter: blur(4px); padding: 7vh 24px; overflow-y:auto;
+  }
+  .overlay.open { display:flex; animation: ovIn .16s ease both; }
+  @keyframes ovIn { from{opacity:0;} to{opacity:1;} }
+  .sheet {
+    width:100%; max-width: 660px; background: var(--bg-raised);
+    border: 1px solid var(--line-strong); border-radius: 16px; overflow:hidden;
+    animation: shIn .26s cubic-bezier(.22,.8,.34,1) both;
+  }
+  @keyframes shIn { from{opacity:0; transform: translateY(16px);} to{opacity:1; transform:none;} }
+  .sheet .thumb { border-radius: 0; border: none; aspect-ratio: 16/7; }
+  .sheet-body { padding: 22px 28px 28px; }
+  .sheet-row1 { display:flex; align-items:flex-start; gap: 14px; }
+  .sheet-row1 h3 { font-size: 20px; font-weight: 800; letter-spacing:-0.01em; display:flex; align-items:center; gap:7px; }
+  .sheet-row1 .vc { width:15px; height:15px; color: var(--text-faint); }
+  .sheet-row1 .sub { font-size: 13px; color: var(--text-soft); margin-top: 3px; }
+  .sheet-cta {
+    margin-left:auto; display:flex; gap: 8px;
+  }
+  .btn {
+    font-family: var(--font); font-size: 13px; font-weight: 700; border-radius: 9px;
+    padding: 9px 18px; cursor:pointer; transition: all .13s; border: 1px solid var(--line-strong);
+    background: none; color: var(--text); white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--text-faint); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color:#fff; }
+  .btn.primary:hover { background: #0A79C9; }
+  .sheet-stats { display:flex; gap: 18px; margin: 16px 0 14px; font-size: 12.5px; color: var(--text-soft); }
+  .sheet-desc { font-size: 13.5px; line-height: 1.6; color: var(--text-soft); }
+  .sheet-desc p+p { margin-top: 9px; }
+  .ext-h { font-size: 11px; font-weight: 700; letter-spacing:.08em; text-transform: uppercase; color: var(--text-faint); margin: 18px 0 8px; }
+  .ext { display:flex; flex-wrap:wrap; gap: 7px; }
+  .ext code { font-size: 11.5px; font-family: ui-monospace, monospace; color: var(--text-soft); background: var(--bg); border:1px solid var(--line); padding: 4px 9px; border-radius: 7px; }
+  .sheet-x {
+    position:absolute; top: 12px; right: 12px; width: 30px; height: 30px; border-radius: 8px;
+    background: rgba(0,0,0,.4); border:none; color:#fff; cursor:pointer; font-size: 14px;
+  }
+  .sheet-x:hover { background: rgba(0,0,0,.6); }
+
+  .toast {
+    position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(70px);
+    background: var(--bg-hover); border: 1px solid var(--line-strong); color: var(--text);
+    font-size: 13px; font-weight: 600; padding: 11px 20px; border-radius: 11px;
+    z-index: 80; opacity: 0; transition: all .28s cubic-bezier(.22,.8,.34,1);
+    display:flex; align-items:center; gap: 9px; box-shadow: 0 14px 40px -10px rgba(0,0,0,.6);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast .dot { width:7px; height:7px; border-radius:50%; background:#7BE07B; }
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="topbar-inner">
+  <div class="logo"><span class="mk"><i></i><i></i><i></i><i></i></span>Community</div>
+  <nav class="topnav">
+    <button class="active" id="tn-explore" onclick="setTab('explore')">Explore</button>
+    <button id="tn-installed" onclick="setTab('installed')">Installed</button>
+  </nav>
+  <div class="top-search">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input id="q" type="text" placeholder="Search Community" oninput="state.q=this.value;render()">
+  </div>
+</div></div>
+
+<div id="view-explore">
+  <div class="hero"><div class="hero-inner">
+    <h1>Discover community-made <span class="c1">plugins</span>,<br><span class="c2">themes</span>, <span class="c3">integrations</span>, and more</h1>
+    <p>Built by organisations like yours. Try anything instantly — installing stays in your hands.</p>
+  </div></div>
+
+  <div class="wrap">
+    <div class="pills" id="pills"></div>
+    <div id="explore-body"></div>
+    <footer>
+      <span>A concept study — mock data, nothing real was installed.</span>
+      <span>Every plugin is sandboxed &amp; open source.</span>
+    </footer>
+  </div>
+</div>
+
+<div id="view-installed" style="display:none">
+  <div class="wrap">
+    <section>
+      <div class="sec-h"><h2>Installed</h2><span class="right" id="inst-count"></span></div>
+      <div class="rows" id="installed-rows"></div>
+      <div class="empty" id="installed-empty" style="display:none"><b>Nothing installed yet.</b>Explore the community and add something useful.</div>
+    </section>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeSheet()">
+  <div class="sheet" id="sheet" style="position:relative"></div>
+</div>
+<div class="toast" id="toastEl"><span class="dot"></span><span id="toastTxt"></span></div>
+
+<script>
+const ICONS = {
+  polls:   `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M6 20V10M12 20V4M18 20v-7"/></svg>`,
+  captions:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 13h4M13 13h4M7 16h7"/></svg>`,
+  chart:   `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 3 6-8"/></svg>`,
+  quiz:    `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M9 9a3 3 0 1 1 4.5 2.6c-.9.5-1.5 1-1.5 2.1"/><circle cx="12" cy="17.5" r="0.6" fill="#fff"/></svg>`,
+  upload:  `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V5M7.5 9.5L12 5l4.5 4.5"/><path d="M4 19h16"/></svg>`,
+  heat:    `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M4 16c1.5-2 2.5-6 4-6s2.5 8 4 8 2.5-12 4-12 2.5 6 4 6"/></svg>`,
+  sync:    `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 8a8 8 0 0 0-14-2M4 16a8 8 0 0 0 14 2"/><path d="M20 3v5h-5M4 21v-5h5"/></svg>`,
+  speech:  `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><path d="M20 20l-4.5-4.5"/></svg>`,
+  clip:    `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="6.5" cy="7" r="2.5"/><circle cx="6.5" cy="17" r="2.5"/><path d="M8.5 8.5L20 19M8.5 15.5L20 5"/></svg>`,
+  slides:  `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="15" height="11" rx="2"/><path d="M3 8v9a3 3 0 0 0 3 3h11"/></svg>`,
+  pen:     `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1z"/></svg>`,
+  hook:    `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M13 2L6 13h5l-1 9 8-12h-5l1-8z" fill="#fff" opacity=".95"/></svg>`,
+  theme:   `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.4-2-.8-1.4.2-3 1.9-3H17a4 4 0 0 0 4-4c0-5-4-9-9-9z"/></svg>`,
+};
+const GRADS = {
+  orange:["#FF8A5C","#D14E1E"], blue:["#5B9CF0","#2760C2"], green:["#67B26F","#2E7D44"],
+  purple:["#A47FF0","#6440C4"], teal:["#4FB8C4","#1F7E8C"], rose:["#F07396","#C43A5E"],
+  amber:["#F0B845","#C4841A"], slate:["#93A1B8","#5A6A85"], indigo:["#7C89E8","#3F4EB8"],
+  mossy:["#A3BC5F","#6A8A2E"], coal:["#7A776E","#45433D"], sky:["#58C0E8","#2286B0"],
+  night:["#3A4166","#181C33"], meadow:["#8FBF63","#557D33"],
+};
+
+const PLUGINS = [
+  { id:"live-polls", name:"Live Polls", author:"Community Guild", verified:true, cat:"Engagement",
+    grad:"orange", icon:"polls", likes:412, users:"4.1k", version:"2.3.0", updated:"Aug 12", license:"MIT",
+    tagline:"Slide-synced live polls your viewers answer from any device.",
+    desc:["Live Polls drops a question layer on top of any live stream. Presenters trigger polls from the control room, viewers answer from whatever device they're on, and results animate in as they arrive.","Poll timelines are stored with the recording, so on-demand viewers see questions at the same moments the live audience did."],
+    ext:["apps:definitions","sidebar:nav-items","player:overlays"], featured:true, thumb:"bars" },
+  { id:"auto-captions", name:"Auto Captions", author:"Access Lab", verified:true, cat:"Accessibility",
+    grad:"blue", icon:"captions", likes:688, users:"6.8k", version:"4.1.2", updated:"Aug 3", license:"Apache-2.0",
+    tagline:"Speech-to-text on every upload — edit, translate, publish.",
+    desc:["Every processed recording gets a caption track automatically. A side-by-side editor lets staff correct the transcript with a keyboard-only flow; one click publishes to the player.","Supports 14 languages, with per-series glossaries for domain vocabulary."],
+    ext:["workflow:handlers","apps:definitions"], featured:true, thumb:"lines" },
+  { id:"viewer-analytics", name:"Viewer Analytics", author:"Metricsmith", verified:true, cat:"Analytics",
+    grad:"purple", icon:"chart", likes:521, users:"5.2k", version:"3.0.1", updated:"Jul 28", license:"MIT",
+    tagline:"Who watched what, and where they stopped. Privacy-first.",
+    desc:["A dashboard that answers the questions people actually ask: which recordings get watched, how far viewers get, when engagement drops off.","All data is aggregated and anonymized on ingestion — no individual viewer tracking, ever."],
+    ext:["apps:definitions","sidebar:nav-items"], featured:true, thumb:"bars" },
+  { id:"quiz-overlays", name:"Quiz Overlays", author:"Community Guild", verified:false, cat:"Engagement",
+    grad:"amber", icon:"quiz", likes:190, users:"1.9k", version:"1.8.0", updated:"Aug 9", license:"MIT",
+    tagline:"In-video checkpoints that pause playback until answered.",
+    desc:["Embed multiple-choice checkpoints at any timestamp. Playback pauses until the viewer answers; results export as CSV per series."],
+    ext:["player:overlays"], thumb:"lines" },
+  { id:"batch-uploader", name:"Batch Uploader", author:"Workflow Co-op", verified:true, cat:"Workflow",
+    grad:"teal", icon:"upload", likes:330, users:"3.3k", version:"2.0.4", updated:"Aug 15", license:"MIT",
+    tagline:"Drop a folder of 40 recordings. Walk away. It's handled.",
+    desc:["Resumable, parallel uploads with per-file metadata templating. Interrupted connections pick up where they left off — even after closing the browser."],
+    ext:["apps:definitions","upload:sources"], thumb:"lines" },
+  { id:"retention-heatmaps", name:"Retention Heatmaps", author:"Metricsmith", verified:true, cat:"Analytics",
+    grad:"rose", icon:"heat", likes:98, users:"980", version:"0.9.2", updated:"Aug 17", license:"MIT",
+    tagline:"See the exact second your audience checks out.",
+    desc:["Renders a heat strip under every recording's timeline showing where viewers rewind, skip, and leave. The rewatch peaks usually mark the hardest material."],
+    ext:["player:overlays","apps:definitions"], isNew:true, featured:true, thumb:"bars" },
+  { id:"lms-sync", name:"LMS Sync", author:"Bridge Works", verified:true, cat:"Integrations",
+    grad:"indigo", icon:"sync", likes:270, users:"2.7k", version:"5.2.0", updated:"Jul 30", license:"Apache-2.0",
+    tagline:"Series appear in your LMS courses automatically.",
+    desc:["Connects series to LMS courses over LTI 1.3. Enrollments drive permissions, and quiz results from compatible plugins flow back to the gradebook."],
+    ext:["workflow:handlers","app:config:defaults"], thumb:"lines" },
+  { id:"speech-search", name:"Speech Search", author:"Access Lab", verified:true, cat:"Accessibility",
+    grad:"sky", icon:"speech", likes:140, users:"1.4k", version:"1.2.1", updated:"Aug 14", license:"MIT",
+    tagline:"Search the spoken word, jump straight to the moment.",
+    desc:["Full-text search across every transcript in your library. Results deep-link to the exact second the phrase is spoken."],
+    ext:["apps:definitions","search:providers"], isNew:true, thumb:"lines" },
+  { id:"clip-editor", name:"Clip Editor", author:"Workflow Co-op", verified:false, cat:"Workflow",
+    grad:"green", icon:"clip", likes:210, users:"2.1k", version:"1.5.3", updated:"Aug 6", license:"MIT",
+    tagline:"Trim, splice and publish highlights without re-encoding.",
+    desc:["A frame-accurate, browser-based cutting room. Cuts are non-destructive edit decision lists — the original recording is never touched."],
+    ext:["apps:definitions"], thumb:"bars" },
+  { id:"slide-detection", name:"Slide Detection", author:"Vision Collective", verified:false, cat:"Workflow",
+    grad:"slate", icon:"slides", likes:41, users:"410", version:"0.4.0", updated:"Aug 19", license:"MIT",
+    tagline:"Finds slide changes and builds chapter markers from them.",
+    desc:["Computer vision over the presentation track detects slide transitions and generates a navigable chapter list — plus OCR'd slide text feeding into search."],
+    ext:["workflow:handlers"], isNew:true, thumb:"lines" },
+  { id:"transcript-editor", name:"Transcript Editor", author:"Access Lab", verified:true, cat:"Accessibility",
+    grad:"coal", icon:"pen", likes:110, users:"1.1k", version:"2.2.0", updated:"Aug 18", license:"Apache-2.0",
+    tagline:"Collaborative caption correction with review workflow.",
+    desc:["Multiple editors, one transcript. Suggestions, approvals, and a review state machine designed for student-assistant workflows."],
+    ext:["apps:definitions"], isNew:true, thumb:"lines" },
+  { id:"webhooks", name:"Webhooks", author:"Bridge Works", verified:true, cat:"Integrations",
+    grad:"mossy", icon:"hook", likes:160, users:"1.6k", version:"3.1.0", updated:"Jul 21", license:"MIT",
+    tagline:"Fire events to any endpoint when recordings change state.",
+    desc:["Processing finished, caption published, series created — subscribe any HTTPS endpoint with signed payloads and automatic retries."],
+    ext:["app:config:defaults"], thumb:"lines" },
+  { id:"theme-midnight", name:"Midnight", author:"Nocturne Studio", verified:true, cat:"Themes",
+    grad:"night", icon:"theme", likes:220, users:"2.2k", version:"1.4.0", updated:"Aug 1", license:"MIT",
+    tagline:"A deep-blue dark theme tuned for control-room lighting.",
+    desc:["Restyles the whole interface for dark environments: dimmed chrome, high-contrast focus states, player controls that don't glow in a dark room."],
+    ext:["app:theme"], isTheme:true, thumb:"bars" },
+  { id:"theme-chalk", name:"Chalkboard", author:"Community Guild", verified:false, cat:"Themes",
+    grad:"green", icon:"theme", likes:89, users:"890", version:"1.1.2", updated:"Jul 19", license:"MIT",
+    tagline:"Muted green-slate look with a warm accent.",
+    desc:["A calm, low-saturation theme meant for long editing sessions."],
+    ext:["app:theme"], isTheme:true, thumb:"lines" },
+  { id:"theme-meadow", name:"Meadow", author:"Nocturne Studio", verified:true, cat:"Themes",
+    grad:"meadow", icon:"theme", likes:64, users:"640", version:"1.0.3", updated:"Aug 8", license:"MIT",
+    tagline:"A light, friendly theme with generous contrast.",
+    desc:["Bright surfaces, soft shadows, a green accent — designed for daylight offices and projector demos."],
+    ext:["app:theme"], isTheme:true, thumb:"bars" },
+  { id:"theme-slate", name:"Slate", author:"Vision Collective", verified:false, cat:"Themes",
+    grad:"slate", icon:"theme", likes:37, users:"370", version:"0.9.0", updated:"Aug 16", license:"MIT",
+    tagline:"Neutral gray theme that gets out of the way.",
+    desc:["Zero-chroma surfaces and a single restrained accent, for orgs that brand via logo only."],
+    ext:["app:theme"], isTheme:true, isNew:true, thumb:"lines" },
+];
+
+const CATS = ["All","Engagement","Accessibility","Analytics","Workflow","Integrations","Themes"];
+const state = { tab:"explore", q:"", cat:"All",
+  installed:new Set(["auto-captions","batch-uploader","theme-midnight"]) };
+
+const $ = id => document.getElementById(id);
+const byId = id => PLUGINS.find(p=>p.id===id);
+const gradCss = k => `background: linear-gradient(135deg, ${GRADS[k][0]}, ${GRADS[k][1]});`;
+const AV_COLORS = {"Community Guild":"#D14E1E","Access Lab":"#2760C2","Metricsmith":"#6440C4","Workflow Co-op":"#1F7E8C","Bridge Works":"#3F4EB8","Vision Collective":"#5A6A85","Nocturne Studio":"#45433D"};
+
+function toast(m){ $("toastTxt").textContent=m; $("toastEl").classList.add("show");
+  clearTimeout(toast._t); toast._t=setTimeout(()=>$("toastEl").classList.remove("show"),2500); }
+function vc(){ return `<svg class="vc" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.8l2.4 2.1 3.2-.3 1 3 2.9 1.4-.7 3.1 2 2.5-2 2.5.7 3.1-2.9 1.4-1 3-3.2-.3-2.4 2.1-2.4-2.1-3.2.3-1-3-2.9-1.4.7-3.1-2-2.5 2-2.5-.7-3.1 2.9-1.4 1-3 3.2.3z" opacity=".3"/><path d="M10.6 15.9l-3-3 1.3-1.3 1.7 1.7 4.5-4.5 1.3 1.3z"/></svg>`; }
+function avatar(a){ const ini=a.split(" ").map(w=>w[0]).slice(0,2).join("");
+  return `<span class="avatar" style="background:${AV_COLORS[a]||"#666"}">${ini}</span>`; }
+const heart = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.8-9A5.6 5.6 0 0 1 12 6.4 5.6 5.6 0 0 1 21.8 12c-2.3 4.4-9.8 9-9.8 9z"/></svg>`;
+const ppl = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="8" r="3.4"/><path d="M3 20c.8-3.2 3.2-5 6-5s5.2 1.8 6 5"/><path d="M16 5.4a3.4 3.4 0 0 1 0 5.9M18.5 20c-.3-1.6-1-2.9-2-3.9" opacity=".7"/></svg>`;
+
+function install(id,ev){ if(ev)ev.stopPropagation();
+  if(state.installed.has(id))return;
+  state.installed.add(id); toast(`${byId(id).name} installed`); render(); }
+function uninstall(id,ev){ if(ev)ev.stopPropagation();
+  state.installed.delete(id); toast(`${byId(id).name} removed`); render(); }
+function tryIt(id,ev){ if(ev)ev.stopPropagation();
+  toast(`${byId(id).name} loaded for this session — try it out`); }
+
+function thumbHtml(p){
+  const [a,b]=GRADS[p.grad];
+  const bars = p.thumb==="bars"
+    ? `<div class="bar-row">${[35,60,45,80,55,70].map(h=>`<i style="height:${h}%;background:${a}"></i>`).join("")}</div>`
+    : `<div class="line" style="background:${a};width:45%"></div><div class="line w60"></div><div class="line w40"></div><div class="line" style="width:70%"></div>`;
+  return `<div class="thumb" style="background:linear-gradient(135deg, ${a}, ${b})">
+    <span class="badge-i" style="${gradCss(p.grad)}">${ICONS[p.icon]}</span>
+    <div class="win">
+      <div class="sb"><i style="background:${a};opacity:.5"></i><i></i><i></i><i></i></div>
+      <div class="main">${bars}</div>
+    </div>
+  </div>`;
+}
+
+function rowHtml(p,i){
+  const inst = state.installed.has(p.id);
+  return `<div class="row" style="animation-delay:${i*0.03}s" onclick="openSheet('${p.id}')">
+    <div class="tile" style="${gradCss(p.grad)}">${ICONS[p.icon]}</div>
+    <div class="row-head">
+      <div class="row-title">${p.name}${p.verified?vc():""}</div>
+      <div class="row-meta">
+        <span>${avatar(p.author)}${p.author}</span>
+        <span class="stat">${heart} ${p.likes}</span>
+        <span class="stat">${ppl} ${p.users}</span>
+      </div>
+    </div>
+    <button class="try-btn ${inst?"installed":""}" onclick="${inst?"event.stopPropagation()":`tryIt('${p.id}', event)`}">${inst?"Installed ✓":"Try it"}</button>
+    <div class="row-desc">${p.tagline}</div>
+  </div>`;
+}
+
+function mcardHtml(p,i){
+  const inst = state.installed.has(p.id);
+  return `<div class="mcard" style="animation-delay:${i*0.04}s" onclick="openSheet('${p.id}')">
+    ${thumbHtml(p)}
+    <div class="mcard-foot">
+      <div>
+        <div class="mcard-name">${p.name}${p.verified?vc():""}</div>
+        <div class="mcard-sub"><span>${avatar(p.author)}${p.author}</span><span class="stat">${heart} ${p.likes}</span><span class="stat">${ppl} ${p.users}</span></div>
+      </div>
+      <button class="get ${inst?"installed":""}" onclick="${inst?"event.stopPropagation()":`install('${p.id}', event)`}">${inst?"✓":"Install"}</button>
+    </div>
+  </div>`;
+}
+
+function matches(p){
+  const q=state.q.trim().toLowerCase();
+  return (!q || (p.name+" "+p.tagline+" "+p.author+" "+p.cat).toLowerCase().includes(q))
+    && (state.cat==="All"||p.cat===state.cat);
+}
+
+function chevron(){ return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`; }
+
+function render(){
+  $("tn-explore").classList.toggle("active", state.tab==="explore");
+  $("tn-installed").classList.toggle("active", state.tab==="installed");
+  $("view-explore").style.display = state.tab==="explore"?"":"none";
+  $("view-installed").style.display = state.tab==="installed"?"":"none";
+
+  $("pills").innerHTML = CATS.map(c=>
+    `<button class="pillb ${state.cat===c?"active":""}" onclick="state.cat='${c}';render()">${c==="Themes"?c+' <span class="tag">New</span>':c}</button>`).join("");
+
+  const filtering = state.q.trim()!=="" || state.cat!=="All";
+  const body = $("explore-body");
+  if(!filtering){
+    const featured = PLUGINS.filter(p=>p.featured);
+    const plugins = PLUGINS.filter(p=>!p.isTheme).slice(0,8);
+    const themes = PLUGINS.filter(p=>p.isTheme);
+    body.innerHTML = `
+      <section>
+        <div class="sec-h"><h2>Featured plugins</h2>${chevron()}<span class="right">Fresh picks, monthly</span></div>
+        <div class="cards">${featured.map(mcardHtml).join("")}</div>
+      </section>
+      <section>
+        <div class="sec-h"><h2>Plugins</h2>${chevron()}</div>
+        <div class="rows">${plugins.map(rowHtml).join("")}</div>
+      </section>
+      <section>
+        <div class="sec-h"><h2>Themes</h2>${chevron()}<span class="right">Restyle the whole interface</span></div>
+        <div class="cards">${themes.map(mcardHtml).join("")}</div>
+      </section>`;
+  } else {
+    const hits = PLUGINS.filter(matches);
+    body.innerHTML = hits.length
+      ? `<section><div class="sec-h"><h2>${state.q.trim()?`Results for “${state.q.trim()}”`:state.cat}</h2><span class="right">${hits.length} result${hits.length===1?"":"s"}</span></div>
+         <div class="rows">${hits.map(rowHtml).join("")}</div></section>`
+      : `<div class="empty"><b>Nothing found.</b>Try a different search — or build it yourself with the plugin SDK.</div>`;
+  }
+
+  const ids=[...state.installed];
+  $("inst-count").textContent = `${ids.length} plugin${ids.length===1?"":"s"}`;
+  $("installed-empty").style.display = ids.length?"none":"";
+  $("installed-rows").innerHTML = ids.map((id,i)=>{
+    const p=byId(id);
+    return `<div class="row" style="animation-delay:${i*0.03}s" onclick="openSheet('${id}')">
+      <div class="tile" style="${gradCss(p.grad)}">${ICONS[p.icon]}</div>
+      <div>
+        <div class="row-title">${p.name}${p.verified?vc():""}</div>
+        <div class="row-meta"><span>${avatar(p.author)}${p.author}</span><span class="stat">v${p.version}</span></div>
+      </div>
+      <button class="try-btn" onclick="uninstall('${id}', event)">Remove</button>
+      <div class="row-desc">${p.tagline}</div>
+    </div>`;}).join("");
+}
+
+function setTab(t){ state.tab=t; render(); window.scrollTo({top:0}); }
+
+function openSheet(id){
+  const p=byId(id), inst=state.installed.has(id);
+  $("sheet").innerHTML = `
+    ${thumbHtml(p)}
+    <button class="sheet-x" onclick="closeSheet()">✕</button>
+    <div class="sheet-body">
+      <div class="sheet-row1">
+        <div>
+          <h3>${p.name}${p.verified?vc():""}</h3>
+          <div class="sub">${avatar(p.author)}${p.author} · ${p.cat} · v${p.version}</div>
+        </div>
+        <div class="sheet-cta">
+          ${inst
+            ? `<button class="btn" onclick="uninstall('${p.id}');closeSheet()">Remove</button><button class="btn primary" style="opacity:.6;cursor:default">Installed ✓</button>`
+            : `<button class="btn" onclick="tryIt('${p.id}')">Try it</button><button class="btn primary" onclick="install('${p.id}');closeSheet()">Install</button>`}
+        </div>
+      </div>
+      <div class="sheet-stats">
+        <span class="stat">${heart} ${p.likes} likes</span>
+        <span class="stat">${ppl} ${p.users} installs</span>
+        <span class="stat">Updated ${p.updated}</span>
+        <span class="stat">${p.license}</span>
+      </div>
+      <div class="sheet-desc">${p.desc.map(d=>`<p>${d}</p>`).join("")}</div>
+      <div class="ext-h">Extends</div>
+      <div class="ext">${p.ext.map(e=>`<code>${e}</code>`).join("")}</div>
+    </div>`;
+  $("overlay").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+function closeSheet(){ $("overlay").classList.remove("open"); document.body.style.overflow=""; }
+document.addEventListener("keydown",e=>{ if(e.key==="Escape")closeSheet(); });
+
+render();
+</script>
+</body>
+</html>
