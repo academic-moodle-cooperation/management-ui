@@ -334,9 +334,11 @@ exports (this PR).
 Opt-in remote loading (PR #225) neutralised the default-on risk; these harden the
 feature for deployments that enable it.
 
-- **Integrity: SRI / signature verification** of fetched plugin (and theme) code.
-  The domain allowlist authenticates the *host*, not the code's author (a shared
-  CDN serves anyone), so it is necessary-but-not-sufficient. See
+- **Integrity:** the loader's `integrity` option checks a fetched bundle against a
+  pinned hash, but a caller has to pass one. Still open: signature verification,
+  and theme CSS, which no hash covers. The domain allowlist authenticates the
+  *host*, not the code's author (a shared CDN serves anyone), so it is
+  necessary-but-not-sufficient. See
   `packages/remote-plugin-loader/src/loadAndRegister.ts`.
 - **Namespace enforcement** so a loaded remote plugin can only register under its
   own declared namespace (can't hijack another plugin's routes/extension points).

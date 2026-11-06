@@ -306,6 +306,11 @@ field is present in the raw slice, and the shell loader reads the raw
 slice (not the validated output) when it decides whether to skip the
 plugin.
 
+One browser tab can deviate from both switches without any config change:
+a *preview* treats a present but disabled namespace as enabled, a *pause*
+skips an enabled one. Both last as long as the tab; see
+[Tab-scoped previews and pauses](./contracts.md#tab-scoped-previews-and-pauses).
+
 ## Loading phases
 
 `PluginInitializer` (`apps/shell/src/components/PluginInitializer.tsx`)
@@ -317,9 +322,10 @@ runs this sequence:
 3. Register the config plugins (`<ns>:config`) first so they can
    contribute both defaults and overlays before anything else runs.
 4. Compute the merged config snapshot.
-5. Register the rest of the static plugins, applying the
-   `enabledPlugins` ship filter and the per-slice `enabled` runtime
-   switch in that order.
+5. Read the tab's previews and pauses, then register the rest of the
+   static plugins: a pause skips the plugin, otherwise a local override
+   decides, otherwise the `enabledPlugins` ship filter and the per-slice
+   `enabled` runtime switch apply in that order (a preview passes both).
 6. Load JAR plugins in two phases: (1) matches the pre-merge filter,
    (2) re-merges the config (because the JAR config plugin may have
    contributed more namespaces) and loads the rest.
