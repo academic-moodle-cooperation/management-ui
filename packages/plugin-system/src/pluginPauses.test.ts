@@ -16,18 +16,18 @@ describe("plugin pauses (tab-scoped)", () => {
 
   it("round-trips a deduplicated list and clears the key when empty", () => {
     expect(readPluginPauses()).toEqual([]);
-    addPluginPause("univie");
-    addPluginPause("univie");
-    addPluginPause("tuwien-theme");
-    expect(readPluginPauses()).toEqual(["univie", "tuwien-theme"]);
-    removePluginPause("univie");
-    expect(readPluginPauses()).toEqual(["tuwien-theme"]);
+    addPluginPause("acme");
+    addPluginPause("acme");
+    addPluginPause("other-org-theme");
+    expect(readPluginPauses()).toEqual(["acme", "other-org-theme"]);
+    removePluginPause("acme");
+    expect(readPluginPauses()).toEqual(["other-org-theme"]);
     writePluginPauses([]);
     expect(sessionStorage.getItem(PLUGIN_PAUSES_STORAGE_KEY)).toBeNull();
   });
 
   it("keeps pauses and previews apart", () => {
-    addPluginPause("univie");
+    addPluginPause("acme");
     expect(readPluginPreviews()).toEqual([]);
     expect(sessionStorage.getItem(PLUGIN_PREVIEWS_STORAGE_KEY)).toBeNull();
   });

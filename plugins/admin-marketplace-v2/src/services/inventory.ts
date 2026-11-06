@@ -60,7 +60,7 @@ export interface InventoryItem {
   browserInstallIds?: string[];
   /**
    * Set when this namespace is registered by a module of another deployed
-   * plugin (e.g. `univie-support` from the `univie` JAR): it is switched on
+   * plugin (e.g. `acme-support` from the `acme` JAR): it is switched on
    * and off with that parent's namespace, not on its own.
    */
   moduleOf?: string;

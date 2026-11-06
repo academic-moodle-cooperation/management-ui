@@ -24,7 +24,7 @@ describe("exclusiveSlots", () => {
 
 describe("findConflicts", () => {
   const inventory = [
-    item({ namespace: "univie", displayName: "Univie", types: ["app", "sidebar", "footer", "landing-page"] }),
+    item({ namespace: "acme", displayName: "Acme", types: ["app", "sidebar", "footer", "landing-page"] }),
     item({ namespace: "core", origin: "builtin", types: ["header", "footer", "sidebar"] }),
     item({ namespace: "episodes", origin: "builtin", types: ["app"] }),
     item({ namespace: "off", types: ["footer"], status: "disabled" }),
@@ -33,16 +33,16 @@ describe("findConflicts", () => {
 
   it("reports active plugins sharing an exclusive slot, naming the slots", () => {
     const conflicts = findConflicts(
-      { namespace: "tuwien", types: ["app", "footer", "header", "landing-page", "sidebar"] },
+      { namespace: "other-org", types: ["app", "footer", "header", "landing-page", "sidebar"] },
       inventory,
     );
     expect(conflicts).toEqual([
-      { namespace: "univie", displayName: "Univie", slots: ["footer", "landing page", "sidebar"] },
+      { namespace: "acme", displayName: "Acme", slots: ["footer", "landing page", "sidebar"] },
     ]);
   });
 
   it("ignores defaults, the shell, disabled plugins, and the candidate itself", () => {
-    expect(findConflicts({ namespace: "univie", types: ["footer"] }, inventory)).toEqual([]);
+    expect(findConflicts({ namespace: "acme", types: ["footer"] }, inventory)).toEqual([]);
     expect(findConflicts({ namespace: "x", types: ["header"] }, inventory)).toEqual([]);
   });
 
