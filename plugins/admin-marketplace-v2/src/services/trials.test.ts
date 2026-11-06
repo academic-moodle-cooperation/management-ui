@@ -10,17 +10,17 @@ describe("getTrials", () => {
     sessionStorage.setItem(
       "mui.marketplace-v2.trials",
       JSON.stringify([
-        { kind: "local", id: "tuwien", name: "Tuwien", version: "", startedAt: "2026-11-05T14:48:36.173Z" },
+        { kind: "local", id: "other-org", name: "Other Org", version: "", startedAt: "2026-11-05T14:48:36.173Z" },
         { id: "legacy", name: "Legacy", version: "1.0.0", url: "https://x/y.mjs", startedAt: "2026-11-05T14:48:36.173Z" },
         { id: "broken", name: "Broken" },
       ]),
     );
     const trials = getTrials();
     expect(trials.map((t) => [t.id, t.kind])).toEqual([
-      ["tuwien", "local"],
+      ["other-org", "local"],
       ["legacy", "remote"],
     ]);
-    expect(isTrialActive("tuwien")).toBe(true);
+    expect(isTrialActive("other-org")).toBe(true);
     expect(isTrialActive("broken")).toBe(false);
   });
 
