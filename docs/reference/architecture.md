@@ -54,14 +54,14 @@ The shell at `apps/shell/` is the only entry point. It boots `@oc-mui/plugin-sys
 
 The plugin runtime is split into six orthogonal contracts, all versioned independently. Frozen surfaces and the authoritative version numbers are listed in [Contracts](./contracts.md):
 
-| Contract | Frozen at | What it specifies |
-|----------|-----------|-------------------|
-| Manifest | 1.1 | The fields in `plugin.json` |
-| Runtime API | 1.1 | The `createPlugin`/`PluginManager` surface |
-| Theme | 2.1 | Semantic CSS tokens, layer order |
-| Config | 1.0 | The `AppConfig` layer model + `definePluginConfig` reader |
-| Shared Runtime Dependencies | 1.0 | Which packages the host provides to plugins, at which majors |
-| GraphQL Operation Naming | 1.0 | Namespace-prefixed operation and fragment names |
+| Contract | What it specifies |
+|----------|-------------------|
+| Manifest | The fields in `plugin.json` |
+| Runtime API | The `createPlugin`/`PluginManager` surface |
+| Theme | Semantic CSS tokens, layer order |
+| Config | The `AppConfig` layer model + `definePluginConfig` reader |
+| Shared Runtime Dependencies | Which packages the host provides to plugins, at which majors |
+| GraphQL Operation Naming | Namespace-prefixed operation and fragment names |
 
 Any change observable to a plugin author through one of these contracts is **always major** for the affected package, even if Semver alone would say otherwise.
 
@@ -70,7 +70,7 @@ Any change observable to a plugin author through one of these contracts is **alw
 The shell loads plugins in two phases to handle the chicken-and-egg of config-driven enablement:
 
 1. **Phase 1: load `*:config` plugins.** They register `app:config` slices that include `app.enabledPlugins`.
-2. **Phase 2: merge config and load the rest.** Merge order: `app:config:defaults` ⊕ base config ⊕ `app:config`. The merged `app.enabledPlugins` (ship filter) plus per-slice `config.plugins[id].enabled` (runtime switch) decide which remaining plugins activate.
+2. **Phase 2: merge config and load the rest.** Merge order: `app:config:defaults` ⊕ base config ⊕ `app:config`. The merged `app.enabledPlugins` (ship filter) plus per-slice `config.plugins[id].enabled` (runtime switch) decide which remaining plugins activate. A single tab can deviate through a [preview or pause](./contracts.md#tab-scoped-previews-and-pauses).
 
 Full model: [Configuration model](./configuration.md).
 

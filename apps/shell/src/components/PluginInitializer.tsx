@@ -282,6 +282,12 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           if (plugin && plugin.name) {
             const [pluginNamespace] = plugin.name.split(":");
 
+            // A tab-scoped pause wins over everything below, a local override included.
+            if (pluginNamespace && pausedNamespaces.has(pluginNamespace)) {
+              logger.info(`PluginInitializer: Skipping "${plugin.name}" - paused in this tab`);
+              continue;
+            }
+
             // Check for localStorage override first
             const override = overrides.overrides[plugin.name];
 
@@ -409,12 +415,9 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
             };
 
             const enabled1 = getEnabledPluginNamespaces(config);
-            const toLoad1 =
-              enabled1.size === 0
-                ? jarPluginsToConsider
-                : jarPluginsToConsider.filter((entry) =>
-                    matchesEnabledNamespace(entry, enabled1),
-                  );
+            const toLoad1 = jarPluginsToConsider.filter((entry) =>
+              matchesEnabledNamespace(entry, enabled1),
+            );
             await loadBatch(toLoad1, 1);
 
             const mergedJarConfig = getAppConfigSync(manager, config);
@@ -482,10 +485,9 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
 
             // Phase 1: load entries that match current config (e.g. .local-plugins/config/)
             const enabled1 = getEnabledPluginNamespaces(config);
-            const toLoad1 =
-              enabled1.size === 0
-                ? localManifest
-                : localManifest.filter((entry) => matchesEnabledNamespace(entry, enabled1));
+            const toLoad1 = localManifest.filter((entry) =>
+              matchesEnabledNamespace(entry, enabled1),
+            );
             if (toLoad1.length > 0) {
               registerPluginLocales(toLoad1);
               logger.info("PluginInitializer: Loading .local-plugins (phase 1)", {

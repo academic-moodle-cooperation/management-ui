@@ -16,8 +16,8 @@ describe("plugin previews (sessionStorage contract)", () => {
   });
 
   it("round-trips, deduplicates, and drops empty names", () => {
-    writePluginPreviews(["support-ui", "reports", "support-ui", ""]);
-    expect(readPluginPreviews()).toEqual(["support-ui", "reports"]);
+    writePluginPreviews(["acme-support", "reports", "acme-support", ""]);
+    expect(readPluginPreviews()).toEqual(["acme-support", "reports"]);
   });
 
   it("adds and removes single namespaces", () => {
