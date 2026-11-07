@@ -83,7 +83,7 @@ const Dropzone: FC<DropzoneProps> = ({
     // wrapper's classes were dropped via the old asChild/Fragment, the Card sat
     // directly in the full-width column, so the dropzone stayed wide.)
     <Container className="flex flex-col items-center justify-center w-full">
-      <Card className="py-0 w-2/3">
+      <Card className="py-0 w-full sm:w-2/3">
         <Label
           htmlFor="dropzone-file"
           className={cn(

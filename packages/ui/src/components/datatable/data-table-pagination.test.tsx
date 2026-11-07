@@ -52,3 +52,14 @@ describe("DataTablePagination row counter", () => {
     expect(counter()).toBeNull();
   });
 });
+
+describe("DataTablePagination page count", () => {
+  it("shows one page for an empty table, whose page count is -1", () => {
+    const table = { ...(tableStub(0) as object), getPageCount: () => -1 } as never;
+    render(<DataTablePagination table={table} totalRows={0} />);
+
+    expect(screen.getByText(/pagination\.of/).textContent).toBe(
+      "pagination.page 1 pagination.of 1",
+    );
+  });
+});
