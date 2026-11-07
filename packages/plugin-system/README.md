@@ -43,7 +43,7 @@ The full plugin-authoring walkthrough lives at [`docs/extend/plugin-guide.md`](.
 | `fragmentRegistry`, `FragmentRegistryService` | GraphQL fragment registry used by `@oc-mui/query`. |
 | `checkApiVersionCompatibility(required, host?)`, `parseSemver(input)`, `PLUGIN_API_VERSION` | Runtime checks for the host-vs-plugin API version handshake. |
 | `SHARED_RUNTIME_MAJORS`, `checkSharedDependencyCompatibility(deps, hostMajors?)`, `parseRangeMajor(range)` | The Shared Runtime Dependencies contract: which majors of `react`, `@oc-mui/*`, … the host provides, and the check a remote plugin's declared ranges run through before load. |
-| `validatePluginMetadata(json)` | Zod-backed runtime validation against the manifest schema. |
+| `validatePluginMetadata(json)` | Hand-written runtime check of a parsed `plugin.json`: required fields, core field types, and the `id`, `version` and `namespace` patterns. It enforces the key constraints of [`plugin.schema.json`](./src/schemas/plugin.schema.json), not the full schema. |
 | `readPluginPreviews()`, `writePluginPreviews(ns[])`, `addPluginPreview(ns)`, `removePluginPreview(ns)` | Tab-scoped previews: namespaces the host treats as enabled in this browser tab only. |
 | `readPluginPauses()`, `writePluginPauses(ns[])`, `addPluginPause(ns)`, `removePluginPause(ns)` | Tab-scoped pauses: enabled namespaces the host skips in this browser tab only. See [the contract](../../docs/reference/contracts.md#tab-scoped-previews-and-pauses). |
 
