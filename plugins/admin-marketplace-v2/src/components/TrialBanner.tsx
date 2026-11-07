@@ -1,5 +1,6 @@
 import { FlaskConical, Palette, PauseCircle, XCircle } from "lucide-react";
 
+import { useI18n } from "@oc-mui/i18n";
 import { Button } from "@oc-mui/ui/components";
 
 import { endThemePreview, type ThemePreview } from "../services/themePreview";
@@ -20,21 +21,24 @@ interface TrialBannerProps {
  * trial can be understood and ended instead of silently doing nothing.
  */
 const TrialBanner: FC<TrialBannerProps> = ({ trials, errors, themePreview }) => {
+  const { t } = useI18n();
   if (trials.length === 0 && !themePreview) return null;
   const parts = [
-    trials.length === 1 ? "1 plugin" : trials.length > 1 ? `${trials.length} plugins` : null,
-    themePreview ? "1 theme" : null,
+    trials.length > 0 ? t("marketplace:banner.plugins", { count: trials.length }) : null,
+    themePreview ? t("marketplace:banner.theme") : null,
   ].filter(Boolean);
 
   return (
     <div className="rounded-xl border border-warning/40 bg-warning/10 px-4 py-3">
       <div className="flex items-center gap-2.5">
         <FlaskConical className="size-4 shrink-0 text-warning" />
-        <span className="text-sm font-semibold">{parts.join(" + ")} loaded for this tab only</span>
-        <span className="text-xs text-muted-foreground">— gone when the tab closes</span>
+        <span className="text-sm font-semibold">
+          {t("marketplace:banner.loaded", { what: parts.join(t("marketplace:banner.join")) })}
+        </span>
+        <span className="text-xs text-muted-foreground">{t("marketplace:banner.gone")}</span>
         {trials.length > 1 && (
           <Button variant="ghost" size="sm" className="ml-auto" onClick={endAllTrials}>
-            End all trials
+            {t("marketplace:actions.endAllTrials")}
           </Button>
         )}
       </div>
@@ -43,9 +47,9 @@ const TrialBanner: FC<TrialBannerProps> = ({ trials, errors, themePreview }) => 
           <li className="flex items-center gap-2 text-sm">
             <Palette className="size-3.5 shrink-0 text-warning" />
             <span className="font-medium">{themePreview.name}</span>
-            <span className="text-xs text-muted-foreground">theme · applied in this tab</span>
+            <span className="text-xs text-muted-foreground">{t("marketplace:banner.themeApplied")}</span>
             <Button variant="outline" size="sm" className="ml-auto h-7 px-2.5 text-xs" onClick={endThemePreview}>
-              End preview
+              {t("marketplace:actions.endPreview")}
             </Button>
           </li>
         )}
@@ -63,14 +67,17 @@ const TrialBanner: FC<TrialBannerProps> = ({ trials, errors, themePreview }) => 
                 <span className="font-mono text-xs text-muted-foreground">v{trial.version}</span>
               )}
               <span className="text-xs text-muted-foreground">
-                {trial.kind === "local" ? "deployed here · previewing" : "from registry"}
+                {trial.kind === "local"
+                  ? t("marketplace:banner.deployedPreviewing")
+                  : t("marketplace:banner.fromRegistry")}
               </span>
               {trial.paused && trial.paused.length > 0 && (
                 <span
                   className="flex items-center gap-1 rounded-md bg-warning/15 px-1.5 py-0.5 text-[10.5px] font-semibold text-warning"
-                  title="Paused in this tab for this trial; End trial brings it back"
+                  title={t("marketplace:banner.pausingHint")}
                 >
-                  <PauseCircle className="size-3" /> pausing {trial.paused.join(", ")}
+                  <PauseCircle className="size-3" />{" "}
+                  {t("marketplace:banner.pausing", { names: trial.paused.join(", ") })}
                 </span>
               )}
               {error && (
@@ -84,7 +91,7 @@ const TrialBanner: FC<TrialBannerProps> = ({ trials, errors, themePreview }) => 
                 className="ml-auto h-7 px-2.5 text-xs"
                 onClick={() => endTrial(trial.id)}
               >
-                End trial
+                {t("marketplace:actions.endTrial")}
               </Button>
             </li>
           );
