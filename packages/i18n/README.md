@@ -67,7 +67,7 @@ The language switcher calls `setUserLanguage(...)`, which records the choice und
 
 Precedence: user choice → `app.locale` → browser detection → `en`.
 
-The shell ships a base set of locales (`packages/i18n/src/locales/`) for `common`, `episodes`, `series`, `upload`, etc. Plugins ship their own under `<plugin>/locales/<namespace>/<lng>.json`.
+The shell ships a base set of locales (`packages/i18n/src/locales/`) for `common`, `episodes`, `series`, `upload`, `marketplace`, etc. Plugins ship their own under `<plugin>/locales/<namespace>/<lng>.json`.
 
 ## Layer
 

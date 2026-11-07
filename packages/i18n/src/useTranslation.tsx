@@ -36,7 +36,7 @@ i18n
   .init({
     partialBundledLanguages: true,
     fallbackLng: "en",
-    ns: ["common", "series", "episodes", "upload"], // Split namespaces for better organization
+    ns: ["common", "series", "episodes", "upload", "marketplace"], // Split namespaces for better organization
     defaultNS: "common",
     backend: {
       loadPath: (lngs: string | string[], namespaces: string | string[]) => {
