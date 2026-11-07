@@ -14,10 +14,10 @@ const isPlugin = (module: unknown): module is Plugin =>
 /**
  * Return the set of plugin namespaces that are enabled in config.
  *
- * The flat `app.enabledPlugins` list is the single gate for whether a
- * namespace (bundled or .local-plugins folder name) may load at all.
- * Finer-grained deactivation belongs on each plugin's own config slice
- * via `config.plugins[<id>].enabled === false`.
+ * The flat `app.enabledPlugins` list is the ship filter for whether a
+ * namespace (bundled, JAR, or .local-plugins folder name) may load at all.
+ * `config.plugins[<namespace>].enabled === false` switches a namespace off
+ * without touching the list.
  *
  * Returning an empty set means "no filter" and keeps the dev workflow
  * of an empty/absent config working: everything the shell can see loads.
@@ -30,14 +30,14 @@ export function getEnabledPluginNamespaces(config?: AppConfig): Set<string> {
 
 /**
  * Runtime switch per plugin slice: a plugin can be disabled without
- * touching `enabledPlugins` by setting `config.plugins[id].enabled: false`.
+ * touching `enabledPlugins` by setting `config.plugins[<namespace>].enabled: false`.
  * Missing or non-object slices default to enabled.
  */
 export function isPluginEnabledAtRuntime(
   config: AppConfig | undefined,
-  pluginId: string,
+  namespace: string,
 ): boolean {
-  const slice = config?.plugins?.[pluginId];
+  const slice = config?.plugins?.[namespace];
   if (!slice || typeof slice !== "object") return true;
   const enabled = (slice as { enabled?: unknown }).enabled;
   return enabled !== false;

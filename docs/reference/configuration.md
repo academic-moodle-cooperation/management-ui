@@ -4,7 +4,7 @@
 
 **Status:** Canonical. Supersedes the deleted `docs/CONFIG_ORDER.md` and
 `docs/CONFIG_GENERATION.md`.
-**Last updated:** 2026-08-12.
+**Last updated:** 2026-11-06.
 **Stability:** The layer model and the `definePluginConfig` API are
 stable for the 1.x host. Plugin-side slice shapes are owned by each
 plugin; see that plugin's `src/config.ts` for the Zod schema it commits
@@ -308,8 +308,8 @@ The two switches do different things on purpose:
 | | `app.enabledPlugins: string[]` | `config.plugins[id].enabled?: boolean` |
 |-|-|-|
 | **What it gates** | Whether a plugin namespace is allowed to load at all. | Whether an already-enabled plugin actually runs this request. |
-| **When it's evaluated** | Before the plugin is registered with the manager. | Before the plugin is registered, after the base + overlay merge. |
-| **Granularity** | One entry per namespace (e.g. `core`, `admin`, `episodes`). | Per plugin slice (`config.plugins.episodes.enabled = false`). |
+| **When it's evaluated** | Before the plugin is registered with the manager; for JAR and local plugins, before the bundle is fetched. | The same, after the base + overlay merge. |
+| **Granularity** | One entry per namespace (e.g. `core`, `admin`, `episodes`). | One namespace too, so all modules of a multi-module JAR go together (`config.plugins.episodes.enabled = false`). |
 | **How to change it** | Edit `config.json` / a config plugin. Requires a reload. | Same — but doesn't require touching the namespace list. |
 | **Default** | `["core", "episodes", "series", "upload", "admin", "config"]` — OSS core + marketplace + local-config hook. | Missing = enabled. Only `=== false` deactivates. |
 
@@ -321,7 +321,7 @@ Typical usage:
   `config.plugins.series.enabled = false` in the deployed
   `config.json`. Shell ships the same bundle, skips that plugin at
   load time.
-- **An org ships extra plugins:** their `.local-plugins/<org>/` config
+- **An org ships extra plugins:** their `.local-plugins/config/`
   plugin extends `enabledPlugins` (e.g. `[...default, "my-org"]`) and
   the namespace becomes available for loading.
 
@@ -330,6 +330,16 @@ Zod's default `.strip()` behaviour keeps validation passing when the
 field is present in the raw slice, and the shell loader reads the raw
 slice (not the validated output) when it decides whether to skip the
 plugin.
+
+Both switches apply to bundled plugins other than `<ns>:config`, and to
+JAR and `.local-plugins` entries. Plugins installed through the
+marketplace are not gated. The loader looks the slice up by **namespace**, the
+same unit `enabledPlugins` lists, so `[id]` means the namespace here.
+Where a plugin's `id` differs, the switch is not in the slice the plugin
+reads its settings from: the bundled marketplace has the id
+`admin-marketplace` and the namespace `admin`, so it is switched off
+with `config.plugins.admin.enabled`. A JAR or local entry without a
+namespace has no slice to read and loads.
 
 One browser tab can deviate from both switches without any config change:
 a *preview* treats a present but disabled namespace as enabled, a *pause*
@@ -351,16 +361,29 @@ runs this sequence:
    static plugins: a pause skips the plugin, otherwise a local override
    decides, otherwise the `enabledPlugins` ship filter and the per-slice
    `enabled` runtime switch apply in that order (a preview passes both).
-6. Load JAR plugins in two phases: (1) matches the pre-merge filter,
-   (2) re-merges the config (because the JAR config plugin may have
-   contributed more namespaces) and loads the rest.
+6. Load JAR plugins in two phases. Phase 1 takes only the config
+   plugins that pass the pre-merge filter: entries with `type: config`,
+   or in the `config` namespace. Phase 2 re-merges the config, which is
+   complete only now, and loads the rest that pass both switches (a
+   preview passes them, a pause skips the entry). It repeats until a
+   pass adds nothing, in case a plugin that did not declare itself as
+   config contributed more namespaces.
 7. Load `.local-plugins/` manifest entries the same way — two phases
    so `.local-plugins/config/` can inject org namespaces before
-   org-specific plugins are considered.
+   org-specific plugins are considered. This runs after the JAR phases,
+   so what a local config plugin contributes reaches no JAR plugin.
 8. Mark the manager as ready.
 
 Both phase-2 passes use the same layered merge as the hook, so the
 view the loader sees and the view React sees are identical.
+
+Among JAR and local plugins, only a declared config plugin is sure to
+reach the gates in time: a switch contributed by any other plugin comes
+too late for the entries loaded alongside it. Config plugins themselves
+are checked in phase 1 against the config known so far, so within one
+path's phase 1 one cannot switch off another. Bundled plugins are gated
+before any JAR or local plugin runs, so only `config.json` or a bundled
+config plugin can switch them.
 
 ## `config.json` — where it comes from
 
@@ -402,9 +425,9 @@ Opencast config path.
 - **`app.pluginNamespace` → `app.enabledPlugins`** (Phase 2b Commit 5).
   The field is a flat `string[]` now — the object-form entries
   (`{ <ns>: { types: […] } }`) were never used by any first-party
-  plugin and are gone. If you need to deactivate a specific module
-  without removing its namespace, use `config.plugins[<id>].enabled =
-  false` instead.
+  plugin and are gone. To switch a whole namespace off without
+  removing it from the list, use `config.plugins[<namespace>].enabled =
+  false` instead. Neither config switch can single out one module.
 - **`config.plugins["management-ui-series" | "management-ui-episodes"
   | "management-ui-upload"]` → `config.plugins.series` / `.episodes`
   / `.upload`** (Phase 2b Commit 2). The same slice shapes apply; only
