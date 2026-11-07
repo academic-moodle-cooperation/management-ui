@@ -4,7 +4,7 @@ For everyone grouping recordings. Afterwards you'll have created a series, edite
 
 A series is the container a recording lives in — a course, a lecture series, a project. Every upload needs one.
 
-![The Series screen: the Create series button in the toolbar and a Videos count in each row.](/screenshots/series-list-light.png)
+![The Series screen: the Create series button beside the heading and a Videos count in each row.](/screenshots/series-list-light.png)
 
 ## Browse
 
@@ -14,10 +14,11 @@ The number under **Videos** is a link: it opens the video list limited to that s
 
 ## Create a series
 
-1. Click **Create series** at the right of the toolbar.
-2. **Create new series** opens. Fill in **Title** — the only required field, marked with `*`.
-3. Optionally add Description, Language, License, Contributors, Organizer, Publisher, Subject, and Rightsholder. The multi-value boxes take several entries, separated by commas or new lines.
-4. Click **Create**. **Series created** confirms it; **Failed to create series** means nothing was saved.
+1. Click **Create series** next to the **Series** heading. The same button is offered when your list is still empty.
+2. **Create new series** opens. If your deployment offers several kinds of series, **New series** first asks which kind you want; pick one, and **Back** returns to that choice.
+3. In the standard form, fill in **Title** — the only required field, marked with `*`.
+4. Optionally add Description, Language, License, Contributors, Organizer, Publisher, Subject, and Rightsholder. The multi-value boxes take several entries, separated by commas or new lines.
+5. Click **Create**. **Series created** confirms it; **Failed to create series** means nothing was saved.
 
 Which optional fields appear depends on what your Opencast accepts, so your dialog may be shorter than the list above.
 

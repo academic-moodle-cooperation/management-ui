@@ -1,12 +1,11 @@
-import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { useI18n } from "@oc-mui/i18n";
+import type { CreateSeriesVariantProps } from "@oc-mui/plugin-core";
 import { ComponentResolver } from "@oc-mui/plugin-system";
 import {
   useMuiCreateSeriesMutation,
   useMuiGetAllManagedAclsQuery,
-  useQueryClient,
   useMuiUserQuery,
   useAcceptedInputFields,
   pickAcceptedFields,
@@ -16,8 +15,6 @@ import {
 } from "@oc-mui/query";
 import {
   Button,
-  Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -33,10 +30,6 @@ import {
   Textarea,
   toast,
 } from "@oc-mui/ui/components";
-
-interface CreateSeriesToolbarActionProps {
-  refetch?: () => void;
-}
 
 interface CreateSeriesFormState {
   title: string;
@@ -196,9 +189,18 @@ const buildMetadataInput = (formState: CreateSeriesFormState): CommonSeriesMetad
 
 type ManagedAclItem = NonNullable<MuiGetAllManagedAclsQuery["managedAcls"]["nodes"][number]>;
 
-export const CreateSeriesToolbarAction = ({ refetch }: CreateSeriesToolbarActionProps) => {
+/**
+ * The plain metadata form over `CommonSeriesMetadataInput` — the variant
+ * `default` on `series:create-series:variants`. Renders the dialog body and
+ * footer; the dialog frame, chooser and close-after-create live in
+ * {@link CreateSeriesAction}.
+ */
+export const DefaultCreateSeriesVariant = ({
+  onCreated,
+  onCancel,
+  refetch,
+}: CreateSeriesVariantProps) => {
   const { t } = useI18n();
-  const queryClient = useQueryClient();
   const createSeries = useMuiCreateSeriesMutation();
 
   // The org's catalog config decides which metadata fields exist on
@@ -209,7 +211,6 @@ export const CreateSeriesToolbarAction = ({ refetch }: CreateSeriesToolbarAction
   const isFieldAccepted = (field: keyof CreateSeriesFormState) =>
     !acceptedFields || acceptedFields.has(field);
   const { data: userData } = useMuiUserQuery();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formState, setFormState] = useState<CreateSeriesFormState>(DEFAULT_FORM_STATE);
   const [pluginAclData, setPluginAclData] = useState<AclData | null>(null);
 
@@ -250,14 +251,6 @@ export const CreateSeriesToolbarAction = ({ refetch }: CreateSeriesToolbarAction
 
       return sameManagedAclId && sameEntries && sameManagedEntries ? prev : nextAclData;
     });
-  };
-
-  const handleOpenChange = (open: boolean) => {
-    setIsDialogOpen(open);
-    if (!open) {
-      setFormState(DEFAULT_FORM_STATE);
-      setPluginAclData(null);
-    }
   };
 
   const handleCreateSeries = () => {
@@ -316,12 +309,10 @@ export const CreateSeriesToolbarAction = ({ refetch }: CreateSeriesToolbarAction
         acl,
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           toast.success(t("series:seriesTable.createSeries.toast.success"));
-          setIsDialogOpen(false);
           setFormState(DEFAULT_FORM_STATE);
-          void queryClient.invalidateQueries({ queryKey: ["GetMySeries"] });
-          refetch?.();
+          onCreated(data.createSeries.id);
         },
         onError: () => {
           toast.error(t("series:seriesTable.createSeries.toast.error"));
@@ -331,190 +322,175 @@ export const CreateSeriesToolbarAction = ({ refetch }: CreateSeriesToolbarAction
   };
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
-      <Button
-        variant="secondary"
-        className="flex font-medium text-sm h-8 rounded-md px-3 py-1"
-        onClick={() => setIsDialogOpen(true)}
-      >
-        <Plus className="mr-2 h-4 w-4" />
-        {t("series:seriesTable.createSeries.button")}
-      </Button>
+    <>
+      <DialogHeader>
+        <DialogTitle>{t("series:seriesTable.createSeries.dialog.title")}</DialogTitle>
+        <DialogDescription>
+          {t("series:seriesTable.createSeries.dialog.description")}
+        </DialogDescription>
+      </DialogHeader>
 
-      <DialogContent className="max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{t("series:seriesTable.createSeries.dialog.title")}</DialogTitle>
-          <DialogDescription>
-            {t("series:seriesTable.createSeries.dialog.description")}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="grid gap-4 py-2">
-          <div className="grid gap-2">
-            <Label htmlFor="create-series-title">{t("series:seriesInfo.title")} *</Label>
-            <Input
-              id="create-series-title"
-              value={formState.title}
-              onChange={(event) => updateField("title", event.target.value)}
-            />
-          </div>
-
-          {isFieldAccepted("description") && (
-            <div className="grid gap-2">
-              <Label htmlFor="create-series-description">
-                {t("series:seriesInfo.description")}
-              </Label>
-              <Textarea
-                id="create-series-description"
-                rows={3}
-                value={formState.description}
-                onChange={(event) => updateField("description", event.target.value)}
-              />
-            </div>
-          )}
-
-          {(isFieldAccepted("language") || isFieldAccepted("license")) && (
-            <div className="grid grid-cols-2 gap-3">
-              {isFieldAccepted("language") && (
-                <div className="grid gap-2">
-                  <Label htmlFor="create-series-language">{t("series:seriesInfo.language")}</Label>
-                  <Select
-                    value={formState.language}
-                    onValueChange={(value) => updateField("language", value)}
-                  >
-                    <SelectTrigger id="create-series-language">
-                      <SelectValue placeholder={t("noOptionSelected")} />
-                    </SelectTrigger>
-                    <SelectContent className="sidebar-portal-inside">
-                      {LANGUAGE_OPTIONS.map((languageCode) => (
-                        <SelectItem key={languageCode} value={languageCode}>
-                          {t(`common:languages.${languageCode}`)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-
-              {isFieldAccepted("license") && (
-                <div className="grid gap-2">
-                  <Label htmlFor="create-series-license">{t("series:seriesInfo.license")}</Label>
-                  <Select
-                    value={formState.license}
-                    onValueChange={(value) => updateField("license", value)}
-                  >
-                    <SelectTrigger id="create-series-license">
-                      <SelectValue placeholder={t("noOptionSelected")} />
-                    </SelectTrigger>
-                    <SelectContent className="sidebar-portal-inside">
-                      {LICENSE_OPTIONS.map((licenseCode) => (
-                        <SelectItem key={licenseCode} value={licenseCode}>
-                          {t(`common:licences.${licenseCode}`)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-            </div>
-          )}
-
-          {isFieldAccepted("contributor") && (
-            <div className="grid gap-2">
-              <Label htmlFor="create-series-contributor">
-                {t("series:seriesInfo.contributor")}
-              </Label>
-              <Textarea
-                id="create-series-contributor"
-                rows={2}
-                value={formState.contributor}
-                onChange={(event) => updateField("contributor", event.target.value)}
-              />
-              <span className="text-xs text-muted-foreground">{t("common:sepatateValues")}</span>
-            </div>
-          )}
-
-          {isFieldAccepted("creator") && (
-            <div className="grid gap-2">
-              <Label htmlFor="create-series-creator">{t("series:seriesInfo.creator")}</Label>
-              <Textarea
-                id="create-series-creator"
-                rows={2}
-                value={formState.creator}
-                onChange={(event) => updateField("creator", event.target.value)}
-              />
-              <span className="text-xs text-muted-foreground">{t("common:sepatateValues")}</span>
-            </div>
-          )}
-
-          {isFieldAccepted("publisher") && (
-            <div className="grid gap-2">
-              <Label htmlFor="create-series-publisher">{t("series:seriesInfo.publisher")}</Label>
-              <Textarea
-                id="create-series-publisher"
-                rows={2}
-                value={formState.publisher}
-                onChange={(event) => updateField("publisher", event.target.value)}
-              />
-              <span className="text-xs text-muted-foreground">{t("common:sepatateValues")}</span>
-            </div>
-          )}
-
-          {(isFieldAccepted("subject") || isFieldAccepted("rightsHolder")) && (
-            <div className="grid grid-cols-2 gap-3">
-              {isFieldAccepted("subject") && (
-                <div className="grid gap-2">
-                  <Label htmlFor="create-series-subject">{t("series:seriesInfo.subject")}</Label>
-                  <Input
-                    id="create-series-subject"
-                    value={formState.subject}
-                    onChange={(event) => updateField("subject", event.target.value)}
-                  />
-                </div>
-              )}
-
-              {isFieldAccepted("rightsHolder") && (
-                <div className="grid gap-2">
-                  <Label htmlFor="create-series-rights-holder">
-                    {t("series:seriesInfo.rightsHolder")}
-                  </Label>
-                  <Input
-                    id="create-series-rights-holder"
-                    value={formState.rightsHolder}
-                    onChange={(event) => updateField("rightsHolder", event.target.value)}
-                  />
-                </div>
-              )}
-            </div>
-          )}
-
-          <ComponentResolver
-            componentType="series:create-series:acl-editor"
-            defaultComponent={() => null}
-            componentProps={{
-              aclData: pluginAclData,
-              onAclDataChange,
-              selectedSeries: null,
-              disabled: createSeries.isPending,
-              refetch,
-            }}
-            useOverridePrefix={false}
-            loadingBehavior="none"
+      <div className="grid gap-4 py-2">
+        <div className="grid gap-2">
+          <Label htmlFor="create-series-title">{t("series:seriesInfo.title")} *</Label>
+          <Input
+            id="create-series-title"
+            value={formState.title}
+            onChange={(event) => updateField("title", event.target.value)}
           />
         </div>
 
-        <DialogFooter>
-          <Button variant="secondary" onClick={() => handleOpenChange(false)}>
-            {t("common:cancel")}
-          </Button>
-          <Button
-            onClick={handleCreateSeries}
-            disabled={createSeries.isPending || formState.title.trim().length === 0}
-          >
-            {t("common:create")}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        {isFieldAccepted("description") && (
+          <div className="grid gap-2">
+            <Label htmlFor="create-series-description">{t("series:seriesInfo.description")}</Label>
+            <Textarea
+              id="create-series-description"
+              rows={3}
+              value={formState.description}
+              onChange={(event) => updateField("description", event.target.value)}
+            />
+          </div>
+        )}
+
+        {(isFieldAccepted("language") || isFieldAccepted("license")) && (
+          <div className="grid grid-cols-2 gap-3">
+            {isFieldAccepted("language") && (
+              <div className="grid gap-2">
+                <Label htmlFor="create-series-language">{t("series:seriesInfo.language")}</Label>
+                <Select
+                  value={formState.language}
+                  onValueChange={(value) => updateField("language", value)}
+                >
+                  <SelectTrigger id="create-series-language">
+                    <SelectValue placeholder={t("noOptionSelected")} />
+                  </SelectTrigger>
+                  <SelectContent className="sidebar-portal-inside">
+                    {LANGUAGE_OPTIONS.map((languageCode) => (
+                      <SelectItem key={languageCode} value={languageCode}>
+                        {t(`common:languages.${languageCode}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {isFieldAccepted("license") && (
+              <div className="grid gap-2">
+                <Label htmlFor="create-series-license">{t("series:seriesInfo.license")}</Label>
+                <Select
+                  value={formState.license}
+                  onValueChange={(value) => updateField("license", value)}
+                >
+                  <SelectTrigger id="create-series-license">
+                    <SelectValue placeholder={t("noOptionSelected")} />
+                  </SelectTrigger>
+                  <SelectContent className="sidebar-portal-inside">
+                    {LICENSE_OPTIONS.map((licenseCode) => (
+                      <SelectItem key={licenseCode} value={licenseCode}>
+                        {t(`common:licences.${licenseCode}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+        )}
+
+        {isFieldAccepted("contributor") && (
+          <div className="grid gap-2">
+            <Label htmlFor="create-series-contributor">{t("series:seriesInfo.contributor")}</Label>
+            <Textarea
+              id="create-series-contributor"
+              rows={2}
+              value={formState.contributor}
+              onChange={(event) => updateField("contributor", event.target.value)}
+            />
+            <span className="text-xs text-muted-foreground">{t("common:sepatateValues")}</span>
+          </div>
+        )}
+
+        {isFieldAccepted("creator") && (
+          <div className="grid gap-2">
+            <Label htmlFor="create-series-creator">{t("series:seriesInfo.creator")}</Label>
+            <Textarea
+              id="create-series-creator"
+              rows={2}
+              value={formState.creator}
+              onChange={(event) => updateField("creator", event.target.value)}
+            />
+            <span className="text-xs text-muted-foreground">{t("common:sepatateValues")}</span>
+          </div>
+        )}
+
+        {isFieldAccepted("publisher") && (
+          <div className="grid gap-2">
+            <Label htmlFor="create-series-publisher">{t("series:seriesInfo.publisher")}</Label>
+            <Textarea
+              id="create-series-publisher"
+              rows={2}
+              value={formState.publisher}
+              onChange={(event) => updateField("publisher", event.target.value)}
+            />
+            <span className="text-xs text-muted-foreground">{t("common:sepatateValues")}</span>
+          </div>
+        )}
+
+        {(isFieldAccepted("subject") || isFieldAccepted("rightsHolder")) && (
+          <div className="grid grid-cols-2 gap-3">
+            {isFieldAccepted("subject") && (
+              <div className="grid gap-2">
+                <Label htmlFor="create-series-subject">{t("series:seriesInfo.subject")}</Label>
+                <Input
+                  id="create-series-subject"
+                  value={formState.subject}
+                  onChange={(event) => updateField("subject", event.target.value)}
+                />
+              </div>
+            )}
+
+            {isFieldAccepted("rightsHolder") && (
+              <div className="grid gap-2">
+                <Label htmlFor="create-series-rights-holder">
+                  {t("series:seriesInfo.rightsHolder")}
+                </Label>
+                <Input
+                  id="create-series-rights-holder"
+                  value={formState.rightsHolder}
+                  onChange={(event) => updateField("rightsHolder", event.target.value)}
+                />
+              </div>
+            )}
+          </div>
+        )}
+
+        <ComponentResolver
+          componentType="series:create-series:acl-editor"
+          defaultComponent={() => null}
+          componentProps={{
+            aclData: pluginAclData,
+            onAclDataChange,
+            selectedSeries: null,
+            disabled: createSeries.isPending,
+            refetch,
+          }}
+          useOverridePrefix={false}
+          loadingBehavior="none"
+        />
+      </div>
+
+      <DialogFooter>
+        <Button variant="secondary" onClick={onCancel}>
+          {t("common:cancel")}
+        </Button>
+        <Button
+          onClick={handleCreateSeries}
+          disabled={createSeries.isPending || formState.title.trim().length === 0}
+        >
+          {t("common:create")}
+        </Button>
+      </DialogFooter>
+    </>
   );
 };
