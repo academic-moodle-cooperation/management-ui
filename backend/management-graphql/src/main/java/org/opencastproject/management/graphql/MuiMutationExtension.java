@@ -21,6 +21,7 @@
 
 package org.opencastproject.management.graphql;
 
+import org.opencastproject.graphql.directive.RolesAllowed;
 import org.opencastproject.graphql.type.input.Mutation;
 
 import graphql.annotations.annotationTypes.GraphQLField;
@@ -32,7 +33,11 @@ public final class MuiMutationExtension {
   private MuiMutationExtension() {
   }
 
+  // Every mutation under `mui` changes data, so all of them require a signed-in
+  // user. Gating the entry field covers them at once and matches how the
+  // upstream mutation extensions guard their fields.
   @GraphQLField
+  @RolesAllowed("ROLE_USER")
   public static MuiMutation mui() {
     return new MuiMutation();
   }
