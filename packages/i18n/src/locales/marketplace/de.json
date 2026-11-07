@@ -1,0 +1,181 @@
+{
+  "nav": {
+    "title": "Marketplace v2"
+  },
+  "header": {
+    "explore": "Entdecken",
+    "library": "Bibliothek",
+    "search": "Plugins & Themes suchen",
+    "newerInRegistry": "Die Registry führt eine neuere Version"
+  },
+  "categories": {
+    "all": "Alle",
+    "feature": "Funktionen",
+    "integration": "Integrationen",
+    "utility": "Werkzeuge",
+    "theme": "Themes",
+    "experimental": "Experimentell"
+  },
+  "hero": {
+    "title": "Entdecken Sie <plugins>Plugins</plugins>, <themes>Themes</themes>, <integrations>Integrationen</integrations> und mehr aus der Community",
+    "subtitle": "Entwickelt von Organisationen wie Ihrer. Probieren Sie alles in diesem Tab aus — nichts wird installiert, und dauerhafte Änderungen bleiben in Ihrer Hand."
+  },
+  "catalog": {
+    "loadFailed": "Der Katalog konnte nicht geladen werden.",
+    "retry": "Erneut versuchen",
+    "noRegistries": "Keine Registries konfiguriert.",
+    "noRegistriesHint": "Für diese Installation sind keine Plugin-Registries eingerichtet. Tragen Sie Registry-URLs in die Marketplace-Konfiguration ein, um Community-Plugins zu durchsuchen.",
+    "nothingFound": "Nichts gefunden.",
+    "nothingFoundHint": "Versuchen Sie eine andere Suche oder Kategorie — oder bauen Sie es selbst mit dem Plugin-SDK.",
+    "featured": "Empfohlene Plugins",
+    "featuredHint": "Ausgewählt von dieser Installation",
+    "plugins": "Plugins",
+    "themes": "Themes",
+    "themesHint": "Gestalten Sie die gesamte Oberfläche neu — Ausprobieren wirkt sofort in diesem Tab",
+    "results": "Ergebnisse",
+    "resultsFor": "Ergebnisse für „{{query}}“",
+    "resultCount_one": "{{count}} Ergebnis",
+    "resultCount_other": "{{count}} Ergebnisse"
+  },
+  "actions": {
+    "tryIt": "Ausprobieren",
+    "tryItReload": "Ausprobieren — Seite neu laden",
+    "cancel": "Abbrechen",
+    "endTrial": "Test beenden",
+    "endAllTrials": "Alle Tests beenden",
+    "endPreview": "Vorschau beenden",
+    "trialActive": "Test aktiv",
+    "activeHere": "Hier aktiv",
+    "active": "Aktiv",
+    "repository": "Repository",
+    "homepage": "Website"
+  },
+  "hints": {
+    "activeHere": "Auf dieser Installation ausgerollt und aktiviert",
+    "activeHereShort": "Hier ausgerollt und aktiviert",
+    "trialActiveTab": "Test in diesem Tab aktiv",
+    "previewInTab": "Vorschau in diesem Tab",
+    "previewInTabOnly": "Vorschau nur in diesem Tab",
+    "previewingClickToEnd": "Vorschau in diesem Tab — klicken zum Beenden",
+    "appliedForEveryone": "Für alle aktiv über app.theme",
+    "unloadFromTab": "Aus diesem Tab entfernen (lädt neu)",
+    "verified": "Verifiziert",
+    "integrityPinned": "Integritätsgeprüft: nur der exakt geprüfte Build wird ausgeführt.",
+    "by": "von {{name}}"
+  },
+  "detail": {
+    "version": "Version",
+    "category": "Kategorie",
+    "license": "Lizenz",
+    "updated": "Aktualisiert",
+    "permanentTitle": "Dauerhaft aktivieren ist ein Deployment-Schritt.",
+    "permanentText": "Ausprobieren lädt das Plugin nur in diesem Tab. Für alle: Bundle ausrollen (JAR oder gehostete Datei), dann den Namespace in der <code>config.json</code> der Installation eintragen:",
+    "copyNamespace": "Namespace kopieren",
+    "copyNamespaceAria": "Namespace kopieren",
+    "alreadyDeployed": "Schon hier ausgerollt, aber abgeschaltet? Die Bibliothek führt es unter „Verfügbar, aber deaktiviert“, mit demselben Wert."
+  },
+  "toasts": {
+    "namespaceCopied": "„{{value}}“ kopiert — in app.enabledPlugins eintragen",
+    "namespace": "Namespace: {{value}}",
+    "themeCopied": "„{{value}}“ kopiert — als app.theme setzen",
+    "themeValue": "Wert für app.theme: {{value}}"
+  },
+  "extends": {
+    "extends": "Erweitert",
+    "requires": "Benötigt",
+    "state": {
+      "active": "vorhanden",
+      "trial": "in diesem Tab",
+      "disabled": "vorhanden, abgeschaltet",
+      "paused": "in diesem Tab pausiert",
+      "missing": "nicht auf dieser Installation"
+    }
+  },
+  "try": {
+    "title": "„{{name}}“ in diesem Tab ausprobieren?",
+    "theme": "Ein Theme ändert nur Farben, Schriften und Abstände. Es wird <b>sofort, in diesem Tab</b> angewendet — ohne Neuladen.",
+    "themeSource": "Das Stylesheet kommt von <host/>.",
+    "local": "Dieses Plugin ist auf diesem Server <b>bereits ausgerollt</b>, aber per Konfiguration abgeschaltet. Es wird nichts heruntergeladen — es wird nur für Ihren Tab aktiviert, genau so, als wäre es eingeschaltet.",
+    "remote": "Dies führt Fremdcode von <host/> mit Ihren Administratorrechten in diesem Browser aus.",
+    "pinned": "Das Bundle ist <b>integritätsgeprüft</b>: nur der exakt geprüfte Build wird ausgeführt.",
+    "notPinned": "Dieser Eintrag ist <b>nicht integritätsgeprüft</b> — dem Bundle wird vertraut, wie sein Host es ausliefert.",
+    "tabOnly": "Für niemanden sonst wird etwas installiert oder aktiviert. Der Test läuft <b>nur in diesem Tab</b> und endet, wenn Sie ihn schließen.",
+    "overlapsTitle": "Überschneidet sich mit dem, was hier läuft.",
+    "overlapsItem": "<name/> belegt bereits <slots/>",
+    "overlapsTail": ". Zwei Plugins in einem Slot vertragen sich nicht — wer zuletzt registriert, gewinnt.",
+    "pause_one": "<names/> während des Tests in diesem Tab pausieren — <b>Test beenden</b> bringt es zurück. Für niemanden sonst ändert sich etwas.",
+    "pause_other": "<names/> während des Tests in diesem Tab pausieren — <b>Test beenden</b> bringt sie zurück. Für niemanden sonst ändert sich etwas.",
+    "pauseJoin": " und ",
+    "reloads": "Die Seite wird zum Aktivieren neu geladen."
+  },
+  "library": {
+    "intro": "Das ist alles, was die Shell kennt. Ein Plugin für die ganze Organisation einzuschalten ist ein Deployment-Schritt: tragen Sie seinen <code>namespace</code> in <code>app.enabledPlugins</code> der <code>config.json</code> ein (jede Zeile hat einen Kopierknopf für diesen Wert). Zusätzlich lässt sich ein Plugin zur Laufzeit über <switch/> abschalten.",
+    "theme": "Theme",
+    "themeActive": "für alle aktiv:",
+    "themeVia": "(über <code>app.theme</code>)",
+    "themePreviewing": "Vorschau {{name}} · dieser Tab",
+    "groups": {
+      "active": "Aktiv",
+      "activeHint": "Läuft gerade auf dieser Installation",
+      "trial": "Tests",
+      "trialHint": "Nur in diesem Tab geladen — weg, wenn er geschlossen wird",
+      "paused": "In diesem Tab pausiert",
+      "pausedHint": "Für einen Test beiseitegetreten — zurück, wenn er endet",
+      "disabled": "Verfügbar, aber deaktiviert",
+      "disabledHint": "Auf dieser Installation vorhanden, per Konfiguration abgeschaltet"
+    },
+    "emptyActive": "Nichts ist registriert — das wäre ein fehlgeschlagener Start; prüfen Sie die Konsole.",
+    "emptyDisabled": "Alles Vorhandene ist eingeschaltet.",
+    "origin": {
+      "builtin": "Eingebaut",
+      "jar": "Deployment (JAR)",
+      "local": "Lokale Entwicklung",
+      "trial": "Test",
+      "browser": "Dieser Browser",
+      "shell": "Shell"
+    },
+    "badge": {
+      "previewingTab": "Vorschau · dieser Tab",
+      "thisTab": "dieser Tab",
+      "pausedTab": "pausiert · dieser Tab",
+      "registryNewer": "Registry: {{version}}",
+      "registryNewerHint": "Die Registry führt eine neuere Version. Aktualisieren ist ein Deployment-Schritt."
+    },
+    "namespace": "namespace",
+    "copyNamespaceHint": "Kopieren — das ist der Wert für app.enabledPlugins",
+    "copyNamespaceAria": "Namespace kopieren",
+    "type_one": "Typ",
+    "type_other": "Typen",
+    "moduleOf": "Ein Modul des Plugins <parent/>, registriert unter eigenem Namespace. Es wird zusammen mit <parentQuoted/> in <code>app.enabledPlugins</code> ein- und ausgeschaltet, nicht einzeln.",
+    "browserInstalled": "Vom bisherigen Marketplace in diesem Browser installiert (localStorage{{ids}}). Es lädt bei jedem Besuch nur aus diesem Browser — niemand sonst sieht es. Entfernen Sie es in der Bibliothek des bisherigen Marketplace oder löschen Sie diesen Schlüssel.",
+    "pausedText": "Für alle aktiviert, in diesem Tab beiseitegetreten, damit ein Test seine Slots belegen kann. Das Beenden des Tests bringt es zurück.",
+    "disabledBySwitch": "Vorhanden, aber abgeschaltet über <switch/>.",
+    "disabledNotListed": "Vorhanden, aber nicht in <code>app.enabledPlugins</code> eingetragen. Um es für alle einzuschalten, ergänzen Sie <namespaceQuoted/> in dieser Liste in der <code>config.json</code> der Installation."
+  },
+  "themeCard": {
+    "source": {
+      "shipped": "Mitgeliefert",
+      "jar": "Deployment",
+      "local": "Lokale Entwicklung",
+      "registry": "Registry"
+    },
+    "configValueHint": "Der Wert für app.theme, der dieses Theme für alle aktiviert",
+    "copyHint": "Kopieren — als app.theme setzen, um es für alle zu aktivieren",
+    "copyAria": "Wert für app.theme kopieren",
+    "external": "· extern",
+    "externalHint": "Eine Installation muss das CSS selbst hosten, bevor sie app.theme setzen kann."
+  },
+  "banner": {
+    "plugins_one": "{{count}} Plugin",
+    "plugins_other": "{{count}} Plugins",
+    "theme": "1 Theme",
+    "join": " + ",
+    "loaded": "{{what}} nur für diesen Tab geladen",
+    "gone": "— weg, wenn der Tab geschlossen wird",
+    "themeApplied": "Theme · in diesem Tab angewendet",
+    "deployedPreviewing": "hier ausgerollt · Vorschau",
+    "fromRegistry": "aus der Registry",
+    "pausing": "pausiert {{names}}",
+    "pausingHint": "Für diesen Test in diesem Tab pausiert; Test beenden bringt es zurück"
+  }
+}

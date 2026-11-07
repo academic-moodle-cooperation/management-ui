@@ -71,6 +71,7 @@
   },
   "noSeriesAvailable": {
     "title": "Keine Serie vorhanden",
-    "text": "Derzeit haben Sie noch keine Serie angemeldet. Um eine neue Serie anzumelden, gehen Sie bitte auf die Web-Oberfläche. Weitere Informationen zur Anmeldung einer Serie finden Sie in der Anleitung."
+    "text": "Derzeit haben Sie noch keine Serie angemeldet. Weitere Informationen zur Anmeldung einer Serie finden Sie in der Anleitung.",
+    "createText": "Sie haben noch keine Serie angelegt. Legen Sie Ihre erste Serie über die Schaltfläche unten an."
   }
 }

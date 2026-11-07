@@ -179,10 +179,10 @@ describe("buildInventory — multi-module JARs", () => {
       registered: new Map(),
       bundled: [],
       jars: ["app", "footer", "header", "landing-page", "sidebar"].map((type) => ({
-        name: `tuwien:${type}`,
-        namespace: "tuwien",
+        name: `other-org:${type}`,
+        namespace: "other-org",
         type,
-        url: `/static/plugins/tuwien/tuwien.mjs`,
+        url: `/static/plugins/other-org/other-org.mjs`,
       })),
       locals: [],
       trials: [],
@@ -198,13 +198,13 @@ describe("buildInventory — multi-module JARs", () => {
 describe("buildInventory — previous marketplace's browser installs", () => {
   const registered = new Map<string, Plugin>([
     ["registry", { name: "registry", version: "1.0.0", initialize() {} } as unknown as Plugin],
-    ["univie-support:app", { name: "univie-support:app", version: "1.0.0", initialize() {} } as unknown as Plugin],
+    ["acme-support:app", { name: "acme-support:app", version: "1.0.0", initialize() {} } as unknown as Plugin],
   ]);
   const base = { bundled: [], jars: [], locals: [], trials: [], catalog: [], config: undefined };
 
   it("labels a typed, unexplained plugin as a browser install when v1 recorded installs", () => {
     const items = buildInventory({ ...base, registered, browserInstalls: [{ id: "support-ui", url: "https://x/y.mjs" }] });
-    const support = items.find((i) => i.namespace === "univie-support");
+    const support = items.find((i) => i.namespace === "acme-support");
     expect(support?.origin).toBe("browser");
     expect(support?.browserInstallIds).toEqual(["support-ui"]);
     expect(items.find((i) => i.namespace === "registry")?.origin).toBe("shell");
@@ -212,28 +212,28 @@ describe("buildInventory — previous marketplace's browser installs", () => {
 
   it("keeps the shell label without v1 records", () => {
     const items = buildInventory({ ...base, registered });
-    expect(items.find((i) => i.namespace === "univie-support")?.origin).toBe("shell");
+    expect(items.find((i) => i.namespace === "acme-support")?.origin).toBe("shell");
   });
 });
 
 describe("buildInventory — modules registered under their own namespace", () => {
   it("attributes `<parent>-<x>:<type>` to the deployed parent plugin", () => {
     const registered = new Map<string, Plugin>([
-      ["univie:app", { name: "univie:app", version: "1.0.0", initialize() {} } as unknown as Plugin],
-      ["univie-support:app", { name: "univie-support:app", version: "1.0.0", initialize() {} } as unknown as Plugin],
+      ["acme:app", { name: "acme:app", version: "1.0.0", initialize() {} } as unknown as Plugin],
+      ["acme-support:app", { name: "acme-support:app", version: "1.0.0", initialize() {} } as unknown as Plugin],
     ]);
     const items = buildInventory({
       registered,
       bundled: [],
-      jars: [{ name: "University of Vienna:app", namespace: "univie", type: "app", url: "/static/plugins/univie/plugin-univie-app.mjs" }],
+      jars: [{ name: "Acme University:app", namespace: "acme", type: "app", url: "/static/plugins/acme/plugin-acme-app.mjs" }],
       locals: [],
       trials: [],
       catalog: [],
       config: undefined,
     });
-    const support = items.find((i) => i.namespace === "univie-support");
+    const support = items.find((i) => i.namespace === "acme-support");
     expect(support?.origin).toBe("jar");
-    expect(support?.moduleOf).toBe("univie");
+    expect(support?.moduleOf).toBe("acme");
     expect(support?.status).toBe("active");
   });
 });

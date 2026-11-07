@@ -1,12 +1,14 @@
 import { Info, Palette } from "lucide-react";
 import { useState } from "react";
 
+import { useI18n } from "@oc-mui/i18n";
 import { useAppConfig } from "@oc-mui/query";
 import { Button, Skeleton } from "@oc-mui/ui/components";
 
 import { LibraryRow } from "../components/LibraryRow";
 import { TryConfirmDialog } from "../components/TryConfirmDialog";
 import { useThemePreview } from "../hooks/useThemePreview";
+import { rich } from "../lib/rich";
 import { findConflicts } from "../services/conflicts";
 import { endThemePreview } from "../services/themePreview";
 import { startLocalTrial } from "../services/trials";
@@ -20,16 +22,8 @@ interface LibraryProps {
   inventory: InventoryState;
 }
 
-const GROUPS: Array<{ status: InventoryStatus; title: string; hint: string }> = [
-  { status: "active", title: "Active", hint: "Running on this deployment right now" },
-  { status: "trial", title: "Trials", hint: "Loaded in this tab only — gone when it closes" },
-  { status: "paused", title: "Paused in this tab", hint: "Stepped aside for a trial — back when it ends" },
-  {
-    status: "disabled",
-    title: "Available but disabled",
-    hint: "Present on this deployment, switched off by configuration",
-  },
-];
+/** Group order; title and hint resolve from `marketplace:library.groups.<status>[Hint]`. */
+const GROUPS: InventoryStatus[] = ["active", "trial", "paused", "disabled"];
 
 /**
  * Library — "what is on this deployment, and is it running?"
@@ -40,6 +34,7 @@ const GROUPS: Array<{ status: InventoryStatus; title: string; hint: string }> = 
  * decision, which is why every row shows the exact config value to copy.
  */
 const Library: FC<LibraryProps> = ({ inventory }) => {
+  const { t } = useI18n();
   const { items, loading } = inventory;
   const [tryCandidate, setTryCandidate] = useState<InventoryItem | null>(null);
   const { config } = useAppConfig();
@@ -74,48 +69,50 @@ const Library: FC<LibraryProps> = ({ inventory }) => {
       <div className="mb-6 flex items-start gap-2.5 rounded-xl border border-border bg-card/60 px-4 py-3 text-sm text-muted-foreground">
         <Info className="mt-0.5 size-4 shrink-0" />
         <p>
-          This is everything the shell knows about. Enabling a plugin for the whole organisation is a
-          deployment step: add its <code className="font-mono">namespace</code> to{" "}
-          <code className="font-mono">app.enabledPlugins</code> in <code className="font-mono">config.json</code>{" "}
-          (every row has a copy button for that value). A plugin can additionally be switched off at
-          runtime via <code className="font-mono">config.plugins.&lt;namespace&gt;.enabled: false</code>.
+          {rich(t("marketplace:library.intro"), {
+            code: <code className="font-mono" />,
+            switch: <code className="font-mono">config.plugins.&lt;namespace&gt;.enabled: false</code>,
+          })}
         </p>
       </div>
 
       <div className="mb-8 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-border bg-card px-4 py-3 text-sm">
         <Palette className="size-4 shrink-0 text-muted-foreground" />
-        <span className="font-semibold">Theme</span>
+        <span className="font-semibold">{t("marketplace:library.theme")}</span>
         <span className="text-muted-foreground">
-          active for everyone: <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[11.5px] text-foreground">{activeTheme}</code>
-          <span className="ml-1.5 text-xs">(via <code className="font-mono">app.theme</code>)</span>
+          {t("marketplace:library.themeActive")}{" "}
+          <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[11.5px] text-foreground">{activeTheme}</code>
+          <span className="ml-1.5 text-xs">
+            {rich(t("marketplace:library.themeVia"), { code: <code className="font-mono" /> })}
+          </span>
         </span>
         {themePreview && (
           <>
             <span className="flex items-center gap-1 rounded-md bg-warning/15 px-1.5 py-0.5 text-[10.5px] font-semibold text-warning">
-              previewing {themePreview.name} · this tab
+              {t("marketplace:library.themePreviewing", { name: themePreview.name })}
             </span>
             <Button variant="outline" size="sm" className="ml-auto h-7 px-2.5 text-xs" onClick={endThemePreview}>
-              End preview
+              {t("marketplace:actions.endPreview")}
             </Button>
           </>
         )}
       </div>
 
-      {GROUPS.map(({ status, title, hint }) => {
+      {GROUPS.map((status) => {
         const group = byStatus.get(status) ?? [];
         if (group.length === 0 && (status === "trial" || status === "paused")) return null;
         return (
           <section key={status} className="mb-8">
             <div className="mb-3 flex items-baseline gap-2.5">
-              <h2 className="font-heading text-base font-semibold">{title}</h2>
+              <h2 className="font-heading text-base font-semibold">{t(`marketplace:library.groups.${status}`)}</h2>
               <span className="font-mono text-xs text-muted-foreground">{group.length}</span>
-              <span className="text-xs text-muted-foreground">— {hint}</span>
+              <span className="text-xs text-muted-foreground">— {t(`marketplace:library.groups.${status}Hint`)}</span>
             </div>
             {group.length === 0 ? (
               <p className="rounded-xl border border-dashed border-border px-4 py-5 text-sm text-muted-foreground">
                 {status === "active"
-                  ? "Nothing is registered — that would be a broken boot; check the console."
-                  : "Everything present is enabled."}
+                  ? t("marketplace:library.emptyActive")
+                  : t("marketplace:library.emptyDisabled")}
               </p>
             ) : (
               <div className="space-y-2">

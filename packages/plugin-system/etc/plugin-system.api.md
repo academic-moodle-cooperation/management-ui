@@ -160,7 +160,7 @@ interface Plugin_2 {
 export { Plugin_2 as Plugin }
 
 // @public
-export const PLUGIN_API_VERSION: "1.1.0";
+export const PLUGIN_API_VERSION: "1.2.0";
 
 // @public (undocumented)
 export const PLUGIN_PAUSES_STORAGE_KEY = "mui.plugin-pauses";

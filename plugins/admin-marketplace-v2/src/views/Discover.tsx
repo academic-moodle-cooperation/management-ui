@@ -1,6 +1,7 @@
 import { RefreshCw } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import { useI18n } from "@oc-mui/i18n";
 import { Button, Skeleton } from "@oc-mui/ui/components";
 
 import { DetailDialog } from "../components/DetailDialog";
@@ -12,6 +13,7 @@ import { TryConfirmDialog } from "../components/TryConfirmDialog";
 import { marketplaceV2Config } from "../config";
 import { useThemePreview } from "../hooks/useThemePreview";
 import { useThemes } from "../hooks/useThemes";
+import { rich } from "../lib/rich";
 import { findConflicts } from "../services/conflicts";
 import { namespaceOf } from "../services/registry";
 import { isAllowedAssetUrl } from "../services/security";
@@ -41,13 +43,14 @@ import type { FC, ReactElement } from "react";
  * surface with its own hero — not a standard content page.
  */
 
-const CATEGORY_FILTERS: Array<{ key: RegistryCategory | "all"; label: string }> = [
-  { key: "all", label: "All" },
-  { key: "feature", label: "Features" },
-  { key: "integration", label: "Integrations" },
-  { key: "utility", label: "Utilities" },
-  { key: "theme", label: "Themes" },
-  { key: "experimental", label: "Experimental" },
+/** Pill order; labels resolve from `marketplace:categories.<key>`. */
+const CATEGORY_FILTERS: Array<RegistryCategory | "all"> = [
+  "all",
+  "feature",
+  "integration",
+  "utility",
+  "theme",
+  "experimental",
 ];
 
 function matches(plugin: RegistryPlugin, query: string, category: RegistryCategory | "all"): boolean {
@@ -81,6 +84,7 @@ const CARD_GRID = "grid grid-cols-2 gap-[18px] lg:grid-cols-4";
 const ROW_GRID = "grid gap-x-10 gap-y-1 md:grid-cols-2";
 
 const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
+  const { t } = useI18n();
   const cfg = marketplaceV2Config.use();
   const { plugins, loading, error, reload } = catalog;
   const [category, setCategory] = useState<RegistryCategory | "all">("all");
@@ -99,7 +103,7 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
   const visibleThemes = useMemo(() => {
     const q = query.trim().toLowerCase();
     return themes.themes.filter(
-      (t) => !q || `${t.name} ${t.tagline ?? ""} ${t.author ?? ""}`.toLowerCase().includes(q),
+      (theme) => !q || `${theme.name} ${theme.tagline ?? ""} ${theme.author ?? ""}`.toLowerCase().includes(q),
     );
   }, [themes.themes, query]);
 
@@ -156,9 +160,9 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
     showThemes && !themes.loading && visibleThemes.length > 0 ? (
       <section className="pt-8">
         <SectionHeader
-          title="Themes"
+          title={t("marketplace:catalog.themes")}
           count={visibleThemes.length}
-          hint="Restyle the whole interface — Try applies instantly in this tab"
+          hint={t("marketplace:catalog.themesHint")}
         />
         <div className={CARD_GRID}>
           {visibleThemes.map((theme) => (
@@ -195,33 +199,33 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
         />
         <div className="relative mx-auto max-w-[1180px] px-8 pt-14 pb-[54px] text-center">
           <h1 className="mx-auto max-w-2xl font-heading text-[clamp(1.5rem,3.3vw,2.0625rem)] leading-[1.25] font-bold tracking-tight text-balance">
-            Discover community-made <span className="text-primary">plugins</span>,{" "}
-            <span className="text-info">themes</span>, <span className="text-ok">integrations</span>, and more
+            {rich(t("marketplace:hero.title"), {
+              plugins: <span className="text-primary" />,
+              themes: <span className="text-info" />,
+              integrations: <span className="text-ok" />,
+            })}
           </h1>
-          <p className="mt-2.5 text-[14.5px] text-muted-foreground">
-            Built by organisations like yours. Try anything in this tab — nothing is installed, and
-            permanent changes stay in your hands.
-          </p>
+          <p className="mt-2.5 text-[14.5px] text-muted-foreground">{t("marketplace:hero.subtitle")}</p>
         </div>
       </div>
 
       <div className="mx-auto max-w-[1180px] px-8 pb-16">
         {/* ---- Category pills ---- */}
         <div className="flex flex-wrap items-center gap-2 pt-[22px] pb-1">
-          {CATEGORY_FILTERS.map((filter) => {
-            const active = category === filter.key;
+          {CATEGORY_FILTERS.map((key) => {
+            const active = category === key;
             return (
               <button
-                key={filter.key}
+                key={key}
                 type="button"
-                onClick={() => setCategory(filter.key)}
+                onClick={() => setCategory(key)}
                 className={
                   active
                     ? "rounded-md border border-foreground bg-foreground px-3.5 py-[7px] text-[13px] font-semibold text-background"
                     : "rounded-md border border-input px-3.5 py-[7px] text-[13px] font-semibold text-muted-foreground transition-colors hover:bg-card hover:text-foreground"
                 }
               >
-                {filter.label}
+                {t(`marketplace:categories.${key}`)}
               </button>
             );
           })}
@@ -242,28 +246,28 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
           </div>
         ) : error ? (
           <div className="py-20 text-center">
-            <p className="font-medium">The catalog could not be loaded.</p>
+            <p className="font-medium">{t("marketplace:catalog.loadFailed")}</p>
             <p className="mt-1 text-sm text-muted-foreground">{error}</p>
             <Button variant="outline" size="sm" className="mt-4" onClick={reload}>
-              <RefreshCw className="size-3.5" /> Try again
+              <RefreshCw className="size-3.5" /> {t("marketplace:catalog.retry")}
             </Button>
           </div>
         ) : nothingToShow ? (
           <div className="py-20 text-center">
             <p className="font-heading text-lg font-semibold">
-              {plugins.length === 0 ? "No registries configured." : "Nothing found."}
+              {plugins.length === 0 ? t("marketplace:catalog.noRegistries") : t("marketplace:catalog.nothingFound")}
             </p>
             <p className="mx-auto mt-1.5 max-w-md text-sm text-muted-foreground">
               {plugins.length === 0
-                ? "This deployment has no plugin registries set up. Add registry URLs to the marketplace configuration to browse community plugins."
-                : "Try a different search or category — or build it yourself with the plugin SDK."}
+                ? t("marketplace:catalog.noRegistriesHint")
+                : t("marketplace:catalog.nothingFoundHint")}
             </p>
           </div>
         ) : !filtering ? (
           <>
             {featured.length > 0 && (
               <section className="pt-8">
-                <SectionHeader title="Featured plugins" hint="Picked by this deployment" />
+                <SectionHeader title={t("marketplace:catalog.featured")} hint={t("marketplace:catalog.featuredHint")} />
                 <div className={CARD_GRID}>
                   {featured.map((plugin) => (
                     <FeaturedCard
@@ -282,7 +286,7 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
             )}
             {visible.length > 0 && (
               <section className="pt-8">
-                <SectionHeader title="Plugins" count={visible.length} />
+                <SectionHeader title={t("marketplace:catalog.plugins")} count={visible.length} />
                 {rows(visible)}
               </section>
             )}
@@ -295,10 +299,12 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
                 <SectionHeader
                   title={
                     query.trim()
-                      ? `Results for “${query.trim()}”`
-                      : (CATEGORY_FILTERS.find((f) => f.key === category)?.label ?? "Results")
+                      ? t("marketplace:catalog.resultsFor", { query: query.trim() })
+                      : category === "all"
+                        ? t("marketplace:catalog.results")
+                        : t(`marketplace:categories.${category}`)
                   }
-                  hint={`${visible.length} ${visible.length === 1 ? "result" : "results"}`}
+                  hint={t("marketplace:catalog.resultCount", { count: visible.length })}
                 />
                 {rows(visible)}
               </section>

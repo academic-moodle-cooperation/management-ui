@@ -1,5 +1,7 @@
 import { Check, CircleDashed, FlaskConical, Minus, PauseCircle } from "lucide-react";
 
+import { useI18n } from "@oc-mui/i18n";
+
 import type { InventoryStatus } from "../services/inventory";
 import type { FC, ReactElement } from "react";
 
@@ -14,12 +16,13 @@ interface ExtendsRequiresProps {
   layout?: "row" | "block";
 }
 
-const DEP_STATE: Record<InventoryStatus | "missing", { label: string; className: string; Icon: FC<{ className?: string }> }> = {
-  active: { label: "present", className: "text-ok", Icon: Check },
-  trial: { label: "in this tab", className: "text-warning", Icon: FlaskConical },
-  disabled: { label: "present, switched off", className: "text-warning", Icon: CircleDashed },
-  paused: { label: "paused in this tab", className: "text-warning", Icon: PauseCircle },
-  missing: { label: "not on this deployment", className: "text-muted-foreground", Icon: Minus },
+/** Per dependency state; the label resolves from `marketplace:extends.state.<state>`. */
+const DEP_STATE: Record<InventoryStatus | "missing", { className: string; Icon: FC<{ className?: string }> }> = {
+  active: { className: "text-ok", Icon: Check },
+  trial: { className: "text-warning", Icon: FlaskConical },
+  disabled: { className: "text-warning", Icon: CircleDashed },
+  paused: { className: "text-warning", Icon: PauseCircle },
+  missing: { className: "text-muted-foreground", Icon: Minus },
 };
 
 /**
@@ -34,6 +37,7 @@ const ExtendsRequires: FC<ExtendsRequiresProps> = ({
   presence,
   layout = "block",
 }) => {
+  const { t } = useI18n();
   const points = extensionPoints ?? [];
   const deps = pluginDependencies ?? [];
   if (points.length === 0 && deps.length === 0) return null;
@@ -49,12 +53,14 @@ const ExtendsRequires: FC<ExtendsRequiresProps> = ({
     </code>
   ));
   const depItems = deps.map((dep) => {
-    const state = DEP_STATE[presence.get(dep) ?? "missing"];
+    const stateKey = presence.get(dep) ?? "missing";
+    const state = DEP_STATE[stateKey];
+    const stateLabel = t(`marketplace:extends.state.${stateKey}`);
     return (
-      <span key={dep} className="flex items-center gap-1 text-xs" title={state.label}>
+      <span key={dep} className="flex items-center gap-1 text-xs" title={stateLabel}>
         <state.Icon className={`size-3 ${state.className}`} />
         <code className="font-mono text-[11px] text-foreground">{dep}</code>
-        {layout === "block" && <span className={`${state.className}`}>· {state.label}</span>}
+        {layout === "block" && <span className={`${state.className}`}>· {stateLabel}</span>}
       </span>
     );
   });
@@ -64,13 +70,13 @@ const ExtendsRequires: FC<ExtendsRequiresProps> = ({
       <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
         {points.length > 0 && (
           <span className="flex flex-wrap items-center gap-1">
-            <span className="text-[10.5px] tracking-wide uppercase">extends</span>
+            <span className="text-[10.5px] tracking-wide uppercase">{t("marketplace:extends.extends")}</span>
             {chips}
           </span>
         )}
         {deps.length > 0 && (
           <span className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[10.5px] tracking-wide uppercase">requires</span>
+            <span className="text-[10.5px] tracking-wide uppercase">{t("marketplace:extends.requires")}</span>
             {depItems}
           </span>
         )}
@@ -82,13 +88,13 @@ const ExtendsRequires: FC<ExtendsRequiresProps> = ({
     <div className="mt-4 space-y-2">
       {points.length > 0 && (
         <div className="flex items-start gap-3">
-          {label("Extends")}
+          {label(t("marketplace:extends.extends"))}
           <div className="flex flex-wrap gap-1">{chips}</div>
         </div>
       )}
       {deps.length > 0 && (
         <div className="flex items-start gap-3">
-          {label("Requires")}
+          {label(t("marketplace:extends.requires"))}
           <div className="flex flex-wrap gap-x-4 gap-y-1">{depItems}</div>
         </div>
       )}

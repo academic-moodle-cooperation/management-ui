@@ -71,6 +71,7 @@
   },
   "noSeriesAvailable": {
     "title": "No series available",
-    "text": "You have not registered a series yet. To register a new series, please visit the web interface. For further information on registering a series, please consult the registration and administration guide."
+    "text": "You have not registered a series yet. For further information on registering a series, please consult the registration and administration guide.",
+    "createText": "You have not created a series yet. Create your first series with the button below."
   }
 }

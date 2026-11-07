@@ -55,7 +55,7 @@ Both closing tasks of the exports→dist effort are now in place — Verdaccio f
 
 Every workspace package under `packages/` and `plugins/` is **versioned independently** following [Semver 2.0](https://semver.org/). Apps under `apps/` (`shell`, `playground`) are not published and not versioned.
 
-The six frozen contracts in [Contracts](../reference/contracts.md) layer additional rules on top of plain Semver — that page owns the contract names, versions, and owning packages. Any change observable to a plugin author through one of those surfaces is **always a major** bump of the affected package, even if Semver alone would say otherwise.
+The six frozen contracts in [Contracts](../reference/contracts.md) layer additional rules on top of plain Semver — that page owns the contract names, versions, and owning packages. A breaking change to one of those surfaces is **always a major** bump of the affected package, even if Semver alone would say otherwise. Additive changes are minor; each contract spells out which is which.
 
 ## Picking the bump level
 
@@ -65,10 +65,10 @@ Decide based on what the change does to the package's **public surface** — the
 |------|------|
 | **Patch** | Internal refactor, performance, bug fix that keeps the same public signature. No visible behaviour change. |
 | **Minor** | New export, new optional parameter, new method, new optional field on a public type. Existing consumers stay source- and binary-compatible. |
-| **Major** | Removed or renamed export, changed signature, behaviour change a consumer would observe, contract change. |
+| **Major** | Removed or renamed export, changed signature, behaviour change that could break a consumer, breaking contract change. |
 | **Empty** | Nothing to tell consumers — including a docs-only change such as a `README.md` *inside* `packages/*` or `plugins/*`, which is part of that versioned package and so still needs a changeset. `pnpm changeset --empty` records the decision. |
 
-Plugin runtime API has the hard rule: anything that changes what plugin authors observe → **major** of `@oc-mui/plugin-system`. The loader rejects plugins whose declared `apiVersion` major doesn't match the host's `PLUGIN_API_VERSION`.
+Plugin runtime API has the hard rule: anything that could break an existing plugin → **major** of `@oc-mui/plugin-system`; new capabilities that leave existing plugins working → **minor**. The loader rejects plugins whose declared `apiVersion` major doesn't match the host's `PLUGIN_API_VERSION`.
 
 ## Changesets
 
