@@ -154,7 +154,16 @@
     },
     "icon": {
       "type": "string",
-      "description": "Lucide icon name for marketplace display (e.g., 'GraduationCap', 'BarChart3', 'Puzzle')."
+      "description": "Lucide icon name for marketplace display (e.g., 'GraduationCap', 'BarChart3', 'Puzzle'); kebab-case ('bar-chart-3') is accepted too."
+    },
+    "tagline": {
+      "type": "string",
+      "maxLength": 120,
+      "description": "One-line pitch for marketplace display (manifest 1.2)."
+    },
+    "accentColor": {
+      "type": "string",
+      "description": "Brand color for marketplace display, any CSS color (manifest 1.2). Purely presentational."
     },
     "tags": {
       "type": "array",
