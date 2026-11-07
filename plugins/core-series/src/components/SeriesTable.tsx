@@ -270,11 +270,14 @@ const SeriesTable = () => {
       ]
     : columns;
 
-  const isCreateSeriesEnabled = cfg.seriesTable?.createSeries?.enabled !== false;
+  // The create-series action lives next to the page heading unless the
+  // deployment puts it back into the toolbar; CreateSeriesAction itself
+  // renders nothing when the feature is off or no variant is available.
+  const isCreateSeriesInToolbar = cfg.seriesTable?.createSeries?.placement === "toolbar";
 
   const toolbarEndButtons = useMemo(() => {
     const sortedActions = [...seriesToolbarEndActions]
-      .filter((action) => (isCreateSeriesEnabled ? true : action.id !== "create-series"))
+      .filter((action) => (isCreateSeriesInToolbar ? true : action.id !== "create-series"))
       .filter((action) => typeof action.component === "function")
       .sort((a, b) => (a.order || 100) - (b.order || 100));
 
@@ -291,7 +294,7 @@ const SeriesTable = () => {
         })}
       </>
     );
-  }, [seriesToolbarEndActions, refetch, isCreateSeriesEnabled]);
+  }, [seriesToolbarEndActions, refetch, isCreateSeriesInToolbar]);
 
   // Error handling
   if (error && typeof error === "object" && "message" in error) {

@@ -44,7 +44,10 @@
         "title": "Neue Serie erstellen",
         "description": "Erfassen Sie die Metadaten für die neue Serie.",
         "aclPolicyLabel": "Zugriffsrichtlinie",
-        "noPolicy": "Keine Richtlinie"
+        "noPolicy": "Keine Richtlinie",
+        "chooserTitle": "Neue Serie",
+        "chooserDescription": "Welche Art von Serie möchten Sie anlegen?",
+        "back": "Zurück"
       },
       "toast": {
         "success": "Serie wurde erstellt",
@@ -52,6 +55,12 @@
       },
       "validation": {
         "titleRequired": "Titel ist erforderlich"
+      },
+      "variants": {
+        "default": {
+          "label": "Serie",
+          "description": "Metadaten selbst erfassen."
+        }
       }
     },
     "notification": {
@@ -62,6 +71,7 @@
   },
   "noSeriesAvailable": {
     "title": "Keine Serie vorhanden",
-    "text": "Derzeit haben Sie noch keine Serie angemeldet. Um eine neue Serie anzumelden, gehen Sie bitte auf die Web-Oberfläche. Weitere Informationen zur Anmeldung einer Serie finden Sie in der Anleitung."
+    "text": "Derzeit haben Sie noch keine Serie angemeldet. Weitere Informationen zur Anmeldung einer Serie finden Sie in der Anleitung.",
+    "createText": "Sie haben noch keine Serie angelegt. Legen Sie Ihre erste Serie über die Schaltfläche unten an."
   }
 }

@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@oc-mui/i18n": "workspace:*",
+    "@oc-mui/plugin-core": "workspace:*",
     "@oc-mui/plugin-system": "workspace:*",
     "@oc-mui/providers": "workspace:*",
     "@oc-mui/query": "workspace:*",

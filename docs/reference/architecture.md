@@ -63,14 +63,14 @@ The plugin runtime is split into six orthogonal contracts, all versioned indepen
 | Shared Runtime Dependencies | Which packages the host provides to plugins, at which majors |
 | GraphQL Operation Naming | Namespace-prefixed operation and fragment names |
 
-Any change observable to a plugin author through one of these contracts is **always major** for the affected package, even if Semver alone would say otherwise.
+A breaking change to one of these contracts is **always major** for the affected package, even if Semver alone would say otherwise. Additive changes are minor; each contract spells out which is which.
 
 ## Plugin loading — two phases
 
 The shell loads plugins in two phases to handle the chicken-and-egg of config-driven enablement:
 
 1. **Phase 1: load `*:config` plugins.** They register `app:config` slices that include `app.enabledPlugins`.
-2. **Phase 2: merge config and load the rest.** Merge order: `app:config:defaults` ⊕ base config ⊕ `app:config`. The merged `app.enabledPlugins` (ship filter) plus per-slice `config.plugins[id].enabled` (runtime switch) decide which remaining plugins activate. A single tab can deviate through a [preview or pause](./contracts.md#tab-scoped-previews-and-pauses).
+2. **Phase 2: merge config and load the rest.** Merge order: `app:config:defaults` ⊕ base config ⊕ `app:config`. The merged `app.enabledPlugins` (ship filter) plus per-slice `config.plugins[<namespace>].enabled` (runtime switch) decide which remaining plugins activate. A single tab can deviate through a [preview or pause](./contracts.md#tab-scoped-previews-and-pauses).
 
 Full model: [Configuration model](./configuration.md).
 

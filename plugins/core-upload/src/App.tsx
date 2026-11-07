@@ -473,8 +473,8 @@ export const App = () => {
             loadingBehavior="none"
           />
         ) : (
-          <Container className="flex flex-row items-center justify-center w-full">
-            <Container className="flex flex-col items-center justify-center w-full mt-12 sticky top-20 bottom-8">
+          <Container className="flex flex-col items-center justify-center w-full gap-4 lg:flex-row lg:gap-0">
+            <Container className="flex flex-col items-center justify-center w-full lg:mt-12 lg:sticky lg:top-20 lg:bottom-8">
               <Dropzone
                 handleDrop={useHandleDrop}
                 fileWaitingList={fileWaitingList}
@@ -484,7 +484,7 @@ export const App = () => {
               />
             </Container>
             {(!!fileWaitingList.length || !!zustandupload.uploaded.length) && (
-              <Container className="flex flex-col w-full gap-y-4">
+              <Container className="flex flex-col w-full min-w-0 gap-y-4">
                 {!!zustandupload?.uploaded.length && (
                   <Card className="px-4 py-0">
                     <Accordion type="single" collapsible>
@@ -510,8 +510,8 @@ export const App = () => {
                 {(!!fileWaitingList.length || !!zustandupload.uploaded.length) && (
                   <Card className="flex flex-col w-full h-full px-4 py-6 lg:px-8 gap-y-4">
                     <div className="flex flex-col">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-1">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="min-w-0 space-y-1">
                           <h2 className="text-xl font-semibold tracking-tight">
                             {t("upload:headingList")}
                           </h2>
@@ -523,7 +523,7 @@ export const App = () => {
                           color="primary"
                           variant={"outline"}
                           size={"sm"}
-                          className={"self-end relative"}
+                          className={"self-end relative shrink-0"}
                           disabled={isLoading}
                           onClick={() => {
                             setFileWaitingList([]);
