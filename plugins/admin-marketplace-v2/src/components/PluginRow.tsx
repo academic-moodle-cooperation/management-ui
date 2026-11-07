@@ -1,5 +1,7 @@
 import { BadgeCheck, Check } from "lucide-react";
 
+import { useI18n } from "@oc-mui/i18n";
+
 import { ActionPill } from "./ActionPill";
 import { PluginTile } from "./PluginTile";
 
@@ -32,6 +34,7 @@ export function taglineOf(plugin: Pick<RegistryPlugin, "tagline" | "description"
  * ops path).
  */
 const PluginRow: FC<PluginRowProps> = ({ plugin, onOpen, canTry, trialActive, activeHere, onTry }) => {
+  const { t } = useI18n();
   return (
     <div
       role="button"
@@ -50,7 +53,7 @@ const PluginRow: FC<PluginRowProps> = ({ plugin, onOpen, canTry, trialActive, ac
         <span className="flex items-center gap-1.5 text-[14.5px] font-semibold text-foreground">
           <span className="truncate">{plugin.name}</span>
           {plugin.verified && (
-            <BadgeCheck aria-label="Verified" className="size-3.5 shrink-0 text-muted-foreground" />
+            <BadgeCheck aria-label={t("marketplace:hints.verified")} className="size-3.5 shrink-0 text-muted-foreground" />
           )}
         </span>
         <span className="mt-0.5 flex items-center gap-2.5 text-[12.5px] text-muted-foreground">
@@ -61,14 +64,14 @@ const PluginRow: FC<PluginRowProps> = ({ plugin, onOpen, canTry, trialActive, ac
       <span className="self-center">
         {trialActive ? (
           <ActionPill tone="ok">
-            Trial active <Check className="size-3.5" strokeWidth={2.6} />
+            {t("marketplace:actions.trialActive")} <Check className="size-3.5" strokeWidth={2.6} />
           </ActionPill>
         ) : activeHere ? (
-          <ActionPill tone="ok" title="Deployed and enabled on this deployment">
-            Active here <Check className="size-3.5" strokeWidth={2.6} />
+          <ActionPill tone="ok" title={t("marketplace:hints.activeHere")}>
+            {t("marketplace:actions.activeHere")} <Check className="size-3.5" strokeWidth={2.6} />
           </ActionPill>
         ) : canTry && onTry ? (
-          <ActionPill onClick={() => onTry(plugin)}>Try it</ActionPill>
+          <ActionPill onClick={() => onTry(plugin)}>{t("marketplace:actions.tryIt")}</ActionPill>
         ) : null}
       </span>
       <span className="col-span-2 col-start-2 line-clamp-2 text-[13px] leading-[1.45] text-muted-foreground">

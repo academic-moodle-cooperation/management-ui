@@ -1,6 +1,7 @@
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 
+import { useI18n } from "@oc-mui/i18n";
 import { toast } from "@oc-mui/ui/components";
 
 import { useIsDark } from "../hooks/useIsDark";
@@ -10,16 +11,8 @@ import { endThemePreview } from "../services/themePreview";
 import { ActionPill } from "./ActionPill";
 import { Artwork, variantFor, type ArtworkPalette } from "./Artwork";
 
-import type { ThemeSource } from "../services/themePreview";
 import type { ThemeCandidate } from "../services/themes";
 import type { FC } from "react";
-
-const SOURCE_LABEL: Record<ThemeSource, string> = {
-  shipped: "Shipped",
-  jar: "Deployment",
-  local: "Local dev",
-  registry: "Registry",
-};
 
 interface ThemeCardProps {
   theme: ThemeCandidate;
@@ -58,6 +51,7 @@ function paletteFor(theme: ThemeCandidate, isDark: boolean): ArtworkPalette {
  * would make it permanent.
  */
 const ThemeCard: FC<ThemeCardProps> = ({ theme, isActive, isPreviewing, can, onTry }) => {
+  const { t } = useI18n();
   const [copied, setCopied] = useState(false);
   const isDark = useIsDark();
   const palette = paletteFor(theme, isDark);
@@ -67,10 +61,10 @@ const ThemeCard: FC<ThemeCardProps> = ({ theme, isActive, isPreviewing, can, onT
     try {
       await navigator.clipboard.writeText(theme.configValue);
       setCopied(true);
-      toast(`Copied "${theme.configValue}" — set it as app.theme`);
+      toast(t("marketplace:toasts.themeCopied", { value: theme.configValue }));
       setTimeout(() => setCopied(false), 1600);
     } catch {
-      toast(`app.theme value: ${theme.configValue}`);
+      toast(t("marketplace:toasts.themeValue", { value: theme.configValue }));
     }
   };
 
@@ -84,11 +78,14 @@ const ThemeCard: FC<ThemeCardProps> = ({ theme, isActive, isPreviewing, can, onT
       <div className="flex items-start gap-2.5 px-0.5 pt-2.5">
         <div className="min-w-0">
           <div className="flex items-center gap-1.5 text-[13.5px] font-semibold">
-            <span className="truncate" title={theme.author ? `by ${theme.author}` : undefined}>
+            <span
+              className="truncate"
+              title={theme.author ? t("marketplace:hints.by", { name: theme.author }) : undefined}
+            >
               {theme.name}
             </span>
             <span className="shrink-0 rounded-sm border border-border px-1 py-px text-[9.5px] font-semibold tracking-wide text-muted-foreground uppercase">
-              {SOURCE_LABEL[theme.source]}
+              {t(`marketplace:themeCard.source.${theme.source}`)}
             </span>
           </div>
           <div className="mt-0.5 flex items-center gap-1.5 text-xs whitespace-nowrap text-muted-foreground">
@@ -96,15 +93,15 @@ const ThemeCard: FC<ThemeCardProps> = ({ theme, isActive, isPreviewing, can, onT
               <>
                 <code
                   className="rounded bg-muted px-1 py-px font-mono text-[11px] text-foreground"
-                  title="The app.theme value that applies this theme for everyone"
+                  title={t("marketplace:themeCard.configValueHint")}
                 >
                   {theme.configValue}
                 </code>
                 <button
                   type="button"
                   onClick={copyValue}
-                  title="Copy — set this as app.theme to apply it for everyone"
-                  aria-label="Copy app.theme value"
+                  title={t("marketplace:themeCard.copyHint")}
+                  aria-label={t("marketplace:themeCard.copyAria")}
                   className="rounded p-0.5 text-muted-foreground/70 transition-colors hover:bg-muted hover:text-foreground"
                 >
                   {copied ? <Check className="size-3 text-ok" /> : <Copy className="size-3" />}
@@ -113,23 +110,33 @@ const ThemeCard: FC<ThemeCardProps> = ({ theme, isActive, isPreviewing, can, onT
             ) : (
               <>
                 {theme.author && <span className="truncate">{theme.author}</span>}
-                <span title="A deployment hosts the CSS itself before it can set app.theme.">· external</span>
+                <span title={t("marketplace:themeCard.externalHint")}>{t("marketplace:themeCard.external")}</span>
               </>
             )}
           </div>
         </div>
         <div className="ml-auto shrink-0">
           {isActive ? (
-            <ActionPill tone="ok" size="sm" title="Applied for everyone via app.theme">
-              Active <Check className="size-3.5" strokeWidth={2.6} />
+            <ActionPill tone="ok" size="sm" title={t("marketplace:hints.appliedForEveryone")}>
+              {t("marketplace:actions.active")} <Check className="size-3.5" strokeWidth={2.6} />
             </ActionPill>
           ) : isPreviewing ? (
-            <ActionPill tone="warning" size="sm" onClick={endThemePreview} title="Previewing in this tab — click to end">
-              End preview
+            <ActionPill
+              tone="warning"
+              size="sm"
+              onClick={endThemePreview}
+              title={t("marketplace:hints.previewingClickToEnd")}
+            >
+              {t("marketplace:actions.endPreview")}
             </ActionPill>
           ) : (
-            <ActionPill size="sm" disabled={!can.ok} onClick={() => onTry(theme)} title={can.reason ?? "Preview in this tab"}>
-              Try it
+            <ActionPill
+              size="sm"
+              disabled={!can.ok}
+              onClick={() => onTry(theme)}
+              title={can.reason ?? t("marketplace:hints.previewInTab")}
+            >
+              {t("marketplace:actions.tryIt")}
             </ActionPill>
           )}
         </div>

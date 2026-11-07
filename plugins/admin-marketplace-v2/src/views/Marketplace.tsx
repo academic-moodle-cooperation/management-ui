@@ -1,6 +1,7 @@
 import { Compass, LibraryBig, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { useI18n } from "@oc-mui/i18n";
 import { Input } from "@oc-mui/ui/components";
 
 import { TrialBanner } from "../components/TrialBanner";
@@ -28,6 +29,7 @@ function tabFromHash(): Tab {
  * The active tab lives in the URL hash so it survives reloads and can be linked.
  */
 const Marketplace: FC = () => {
+  const { t } = useI18n();
   const [tab, setTab] = useState<Tab>(tabFromHash);
   const [query, setQuery] = useState("");
   const catalog = useCatalog();
@@ -58,8 +60,8 @@ const Marketplace: FC = () => {
         <div className="mx-auto flex max-w-[1180px] items-center gap-1 px-8">
           {(
             [
-              { key: "explore", label: "Explore", Icon: Compass },
-              { key: "library", label: "Library", Icon: LibraryBig },
+              { key: "explore", label: t("marketplace:header.explore"), Icon: Compass },
+              { key: "library", label: t("marketplace:header.library"), Icon: LibraryBig },
             ] as const
           ).map(({ key, label, Icon }) => {
             const active = tab === key;
@@ -80,7 +82,7 @@ const Marketplace: FC = () => {
                   <>
                     <span className="font-mono text-[11px] font-normal text-muted-foreground">{libraryCount}</span>
                     {libraryAttention && (
-                      <span className="size-[7px] rounded-full bg-primary" title="A newer version is listed in the registry" />
+                      <span className="size-[7px] rounded-full bg-primary" title={t("marketplace:header.newerInRegistry")} />
                     )}
                   </>
                 )}
@@ -95,7 +97,7 @@ const Marketplace: FC = () => {
                 setQuery(e.target.value);
                 if (tab !== "explore") select("explore");
               }}
-              placeholder="Search plugins & themes"
+              placeholder={t("marketplace:header.search")}
               className="h-[38px] rounded-md bg-card pl-9 text-[13.5px]"
             />
           </div>

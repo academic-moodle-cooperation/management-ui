@@ -1,6 +1,7 @@
 import { AlertTriangle, PauseCircle, RefreshCw, ShieldCheck, Timer } from "lucide-react";
 import { useState } from "react";
 
+import { useI18n } from "@oc-mui/i18n";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,6 +12,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@oc-mui/ui/components";
+
+import { rich } from "../lib/rich";
 
 import type { Conflict } from "../services/conflicts";
 import type { ReactElement } from "react";
@@ -39,6 +42,9 @@ interface TryConfirmDialogProps<T extends TrySubject> {
   onCancel: () => void;
 }
 
+/** The emphasised run of a sentence: the `<b>` tag of a translated string. */
+const strong = <b className="font-medium text-foreground" />;
+
 /**
  * The consent step before a trial starts. States plainly what it is: for a
  * registry bundle, third-party code with the admin's privileges; for a
@@ -51,6 +57,7 @@ function TryConfirmDialog<T extends TrySubject>({
   onConfirm,
   onCancel,
 }: TryConfirmDialogProps<T>): ReactElement | null {
+  const { t } = useI18n();
   // Pausing is the sensible default: without it the two plugins fight per slot.
   const [pause, setPause] = useState(true);
   if (!plugin) return null;
@@ -61,84 +68,65 @@ function TryConfirmDialog<T extends TrySubject>({
   } catch {
     /* show the raw URL if unparseable — validation rejects it later anyway */
   }
+  // Registry data goes in as an element, never spliced into the string (see lib/rich).
+  const hostEl = <b className="font-medium text-foreground">{host}</b>;
 
   return (
     <AlertDialog open onOpenChange={(open) => !open && onCancel()}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Try “{plugin.name}” in this tab?</AlertDialogTitle>
+          <AlertDialogTitle>{t("marketplace:try.title", { name: plugin.name })}</AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="space-y-3 pt-1 text-sm">
               {mode === "theme" ? (
                 <p className="flex gap-2.5">
                   <ShieldCheck className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
                   <span>
-                    A theme only changes colors, fonts and spacing. It is applied{" "}
-                    <b className="font-medium text-foreground">immediately, in this tab</b> — no reload.
-                    {host && (
-                      <>
-                        {" "}The stylesheet comes from <b className="font-medium text-foreground">{host}</b>.
-                      </>
-                    )}
+                    {rich(t("marketplace:try.theme"), { b: strong })}
+                    {host && <> {rich(t("marketplace:try.themeSource"), { host: hostEl })}</>}
                   </span>
                 </p>
               ) : mode === "local" ? (
                 <p className="flex gap-2.5">
                   <ShieldCheck className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                  <span>
-                    This plugin is <b className="font-medium text-foreground">already deployed</b> on this
-                    server but switched off by configuration. Nothing is downloaded — it is activated
-                    for your tab only, exactly as if it were enabled.
-                  </span>
+                  <span>{rich(t("marketplace:try.local"), { b: strong })}</span>
                 </p>
               ) : (
                 <p className="flex gap-2.5">
                   <AlertTriangle className="mt-0.5 size-4 shrink-0 text-warning" />
-                  <span>
-                    This runs third-party code from <b className="font-medium text-foreground">{host}</b>{" "}
-                    with your administrator privileges in this browser.
-                  </span>
+                  <span>{rich(t("marketplace:try.remote"), { host: hostEl })}</span>
                 </p>
               )}
               {mode === "remote" && (
-              <p className="flex gap-2.5">
-                <ShieldCheck className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                <span>
-                  {plugin.integrity ? (
-                    <>
-                      The bundle is <b className="font-medium text-foreground">integrity-pinned</b>:
-                      only the exact reviewed build will execute.
-                    </>
-                  ) : (
-                    <>
-                      This entry is <b className="font-medium text-foreground">not integrity-pinned</b> —
-                      the bundle is trusted as served by its host.
-                    </>
-                  )}
-                </span>
-              </p>
+                <p className="flex gap-2.5">
+                  <ShieldCheck className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                  <span>
+                    {rich(t(plugin.integrity ? "marketplace:try.pinned" : "marketplace:try.notPinned"), {
+                      b: strong,
+                    })}
+                  </span>
+                </p>
               )}
               <p className="flex gap-2.5">
                 <Timer className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                <span>
-                  Nothing is installed or enabled for anyone else. The trial is active{" "}
-                  <b className="font-medium text-foreground">only in this tab</b> and ends when you close it.
-                </span>
+                <span>{rich(t("marketplace:try.tabOnly"), { b: strong })}</span>
               </p>
               {conflicts.length > 0 && (
                 <div className="rounded-lg border border-warning/40 bg-warning/10 p-3">
                   <p className="flex gap-2.5">
                     <AlertTriangle className="mt-0.5 size-4 shrink-0 text-warning" />
                     <span>
-                      <b className="font-medium text-foreground">Overlaps with what runs here.</b>{" "}
+                      <b className="font-medium text-foreground">{t("marketplace:try.overlapsTitle")}</b>{" "}
                       {conflicts.map((c, i) => (
                         <span key={c.namespace}>
                           {i > 0 && "; "}
-                          <b className="font-medium text-foreground">{c.displayName}</b> already fills the{" "}
-                          {c.slots.join(", ")}
+                          {rich(t("marketplace:try.overlapsItem"), {
+                            name: <b className="font-medium text-foreground">{c.displayName}</b>,
+                            slots: <span>{c.slots.join(", ")}</span>,
+                          })}
                         </span>
                       ))}
-                      . Two plugins in one slot don&apos;t compose — whichever registers last wins.
+                      {t("marketplace:try.overlapsTail")}
                     </span>
                   </p>
                   <label className="mt-2.5 flex cursor-pointer items-start gap-2.5 text-foreground">
@@ -150,9 +138,10 @@ function TryConfirmDialog<T extends TrySubject>({
                     />
                     <span>
                       <PauseCircle className="mr-1 inline size-3.5 text-muted-foreground" />
-                      Pause {conflicts.map((c) => c.displayName).join(" and ")} in this tab while trying —{" "}
-                      <b className="font-medium">End trial</b> brings {conflicts.length === 1 ? "it" : "them"} back.
-                      Nothing changes for anyone else.
+                      {rich(t("marketplace:try.pause", { count: conflicts.length }), {
+                        b: <b className="font-medium" />,
+                        names: <span>{conflicts.map((c) => c.displayName).join(t("marketplace:try.pauseJoin"))}</span>,
+                      })}
                     </span>
                   </label>
                 </div>
@@ -160,18 +149,18 @@ function TryConfirmDialog<T extends TrySubject>({
               {mode !== "theme" && (
                 <p className="flex gap-2.5">
                   <RefreshCw className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                  <span>The page reloads to activate it.</span>
+                  <span>{t("marketplace:try.reloads")}</span>
                 </p>
               )}
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t("marketplace:actions.cancel")}</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => onConfirm(plugin, { pause: pause ? conflicts.map((c) => c.namespace) : [] })}
           >
-            {mode === "theme" ? "Try it" : "Try it — reload page"}
+            {mode === "theme" ? t("marketplace:actions.tryIt") : t("marketplace:actions.tryItReload")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

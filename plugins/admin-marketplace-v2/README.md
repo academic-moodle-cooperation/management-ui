@@ -97,6 +97,16 @@ starts with `demo-` are catalog-only showcase data.
 cards; empty hides the section. Curation is a deployment decision for now — a
 registry-side flag may follow once the central registry has a review process.
 
+**Languages**: every visible string comes from the `marketplace` namespace in
+[`packages/i18n/src/locales/marketplace/`](../../packages/i18n/src/locales/marketplace/)
+(English and German), like the other in-tree plugins — the shell loads only
+the shared namespaces for bundled plugins, so a plugin-local `locales/` folder
+would not be picked up here. Strings that quote the deployment — namespaces,
+plugin names, hosts — go into `Trans` as elements rather than interpolations,
+because `Trans` parses the translated string as markup. The diagnostics of the
+Try security gates (allowlist, protocol, integrity) stay English on purpose:
+they quote configuration keys for administrators.
+
 ## Registry additions
 
 The registry entry format ([`src/services/registry.ts`](src/services/registry.ts))

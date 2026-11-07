@@ -1,5 +1,7 @@
 import { BadgeCheck, Check } from "lucide-react";
 
+import { useI18n } from "@oc-mui/i18n";
+
 import { usePaperToken } from "../hooks/usePaperToken";
 import { accentFor, tileGradient } from "../lib/palette";
 
@@ -29,6 +31,7 @@ interface FeaturedCardProps {
  * doesn't show — it only gives the entry room.
  */
 const FeaturedCard: FC<FeaturedCardProps> = ({ plugin, image, onOpen, canTry, trialActive, activeHere, onTry }) => {
+  const { t } = useI18n();
   const paper = usePaperToken();
   return (
   <div
@@ -54,7 +57,7 @@ const FeaturedCard: FC<FeaturedCardProps> = ({ plugin, image, onOpen, canTry, tr
         <div className="flex items-center gap-1.5 text-[13.5px] font-semibold">
           <span className="truncate">{plugin.name}</span>
           {plugin.verified && (
-            <BadgeCheck aria-label="Verified" className="size-3 shrink-0 text-muted-foreground" />
+            <BadgeCheck aria-label={t("marketplace:hints.verified")} className="size-3 shrink-0 text-muted-foreground" />
           )}
         </div>
         <div className="mt-0.5 flex items-center gap-2 text-xs whitespace-nowrap text-muted-foreground">
@@ -64,12 +67,16 @@ const FeaturedCard: FC<FeaturedCardProps> = ({ plugin, image, onOpen, canTry, tr
       </div>
       <div className="ml-auto shrink-0">
         {trialActive || activeHere ? (
-          <ActionPill tone="ok" size="sm" title={activeHere ? "Deployed and enabled here" : "Trial active in this tab"}>
+          <ActionPill
+            tone="ok"
+            size="sm"
+            title={activeHere ? t("marketplace:hints.activeHereShort") : t("marketplace:hints.trialActiveTab")}
+          >
             <Check className="size-3.5" strokeWidth={2.6} />
           </ActionPill>
         ) : canTry && onTry ? (
           <ActionPill size="sm" onClick={() => onTry(plugin)}>
-            Try it
+            {t("marketplace:actions.tryIt")}
           </ActionPill>
         ) : null}
       </div>

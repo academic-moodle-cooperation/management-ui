@@ -45,7 +45,8 @@ export const adminMarketplaceV2Plugin = createPlugin({
     });
 
     manager.registerObject("sidebar:nav-items", "marketplace-v2", {
-      title: "Marketplace v2",
+      // A translation key: the sidebar resolves it (and loads the namespace) at render time.
+      title: "marketplace:nav.title",
       path: "/admin/marketplace-v2",
       icon: Store,
       order: 1001, // right below the v1 marketplace entry while both exist
