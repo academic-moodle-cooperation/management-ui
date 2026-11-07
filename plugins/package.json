@@ -18,7 +18,8 @@
     "@oc-mui/plugin-core-episodes": "workspace:*",
     "@oc-mui/plugin-core-series": "workspace:*",
     "@oc-mui/plugin-core-upload": "workspace:*",
-    "@oc-mui/plugin-example": "workspace:*"
+    "@oc-mui/plugin-example": "workspace:*",
+    "@oc-mui/plugin-usage-stats": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.0.6",

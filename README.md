@@ -1,6 +1,6 @@
 # Management UI
 
-A modular, plugin-first admin interface for [Opencast](https://opencast.org). A thin shell hosts routing, auth, and layout; every visible feature — episodes, series, upload, marketplace — ships as a plugin. Organisations customize by adding plugins and themes, not by forking.
+A modular, plugin-first admin interface for [Opencast](https://opencast.org). A thin shell hosts routing, auth, and layout; every visible feature — episodes, series, upload, usage statistics, marketplace — ships as a plugin. Organisations customize by adding plugins and themes, not by forking.
 
 [![License: ECL 2.0](https://img.shields.io/badge/License-ECL_2.0-blue.svg)](LICENSE)
 

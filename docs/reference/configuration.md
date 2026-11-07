@@ -283,7 +283,7 @@ The two switches do different things on purpose:
 | **When it's evaluated** | Before the plugin is registered with the manager. | Before the plugin is registered, after the base + overlay merge. |
 | **Granularity** | One entry per namespace (e.g. `core`, `admin`, `episodes`). | Per plugin slice (`config.plugins.episodes.enabled = false`). |
 | **How to change it** | Edit `config.json` / a config plugin. Requires a reload. | Same — but doesn't require touching the namespace list. |
-| **Default** | `["core", "episodes", "series", "upload", "admin", "config"]` — OSS core + marketplace + local-config hook. | Missing = enabled. Only `=== false` deactivates. |
+| **Default** | `["core", "episodes", "series", "upload", "usage-stats", "admin", "config"]` — OSS core + usage statistics + marketplace + local-config hook. | Missing = enabled. Only `=== false` deactivates. |
 
 Typical usage:
 

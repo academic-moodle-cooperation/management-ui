@@ -1023,6 +1023,9 @@ importers:
       '@oc-mui/plugin-example':
         specifier: workspace:*
         version: link:example
+      '@oc-mui/plugin-usage-stats':
+        specifier: workspace:*
+        version: link:usage-stats
     devDependencies:
       '@oc-mui/eslint-config':
         specifier: workspace:*
@@ -1347,6 +1350,52 @@ importers:
         version: 9.30.1(jiti@2.4.2)
       typescript:
         specifier: ~5.5.4
+        version: 5.5.4
+      vitest:
+        specifier: 4.1.9
+        version: 4.1.9(@types/node@25.0.6)(@vitest/coverage-v8@4.1.9)(@vitest/ui@4.1.9)(jsdom@27.4.0)(vite@7.3.6(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.9.0))
+
+  plugins/usage-stats:
+    dependencies:
+      '@oc-mui/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
+      '@oc-mui/plugin-system':
+        specifier: workspace:*
+        version: link:../../packages/plugin-system
+      '@oc-mui/query':
+        specifier: workspace:*
+        version: link:../../packages/query
+      '@oc-mui/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      lucide-react:
+        specifier: ^0.417.0
+        version: 0.417.0(react@19.1.0)
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
+      '@oc-mui/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@oc-mui/plugin-testing':
+        specifier: workspace:*
+        version: link:../../packages/plugin-testing
+      '@oc-mui/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      '@types/react':
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.8
+      eslint:
+        specifier: ^9.20.0
+        version: 9.30.1(jiti@2.4.2)
+      react:
+        specifier: ^19.1.0
+        version: 19.1.0
+      typescript:
+        specifier: ^5.3.3
         version: 5.5.4
       vitest:
         specifier: 4.1.9
@@ -9970,7 +10019,7 @@ snapshots:
   '@jridgewell/trace-mapping@0.3.29':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.5.4
+      '@jridgewell/sourcemap-codec': 1.5.5
 
   '@jridgewell/trace-mapping@0.3.31':
     dependencies:
@@ -13749,7 +13798,7 @@ snapshots:
 
   estree-walker@3.0.3:
     dependencies:
-      '@types/estree': 1.0.8
+      '@types/estree': 1.0.9
 
   esutils@2.0.3: {}
 
@@ -16147,11 +16196,11 @@ snapshots:
       magic-string: 0.30.21
       obug: 2.1.1
       pathe: 2.0.3
-      picomatch: 4.0.3
+      picomatch: 4.0.4
       std-env: 4.1.0
       tinybench: 2.9.0
       tinyexec: 1.0.2
-      tinyglobby: 0.2.15
+      tinyglobby: 0.2.17
       tinyrainbow: 3.1.0
       vite: 6.4.3(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.9.0)
       why-is-node-running: 2.3.0
@@ -16177,11 +16226,11 @@ snapshots:
       magic-string: 0.30.21
       obug: 2.1.1
       pathe: 2.0.3
-      picomatch: 4.0.3
+      picomatch: 4.0.4
       std-env: 4.1.0
       tinybench: 2.9.0
       tinyexec: 1.0.2
-      tinyglobby: 0.2.15
+      tinyglobby: 0.2.17
       tinyrainbow: 3.1.0
       vite: 7.3.6(@types/node@25.0.6)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.9.0)
       why-is-node-running: 2.3.0

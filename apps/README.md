@@ -7,7 +7,7 @@ This directory contains the **deployable Vite applications** of the project. Sin
 | [`shell/`](./shell)           | The one and only production application. Owns routing, layout, auth, theme, i18n, plugin loader. Exposes zero feature code itself. | 3000 | Yes            |
 | [`playground/`](./playground) | Dev-only sandbox that boots a single plugin standalone, with no other plugins loaded. For plugin authoring; the automated contract tests run per-plugin via `pnpm test:contract`, not here. | 3001 | No             |
 
-All features (episodes, series, upload, the admin marketplace, and every organization-specific extension) are **core plugins** under [`plugins/core-*`](../plugins/README.md) or external plugins. The shell renders them by reading the `apps:definitions` extension point at runtime - there is no longer a `dynamic-modules.json` manifest, no `@monorepo-apps/*` Vite alias, and no `app-router.tsx`.
+All features (episodes, series, upload, usage statistics, the admin marketplace, and every organization-specific extension) are **core plugins** under [`plugins/core-*`](../plugins/README.md) or external plugins. The shell renders them by reading the `apps:definitions` extension point at runtime - there is no longer a `dynamic-modules.json` manifest, no `@monorepo-apps/*` Vite alias, and no `app-router.tsx`.
 
 ## Running
 

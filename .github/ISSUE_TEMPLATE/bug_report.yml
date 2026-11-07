@@ -62,6 +62,7 @@ body:
         - Core plugin — core-episodes
         - Core plugin — core-series
         - Core plugin — core-upload
+        - Core plugin — usage-stats
         - Example plugin (plugins/example)
         - Admin Marketplace
         - A third-party / local plugin

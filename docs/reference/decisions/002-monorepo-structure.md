@@ -259,7 +259,7 @@ management-ui/
 > *2026-08 note:* this tree is the historical state at decision time and is
 > superseded — `apps/` now contains only `shell/` and `playground/`, and
 > `plugins/` contains `core`, `core-episodes`, `core-series`, `core-upload`,
-> `admin-marketplace`, and `example`. See
+> `admin-marketplace`, `usage-stats`, and `example`. See
 > [ADR-003](./003-shell-plus-core-plugins.md) and the current tree.
 
 ### Workspace Configuration
@@ -371,7 +371,7 @@ If layer violations are found:
 
 The boundary between core plugins and org plugins was tightened:
 
-- **`plugins/index.ts`** exports only core-shipped plugins (core, admin-marketplace, admin-dashboard, example-university). Org plugins are NEVER added here. *(2026-08 note: the exported set today is core, core-episodes, core-series, core-upload, example, admin-marketplace — see [`plugins/index.ts`](../../../plugins/index.ts).)*
+- **`plugins/index.ts`** exports only core-shipped plugins (core, admin-marketplace, admin-dashboard, example-university). Org plugins are NEVER added here. *(2026-08 note: the exported set today is core, core-episodes, core-series, core-upload, example, admin-marketplace, usage-stats — see [`plugins/index.ts`](../../../plugins/index.ts).)*
 - **`.local-plugins/`** is a dev checkout location, not an architectural boundary. It can be a separate git repo containing org-specific plugins.
 - **Plugin manifest** (`plugin.json`) is the canonical metadata source. Convention-based filename discovery still works but is documented as a contract, not an accident.
 - **`packages/remote-plugin-loader`** added as a shared package for all dynamic loading paths (JAR, `.local-plugins`, marketplace, registry).

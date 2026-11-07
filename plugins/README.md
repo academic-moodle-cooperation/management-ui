@@ -9,6 +9,7 @@ plugins/
 ├── core-series/           /series route + sidebar + create action + config defaults
 ├── core-upload/           /upload route + sidebar + config defaults
 ├── admin-marketplace/     Marketplace UI for installing/trying remote plugins
+├── usage-stats/           /usage-stats route + episodes "Usage" tab — views, timelines, watched parts
 ├── example/               Minimal reference implementation — start here when learning
 ├── assets/                Default fallback assets (favicons, fonts)
 └── index.ts               Exports the bundled plugins consumed by the shell

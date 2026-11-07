@@ -1,0 +1,19 @@
+{
+  "$schema": "../../packages/plugin-system/src/schemas/plugin.schema.json",
+  "id": "usage-stats",
+  "name": "Usage Statistics",
+  "version": "1.0.0",
+  "description": "Shows creators how often their videos are watched and which parts viewers actually see. Reads Opencast's usertracking service and falls back to generated demo data when it is unavailable.",
+  "author": {
+    "name": "Management UI Core"
+  },
+  "namespace": "usage-stats",
+  "type": "app",
+  "category": "feature",
+  "i18nNamespaces": ["usage-stats"],
+  "extensionPoints": [
+    "apps:definitions",
+    "sidebar:nav-items",
+    "app:config:defaults"
+  ]
+}

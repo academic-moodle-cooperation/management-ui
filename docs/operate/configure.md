@@ -16,7 +16,7 @@ Switch the deployment to the shipped `forest-sage` theme and drop the upload fea
 {
   "app": {
     "theme": "forest-sage",
-    "enabledPlugins": ["core", "episodes", "series", "admin", "config"]
+    "enabledPlugins": ["core", "episodes", "series", "usage-stats", "admin", "config"]
   }
 }
 ```
@@ -24,7 +24,7 @@ Switch the deployment to the shipped `forest-sage` theme and drop the upload fea
 Save, reload: the colours change and **Upload** disappears from the sidebar. Why it looks like this:
 
 - **`app.theme`** names a theme; the shell loads `<name>.css` on top of the always-present `default` baseline. Shipped in the core bundle: `aurora`, `forest-sage`, `heritage-burgundy`, `modern-slate`, `oxford-navy`, `press`, plus `example` — which is a sample, not a design. Light/dark is a separate toggle in the header, not a theme; an organization's own theme comes from a theme plugin.
-- **`app.enabledPlugins` replaces the default list wholesale** — arrays never merge item by item, so disabling one plugin means listing all the others. The default is `["core", "episodes", "series", "upload", "admin", "config"]`; this drops `upload`. Always keep `core` and `config`. **Mind the naming:** these are namespaces, not sidebar labels — the entry a user sees as **Videos** is the `episodes` namespace, and there is no `videos` key anywhere.
+- **`app.enabledPlugins` replaces the default list wholesale** — arrays never merge item by item, so disabling one plugin means listing all the others. The default is `["core", "episodes", "series", "upload", "usage-stats", "admin", "config"]` (see [Configuration model](../reference/configuration.md)); this drops `upload`. Always keep `core` and `config`. **Mind the naming:** these are namespaces, not sidebar labels — the entry a user sees as **Videos** is the `episodes` namespace, and there is no `videos` key anywhere.
 - Everything unnamed — locale, auth, branding, plugin slices — is omitted and stays at its default. Keep whatever your file already carries; this shows a deployment whose *only* customizations are these two.
 
 ## When a change does not take

@@ -144,7 +144,7 @@ Open `http://127.0.0.1:3000/management-ui/` in the browser.
 | # | Test | Expected |
 |---|------|----------|
 | 2.1 | Shell renders without console errors | Devtools console clean. Warnings OK, errors not. |
-| 2.2 | Sidebar shows expected nav items | Episodes, Series, Upload, Marketplace (depending on `app.enabledPlugins`). |
+| 2.2 | Sidebar shows expected nav items | Episodes, Series, Upload, Statistics, Marketplace (depending on `app.enabledPlugins`). |
 | 2.3 | Default theme applied | Semantic tokens render (no white-on-white text, no `oklch()` strings visible). |
 | 2.4 | Active route highlights in sidebar | Click an item — its row goes active. |
 | 2.5 | Footer renders | Default core footer present. |

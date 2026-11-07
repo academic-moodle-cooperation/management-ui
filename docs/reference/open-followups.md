@@ -160,6 +160,7 @@ Self-contained in [`testing.md` → Follow-ups](../contribute/testing.md#follow-
 3. Playground-as-isolated-plugin-runner.
 4. Visual regression — data screens + promote to CI (default + alternate-theme baselines are committed).
 5. Remote turbo cache to share artefacts across CI jobs.
+6. Contract harness blind to component extension points — `expectRegistered` should also consult `renderer.getComponents` so points populated via `registerComponent` can be declared in `plugin.json`.
 
 ---
 
@@ -260,7 +261,7 @@ exports (this PR).
 ### 9.1 Before the first npm publish
 
 - **peerDependencies shape.** ✅ Done in PR #227 — wrapped libraries in the
-  facades and `react`/`react-dom` in the four in-tree plugins are
+  facades and `react`/`react-dom` in the in-tree plugins are
   `peerDependencies`; `@oc-mui/ui`'s react peer is reconciled.
 - **`sideEffects` + api-extractor coverage.** Mostly done in PR #228
   (`sideEffects` declared; `.api.md` tracking + `api-check` added to

@@ -44,6 +44,7 @@ never directly.
 - `core` — mandatory infrastructure plugin: shared extension-point identifiers and defaults
 - `core-episodes`, `core-series`, `core-upload` — the built-in feature apps
 - `admin-marketplace` — optional marketplace UI for remote plugins
+- `usage-stats` — optional usage statistics (views, timelines, watched parts) from the Opencast statistics and usertracking services
 - `example` — minimal brand-neutral reference plugin
 - `assets` — shared static assets; not a runtime plugin
 

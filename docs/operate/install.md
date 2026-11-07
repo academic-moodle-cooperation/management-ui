@@ -63,7 +63,7 @@ Users still meet **Opencast's own login page** first: `etc/security/mh_default_o
 
 ## Verify
 
-1. Open `https://opencast.example.org/management-ui/` and log in. You land in Management UI, and the sidebar shows the entries the enabled plugins contribute — with the defaults: **Videos**, **Series**, **Upload**.
+1. Open `https://opencast.example.org/management-ui/` and log in. You land in Management UI, and the sidebar shows the entries the enabled plugins contribute — with the defaults: **Videos**, **Series**, **Upload**, **Statistics** (which shows labelled demo data until a statistics source is reachable — see [`plugins/usage-stats/README.md`](../../plugins/usage-stats/README.md)).
 2. The plugin endpoint answers: `curl -s -u <admin-user> "https://opencast.example.org/management-tool/ui/config/plugins.json"` returns `{"plugins":[]}`. The empty list is correct until you deploy plugin JARs; anonymous requests get HTTP 403, hence the credentials.
 
 If the UI loads but the tables error out, the GraphQL prerequisite above is unmet — every data query goes through `/graphql`. Other symptoms: [Troubleshooting](./troubleshooting.md).

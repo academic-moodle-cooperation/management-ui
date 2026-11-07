@@ -1,0 +1,60 @@
+{
+  "nav": {
+    "title": "Statistik"
+  },
+  "page": {
+    "title": "Nutzungsstatistik",
+    "description": "Wie oft Ihre Videos angesehen werden und welche Stellen tatsächlich gesehen werden."
+  },
+  "tab": {
+    "title": "Nutzung"
+  },
+  "source": {
+    "label": "Datenquelle",
+    "statistics": "Opencast-Statistik",
+    "statisticsHint": "Aggregierte Zahlen aus den Opencast-Statistik-Providern (Matomo oder InfluxDB).",
+    "usertracking": "Opencast-Usertracking",
+    "usertrackingHint": "Echte Zahlen aus dem Usertracking-Dienst von Opencast.",
+    "demo": "Demodaten",
+    "demoHint": "Keine Statistikquelle ist erreichbar; diese Zahlen werden lokal zur Veranschaulichung erzeugt."
+  },
+  "summary": {
+    "totalViews": "Aufrufe gesamt",
+    "episodes": "Episoden",
+    "withViews_one": "{{count}} mit Aufrufen",
+    "withViews_other": "{{count}} mit Aufrufen",
+    "avgCompletion": "Durchschnittliche Abschlussrate",
+    "avgCompletionHint": "Anteil der Zuschauer, die das Ende erreichen"
+  },
+  "top": {
+    "title": "Am häufigsten angesehen",
+    "views_one": "{{count}} Aufruf",
+    "views_other": "{{count}} Aufrufe"
+  },
+  "table": {
+    "title": "Alle Episoden",
+    "episode": "Episode",
+    "series": "Serie",
+    "views": "Aufrufe",
+    "timeline": "Aufrufe im Zeitverlauf",
+    "completion": "Abschluss",
+    "profile": "Gesehene Stellen",
+    "lastViewed": "Zuletzt angesehen"
+  },
+  "timeline": {
+    "title": "Aufrufe im Zeitverlauf",
+    "legend": "Aufrufe pro Tag"
+  },
+  "profile": {
+    "title": "Welche Stellen wurden angesehen",
+    "legend": "Anteil der Aufrufe, die diese Stelle erreichen",
+    "start": "Anfang",
+    "end": "Ende",
+    "unavailable": "Diese Datenquelle zeichnet nicht auf, welche Stellen eines Videos gesehen wurden."
+  },
+  "state": {
+    "loading": "Nutzungsdaten werden geladen…",
+    "empty": "Sie haben noch keine Episoden. Laden Sie eine hoch, dann erscheint hier die Statistik.",
+    "error": "Nutzungsdaten konnten nicht geladen werden."
+  }
+}

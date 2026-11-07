@@ -1,0 +1,60 @@
+{
+  "nav": {
+    "title": "Statistics"
+  },
+  "page": {
+    "title": "Usage statistics",
+    "description": "How often your videos are watched, and which parts viewers actually see."
+  },
+  "tab": {
+    "title": "Usage"
+  },
+  "source": {
+    "label": "Data source",
+    "statistics": "Opencast statistics",
+    "statisticsHint": "Aggregated numbers from the Opencast statistics providers (Matomo or InfluxDB).",
+    "usertracking": "Opencast usertracking",
+    "usertrackingHint": "Live numbers from Opencast's usertracking service.",
+    "demo": "Demo data",
+    "demoHint": "No statistics source is reachable, so these numbers are generated locally for illustration."
+  },
+  "summary": {
+    "totalViews": "Total views",
+    "episodes": "Episodes",
+    "withViews_one": "{{count}} with views",
+    "withViews_other": "{{count}} with views",
+    "avgCompletion": "Average completion",
+    "avgCompletionHint": "Share of viewers who reach the end"
+  },
+  "top": {
+    "title": "Most watched",
+    "views_one": "{{count}} view",
+    "views_other": "{{count}} views"
+  },
+  "table": {
+    "title": "All episodes",
+    "episode": "Episode",
+    "series": "Series",
+    "views": "Views",
+    "timeline": "Views over time",
+    "completion": "Completion",
+    "profile": "Watched parts",
+    "lastViewed": "Last viewed"
+  },
+  "timeline": {
+    "title": "Views over time",
+    "legend": "Plays per day"
+  },
+  "profile": {
+    "title": "Which parts were watched",
+    "legend": "Share of plays reaching each part",
+    "start": "Start",
+    "end": "End",
+    "unavailable": "This data source does not record which parts of a video were watched."
+  },
+  "state": {
+    "loading": "Loading usage data…",
+    "empty": "You have no episodes yet. Upload one and the statistics appear here.",
+    "error": "Usage data could not be loaded."
+  }
+}

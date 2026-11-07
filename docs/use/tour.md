@@ -10,6 +10,7 @@ For anyone opening Management UI for the first time. Afterwards you'll recognize
 - **Series** — the groups your recordings belong to.
 - **Videos** — every recording you may work with. Most tasks start here.
 - **Upload** — add new files.
+- **Statistics** — how often your videos are watched and which parts viewers see.
 - **Marketplace** — administrators only, and it manages plugins, not content.
 
 **So start at Videos or Series**, not at Home. Collapse the navigation with the panel button beside it, or press <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>B</kbd>.
@@ -38,7 +39,7 @@ The Videos screen adds a grid button left of *View* that swaps the list for a ga
 
 Everything you edit works the same way, on Videos and on Series alike:
 
-1. **Click a row.** A panel opens on the right — **Videoinfo** for a recording, **Series Info** for a series.
+1. **Click a row.** A panel opens on the right — **Videoinfo** for a recording, **Series Info** for a series. Plugins can add tabs to that panel; the built-in **Usage** tab on a recording shows its view statistics.
 2. **Click Edit** at the bottom of the panel. A pencil appears next to every field you may change.
 3. **Click a pencil**, change the value, then **Save**.
 

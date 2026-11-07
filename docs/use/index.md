@@ -12,6 +12,7 @@ No setup knowledge needed: someone has deployed the UI, you have a link and an a
 - [Upload a video](./upload.md) — add new material and see what happens to it.
 - [Work with series](./series.md) — create a series and manage what belongs to it.
 - [Delete a video](./delete-a-video.md) — the trash versus permanent removal.
+- [See how videos are watched](./usage-statistics.md) — views, views over time, watched parts, and where the numbers come from.
 
 ## Look it up
 

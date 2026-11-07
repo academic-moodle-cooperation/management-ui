@@ -44,6 +44,7 @@ The shell at `apps/shell/` is the only entry point. It boots `@oc-mui/plugin-sys
 |----------|-----------------|------------------|
 | `plugins/core*/` | Mandatory extension points and defaults | Yes |
 | `plugins/admin-*/` | Optional shared plugins (currently the marketplace) | Yes |
+| `plugins/usage-stats/` | Optional feature plugin: usage statistics for creators | Yes |
 | `plugins/example/` | Reference implementation for learning | Yes |
 | `.local-plugins/<org>/` | Org-specific or private plugins (dev checkout) | No |
 | External repos / JARs / CDN | Production org plugins and community plugins | No |

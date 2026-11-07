@@ -27,11 +27,11 @@ The set is decided **forward-looking**: it covers what a plugin author can legit
 | `@oc-mui/plugin-testing` | the contract-test harness (devDependency) |
 | `@oc-mui/eslint-config` · `@oc-mui/typescript-config` · `@oc-mui/vite-config` | the shared lint / TS / build configs the scaffold wires in |
 
-**Never published — stays `private: true` (7 packages).** The guiding rule: *publishing is a commitment* — every published package is a versioned public contract. Adding a package to npm later is a non-breaking change; un-publishing one is not. So when a package is a host internal rather than part of the authoring contract, it stays private until there's a concrete reason to expose it.
+**Never published — stays `private: true` (8 packages).** The guiding rule: *publishing is a commitment* — every published package is a versioned public contract. Adding a package to npm later is a non-breaking change; un-publishing one is not. So when a package is a host internal rather than part of the authoring contract, it stays private until there's a concrete reason to expose it.
 
 | Package | Why it is not an SDK package |
 |---|---|
-| `@oc-mui/plugin-core-episodes` · `-series` · `-upload` | feature plugins — application products, shipped via JAR/marketplace. The architecture forbids importing one plugin from another (communicate via extension points), so no author depends on these as packages. |
+| `@oc-mui/plugin-core-episodes` · `-series` · `-upload` · `@oc-mui/plugin-usage-stats` | feature plugins — application products, shipped via JAR/marketplace. The architecture forbids importing one plugin from another (communicate via extension points), so no author depends on these as packages. |
 | `@oc-mui/plugin-admin-marketplace` | the host's admin product |
 | `@oc-mui/plugin-example` | reference/scaffold source, read not installed |
 | `@oc-mui/remote-plugin-loader` | host-side mechanism for loading remote plugins; an author writes a plugin, the host loads it |

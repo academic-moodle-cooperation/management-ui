@@ -51,6 +51,7 @@ const defaultProxyPaths: Record<string, string | ProxyOptions> = {
   "/studio": "",
   "/ingest": "",
   "/api": "",
+  "/usertracking": "", // usage-stats plugin: Opencast usertracking service
 };
 
 /**
