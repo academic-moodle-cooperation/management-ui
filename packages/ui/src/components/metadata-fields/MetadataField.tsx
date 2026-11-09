@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 import { formatDate, useI18n } from "@oc-mui/i18n";
 import type { MetadataFieldType } from "@oc-mui/query";
 import { parseDuration } from "@oc-mui/utils";
@@ -61,8 +63,8 @@ export const MetadataField = ({ type, listProvider, collection, value }: Metadat
         metadataElement = (
           <div className="whitespace-pre">
             <>
-              {(Array.isArray(value) ? value : displayValue.split(",")).map((item) => (
-                <>{(item ?? "") + "\n"}</>
+              {(Array.isArray(value) ? value : displayValue.split(",")).map((item, index) => (
+                <Fragment key={index}>{(item ?? "") + "\n"}</Fragment>
               ))}
             </>
           </div>

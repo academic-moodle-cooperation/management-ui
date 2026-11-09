@@ -211,7 +211,7 @@ A theme is a CSS file that overrides token values — color **and** structure (r
   --primary: oklch(0.45 0.15 250);
   --sidebar: oklch(0.20 0.05 250);
   --radius: 0.5rem;
-  --font-heading: Georgia, "Times New Roman", serif; /* system stack — see below */
+  --font-heading: Georgia, "Times New Roman", serif; /* system stack or a self-hosted font — see below */
 }
 
 .dark {
@@ -220,16 +220,24 @@ A theme is a CSS file that overrides token values — color **and** structure (r
 }
 ```
 
-**No external web fonts.** Set `--font-*` to **system font stacks only** — don't `@import` Google Fonts (or any remote font). Embedding remote fonts sends every user's IP to a third party, which is a GDPR problem for EU/university deployments (and breaks offline/air-gapped installs). Use serif vs. sans, plus `--radius`/`--shadow-*`/`--spacing-*`, to give a theme its character. See `apps/shell/public/plugins/themes/*.css` for worked examples.
+**No remote web fonts.** Never `@import` Google Fonts (or any font served by a third party): it sends every user's IP to that party, which is a GDPR problem for EU/university deployments, and it breaks offline/air-gapped installs. Three options stay open:
+
+- **Inherit the host font.** A theme that sets no `--font-*` keeps Geist, which `@oc-mui/ui` bundles as `woff2` files (no network request). Most shipped themes do this.
+- **System font stacks.** Set `--font-*` to platform fonts (`Georgia, …`, `system-ui, …`) — zero bytes, zero requests.
+- **Ship your own font with the theme.** Fonts are a theme's job, not the host's: put the `woff2` files next to the theme CSS, declare them with `@font-face` using *relative* `url()`s (they resolve against the CSS file, wherever it is served from — `public/plugins/themes/`, a JAR's `/static/plugins/<org>/`, or a registry), and point `--font-sans` / `--font-heading` at the family. Use a font whose licence permits redistribution (e.g. SIL OFL). Same origin as the CSS means no new party learns who is browsing; a registry theme's fonts go through the same allowlist as its CSS.
+
+Beyond the typeface, `--radius`/`--shadow-*`/`--spacing-*` give a theme its character. See `apps/shell/public/plugins/themes/*.css` for worked examples.
 
 **Where themes live & how they're served:**
 
 | Theme kind | Location | Applied via |
 | --- | --- | --- |
-| Shipped showcase themes | `apps/shell/public/plugins/themes/<name>.css` | marketplace **and** `app.theme` |
+| Shipped showcase themes | `apps/shell/public/plugins/themes/<name>.css`, listed in `index.json` next to them | marketplace **and** `app.theme` |
 | Org themes (dev) | `.local-plugins/<org>/themes/<org>.css` | `app.theme` |
 | Org themes (prod) | the org's JAR, served at `/static/plugins/<org>/<org>.css` | `app.theme` |
 
+> When you add or remove a shipped theme, update `apps/shell/public/plugins/themes/index.json` as well — the marketplace lists shipped themes from that file (id, name, tagline, author); the CSS itself is never parsed for metadata.
+>
 > Theme CSS **must be served as a raw `text/css` static file**. A `.css` under a *source* dir (e.g. `plugins/themes/`) is returned by Vite as a JS module (dev) or the SPA `index.html` fallback (build), so a `<link rel="stylesheet">` "loads" it (200) but applies nothing. That's why shipped themes live under `public/`. The default baseline (`apps/shell/src/themes/default.css`) is the one exception — it's `import`ed directly by the shell, not loaded by name.
 
 ## Review checklist
@@ -240,7 +248,7 @@ A theme is a CSS file that overrides token values — color **and** structure (r
 - [ ] Any host-component overrides are scoped with a plugin-root selector.
 - [ ] Renders correctly in light and dark mode.
 - [ ] Renders correctly against the default theme **and** at least one org theme.
-- [ ] Theme files set `--font-*` to system stacks only — no remote `@import` of web fonts.
+- [ ] Theme fonts are inherited, system stacks, or self-hosted next to the theme CSS — never a remote `@import`.
 
 ## Consuming `@oc-mui/ui` outside the monorepo
 

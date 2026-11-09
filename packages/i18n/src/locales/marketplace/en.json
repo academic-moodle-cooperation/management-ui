@@ -1,0 +1,182 @@
+{
+  "nav": {
+    "title": "Marketplace v2"
+  },
+  "header": {
+    "explore": "Explore",
+    "library": "Installed",
+    "search": "Search plugins & themes",
+    "newerInRegistry": "A newer version is listed in the registry"
+  },
+  "categories": {
+    "all": "All",
+    "feature": "Features",
+    "integration": "Integrations",
+    "utility": "Utilities",
+    "theme": "Themes",
+    "experimental": "Experimental"
+  },
+  "hero": {
+    "title": "Discover community-made <plugins>plugins</plugins>, <themes>themes</themes>, <integrations>integrations</integrations>, and more",
+    "subtitle": "Built by organisations like yours. Try anything in this tab — nothing is installed, and permanent changes stay in your hands."
+  },
+  "catalog": {
+    "loadFailed": "The catalog could not be loaded.",
+    "retry": "Try again",
+    "noRegistries": "No registries configured.",
+    "noRegistriesHint": "This deployment has no plugin registries set up. Add registry URLs to the marketplace configuration to browse community plugins.",
+    "nothingFound": "Nothing found.",
+    "nothingFoundHint": "Try a different search or category — or build it yourself with the plugin SDK.",
+    "featured": "Featured plugins",
+    "featuredHint": "Picked by this deployment",
+    "plugins": "Plugins",
+    "themes": "Themes",
+    "themesHint": "Restyle the whole interface — Try applies instantly in this tab",
+    "results": "Results",
+    "resultsFor": "Results for “{{query}}”",
+    "resultCount_one": "{{count}} result",
+    "resultCount_other": "{{count}} results"
+  },
+  "actions": {
+    "tryIt": "Try it",
+    "tryItReload": "Try it — reload page",
+    "cancel": "Cancel",
+    "endTrial": "End trial",
+    "endAllTrials": "End all trials",
+    "endPreview": "End preview",
+    "trialActive": "Trial active",
+    "installed": "Installed",
+    "active": "Active",
+    "repository": "Repository",
+    "homepage": "Homepage"
+  },
+  "hints": {
+    "installed": "Installed and enabled on this deployment — click to open it under Installed",
+    "installedShort": "Installed and enabled here — click to open",
+    "trialActiveTab": "Trial active in this tab",
+    "previewInTab": "Preview in this tab",
+    "previewInTabOnly": "Preview in this tab only",
+    "previewingClickToEnd": "Previewing in this tab — click to end",
+    "appliedForEveryone": "Applied for everyone via app.theme",
+    "unloadFromTab": "Unload it from this tab (reloads)",
+    "verified": "Verified",
+    "integrityPinned": "Integrity-pinned: only the exact reviewed build will execute.",
+    "by": "by {{name}}"
+  },
+  "detail": {
+    "version": "Version",
+    "category": "Category",
+    "license": "License",
+    "updated": "Updated",
+    "permanentTitle": "Making it permanent is a deployment step.",
+    "permanentText": "Try only loads it in this tab. For everyone: deploy the bundle (JAR or hosted file), then list its namespace in the deployment's <code>config.json</code>:",
+    "copyNamespace": "Copy the namespace",
+    "copyNamespaceAria": "Copy namespace",
+    "alreadyDeployed": "Already deployed here but switched off? The Library lists it under “Available but disabled”, with the same value."
+  },
+  "toasts": {
+    "namespaceCopied": "Copied \"{{value}}\" — add it to app.enabledPlugins",
+    "namespace": "Namespace: {{value}}",
+    "themeCopied": "Copied \"{{value}}\" — set it as app.theme",
+    "themeValue": "app.theme value: {{value}}"
+  },
+  "extends": {
+    "extends": "Extends",
+    "requires": "Requires",
+    "state": {
+      "active": "present",
+      "trial": "in this tab",
+      "disabled": "present, switched off",
+      "paused": "paused in this tab",
+      "missing": "not on this deployment"
+    }
+  },
+  "try": {
+    "title": "Try “{{name}}” in this tab?",
+    "theme": "A theme only changes colors, fonts and spacing. It is applied <b>immediately, in this tab</b> — no reload.",
+    "themeSource": "The stylesheet comes from <host/>.",
+    "local": "This plugin is <b>already deployed</b> on this server but switched off by configuration. Nothing is downloaded — it is activated for your tab only, exactly as if it were enabled.",
+    "remote": "This runs third-party code from <host/> with your administrator privileges in this browser.",
+    "pinned": "The bundle is <b>integrity-pinned</b>: only the exact reviewed build will execute.",
+    "notPinned": "This entry is <b>not integrity-pinned</b> — the bundle is trusted as served by its host.",
+    "tabOnly": "Nothing is installed or enabled for anyone else. The trial is active <b>only in this tab</b> and ends when you close it.",
+    "overlapsTitle": "Overlaps with what runs here.",
+    "overlapsItem": "<name/> already fills the <slots/>",
+    "overlapsTail": ". Two plugins in one slot don't compose — whichever registers last wins.",
+    "pause_one": "Pause <names/> in this tab while trying — <b>End trial</b> brings it back. Nothing changes for anyone else.",
+    "pause_other": "Pause <names/> in this tab while trying — <b>End trial</b> brings them back. Nothing changes for anyone else.",
+    "pauseJoin": " and ",
+    "reloads": "The page reloads to activate it."
+  },
+  "library": {
+    "lead": "Everything running in this deployment: shipped with the app, deployed as JARs, or on trial in this tab.",
+    "intro": "Enabling a plugin for the whole organisation is a deployment step: add its <code>namespace</code> to <code>app.enabledPlugins</code> in <code>config.json</code> (every row has a copy button for that value). A plugin can additionally be switched off at runtime via <switch/>.",
+    "theme": "Theme",
+    "themeActive": "active for everyone:",
+    "themeVia": "(via <code>app.theme</code>)",
+    "themePreviewing": "previewing {{name}} · this tab",
+    "groups": {
+      "active": "Active",
+      "activeHint": "Running on this deployment right now",
+      "trial": "Trials",
+      "trialHint": "Loaded in this tab only — gone when it closes",
+      "paused": "Paused in this tab",
+      "pausedHint": "Stepped aside for a trial — back when it ends",
+      "disabled": "Available but disabled",
+      "disabledHint": "Present on this deployment, switched off by configuration"
+    },
+    "emptyActive": "Nothing is registered — that would be a broken boot; check the console.",
+    "emptyDisabled": "Everything present is enabled.",
+    "origin": {
+      "builtin": "Built-in",
+      "jar": "Deployment (JAR)",
+      "local": "Local dev",
+      "trial": "Trial",
+      "browser": "This browser",
+      "shell": "Shell"
+    },
+    "badge": {
+      "previewingTab": "previewing · this tab",
+      "thisTab": "this tab",
+      "pausedTab": "paused · this tab",
+      "registryNewer": "Registry: {{version}}",
+      "registryNewerHint": "The registry lists a newer version. Updating is a deployment step."
+    },
+    "namespace": "namespace",
+    "copyNamespaceHint": "Copy — this is the app.enabledPlugins value",
+    "copyNamespaceAria": "Copy namespace",
+    "type_one": "type",
+    "type_other": "types",
+    "moduleOf": "A module of the <parent/> plugin, registered under its own namespace. It is switched on and off together with <parentQuoted/> in <code>app.enabledPlugins</code>, not separately.",
+    "browserInstalled": "Installed in this browser by the previous marketplace (localStorage{{ids}}). It loads on every visit from this browser only — nobody else sees it. Remove it in the previous marketplace's Library, or clear that key.",
+    "pausedText": "Enabled for everyone, stepped aside in this tab so a trial can fill its slots. Ending that trial brings it back.",
+    "disabledBySwitch": "Present, but switched off via <switch/>.",
+    "disabledNotListed": "Present, but not listed in <code>app.enabledPlugins</code>. To enable it for everyone, add <namespaceQuoted/> to that list in the deployment's <code>config.json</code>."
+  },
+  "themeCard": {
+    "source": {
+      "shipped": "Shipped",
+      "jar": "Deployment",
+      "local": "Local dev",
+      "registry": "Registry"
+    },
+    "configValueHint": "The app.theme value that applies this theme for everyone",
+    "copyHint": "Copy — set this as app.theme to apply it for everyone",
+    "copyAria": "Copy app.theme value",
+    "external": "· external",
+    "externalHint": "A deployment hosts the CSS itself before it can set app.theme."
+  },
+  "banner": {
+    "plugins_one": "{{count}} plugin",
+    "plugins_other": "{{count}} plugins",
+    "theme": "1 theme",
+    "join": " + ",
+    "loaded": "{{what}} loaded for this tab only",
+    "gone": "— gone when the tab closes",
+    "themeApplied": "theme · applied in this tab",
+    "deployedPreviewing": "deployed here · previewing",
+    "fromRegistry": "from registry",
+    "pausing": "pausing {{names}}",
+    "pausingHint": "Paused in this tab for this trial; End trial brings it back"
+  }
+}
