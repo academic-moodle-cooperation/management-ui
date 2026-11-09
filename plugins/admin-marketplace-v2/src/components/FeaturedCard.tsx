@@ -19,9 +19,11 @@ interface FeaturedCardProps {
   onOpen: (plugin: RegistryPlugin) => void;
   canTry?: boolean;
   trialActive?: boolean;
-  /** The plugin is deployed here and running — nothing to try. */
+  /** The plugin is deployed here and running — nothing to try; the pill links to its Installed row. */
   activeHere?: boolean;
   onTry?: (plugin: RegistryPlugin) => void;
+  /** Opens the plugin's row in the Installed tab (the "Installed" pill). */
+  onOpenInstalled?: (plugin: RegistryPlugin) => void;
 }
 
 /**
@@ -30,7 +32,16 @@ interface FeaturedCardProps {
  * (`featured` in the plugin config); the card itself adds nothing a row
  * doesn't show — it only gives the entry room.
  */
-const FeaturedCard: FC<FeaturedCardProps> = ({ plugin, image, onOpen, canTry, trialActive, activeHere, onTry }) => {
+const FeaturedCard: FC<FeaturedCardProps> = ({
+  plugin,
+  image,
+  onOpen,
+  canTry,
+  trialActive,
+  activeHere,
+  onTry,
+  onOpenInstalled,
+}) => {
   const { t } = useI18n();
   const paper = usePaperToken();
   return (
@@ -70,7 +81,8 @@ const FeaturedCard: FC<FeaturedCardProps> = ({ plugin, image, onOpen, canTry, tr
           <ActionPill
             tone="ok"
             size="sm"
-            title={activeHere ? t("marketplace:hints.activeHereShort") : t("marketplace:hints.trialActiveTab")}
+            title={activeHere ? t("marketplace:hints.installedShort") : t("marketplace:hints.trialActiveTab")}
+            onClick={activeHere && !trialActive && onOpenInstalled ? () => onOpenInstalled(plugin) : undefined}
           >
             <Check className="size-3.5" strokeWidth={2.6} />
           </ActionPill>

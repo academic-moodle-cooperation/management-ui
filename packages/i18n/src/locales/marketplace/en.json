@@ -4,7 +4,7 @@
   },
   "header": {
     "explore": "Explore",
-    "library": "Library",
+    "library": "Installed",
     "search": "Search plugins & themes",
     "newerInRegistry": "A newer version is listed in the registry"
   },
@@ -45,14 +45,14 @@
     "endAllTrials": "End all trials",
     "endPreview": "End preview",
     "trialActive": "Trial active",
-    "activeHere": "Active here",
+    "installed": "Installed",
     "active": "Active",
     "repository": "Repository",
     "homepage": "Homepage"
   },
   "hints": {
-    "activeHere": "Deployed and enabled on this deployment",
-    "activeHereShort": "Deployed and enabled here",
+    "installed": "Installed and enabled on this deployment — click to open it under Installed",
+    "installedShort": "Installed and enabled here — click to open",
     "trialActiveTab": "Trial active in this tab",
     "previewInTab": "Preview in this tab",
     "previewInTabOnly": "Preview in this tab only",
@@ -109,7 +109,8 @@
     "reloads": "The page reloads to activate it."
   },
   "library": {
-    "intro": "This is everything the shell knows about. Enabling a plugin for the whole organisation is a deployment step: add its <code>namespace</code> to <code>app.enabledPlugins</code> in <code>config.json</code> (every row has a copy button for that value). A plugin can additionally be switched off at runtime via <switch/>.",
+    "lead": "Everything running in this deployment: shipped with the app, deployed as JARs, or on trial in this tab.",
+    "intro": "Enabling a plugin for the whole organisation is a deployment step: add its <code>namespace</code> to <code>app.enabledPlugins</code> in <code>config.json</code> (every row has a copy button for that value). A plugin can additionally be switched off at runtime via <switch/>.",
     "theme": "Theme",
     "themeActive": "active for everyone:",
     "themeVia": "(via <code>app.theme</code>)",
