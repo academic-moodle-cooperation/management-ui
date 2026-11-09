@@ -45,6 +45,32 @@ function hasLocalPluginLocaleFiles(monorepoRootPath: string): boolean {
   return false;
 }
 
+type StaticCopyRename = (
+  fileName: string,
+  fileExtension: string,
+  fullPath: string,
+) => { stripBase: true; name: string };
+
+/**
+ * vite-plugin-static-copy >= 4 mirrors each match's whole directory path below
+ * `dest` (v3 copied matched directories as-is). This drops that path and keeps
+ * only the part below `baseOf(file)`, e.g. `<ns>/<lng>.json` for a locales dir.
+ */
+function keepPathBelow(baseOf: (fullPath: string) => string): StaticCopyRename {
+  return (_fileName, _fileExtension, fullPath) => ({
+    stripBase: true,
+    name: path.relative(baseOf(fullPath), fullPath),
+  });
+}
+
+/** Innermost `locales/` directory on the way to a matched locale file. */
+function localesDirOf(fullPath: string): string {
+  const segments = fullPath.split(path.sep);
+  return segments.slice(0, segments.lastIndexOf("locales") + 1).join(path.sep);
+}
+
+const belowLocalesDir = keepPathBelow(localesDirOf);
+
 export interface CreateShellAppViteConfigOptions {
   packageName: string;
   mode: string; // 'development', 'production', etc.
@@ -58,9 +84,13 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
 
   const monorepoRootPath = path.resolve(invokerDir, "../..");
 
+  // The `**` locale globs would otherwise descend into installed dependencies and
+  // ship their `locales/` folders (date libraries, validators) with the app.
+  const noNodeModules = `!${path.resolve(monorepoRootPath, "**/node_modules/**")}`;
+
   // Discover per-plugin asset directories (e.g., plugins/<plugin>/assets/**/*)
   const pluginsRoot = path.resolve(monorepoRootPath, "plugins");
-  let perPluginAssetTargets: { src: string; dest: string }[] = [];
+  let perPluginAssetTargets: { src: string; dest: string; rename: StaticCopyRename }[] = [];
   try {
     const pluginEntries = fs.readdirSync(pluginsRoot, { withFileTypes: true });
     perPluginAssetTargets = pluginEntries
@@ -70,6 +100,7 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
       .map((pluginDirName) => ({
         src: path.resolve(pluginsRoot, pluginDirName, "assets/**/*"),
         dest: `assets/${pluginDirName}`,
+        rename: keepPathBelow(() => path.resolve(pluginsRoot, pluginDirName, "assets")),
       }));
   } catch {
     // Silently ignore if plugins directory does not exist in certain environments
@@ -77,7 +108,7 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
 
   // Discover .local-plugins asset directories (e.g. .local-plugins/example-org/assets/**/*)
   const localPluginsRoot = path.resolve(monorepoRootPath, ".local-plugins");
-  let localPluginAssetTargets: { src: string; dest: string }[] = [];
+  let localPluginAssetTargets: { src: string; dest: string; rename: StaticCopyRename }[] = [];
   try {
     if (fs.existsSync(localPluginsRoot) && fs.statSync(localPluginsRoot).isDirectory()) {
       const localEntries = fs.readdirSync(localPluginsRoot, { withFileTypes: true });
@@ -91,6 +122,7 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
         .map((name) => ({
           src: path.join(localPluginsRoot, name, "assets/**/*"),
           dest: `assets/${name}`,
+          rename: keepPathBelow(() => path.join(localPluginsRoot, name, "assets")),
         }));
     }
   } catch {
@@ -104,13 +136,20 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
       {
         src: path.resolve(monorepoRootPath, ".local-plugins/*/modules/*/locales/**/*"),
         dest: "locales",
+        rename: belowLocalesDir,
       },
     ]
     : [];
 
   // .local-plugins locales, root-level layout (`<plugin>/locales/<ns>/`, relocatable
   // via plugin.json's `locales` field) — one target per namespace dir with files
-  const localPluginsRootLocalesTargets = discoverLocalPluginRootLocaleTargets(monorepoRootPath);
+  // (the locale root is relocatable, so anchor on the namespace dir's parent)
+  const localPluginsRootLocalesTargets = discoverLocalPluginRootLocaleTargets(
+    monorepoRootPath,
+  ).map((target) => ({
+    ...target,
+    rename: keepPathBelow(() => path.dirname(target.src)),
+  }));
 
   // Create static assets copying plugin for i18n and custom assets support
   const staticAssetsCopyPlugin = viteStaticCopy({
@@ -119,24 +158,28 @@ export const createShellAppViteConfig = (options: CreateShellAppViteConfigOption
       {
         src: path.resolve(monorepoRootPath, "packages/i18n/src/locales/**/*"),
         dest: "locales",
+        rename: belowLocalesDir,
       },
       // Plugin locales (from packages)
       {
-        src: path.resolve(monorepoRootPath, "packages/**/locales/**/*"),
+        src: [path.resolve(monorepoRootPath, "packages/**/locales/**/*"), noNodeModules],
         dest: "locales",
+        rename: belowLocalesDir,
       },
       // All plugin implementations from unified plugins directory
       {
-        src: path.resolve(monorepoRootPath, "plugins/**/locales/**/*"),
+        src: [path.resolve(monorepoRootPath, "plugins/**/locales/**/*"), noNodeModules],
         dest: "locales",
+        rename: belowLocalesDir,
       },
       // .local-plugins locale namespaces (only when .local-plugins exists)
       ...localPluginsLocalesTarget,
       ...localPluginsRootLocalesTargets,
       // Shared plugin assets (global)
       {
-        src: path.resolve(monorepoRootPath, "plugins/assets/*"),
+        src: path.resolve(monorepoRootPath, "plugins/assets/**/*"),
         dest: "assets",
+        rename: keepPathBelow(() => path.resolve(monorepoRootPath, "plugins/assets")),
       },
       // Per-plugin assets (encapsulated under /assets/<plugin>/...)
       ...perPluginAssetTargets,
