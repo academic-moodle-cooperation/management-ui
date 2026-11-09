@@ -75,6 +75,13 @@ mirror image (`mui.plugin-pauses`, honoured by the shell at every load gate).
 End trial lifts the pause; nothing changes for anyone else. The Installed tab lists
 paused plugins in their own group.
 
+Routes are a slot too. If a trial's app registers a `routePath` a deployed app
+already serves (and the deployed one was not paused), the shell keeps the first
+registration and logs the collision instead of failing to build the router.
+Trials load before the JAR plugins, so in this tab the trial's app wins the
+route; the banner names the collision on that trial so End trial is the way
+back. What each trial registered is remembered in `mui.marketplace-v2.trial-apps`.
+
 Config slice (`config.plugins["admin-marketplace-v2"]`):
 
 ```json

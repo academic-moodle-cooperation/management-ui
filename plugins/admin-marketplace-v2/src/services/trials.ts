@@ -18,12 +18,13 @@ import { registerPluginI18nNamespaces } from "@oc-mui/i18n";
 import {
   addPluginPause,
   addPluginPreview,
+  getAllApps,
   removePluginPause,
   removePluginPreview,
   writePluginPauses,
   writePluginPreviews,
 } from "@oc-mui/plugin-system";
-import type { PluginManager } from "@oc-mui/plugin-system";
+import type { AppDefinition, PluginManager } from "@oc-mui/plugin-system";
 import { loadAndRegister } from "@oc-mui/remote-plugin-loader";
 import { logger } from "@oc-mui/utils";
 
@@ -36,6 +37,14 @@ const log = logger.child({ component: "marketplace-v2/trials" });
 
 const TRIALS_KEY = "mui.marketplace-v2.trials";
 const ERRORS_KEY = "mui.marketplace-v2.trial-errors";
+/** Per trial id: the apps its bundle registered at boot (for route-collision reporting). */
+const APPS_KEY = "mui.marketplace-v2.trial-apps";
+
+/** What a trial's bundle registered on `apps:definitions`. */
+export interface TrialApp {
+  id: string;
+  routePath: string;
+}
 
 interface TrialBase {
   id: string;
@@ -114,6 +123,63 @@ function writeErrors(errors: Record<string, string>): void {
   sessionStorage.setItem(ERRORS_KEY, JSON.stringify(errors));
 }
 
+/** Apps each trial registered at boot, keyed by trial id. */
+export function getTrialApps(): Record<string, TrialApp[]> {
+  return readJson<Record<string, TrialApp[]>>(APPS_KEY, {});
+}
+
+function writeTrialApps(apps: Record<string, TrialApp[]>): void {
+  sessionStorage.setItem(APPS_KEY, JSON.stringify(apps));
+}
+
+/** `/support/` and `support` are one route to the router. */
+function normalizeRoutePath(routePath: string): string {
+  const trimmed = routePath.trim().replace(/\/+$/, "");
+  if (trimmed === "") return "/";
+  return trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+}
+
+/** Apps currently registered, or none when the apps registry is not available. */
+function currentApps(manager: PluginManager): Array<Pick<AppDefinition, "id" | "routePath">> {
+  try {
+    return getAllApps(manager).map((a) => ({ id: a.id, routePath: a.routePath }));
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * A trial whose app lands on a route another app already serves is not a
+ * load error — the bundle ran fine — but only one of the two is reachable,
+ * and the shell decides which. Name it on the trial so End trial is the
+ * obvious way out. Pure: both inputs come from the caller.
+ */
+export function findRouteCollisions(
+  trialApps: Record<string, TrialApp[]>,
+  allApps: ReadonlyArray<Pick<AppDefinition, "id" | "routePath">>,
+): Record<string, string> {
+  const collisions: Record<string, string> = {};
+  for (const [trialId, apps] of Object.entries(trialApps)) {
+    const own = new Set(apps.map((a) => a.id));
+    for (const app of apps) {
+      const path = normalizeRoutePath(app.routePath);
+      const other = allApps.find((a) => !own.has(a.id) && normalizeRoutePath(a.routePath) === path);
+      if (other) {
+        collisions[trialId] = `Shares route ${path} with "${other.id}"; only one of them is reachable in this tab.`;
+        break;
+      }
+    }
+  }
+  return collisions;
+}
+
+/** Route collisions of this tab's trials against everything registered now. */
+export function getTrialCollisions(manager: PluginManager): Record<string, string> {
+  const trialApps = getTrialApps();
+  if (Object.keys(trialApps).length === 0) return {};
+  return findRouteCollisions(trialApps, currentApps(manager));
+}
+
 /**
  * Record a trial and reload so it loads through the boot path.
  * Caller is responsible for having confirmed with the user first.
@@ -187,12 +253,16 @@ export function endTrial(pluginId: string): void {
   const errors = getTrialErrors();
   delete errors[pluginId];
   writeErrors(errors);
+  const apps = getTrialApps();
+  delete apps[pluginId];
+  writeTrialApps(apps);
   window.location.reload();
 }
 
 export function endAllTrials(): void {
   sessionStorage.removeItem(TRIALS_KEY);
   sessionStorage.removeItem(ERRORS_KEY);
+  sessionStorage.removeItem(APPS_KEY);
   writePluginPreviews([]);
   writePluginPauses([]);
   window.location.reload();
@@ -208,6 +278,7 @@ export async function loadTrials(manager: PluginManager, cfg: TryConfig): Promis
   if (trials.length === 0) return;
 
   const errors: Record<string, string> = {};
+  const trialApps: Record<string, TrialApp[]> = {};
 
   for (const trial of trials) {
     // Local previews are loaded by the host itself (preview contract); nothing
@@ -221,6 +292,7 @@ export async function loadTrials(manager: PluginManager, cfg: TryConfig): Promis
       continue;
     }
 
+    const before = new Set(currentApps(manager).map((a) => a.id));
     const result = await loadAndRegister(trial.url, manager, {
       ...(trial.integrity && { integrity: trial.integrity }),
     });
@@ -231,6 +303,10 @@ export async function loadTrials(manager: PluginManager, cfg: TryConfig): Promis
       continue;
     }
 
+    // Remember what the bundle registered: deployed plugins load after the
+    // trials, so a route collision can only be judged later, at render time.
+    trialApps[trial.id] = currentApps(manager).filter((a) => !before.has(a.id));
+
     if (trial.localesUrl && trial.i18nNamespaces?.length) {
       registerPluginI18nNamespaces(trial.i18nNamespaces, trial.localesUrl);
     }
@@ -238,4 +314,5 @@ export async function loadTrials(manager: PluginManager, cfg: TryConfig): Promis
   }
 
   writeErrors(errors);
+  writeTrialApps(trialApps);
 }
