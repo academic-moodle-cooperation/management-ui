@@ -15,9 +15,11 @@ interface PluginRowProps {
   canTry?: boolean;
   /** A trial of this plugin is active in this tab. */
   trialActive?: boolean;
-  /** The plugin is deployed here and running — nothing to try. */
+  /** The plugin is deployed here and running — nothing to try; the pill links to its Installed row. */
   activeHere?: boolean;
   onTry?: (plugin: RegistryPlugin) => void;
+  /** Opens the plugin's row in the Installed tab (the "Installed" pill). */
+  onOpenInstalled?: (plugin: RegistryPlugin) => void;
 }
 
 /** One-line pitch: explicit tagline, or the description's first sentence. */
@@ -33,7 +35,7 @@ export function taglineOf(plugin: Pick<RegistryPlugin, "tagline" | "description"
  * Try is the only action; there is no install (permanence goes through the
  * ops path).
  */
-const PluginRow: FC<PluginRowProps> = ({ plugin, onOpen, canTry, trialActive, activeHere, onTry }) => {
+const PluginRow: FC<PluginRowProps> = ({ plugin, onOpen, canTry, trialActive, activeHere, onTry, onOpenInstalled }) => {
   const { t } = useI18n();
   return (
     <div
@@ -67,8 +69,12 @@ const PluginRow: FC<PluginRowProps> = ({ plugin, onOpen, canTry, trialActive, ac
             {t("marketplace:actions.trialActive")} <Check className="size-3.5" strokeWidth={2.6} />
           </ActionPill>
         ) : activeHere ? (
-          <ActionPill tone="ok" title={t("marketplace:hints.activeHere")}>
-            {t("marketplace:actions.activeHere")} <Check className="size-3.5" strokeWidth={2.6} />
+          <ActionPill
+            tone="ok"
+            title={t("marketplace:hints.installed")}
+            onClick={onOpenInstalled ? () => onOpenInstalled(plugin) : undefined}
+          >
+            {t("marketplace:actions.installed")} <Check className="size-3.5" strokeWidth={2.6} />
           </ActionPill>
         ) : canTry && onTry ? (
           <ActionPill onClick={() => onTry(plugin)}>{t("marketplace:actions.tryIt")}</ActionPill>
