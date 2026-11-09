@@ -114,6 +114,11 @@
       "title": "Modulfehler",
       "loadingFailed": "Modul konnte nicht geladen werden: {{name}}",
       "description": "Bitte laden Sie die Seite neu."
+    },
+    "router": {
+      "title": "Die Seite konnte nicht zusammengesetzt werden",
+      "description": "Ein Plugin hat eine Route registriert, die die App nicht bauen konnte. Laden Sie die Seite neu; passiert es weiterhin, beenden Sie laufende Plugin-Tests in diesem Tab.",
+      "reload": "Seite neu laden"
     }
   },
   "appearance": {

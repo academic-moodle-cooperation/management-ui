@@ -1,14 +1,15 @@
 import { Compass, LibraryBig, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useI18n } from "@oc-mui/i18n";
+import { usePluginManager } from "@oc-mui/plugin-system";
 import { Input } from "@oc-mui/ui/components";
 
 import { TrialBanner } from "../components/TrialBanner";
 import { useCatalog } from "../hooks/useCatalog";
 import { useInventory } from "../hooks/useInventory";
 import { useThemePreview } from "../hooks/useThemePreview";
-import { getTrialErrors, getTrials } from "../services/trials";
+import { getTrialCollisions, getTrialErrors, getTrials } from "../services/trials";
 
 import { Discover } from "./Discover";
 import { Library } from "./Library";
@@ -53,9 +54,14 @@ const Marketplace: FC = () => {
   const [query, setQuery] = useState("");
   const catalog = useCatalog();
   const inventory = useInventory(catalog.plugins);
+  const manager = usePluginManager();
   // Trials only change via full page reloads, so a render-time read is stable.
   const [trials] = useState(getTrials);
-  const [trialErrors] = useState(getTrialErrors);
+  // Boot errors win over a route collision: a bundle that never loaded has no routes.
+  const trialErrors = useMemo(
+    () => ({ ...getTrialCollisions(manager), ...getTrialErrors() }),
+    [manager],
+  );
   const themePreview = useThemePreview();
 
   useEffect(() => {

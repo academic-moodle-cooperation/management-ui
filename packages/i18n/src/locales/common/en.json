@@ -114,6 +114,11 @@
       "title": "Module Error",
       "loadingFailed": "Error loading module: {{name}}",
       "description": "Please try refreshing the page."
+    },
+    "router": {
+      "title": "The page could not be assembled",
+      "description": "A plugin registered a route the app could not build. Reload to try again; if it keeps happening, end any plugin trials in this tab.",
+      "reload": "Reload page"
     }
   },
   "appearance": {
