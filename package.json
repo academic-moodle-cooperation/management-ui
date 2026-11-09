@@ -60,9 +60,9 @@
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.3",
-    "@microsoft/api-extractor": "^7.59.4",
-    "@playwright/test": "^1.64.1",
-    "@swc/helpers": "^0.5.23",
+    "@microsoft/api-extractor": "^7.60.1",
+    "@playwright/test": "^1.65.0",
+    "@swc/helpers": "^0.5.24",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.8",
@@ -86,7 +86,7 @@
     "node": ">=22.11"
   },
   "dependencies": {
-    "lucide-react": "^0.417.0"
+    "lucide-react": "^0.577.0"
   },
   "pnpm": {
     "overrides": {
