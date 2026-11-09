@@ -1,5 +1,8 @@
 See @AGENTS.md for all project conventions.
 
+Project intent lives in [INTENT.md](INTENT.md) — check proposed work against
+it, especially the non-goals, before building.
+
 `AGENTS.md` is the canonical operational guide for AI agents in this repo — plugin
 layout, import boundaries, contract tests, config slices, versioning/changesets, and
 the `pnpm verify` pre-push gate. The human contributor path is

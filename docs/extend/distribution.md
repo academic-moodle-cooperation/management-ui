@@ -314,6 +314,22 @@ The essentials per entry: `id`, `name`, `description`, `version`, `author`,
 `localesUrl` + `i18nNamespaces` — set those two so a remote-loaded plugin keeps
 its translations (`<localesUrl>/<namespace>/<language>.json`, the same layout
 the JAR path serves); without them its UI falls back to raw keys.
+Further optional fields are read by the marketplace v2 catalog, with the same
+meaning as in a `plugin.json` (manifest 1.2): `namespace` (the
+`app.enabledPlugins` value the detail view shows operators; the id is assumed
+when absent), `tagline` (one-line pitch for
+cards and rows), `accentColor` (any CSS color for the entry's tile and
+artwork), `icon` (a Lucide icon name; otherwise a per-category default),
+`screenshots` (`[{ "url", "caption"? }]` — shown only when the image is
+same-origin or on a `try.allowedDomains` host, otherwise the generated artwork
+stays), `extensionPoints` and `pluginDependencies` (the manifest's — the
+detail view shows what the plugin extends and whether a required plugin is
+present on the deployment), and `integrity` (an SRI-style hash of the exact bundle bytes, e.g.
+`sha384-<base64>` — when present, v2's Try gesture refuses a bundle that
+doesn't match, and deployments can require pinning via
+`try.requireIntegrity`). All have fallbacks, so omitting them is fine. Which
+entries get the big "Featured" cards is the deployment's call:
+`plugins["admin-marketplace-v2"].featured` lists registry ids in display order.
 
 Listing and loading are gated separately: configuring a registry makes its
 entries *visible*, but Try/Install still require `enabled: true` and a host on
