@@ -78,12 +78,14 @@ interface DiscoverProps {
   query: string;
   /** This deployment's inventory — tells the detail view whether a dependency is present. */
   inventory: InventoryState;
+  /** Switches to the Installed tab and focuses the row for this namespace (the "Installed" pill). */
+  onOpenInstalled?: (namespace: string) => void;
 }
 
 const CARD_GRID = "grid grid-cols-2 gap-[18px] lg:grid-cols-4";
 const ROW_GRID = "grid gap-x-10 gap-y-1 md:grid-cols-2";
 
-const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
+const Discover: FC<DiscoverProps> = ({ catalog, query, inventory, onOpenInstalled }) => {
   const { t } = useI18n();
   const cfg = marketplaceV2Config.use();
   const { plugins, loading, error, reload } = catalog;
@@ -133,6 +135,11 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
     return target.kind === "present" && target.status === "active";
   };
 
+  const openInstalled = (plugin: RegistryPlugin): void => {
+    setSelected(null);
+    onOpenInstalled?.(namespaceOf(plugin));
+  };
+
   const requestTry = (plugin: RegistryPlugin): void => {
     setSelected(null);
     const target = resolveTryTarget(plugin, inventory.items);
@@ -151,6 +158,7 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
           trialActive={isTrialActive(plugin.id)}
           activeHere={activeHere(plugin)}
           onTry={requestTry}
+          onOpenInstalled={openInstalled}
         />
       ))}
     </div>
@@ -279,6 +287,7 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
                       trialActive={isTrialActive(plugin.id)}
                       activeHere={activeHere(plugin)}
                       onTry={requestTry}
+                      onOpenInstalled={openInstalled}
                     />
                   ))}
                 </div>
@@ -324,6 +333,7 @@ const Discover: FC<DiscoverProps> = ({ catalog, query, inventory }) => {
         activeHere={selected ? activeHere(selected) : false}
         onTry={requestTry}
         onEndTrial={endTrial}
+        onOpenInstalled={openInstalled}
       />
       <TryConfirmDialog
         plugin={tryCandidate}

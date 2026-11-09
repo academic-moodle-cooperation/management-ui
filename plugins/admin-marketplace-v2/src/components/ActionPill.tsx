@@ -10,7 +10,7 @@ interface ActionPillProps {
   tone?: "neutral" | "ok" | "warning";
   size?: "sm" | "md";
   /** With a handler the pill is a button; without, a static status label. */
-  onClick?: MouseEventHandler<HTMLButtonElement>;
+  onClick?: MouseEventHandler<HTMLButtonElement> | undefined;
   disabled?: boolean;
   title?: string;
   className?: string;
@@ -42,7 +42,9 @@ const ActionPill: FC<ActionPillProps> = ({
   title,
   className,
 }) => {
-  const base = `inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border font-semibold transition-colors ${SIZE[size]} ${TONE[tone]} ${className ?? ""}`;
+  // A status pill that also navigates (Installed → its row) reads as a label but acts as a link.
+  const interactiveOk = onClick && tone === "ok" ? " cursor-pointer hover:bg-ok/25" : "";
+  const base = `inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border font-semibold transition-colors ${SIZE[size]} ${TONE[tone]}${interactiveOk} ${className ?? ""}`;
   if (!onClick) {
     return (
       <span className={base} title={title}>
