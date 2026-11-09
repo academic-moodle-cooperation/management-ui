@@ -1,5 +1,5 @@
 import { Info, Palette } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useI18n } from "@oc-mui/i18n";
 import { useAppConfig } from "@oc-mui/query";
@@ -18,25 +18,47 @@ import type { InventoryItem, InventoryStatus } from "../services/inventory";
 import type { FC } from "react";
 
 interface LibraryProps {
-  /** Loaded by the page (the header's Library count reads it too). */
+  /** Loaded by the page (the header's Installed count reads it too). */
   inventory: InventoryState;
+  /** A namespace to scroll to and flash once (from an Explore "Installed" pill or `#library=<ns>`). */
+  focusNamespace?: string | null;
+}
+
+/** How long the focused row keeps its ring. */
+const FOCUS_FLASH_MS = 2400;
+
+/** DOM id of a row (LibraryRow renders the same literal), so a focus can find it after the tab mounts. */
+function rowId(namespace: string): string {
+  return `installed-${namespace}`;
 }
 
 /** Group order; title and hint resolve from `marketplace:library.groups.<status>[Hint]`. */
 const GROUPS: InventoryStatus[] = ["active", "trial", "paused", "disabled"];
 
 /**
- * Library — "what is on this deployment, and is it running?"
+ * Installed (the "Library" view) — "what is on this deployment, and is it running?"
  *
  * Read-only inventory grouped by status (per the feature discussion):
  * no toggles here — tab-scoped preview arrives with the Try gesture for
  * present-but-disabled plugins, and org-wide enabling stays a deployment
  * decision, which is why every row shows the exact config value to copy.
  */
-const Library: FC<LibraryProps> = ({ inventory }) => {
+const Library: FC<LibraryProps> = ({ inventory, focusNamespace = null }) => {
   const { t } = useI18n();
   const { items, loading } = inventory;
   const [tryCandidate, setTryCandidate] = useState<InventoryItem | null>(null);
+  const [flashing, setFlashing] = useState<string | null>(null);
+
+  // Once the rows exist, bring the focused one into view and ring it briefly.
+  useEffect(() => {
+    if (loading || !focusNamespace) return;
+    const el = document.getElementById(rowId(focusNamespace));
+    if (!el) return;
+    el.scrollIntoView({ block: "center", behavior: "smooth" });
+    setFlashing(focusNamespace);
+    const timer = window.setTimeout(() => setFlashing(null), FOCUS_FLASH_MS);
+    return () => window.clearTimeout(timer);
+  }, [loading, focusNamespace]);
   const { config } = useAppConfig();
   const activeTheme =
     ((config as unknown as { app?: { theme?: string } } | undefined)?.app?.theme ?? "default") || "default";
@@ -66,6 +88,7 @@ const Library: FC<LibraryProps> = ({ inventory }) => {
 
   return (
     <div className="py-6">
+      <p className="mb-3 text-sm font-medium text-foreground">{t("marketplace:library.lead")}</p>
       <div className="mb-6 flex items-start gap-2.5 rounded-xl border border-border bg-card/60 px-4 py-3 text-sm text-muted-foreground">
         <Info className="mt-0.5 size-4 shrink-0" />
         <p>
@@ -117,7 +140,13 @@ const Library: FC<LibraryProps> = ({ inventory }) => {
             ) : (
               <div className="space-y-2">
                 {group.map((item) => (
-                  <LibraryRow key={item.key} item={item} onTry={setTryCandidate} presence={presence} />
+                  <LibraryRow
+                    key={item.key}
+                    item={item}
+                    onTry={setTryCandidate}
+                    presence={presence}
+                    focused={flashing === item.namespace}
+                  />
                 ))}
               </div>
             )}
