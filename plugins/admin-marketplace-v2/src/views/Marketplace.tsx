@@ -1,14 +1,15 @@
 import { Compass, LibraryBig, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useI18n } from "@oc-mui/i18n";
+import { usePluginManager } from "@oc-mui/plugin-system";
 import { Input } from "@oc-mui/ui/components";
 
 import { TrialBanner } from "../components/TrialBanner";
 import { useCatalog } from "../hooks/useCatalog";
 import { useInventory } from "../hooks/useInventory";
 import { useThemePreview } from "../hooks/useThemePreview";
-import { getTrialErrors, getTrials } from "../services/trials";
+import { getTrialCollisions, getTrialErrors, getTrials } from "../services/trials";
 
 import { Discover } from "./Discover";
 import { Library } from "./Library";
@@ -17,8 +18,25 @@ import type { FC } from "react";
 
 type Tab = "explore" | "library";
 
+const LIBRARY_HASH = "#library";
+
+/** `#library` opens the Installed tab; `#library=<namespace>` additionally focuses that row. */
 function tabFromHash(): Tab {
-  return typeof window !== "undefined" && window.location.hash === "#library" ? "library" : "explore";
+  if (typeof window === "undefined") return "explore";
+  const { hash } = window.location;
+  return hash === LIBRARY_HASH || hash.startsWith(`${LIBRARY_HASH}=`) ? "library" : "explore";
+}
+
+function focusFromHash(): string | null {
+  if (typeof window === "undefined") return null;
+  const { hash } = window.location;
+  if (!hash.startsWith(`${LIBRARY_HASH}=`)) return null;
+  const raw = hash.slice(LIBRARY_HASH.length + 1);
+  try {
+    return decodeURIComponent(raw) || null;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -26,30 +44,44 @@ function tabFromHash(): Tab {
  * line — Explore · Library as underline tabs (with the active count and an
  * attention dot for registry updates) and the search on the right. No
  * wordmark: the sidebar already says where you are.
- * The active tab lives in the URL hash so it survives reloads and can be linked.
+ * The active tab lives in the URL hash so it survives reloads and can be linked;
+ * `#library=<namespace>` also focuses one Installed row (the Explore pills link there).
  */
 const Marketplace: FC = () => {
   const { t } = useI18n();
   const [tab, setTab] = useState<Tab>(tabFromHash);
+  const [focusNamespace, setFocusNamespace] = useState<string | null>(focusFromHash);
   const [query, setQuery] = useState("");
   const catalog = useCatalog();
   const inventory = useInventory(catalog.plugins);
+  const manager = usePluginManager();
   // Trials only change via full page reloads, so a render-time read is stable.
   const [trials] = useState(getTrials);
-  const [trialErrors] = useState(getTrialErrors);
+  // Boot errors win over a route collision: a bundle that never loaded has no routes.
+  const trialErrors = useMemo(
+    () => ({ ...getTrialCollisions(manager), ...getTrialErrors() }),
+    [manager],
+  );
   const themePreview = useThemePreview();
 
   useEffect(() => {
-    const onHash = (): void => setTab(tabFromHash());
+    const onHash = (): void => {
+      setTab(tabFromHash());
+      setFocusNamespace(focusFromHash());
+    };
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
-  const select = (next: Tab): void => {
+  const select = (next: Tab, focus: string | null = null): void => {
     setTab(next);
-    const hash = next === "library" ? "#library" : "";
+    setFocusNamespace(focus);
+    const hash = next === "library" ? (focus ? `${LIBRARY_HASH}=${encodeURIComponent(focus)}` : LIBRARY_HASH) : "";
     window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}${hash}`);
   };
+
+  /** The Explore "Installed" pill: jump to that plugin's row. */
+  const openInstalled = (namespace: string): void => select("library", namespace);
 
   const libraryCount = inventory.items.filter((i) => i.status === "active" && i.origin !== "shell").length;
   const libraryAttention = inventory.items.some((i) => i.registryNewer !== undefined);
@@ -111,10 +143,10 @@ const Marketplace: FC = () => {
       )}
 
       {tab === "explore" ? (
-        <Discover catalog={catalog} query={query} inventory={inventory} />
+        <Discover catalog={catalog} query={query} inventory={inventory} onOpenInstalled={openInstalled} />
       ) : (
         <div className="mx-auto max-w-[1180px] px-8">
-          <Library inventory={inventory} />
+          <Library inventory={inventory} focusNamespace={focusNamespace} />
         </div>
       )}
     </div>

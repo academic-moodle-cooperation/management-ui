@@ -30,13 +30,15 @@ interface LibraryRowProps {
   onTry?: (item: InventoryItem) => void;
   /** The whole inventory by namespace, for dependency states. */
   presence: ReadonlyMap<string, InventoryStatus>;
+  /** Briefly ringed after a jump from Explore's "Installed" pill. */
+  focused?: boolean;
 }
 
 /**
  * One inventory line. Read-only on purpose; the one interaction is copying
  * the namespace — the exact `app.enabledPlugins` value an operator needs.
  */
-const LibraryRow: FC<LibraryRowProps> = ({ item, onTry, presence }) => {
+const LibraryRow: FC<LibraryRowProps> = ({ item, onTry, presence, focused = false }) => {
   const { t } = useI18n();
   const canTry = item.status === "disabled" && item.origin !== "shell" && Boolean(onTry);
   const [copied, setCopied] = useState(false);
@@ -62,7 +64,12 @@ const LibraryRow: FC<LibraryRowProps> = ({ item, onTry, presence }) => {
   const mono = (text: string): ReactElement => <code className="font-mono">{text}</code>;
 
   return (
-    <div className="grid grid-cols-[auto_1fr_auto] items-start gap-x-3.5 gap-y-1 rounded-xl border border-border bg-card p-3.5">
+    <div
+      id={`installed-${item.namespace}`} // keep in sync with Library's rowId()
+      className={`grid grid-cols-[auto_1fr_auto] items-start gap-x-3.5 gap-y-1 rounded-xl border border-border bg-card p-3.5 transition-shadow ${
+        focused ? "ring-2 ring-primary/60" : ""
+      }`}
+    >
       <PluginTile plugin={{ name: item.displayName, ...tileSource }} />
 
       <div className="min-w-0">

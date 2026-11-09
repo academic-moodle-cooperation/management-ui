@@ -28,7 +28,7 @@ SRI `integrity` hash, the fetched bytes must match or the load aborts
 (verified inside `@oc-mui/remote-plugin-loader`, no second fetch);
 `requireIntegrity: true` refuses unpinned entries entirely.
 
-**Library** (second tab, `#library`): the deployment's plugin inventory —
+**Installed** (second tab, `#library`; the code calls the view Library): the deployment's plugin inventory —
 one row per namespace, grouped by status (*Active* · *Trials* · *Available
 but disabled*), with origin (Built-in / Deployment JAR / Local dev / Trial /
 Shell), module types, version, and a read-only "Registry: x.y.z" hint when the
@@ -40,7 +40,7 @@ present plugin off. Sources: `manager.plugins`, the shell-injected
 `marketplace.getAllPlugins`, `/management-tool/ui/config/plugins.json`, the
 dev `.local-plugins` manifest, and this tab's trials.
 
-The Library has exactly one gesture, and it is the same word as in Explore:
+The Installed tab has exactly one gesture, and it is the same word as in Explore:
 **Try** on a present-but-disabled plugin previews it **in this tab only**. No
 code is fetched — the plugin is already deployed; the marketplace records the
 namespace through `@oc-mui/plugin-system`'s preview contract
@@ -58,12 +58,13 @@ needs no boot path), survives a refresh via a `sessionStorage` marker, and
 ends with one click or with the tab. Same-origin themes are trusted; registry
 CSS goes through the Try gates (it can pull remote fonts/images). A theme
 becomes permanent only via `app.theme` — the row shows that value to copy;
-the Library shows which theme is active for everyone.
+the Installed tab shows which theme is active for everyone.
 
 **Catalog entries for deployed plugins.** When a registry entry's id (or
 `namespace`) matches a plugin deployed here, Try it in Explore previews the
 local copy through the preview contract instead of fetching the bundle again,
-and a running copy shows "Active here". This is the multi-tenant shape: JARs
+and a running copy shows an **Installed** pill that jumps to its row in the
+Installed tab (`#library=<namespace>` deep-links there). This is the multi-tenant shape: JARs
 deployed centrally, listed in the catalog, switched on per tenant.
 
 **Overlaps.** Some slots only one plugin can fill — footer, landing page,
@@ -71,8 +72,15 @@ sidebar, header. Before a trial, the dialog names the active plugins that
 already fill the slots the candidate ships (from module types and extension
 points) and offers to **pause** them in this tab: the preview contract's
 mirror image (`mui.plugin-pauses`, honoured by the shell at every load gate).
-End trial lifts the pause; nothing changes for anyone else. The Library lists
+End trial lifts the pause; nothing changes for anyone else. The Installed tab lists
 paused plugins in their own group.
+
+Routes are a slot too. If a trial's app registers a `routePath` a deployed app
+already serves (and the deployed one was not paused), the shell keeps the first
+registration and logs the collision instead of failing to build the router.
+Trials load before the JAR plugins, so in this tab the trial's app wins the
+route; the banner names the collision on that trial so End trial is the way
+back. What each trial registered is remembered in `mui.marketplace-v2.trial-apps`.
 
 Config slice (`config.plugins["admin-marketplace-v2"]`):
 

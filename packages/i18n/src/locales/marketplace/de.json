@@ -4,7 +4,7 @@
   },
   "header": {
     "explore": "Entdecken",
-    "library": "Bibliothek",
+    "library": "Installiert",
     "search": "Plugins & Themes suchen",
     "newerInRegistry": "Die Registry führt eine neuere Version"
   },
@@ -45,14 +45,14 @@
     "endAllTrials": "Alle Tests beenden",
     "endPreview": "Vorschau beenden",
     "trialActive": "Test aktiv",
-    "activeHere": "Hier aktiv",
+    "installed": "Installiert",
     "active": "Aktiv",
     "repository": "Repository",
     "homepage": "Website"
   },
   "hints": {
-    "activeHere": "Auf dieser Installation ausgerollt und aktiviert",
-    "activeHereShort": "Hier ausgerollt und aktiviert",
+    "installed": "Auf dieser Installation installiert und aktiviert – klicken, um es unter „Installiert“ zu öffnen",
+    "installedShort": "Hier installiert und aktiviert – klicken zum Öffnen",
     "trialActiveTab": "Test in diesem Tab aktiv",
     "previewInTab": "Vorschau in diesem Tab",
     "previewInTabOnly": "Vorschau nur in diesem Tab",
@@ -109,7 +109,8 @@
     "reloads": "Die Seite wird zum Aktivieren neu geladen."
   },
   "library": {
-    "intro": "Das ist alles, was die Shell kennt. Ein Plugin für die ganze Organisation einzuschalten ist ein Deployment-Schritt: tragen Sie seinen <code>namespace</code> in <code>app.enabledPlugins</code> der <code>config.json</code> ein (jede Zeile hat einen Kopierknopf für diesen Wert). Zusätzlich lässt sich ein Plugin zur Laufzeit über <switch/> abschalten.",
+    "lead": "Alles, was in dieser Installation läuft: mit der App ausgeliefert, als JAR ausgerollt oder in diesem Tab auf Probe.",
+    "intro": "Ein Plugin für die ganze Organisation einzuschalten ist ein Deployment-Schritt: tragen Sie seinen <code>namespace</code> in <code>app.enabledPlugins</code> der <code>config.json</code> ein (jede Zeile hat einen Kopierknopf für diesen Wert). Zusätzlich lässt sich ein Plugin zur Laufzeit über <switch/> abschalten.",
     "theme": "Theme",
     "themeActive": "für alle aktiv:",
     "themeVia": "(über <code>app.theme</code>)",

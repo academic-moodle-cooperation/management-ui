@@ -34,10 +34,12 @@ interface DetailDialogProps {
   canTry?: boolean;
   /** A trial of this plugin is active in this tab. */
   trialActive?: boolean;
-  /** The plugin is deployed here and running — nothing to try. */
+  /** The plugin is deployed here and running — nothing to try; the pill links to its Installed row. */
   activeHere?: boolean;
   onTry?: (plugin: RegistryPlugin) => void;
   onEndTrial?: (pluginId: string) => void;
+  /** Opens the plugin's row in the Installed tab (the "Installed" pill). */
+  onOpenInstalled?: (plugin: RegistryPlugin) => void;
   /** A screenshot the deployment may load, or null for generated artwork. */
   image?: string | null;
   /** This deployment's plugins by namespace — decides whether a dependency is present. */
@@ -97,6 +99,7 @@ const DetailDialog: FC<DetailDialogProps> = ({
   activeHere,
   onTry,
   onEndTrial,
+  onOpenInstalled,
   image = null,
   presence = new Map(),
 }) => {
@@ -161,8 +164,12 @@ const DetailDialog: FC<DetailDialogProps> = ({
                     )}
                   </span>
                 ) : activeHere ? (
-                  <ActionPill tone="ok" title={t("marketplace:hints.activeHere")}>
-                    {t("marketplace:actions.activeHere")} <Check className="size-3.5" strokeWidth={2.6} />
+                  <ActionPill
+                    tone="ok"
+                    title={t("marketplace:hints.installed")}
+                    onClick={onOpenInstalled ? () => onOpenInstalled(plugin) : undefined}
+                  >
+                    {t("marketplace:actions.installed")} <Check className="size-3.5" strokeWidth={2.6} />
                   </ActionPill>
                 ) : canTry && onTry ? (
                   <ActionPill onClick={() => onTry(plugin)}>{t("marketplace:actions.tryIt")}</ActionPill>
