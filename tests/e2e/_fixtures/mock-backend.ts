@@ -269,7 +269,7 @@ const aclInputToEntries = (acl: unknown): MockPlaylistAce[] => {
  * required, readOnly, value). Without this the mask renders empty — which is
  * how the first draft of these specs failed.
  */
-const metaField = (id: string, label: string, value: unknown, order: number, type = "text") => ({
+const metaField = (id: string, label: string, value: unknown, order: number, type = "TEXT") => ({
   collectionId: null,
   collection: null,
   id,
@@ -282,34 +282,38 @@ const metaField = (id: string, label: string, value: unknown, order: number, typ
   value,
 });
 
+// Field `type` values are the GraphQL `Type` enum (uppercase — see `enum Type`
+// in packages/query/src/gql-generated.ts). The backend derives them from the
+// Opencast episode/series catalog configs, so e.g. startDate is START_DATE and
+// created is DATE; lowercase values would fall through the UI's type switch.
 const seriesMetadata = (s: MockSeries) => ({
-  contributor: metaField("contributor", "Contributors", s.contributors, 4, "text"),
+  contributor: metaField("contributor", "Contributors", s.contributors, 4, "MIXED_TEXT"),
   title: metaField("title", "Title", s.title, 0),
   subject: metaField("subject", "Subject", "", 5),
   rightsHolder: metaField("rightsHolder", "Rights holder", "", 6),
-  publisher: metaField("publisher", "Publisher", [], 7, "text"),
-  license: metaField("license", "License", "", 8),
+  publisher: metaField("publisher", "Publisher", [], 7, "MIXED_TEXT"),
+  license: metaField("license", "License", "", 8, "ORDERED_TEXT"),
   language: metaField("language", "Language", "", 9),
   identifier: metaField("identifier", "Identifier", s.id, 10),
   description: metaField("description", "Description", s.description, 1),
-  creator: metaField("creator", "Creator", [s.creator], 2, "text"),
+  creator: metaField("creator", "Creator", [s.creator], 2, "MIXED_TEXT"),
 });
 
 const eventMetadata = (e: MockEvent) => ({
-  contributor: metaField("contributor", "Contributors", e.contributors, 6, "text"),
-  created: metaField("created", "Created", e.created, 10, "date"),
-  creator: metaField("creator", "Creator", [e.creator], 3, "text"),
-  description: metaField("description", "Description", e.description, 1),
-  duration: metaField("duration", "Duration", e.duration, 11, "duration"),
+  contributor: metaField("contributor", "Contributors", e.contributors, 6, "MIXED_TEXT"),
+  created: metaField("created", "Created", e.created, 10, "DATE"),
+  creator: metaField("creator", "Creator", [e.creator], 3, "MIXED_TEXT"),
+  description: metaField("description", "Description", e.description, 1, "TEXT_LONG"),
+  duration: metaField("duration", "Duration", e.duration, 11, "DURATION"),
   identifier: metaField("identifier", "Identifier", e.id, 12),
   isPartOf: metaField("isPartOf", "Series", e.seriesId, 2),
   language: metaField("language", "Language", "", 7),
-  license: metaField("license", "License", "", 8),
+  license: metaField("license", "License", "", 8, "ORDERED_TEXT"),
   location: metaField("location", "Location", e.location, 4),
   publisher: metaField("publisher", "Publisher", "", 9),
   rightsHolder: metaField("rightsHolder", "Rights holder", "", 13),
   source: metaField("source", "Source", "", 14),
-  startDate: metaField("startDate", "Start date", e.startDate, 5, "date"),
+  startDate: metaField("startDate", "Start date", e.startDate, 5, "START_DATE"),
   subject: metaField("subject", "Subject", "", 15),
   title: metaField("title", "Title", e.title, 0),
 });
