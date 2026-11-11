@@ -31,6 +31,12 @@
       "author": "Management UI Core"
     },
     {
+      "id": "modern",
+      "name": "Modern",
+      "tagline": "Neutral, crisp, compact",
+      "author": "Management UI Core"
+    },
+    {
       "id": "modern-slate",
       "name": "Modern Slate & Teal",
       "tagline": "Contemporary, tech-forward, airy",
