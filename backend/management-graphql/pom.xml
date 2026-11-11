@@ -107,5 +107,22 @@
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.service.cm</artifactId>
     </dependency>
+    <!-- Testing -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.opencastproject</groupId>
+      <artifactId>opencast-ingest-service-api</artifactId>
+      <version>${opencast.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

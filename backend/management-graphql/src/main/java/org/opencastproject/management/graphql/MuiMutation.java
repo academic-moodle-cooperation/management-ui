@@ -26,12 +26,9 @@ import org.opencastproject.graphql.command.UpdateSeriesCommand;
 import org.opencastproject.graphql.defaultvalue.DefaultTrue;
 import org.opencastproject.graphql.event.GqlDeleteEventPayload;
 import org.opencastproject.graphql.event.GqlEvent;
-import org.opencastproject.graphql.execution.context.OpencastContext;
-import org.opencastproject.graphql.execution.context.OpencastContextManager;
 import org.opencastproject.graphql.type.input.AccessControlListInput;
 import org.opencastproject.graphql.type.input.GqlCommonEventMetadataInput;
 import org.opencastproject.graphql.type.input.GqlCommonSeriesMetadataInput;
-import org.opencastproject.management.graphql.command.EventWriteAccess;
 import org.opencastproject.management.graphql.command.MuiMoveToTrashEventCommand;
 import org.opencastproject.management.graphql.command.MuiUpdateEventAclCommand;
 import org.opencastproject.management.graphql.command.MuiUpdateEventCommand;
@@ -93,13 +90,9 @@ public class MuiMutation {
   public static GqlDeleteEventPayload deleteEvent(
       @GraphQLName("id") @GraphQLNonNull String id,
       final DataFetchingEnvironment environment) {
-    // Both branches below only need READ on the event to get going: the trash
-    // workflow is applied to the latest snapshot, and the permanent branch starts
-    // a retract workflow the same way whenever the event is published. Deleting
-    // is a write, so check WRITE here, once, before choosing a branch.
-    final OpencastContext context = OpencastContextManager.getCurrentContext();
-    EventWriteAccess.requireWrite(context, id);
-
+    // The write check lives in the commands, not here. The trash command checks
+    // WRITE itself; the permanent delete is Opencast's own command, which does
+    // the same in versions that include the upstream fix.
     // `trash_workflow_id()` is deliberately the one option without a metatype
     // default: its ABSENCE is how a deployment selects permanent deletion,
     // which is also what plain Opencast does (it ships no trash workflow).
@@ -116,13 +109,6 @@ public class MuiMutation {
           .build()
           .execute();
     } else {
-      // Deleting for good is not something an operator should discover from
-      // the data being gone — say so where deployments actually look.
-      logger.warn(
-          "No trash workflow configured ({}.trash.workflow.id is unset), so event {} is being "
-              + "deleted permanently and cannot be restored. Set that key to a workflow the server "
-              + "has if deletions should be reversible.",
-          MuiConfig.CONFIGURATION_PID, id);
       return DeleteEventCommand.create(id)
           .environment(environment)
           .build()
