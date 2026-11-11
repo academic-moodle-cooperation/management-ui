@@ -56,6 +56,11 @@ public class MuiMoveToTrashEventCommand extends AbstractCommand<GqlDeleteEventPa
   @Override
   public GqlDeleteEventPayload execute() {
     OpencastContext context = OpencastContextManager.getCurrentContext();
+
+    // Applying the trash workflow only needs READ on the event, but moving it to
+    // the trash is a write, so verify WRITE before anything runs.
+    EventWriteAccess.requireWrite(context, id);
+
     final WorkflowService workflowService = context.getService(WorkflowService.class);
     final AssetManager assetManager = context.getService(AssetManager.class);
 
