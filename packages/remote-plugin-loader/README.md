@@ -22,6 +22,7 @@ Loads the plugin at `url`, transforms it, and registers it with `manager`.
   - `cssUrl` – Explicit CSS URL when the stylesheet name does not match the module name.
   - `skipUrlValidation` – Caller has already validated the URL (e.g. core for JAR URLs). This package does not validate URLs; the flag is for API clarity.
   - `skipPluginNames` – `Set` of plugin names to load but **not** register; the plugin object is still returned in `LoadResult.plugin` so the caller can keep it for discovery (e.g. the marketplace's "disabled" list).
+  - `integrity` – SRI-style hash (`sha256-|sha384-|sha512-<base64>`) the fetched bytes must match. It is checked on the raw bytes before any transform or import; a mismatch or a malformed value aborts the load.
 
 Returns a `Promise<LoadResult>` with `{ success, pluginId?, error?, warnings, skipped?, plugin? }` — `skipped` is true when the name was in `skipPluginNames`, and `plugin` is the loaded `Plugin` object (always set on success, even when skipped).
 
@@ -31,6 +32,10 @@ The host app must call `exposeSharedModules()` (e.g. in `main.tsx`) so `window._
 
 Returns whether `url` is same-origin. Can be used by the core when trusting backend-derived JAR URLs.
 
+### `parseIntegrity(value)` / `verifyIntegrity(bytes, integrity)`
+
+The primitives behind the `integrity` option, for callers that want to check a value up front. `verifyIntegrity` resolves to `{ ok, actual }`.
+
 ### `transformModuleSource(source)` / `SHARED_MODULE_NAMES`
 
 Exported for tests. Transform replaces bare imports of shared modules (react, @oc-mui/*) with references to the shim; `SHARED_MODULE_NAMES` in `src/transform.ts` is the list of those modules. For the full list of packages community plugins can import, see [docs/extend/distribution.md](../../docs/extend/distribution.md#available-packages-the-import-contract).
@@ -39,6 +44,7 @@ Exported for tests. Transform replaces bare imports of shared modules (react, @o
 
 - This package does **not** enforce URL allowlists or HTTPS. Callers (e.g. marketplace) must validate URLs and versions before calling `loadAndRegister` for user-supplied or registry URLs.
 - For JAR plugins, the shell calls `loadAndRegister` with `skipUrlValidation: true` because URLs come from the backend (`plugins.json`).
+- `integrity` pins *which code* runs, independent of the host serving it. It complements a URL allowlist, which only says *where* code may come from.
 
 ## Layer
 

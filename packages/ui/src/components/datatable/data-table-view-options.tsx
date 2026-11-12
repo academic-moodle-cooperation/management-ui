@@ -31,9 +31,9 @@ export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="hidden h-8 ml-auto lg:flex">
-          <Settings2 className="w-4 h-4 mr-2" />
-          {t("common:viewOptions")}
+        <Button variant="outline" size="sm" className="h-8 ml-auto">
+          <Settings2 className="w-4 h-4 sm:mr-2" />
+          <span className="sr-only sm:not-sr-only">{t("common:viewOptions")}</span>
         </Button>
       </DropdownMenuTrigger>
       {/*

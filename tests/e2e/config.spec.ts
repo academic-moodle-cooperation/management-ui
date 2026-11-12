@@ -140,3 +140,34 @@ test("§6.2 a separated gallery config renders single columns instead of the com
   await expect(page.getByRole("columnheader", { name: /thumbnail/i })).toBeVisible();
   await expect(page.getByRole("columnheader", { name: /^video$/i })).toHaveCount(0);
 });
+
+test("§6.2 the series empty state points at the create button when there is one", async ({
+  page,
+}) => {
+  await installMockBackend(page, { series: [] });
+  await page.goto("/management-ui/series");
+
+  await expect(page.getByText(/create your first series/i)).toBeVisible({ timeout: 15_000 });
+  // One next to the heading, one under the text.
+  await expect(page.getByRole("button", { name: "Create series" })).toHaveCount(2);
+});
+
+test("§6.2 with createSeries switched off the series empty state offers no button", async ({
+  page,
+}) => {
+  const config = {
+    ...defaultConfig,
+    plugins: {
+      ...defaultConfig.plugins,
+      series: { seriesTable: { createSeries: { enabled: false } } },
+    },
+  };
+  await installMockBackend(page, { config, series: [] });
+  await page.goto("/management-ui/series");
+
+  await expect(page.getByText(/have not registered a series yet/i)).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(page.getByText(/button below/i)).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Create series" })).toHaveCount(0);
+});

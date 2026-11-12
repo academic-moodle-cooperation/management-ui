@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@oc-mui/i18n": "workspace:*",
+    "@oc-mui/plugin-core": "workspace:*",
     "@oc-mui/plugin-system": "workspace:*",
     "@oc-mui/providers": "workspace:*",
     "@oc-mui/query": "workspace:*",
@@ -23,7 +24,7 @@
     "@oc-mui/ui": "workspace:*",
     "@oc-mui/ui-config": "workspace:*",
     "@oc-mui/utils": "workspace:*",
-    "lucide-react": "^0.417.0",
+    "lucide-react": "^0.577.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {

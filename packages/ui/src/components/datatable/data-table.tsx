@@ -16,6 +16,7 @@ import { useComponentTheme } from "../../theme/theme.context";
 import { Table, TableHead, TableHeader, TableRow } from "../ui";
 
 import { DataTableBody } from "./data-table-body";
+import { EmptyStateContent } from "./data-table-empty-state";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 // Import the hook from the new location
@@ -173,13 +174,20 @@ function DataTable<TData extends Record<string, unknown>, TValue>({
           <DataTableBody
             table={table}
             className={theme.tbody({ size: "xs" })}
-            columns={columns}
             selectedId={selectedId}
             onClickRowAction={onClickRowAction}
-            queryFilter={queryFilter}
-            emptyState={emptyState}
           />
         </Table>
+        {/* Below the table, not in a spanning cell: a cell is as wide as the
+            scrolling table, so on a phone its centered content ends up off screen. */}
+        {table.getRowModel().rows.length === 0 && (
+          <div className="flex min-h-24 flex-col justify-center p-2 text-center text-sm">
+            <EmptyStateContent
+              {...(queryFilter !== undefined && { queryFilter })}
+              {...(emptyState !== undefined && { emptyState })}
+            />
+          </div>
+        )}
       </div>
       <DataTablePagination
         table={table}

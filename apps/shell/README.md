@@ -16,7 +16,7 @@ pnpm --filter shell preview      # serve the built bundle
 2. **Register built-in plugins** from `@oc-mui/plugins` (the `plugins/index.ts` barrel).
 3. **Load JAR plugins** from the backend's `/management-tool/ui/config/plugins.json` if present.
 4. **Load `.local-plugins/` (dev only)** by fetching `/local-plugins/manifest.json`.
-5. **Two-phase activation**: load `*:config` plugins first → merge config → load remaining plugins filtered by `app.enabledPlugins`. Full model in [`docs/reference/configuration.md`](../../docs/reference/configuration.md).
+5. **Two-phase activation**: load `*:config` plugins first → merge config → load remaining plugins filtered by `app.enabledPlugins` and `config.plugins[<namespace>].enabled`. Full model in [`docs/reference/configuration.md`](../../docs/reference/configuration.md).
 6. **Mount the router** with every route registered on `apps:definitions`.
 
 ## Layout

@@ -1,4 +1,22 @@
 import { fragmentRegistry } from "@oc-mui/plugin-system";
+import { logger } from "@oc-mui/utils";
+
+interface GraphQLErrorShape {
+  message?: string;
+  path?: ReadonlyArray<string | number>;
+  extensions?: { classification?: string };
+}
+
+/**
+ * graphql-java reports a `null` in a field the schema declares non-null as an
+ * error and nulls the nearest nullable parent (for a list entry: that entry).
+ * The rest of the response is intact. One broken record (an event that lost
+ * its title in a failed workflow, for instance) must not take a whole table
+ * down, so this error alone does not fail the request.
+ */
+const isNullBubbling = (error: GraphQLErrorShape): boolean =>
+  error.extensions?.classification === "NullValueInNonNullableField" ||
+  /declared as a non null type.*returned a null value/i.test(error.message ?? "");
 
 /**
  * Matches stub fragments: "fragment PluginXxxFields on TypeName { __typename }".
@@ -38,6 +56,14 @@ export const fetchData = <TData, TVariables>(
     });
 
     const json = await response.json();
+
+    const errors: GraphQLErrorShape[] = Array.isArray(json.errors) ? json.errors : [];
+    if (errors.length > 0 && json.data != null && errors.every(isNullBubbling)) {
+      logger.warn("GraphQL response has null entries where the schema promises values; continuing with partial data", {
+        paths: errors.map((e) => e.path?.join("/") ?? "?"),
+      });
+      return json.data;
+    }
 
     // Check if there are GraphQL errors in the response
     if (json.errors && json.errors.length > 0) {

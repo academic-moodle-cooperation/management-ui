@@ -1,6 +1,6 @@
 # @oc-mui/plugin-core-series
 
-Core plugin. Registers the `/series` route, its sidebar entry, the Create-series toolbar action, and the series config slice. Ships with the OSS repo and is enabled by default.
+Core plugin. Registers the `/series` route, its sidebar entry, the Create-series action and its default variant on `series:create-series:variants`, and the series config slice. Ships with the OSS repo and is enabled by default.
 
 ## What it provides
 
@@ -8,7 +8,8 @@ Core plugin. Registers the `/series` route, its sidebar entry, the Create-series
 |------|------|
 | `apps:definitions` | The `series` app at `/series` rendered by `src/App.tsx`. |
 | `sidebar:nav-items` | The "Series" sidebar entry. |
-| `series:table:toolbar-end-actions` | The "Create series" button rendered in the toolbar of the series table. |
+| `series:table:toolbar-end-actions` | The "Create series" button (`CreateSeriesAction`), only when `createSeries.placement` is `"toolbar"`; by default it renders next to the page heading and in the empty state. |
+| `series:create-series:variants` | The variant `default` (`DefaultCreateSeriesVariant`): the plain metadata form. Other plugins add their own kinds of series here — see [`plugins/core/README.md`](../core/README.md#adding-a-way-to-create-a-series). |
 | `app:config:defaults` | Series' default config slice (`config.plugins.series`) — merged *below* `config.json`. |
 
 ## Configuration
@@ -22,7 +23,7 @@ import { seriesConfig } from "./config";
 const { seriesTable } = seriesConfig.use();
 ```
 
-The slice's top-level keys are `seriesInfo` (metadata field visibility), `seriesTable` (columns + `createSeries.enabled`), and `protection`.
+The slice's top-level keys are `seriesInfo` (metadata field visibility), `seriesTable` (columns + `createSeries.{enabled,placement,variants}` — see [Creating a series](../../docs/reference/configuration.md#creating-a-series)), and `protection`.
 
 Full merge order: [`docs/reference/configuration.md`](../../docs/reference/configuration.md).
 

@@ -52,8 +52,8 @@ export const UploadList = ({
           >
             <div className="flex flex-col justify-between">
               <div className="">
-                <div className="flex justify-between mb-1">
-                  <div className="flex">
+                <div className="flex justify-between gap-2 mb-1">
+                  <div className="flex min-w-0">
                     {editFile && editFile.index === selectedFile.id ? (
                       // Size to content with CSS `field-sizing-content` (Chromium) instead of
                       // measuring a hidden mirror span's offsetWidth during render. The old
@@ -75,7 +75,7 @@ export const UploadList = ({
                         onBlur={() => editUploadNameEnd(editFile.name)}
                       />
                     ) : (
-                      <span className="text-sm font-semibold text-foreground">
+                      <span className="min-w-0 text-sm font-semibold text-foreground wrap-anywhere">
                         {selectedFile?.uploadName || selectedFile?.name}
                       </span>
                     )}
@@ -86,7 +86,7 @@ export const UploadList = ({
                     )}
                   </div>
                   <>
-                    <div className="flex items-end space-x-4">
+                    <div className="flex items-end shrink-0 space-x-4">
                       <span className="relative text-sm font-medium text-muted-foreground hover:text-foreground">
                         {selectedFile.status === "completed" && (
                           <CheckCircle2 className="w-5 h-5 text-ok" />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Suspense } from "react";
 
+import { useTranslation } from "@oc-mui/i18n";
 import {
   usePluginManager,
   getAllApps,
@@ -16,13 +17,14 @@ import {
   type AnyRoute,
   type AnyRouter,
 } from "@oc-mui/router";
-import { AppLoader } from "@oc-mui/ui/components";
+import { AppLoader, Button } from "@oc-mui/ui/components";
 import { ErrorBoundary, NotFoundError } from "@oc-mui/ui/internal";
 import { logger } from "@oc-mui/utils";
 
 import { createCommonRoutes } from "../shared/commonRoutes";
 
 import { AuthCheckError } from "./AuthCheckError";
+import { dedupeAppsByRoute } from "./dedupeAppsByRoute";
 import { ModuleErrorFallback } from "./errors/ModuleErrorFallback";
 import { CoreAppShellLayout } from "./layout/CoreAppShellLayout";
 
@@ -70,6 +72,20 @@ const getPluginBasedApps = (manager: PluginManager): AppDefinition[] => {
     );
     return [];
   }
+};
+
+/** Full-screen stop when the route tree itself cannot be built; the loader would spin forever. */
+const RouterBuildError: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background p-8 text-foreground">
+      <div className="max-w-md text-center">
+        <h1 className="mb-2 text-lg font-semibold">{t("errors.router.title")}</h1>
+        <p className="mb-6 text-sm text-muted-foreground">{t("errors.router.description")}</p>
+        <Button onClick={() => window.location.reload()}>{t("errors.router.reload")}</Button>
+      </div>
+    </div>
+  );
 };
 
 const createRoutesFromApps = (apps: AppDefinition[]): AnyRoute[] => {
@@ -137,6 +153,7 @@ export const DynamicRouterProvider: React.FC<DynamicRouterProviderProps> = ({ ch
   const manager = usePluginManager();
   const [router, setRouter] = useState<AnyRouter | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [buildFailed, setBuildFailed] = useState(false);
 
   useEffect(() => {
     const createRouterWithPlugins = async () => {
@@ -148,7 +165,7 @@ export const DynamicRouterProvider: React.FC<DynamicRouterProviderProps> = ({ ch
         const pluginApps = getPluginBasedApps(manager);
         logger.debug("Plugin apps loaded", { count: pluginApps.length, apps: pluginApps });
 
-        const dynamicRoutes = createRoutesFromApps(pluginApps);
+        const dynamicRoutes = createRoutesFromApps(dedupeAppsByRoute(pluginApps));
 
         const allChildRoutes = [
           commonRoutes.rootLandingRoute,
@@ -173,12 +190,17 @@ export const DynamicRouterProvider: React.FC<DynamicRouterProviderProps> = ({ ch
           "Error creating dynamic router",
           error instanceof Error ? error : new Error(String(error)),
         );
+        setBuildFailed(true);
         setIsLoading(false);
       }
     };
 
     createRouterWithPlugins();
   }, [manager]);
+
+  if (buildFailed && !router) {
+    return <RouterBuildError />;
+  }
 
   if (isLoading || !router) {
     return <AppLoader />;
