@@ -1,0 +1,15 @@
+/*
+ * The playground's Tailwind entry — same shape as apps/shell/src/app.css.
+ *
+ * `@oc-mui/ui/globals.css` brings Tailwind, the design tokens and a scan of
+ * the UI library; the `@source` lines add the playground's own files. The UI
+ * package is scanned again on purpose: this is the last sheet, so it has to be
+ * a superset of the library's own build (see the comment in the shell's
+ * app.css for the ordering trap this avoids).
+ *
+ * Paths are relative to this file (apps/playground/src/).
+ */
+@import "@oc-mui/ui/globals.css";
+
+@source "./**/*.{ts,tsx}";
+@source "../../../packages/ui/src/**/*.{ts,tsx,js,jsx}";

@@ -1,24 +1,16 @@
 import React from "react";
 
-import { Button } from "@oc-mui/ui/components";
+import { Gallery } from "./gallery/Gallery";
 
 /**
- * Minimal standalone harness. In the long run this will render a single
- * selected plugin in isolation against a mocked shell (see ADR-003).
- * For now it is intentionally blank so plugin authors have a clean
- * starting point.
+ * The playground currently hosts the component gallery: every base component
+ * of `@oc-mui/ui` in its main variants and sizes, switchable across the
+ * shipped themes, light/dark and (later) styles. It doubles as the visual
+ * regression surface for changes to the base components.
+ *
+ * Running a single plugin in isolation (ADR-003) is still the long-term plan
+ * for this app and is unaffected by the gallery.
  */
-const App: React.FC = () => {
-  return (
-    <div style={{ padding: "20px", fontFamily: "system-ui, sans-serif" }}>
-      <h1>Plugin Playground</h1>
-      <p>
-        Isolated development sandbox. Load a single plugin here without the rest of the shell. Not
-        shipped to production.
-      </p>
-      <Button onClick={() => alert("Harness is alive")}>Ping</Button>
-    </div>
-  );
-};
+const App: React.FC = () => <Gallery />;
 
 export default App;
