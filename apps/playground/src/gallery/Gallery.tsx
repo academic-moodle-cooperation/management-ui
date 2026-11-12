@@ -34,6 +34,7 @@ import {
   SonnerSection,
   TooltipSection,
 } from "./sections/overlays";
+import { PrecedenceSection } from "./sections/precedence";
 import { useGallerySettings } from "./settings";
 import { useTheme } from "./themes";
 import { Toolbar } from "./Toolbar";
@@ -77,6 +78,7 @@ const SECTIONS: { id: string; render: (open: boolean) => ReactNode }[] = [
   { id: "sonner", render: () => <SonnerSection /> },
   { id: "sidebar", render: () => <SidebarSection /> },
   { id: "data-table", render: () => <DataTableSection /> },
+  { id: "precedence", render: () => <PrecedenceSection /> },
 ];
 
 export function Gallery() {
