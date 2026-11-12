@@ -47,6 +47,12 @@
       "name": "Press",
       "tagline": "Editorial, high-contrast, flat",
       "author": "Management UI Core"
+    },
+    {
+      "id": "stress",
+      "name": "Stress",
+      "tagline": "Test fixture: an extreme corporate design",
+      "author": "Management UI Core"
     }
   ]
 }

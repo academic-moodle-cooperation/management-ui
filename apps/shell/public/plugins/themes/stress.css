@@ -1,0 +1,274 @@
+/**
+ * Stress — a deliberately extreme corporate design, used as a test fixture.
+ *
+ * It is not meant to look good. It asks one question: how far can a theme
+ * push the look of the application, and of plugins that bring no look of
+ * their own, with the two means a theme has?
+ *
+ *   Part 1  CSS variables: colours, fonts, radius, shadows and the component
+ *           metrics (control heights, paddings, border widths, focus ring).
+ *   Part 2  Theme CSS that targets the components' `data-slot` attributes,
+ *           for everything no variable exists for.
+ *
+ * The brief: square corners, uppercase buttons with wide tracking, 2px frames
+ * instead of shadows, serif headings, a much roomier density, a loud focus
+ * frame, underlined links.
+ *
+ * Part 2 is unlayered on purpose. A theme file is loaded as a plain
+ * stylesheet, so its rules sit outside every cascade layer and beat the
+ * components' utilities — including a `className` a caller passed. Each rule
+ * below notes why a variable could not do the job.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Part 1 — variables                                                  */
+/* ------------------------------------------------------------------ */
+:root {
+  --theme-name: "Stress";
+
+  /* Square, flat, serif headings */
+  --radius: 0rem;
+  --font-heading: Georgia, "Times New Roman", "Liberation Serif", serif;
+  --font-sans: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  --spacing-tight: 0.75rem;
+  --spacing-normal: 1.25rem;
+  --spacing-relaxed: 2rem;
+  --spacing-card: 2rem;
+  --spacing-sidebar: 1rem;
+  --shadow-xs: 0 0 #0000;
+  --shadow-sm: 0 0 #0000;
+  --shadow-md: 0 0 #0000;
+  --shadow-lg: 0 0 #0000;
+  --shadow-card: 0 0 #0000;
+  --shadow-sidebar: 0 0 #0000;
+  --duration-transition: 0ms;
+
+  /* Component metrics: roomy, heavy frames, loud focus */
+  --control-height: 3rem;
+  --control-height-sm: 2.5rem;
+  --control-height-lg: 3.5rem;
+  --control-radius: 0rem;
+  --control-font-size: 0.9375rem;
+  --control-line-height: 1.5rem;
+  --control-border-width: 2px;
+  --focus-ring-width: 4px;
+  --button-font-weight: 700;
+  --button-gap: 0.75rem;
+  --button-gap-sm: 0.5rem;
+  --button-padding-x: 1.75rem;
+  --button-padding-x-icon: 1.25rem;
+  --button-padding-x-sm: 1.25rem;
+  --button-padding-x-sm-icon: 1rem;
+  --button-padding-x-lg: 2.25rem;
+  --button-padding-x-lg-icon: 1.75rem;
+  --input-padding-x: 1rem;
+  --card-spacing: 2rem;
+  --card-header-gap: 0.5rem;
+  --card-radius: 0rem;
+  --card-border-width: 2px;
+  --card-title-font-weight: 700;
+
+  /* Colour: paper, ink, one loud red, a yellow focus frame */
+  --background: oklch(0.975 0.012 90);
+  --foreground: oklch(0.16 0.01 60);
+  --card: oklch(0.995 0.005 90);
+  --card-foreground: oklch(0.16 0.01 60);
+  --popover: oklch(0.995 0.005 90);
+  --popover-foreground: oklch(0.16 0.01 60);
+
+  --primary: oklch(0.46 0.19 25);
+  --primary-foreground: oklch(0.99 0.005 90);
+  --secondary: oklch(0.9 0.03 90);
+  --secondary-foreground: oklch(0.16 0.01 60);
+  --muted: oklch(0.93 0.02 90);
+  --muted-foreground: oklch(0.4 0.02 60);
+  --accent: oklch(0.88 0.06 90);
+  --accent-foreground: oklch(0.16 0.01 60);
+
+  --border: oklch(0.16 0.01 60);
+  --input: oklch(0.16 0.01 60);
+  --ring: oklch(0.8 0.17 85);
+
+  --sidebar: oklch(0.16 0.01 60);
+  --sidebar-foreground: oklch(0.97 0.012 90);
+  --sidebar-primary: oklch(0.46 0.19 25);
+  --sidebar-primary-foreground: oklch(0.99 0.005 90);
+  --sidebar-accent: oklch(0.3 0.02 60);
+  --sidebar-accent-foreground: oklch(0.99 0.005 90);
+  --sidebar-border: oklch(0.4 0.02 60);
+  --sidebar-ring: oklch(0.8 0.17 85);
+  --color-footer: oklch(0.975 0.012 90);
+}
+
+.dark {
+  --background: oklch(0.16 0.01 60);
+  --foreground: oklch(0.97 0.012 90);
+  --card: oklch(0.2 0.01 60);
+  --card-foreground: oklch(0.97 0.012 90);
+  --popover: oklch(0.2 0.01 60);
+  --popover-foreground: oklch(0.97 0.012 90);
+
+  --primary: oklch(0.7 0.17 25);
+  --primary-foreground: oklch(0.16 0.01 60);
+  --secondary: oklch(0.28 0.02 60);
+  --secondary-foreground: oklch(0.97 0.012 90);
+  --muted: oklch(0.25 0.015 60);
+  --muted-foreground: oklch(0.75 0.02 90);
+  --accent: oklch(0.34 0.04 90);
+  --accent-foreground: oklch(0.97 0.012 90);
+
+  --border: oklch(0.97 0.012 90);
+  --input: oklch(0.97 0.012 90);
+  --ring: oklch(0.85 0.17 85);
+
+  --sidebar: oklch(0.12 0.01 60);
+  --sidebar-foreground: oklch(0.97 0.012 90);
+  --sidebar-primary: oklch(0.7 0.17 25);
+  --sidebar-primary-foreground: oklch(0.16 0.01 60);
+  --sidebar-accent: oklch(0.3 0.02 60);
+  --sidebar-accent-foreground: oklch(0.99 0.005 90);
+  --sidebar-border: oklch(0.5 0.02 60);
+  --sidebar-ring: oklch(0.85 0.17 85);
+  --color-footer: oklch(0.16 0.01 60);
+
+  --shadow-xs: 0 0 #0000;
+  --shadow-sm: 0 0 #0000;
+  --shadow-md: 0 0 #0000;
+  --shadow-lg: 0 0 #0000;
+  --shadow-card: 0 0 #0000;
+  --shadow-sidebar: 0 0 #0000;
+}
+
+/* ------------------------------------------------------------------ */
+/* Part 2 — theme CSS on data-slot                                     */
+/* ------------------------------------------------------------------ */
+
+/* Uppercase, tracked buttons. No variable: text-transform has no utility
+   that reads one, and the button sets no tracking. */
+[data-slot="button"] {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Serif headings. `--font-heading` exists, but the title slots of the base
+   components do not use it. */
+[data-slot="card-title"],
+[data-slot="dialog-title"],
+[data-slot="alert-dialog-title"],
+[data-slot="sheet-title"],
+[data-slot="drawer-title"],
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+}
+
+/* Field labels: small, uppercase, tracked. The label has no metrics. */
+[data-slot="label"] {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Density and frames for the controls that do not read the control metrics
+   yet (only Button, Card and Input do). */
+[data-slot="select-trigger"],
+[data-slot="textarea"] {
+  border-width: var(--control-border-width);
+  padding-inline: var(--input-padding-x);
+  font-size: var(--control-font-size);
+}
+[data-slot="select-trigger"] {
+  height: var(--control-height);
+}
+[data-slot="tabs-list"] {
+  height: var(--control-height);
+  padding: 0;
+  background: transparent;
+  border-bottom: var(--control-border-width) solid var(--border);
+}
+[data-slot="tabs-trigger"] {
+  padding-inline: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 0;
+}
+[data-slot="tabs-trigger"][data-state="active"] {
+  background: var(--foreground);
+  color: var(--background);
+}
+[data-slot="table-head"],
+[data-slot="table-cell"] {
+  padding: 1rem 1.25rem;
+}
+[data-slot="table-head"] {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+[data-slot="table-row"] {
+  border-bottom-width: var(--control-border-width);
+}
+
+/* Shapes that are hard-coded as fully round or as fixed pixel radii. */
+[data-slot="badge"],
+[data-slot="checkbox"],
+[data-slot="switch"],
+[data-slot="switch-thumb"],
+[data-slot="avatar"],
+[data-slot="avatar-fallback"],
+[data-slot="skeleton"] {
+  border-radius: 0;
+}
+[data-slot="badge"] {
+  border-width: var(--control-border-width);
+  padding: 0.25rem 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+[data-slot="checkbox"] {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-width: var(--control-border-width);
+}
+
+/* 2px frames instead of shadows on every floating surface. The shadow
+   tokens flatten them; the frame width has no variable there. */
+[data-slot="dialog-content"],
+[data-slot="alert-dialog-content"],
+[data-slot="popover-content"],
+[data-slot="hover-card-content"],
+[data-slot="dropdown-menu-content"],
+[data-slot="select-content"],
+[data-slot="sheet-content"],
+[data-slot="drawer-content"],
+[data-slot="command"] {
+  border: var(--control-border-width) solid var(--border);
+  box-shadow: none;
+}
+[data-slot="separator"] {
+  background: var(--foreground);
+}
+[data-slot="separator"][data-orientation="horizontal"] {
+  height: 2px;
+}
+[data-slot="separator"][data-orientation="vertical"] {
+  width: 2px;
+}
+
+/* A loud focus frame on everything focusable. The ring width is a variable
+   for three components; an outline with an offset is not expressible. */
+[data-slot]:focus-visible {
+  outline: 4px solid var(--ring);
+  outline-offset: 3px;
+}
+
+/* Underlined links. Plain anchors and the breadcrumb; the link variant of
+   the button cannot be addressed (no attribute tells the variants apart). */
+a:not([data-slot]),
+[data-slot="breadcrumb-link"] {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}

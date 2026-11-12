@@ -162,6 +162,7 @@
   --control-radius: calc(var(--radius) - 2px);
   --control-font-size: 0.875rem;
   --control-line-height: calc(1.25 / 0.875);
+  --control-border-width: 1px;
   --focus-ring-width: 3px;
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --button-font-weight: 500;
@@ -177,6 +178,7 @@
   --card-spacing: 1.5rem;
   --card-header-gap: 0.375rem;
   --card-radius: calc(var(--radius) + 4px);
+  --card-border-width: 1px;
   --card-title-font-weight: 600;
 }
 
