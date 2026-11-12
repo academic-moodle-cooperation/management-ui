@@ -25,7 +25,7 @@ const arbitrary = (utility: string, value: string) => `${utility}-[${value}]`;
 const escaped = (className: string) => className.replace(/[[\]]/g, "\\$&");
 
 const PLUGIN_RULES: [className: string, declaration: string][] = [
-  [arbitrary("h", "53px"), "height: 53px"],
+  [arbitrary("h", "51px"), "height: 51px"],
   [arbitrary("px", "37px"), "padding-inline: 37px"],
   [arbitrary("py", "9px"), "padding-block: 9px"],
   [arbitrary("gap", "7px"), "gap: 7px"],
@@ -91,12 +91,12 @@ export function PrecedenceSection() {
           data-precedence="plugin-button"
           className={`${PLUGIN_H} ${PLUGIN_PX} ${PLUGIN_ROUNDED}`}
         >
-          height 53, padding 37, radius 3
+          height 51, padding 37, radius 3
         </Button>
         <Input
           data-precedence="plugin-input"
           className={`w-64 ${PLUGIN_H} ${PLUGIN_PX} ${PLUGIN_ROUNDED}`}
-          defaultValue="height 53, padding 37, radius 3"
+          defaultValue="height 51, padding 37, radius 3"
         />
         <Card
           data-precedence="plugin-card"
