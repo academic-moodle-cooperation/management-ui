@@ -1,0 +1,83 @@
+/**
+ * Modern: neutral surfaces, crisp borders, compact type.
+ *
+ * A soft page ground with white cards, light borders, a moderate radius and a
+ * 15px base size, so the whole interface sits a little tighter. Follows the
+ * look of the marketplace page. Ships both light (:root) and dark (.dark).
+ */
+:root {
+  --theme-name: "Modern";
+
+  /* Structure: the 15px base scales every rem-based size by about 6 percent.
+     Inter is used where installed; the theme ships no font files. */
+  font-size: 15px;
+  --radius: 0.5rem;
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-heading: var(--font-sans);
+  --shadow-sm: 0 1px 2px 0 rgb(15 23 42 / 0.05);
+  --shadow-md: 0 4px 12px -2px rgb(15 23 42 / 0.08);
+  --shadow-lg: 0 12px 28px -6px rgb(15 23 42 / 0.12);
+
+  /* Color: soft page ground, white cards, one brand blue. */
+  --background: oklch(0.985 0.002 250);
+  --foreground: oklch(0.21 0.015 255);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.21 0.015 255);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.015 255);
+  --primary: hsl(200 100% 32%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: oklch(0.965 0.004 250);
+  --secondary-foreground: oklch(0.27 0.02 255);
+  --muted: oklch(0.965 0.004 250);
+  --muted-foreground: oklch(0.52 0.015 255);
+  --accent: oklch(0.955 0.02 235);
+  --accent-foreground: oklch(0.3 0.06 240);
+  --border: oklch(0.915 0.006 250);
+  --input: oklch(0.915 0.006 250);
+  --ring: hsl(200 100% 32%);
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.3 0.015 255);
+  --sidebar-primary: oklch(0.955 0.02 235);
+  --sidebar-primary-foreground: hsl(200 100% 26%);
+  --sidebar-accent: oklch(0.965 0.004 250);
+  --sidebar-accent-foreground: oklch(0.21 0.015 255);
+  --sidebar-border: oklch(0.915 0.006 250);
+  --sidebar-ring: hsl(200 100% 32%);
+  --color-footer: oklch(0.965 0.004 250);
+}
+
+.dark {
+  /* Same near-black surfaces Marketplace v2 is designed against. */
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.18 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.18 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: hsl(200 100% 45%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: oklch(0.25 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.25 0 0);
+  --muted-foreground: oklch(0.72 0 0);
+  --accent: oklch(0.28 0.03 240);
+  --accent-foreground: oklch(0.985 0 0);
+  --border: oklch(0.28 0 0);
+  --input: oklch(0.28 0 0);
+  --ring: hsl(200 100% 45%);
+  --sidebar: oklch(0.17 0 0);
+  --sidebar-foreground: oklch(0.9 0 0);
+  --sidebar-primary: oklch(0.28 0.03 240);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.25 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.28 0 0);
+  --color-footer: oklch(0.17 0 0);
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.015em;
+}
