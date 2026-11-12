@@ -37,7 +37,7 @@ The plugin's `vite.config.ts` (scaffolded by `pnpm create-plugin`) marks these a
 
 ## Path 1 — in-tree
 
-Plugins under `plugins/<name>/` are exported from [`plugins/index.ts`](../../plugins/index.ts) and loaded at startup, filtered by `app.enabledPlugins` and `config.plugins[id].enabled`.
+Plugins under `plugins/<name>/` are exported from [`plugins/index.ts`](../../plugins/index.ts) and loaded at startup, filtered by `app.enabledPlugins` and `config.plugins[<namespace>].enabled`.
 
 Workflow:
 
@@ -73,7 +73,7 @@ The Vite dev plugin at [`packages/vite-config/src/plugins/local-plugins-dev.ts`]
 - The bundle at `/local-plugins/<name>/<file>.mjs` (and its `.css` sibling).
 - A manifest at `/local-plugins/manifest.json` listing every discovered bundle.
 
-The shell fetches that manifest, filters by `app.enabledPlugins`, and loads each entry through `@oc-mui/remote-plugin-loader`. Add the folder name to `app.enabledPlugins` to enable a plugin.
+The shell fetches that manifest, filters by `app.enabledPlugins` and `config.plugins[<namespace>].enabled` in the same two phases as JAR plugins, and loads each entry through `@oc-mui/remote-plugin-loader`. The folder name is the namespace: add it to `app.enabledPlugins` to enable a plugin. On this path an entry's `type` comes from the file name only (`plugin-<folder>-<type>.mjs`), not from `plugin.json`, so a config plugin needs `plugin-<folder>-config.mjs` or the `.local-plugins/config/` folder.
 
 This path is **dev only**. Production never reads `.local-plugins/`.
 
@@ -222,7 +222,7 @@ Without `-DdeployTo`, the copy step is a no-op.
 
 The backend tracks every OSGi bundle carrying the `Management-Plugin` header. For each, it reads `static/plugins/<plugin-id>/plugin.json` (the canonical source of truth) and emits one entry per module declared in the manifest. If `plugin.json` is missing or unparseable, the tracker falls back to filename-convention discovery: every `*.mjs` in the static directory becomes its own entry. Both strategies, their precedence, and which headers each one reads: [Backend bundles](./backend-bundles.md#two-discovery-strategies-and-which-wins).
 
-The aggregated list is served at `GET /management-tool/ui/config/plugins.json`, which the shell ([`apps/shell/src/services/jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts)) fetches at boot. Matching `config`-type plugins load first, runtime config is re-merged, then the rest load filtered by `app.enabledPlugins` and `config.plugins[id].enabled`.
+The aggregated list is served at `GET /management-tool/ui/config/plugins.json`, which the shell ([`apps/shell/src/services/jarPluginLoader.ts`](../../apps/shell/src/services/jarPluginLoader.ts)) fetches at boot. Matching `config`-type plugins load first, runtime config is re-merged, then the rest load filtered by `app.enabledPlugins` and `config.plugins[<namespace>].enabled`. Declare a module that contributes config as `type: config`, so that it runs before the filters decide.
 
 For a manifest without a `modules` array (the scaffold's shape), the tracker reads the top-level `type`, `entry`, `css` and `locales`: `scriptUrl` is `Http-Alias` plus the basename of `entry`, `cssUrl` likewise from `css`, and `localesUrl` is `Http-Alias` plus `locales` (or plus `locales` by convention when only `i18nNamespaces` is declared). **No `entry`, no `scriptUrl`.** The plugin still shows up in `plugins.json`, and the shell then guesses `<app base>/static/plugins/<plugin-id>/<plugin-id>.mjs` — a guess that only holds while `api.baseUrl` matches the JAR's `Http-Alias` prefix and the bundle is named after the plugin id. The scaffold declares all three fields so the backend's answer is authoritative; if you hand-write a manifest, `entry` is the field not to forget.
 
@@ -314,6 +314,22 @@ The essentials per entry: `id`, `name`, `description`, `version`, `author`,
 `localesUrl` + `i18nNamespaces` — set those two so a remote-loaded plugin keeps
 its translations (`<localesUrl>/<namespace>/<language>.json`, the same layout
 the JAR path serves); without them its UI falls back to raw keys.
+Further optional fields are read by the marketplace v2 catalog, with the same
+meaning as in a `plugin.json` (manifest 1.2): `namespace` (the
+`app.enabledPlugins` value the detail view shows operators; the id is assumed
+when absent), `tagline` (one-line pitch for
+cards and rows), `accentColor` (any CSS color for the entry's tile and
+artwork), `icon` (a Lucide icon name; otherwise a per-category default),
+`screenshots` (`[{ "url", "caption"? }]` — shown only when the image is
+same-origin or on a `try.allowedDomains` host, otherwise the generated artwork
+stays), `extensionPoints` and `pluginDependencies` (the manifest's — the
+detail view shows what the plugin extends and whether a required plugin is
+present on the deployment), and `integrity` (an SRI-style hash of the exact bundle bytes, e.g.
+`sha384-<base64>` — when present, v2's Try gesture refuses a bundle that
+doesn't match, and deployments can require pinning via
+`try.requireIntegrity`). All have fallbacks, so omitting them is fine. Which
+entries get the big "Featured" cards is the deployment's call:
+`plugins["admin-marketplace-v2"].featured` lists registry ids in display order.
 
 Listing and loading are gated separately: configuring a registry makes its
 entries *visible*, but Try/Install still require `enabled: true` and a host on

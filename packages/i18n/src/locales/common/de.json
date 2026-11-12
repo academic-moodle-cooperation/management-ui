@@ -114,6 +114,11 @@
       "title": "Modulfehler",
       "loadingFailed": "Modul konnte nicht geladen werden: {{name}}",
       "description": "Bitte laden Sie die Seite neu."
+    },
+    "router": {
+      "title": "Die Seite konnte nicht zusammengesetzt werden",
+      "description": "Ein Plugin hat eine Route registriert, die die App nicht bauen konnte. Laden Sie die Seite neu; passiert es weiterhin, beenden Sie laufende Plugin-Tests in diesem Tab.",
+      "reload": "Seite neu laden"
     }
   },
   "appearance": {
@@ -143,7 +148,7 @@
     },
     "about": {
       "badgeNew": "Neu",
-      "badgeFrozen": "Verträge für die gesamte 1.x-Linie eingefroren",
+      "badgeFrozen": "Versionshinweise",
       "lead": "Eine Plugin-first-Verwaltungsoberfläche für Opencast.",
       "tagline": "Eine schlanke Shell kümmert sich um Routing, Auth und Layout. Alles, was du siehst — Seiten, Navigation, sogar das Theme — ist ein Plugin, das du hinzufügen, austauschen oder selbst bauen kannst.",
       "checks": {

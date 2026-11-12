@@ -12,4 +12,6 @@
 
 export { loadAndRegister, isSameOriginUrl } from "./loadAndRegister";
 export type { LoadOptions, LoadResult } from "./loadAndRegister";
+export { parseIntegrity, verifyIntegrity } from "./integrity";
+export type { IntegrityCheckResult } from "./integrity";
 export { transformModuleSource, SHARED_MODULE_NAMES } from "./transform";

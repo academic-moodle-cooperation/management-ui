@@ -50,7 +50,7 @@ hand-check the residue (the design is in [`tests/integration/README.md`](../../t
 | 3 | Built-in plugin features | `pnpm test:integration` (real backend) + `pnpm test:e2e` (config gating) |
 | 4 | GraphQL data flow | `pnpm test:integration` (`Mui` ops return `data`, not `errors`) |
 | 5 | i18n | `pnpm test:e2e` (`i18n.spec.ts`) |
-| 6 | Configuration | `pnpm test:e2e` (`config.spec.ts`) |
+| 6 | Configuration | `pnpm test:e2e` (`config.spec.ts`, `plugin-load-gates.spec.ts`) |
 | 7 | Theming | `pnpm test:e2e` (`theming.spec.ts`) + `pnpm test:visual` |
 | 8 | Plugin scaffolding | `pnpm test:scaffold` |
 | 9 | `.local-plugins/` loading | `pnpm test:local-plugin` |
@@ -157,7 +157,7 @@ Each core plugin's route should mount, render, and react to user input. Backend 
 | # | Plugin | Route | Test |
 |---|--------|-------|------|
 | 3.1 | Episodes | `/episodes` | Table renders. Sorting, filtering, pagination work. Click a row → detail panel. |
-| 3.2 | Series | `/series` | Table renders. "Create series" toolbar action opens dialog. Submitting creates the series; it appears in the list. |
+| 3.2 | Series | `/series` | Table renders. "Create series" next to the page heading (in the toolbar only with `createSeries.placement: "toolbar"`) opens the dialog. Submitting creates the series; it appears in the list. |
 | 3.3 | Upload | `/upload` | Upload-file UI renders. Drag-drop or browse-pick works. Workflow selection shows configured options. |
 | 3.4 | Marketplace | `/admin/marketplace` | Lists registered plugins. Developer Mode section visible (admin role). |
 
@@ -212,7 +212,7 @@ The file the shell fetches is `apps/shell/public/ui/config/management-ui/config.
 |---|------|----------|
 | 6.1 | Edit `app.theme` in `apps/shell/public/ui/config/management-ui/config.json` | New theme applies after page reload (no dev-server restart). |
 | 6.2 | Remove a plugin from `app.enabledPlugins` | Plugin no longer loads; its sidebar entry disappears. |
-| 6.3 | Set `config.plugins.episodes.enabled = false` | Episodes plugin loads (it's in the ship filter) but doesn't activate; sidebar entry hidden. |
+| 6.3 | Set `config.plugins.episodes.enabled = false` | Episodes plugin is skipped at load, though it's in the ship filter; sidebar entry hidden. A JAR or `.local-plugins` plugin switched off the same way isn't even fetched. |
 | 6.4 | Change a plugin's config slice value (e.g. `config.plugins.upload.workflows`) | Plugin reads new value via `definePluginConfig().use()`. |
 | 6.5 | Add an unknown top-level key (e.g. `"legacyThing": 1`) and reload | Shell still boots; the unknown key is ignored, not a crash. (Confirms the `[key: string]: unknown` passthrough.) |
 

@@ -7,6 +7,8 @@ import {
   createRendererPlugin,
   usePluginManager,
   type Plugin,
+  readPluginPauses,
+  readPluginPreviews,
 } from "@oc-mui/plugin-system";
 import type { AppConfig } from "@oc-mui/query";
 import { getAppConfigSync } from "@oc-mui/query";
@@ -69,14 +71,67 @@ const parsePluginName = (name: string): { namespace: string; type: string } => {
   return { namespace: namespace || "unknown", type: type || "unknown" };
 };
 
+/**
+ * Namespaces previewed in this tab (sessionStorage, written by the marketplace's
+ * Try gesture for present-but-disabled plugins). Populated once per boot in
+ * initializePlugins; honoured by every load gate below so a preview behaves
+ * exactly like an enabled plugin — for this tab only.
+ */
+let previewNamespaces = new Set<string>();
+
+/**
+ * Namespaces paused in this tab (the preview contract's mirror image): enabled
+ * on the deployment, but skipped at every gate here so a trial of a plugin
+ * that fills the same slots can be seen on its own. Written by the marketplace
+ * together with the trial that needs it.
+ */
+let pausedNamespaces = new Set<string>();
+
 const matchesEnabledNamespace = (
   entry: { namespace?: string | undefined },
   enabledNamespaces: Set<string>,
 ): boolean => {
+  if (entry.namespace !== undefined && pausedNamespaces.has(entry.namespace)) return false;
+  if (entry.namespace !== undefined && previewNamespaces.has(entry.namespace)) return true;
   if (enabledNamespaces.size === 0) return true;
   if (entry.namespace === undefined) return true;
   return enabledNamespaces.has(entry.namespace);
 };
+
+/**
+ * The per-slice runtime switch, `config.plugins[<ns>].enabled === false`, for
+ * the bundled, JAR and .local-plugins paths. The namespace comes from the
+ * entry, not from its `name`: a JAR entry's name is a display name. An entry
+ * without a namespace has no slice to read, and a preview passes the switch
+ * like it passes the filter.
+ */
+const passesRuntimeSwitch = (
+  entry: { namespace?: string | undefined },
+  config: AppConfig,
+): boolean => {
+  const { namespace } = entry;
+  if (namespace === undefined || previewNamespaces.has(namespace)) return true;
+  if (isPluginEnabledAtRuntime(config, namespace)) return true;
+  logger.info(
+    `PluginInitializer: Skipping namespace "${namespace}" - disabled via config.plugins.${namespace}.enabled`,
+  );
+  return false;
+};
+
+/**
+ * Entries declared as config plugins: `type: config`, or the `config` namespace
+ * of a `.local-plugins/config/` folder, whose files need not carry the type.
+ */
+const isConfigEntry = (entry: {
+  namespace?: string | undefined;
+  type?: string | undefined;
+}): boolean => entry.type === "config" || entry.namespace === "config";
+
+interface RemotePluginEntry {
+  url: string;
+  namespace?: string | undefined;
+  type?: string | undefined;
+}
 
 interface PluginInitializerProps {
   children: React.ReactNode;
@@ -119,6 +174,48 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           registerPluginI18nNamespaces(entry.i18nNamespaces, entry.localesUrl);
         }
       });
+    };
+
+    /**
+     * The two-phase load shared by the JAR and .local-plugins paths.
+     *
+     * Phase 1 takes declared config plugins only. The merged config is not
+     * complete until they have run, so anything loaded alongside them could
+     * not be held to a switch they contribute.
+     *
+     * Phase 2 gates everything else against the re-merged config. It repeats
+     * until a pass adds nothing, because a plugin that did not declare itself
+     * as config may still contribute namespaces.
+     */
+    const loadInPhases = async <T extends RemotePluginEntry>(
+      entries: T[],
+      loadBatch: (batch: T[], phase: 1 | 2) => Promise<void>,
+    ) => {
+      const enabled1 = getEnabledPluginNamespaces(config);
+      const knownConfig = getAppConfigSync(manager, config);
+      const toLoad1 = entries.filter(
+        (entry) =>
+          isConfigEntry(entry) &&
+          matchesEnabledNamespace(entry, enabled1) &&
+          passesRuntimeSwitch(entry, knownConfig),
+      );
+      await loadBatch(toLoad1, 1);
+
+      const loadedUrls = new Set(toLoad1.map((entry) => entry.url));
+      const nextBatch = () => {
+        const mergedRemoteConfig = getAppConfigSync(manager, config);
+        const enabled2 = getEnabledPluginNamespaces(mergedRemoteConfig);
+        return entries.filter(
+          (entry) =>
+            !loadedUrls.has(entry.url) &&
+            matchesEnabledNamespace(entry, enabled2) &&
+            passesRuntimeSwitch(entry, mergedRemoteConfig),
+        );
+      };
+      for (let batch = nextBatch(); batch.length > 0; batch = nextBatch()) {
+        batch.forEach((entry) => loadedUrls.add(entry.url));
+        await loadBatch(batch, 2);
+      }
     };
 
     const initializePlugins = async () => {
@@ -193,6 +290,21 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
 
         // 5. Get localStorage overrides for plugin enable/disable
         const overrides = getPluginOverrides();
+
+        // 5b. Tab-scoped previews: treated as enabled at every gate below.
+        previewNamespaces = new Set(readPluginPreviews());
+        if (previewNamespaces.size > 0) {
+          logger.info("PluginInitializer: previewing plugins in this tab (sessionStorage)", {
+            namespaces: [...previewNamespaces],
+          });
+        }
+        // 5c. Tab-scoped pauses: skipped at every gate below.
+        pausedNamespaces = new Set(readPluginPauses());
+        if (pausedNamespaces.size > 0) {
+          logger.info("PluginInitializer: pausing plugins in this tab (sessionStorage)", {
+            namespaces: [...pausedNamespaces],
+          });
+        }
         const hasOverrides = Object.keys(overrides.overrides).length > 0;
         if (hasOverrides) {
           logger.info("PluginInitializer: Applying plugin overrides from localStorage", {
@@ -247,6 +359,12 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
           if (plugin && plugin.name) {
             const [pluginNamespace] = plugin.name.split(":");
 
+            // A tab-scoped pause wins over everything below, a local override included.
+            if (pluginNamespace && pausedNamespaces.has(pluginNamespace)) {
+              logger.info(`PluginInitializer: Skipping "${plugin.name}" - paused in this tab`);
+              continue;
+            }
+
             // Check for localStorage override first
             const override = overrides.overrides[plugin.name];
 
@@ -283,12 +401,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
             );
             if (!namespaceEnabled) continue;
 
-            if (pluginNamespace && !isPluginEnabledAtRuntime(mergedConfig, pluginNamespace)) {
-              logger.info(
-                `PluginInitializer: Skipping "${plugin.name}" - disabled via config.plugins.${pluginNamespace}.enabled`,
-              );
-              continue;
-            }
+            if (!passesRuntimeSwitch({ namespace: pluginNamespace }, mergedConfig)) continue;
 
             if (!manager.plugins.has(plugin.name)) {
               const reg = manager.register(plugin);
@@ -369,23 +482,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
               });
             };
 
-            const enabled1 = getEnabledPluginNamespaces(config);
-            const toLoad1 =
-              enabled1.size === 0
-                ? jarPluginsToConsider
-                : jarPluginsToConsider.filter((entry) =>
-                    matchesEnabledNamespace(entry, enabled1),
-                  );
-            await loadBatch(toLoad1, 1);
-
-            const mergedJarConfig = getAppConfigSync(manager, config);
-            const enabled2 = getEnabledPluginNamespaces(mergedJarConfig);
-            const loadedUrls = new Set(toLoad1.map((entry) => entry.url));
-            const toLoad2 = jarPluginsToConsider.filter(
-              (entry) =>
-                !loadedUrls.has(entry.url) && matchesEnabledNamespace(entry, enabled2),
-            );
-            await loadBatch(toLoad2, 2);
+            await loadInPhases(jarPluginsToConsider, loadBatch);
           }
         } catch (error) {
           logger.debug("PluginInitializer: JAR plugins not available or failed", {
@@ -394,19 +491,23 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
         }
 
         // 8. Load .local-plugins/ from dev server manifest (dev only, no Marketplace required)
-        // Two-phase load: first load entries matching current config (e.g. "config" namespace);
-        // then re-merge config from manager (config plugin may have registered app:config with
-        // more namespaces) and load remaining .local-plugins (e.g. org-a, org-b).
+        // Two-phase load: first the config plugins (e.g. "config" namespace); then re-merge
+        // config from manager (they may have registered app:config with more namespaces or
+        // switched a slice off) and load remaining .local-plugins (e.g. org-a, org-b).
         try {
           const localManifest = await loadLocalPluginsManifest();
           if (localManifest.length === 0) {
             // skip
           } else {
-            const loadBatch = async (entries: typeof localManifest) => {
+            const loadBatch = async (entries: typeof localManifest, phase: 1 | 2) => {
               if (entries.length === 0) return;
               // Shared-runtime gate (mirrors the JAR + marketplace paths).
               const loadable = entries.filter(passesSharedDependencyGate);
               if (loadable.length === 0) return;
+              registerPluginLocales(loadable);
+              logger.info(`PluginInitializer: Loading .local-plugins (phase ${phase})`, {
+                count: loadable.length,
+              });
               const results = await Promise.allSettled(
                 loadable.map((entry) =>
                   loadAndRegister(getLocalPluginFullUrl(entry), manager, {
@@ -441,36 +542,7 @@ export const PluginInitializer: React.FC<PluginInitializerProps> = ({ children, 
               });
             };
 
-            // Phase 1: load entries that match current config (e.g. .local-plugins/config/)
-            const enabled1 = getEnabledPluginNamespaces(config);
-            const toLoad1 =
-              enabled1.size === 0
-                ? localManifest
-                : localManifest.filter((entry) => matchesEnabledNamespace(entry, enabled1));
-            if (toLoad1.length > 0) {
-              registerPluginLocales(toLoad1);
-              logger.info("PluginInitializer: Loading .local-plugins (phase 1)", {
-                count: toLoad1.length,
-              });
-              await loadBatch(toLoad1);
-            }
-
-            // Phase 2: re-merge config from manager (config plugin may have added namespaces),
-            // then load remaining .local-plugins that now match (e.g. org-a, org-b) and types
-            const mergedLocalConfig = getAppConfigSync(manager, config);
-            const enabled2 = getEnabledPluginNamespaces(mergedLocalConfig);
-            const loadedUrls = new Set(toLoad1.map((e) => e.url));
-            const toLoad2 = localManifest.filter(
-              (entry) =>
-                !loadedUrls.has(entry.url) && matchesEnabledNamespace(entry, enabled2),
-            );
-            if (toLoad2.length > 0) {
-              registerPluginLocales(toLoad2);
-              logger.info("PluginInitializer: Loading .local-plugins (phase 2)", {
-                count: toLoad2.length,
-              });
-              await loadBatch(toLoad2);
-            }
+            await loadInPhases(localManifest, loadBatch);
           }
         } catch (error) {
           logger.debug("PluginInitializer: .local-plugins manifest not available or failed", {
