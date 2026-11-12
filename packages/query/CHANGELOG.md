@@ -1,5 +1,19 @@
 # @oc-mui/query
 
+## 2.1.2
+
+### Patch Changes
+
+- 9cd60b8: Dependency maintenance: minor/patch bumps of `lucide-react` (0.417 → 0.577, still the host-provided 0.x major), `tailwindcss`/`@tailwindcss/vite`, `autoprefixer`, `typescript-eslint`, `@microsoft/api-extractor`, `@playwright/test`, `@swc/helpers`, `@tanstack/react-query-devtools` and `@graphql-codegen/typescript-operations`.
+- b864edb: A single record that violates the schema's non-null promise (for example an event without a title after a failed workflow) no longer fails the whole request. When every GraphQL error is such a null-bubbling error and the response carries data, the fetcher logs a warning and returns the partial data; lists already skip the nulled entries.
+- Updated dependencies [9cd60b8]
+- Updated dependencies [e4f061d]
+- Updated dependencies [e4f061d]
+- Updated dependencies [7a1689f]
+  - @oc-mui/plugin-system@1.4.0
+  - @oc-mui/ui-config@2.0.1
+  - @oc-mui/utils@1.3.1
+
 ## 2.1.1
 
 ### Patch Changes
