@@ -53,6 +53,41 @@ describe("fetcher", () => {
       await expect(queryFn()).rejects.toThrow("GraphQL error");
     });
 
+    it("returns partial data when the only errors are non-null fields that came back null", async () => {
+      const data = { currentUser: { myEvents: { nodes: [null, { id: "b", title: "B" }] } } };
+      const mockResponse = {
+        json: vi.fn().mockResolvedValue({
+          data,
+          errors: [
+            {
+              message:
+                "The field at path '/currentUser/myEvents/nodes[0]/title' was declared as a non null type, but the code involved in retrieving data has wrongly returned a null value.",
+              path: ["currentUser", "myEvents", "nodes", 0, "title"],
+              extensions: { classification: "NullValueInNonNullableField" },
+            },
+          ],
+        }),
+      };
+      vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
+
+      await expect(fetchData("query { test }")()).resolves.toEqual(data);
+    });
+
+    it("still fails when a null-bubbling error comes with other errors", async () => {
+      const mockResponse = {
+        json: vi.fn().mockResolvedValue({
+          data: { currentUser: null },
+          errors: [
+            { message: "x was declared as a non null type, but the code involved in retrieving data has wrongly returned a null value." },
+            { message: "The current user is not authorized", path: ["currentUser"] },
+          ],
+        }),
+      };
+      vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
+
+      await expect(fetchData("query { test }")()).rejects.toThrow("non null type");
+    });
+
     it("should pass variables to request", async () => {
       const mockData = { test: "data" };
       const variables = { id: "123" };

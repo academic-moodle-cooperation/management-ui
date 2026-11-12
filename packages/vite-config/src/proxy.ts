@@ -27,6 +27,12 @@ const defaultBackendTarget = viteProxyTargetEnv || "http://localhost:8080";
 // passed) the deployment's real config.json wins via the proxy as before.
 export const CONFIG_JSON_PATH = "/ui/config/management-ui/config.json";
 
+// Send the backend's own host name, not the dev server's: a multi-tenant
+// Opencast resolves the organisation strictly by the Host header and answers
+// 404 for an unknown one. `autoRewrite` maps the Location of the backend's
+// redirects (the Spring Security login round trip) back to the dev server.
+const HOST_REWRITE: ProxyOptions = { changeOrigin: true, autoRewrite: true };
+
 const defaultProxyPaths: Record<string, string | ProxyOptions> = {
   "/j_spring_security_login": "",
   "/j_spring_security_check": "",
@@ -184,8 +190,8 @@ export function createProxyConfig(
     if (path === CONFIG_JSON_PATH && serveConfigLocally) continue;
     const baseOptions: ProxyOptions =
       typeof pathConfig === "string"
-        ? { target }
-        : { ...pathConfig, target: pathConfig.target ?? target };
+        ? { ...HOST_REWRITE, target }
+        : { ...HOST_REWRITE, ...pathConfig, target: pathConfig.target ?? target };
     resolvedProxies[path] = attachFriendlyErrorHandler(baseOptions, target);
   }
 
@@ -196,10 +202,10 @@ export function createProxyConfig(
       const customConfig = options.customProxies[path];
       const baseOptions: ProxyOptions =
         typeof customConfig === "string"
-          ? { target: customConfig }
+          ? { ...HOST_REWRITE, target: customConfig }
           : customConfig?.target
-            ? customConfig
-            : { ...(customConfig ?? {}), target };
+            ? { ...HOST_REWRITE, ...customConfig }
+            : { ...HOST_REWRITE, ...(customConfig ?? {}), target };
       // ProxyOptions.target can be a URL or other shapes; the friendly
       // handler only needs a stable string for keying warnedTargets and
       // for printing.

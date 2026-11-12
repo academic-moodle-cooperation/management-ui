@@ -1,0 +1,26 @@
+{
+  "$schema": "../../packages/plugin-system/src/schemas/plugin.schema.json",
+  "id": "admin-marketplace-v2",
+  "name": "Marketplace",
+  "version": "0.1.0",
+  "description": "Ground-up marketplace rebuild: a discovery-first catalog of plugins and themes from configured registries. Parallel to admin-marketplace while features migrate piece by piece.",
+  "author": {
+    "name": "Management UI Core"
+  },
+  "namespace": "admin-marketplace-v2",
+  "type": "marketplace",
+  "category": "feature",
+  "apiVersion": "1.0.0",
+  "workspaceDependencies": {
+    "react": "^19.0.0",
+    "@oc-mui/plugin-system": "^1.0.0",
+    "@oc-mui/query": "^1.0.0",
+    "@oc-mui/ui": "^1.0.0",
+    "@oc-mui/utils": "^1.0.0"
+  },
+  "extensionPoints": [
+    "apps:definitions",
+    "sidebar:nav-items",
+    "app:config:defaults"
+  ]
+}

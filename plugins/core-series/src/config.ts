@@ -34,7 +34,26 @@ export const seriesConfigSchema = z.object({
       columns: z.array(tableColumnItemSchema).optional(),
       createSeries: z
         .object({
+          /** Master switch for the create-series button. */
           enabled: z.boolean().optional(),
+          /**
+           * Where the button sits: next to the page heading (default) or in
+           * the table toolbar, where it used to be.
+           */
+          placement: z.enum(["heading", "toolbar"]).optional(),
+          /**
+           * Per-variant switches keyed by the variant's `id` as registered on
+           * `series:create-series:variants` (`default` is the core form).
+           */
+          variants: z
+            .record(
+              z.string(),
+              z.object({
+                enabled: z.boolean().optional(),
+                order: z.number().optional(),
+              }),
+            )
+            .optional(),
         })
         .optional(),
     })
@@ -67,7 +86,7 @@ export const seriesConfigDefaults: SeriesConfig = {
     ],
   },
   seriesTable: {
-    createSeries: { enabled: true },
+    createSeries: { enabled: true, placement: "heading" },
     columns: [
       { title: { show: true } },
       { created: { show: true } },
