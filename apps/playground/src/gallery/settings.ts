@@ -19,10 +19,13 @@ export interface GallerySettings {
 }
 
 /**
- * Styles the switcher offers. Only the built-in look exists today; the
- * style-layer experiment adds entries here.
+ * Styles the switcher offers: one entry per sheet in
+ * `packages/ui/src/styles/component-styles/`.
  */
-export const STYLES = [{ id: "default", name: "Default" }] as const;
+export const STYLES = [
+  { id: "default", name: "Default" },
+  { id: "compact", name: "Compact" },
+] as const;
 
 function read(): GallerySettings {
   const params = new URLSearchParams(window.location.search);

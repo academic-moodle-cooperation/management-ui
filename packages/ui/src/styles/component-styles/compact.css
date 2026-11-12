@@ -1,0 +1,88 @@
+/*
+ * Style "compact" — dense, flat and quiet: 32px controls, hairline borders
+ * instead of drop shadows, a thin focus ring, medium-weight headings.
+ *
+ * Same format as default.css (read its header first). A style states the
+ * complete look of every `cn-*` class it covers; it is not a diff against
+ * the default style, because only one style matches at a time.
+ *
+ * Colours come from the theme tokens only, so every theme works with it.
+ */
+@layer components {
+  :where([data-style="compact"]) {
+    /* MARK: Button */
+    .cn-button {
+      @apply focus-visible:ring-ring aria-invalid:border-destructive aria-invalid:ring-destructive/30 gap-1.5 rounded-md text-[0.8125rem] font-medium transition-colors focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:ring-offset-background active:translate-y-px disabled:opacity-50;
+    }
+
+    .cn-button-variant-default {
+      @apply bg-primary text-primary-foreground hover:bg-primary/85;
+    }
+
+    .cn-button-variant-destructive {
+      @apply bg-destructive hover:bg-destructive/85 focus-visible:ring-destructive dark:bg-destructive/70 text-white;
+    }
+
+    .cn-button-variant-outline {
+      @apply border-border bg-background hover:bg-accent hover:text-accent-foreground hover:border-foreground/20 border;
+    }
+
+    .cn-button-variant-secondary {
+      @apply bg-secondary text-secondary-foreground hover:bg-secondary/70;
+    }
+
+    .cn-button-variant-ghost {
+      @apply text-muted-foreground hover:bg-accent hover:text-accent-foreground;
+    }
+
+    .cn-button-variant-link {
+      @apply text-primary underline-offset-4 hover:underline;
+    }
+
+    .cn-button-size-default {
+      @apply h-8 px-3 has-[>svg]:px-2.5;
+    }
+
+    .cn-button-size-sm {
+      @apply h-7 gap-1 px-2.5 text-xs has-[>svg]:px-2;
+    }
+
+    .cn-button-size-lg {
+      @apply h-9 px-4 text-sm has-[>svg]:px-3;
+    }
+
+    .cn-button-size-icon {
+      @apply size-8;
+    }
+
+    /* MARK: Card */
+    .cn-card {
+      @apply bg-card text-card-foreground border-border gap-4 rounded-lg border py-4 text-sm;
+    }
+
+    .cn-card-header {
+      @apply gap-1 px-4 [.border-b]:pb-4;
+    }
+
+    .cn-card-title {
+      @apply text-sm leading-snug font-medium;
+    }
+
+    .cn-card-description {
+      @apply text-muted-foreground text-[0.8125rem];
+    }
+
+    .cn-card-content {
+      @apply px-4;
+    }
+
+    .cn-card-footer {
+      @apply px-4 [.border-t]:pt-4;
+    }
+
+    /* MARK: Input */
+    .cn-input {
+      @apply file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input hover:border-foreground/25 focus-visible:border-ring focus-visible:ring-ring aria-invalid:border-destructive aria-invalid:ring-destructive/30 h-8 rounded-md border bg-transparent px-2.5 py-1 text-[0.8125rem] transition-colors file:h-6 file:text-xs file:font-medium focus-visible:ring-1 disabled:opacity-50;
+    }
+  }
+}

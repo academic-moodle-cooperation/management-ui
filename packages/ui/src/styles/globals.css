@@ -39,6 +39,7 @@
    component-styles/default.css). Every sheet is loaded; `data-style` on the
    root element decides which one matches. */
 @import "./component-styles/default.css";
+@import "./component-styles/compact.css";
 
 /* Scan THIS library's own files for the utility classes its components use.
    The path is relative to this CSS file, so it works both in-repo
