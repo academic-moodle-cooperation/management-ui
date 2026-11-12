@@ -1,6 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { canPreviewTheme, collectThemes, orgThemeUrl, parseThemeSwatches } from "./themes";
+import {
+  canPreviewTheme,
+  collectThemes,
+  discoverOrgThemes,
+  isThemeCss,
+  orgThemeUrl,
+  parseThemeSwatches,
+} from "./themes";
 
 import type { TryConfig } from "../config";
 import type { RegistryPlugin } from "./registry";
@@ -78,5 +85,57 @@ describe("parseThemeSwatches", () => {
 
   it("returns empty sets for CSS without the blocks", () => {
     expect(parseThemeSwatches(".foo { color: red; }")).toEqual({ light: {}, dark: {} });
+  });
+});
+
+// What a feature plugin's own Tailwind build looks like: theme variables in
+// `:root, :host`, utilities that *read* host tokens, none that set them.
+const pluginCss =
+  "@layer theme{:root,:host{--color-red-500:oklch(63.7% .237 25.331);--spacing:.25rem}}" +
+  "@layer utilities{.bg-background{background-color:var(--background)}.dark\\:bg-card:is(.dark *){background-color:var(--card)}}";
+
+const themeCss = ":root { --primary: oklch(0.45 0.15 250); } .dark { --primary: oklch(0.7 0.12 250); }";
+
+describe("isThemeCss", () => {
+  it("rejects a plugin stylesheet that sets no theme tokens", () => {
+    expect(isThemeCss(pluginCss)).toBe(false);
+    expect(isThemeCss(".foo { color: red; }")).toBe(false);
+  });
+
+  it("accepts a stylesheet that sets a swatch token in :root or .dark", () => {
+    expect(isThemeCss(themeCss)).toBe(true);
+    expect(isThemeCss(".dark { --sidebar: oklch(0.2 0 0); }")).toBe(true);
+  });
+});
+
+describe("discoverOrgThemes", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  const serve = (sheets: Record<string, string>) =>
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        const name = Object.keys(sheets).find((n) => url.endsWith(`/${n}.css`));
+        return name === undefined
+          ? new Response("<!doctype html>", { headers: { "content-type": "text/html" } })
+          : new Response(sheets[name], { headers: { "content-type": "text/css" } });
+      }),
+    );
+
+  it("lists a deployed plugin only when its conventional CSS is a theme", async () => {
+    serve({ "feature-jar": pluginCss, "theme-jar": themeCss, "theme-local": themeCss, "feature-local": pluginCss });
+    const found = await discoverOrgThemes(
+      [
+        { name: "Feature", namespace: "feature-jar", url: "/static/plugins/feature-jar/feature-jar.mjs" },
+        { name: "Theme", namespace: "theme-jar", url: "/static/plugins/theme-jar/theme-jar.mjs" },
+        { name: "No CSS", namespace: "no-css-jar", url: "/static/plugins/no-css-jar/no-css-jar.mjs" },
+      ],
+      [
+        { name: "Local theme", id: "theme-local", url: "/local-plugins/theme-local/src/index.ts" },
+        { name: "Local feature", id: "feature-local", url: "/local-plugins/feature-local/src/index.ts" },
+      ],
+    );
+    expect(found.map((t) => `${t.source}:${t.namespace}`)).toEqual(["jar:theme-jar", "local:theme-local"]);
+    expect(found[0]?.url).toMatch(/\/static\/plugins\/theme-jar\/theme-jar\.css$/);
   });
 });
