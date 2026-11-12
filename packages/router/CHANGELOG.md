@@ -1,5 +1,19 @@
 # @oc-mui/router
 
+## 1.1.4
+
+### Patch Changes
+
+- Updated dependencies [9cd60b8]
+- Updated dependencies [8c48874]
+- Updated dependencies [522aaec]
+- Updated dependencies [cd729c2]
+- Updated dependencies [14662f0]
+- Updated dependencies [b864edb]
+- Updated dependencies [cfbe304]
+  - @oc-mui/query@2.1.2
+  - @oc-mui/i18n@1.2.0
+
 ## 1.1.3
 
 ### Patch Changes

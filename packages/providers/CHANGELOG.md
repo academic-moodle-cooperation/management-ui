@@ -1,5 +1,23 @@
 # @oc-mui/providers
 
+## 4.0.2
+
+### Patch Changes
+
+- Updated dependencies [9cd60b8]
+- Updated dependencies [e4f061d]
+- Updated dependencies [d778e49]
+- Updated dependencies [a94974b]
+- Updated dependencies [b864edb]
+- Updated dependencies [e4f061d]
+- Updated dependencies [03706e3]
+- Updated dependencies [7a1689f]
+  - @oc-mui/plugin-system@1.4.0
+  - @oc-mui/query@2.1.2
+  - @oc-mui/ui@2.1.0
+  - @oc-mui/app-runtime@1.0.5
+  - @oc-mui/router@1.1.4
+
 ## 4.0.1
 
 ### Patch Changes
