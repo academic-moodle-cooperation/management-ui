@@ -35,12 +35,6 @@
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 
-/* The look of the base components, one sheet per style (see the header of
-   component-styles/default.css). Every sheet is loaded; `data-style` on the
-   root element decides which one matches. */
-@import "./component-styles/default.css";
-@import "./component-styles/compact.css";
-
 /* Scan THIS library's own files for the utility classes its components use.
    The path is relative to this CSS file, so it works both in-repo
    (packages/ui/src) and when the built package is consumed from a consumer's
@@ -157,6 +151,33 @@
   --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --shadow-sidebar: 0 1px 0 0 rgb(0 0 0 / 0.05);
   --duration-transition: 150ms;
+
+  /* Component metrics: the sizes, paddings, radii and weights of the base
+     components. The components read these instead of hard-coded utilities, so
+     a theme or a style (see `[data-style]` below) can change them. The values
+     here are the look the components have always had. */
+  --control-height: 2.25rem;
+  --control-height-sm: 2rem;
+  --control-height-lg: 2.5rem;
+  --control-radius: calc(var(--radius) - 2px);
+  --control-font-size: 0.875rem;
+  --control-line-height: calc(1.25 / 0.875);
+  --focus-ring-width: 3px;
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --button-font-weight: 500;
+  --button-gap: 0.5rem;
+  --button-gap-sm: 0.375rem;
+  --button-padding-x: 1rem;
+  --button-padding-x-icon: 0.75rem;
+  --button-padding-x-sm: 0.75rem;
+  --button-padding-x-sm-icon: 0.625rem;
+  --button-padding-x-lg: 1.5rem;
+  --button-padding-x-lg-icon: 1rem;
+  --input-padding-x: 0.75rem;
+  --card-spacing: 1.5rem;
+  --card-header-gap: 0.375rem;
+  --card-radius: calc(var(--radius) + 4px);
+  --card-title-font-weight: 600;
 }
 
 .dark {
@@ -208,6 +229,35 @@
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.2);
   --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.2), 0 1px 2px -1px rgb(0 0 0 / 0.2);
   --shadow-sidebar: 0 1px 0 0 rgb(255 255 255 / 0.05);
+}
+
+/* Style "compact": dense and flat. A style is a named set of component
+   metrics, picked with `data-style` on the root element and independent of
+   the theme, which supplies the colours. It comes after `.dark` on purpose,
+   so its shadow values also hold in dark mode. */
+[data-style="compact"] {
+  --control-height: 2rem;
+  --control-height-sm: 1.75rem;
+  --control-height-lg: 2.25rem;
+  --control-radius: calc(var(--radius) - 4px);
+  --control-font-size: 0.8125rem;
+  --control-line-height: 1.25rem;
+  --focus-ring-width: 2px;
+  --shadow-xs: 0 0 #0000;
+  --shadow-sm: 0 0 #0000;
+  --button-gap: 0.375rem;
+  --button-gap-sm: 0.25rem;
+  --button-padding-x: 0.75rem;
+  --button-padding-x-icon: 0.625rem;
+  --button-padding-x-sm: 0.625rem;
+  --button-padding-x-sm-icon: 0.5rem;
+  --button-padding-x-lg: 1rem;
+  --button-padding-x-lg-icon: 0.75rem;
+  --input-padding-x: 0.625rem;
+  --card-spacing: 1rem;
+  --card-header-gap: 0.25rem;
+  --card-radius: var(--radius);
+  --card-title-font-weight: 500;
 }
 
 @theme inline {
@@ -267,6 +317,7 @@
   --spacing-relaxed: var(--spacing-relaxed);
   --spacing-card: var(--spacing-card);
   --spacing-sidebar: var(--spacing-sidebar);
+  --shadow-xs: var(--shadow-xs);
   --shadow-sm: var(--shadow-sm);
   --shadow-md: var(--shadow-md);
   --shadow-lg: var(--shadow-lg);
