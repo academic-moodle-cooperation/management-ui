@@ -1,5 +1,16 @@
 # @oc-mui/plugin-testing
 
+## 1.0.5
+
+### Patch Changes
+
+- Updated dependencies [9cd60b8]
+- Updated dependencies [e4f061d]
+- Updated dependencies [e4f061d]
+- Updated dependencies [7a1689f]
+  - @oc-mui/plugin-system@1.4.0
+  - @oc-mui/utils@1.3.1
+
 ## 1.0.4
 
 ### Patch Changes

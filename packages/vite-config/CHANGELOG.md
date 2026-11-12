@@ -1,5 +1,14 @@
 # @oc-mui/vite-config
 
+## 1.2.2
+
+### Patch Changes
+
+- 9cd60b8: Dependency maintenance: minor/patch bumps of `lucide-react` (0.417 → 0.577, still the host-provided 0.x major), `tailwindcss`/`@tailwindcss/vite`, `autoprefixer`, `typescript-eslint`, `@microsoft/api-extractor`, `@playwright/test`, `@swc/helpers`, `@tanstack/react-query-devtools` and `@graphql-codegen/typescript-operations`.
+- 994a55d: Dev proxy: requests to `VITE_PROXY_TARGET` now carry the backend's own host name (`changeOrigin`) and redirects are rewritten back to the dev server (`autoRewrite`). A multi-tenant Opencast resolves the organisation strictly by the Host header and answered 404 for every proxied request before.
+- 4cd0ce0: Update `vite-plugin-static-copy` to 4.x. Version 4 mirrors each matched file's full directory path below the destination, so the shell's copy targets now state explicitly which part of the path to keep: locale files still land at `locales/<namespace>/<lng>.json` and assets at `assets/...`, for in-tree plugins and for both `.local-plugins` locale layouts. The locale globs also skip `node_modules` now, so the build no longer ships the locale folders of installed dependencies under `locales/`.
+- @oc-mui/utils@1.3.1
+
 ## 1.2.1
 
 ### Patch Changes

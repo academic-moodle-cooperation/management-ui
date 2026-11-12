@@ -1,5 +1,12 @@
 # @oc-mui/eslint-config
 
+## 1.1.3
+
+### Patch Changes
+
+- c4d5e09: Dependency maintenance: `globals` 16 → 17 (the browser and service-worker global lists the React config spreads; the 17.0 break only splits `audioWorklet` out of `browser`, which the config does not use).
+- 9cd60b8: Dependency maintenance: minor/patch bumps of `lucide-react` (0.417 → 0.577, still the host-provided 0.x major), `tailwindcss`/`@tailwindcss/vite`, `autoprefixer`, `typescript-eslint`, `@microsoft/api-extractor`, `@playwright/test`, `@swc/helpers`, `@tanstack/react-query-devtools` and `@graphql-codegen/typescript-operations`.
+
 ## 1.1.2
 
 ### Patch Changes
