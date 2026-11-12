@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { Button, Card, CardContent, Input } from "@oc-mui/ui/components";
 
+import { PlusIcon } from "../icons";
 import { Row, Section } from "../Section";
 
 /**
@@ -63,6 +64,16 @@ export function PrecedenceSection() {
         </Button>
         <Button data-precedence="host-button-sm" variant="outline" size="sm" className="h-12 gap-4">
           sm + h-12 gap-4
+        </Button>
+        <Button data-precedence="host-button-icon" className="px-8">
+          <PlusIcon />
+          icon + px-8
+        </Button>
+        <Button data-precedence="host-button-bg" className="bg-secondary text-secondary-foreground">
+          bg-secondary
+        </Button>
+        <Button data-precedence="host-button-outline-bg" variant="outline" className="bg-card">
+          outline + bg-card
         </Button>
         <Input
           data-precedence="host-input"

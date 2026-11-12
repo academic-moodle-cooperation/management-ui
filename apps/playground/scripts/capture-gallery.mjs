@@ -13,6 +13,7 @@
  *   --themes  Comma-separated theme ids (default "default").
  *   --modes   Comma-separated appearance modes (default "light,dark").
  *   --style   Style id passed through to the gallery (default "default").
+ *   --only    Comma-separated section ids; captures just those (plus the overview).
  *
  * Output per <out>/<theme>-<mode>/:
  *   overview.png                  the whole page
@@ -65,6 +66,22 @@ const HOVER = {
 };
 
 /**
+ * Elements to capture with keyboard focus, same shape as HOVER. Every section
+ * additionally gets `<id>-focus.png` for its first focusable control.
+ */
+const FOCUS = {
+  button: {
+    secondary: "[data-slot=button] >> nth=1",
+    outline: "[data-slot=button] >> nth=2",
+    ghost: "[data-slot=button] >> nth=3",
+    destructive: "[data-slot=button] >> nth=4",
+    link: "[data-slot=button] >> nth=5",
+    invalid: "[data-slot=button][aria-invalid]",
+  },
+  input: { invalid: "[data-slot=input][aria-invalid]", file: "[data-slot=input][type=file]" },
+};
+
+/**
  * Freeze everything that moves and hide the dev-only query devtools button,
  * which would otherwise float over the bottom-right corner of every picture.
  */
@@ -86,6 +103,7 @@ const { values } = parseArgs({
     themes: { type: "string", default: "default" },
     modes: { type: "string", default: "light,dark" },
     style: { type: "string", default: "default" },
+    only: { type: "string" },
   },
 });
 
@@ -123,9 +141,11 @@ for (const theme of values.themes.split(",")) {
     count += 1;
 
     const sections = page.locator("[data-gallery-section]");
-    const ids = await sections.evaluateAll((elements) =>
+    const allIds = await sections.evaluateAll((elements) =>
       elements.map((element) => element.dataset.gallerySection),
     );
+    const wanted = values.only?.split(",");
+    const ids = wanted ? allIds.filter((id) => wanted.includes(id)) : allIds;
     for (const id of ids) {
       await page
         .locator(`[data-gallery-section="${id}"]`)
@@ -146,6 +166,16 @@ for (const theme of values.themes.split(",")) {
         count += 1;
       }
 
+      for (const [name, selector] of Object.entries(FOCUS[id] ?? {})) {
+        await open({ ...view, only: id });
+        // Tab first: it switches the page to keyboard modality, so the
+        // scripted focus below counts as `:focus-visible`.
+        await page.keyboard.press("Tab");
+        await section.locator(selector).focus();
+        await section.screenshot({ path: path.join(dir, `${id}-focus-${name}.png`) });
+        count += 1;
+      }
+
       // Tab from a fresh page lands on the first focusable control and, being
       // keyboard focus, triggers `:focus-visible`.
       await open({ ...view, only: id });
@@ -159,7 +189,7 @@ for (const theme of values.themes.split(",")) {
       }
     }
 
-    for (const id of OVERLAYS) {
+    for (const id of OVERLAYS.filter((overlay) => ids.includes(overlay))) {
       await open({ ...view, only: id, open: id });
       // Overlays are portalled out of the section, so capture the viewport.
       await page.screenshot({ path: path.join(dir, `${id}-open.png`) });
