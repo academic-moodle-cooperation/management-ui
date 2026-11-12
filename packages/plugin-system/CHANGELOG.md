@@ -1,5 +1,41 @@
 # @oc-mui/plugin-system
 
+## 1.4.0
+
+### Minor Changes
+
+- e4f061d: Plugin Manifest Contract 1.2: two optional, presentational fields join `icon`
+  and `screenshots` in `plugin.schema.json` — `tagline` (one-line pitch) and
+  `accentColor` (any CSS color for the marketplace tile). The runtime validator
+  type-checks `icon`, `tagline` and `accentColor` as strings when present. No
+  loader behaviour changes.
+  
+  The object registry builtin gains `registry.getTypes` (every extension point
+  that received a registration), so tooling can walk all points — the
+  marketplace uses it to show what each plugin on a deployment extends.
+- e4f061d: New tab-scoped **plugin preview** contract: `readPluginPreviews`,
+  `writePluginPreviews`, `addPluginPreview`, `removePluginPreview` and
+  `PLUGIN_PREVIEWS_STORAGE_KEY`. A preview lists plugin namespaces in
+  `sessionStorage`; the host treats them as enabled at every load gate for that
+  browser tab only, so an administrator can look at a plugin that is deployed
+  but switched off by configuration without enabling it for anyone else. The
+  list dies with the tab and is never persisted.
+  
+  Its mirror image, **plugin pauses**: `readPluginPauses`, `writePluginPauses`,
+  `addPluginPause`, `removePluginPause` and `PLUGIN_PAUSES_STORAGE_KEY`. A paused
+  namespace is enabled on the deployment but skipped by the host in that tab, so
+  a plugin that fills the same slots can be looked at on its own.
+  
+  `PLUGIN_API_VERSION` is now `1.2.0`.
+
+### Patch Changes
+
+- 9cd60b8: Dependency maintenance: minor/patch bumps of `lucide-react` (0.417 → 0.577, still the host-provided 0.x major), `tailwindcss`/`@tailwindcss/vite`, `autoprefixer`, `typescript-eslint`, `@microsoft/api-extractor`, `@playwright/test`, `@swc/helpers`, `@tanstack/react-query-devtools` and `@graphql-codegen/typescript-operations`.
+- 7a1689f: The shell now honours `config.plugins[<namespace>].enabled: false` for JAR and `.local-plugins` plugins too, as the Config Contract says; it used to apply the switch to bundled plugins only. A plugin switched off this way is no longer fetched, and a tab-scoped preview still passes the switch. These paths now load only declared config plugins (`type: config`, or the `config` namespace) before the rest, so a module that contributes config should declare that type. On the `.local-plugins` path the type comes from the file name (`plugin-<folder>-config.mjs`), not from `plugin.json`. No API change in this package.
+  
+  README: `validatePluginMetadata` is a hand-written check of the manifest's key constraints, not Zod-backed.
+- @oc-mui/utils@1.3.1
+
 ## 1.3.1
 
 ### Patch Changes
