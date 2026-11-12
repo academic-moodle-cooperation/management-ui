@@ -238,6 +238,8 @@ Beyond the typeface, `--radius`/`--shadow-*`/`--spacing-*` give a theme its char
 
 > When you add or remove a shipped theme, update `apps/shell/public/plugins/themes/index.json` as well — the marketplace lists shipped themes from that file (id, name, tagline, author); the CSS itself is never parsed for metadata.
 >
+> The marketplace also lists org themes, found by requesting the two org paths above for every deployed or local plugin. A feature plugin's own stylesheet can sit at the same path, so the marketplace lists the file as a theme only when it sets at least one of `--background`, `--card`, `--primary`, `--sidebar`, `--muted` or `--border` in a plain `:root { … }` or `.dark { … }` block. `app.theme` is not affected by this check — it loads whatever the path serves.
+>
 > Theme CSS **must be served as a raw `text/css` static file**. A `.css` under a *source* dir (e.g. `plugins/themes/`) is returned by Vite as a JS module (dev) or the SPA `index.html` fallback (build), so a `<link rel="stylesheet">` "loads" it (200) but applies nothing. That's why shipped themes live under `public/`. The default baseline (`apps/shell/src/themes/default.css`) is the one exception — it's `import`ed directly by the shell, not loaded by name.
 
 ## Review checklist
