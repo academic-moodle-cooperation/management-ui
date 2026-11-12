@@ -14,8 +14,12 @@
  *   --modes   Comma-separated appearance modes (default "light,dark").
  *   --style   Style id passed through to the gallery (default "default").
  *
- * Output: <out>/<theme>-<mode>/<component>.png, <component>-open.png for every
- * overlay, and overview.png (the whole page).
+ * Output per <out>/<theme>-<mode>/:
+ *   overview.png                  the whole page
+ *   <component>.png               one section at rest
+ *   <component>-open.png          every overlay, opened
+ *   <component>-hover-<name>.png  pointer over one element (see HOVER)
+ *   <component>-focus.png         keyboard focus on the section's first control
  */
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
@@ -35,6 +39,30 @@ const OVERLAYS = [
   "hover-card",
   "tooltip",
 ];
+
+/**
+ * Elements to capture under the pointer: section id → name → selector inside
+ * that section. Hover styles differ per variant, so the button lists each.
+ */
+const HOVER = {
+  button: {
+    default: "[data-slot=button] >> nth=0",
+    secondary: "[data-slot=button] >> nth=1",
+    outline: "[data-slot=button] >> nth=2",
+    ghost: "[data-slot=button] >> nth=3",
+    destructive: "[data-slot=button] >> nth=4",
+    link: "[data-slot=button] >> nth=5",
+  },
+  badge: { link: "a[data-slot=badge]" },
+  input: { field: "[data-slot=input] >> nth=0" },
+  select: { trigger: "[data-slot=select-trigger] >> nth=0" },
+  tabs: { inactive: "[data-slot=tabs-trigger] >> nth=1" },
+  table: { row: "tbody tr >> nth=0" },
+  accordion: { trigger: "[data-slot=accordion-trigger] >> nth=1" },
+  breadcrumb: { link: "[data-slot=breadcrumb-link] >> nth=0" },
+  sidebar: { item: "[data-slot=sidebar-menu-button] >> nth=2" },
+  "data-table": { row: "tbody tr >> nth=0", button: "[data-slot=button] >> nth=0" },
+};
 
 /**
  * Freeze everything that moves and hide the dev-only query devtools button,
@@ -103,6 +131,32 @@ for (const theme of values.themes.split(",")) {
         .locator(`[data-gallery-section="${id}"]`)
         .screenshot({ path: path.join(dir, `${id}.png`) });
       count += 1;
+    }
+
+    // Interaction states need the section alone on the page: the pointer and
+    // the focus are then guaranteed to sit inside the captured element.
+    for (const id of ids) {
+      const section = page.locator(`[data-gallery-section="${id}"]`);
+
+      for (const [name, selector] of Object.entries(HOVER[id] ?? {})) {
+        await open({ ...view, only: id });
+        await section.locator(selector).hover();
+        await section.screenshot({ path: path.join(dir, `${id}-hover-${name}.png`) });
+        await page.mouse.move(0, 0);
+        count += 1;
+      }
+
+      // Tab from a fresh page lands on the first focusable control and, being
+      // keyboard focus, triggers `:focus-visible`.
+      await open({ ...view, only: id });
+      await page.keyboard.press("Tab");
+      const focused = await page.evaluate(
+        () => document.activeElement !== null && document.activeElement !== document.body,
+      );
+      if (focused) {
+        await section.screenshot({ path: path.join(dir, `${id}-focus.png`) });
+        count += 1;
+      }
     }
 
     for (const id of OVERLAYS) {

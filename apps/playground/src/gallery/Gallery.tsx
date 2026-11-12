@@ -1,6 +1,7 @@
 import { Toaster } from "@oc-mui/ui/components";
 
 import { BadgeSection, ButtonSection } from "./sections/actions";
+import { DataTableSection } from "./sections/composite";
 import {
   AccordionSection,
   AvatarSection,
@@ -41,7 +42,8 @@ import type { ReactNode } from "react";
 
 /**
  * One entry per file in `packages/ui/src/components/ui/`, keyed by the file
- * name. Add the section here when a base component is added there.
+ * name, followed by the composite components. Add the section here when a
+ * base component is added there.
  */
 const SECTIONS: { id: string; render: (open: boolean) => ReactNode }[] = [
   { id: "button", render: () => <ButtonSection /> },
@@ -74,6 +76,7 @@ const SECTIONS: { id: string; render: (open: boolean) => ReactNode }[] = [
   { id: "command", render: () => <CommandSection /> },
   { id: "sonner", render: () => <SonnerSection /> },
   { id: "sidebar", render: () => <SidebarSection /> },
+  { id: "data-table", render: () => <DataTableSection /> },
 ];
 
 export function Gallery() {
