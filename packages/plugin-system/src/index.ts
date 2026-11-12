@@ -5,6 +5,7 @@ export * from "./pluginFactory";
 export * from "./pluginTypes";
 export * from "./types";
 export * from "./appTypes";
+export * from "./pluginPreviews";
 
 // Public API contract version (see docs/reference/contracts.md)
 export {

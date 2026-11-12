@@ -32,7 +32,7 @@ interface PageShellProps {
  */
 const PageShell: FC<PageShellProps> = ({ title, description, actions, children, className }) => {
   return (
-    <Container className={cn("p-8", className)}>
+    <Container className={cn("p-4 md:p-8", className)}>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <AppHeading heading={title} {...(description !== undefined && { description })} />
         {actions && <div className="flex items-center gap-2">{actions}</div>}

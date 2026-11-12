@@ -4,7 +4,7 @@ For plugin authors. Afterwards you'll know what a host upgrade can break in your
 
 Admins upgrading a deployment want [Operate → Upgrade](../operate/upgrade.md) instead.
 
-Every workspace package is versioned **independently** following Semver, and the public contracts (plugin manifest, runtime API, theme, config, shared runtime dependencies, GraphQL operation naming) layer additional rules on top — the authoritative list, including each contract's current version, is [Contracts](../reference/contracts.md). A change observable to a plugin author through any of these surfaces is **always a major bump** of the affected package, even if Semver alone would say otherwise.
+Every workspace package is versioned **independently** following Semver, and the public contracts (plugin manifest, runtime API, theme, config, shared runtime dependencies, GraphQL operation naming) layer additional rules on top — the authoritative list, including each contract's current version, is [Contracts](../reference/contracts.md). A breaking change to any of these surfaces is **always a major bump** of the affected package, even if Semver alone would say otherwise. Additive changes are minor.
 
 ## Patch and minor upgrades
 
@@ -32,7 +32,7 @@ What a break in each contract looks like:
 
 | Contract | A major bump means | What you do |
 | --- | --- | --- |
-| **Manifest** | A required `plugin.json` field changed shape or was renamed; the shell's Zod-backed validator rejects non-conforming plugins | Update `plugin.json` to the new schema ([`plugin.schema.json`](../../packages/plugin-system/src/schemas/plugin.schema.json)) |
+| **Manifest** | A required `plugin.json` field changed shape or was renamed; `validatePluginMetadata`, which your contract test runs on the manifest, rejects a non-conforming one | Update `plugin.json` to the new schema ([`plugin.schema.json`](../../packages/plugin-system/src/schemas/plugin.schema.json)) |
 | **Runtime API** | What `createPlugin`'s `initialize` receives, or what extension points accept, changed | Follow the changelog's migration steps; the loader rejects mismatched majors at boot |
 | **Theme** | A token was removed or renamed (additions are guaranteed minor) | Update your plugin CSS to the new tokens |
 | **Config** | The reader API or the `AppConfig` shape changed | Update your plugin's Zod schema; validation catches mismatches |

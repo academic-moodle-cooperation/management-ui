@@ -3,7 +3,7 @@
   "id": "series",
   "name": "Series",
   "version": "1.0.0",
-  "description": "Core plugin that registers the /series route, its sidebar entry, the Create-series toolbar action, and the series config defaults.",
+  "description": "Core plugin that registers the /series route, its sidebar entry, the Create-series action and its default variant, and the series config defaults.",
   "author": {
     "name": "Management UI Core"
   },
@@ -14,6 +14,7 @@
     "apps:definitions",
     "sidebar:nav-items",
     "series:table:toolbar-end-actions",
+    "series:create-series:variants",
     "app:config:defaults"
   ]
 }

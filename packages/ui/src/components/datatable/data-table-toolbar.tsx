@@ -52,7 +52,7 @@ export function DataTableToolbar<TData>({
   };
 
   return (
-    <div className="flex items-center justify-between py-4 gap-2">
+    <div className="flex flex-wrap items-center justify-between py-4 gap-2">
       <div className="flex items-center flex-1 space-x-2">
         <DebouncedInput
           placeholder={t("search")}
@@ -60,7 +60,7 @@ export function DataTableToolbar<TData>({
           // onChange={(event) => {
           //   setQueryFilter(event.target.value);
           // }}
-          className="h-8 w-[150px] lg:w-[250px]"
+          className="h-8 w-full sm:w-[150px] lg:w-[250px]"
           onChange={(value) => {
             setQueryFilter(value ? value.toString() : undefined);
             setPageIndex(0);
@@ -98,10 +98,10 @@ export function DataTableToolbar<TData>({
         className={"flex font-medium text-sm h-8 rounded-md px-3 py-1"}
         onClick={handleRefetch}
       >
-        <div className={cn("mr-2", isFetchingExtended && "animate-spin")}>
+        <div className={cn("sm:mr-2", isFetchingExtended && "animate-spin")}>
           <RefreshCcw className={cn("h-4 scale-x-[-1]")} />
         </div>
-        {t("reloadData")}
+        <span className="sr-only sm:not-sr-only">{t("reloadData")}</span>
       </Button>
       {toolbarEndButtons && <div>{toolbarEndButtons}</div>}
     </div>

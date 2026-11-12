@@ -44,7 +44,10 @@
         "title": "Create new series",
         "description": "Enter metadata for the new series.",
         "aclPolicyLabel": "Access policy",
-        "noPolicy": "No policy"
+        "noPolicy": "No policy",
+        "chooserTitle": "New series",
+        "chooserDescription": "What kind of series do you want to create?",
+        "back": "Back"
       },
       "toast": {
         "success": "Series created",
@@ -52,6 +55,12 @@
       },
       "validation": {
         "titleRequired": "Title is required"
+      },
+      "variants": {
+        "default": {
+          "label": "Series",
+          "description": "Enter the metadata yourself."
+        }
       }
     },
     "notification": {
@@ -62,6 +71,7 @@
   },
   "noSeriesAvailable": {
     "title": "No series available",
-    "text": "You have not registered a series yet. To register a new series, please visit the web interface. For further information on registering a series, please consult the registration and administration guide."
+    "text": "You have not registered a series yet. For further information on registering a series, please consult the registration and administration guide.",
+    "createText": "You have not created a series yet. Create your first series with the button below."
   }
 }

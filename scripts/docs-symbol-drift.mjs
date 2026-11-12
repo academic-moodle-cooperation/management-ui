@@ -77,6 +77,7 @@ const MEMBER_STOPLIST = new Set([
   "data",
   "title",
   "label",
+  "caption",
   "text",
   "size",
   "src",
