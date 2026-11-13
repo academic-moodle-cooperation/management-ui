@@ -73,11 +73,17 @@ export function NavMain({
   const labelFor = useExtensionLabels(
     keyedItems.map((item) => ({ key: item.title, label: item.title })),
   );
-  const translatedItems = items.map((item) =>
-    item.title.includes(":")
-      ? { ...item, title: labelFor({ key: item.title, label: item.title }) }
-      : item,
-  );
+  // `key` keeps the title as it was registered. The translated title is not
+  // unique while namespaces are still loading: every `<namespace>:nav.title`
+  // falls back to the same derived label ("Nav.Title"), and rows sharing a
+  // React key leave a duplicate row behind once the real labels arrive.
+  const translatedItems = items.map((item) => ({
+    ...item,
+    key: item.title,
+    title: item.title.includes(":")
+      ? labelFor({ key: item.title, label: item.title })
+      : item.title,
+  }));
 
   return (
     <SidebarGroup className={groupClassName}>
@@ -91,7 +97,7 @@ export function NavMain({
           const defaultOpen = item.isActive !== undefined ? item.isActive : !!parentIsActive;
           return (
             <Collapsible
-              key={item.title}
+              key={item.key}
               asChild
               defaultOpen={defaultOpen}
               className="group/collapsible"
