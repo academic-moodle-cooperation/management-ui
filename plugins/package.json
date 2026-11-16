@@ -26,7 +26,7 @@
     "@types/react-dom": "^19.1.6",
     "@oc-mui/eslint-config": "workspace:*",
     "@oc-mui/typescript-config": "workspace:*",
-    "eslint": "^9.9.0",
+    "eslint": "^10.14.0",
     "typescript": "~6.0.3"
   }
 }
