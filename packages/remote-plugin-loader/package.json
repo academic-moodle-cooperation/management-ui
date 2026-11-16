@@ -21,7 +21,7 @@
   "devDependencies": {
     "@oc-mui/eslint-config": "workspace:*",
     "@oc-mui/typescript-config": "workspace:*",
-    "eslint": "^9.9.0",
+    "eslint": "^10.14.0",
     "typescript": "~6.0.3",
     "vitest": "^4.0.17"
   }
