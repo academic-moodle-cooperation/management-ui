@@ -246,6 +246,57 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>amc-releases</id>
+      <name>Academic Moodle Cooperation Releases</name>
+      <url>https://mvn.academic-moodle-cooperation.org/releases</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>amc-snapshots</id>
+      <name>Academic Moodle Cooperation Snapshots</name>
+      <url>https://mvn.academic-moodle-cooperation.org/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>amc-releases</id>
+      <name>Academic Moodle Cooperation Releases</name>
+      <url>https://mvn.academic-moodle-cooperation.org/releases</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>amc-snapshots</id>
+      <name>Academic Moodle Cooperation Snapshots</name>
+      <url>https://mvn.academic-moodle-cooperation.org/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
   <!-- All non-build related project data below here -->
 
   <organization>
