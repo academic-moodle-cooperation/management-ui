@@ -234,19 +234,6 @@ describe("AppProtection auth states", () => {
     expect(refetch).toHaveBeenCalledTimes(1);
   });
 
-  it("does NOT show the error screen for a 401 (falls through to login)", () => {
-    // A 401 is an auth error, so the error branch is skipped; with no user
-    // resolved it shows the checking state rather than the outage screen.
-    vi.mocked(useGetCurrentUser).mockReturnValue({
-      isError: true,
-      error: new Error("Request failed with status code 401"),
-      refetch: vi.fn(),
-    } as never);
-    render(<AppProtection appName="x">{child}</AppProtection>);
-    expect(screen.queryByText(/couldn.t verify your session/i)).toBeNull();
-    expect(screen.queryByText(/checking authentication/i)).not.toBeNull();
-  });
-
   describe("anonymous redirect", () => {
     let originalLocation: Location;
     let hrefSpy: ReturnType<typeof vi.fn<(value: string) => void>>;
@@ -288,6 +275,24 @@ describe("AppProtection auth states", () => {
       const target = hrefSpy.mock.calls[0]![0];
       expect(target).toContain("/login?redirect=");
       expect(target).toContain(encodeURIComponent("/management-ui/episodes?page=2"));
+    });
+
+    it("redirects to /login when the auth check fails with a 401 and no user", () => {
+      // A 401 (or an SSO login redirect, which the session check reports as a
+      // 401) means "not logged in": neither the outage screen nor an endless
+      // checking state, but the login redirect.
+      vi.mocked(useAuth).mockReturnValue({ user: undefined, isAuthenticated: false } as never);
+      vi.mocked(useGetCurrentUser).mockReturnValue({
+        isError: true,
+        error: new Error("Request failed with status code 401"),
+        refetch: vi.fn(),
+      } as never);
+      render(<AppProtection appName="x">{child}</AppProtection>);
+      expect(screen.queryByText(/couldn.t verify your session/i)).toBeNull();
+      expect(screen.queryByText(/checking authentication/i)).toBeNull();
+      expect(screen.queryByText("secret content")).toBeNull();
+      expect(hrefSpy).toHaveBeenCalledTimes(1);
+      expect(hrefSpy.mock.calls[0]![0]).toContain("/login?redirect=");
     });
 
     it("renders the injected redirectingComponent while navigating", () => {
