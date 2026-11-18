@@ -14,6 +14,14 @@ name: Release
 #      per-package tags, and create the product tag `v$(cat VERSION)` + a
 #      GitHub Release.
 #
+# Maven flow (docs/contribute/release.md step 4): the branch always carries
+# `-SNAPSHOT` poms. On the release leg the job makes a RELEASE COMMIT on top of
+# the branch tip (VERSION, Opencast parent MAJOR.MINOR, no -SNAPSHOT), deploys the
+# signed JARs from it to the AMC Maven repository (secrets MVN_DEPLOY_USER,
+# MVN_DEPLOY_PASSWORD, MAVEN_GPG_PRIVATE_KEY, MAVEN_GPG_PASSPHRASE), tags it - the
+# commit lives only under that tag, never on a branch - and finally commits the
+# next development version (-SNAPSHOT) to the branch.
+#
 # Two JAR streams, ONE npm stream (issue #236): only the NEWEST r/NN.x line
 # publishes the @oc-mui/* packages. The TypeScript is identical across lines
 # (they differ only in build metadata), so letting every line publish would
@@ -225,20 +233,144 @@ jobs:
           # via the OIDC `id-token` granted above - no NPM_TOKEN.
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Product tag + GitHub Release
-        # Creates the ops-facing product tag (v<VERSION file>, e.g. v19.0.0)
-        # plus a GitHub Release with generated notes. Deployments (sources.yml
-        # etc.) pin this tag. Runs on the release leg of BOTH kinds of line:
-        # the newest line reports `published` from the npm publish; an older
-        # (JAR-only) line never publishes npm, so its release leg is detected
-        # as "no changesets were pending when this run started". Idempotent:
-        # skips if the tag already exists (e.g. a re-run).
-        # Runs whenever the line has no pending changesets, i.e. after a Version
-        # PR merged — not only when this very run published to npm. A re-run
-        # after a failed publish step would otherwise never create the product
-        # tag (the step itself skips when the tag already exists, so it is
-        # safe to run on every push).
+      - name: Pre-flight for the Maven release
+        # Decides whether this push needs a release and checks that it can be
+        # published, BEFORE anything is built or tagged.
+        #   tagged=true    v<VERSION> already exists: this version is released
+        #                  (a forward merge, a re-run). release=false, no deploy.
+        #   release=true   no tag yet: the release commit is created, published
+        #                  and tagged below. Hard failures here: VERSION is not
+        #                  semver, or the Opencast parent `MAJOR.MINOR` of
+        #                  VERSION is not in the AMC repository (publish it
+        #                  there first).
+        #   publish        false when the release is already in the repository.
+        #                  The probe targets the feature pom - the LAST module
+        #                  deployed - not the root pom, so a half-published
+        #                  release is not mistaken for a finished one. Only a
+        #                  404 means "not published"; any other status fails.
         if: steps.line.outputs.pending == 'false'
+        id: maven
+        run: |
+          VERSION="$(cat VERSION)"
+          PRODUCT_TAG="v${VERSION}"
+          REPO="https://mvn.academic-moodle-cooperation.org/releases"
+          status() { curl -s -o /dev/null -w '%{http_code}' --retry 3 --retry-all-errors -I "$1"; }
+
+          if git rev-parse -q --verify "refs/tags/${PRODUCT_TAG}" >/dev/null || \
+             git ls-remote --exit-code --tags origin "${PRODUCT_TAG}" >/dev/null 2>&1; then
+            echo "Tag ${PRODUCT_TAG} already exists - ${VERSION} is released, nothing to publish."
+            { echo "tagged=true"; echo "release=false"; echo "publish=false"; } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if ! echo "${VERSION}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error file=VERSION::VERSION is not semver: '${VERSION}'."
+            exit 1
+          fi
+          PIN="$(echo "${VERSION}" | cut -d. -f1,2)"
+          PARENT_STATUS="$(status "${REPO}/org/opencastproject/base/${PIN}/base-${PIN}.pom")"
+          if [ "${PARENT_STATUS}" != "200" ]; then
+            echo "::error::Opencast parent org.opencastproject:base:${PIN} is not in ${REPO} (HTTP ${PARENT_STATUS}). Publish it there before releasing ${VERSION}."
+            exit 1
+          fi
+
+          FEATURE_STATUS="$(status "${REPO}/org/amc/management/assemblies/management-ui-feature/${VERSION}/management-ui-feature-${VERSION}.pom")"
+          case "${FEATURE_STATUS}" in
+            200) echo "management-ui ${VERSION} is already in the Maven repository - skipping the deploy."
+                 PUBLISH=false ;;
+            404) PUBLISH=true ;;
+            *)   echo "::error::Unexpected HTTP ${FEATURE_STATUS} probing ${REPO} for ${VERSION}."
+                 exit 1 ;;
+          esac
+          { echo "tagged=false"; echo "release=true"; echo "publish=${PUBLISH}"; } >> "$GITHUB_OUTPUT"
+
+      - name: Create the release commit (stays off the branch)
+        # The branch keeps its `-SNAPSHOT` poms. The release commit is a child
+        # of the branch tip made in this job only: poms in release state
+        # (project version = VERSION, Opencast parent + opencast.version =
+        # MAJOR.MINOR, no `-SNAPSHOT`). It is built, published and TAGGED, but
+        # never pushed to a branch - the tag is its only ref.
+        if: steps.maven.outputs.release == 'true'
+        run: |
+          VERSION="$(cat VERSION)"
+          PIN="$(echo "${VERSION}" | cut -d. -f1,2)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -q --detach
+          node scripts/update-maven-versions.mjs --release
+          if LEFT="$(git grep -n -e '-SNAPSHOT' -- 'pom.xml' '**/pom.xml' ':!**/templates/**')"; then
+            echo "::error::The release commit must not contain -SNAPSHOT, but found:"
+            echo "${LEFT}"
+            exit 1
+          fi
+          PARENT_PIN="$(sed -n '/<parent>/,/<\/parent>/p' pom.xml | grep -o '<version>[^<]*' | cut -c10-)"
+          if [ "${PARENT_PIN}" != "${PIN}" ]; then
+            echo "::error file=pom.xml::Opencast parent is '${PARENT_PIN}', expected '${PIN}' (MAJOR.MINOR of ${VERSION})."
+            exit 1
+          fi
+          if ! git diff --quiet; then
+            git commit -q -a -m "chore(release): ${VERSION}"
+          fi
+          echo "Release commit $(git rev-parse --short HEAD) on top of ${GITHUB_SHA::7} (not pushed to any branch)."
+
+      - name: Setup Java for Maven
+        if: steps.maven.outputs.publish == 'true'
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Build and test the JARs (no secrets in the environment)
+        # Everything that runs third-party code (pnpm install, the frontend
+        # build, the unit tests) happens here, BEFORE the deploy credentials and
+        # the signing key are available.
+        if: steps.maven.outputs.publish == 'true'
+        run: ./mvnw --batch-mode --no-transfer-progress verify
+
+      - name: Configure Maven credentials and import the signing key
+        # A second setup-java run, only now: it writes ~/.m2/settings.xml with a
+        # <server> for the releases repo (credentials are read from the env vars
+        # named here at deploy time) and imports the GPG key into the keyring.
+        if: steps.maven.outputs.publish == 'true'
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
+        with:
+          distribution: temurin
+          java-version: "21"
+          server-id: amc-releases
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Sign and publish to the AMC Maven repository
+        # The only step that sees the secrets. It does not rebuild: tests are
+        # skipped and the pnpm/frontend executions are skipped (the shell's
+        # `dist/` and the installed node from the build step above are reused),
+        # so no dependency or build script runs next to the credentials.
+        # `-Prelease` signs every artifact with the imported key (verify phase);
+        # `deployAtEnd` uploads nothing until ALL modules built and were signed,
+        # so a failure never leaves a half-uploaded release behind.
+        if: steps.maven.outputs.publish == 'true'
+        env:
+          MAVEN_USERNAME: ${{ secrets.MVN_DEPLOY_USER }}
+          MAVEN_PASSWORD: ${{ secrets.MVN_DEPLOY_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: >
+          ./mvnw --batch-mode --no-transfer-progress
+          -Prelease -DdeployAtEnd=true -DskipTests
+          -Dskip.installnodepnpm=true -Dskip.pnpm=true -Dexec.skip=true
+          deploy
+
+      - name: Product tag + GitHub Release
+        # Tags the RELEASE COMMIT (v<VERSION file>, e.g. v19.0.0) - the commit
+        # with release poms made above, which is not on any branch - and creates
+        # a GitHub Release with generated notes. Deployments (sources.yml etc.)
+        # pin this tag. Runs on the release leg of BOTH kinds of line (newest
+        # and JAR-only). The tag comes AFTER the deploy: a tag means "published",
+        # and a failed deploy is simply retried by a re-run. Idempotent: skips
+        # if the tag already exists.
+        if: steps.maven.outputs.release == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -249,11 +381,12 @@ jobs:
             exit 0
           fi
           git tag "${PRODUCT_TAG}"
-          git push origin "${PRODUCT_TAG}"
+          git push origin "refs/tags/${PRODUCT_TAG}"
           # The product version's MAJOR names the targeted Opencast major (the
           # JAR is major-bound via OSGi import ranges), but WHICH exact
           # Opencast the bundles were compiled against is a per-build fact —
-          # stamp it into the release notes instead of the version number.
+          # stamp it into the release notes instead of the version number. On
+          # the release commit this is the pinned Opencast (e.g. 20.5).
           OPENCAST_VERSION="$(sed -n 's|.*<opencast.version>\(.*\)</opencast.version>.*|\1|p' pom.xml | head -1)"
           PRODUCT_MAJOR="${PRODUCT_TAG#v}"; PRODUCT_MAJOR="${PRODUCT_MAJOR%%.*}"
           gh release create "${PRODUCT_TAG}" \
@@ -261,3 +394,37 @@ jobs:
             --notes "Built against Opencast \`${OPENCAST_VERSION:-unknown}\` (runs on any Opencast ${PRODUCT_MAJOR} minor — the backend bundles are bound to the major, not a specific minor)." \
             --generate-notes \
             --verify-tag
+
+      - name: Prepare the next development version
+        # The Maven convention: the released version is tagged, the branch moves
+        # on to the next `-SNAPSHOT` (VERSION's next patch, Opencast pin back to
+        # `MAJOR-SNAPSHOT`) as a child of the branch tip - NOT of the release
+        # commit, which stays tag-only. Runs after a release in this run, and
+        # also when the version was already tagged (a re-run that failed after
+        # the tag): the script is a no-op once the poms are already at the next
+        # development version. Pushed with the workflow token, which does not
+        # trigger another run; if the branch is protected (or moved meanwhile)
+        # and the push is rejected, the same commit goes to a PR instead.
+        if: steps.maven.outputs.release == 'true' || steps.maven.outputs.tagged == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git switch -q --detach "${GITHUB_SHA}"
+          node scripts/update-maven-versions.mjs --next
+          if git diff --quiet; then
+            echo "Poms are already at the next development version - nothing to do."
+            exit 0
+          fi
+          NEXT="$(sed -n '/<artifactId>management-ui<\/artifactId>/,/<\/project>/{s|^[[:space:]]*<version>\(.*\)</version>[[:space:]]*$|\1|p}' pom.xml | head -1)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -q -a -m "chore(release): prepare next development version ${NEXT}"
+          if git push origin "HEAD:refs/heads/${GITHUB_REF_NAME}"; then
+            echo "Pushed ${NEXT} to ${GITHUB_REF_NAME}."
+          else
+            PR_BRANCH="chore/next-dev-$(echo "${GITHUB_REF_NAME}" | tr '/' '-')"
+            git push --force origin "HEAD:refs/heads/${PR_BRANCH}"
+            gh pr create --base "${GITHUB_REF_NAME}" --head "${PR_BRANCH}" \
+              --title "chore(release): prepare next development version ${NEXT}" \
+              --body "Post-release: poms to the next development version (${NEXT}, Opencast parent \`MAJOR-SNAPSHOT\`). Opened as a PR because the direct push to \`${GITHUB_REF_NAME}\` was rejected."
+          fi

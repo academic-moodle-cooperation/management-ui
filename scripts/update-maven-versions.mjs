@@ -1,24 +1,44 @@
-// Sync the Maven project version to the product VERSION, as part of
-// `pnpm changeset:version` (runs right after bump-product-version.mjs in the
-// release workflow's Version-PR step).
+// Stamp the Maven versions of the poms from the product VERSION.
 //
-// Why: the JAR artifacts otherwise stay `1.0-SNAPSHOT` forever. With this,
-// tag = product version = JAR version (issue #236):
-// v19.0.1 ships management-ui-graphql-19.0.1.jar.
+// Maven projects have two states, like with maven-release-plugin:
 //
-// It also derives the OPENCAST major pins from VERSION's major (issue #443):
-// the `org.opencastproject:base` parent version and `<opencast.version>` in
-// every pom, plus the scaffold template. Those used to be hand-maintained
-// line-local files; now a line differs from develop in VERSION only and
-// `pnpm line:derive` (this script) regenerates everything that follows from it.
+//   release state  (the release commit: made by release.yml on top of the branch
+//                   tip and only ever reachable through its tag, not a branch)
+//     project version       <VERSION>            20.5.0
+//     Opencast parent pin   <MAJOR.MINOR>        org.opencastproject:base:20.5
+//     <opencast.version>    <MAJOR.MINOR>        20.5
+//     -> no `-SNAPSHOT` anywhere in the poms; what is tagged is what is published.
 //
-// Why not `mvn versions:set`: resolving the `org.opencastproject:base` parent
-// is impossible on the CI runner — Opencast publishes no release artifacts to
-// Maven Central (see #242 / open-followups §9.2). This script edits the poms
-// textually instead, with a hard safety net: every pom must contain the
-// current project version EXACTLY once (the org.amc.management version — the
-// Opencast parent uses `NN-SNAPSHOT`, a different string), otherwise it
-// aborts rather than guessing.
+//   development state  (the r/NN.x branch between releases)
+//     project version       <next patch>-SNAPSHOT   20.5.1-SNAPSHOT
+//     Opencast parent pin   <MAJOR>-SNAPSHOT        org.opencastproject:base:20-SNAPSHOT
+//     <opencast.version>    <MAJOR>-SNAPSHOT        20-SNAPSHOT
+//
+// Modes:
+//   --release   -> release state. Run by release.yml to build the release commit.
+//   --next      -> development state, version = VERSION's next patch -SNAPSHOT.
+//                  Run by release.yml after the tag was pushed and the artifacts
+//                  were published; the result is committed to the branch.
+//   (no flag)   -> `pnpm line:derive`: re-stamp the pins for the state the
+//                  poms are in now. Development state (what a branch is in):
+//                  version is kept, only the pins are re-derived - use this
+//                  after a forward merge took another line's pom values.
+//
+// The Opencast major in the pins comes from VERSION's major (issue #443): a line
+// differs from develop in VERSION (and the pom versions) only. The scaffold
+// template's parent pin is always `MAJOR-SNAPSHOT`: plugin authors build against
+// Opencast's development line, whatever state this repo's own poms are in.
+//
+// Why not the versions-maven-plugin: both parent pins resolve from the AMC
+// repositories, so it would work, but a state switch changes three things -
+// the project version (`versions:set`), the parent pin (`versions:update-parent`)
+// and `<opencast.version>` (`versions:set-property`) - and the scaffold template
+// pom is not a reactor module, so it would still need a text edit. This script
+// does all of it in one pass with no JDK or network, so `pnpm line:derive` runs
+// anywhere. It edits the poms textually, with a hard safety net: every pom must
+// contain the current project version EXACTLY once (the org.amc.management
+// version, a string the Opencast parent pin never has), otherwise it aborts
+// rather than guessing.
 
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -26,11 +46,21 @@ import { readFileSync, writeFileSync } from "node:fs";
 const repoRoot = new URL("..", import.meta.url);
 const read = (p) => readFileSync(new URL(p, repoRoot), "utf8");
 
-const targetVersion = read("VERSION").trim();
-if (!/^\d+\.\d+\.\d+$/.test(targetVersion)) {
-  console.error(`update-maven-versions: VERSION is not semver: "${targetVersion}"`);
+const args = process.argv.slice(2);
+const unknown = args.filter((a) => a !== "--release" && a !== "--next");
+if (unknown.length > 0 || args.length > 1) {
+  console.error("usage: update-maven-versions.mjs [--release | --next]");
   process.exit(1);
 }
+const mode = args[0]?.slice(2) ?? "keep";
+
+const version = read("VERSION").trim();
+const parts = version.match(/^(\d+)\.(\d+)\.(\d+)$/);
+if (!parts) {
+  console.error(`update-maven-versions: VERSION is not semver: "${version}"`);
+  process.exit(1);
+}
+const [, major, minor, patch] = parts;
 
 // The project's own version: root pom, the <version> directly following the
 // management-ui artifactId.
@@ -44,30 +74,18 @@ if (!m) {
 }
 const currentVersion = m[1];
 
+const released = mode === "release" || (mode === "keep" && !currentVersion.endsWith("-SNAPSHOT"));
+
+let targetVersion;
+if (released) targetVersion = version;
+else if (mode === "next") targetVersion = `${major}.${minor}.${Number(patch) + 1}-SNAPSHOT`;
+else targetVersion = currentVersion;
+
+const pin = released ? `${major}.${minor}` : `${major}-SNAPSHOT`;
+
 const poms = execFileSync("git", ["ls-files", "pom.xml", "**/pom.xml"], { encoding: "utf8" })
   .split("\n")
   .filter((p) => p && !p.includes("templates/"));
-
-// --- Opencast major pins (derived from VERSION's major) ---------------------
-const targetMajor = targetVersion.split(".")[0];
-const snapshot = `${targetMajor}-SNAPSHOT`;
-const pinFiles = [...poms, "scripts/templates/create-plugin-maven/pom.xml.tpl"];
-let pinned = 0;
-for (const f of pinFiles) {
-  const before = read(f);
-  // The parent block's <version> and the <opencast.version> property name the
-  // Opencast major; the project's own version never has the -SNAPSHOT form.
-  const after = before
-    .replace(/(<parent>[\s\S]*?<artifactId>base<\/artifactId>[\s\S]*?<version>)\d+-SNAPSHOT(<\/version>)/, `$1${snapshot}$2`)
-    .replace(/(<opencast\.version>)\d+-SNAPSHOT(<\/opencast\.version>)/g, `$1${snapshot}$2`);
-  if (after !== before) {
-    writeFileSync(new URL(f, repoRoot), after);
-    pinned++;
-  }
-}
-if (pinned > 0) {
-  console.log(`update-maven-versions: Opencast major pinned to ${snapshot} in ${pinned} file(s).`);
-}
 
 // Consistency check runs in the no-op case too: every pom must carry the
 // project version exactly once, or something is drifting and we say so.
@@ -83,6 +101,32 @@ for (const pom of poms) {
   }
 }
 
+// --- Opencast pins --------------------------------------------------------
+// The parent match is confined to the <parent> block, so a pom whose parent is
+// management-ui is never touched. Versions: `20`-style pins, `20.5` releases
+// and `20-SNAPSHOT` developments are all recognised, so the script converts in
+// both directions.
+const pinValue = String.raw`\d+(?:\.\d+)?(?:-SNAPSHOT)?`;
+const parentRe = new RegExp(
+  String.raw`(<parent>(?:(?!</parent>)[\s\S])*?<artifactId>base</artifactId>(?:(?!</parent>)[\s\S])*?<version>)${pinValue}(</version>)`,
+);
+const propertyRe = new RegExp(String.raw`(<opencast\.version>)${pinValue}(</opencast\.version>)`, "g");
+
+const templatePom = "scripts/templates/create-plugin-maven/pom.xml.tpl";
+let pinned = 0;
+for (const f of [...poms, templatePom]) {
+  const value = f === templatePom ? `${major}-SNAPSHOT` : pin;
+  const before = read(f);
+  const after = before.replace(parentRe, `$1${value}$2`).replace(propertyRe, `$1${value}$2`);
+  if (after !== before) {
+    writeFileSync(new URL(f, repoRoot), after);
+    pinned++;
+  }
+}
+if (pinned > 0) {
+  console.log(`update-maven-versions: Opencast pins set (poms ${pin}, template ${major}-SNAPSHOT) in ${pinned} file(s).`);
+}
+
 if (currentVersion === targetVersion) {
   console.log(`update-maven-versions: poms already at ${targetVersion} — nothing to do.`);
   process.exit(0);
@@ -92,6 +136,4 @@ for (const pom of poms) {
   const content = read(pom);
   writeFileSync(new URL(pom, repoRoot), content.replace(needle, `<version>${targetVersion}</version>`));
 }
-console.log(
-  `update-maven-versions: ${currentVersion} -> ${targetVersion} in ${poms.length} pom(s).`,
-);
+console.log(`update-maven-versions: ${currentVersion} -> ${targetVersion} in ${poms.length} pom(s).`);

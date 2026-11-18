@@ -13,7 +13,7 @@
   <groupId>org.amc.management</groupId>
   <artifactId>management-ui</artifactId>
   <packaging>pom</packaging>
-  <version>20.5.0</version>
+  <version>20.5.0-SNAPSHOT</version>
 
   <name>Opencast Management UI</name>
   <description>The Opencast Management UI is an additional module for Opencast to allow video management related tasks.</description>
@@ -246,6 +246,104 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>amc-releases</id>
+      <name>Academic Moodle Cooperation Releases</name>
+      <url>https://mvn.academic-moodle-cooperation.org/releases</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>amc-snapshots</id>
+      <name>Academic Moodle Cooperation Snapshots</name>
+      <url>https://mvn.academic-moodle-cooperation.org/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>amc-releases</id>
+      <name>Academic Moodle Cooperation Releases</name>
+      <url>https://mvn.academic-moodle-cooperation.org/releases</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>amc-snapshots</id>
+      <name>Academic Moodle Cooperation Snapshots</name>
+      <url>https://mvn.academic-moodle-cooperation.org/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <!--
+    Publishing (release.yml -> "Publish to the AMC Maven repository"). The ids match the
+    <repositories> above, so one settings.xml <server> entry per id supplies the credentials.
+  -->
+  <distributionManagement>
+    <repository>
+      <id>amc-releases</id>
+      <name>Academic Moodle Cooperation Releases</name>
+      <url>https://mvn.academic-moodle-cooperation.org/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>amc-snapshots</id>
+      <name>Academic Moodle Cooperation Snapshots</name>
+      <url>https://mvn.academic-moodle-cooperation.org/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <profiles>
+    <!--
+      Signs every deployed artifact (-Prelease). Off by default so local builds need no GPG key.
+      Plugin defaults on purpose: with MAVEN_GPG_PASSPHRASE set the plugin signs non-interactively
+      (it switches gpg to loopback pinentry itself); the key is imported by actions/setup-java in
+      release.yml.
+    -->
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.2.8</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
   <!-- All non-build related project data below here -->
 
   <organization>
