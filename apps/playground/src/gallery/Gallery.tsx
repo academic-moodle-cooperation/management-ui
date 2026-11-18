@@ -75,7 +75,7 @@ const SECTIONS: { id: string; render: (open: boolean) => ReactNode }[] = [
   { id: "hover-card", render: (open) => <HoverCardSection open={open} /> },
   { id: "tooltip", render: (open) => <TooltipSection open={open} /> },
   { id: "command", render: () => <CommandSection /> },
-  { id: "sonner", render: () => <SonnerSection /> },
+  { id: "sonner", render: (open) => <SonnerSection open={open} /> },
   { id: "sidebar", render: () => <SidebarSection /> },
   { id: "data-table", render: () => <DataTableSection /> },
   { id: "precedence", render: () => <PrecedenceSection /> },

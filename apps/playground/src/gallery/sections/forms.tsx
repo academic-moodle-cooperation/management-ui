@@ -161,10 +161,8 @@ export function CalendarSection() {
     <Section id="calendar" title="Calendar">
       <Row>
         <Calendar
-          mode="single"
           defaultMonth={CALENDAR_MONTH}
           selected={CALENDAR_SELECTED}
-          today={CALENDAR_MONTH}
           className="rounded-md border"
         />
       </Row>

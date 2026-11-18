@@ -39,6 +39,7 @@ const OVERLAYS = [
   "popover",
   "hover-card",
   "tooltip",
+  "sonner",
 ];
 
 /**

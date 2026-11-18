@@ -31,6 +31,7 @@ const OVERLAYS = [
   "popover",
   "hover-card",
   "tooltip",
+  "sonner",
 ];
 
 /** Property → value no component uses. Longhands only, so each stands alone. */

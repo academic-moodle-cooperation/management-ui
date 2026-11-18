@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -315,7 +317,23 @@ export function CommandSection() {
   );
 }
 
-export function SonnerSection() {
+export function SonnerSection({ open }: OverlayProps) {
+  // `?open=sonner` shows one toast with every part (icon, title, description,
+  // action, cancel, close) and keeps it, so a screenshot run can capture it.
+  useEffect(() => {
+    if (!open) return;
+    const id = toast.success("Published", {
+      description: "The event is now visible to students.",
+      action: { label: "Undo", onClick: () => undefined },
+      cancel: { label: "Dismiss", onClick: () => undefined },
+      closeButton: true,
+      duration: Infinity,
+    });
+    return () => {
+      toast.dismiss(id);
+    };
+  }, [open]);
+
   return (
     <Section id="sonner" title="Sonner (toast)">
       <Row>
