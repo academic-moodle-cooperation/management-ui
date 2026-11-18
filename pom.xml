@@ -297,6 +297,53 @@
     </pluginRepository>
   </pluginRepositories>
 
+  <!--
+    Publishing (release.yml -> "Publish to the AMC Maven repository"). The ids match the
+    <repositories> above, so one settings.xml <server> entry per id supplies the credentials.
+  -->
+  <distributionManagement>
+    <repository>
+      <id>amc-releases</id>
+      <name>Academic Moodle Cooperation Releases</name>
+      <url>https://mvn.academic-moodle-cooperation.org/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>amc-snapshots</id>
+      <name>Academic Moodle Cooperation Snapshots</name>
+      <url>https://mvn.academic-moodle-cooperation.org/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <profiles>
+    <!--
+      Signs every deployed artifact (-Prelease). Off by default so local builds need no GPG key.
+      Plugin defaults on purpose: with MAVEN_GPG_PASSPHRASE set the plugin signs non-interactively
+      (it switches gpg to loopback pinentry itself); the key is imported by actions/setup-java in
+      release.yml.
+    -->
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.2.8</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
   <!-- All non-build related project data below here -->
 
   <organization>
