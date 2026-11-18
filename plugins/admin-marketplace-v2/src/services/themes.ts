@@ -6,7 +6,8 @@
  *   in `index.json` next to them (`app.theme: "<id>"` applies one)
  * - **jar / local**: org themes next to deployed plugins
  *   (`/static/plugins/<ns>/<ns>.css`, dev: `/local-plugins/<id>/themes/<id>.css`),
- *   discovered by probing the conventional path
+ *   discovered by probing the conventional path and kept only when the
+ *   stylesheet sets theme tokens (a feature plugin's own CSS lives there too)
  * - **registry**: catalog entries of category `theme` whose `url` is a CSS
  *   file — external, therefore subject to the same Try gates as plugin code
  */
@@ -124,8 +125,9 @@ const cssCache = new Map<string, Promise<string | null>>();
 
 /**
  * Fetch a stylesheet's text once per URL — `null` when the URL doesn't
- * serve CSS (the SPA fallback answers 200 with HTML). Shared by the probe
- * and the swatch parser so a theme is downloaded once, not per consumer.
+ * serve CSS (the SPA fallback answers 200 with HTML). Shared by org-theme
+ * discovery and the swatch parser so a theme is downloaded once, not per
+ * consumer.
  */
 export function fetchCss(url: string): Promise<string | null> {
   let pending = cssCache.get(url);
@@ -144,9 +146,15 @@ export function fetchCss(url: string): Promise<string | null> {
   return pending;
 }
 
-/** True when `url` serves CSS (the SPA fallback answers 200 with HTML). */
-export async function probeCss(url: string): Promise<boolean> {
-  return (await fetchCss(url)) !== null;
+/**
+ * True when a stylesheet is a theme: it sets at least one swatch token in
+ * `:root` or `.dark`. A feature plugin's own stylesheet sits at the same
+ * conventional path as an org theme, but its Tailwind build only emits
+ * `:root, :host { --color-*: …; }` — none of the host's tokens.
+ */
+export function isThemeCss(css: string): boolean {
+  const { light, dark } = parseThemeSwatches(css);
+  return Object.keys(light).length > 0 || Object.keys(dark).length > 0;
 }
 
 /** Conventional theme CSS paths for deployed / local plugins. */
@@ -199,7 +207,10 @@ export function collectThemes(input: {
   return out;
 }
 
-/** Org themes next to JAR / local plugins, confirmed by probing. */
+/**
+ * Org themes next to JAR / local plugins, confirmed by probing: the
+ * conventional path must serve CSS, and that CSS must be a theme.
+ */
 export async function discoverOrgThemes(
   jars: JarEntry[],
   locals: LocalEntry[],
@@ -218,7 +229,8 @@ export async function discoverOrgThemes(
   const checks = await Promise.all(
     candidates.map(async (c) => {
       const url = orgThemeUrl(c);
-      return (await probeCss(url)) ? { ...c, url } : null;
+      const css = await fetchCss(url);
+      return css !== null && isThemeCss(css) ? { ...c, url } : null;
     }),
   );
   return checks.filter((c): c is NonNullable<typeof c> => c !== null);

@@ -21,7 +21,6 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { DatePickerState } from 'react-stately';
 import { DatePickerStateOptions } from 'react-stately';
 import { DateValue } from 'react-aria';
-import { DayPicker } from 'react-day-picker';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Dispatch } from 'react';
 import { Drawer as Drawer_2 } from 'vaul';
@@ -44,7 +43,6 @@ import { ReactNode } from 'react';
 import { Row } from '@tanstack/react-table';
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import * as SelectPrimitive from '@radix-ui/react-select';
-import type { SelectSingleEventHandler } from 'react-day-picker';
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
 import { SetStateAction } from 'react';
 import { SortingState } from '@tanstack/react-table';
@@ -241,8 +239,19 @@ export type ButtonVariantProps = {
 // @public (undocumented)
 export const buttonVariants: (props?: ButtonVariantProps & ClassProp) => string;
 
-// @public (undocumented)
-export function Calendar(input: React_2.ComponentProps<typeof DayPicker>): React_2.JSX.Element;
+// @public
+export function Calendar(input: CalendarProps): React_2.JSX.Element;
+
+// @public
+export interface CalendarProps {
+    autoFocus?: boolean | undefined;
+    className?: string | undefined;
+    defaultMonth?: Date | undefined;
+    disabled?: ((date: Date) => boolean) | undefined;
+    onSelect?: ((date: Date | undefined) => void) | undefined;
+    selected?: Date | undefined;
+    showOutsideDays?: boolean | undefined;
+}
 
 // @public (undocumented)
 export function Card(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
@@ -391,10 +400,15 @@ export interface DataTableProps<TData, TValue> {
     totalRows: number;
 }
 
-// Warning: (ae-forgotten-export) The symbol "DatePickerProps" needs to be exported by the entry point index.d.ts
-//
-// @public (undocumented)
+// @public
 export const DatePicker: FC<DatePickerProps>;
+
+// @public
+export interface DatePickerProps {
+    children?: React_3.ReactNode;
+    date: Date | undefined;
+    onDateChange: ((date: Date | undefined) => void) | undefined;
+}
 
 // @public (undocumented)
 export const DateTimePicker: React_3.ForwardRefExoticComponent<DatePickerStateOptions<DateValue> & {

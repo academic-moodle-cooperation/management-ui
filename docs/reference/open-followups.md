@@ -309,8 +309,11 @@ exports (this PR).
   job; either wire it up or replace it with a maintained checker.
 - **Major-version migrations** (each its own PR): `i18next` 23→26 + `react-i18next`
   (also clears the last *runtime* `pnpm audit` item, `i18next-http-backend`),
-  `zustand` 4→5, `react-day-picker` 8→10. ✅ `vite` 6→8, `typescript` 5→6 and
-  `jsdom` 27→30 landed 2026-11-02 (#469, #480, #470). `lucide-react` 0.x→1.x is
+  `zustand` 4→5. ✅ `vite` 6→8, `typescript` 5→6 and
+  `jsdom` 27→30 landed 2026-11-02 (#469, #480, #470). ✅ `react-day-picker` 8→10
+  (replacing Dependabot's #551) shipped as an `@oc-mui/ui` minor: `Calendar` and
+  `DatePicker` now expose their own prop types, so later majors of the library
+  stay behind that boundary. `lucide-react` 0.x→1.x is
   **not** a routine major: it is a shared runtime dependency, so the bump is a
   `@oc-mui/plugin-system` major and ships with the table lift in #505; Dependabot
   ignores lucide majors until then.

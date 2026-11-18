@@ -1,5 +1,24 @@
 # @oc-mui/remote-plugin-loader
 
+## 1.3.0
+
+### Minor Changes
+
+- e4f061d: `loadAndRegister` accepts an optional SRI-style `integrity` option
+  (`sha256-|sha384-|sha512-<base64>`). When set, the fetched bundle's raw bytes
+  are hashed and compared before any transform or import — a mismatch (or a
+  malformed value) aborts the load. `parseIntegrity`/`verifyIntegrity` are
+  exported for callers that need the primitives.
+
+### Patch Changes
+
+- Updated dependencies [9cd60b8]
+- Updated dependencies [e4f061d]
+- Updated dependencies [e4f061d]
+- Updated dependencies [7a1689f]
+  - @oc-mui/plugin-system@1.4.0
+  - @oc-mui/utils@1.3.1
+
 ## 1.2.1
 
 ### Patch Changes

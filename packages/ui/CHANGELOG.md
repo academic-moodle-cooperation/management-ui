@@ -1,5 +1,38 @@
 # @oc-mui/ui
 
+## 2.1.0
+
+### Minor Changes
+
+- 03706e3: Upgrade `react-day-picker` from 8 to 10 behind `@oc-mui/ui`'s own prop types, so callers no longer depend on the library's types.
+  
+  - `Calendar` now takes `CalendarProps`, a new exported type: `selected`, `onSelect`, `disabled`, `defaultMonth`, `showOutsideDays`, `autoFocus` and `className`. It selects a single day. The react-day-picker props it used to pass through (`mode`, `classNames`, `components`, `initialFocus`, range and multiple selection) are gone.
+  - `DatePicker`'s `onDateChange` now receives only the picked date, `(date: Date | undefined) => void`. Its props type is exported as `DatePickerProps`.
+  - Day buttons carry a full accessible label, e.g. "Thursday, November 5th, 2026, selected". The look stays the same; the selected day now shows the focus ring when the calendar opens.
+  
+  Released as a minor although the narrower `Calendar` signature is formally breaking: no known plugin passes react-day-picker-specific props. If yours does, replace `initialFocus` with `autoFocus`, drop `mode="single"`, and move any custom `classNames` or `components` into your own wrapper around `react-day-picker`.
+
+### Patch Changes
+
+- 9cd60b8: Dependency maintenance: minor/patch bumps of `lucide-react` (0.417 → 0.577, still the host-provided 0.x major), `tailwindcss`/`@tailwindcss/vite`, `autoprefixer`, `typescript-eslint`, `@microsoft/api-extractor`, `@playwright/test`, `@swc/helpers`, `@tanstack/react-query-devtools` and `@graphql-codegen/typescript-operations`.
+- d778e49: Fix a missing React `key` in `MetadataField`'s `MIXED_TEXT` list rendering, which logged a dev-mode warning for every multi-value field (creators, contributors).
+- a94974b: Phone-width layout fixes. The videos table offers its gallery toggle and every table its column menu on phones, where they and the reload button show as icons. Tables keep their empty state, toolbar and pager on screen, and an empty table reads "Page 1 of 1" instead of "Page 1 of -1". The upload page stacks its two columns below `lg`, the create series dialog keeps its selects inside, the landing page starts right below its tabs, and the footer wraps. Page padding is smaller below `md`.
+- Updated dependencies [9cd60b8]
+- Updated dependencies [e4f061d]
+- Updated dependencies [8c48874]
+- Updated dependencies [522aaec]
+- Updated dependencies [cd729c2]
+- Updated dependencies [14662f0]
+- Updated dependencies [b864edb]
+- Updated dependencies [e4f061d]
+- Updated dependencies [cfbe304]
+- Updated dependencies [7a1689f]
+  - @oc-mui/plugin-system@1.4.0
+  - @oc-mui/query@2.1.2
+  - @oc-mui/i18n@1.2.0
+  - @oc-mui/ui-config@2.0.1
+  - @oc-mui/utils@1.3.1
+
 ## 2.0.2
 
 ### Patch Changes

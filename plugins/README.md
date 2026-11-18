@@ -43,7 +43,7 @@ Default favicons and fonts live in [`./assets/`](./assets/). The `viteStaticCopy
 
 Org plugins override by shipping their own `assets/favicon/` and `assets/fonts/`. The resolution order is **plugin-specific assets first, fallback to defaults**, so any plugin can replace any asset without touching the core.
 
-The shipped theme CSS files live in [`apps/shell/public/plugins/themes/`](../apps/shell/public/plugins/themes/) (aurora, example, forest-sage, heritage-burgundy, modern-slate, oxford-navy, press) — that is where the marketplace's theme service points. The default org theme (token overrides) is [`apps/shell/src/themes/default.css`](../apps/shell/src/themes/default.css). Org plugins distributing their own theme ship the CSS with the plugin.
+The shipped theme CSS files live in [`apps/shell/public/plugins/themes/`](../apps/shell/public/plugins/themes/) (aurora, ember, example, forest-sage, heritage-burgundy, modern, modern-slate, oxford-navy, press) — that is where the marketplace's theme service points. The default org theme (token overrides) is [`apps/shell/src/themes/default.css`](../apps/shell/src/themes/default.css). Org plugins distributing their own theme ship the CSS with the plugin.
 
 ## See also
 

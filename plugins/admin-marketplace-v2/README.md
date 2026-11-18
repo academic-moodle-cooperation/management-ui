@@ -53,7 +53,12 @@ before deciding to list it in `app.enabledPlugins` for everyone.
 theme this deployment could apply — shipped showcase themes (listed in
 `apps/shell/public/plugins/themes/index.json`), org themes next to deployed
 or local plugins (probed at the conventional CSS paths), and registry entries
-of category `theme`. **Try** applies a theme *immediately in this tab* (CSS
+of category `theme`. A deployed plugin counts as an org theme only when the
+stylesheet at that path sets at least one of the tokens a theme card is drawn
+with (`--background`, `--card`, `--primary`, `--sidebar`, `--muted`,
+`--border`) in a plain `:root { … }` or `.dark { … }` block — a feature
+plugin's own stylesheet is served from the same path, but its Tailwind build
+sets none of them and is not listed. **Try** applies a theme *immediately in this tab* (CSS
 needs no boot path), survives a refresh via a `sessionStorage` marker, and
 ends with one click or with the tab. Same-origin themes are trusted; registry
 CSS goes through the Try gates (it can pull remote fonts/images). A theme

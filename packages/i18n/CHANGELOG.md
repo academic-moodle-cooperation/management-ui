@@ -1,5 +1,18 @@
 # @oc-mui/i18n
 
+## 1.2.0
+
+### Minor Changes
+
+- 14662f0: The marketplace v2 plugin is translated. Every visible string of the Explore and Library tabs, the Try dialog, the detail view, the theme cards and the trial banner now comes from the new `marketplace` namespace, shipped in English and German next to the other core namespaces; the sidebar entry resolves its title through the same key. Diagnostic messages from the Try security gates (allowlist, protocol, integrity) stay English: they quote configuration keys for administrators.
+- cfbe304: The create-series dialog is now a shell over `series:create-series:variants`. The plain metadata form became the variant `default`; when a plugin registers further variants the dialog opens with a chooser, and variants whose `requiredRoles` the user lacks are hidden. New config under `plugins.series.seriesTable.createSeries`: `variants.<id>.enabled` / `.order` to hide or reorder single variants (including `default`), and `placement` (`"heading"`, the new default, or `"toolbar"`) for the button, which now sits next to the page heading as a primary action and is also offered in the empty state. The `series` locale gains the chooser strings. The empty state points at the button when one is available (`noSeriesAvailable.createText`); `noSeriesAvailable.text`, also shown on the upload page, no longer sends users to the web interface.
+
+### Patch Changes
+
+- 8c48874: Landing page: the version badge now reads "v<version> — Release notes" when no newer release exists, instead of the developer-facing "contracts frozen for the entire 1.x line". The "What's new" variant for a newer release is unchanged.
+- 522aaec: Marketplace v2: the Explore / Installed split explains itself. Catalog entries that already run on this deployment show an **Installed** pill (was "Active here") that jumps to the plugin's row in the Installed tab (was "Library"), which now opens with a one-line summary of what it lists; `#library=<namespace>` deep-links to a row.
+- cd729c2: A plugin trial whose app lands on a route another app already serves no longer leaves the shell on an endless loader: duplicate routes are deduplicated when the router is built (first registration wins, the collision is logged), a failed router build shows an error screen with a reload action, and the marketplace's trial banner names the route collision on the trial so "End trial" is the obvious way out.
+
 ## 1.1.1
 
 ### Patch Changes

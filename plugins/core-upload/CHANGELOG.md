@@ -1,5 +1,34 @@
 # @oc-mui/plugin-core-upload
 
+## 1.1.5
+
+### Patch Changes
+
+- 9cd60b8: Dependency maintenance: minor/patch bumps of `lucide-react` (0.417 → 0.577, still the host-provided 0.x major), `tailwindcss`/`@tailwindcss/vite`, `autoprefixer`, `typescript-eslint`, `@microsoft/api-extractor`, `@playwright/test`, `@swc/helpers`, `@tanstack/react-query-devtools` and `@graphql-codegen/typescript-operations`.
+- a94974b: Phone-width layout fixes. The videos table offers its gallery toggle and every table its column menu on phones, where they and the reload button show as icons. Tables keep their empty state, toolbar and pager on screen, and an empty table reads "Page 1 of 1" instead of "Page 1 of -1". The upload page stacks its two columns below `lg`, the create series dialog keeps its selects inside, the landing page starts right below its tabs, and the footer wraps. Page padding is smaller below `md`.
+- Updated dependencies [9cd60b8]
+- Updated dependencies [e4f061d]
+- Updated dependencies [8c48874]
+- Updated dependencies [522aaec]
+- Updated dependencies [cd729c2]
+- Updated dependencies [14662f0]
+- Updated dependencies [d778e49]
+- Updated dependencies [a94974b]
+- Updated dependencies [b864edb]
+- Updated dependencies [e4f061d]
+- Updated dependencies [03706e3]
+- Updated dependencies [cfbe304]
+- Updated dependencies [cfbe304]
+- Updated dependencies [7a1689f]
+  - @oc-mui/plugin-system@1.4.0
+  - @oc-mui/query@2.1.2
+  - @oc-mui/ui@2.1.0
+  - @oc-mui/i18n@1.2.0
+  - @oc-mui/plugin-core@1.2.0
+  - @oc-mui/router@1.1.4
+  - @oc-mui/store@1.2.0
+  - @oc-mui/utils@1.3.1
+
 ## 1.1.4
 
 ### Patch Changes

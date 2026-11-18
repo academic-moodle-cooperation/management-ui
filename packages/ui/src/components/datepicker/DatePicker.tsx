@@ -6,14 +6,24 @@ import { formatDate } from "@oc-mui/i18n";
 import { cn } from "../../lib";
 import { Button, Popover, PopoverContent, PopoverTrigger, Calendar } from "../ui";
 
-import type { SelectSingleEventHandler } from "react-day-picker";
-
-interface DatePickerProps {
+/**
+ * Props of {@link DatePicker}.
+ */
+export interface DatePickerProps {
+  /** The selected date. While it is `undefined`, the trigger shows `children`. */
   date: Date | undefined;
-  onDateChange: SelectSingleEventHandler | undefined;
+  /**
+   * Called when the user picks a date. Receives `undefined` when the user
+   * picks the selected date again, which clears it.
+   */
+  onDateChange: ((date: Date | undefined) => void) | undefined;
+  /** Placeholder shown in the trigger while no date is selected. */
   children?: React.ReactNode;
 }
 
+/**
+ * A button that shows a date and opens a {@link Calendar} to change it.
+ */
 const DatePicker: FC<DatePickerProps> = ({ date, onDateChange, children }) => {
   return (
     <Popover>
@@ -33,11 +43,10 @@ const DatePicker: FC<DatePickerProps> = ({ date, onDateChange, children }) => {
       </PopoverTrigger>
       <PopoverContent className="sidebar-portal-inside w-auto p-0" align="start">
         <Calendar
-          mode="single"
-          {...(date !== undefined && { selected: date })}
-          {...(onDateChange !== undefined && { onSelect: onDateChange })}
-          disabled={(date) => date < new Date("1900-01-01")}
-          initialFocus
+          selected={date}
+          onSelect={onDateChange}
+          disabled={(day) => day < new Date("1900-01-01")}
+          autoFocus
         />
       </PopoverContent>
     </Popover>
