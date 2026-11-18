@@ -195,6 +195,10 @@ function Calendar({
  * button means taking over its focus handling: keyboard navigation moves the
  * `focused` modifier, and this effect moves the DOM focus along with it.
  *
+ * It borrows the ghost button's look but is a calendar cell, not a button of
+ * the interface: it carries its own slot and not `data-ui-button`, so a theme
+ * rule for buttons does not reach the days.
+ *
  * A plain `<button>` with the button styles rather than `Button`: the effect
  * needs a ref, and `Button` only receives one under React 19, while
  * `@oc-mui/ui` also supports React 18.
@@ -217,9 +221,6 @@ function CalendarDayButton({
     <button
       ref={ref}
       data-slot="calendar-day-button"
-      data-ui-button=""
-      data-variant="ghost"
-      data-size="icon"
       data-day={day.date.toLocaleDateString()}
       data-selected-single={modifiers["selected"]}
       className={cn(

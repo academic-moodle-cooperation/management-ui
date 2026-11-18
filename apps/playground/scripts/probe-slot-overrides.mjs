@@ -17,7 +17,10 @@
  *     wrapper replaced its `data-slot` through `asChild`;
  *   - every such element and every badge carries a known `data-variant`
  *     (buttons also `data-size`);
- *   - Calendar and Sonner expose their slots.
+ *   - the Calendar exposes its slots, and the toast its class names. The
+ *     toast is the one exception to "handles are `data-slot`": sonner takes
+ *     class names for its parts, no attributes. Those handles are probed like
+ *     slots and appear in the output under their selector (`.sonner-toast`).
  *
  *   node apps/playground/scripts/probe-slot-overrides.mjs --url http://127.0.0.1:3001 > probe.json
  */
@@ -85,6 +88,10 @@ const REQUIRED_SLOTS = [
   "calendar-week",
   "calendar-day",
   "calendar-day-button",
+];
+
+/** Class-name handles (the toast). Probed like slots; all must exist. */
+const CLASS_HANDLES = [
   "sonner-toaster",
   "sonner-toast",
   "sonner-icon",
@@ -95,6 +102,13 @@ const REQUIRED_SLOTS = [
   "sonner-cancel",
   "sonner-close",
 ];
+
+/**
+ * Slots that use the button look without being a button of the interface, so
+ * they must NOT carry `data-ui-button`: a theme rule for buttons would
+ * otherwise reach them.
+ */
+const BUTTON_LOOK_ONLY = ["calendar-day-button"];
 
 const MODES = {
   unlayered: (rule) => rule,
@@ -126,12 +140,22 @@ for (const overlay of OVERLAYS) {
     content: "* { transition: none !important; animation: none !important; }",
   });
 
-  const slots = await page.evaluate(() => [
-    ...new Set([...document.querySelectorAll("[data-slot]")].map((el) => el.dataset.slot)),
-  ]);
+  // Handle → selector. A slot keeps its bare name as the key; a class-name
+  // handle is keyed by its selector.
+  const handles = await page.evaluate(
+    (classes) => [
+      ...[
+        ...new Set([...document.querySelectorAll("[data-slot]")].map((el) => el.dataset.slot)),
+      ].map((slot) => [slot, `[data-slot="${slot}"]`]),
+      ...classes
+        .filter((name) => document.querySelector(`.${name}`))
+        .map((name) => [`.${name}`, `.${name}`]),
+    ],
+    CLASS_HANDLES,
+  );
 
   const found = await page.evaluate(
-    ({ buttonLook }) => {
+    ({ buttonLook, lookOnly }) => {
       const describe = (el) =>
         `<${el.tagName.toLowerCase()} data-slot="${el.dataset.slot ?? ""}"> "${(el.textContent ?? "").trim().slice(0, 30)}"`;
       return {
@@ -142,15 +166,23 @@ for (const overlay of OVERLAYS) {
           text: describe(el),
         })),
         unmarked: [...document.querySelectorAll("*")]
-          .filter((el) => el.classList.contains(buttonLook) && !el.hasAttribute("data-ui-button"))
+          .filter(
+            (el) =>
+              el.classList.contains(buttonLook) &&
+              !el.hasAttribute("data-ui-button") &&
+              !lookOnly.includes(el.dataset.slot),
+          )
           .map(describe),
+        wronglyMarked: lookOnly.flatMap((slot) =>
+          [...document.querySelectorAll(`[data-slot="${slot}"][data-ui-button]`)].map(describe),
+        ),
         badges: [...document.querySelectorAll('[data-slot="badge"]')].map((el) => ({
           variant: el.dataset.variant ?? null,
           text: describe(el),
         })),
       };
     },
-    { buttonLook: BUTTON_LOOK_CLASS },
+    { buttonLook: BUTTON_LOOK_CLASS, lookOnly: BUTTON_LOOK_ONLY },
   );
   const where = overlay ? `open=${overlay}` : "page";
   const tally = (bucket, key) => (bucket[key] = (bucket[key] ?? 0) + 1);
@@ -172,6 +204,9 @@ for (const overlay of OVERLAYS) {
   for (const text of found.unmarked) {
     marks.problems.push(`${where}: button look without data-ui-button: ${text}`);
   }
+  for (const text of found.wronglyMarked) {
+    marks.problems.push(`${where}: data-ui-button on a part that only borrows the button look: ${text}`);
+  }
   for (const badge of found.badges) {
     marks.badges += 1;
     tally(marks.badgeVariants, String(badge.variant));
@@ -180,13 +215,13 @@ for (const overlay of OVERLAYS) {
     }
   }
 
-  for (const slot of slots) {
+  for (const [slot, selector] of handles) {
     if (result[slot]) continue;
     const entry = {};
     for (const [mode, wrap] of Object.entries(MODES)) {
       entry[mode] = await page.evaluate(
-        ({ slot, sentinels, css }) => {
-          const element = document.querySelector(`[data-slot="${slot}"]`);
+        ({ selector, sentinels, css }) => {
+          const element = document.querySelector(selector);
           const style = document.createElement("style");
           style.textContent = css;
           document.head.appendChild(style);
@@ -201,10 +236,10 @@ for (const overlay of OVERLAYS) {
           return reached;
         },
         {
-          slot,
+          selector,
           sentinels: SENTINELS,
           css: wrap(
-            `[data-slot="${slot}"] { ${Object.entries(SENTINELS)
+            `${selector} { ${Object.entries(SENTINELS)
               .map(([property, sentinel]) => `${property}: ${sentinel};`)
               .join(" ")} }`,
           ),
@@ -219,6 +254,9 @@ await browser.close();
 
 for (const slot of REQUIRED_SLOTS) {
   if (!result[slot]) marks.problems.push(`required slot missing: ${slot}`);
+}
+for (const name of CLASS_HANDLES) {
+  if (!result[`.${name}`]) marks.problems.push(`required class name missing: .${name}`);
 }
 
 console.log(JSON.stringify(result, null, 2));

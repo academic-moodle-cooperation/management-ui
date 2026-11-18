@@ -5,58 +5,49 @@ import {
   OctagonXIcon,
   TriangleAlertIcon,
 } from "lucide-react";
-import * as React from "react";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
+import { cn } from "../../lib/utils";
 import { useThemeMode } from "../theme-mode/theme-mode-context";
 
 /**
- * The toast parts and the `data-slot` each one gets. sonner renders them
- * itself and offers no way to pass attributes, only class names, so the
- * slots are stamped onto its elements (found through sonner's own marks).
+ * Fixed class names for the toaster and the parts of a toast, as handles for
+ * theme CSS.
+ *
+ * This is the one exception to "every part of a base component has a
+ * `data-slot`": sonner renders the toast itself and accepts class names for
+ * its parts, but no attributes. The names carry no styling of their own.
  */
-const TOAST_SLOTS: readonly (readonly [selector: string, slot: string])[] = [
-  ["[data-sonner-toaster]", "sonner-toaster"],
-  ["[data-sonner-toast]", "sonner-toast"],
-  ["[data-sonner-toast] [data-icon]", "sonner-icon"],
-  ["[data-sonner-toast] [data-content]", "sonner-content"],
-  ["[data-sonner-toast] [data-title]", "sonner-title"],
-  ["[data-sonner-toast] [data-description]", "sonner-description"],
-  ["[data-sonner-toast] [data-button]:not([data-cancel])", "sonner-action"],
-  ["[data-sonner-toast] [data-button][data-cancel]", "sonner-cancel"],
-  ["[data-sonner-toast] [data-close-button]", "sonner-close"],
-];
+const TOASTER_CLASS = "sonner-toaster";
+const TOAST_CLASSES = {
+  toast: "sonner-toast",
+  icon: "sonner-icon",
+  content: "sonner-content",
+  title: "sonner-title",
+  description: "sonner-description",
+  actionButton: "sonner-action",
+  cancelButton: "sonner-cancel",
+  closeButton: "sonner-close",
+} as const;
 
-function stampToastSlots(root: Element) {
-  for (const [selector, slot] of TOAST_SLOTS) {
-    for (const element of root.querySelectorAll(selector)) {
-      if (element.getAttribute("data-slot") !== slot) element.setAttribute("data-slot", slot);
-    }
-  }
-}
-
-const Toaster = ({ ...props }: ToasterProps) => {
+const Toaster = (props: ToasterProps) => {
   // Follows the appearance axis (ThemeModeProvider); sonner understands
   // "system" itself. A provider-less render falls back to "system".
   const { theme } = useThemeMode();
 
-  // Toasts come and go, so the slots are stamped whenever sonner changes its
-  // list. The observer runs before the next paint, and React leaves
-  // attributes it did not render alone.
-  const sectionRef = React.useRef<HTMLElement>(null);
-  React.useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-    stampToastSlots(section);
-    const observer = new MutationObserver(() => stampToastSlots(section));
-    observer.observe(section, { childList: true, subtree: true });
-    return () => observer.disconnect();
-  }, []);
+  // A caller's class names for the toast parts are added to the fixed ones.
+  // A caller's `className` replaces "toaster group", as it always did; the
+  // fixed name stays.
+  const { className, toastOptions, ...rest } = props;
+  const classNames: Record<string, string | undefined> = { ...toastOptions?.classNames };
+  for (const [part, name] of Object.entries(TOAST_CLASSES)) {
+    classNames[part] = cn(name, classNames[part]);
+  }
 
   return (
     <Sonner
       theme={theme}
-      className="toaster group"
+      className={cn(className ?? "toaster group", TOASTER_CLASS)}
       icons={{
         success: <CircleCheckIcon className="size-4" />,
         info: <InfoIcon className="size-4" />,
@@ -72,8 +63,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
           "--border-radius": "var(--radius)",
         } as React.CSSProperties
       }
-      {...(props as any)}
-      ref={sectionRef}
+      {...(rest as any)}
+      toastOptions={{ ...toastOptions, classNames }}
     />
   );
 };

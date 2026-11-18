@@ -7,8 +7,10 @@
  *
  *   Part 1  CSS variables: colours, fonts, radius, shadows and the component
  *           metrics (control heights, paddings, border widths, focus ring).
- *   Part 2  Theme CSS that targets the components' `data-slot` attributes,
- *           for everything no variable exists for.
+ *   Part 2  Theme CSS that targets the components' fixed marks, for
+ *           everything no variable exists for: `data-slot`, `data-variant`,
+ *           `data-size`, `data-ui-button` (every button, also one a wrapper
+ *           relabelled through `asChild`) and the toast's class names.
  *
  * The brief: square corners, uppercase buttons with wide tracking, 2px frames
  * instead of shadows, serif headings, a much roomier density, a loud focus
@@ -141,14 +143,67 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* Part 2 — theme CSS on data-slot                                     */
+/* Part 2 — theme CSS on the fixed marks                               */
 /* ------------------------------------------------------------------ */
 
 /* Uppercase, tracked buttons. No variable: text-transform has no utility
-   that reads one, and the button sets no tracking. */
-[data-slot="button"] {
+   that reads one, and the button sets no tracking. `data-ui-button` instead
+   of `data-slot="button"`: a button inside a trigger (`asChild`) carries the
+   trigger's slot, but keeps this mark. The calendar's day cells do not carry
+   it, so they keep their plain digits. */
+[data-ui-button] {
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+[data-ui-button][data-size="sm"] {
+  letter-spacing: 0.04em;
+}
+
+/* The link variant, underlined like every other link. */
+[data-ui-button][data-variant="link"] {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+/* The outline badge gets a dashed frame; the filled ones keep a solid one. */
+[data-slot="badge"][data-variant="outline"] {
+  border-style: dashed;
+}
+
+/* Calendar: serif month name, small tracked weekday row. */
+[data-slot="calendar-caption-label"] {
+  font-family: var(--font-heading);
+}
+[data-slot="calendar-weekday"] {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Toast. Its parts have class names instead of slots (the toast library
+   takes class names only). One rule per part. */
+.sonner-toast {
+  letter-spacing: 0.01em;
+}
+.sonner-title {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+}
+.sonner-description {
+  font-style: italic;
+}
+.sonner-icon {
+  opacity: 0.6;
+}
+.sonner-action {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.sonner-cancel {
+  text-decoration: underline;
+}
+.sonner-close {
+  outline: 2px solid var(--border);
 }
 
 /* Serif headings. `--font-heading` exists, but the title slots of the base
@@ -265,7 +320,7 @@ h3 {
 }
 
 /* Underlined links. Plain anchors and the breadcrumb; the link variant of
-   the button cannot be addressed (no attribute tells the variants apart). */
+   the button has its own rule above. */
 a:not([data-slot]),
 [data-slot="breadcrumb-link"] {
   text-decoration: underline;
