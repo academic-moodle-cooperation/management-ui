@@ -15,6 +15,14 @@
  *   --style   Style id passed through to the gallery (default "default").
  *   --only    Comma-separated section ids; captures just those (plus the overview).
  *
+ * Every component picture is taken with its section alone on the page
+ * (`?only=<id>`), so a height change in one section cannot move another one
+ * to a different sub-pixel position and change its anti-aliasing. Only
+ * `overview.png` shows the whole page and therefore moves with any section.
+ *
+ * The browser's clock is fixed (see NOW), so "today" in the calendar is the
+ * same day in every run and its look is part of the capture.
+ *
  * Output per <out>/<theme>-<mode>/:
  *   overview.png                  the whole page
  *   <component>.png               one section at rest
@@ -83,6 +91,12 @@ const FOCUS = {
 };
 
 /**
+ * The moment the browser believes it is. The gallery's calendar shows January
+ * 2026 with the 14th selected; the 8th is "today", a different cell.
+ */
+const NOW = new Date("2026-01-08T12:00:00Z");
+
+/**
  * Freeze everything that moves and hide the dev-only query devtools button,
  * which would otherwise float over the bottom-right corner of every picture.
  */
@@ -117,8 +131,11 @@ const context = await browser.newContext({
   viewport: { width: 1280, height: 900 },
   deviceScaleFactor: 2,
   reducedMotion: "reduce",
+  timezoneId: "UTC",
 });
 const page = await context.newPage();
+// Fixes `Date.now()` and `new Date()`; timers keep running.
+await page.clock.setFixedTime(NOW);
 
 async function open(params) {
   const query = new URLSearchParams({ chrome: "0", ...params });
@@ -147,17 +164,15 @@ for (const theme of values.themes.split(",")) {
     );
     const wanted = values.only?.split(",");
     const ids = wanted ? allIds.filter((id) => wanted.includes(id)) : allIds;
-    for (const id of ids) {
-      await page
-        .locator(`[data-gallery-section="${id}"]`)
-        .screenshot({ path: path.join(dir, `${id}.png`) });
-      count += 1;
-    }
-
-    // Interaction states need the section alone on the page: the pointer and
-    // the focus are then guaranteed to sit inside the captured element.
+    // Every capture below has the section alone on the page: its position
+    // does not depend on the sections above it, and the pointer and the focus
+    // are guaranteed to sit inside the captured element.
     for (const id of ids) {
       const section = page.locator(`[data-gallery-section="${id}"]`);
+
+      await open({ ...view, only: id });
+      await section.screenshot({ path: path.join(dir, `${id}.png`) });
+      count += 1;
 
       for (const [name, selector] of Object.entries(HOVER[id] ?? {})) {
         await open({ ...view, only: id });
