@@ -10,6 +10,15 @@
  * utility class is "blocked" for a layered rule, because `utilities` is the
  * top layer; an unlayered rule beats every layer.
  *
+ * The script also checks the fixed marks theme CSS relies on, prints that
+ * report to stderr and exits with 1 when one is missing:
+ *
+ *   - every element with the button look carries `data-ui-button`, also when a
+ *     wrapper replaced its `data-slot` through `asChild`;
+ *   - every such element and every badge carries a known `data-variant`
+ *     (buttons also `data-size`);
+ *   - Calendar and Sonner expose their slots.
+ *
  *   node apps/playground/scripts/probe-slot-overrides.mjs --url http://127.0.0.1:3001 > probe.json
  */
 import { parseArgs } from "node:util";
@@ -52,6 +61,41 @@ const SENTINELS = {
   "row-gap": "19px",
 };
 
+/** Values the marks may take; keep in sync with `ButtonVariant`, `ButtonSize`, `BadgeVariant`. */
+const BUTTON_VARIANTS = ["default", "destructive", "outline", "secondary", "ghost", "link"];
+const BUTTON_SIZES = ["default", "sm", "lg", "icon"];
+const BADGE_VARIANTS = ["default", "secondary", "destructive", "outline"];
+
+/** A class only `buttonVariants` emits: finds button-looking elements without the mark. */
+const BUTTON_LOOK_CLASS = "font-[number:var(--button-font-weight)]";
+
+/** Slots that must exist somewhere in the gallery (overlays included). */
+const REQUIRED_SLOTS = [
+  "calendar",
+  "calendar-months",
+  "calendar-month",
+  "calendar-nav",
+  "calendar-nav-button",
+  "calendar-caption",
+  "calendar-caption-label",
+  "calendar-grid",
+  "calendar-weekdays",
+  "calendar-weekday",
+  "calendar-weeks",
+  "calendar-week",
+  "calendar-day",
+  "calendar-day-button",
+  "sonner-toaster",
+  "sonner-toast",
+  "sonner-icon",
+  "sonner-content",
+  "sonner-title",
+  "sonner-description",
+  "sonner-action",
+  "sonner-cancel",
+  "sonner-close",
+];
+
 const MODES = {
   unlayered: (rule) => rule,
   components: (rule) => `@layer components { ${rule} }`,
@@ -61,6 +105,15 @@ const MODES = {
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
 const result = {};
+const marks = {
+  buttons: 0,
+  buttonsRelabelled: {},
+  buttonVariants: {},
+  buttonSizes: {},
+  badges: 0,
+  badgeVariants: {},
+  problems: [],
+};
 
 for (const overlay of OVERLAYS) {
   const query = new URLSearchParams({ chrome: "0" });
@@ -76,6 +129,56 @@ for (const overlay of OVERLAYS) {
   const slots = await page.evaluate(() => [
     ...new Set([...document.querySelectorAll("[data-slot]")].map((el) => el.dataset.slot)),
   ]);
+
+  const found = await page.evaluate(
+    ({ buttonLook }) => {
+      const describe = (el) =>
+        `<${el.tagName.toLowerCase()} data-slot="${el.dataset.slot ?? ""}"> "${(el.textContent ?? "").trim().slice(0, 30)}"`;
+      return {
+        buttons: [...document.querySelectorAll("[data-ui-button]")].map((el) => ({
+          slot: el.dataset.slot ?? "(none)",
+          variant: el.dataset.variant ?? null,
+          size: el.dataset.size ?? null,
+          text: describe(el),
+        })),
+        unmarked: [...document.querySelectorAll("*")]
+          .filter((el) => el.classList.contains(buttonLook) && !el.hasAttribute("data-ui-button"))
+          .map(describe),
+        badges: [...document.querySelectorAll('[data-slot="badge"]')].map((el) => ({
+          variant: el.dataset.variant ?? null,
+          text: describe(el),
+        })),
+      };
+    },
+    { buttonLook: BUTTON_LOOK_CLASS },
+  );
+  const where = overlay ? `open=${overlay}` : "page";
+  const tally = (bucket, key) => (bucket[key] = (bucket[key] ?? 0) + 1);
+  for (const button of found.buttons) {
+    marks.buttons += 1;
+    if (button.slot !== "button") tally(marks.buttonsRelabelled, button.slot);
+    tally(marks.buttonVariants, String(button.variant));
+    tally(marks.buttonSizes, String(button.size));
+    // A wrapper with its own variant or size may own these two marks; only a
+    // missing or unknown value on a plain button is a defect.
+    if (button.slot !== "button" && button.variant !== null && button.size !== null) continue;
+    if (!BUTTON_VARIANTS.includes(button.variant)) {
+      marks.problems.push(`${where}: button without known data-variant (${button.variant}): ${button.text}`);
+    }
+    if (!BUTTON_SIZES.includes(button.size)) {
+      marks.problems.push(`${where}: button without known data-size (${button.size}): ${button.text}`);
+    }
+  }
+  for (const text of found.unmarked) {
+    marks.problems.push(`${where}: button look without data-ui-button: ${text}`);
+  }
+  for (const badge of found.badges) {
+    marks.badges += 1;
+    tally(marks.badgeVariants, String(badge.variant));
+    if (!BADGE_VARIANTS.includes(badge.variant)) {
+      marks.problems.push(`${where}: badge without known data-variant (${badge.variant}): ${badge.text}`);
+    }
+  }
 
   for (const slot of slots) {
     if (result[slot]) continue;
@@ -113,4 +216,11 @@ for (const overlay of OVERLAYS) {
 }
 
 await browser.close();
+
+for (const slot of REQUIRED_SLOTS) {
+  if (!result[slot]) marks.problems.push(`required slot missing: ${slot}`);
+}
+
 console.log(JSON.stringify(result, null, 2));
+console.error(JSON.stringify({ marks }, null, 2));
+if (marks.problems.length > 0) process.exitCode = 1;

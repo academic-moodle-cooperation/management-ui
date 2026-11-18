@@ -2,11 +2,69 @@
 
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import * as React from "react";
-import { DayPicker, getDefaultClassNames, type DayButton } from "react-day-picker";
+import {
+  CaptionLabel as DayPickerCaptionLabel,
+  Day as DayPickerDay,
+  DayPicker,
+  getDefaultClassNames,
+  Month as DayPickerMonth,
+  MonthCaption as DayPickerMonthCaption,
+  MonthGrid as DayPickerMonthGrid,
+  Months as DayPickerMonths,
+  Nav as DayPickerNav,
+  NextMonthButton as DayPickerNextMonthButton,
+  PreviousMonthButton as DayPickerPreviousMonthButton,
+  Week as DayPickerWeek,
+  Weekday as DayPickerWeekday,
+  Weekdays as DayPickerWeekdays,
+  Weeks as DayPickerWeeks,
+  type DayButton,
+} from "react-day-picker";
 
 import { cn } from "../../lib/utils";
 
 import { buttonVariants } from "./button";
+
+/**
+ * Wraps one of react-day-picker's parts so the rendered element carries fixed
+ * marks (`data-slot`, and the button marks where the part looks like a
+ * button). The library's own part does the rendering, so behaviour and
+ * markup stay the library's.
+ */
+function withMarks<P extends object>(
+  Part: React.ComponentType<P>,
+  marks: Record<`data-${string}`, string>,
+) {
+  const Marked = (props: P) => <Part {...marks} {...props} />;
+  Marked.displayName = `Calendar(${marks["data-slot"]})`;
+  return Marked;
+}
+
+/** The month navigation uses the outline button look, see `classNames` below. */
+const NAV_BUTTON_MARKS = {
+  "data-slot": "calendar-nav-button",
+  "data-ui-button": "",
+  "data-variant": "outline",
+  "data-size": "default",
+} as const;
+
+// Module level: a stable identity per part, so a re-render of the calendar
+// does not remount its cells.
+const CALENDAR_PARTS = {
+  Months: withMarks(DayPickerMonths, { "data-slot": "calendar-months" }),
+  Month: withMarks(DayPickerMonth, { "data-slot": "calendar-month" }),
+  Nav: withMarks(DayPickerNav, { "data-slot": "calendar-nav" }),
+  PreviousMonthButton: withMarks(DayPickerPreviousMonthButton, NAV_BUTTON_MARKS),
+  NextMonthButton: withMarks(DayPickerNextMonthButton, NAV_BUTTON_MARKS),
+  MonthCaption: withMarks(DayPickerMonthCaption, { "data-slot": "calendar-caption" }),
+  CaptionLabel: withMarks(DayPickerCaptionLabel, { "data-slot": "calendar-caption-label" }),
+  MonthGrid: withMarks(DayPickerMonthGrid, { "data-slot": "calendar-grid" }),
+  Weekdays: withMarks(DayPickerWeekdays, { "data-slot": "calendar-weekdays" }),
+  Weekday: withMarks(DayPickerWeekday, { "data-slot": "calendar-weekday" }),
+  Weeks: withMarks(DayPickerWeeks, { "data-slot": "calendar-weeks" }),
+  Week: withMarks(DayPickerWeek, { "data-slot": "calendar-week" }),
+  Day: withMarks(DayPickerDay, { "data-slot": "calendar-day" }),
+};
 
 /**
  * Props of {@link Calendar}.
@@ -64,6 +122,8 @@ function Calendar({
       {...(defaultMonth !== undefined && { defaultMonth })}
       {...(autoFocus !== undefined && { autoFocus })}
       showOutsideDays={showOutsideDays}
+      // react-day-picker forwards `data-*` props to its root element.
+      {...{ "data-slot": "calendar" }}
       className={cn(
         "group/calendar bg-background p-3 [--cell-size:--spacing(8)] [[data-slot=popover-content]_&]:bg-transparent",
         className,
@@ -114,6 +174,7 @@ function Calendar({
         hidden: cn("invisible", defaultClassNames.hidden),
       }}
       components={{
+        ...CALENDAR_PARTS,
         Chevron: ({ className, orientation, ...props }) => {
           const Icon =
             orientation === "left"
@@ -155,7 +216,10 @@ function CalendarDayButton({
   return (
     <button
       ref={ref}
-      data-slot="button"
+      data-slot="calendar-day-button"
+      data-ui-button=""
+      data-variant="ghost"
+      data-size="icon"
       data-day={day.date.toLocaleDateString()}
       data-selected-single={modifiers["selected"]}
       className={cn(

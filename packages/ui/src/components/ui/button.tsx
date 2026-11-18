@@ -62,9 +62,18 @@ function Button({
   }) {
   const Comp = asChild ? Slot : "button";
 
+  // Fixed marks for theme CSS. `data-slot` is lost when a wrapper renders the
+  // button through `asChild` (`<DialogTrigger asChild><Button />`): the
+  // wrapper's own `data-slot` arrives in `props` and replaces it. No wrapper
+  // sets `data-ui-button`, so that mark stays on every element that is a
+  // button. A wrapper with its own variant or size (a dropdown menu item, a
+  // sidebar menu button) still wins `data-variant` / `data-size`, as before.
   return (
     <Comp
       data-slot="button"
+      data-ui-button=""
+      data-variant={variant ?? "default"}
+      data-size={size ?? "default"}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />
