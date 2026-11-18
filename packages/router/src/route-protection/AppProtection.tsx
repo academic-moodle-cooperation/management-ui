@@ -112,11 +112,14 @@ export const AppProtection: React.FC<AppProtectionProps> = ({
     return <>{children}</>;
   }
 
-  // The auth check finished with an error and no user was resolved. A 401/403
-  // means the session is invalid → fall through to the login redirect below.
-  // Anything else (backend 5xx, network) is a real outage → show an error
-  // screen with Retry instead of spinning on "Checking authentication…".
-  if (user === undefined && isError && error && !isAuthenticationError(error)) {
+  // The auth check finished with an error and no user was resolved.
+  const authCheckFailed = user === undefined && isError && Boolean(error);
+  // A 401/403 means there is no valid session → treated as anonymous below and
+  // sent to login. Anything else (backend 5xx, network) is a real outage → show
+  // an error screen with Retry instead of spinning on "Checking authentication…".
+  const hasNoSession = authCheckFailed && error !== null && isAuthenticationError(error);
+
+  if (authCheckFailed && !hasNoSession) {
     const onRetry = () => void refetch();
     if (ErrorComponent) {
       return <ErrorComponent error={error} onRetry={onRetry} />;
@@ -133,7 +136,7 @@ export const AppProtection: React.FC<AppProtectionProps> = ({
 
   // Wait for auth state to be determined before making decisions.
   // user === undefined means AuthInitializer is still loading auth data.
-  if (user === undefined) {
+  if (user === undefined && !hasNoSession) {
     const checkingMessage = (
       <div className="p-8 text-center text-muted-foreground">Checking authentication…</div>
     );
@@ -145,7 +148,7 @@ export const AppProtection: React.FC<AppProtectionProps> = ({
 
   // Default is protected - check authentication
   const userRole = user?.currentUser?.userRole;
-  const isAnonymous = !isAuthenticated || userRole === "ROLE_USER_ANONYMOUS";
+  const isAnonymous = hasNoSession || !isAuthenticated || userRole === "ROLE_USER_ANONYMOUS";
 
   if (isAnonymous) {
     // Send anonymous users to the shell's /login route (single login

@@ -1,7 +1,7 @@
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
-import { gql } from "graphql-request";
+import { gql, GraphQLClient } from "graphql-request";
 
-import { createGraphQLClient } from "../client";
+import { sessionCheckFetch } from "../sessionCheckFetch";
 
 import { useAppConfig } from "./useAppConfig";
 
@@ -20,8 +20,13 @@ export function useGetCurrentUser(): UseQueryResult<MuiUserQuery, Error> {
         throw new Error("GraphQL endpoint is not configured.");
       }
 
-      // Use the createGraphQLClient function that properly handles relative URLs
-      const graphQLClient = createGraphQLClient(config.api.graphqlEndpoint);
+      // The session check gets its own client: `sessionCheckFetch` reports a
+      // redirect to a login page (SSO backends) as a 401 instead of letting the
+      // browser follow it into a CORS failure that looks like an outage.
+      const graphQLClient = new GraphQLClient(
+        new URL(config.api.graphqlEndpoint, window.location.origin).href,
+        { fetch: sessionCheckFetch },
+      );
       return graphQLClient.request<MuiUserQuery>(gql`
         query MuiGetCurrentUser {
           currentUser {
