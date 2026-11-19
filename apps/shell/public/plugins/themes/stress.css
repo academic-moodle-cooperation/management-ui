@@ -59,11 +59,11 @@
   --button-gap: 0.75rem;
   --button-gap-sm: 0.5rem;
   --button-padding-x: 1.75rem;
-  --button-padding-x-icon: 1.25rem;
+  --button-padding-x-has-icon: 1.25rem;
   --button-padding-x-sm: 1.25rem;
-  --button-padding-x-sm-icon: 1rem;
+  --button-padding-x-sm-has-icon: 1rem;
   --button-padding-x-lg: 2.25rem;
-  --button-padding-x-lg-icon: 1.75rem;
+  --button-padding-x-lg-has-icon: 1.75rem;
   --input-padding-x: 1rem;
   --card-spacing: 2rem;
   --card-header-gap: 0.5rem;

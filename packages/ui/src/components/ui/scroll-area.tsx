@@ -16,7 +16,7 @@ function ScrollArea({
     >
       <ScrollAreaPrimitive.Viewport
         data-slot="scroll-area-viewport"
-        className="focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1"
+        className="focus-visible:ring-[color:var(--scroll-area-viewport-ring-color-focus,var(--focus-ring-color,color-mix(in_oklab,var(--ring)_50%,transparent)))] size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[length:var(--scroll-area-viewport-ring-width-focus,3px)] focus-visible:outline-1"
       >
         {children}
       </ScrollAreaPrimitive.Viewport>
@@ -37,15 +37,17 @@ function ScrollBar({
       orientation={orientation}
       className={cn(
         "flex touch-none p-px transition-colors select-none",
-        orientation === "vertical" && "h-full w-2.5 border-l border-l-transparent",
-        orientation === "horizontal" && "h-2.5 flex-col border-t border-t-transparent",
+        orientation === "vertical" &&
+          "h-full w-[var(--scroll-area-scrollbar-width,0.625rem)] border-l border-l-transparent",
+        orientation === "horizontal" &&
+          "h-[var(--scroll-area-scrollbar-height,0.625rem)] flex-col border-t border-t-transparent",
         className,
       )}
       {...props}
     >
       <ScrollAreaPrimitive.ScrollAreaThumb
         data-slot="scroll-area-thumb"
-        className="bg-border relative flex-1 rounded-full"
+        className="bg-[color:var(--scroll-area-thumb-bg,var(--border))] relative flex-1 rounded-[var(--scroll-area-thumb-radius,calc(infinity*1px))]"
       />
     </ScrollAreaPrimitive.ScrollAreaScrollbar>
   );

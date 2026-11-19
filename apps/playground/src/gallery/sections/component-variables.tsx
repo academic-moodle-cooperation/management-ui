@@ -4,6 +4,8 @@ import { Button, Checkbox, Input } from "@oc-mui/ui/components";
 import { PlusIcon } from "../icons";
 import { Section } from "../Section";
 
+import { ROLLOUT_CASES } from "./component-variable-cases";
+
 import type { ReactNode } from "react";
 
 /**
@@ -15,23 +17,34 @@ import type { ReactNode } from "react";
  * reads the computed value of both: the plain part must follow the variable,
  * the caller's part must not move.
  *
- * Shown only with `?only=component-variables`, never on the full page.
+ * Shown only with `?only=component-variables`, never on the full page. With
+ * `&open=component-variables` it shows the cases that live in an overlay
+ * instead, all overlays opened at once.
  */
 
 type State = "rest" | "hover" | "focus";
 
-type Case = {
+/** Attributes for the measured element when it is not the first child. */
+export type Mark = { "data-cv-id"?: string };
+
+export type Case = {
   /** The variable under test. */
   variable: string;
   /** The computed property it must change. */
   prop: string;
   state?: State;
   /** Measure a child or a pseudo-element instead of the part itself. */
-  target?: "svg";
+  target?: string;
   pseudo?: "::placeholder";
   dark?: boolean;
+  /** The measured element carries the mark (it is portalled or nested). */
+  byId?: boolean;
+  /** Lives in an overlay; rendered only in the opened pass. */
+  overlay?: boolean;
+  /** The caller cannot pass a class to this piece; only the variable is measured. */
+  plainOnly?: boolean;
   /** Renders the part; `callerClass` is empty for the plain one. */
-  render: (callerClass: string | undefined) => ReactNode;
+  render: (callerClass: string | undefined, mark: Mark) => ReactNode;
   /** The caller's class for the same property and state. */
   caller: string;
 };
@@ -579,7 +592,8 @@ const CASES: Case[] = [
   },
 ];
 
-function Probe({ item, role }: { item: Case; role: "plain" | "caller" }) {
+function Probe({ item, role, id }: { item: Case; role: "plain" | "caller"; id: string }) {
+  const mark: Mark = item.byId ? { "data-cv-id": id } : {};
   return (
     <span
       className="inline-flex"
@@ -590,21 +604,23 @@ function Probe({ item, role }: { item: Case; role: "plain" | "caller" }) {
       data-cv-target={item.target}
       data-cv-pseudo={item.pseudo}
       data-cv-dark={item.dark ? "" : undefined}
+      data-cv-el={item.byId ? id : undefined}
       data-cv-caller={role === "caller" ? item.caller : undefined}
     >
-      {item.render(role === "caller" ? item.caller : undefined)}
+      {item.render(role === "caller" ? item.caller : undefined, mark)}
     </span>
   );
 }
 
-export function ComponentVariablesSection() {
+export function ComponentVariablesSection({ open = false }: { open?: boolean }) {
+  const cases = [...CASES, ...ROLLOUT_CASES].filter((item) => Boolean(item.overlay) === open);
   return (
     <Section id="component-variables" title="Component variables (fixture)">
       <div className="grid grid-cols-[22rem_1fr_1fr] items-center gap-x-4 gap-y-2 text-xs">
         <span className="text-muted-foreground">variable</span>
         <span className="text-muted-foreground">plain</span>
         <span className="text-muted-foreground">with the caller&apos;s class</span>
-        {CASES.map((item, index) => (
+        {cases.map((item, index) => (
           <div
             key={index}
             className={`col-span-3 grid grid-cols-subgrid items-center ${item.dark ? "dark bg-background text-foreground" : ""}`}
@@ -614,11 +630,17 @@ export function ComponentVariablesSection() {
               {item.dark ? " (dark)" : ""}
               {item.state ? ` (${item.state})` : ""}
             </code>
-            <Probe item={item} role="plain" />
-            <span className="flex items-center gap-2">
-              <Probe item={item} role="caller" />
-              <code className="text-muted-foreground">{item.caller}</code>
-            </span>
+            <Probe item={item} role="plain" id={`${index}-plain`} />
+            {item.plainOnly ? (
+              <code className="text-muted-foreground">
+                no class of the caller reaches this piece
+              </code>
+            ) : (
+              <span className="flex items-center gap-2">
+                <Probe item={item} role="caller" id={`${index}-caller`} />
+                <code className="text-muted-foreground">{item.caller}</code>
+              </span>
+            )}
           </div>
         ))}
       </div>

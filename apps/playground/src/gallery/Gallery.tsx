@@ -83,7 +83,11 @@ const SECTIONS: { id: string; render: (open: boolean) => ReactNode; fixtureOnly?
   { id: "sidebar", render: () => <SidebarSection /> },
   { id: "data-table", render: () => <DataTableSection /> },
   { id: "precedence", render: () => <PrecedenceSection /> },
-  { id: "component-variables", render: () => <ComponentVariablesSection />, fixtureOnly: true },
+  {
+    id: "component-variables",
+    render: (open) => <ComponentVariablesSection open={open} />,
+    fixtureOnly: true,
+  },
 ];
 
 export function Gallery() {

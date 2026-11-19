@@ -49,11 +49,11 @@ const Toaster = (props: ToasterProps) => {
       theme={theme}
       className={cn(className ?? "toaster group", TOASTER_CLASS)}
       icons={{
-        success: <CircleCheckIcon className="size-4" />,
-        info: <InfoIcon className="size-4" />,
-        warning: <TriangleAlertIcon className="size-4" />,
-        error: <OctagonXIcon className="size-4" />,
-        loading: <Loader2Icon className="size-4 animate-spin" />,
+        success: <CircleCheckIcon className="size-[var(--sonner-icon-size,1rem)]" />,
+        info: <InfoIcon className="size-[var(--sonner-icon-size,1rem)]" />,
+        warning: <TriangleAlertIcon className="size-[var(--sonner-icon-size,1rem)]" />,
+        error: <OctagonXIcon className="size-[var(--sonner-icon-size,1rem)]" />,
+        loading: <Loader2Icon className="size-[var(--sonner-icon-size,1rem)] animate-spin" />,
       }}
       style={
         {

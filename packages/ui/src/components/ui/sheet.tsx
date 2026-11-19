@@ -28,7 +28,7 @@ function SheetOverlay({
     <SheetPrimitive.Overlay
       data-slot="sheet-overlay"
       className={cn(
-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-[color:var(--sheet-overlay-bg,color-mix(in_oklab,black_50%,transparent))]",
         className,
       )}
       {...props}
@@ -50,7 +50,7 @@ function SheetContent({
       <SheetPrimitive.Content
         data-slot="sheet-content"
         className={cn(
-          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 flex flex-col gap-4 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
+          "bg-[color:var(--sheet-content-bg,var(--background))] data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 flex flex-col gap-[var(--sheet-content-gap,1rem)] shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
           side === "right" &&
             "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm",
           side === "left" &&
@@ -77,7 +77,10 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sheet-header"
-      className={cn("flex flex-col gap-1.5 p-4", className)}
+      className={cn(
+        "flex flex-col gap-[var(--sheet-header-gap,0.375rem)] p-[var(--sheet-header-padding,1rem)]",
+        className,
+      )}
       {...props}
     />
   );
@@ -87,7 +90,10 @@ function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sheet-footer"
-      className={cn("mt-auto flex flex-col gap-2 p-4", className)}
+      className={cn(
+        "mt-auto flex flex-col gap-[var(--sheet-footer-gap,0.5rem)] p-[var(--sheet-footer-padding,1rem)]",
+        className,
+      )}
       {...props}
     />
   );
@@ -97,7 +103,10 @@ function SheetTitle({ className, ...props }: React.ComponentProps<typeof SheetPr
   return (
     <SheetPrimitive.Title
       data-slot="sheet-title"
-      className={cn("text-foreground font-semibold", className)}
+      className={cn(
+        "text-[color:var(--sheet-title-color,var(--foreground))] font-[number:var(--sheet-title-font-weight,600)]",
+        className,
+      )}
       {...props}
     />
   );
@@ -110,7 +119,10 @@ function SheetDescription({
   return (
     <SheetPrimitive.Description
       data-slot="sheet-description"
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn(
+        "text-[color:var(--sheet-description-color,var(--muted-foreground))] text-[length:var(--sheet-description-font-size,0.875rem)]/[var(--sheet-description-line-height,calc(1.25/0.875))]",
+        className,
+      )}
       {...props}
     />
   );

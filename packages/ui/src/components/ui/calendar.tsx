@@ -162,10 +162,7 @@ function Calendar({
           "group/day relative aspect-square h-full w-full p-0 text-center select-none",
           defaultClassNames.day,
         ),
-        today: cn(
-          "rounded-md bg-accent text-accent-foreground",
-          defaultClassNames.today,
-        ),
+        today: cn("rounded-md bg-accent text-accent-foreground", defaultClassNames.today),
         outside: cn(
           "text-muted-foreground aria-selected:text-muted-foreground",
           defaultClassNames.outside,
@@ -225,7 +222,7 @@ function CalendarDayButton({
       data-selected-single={modifiers["selected"]}
       className={cn(
         buttonVariants({ variant: "ghost", size: "icon" }),
-        "flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-[3px] group-data-[focused=true]/day:ring-ring/50 data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground dark:hover:text-accent-foreground",
+        "flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-[var(--calendar-day-button-gap,0.25rem)] leading-[var(--calendar-day-button-line-height,1)] font-[number:var(--calendar-day-button-font-weight,400)] group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-[3px] group-data-[focused=true]/day:ring-ring/50 data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground dark:hover:text-[color:var(--calendar-day-button-color-hover,var(--accent-foreground))]",
         defaultClassNames.day,
         className,
       )}

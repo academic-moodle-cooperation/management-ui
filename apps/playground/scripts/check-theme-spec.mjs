@@ -111,6 +111,8 @@ for (const entry of SPEC) {
   for (const mode of MODES) {
     const want = typeof check.want === "object" && check.want !== null ? check.want[mode] : check.want;
     if (want === null || want === undefined) continue;
+    // A requirement about a narrow screen names its own viewport.
+    await page.setViewportSize(check.viewport ?? { width: 1280, height: 900 });
     await open({ mode, only: check.section, open: check.open });
     if (check.inject) await page.addStyleTag({ content: check.inject });
     const locator = page.locator(check.sel).nth(check.n ?? 0);
@@ -154,6 +156,7 @@ for (const entry of SPEC) {
     await page.mouse.move(2, 2);
   }
 }
+await page.setViewportSize({ width: 1280, height: 900 });
 
 // ---------------------------------------------------------------------------
 // Part 2: contract guard

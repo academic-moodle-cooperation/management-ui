@@ -33,7 +33,7 @@ function DropdownMenuContent({
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
         className={cn(
-          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 max-h-(--radix-dropdown-menu-content-available-height) min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md",
+          "bg-[color:var(--dropdown-menu-content-bg,var(--popover))] text-[color:var(--dropdown-menu-content-color,var(--popover-foreground))] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 max-h-(--radix-dropdown-menu-content-available-height) min-w-[var(--dropdown-menu-content-min-width,8rem)] origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-[var(--dropdown-menu-content-radius,calc(var(--radius)_-_2px))] border-[length:var(--dropdown-menu-content-border-width,1px)] p-[var(--dropdown-menu-content-padding,0.25rem)] shadow-md",
           className,
         )}
         {...props}
@@ -61,7 +61,7 @@ function DropdownMenuItem({
       data-inset={inset}
       data-variant={variant}
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "focus:bg-[color:var(--dropdown-menu-item-bg-focus,var(--accent))] focus:text-[color:var(--dropdown-menu-item-color-focus,var(--accent-foreground))] data-[variant=destructive]:text-[color:var(--dropdown-menu-item-color-destructive,var(--destructive))] data-[variant=destructive]:focus:bg-[color:var(--dropdown-menu-item-bg-destructive-focus,color-mix(in_oklab,var(--destructive)_10%,transparent))] dark:data-[variant=destructive]:focus:bg-[color:var(--dropdown-menu-item-bg-destructive-focus,color-mix(in_oklab,var(--destructive)_20%,transparent))] data-[variant=destructive]:focus:text-[color:var(--dropdown-menu-item-color-destructive-focus,var(--destructive))] data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*='text-'])]:text-[color:var(--dropdown-menu-item-icon-color,var(--muted-foreground))] relative flex cursor-default items-center gap-[var(--dropdown-menu-item-gap,0.5rem)] rounded-[var(--dropdown-menu-item-radius,calc(var(--radius)_-_4px))] px-[var(--dropdown-menu-item-padding-x,0.5rem)] py-[var(--dropdown-menu-item-padding-y,0.375rem)] text-[length:var(--dropdown-menu-item-font-size,0.875rem)]/[var(--dropdown-menu-item-line-height,calc(1.25/0.875))] outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-[var(--dropdown-menu-item-opacity-disabled,var(--control-opacity-disabled,0.5))] data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-[var(--dropdown-menu-item-icon-size,1rem)]",
         className,
       )}
       {...props}
@@ -79,7 +79,7 @@ function DropdownMenuCheckboxItem({
     <DropdownMenuPrimitive.CheckboxItem
       data-slot="dropdown-menu-checkbox-item"
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "focus:bg-[color:var(--dropdown-menu-checkbox-item-bg-focus,var(--accent))] focus:text-[color:var(--dropdown-menu-checkbox-item-color-focus,var(--accent-foreground))] relative flex cursor-default items-center gap-[var(--dropdown-menu-checkbox-item-gap,0.5rem)] rounded-[var(--dropdown-menu-checkbox-item-radius,calc(var(--radius)_-_4px))] py-[var(--dropdown-menu-checkbox-item-padding-y,0.375rem)] pr-[var(--dropdown-menu-checkbox-item-padding-right,0.5rem)] pl-[var(--dropdown-menu-checkbox-item-padding-left,2rem)] text-[length:var(--dropdown-menu-checkbox-item-font-size,0.875rem)]/[var(--dropdown-menu-checkbox-item-line-height,calc(1.25/0.875))] outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-[var(--dropdown-menu-checkbox-item-opacity-disabled,var(--control-opacity-disabled,0.5))] [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-[var(--dropdown-menu-checkbox-item-icon-size,1rem)]",
         className,
       )}
       {...(checked !== undefined && { checked })}
@@ -110,7 +110,7 @@ function DropdownMenuRadioItem({
     <DropdownMenuPrimitive.RadioItem
       data-slot="dropdown-menu-radio-item"
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "focus:bg-[color:var(--dropdown-menu-radio-item-bg-focus,var(--accent))] focus:text-[color:var(--dropdown-menu-radio-item-color-focus,var(--accent-foreground))] relative flex cursor-default items-center gap-[var(--dropdown-menu-radio-item-gap,0.5rem)] rounded-[var(--dropdown-menu-radio-item-radius,calc(var(--radius)_-_4px))] py-[var(--dropdown-menu-radio-item-padding-y,0.375rem)] pr-[var(--dropdown-menu-radio-item-padding-right,0.5rem)] pl-[var(--dropdown-menu-radio-item-padding-left,2rem)] text-[length:var(--dropdown-menu-radio-item-font-size,0.875rem)]/[var(--dropdown-menu-radio-item-line-height,calc(1.25/0.875))] outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-[var(--dropdown-menu-radio-item-opacity-disabled,var(--control-opacity-disabled,0.5))] [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-[var(--dropdown-menu-radio-item-icon-size,1rem)]",
         className,
       )}
       {...props}
@@ -136,7 +136,10 @@ function DropdownMenuLabel({
     <DropdownMenuPrimitive.Label
       data-slot="dropdown-menu-label"
       data-inset={inset}
-      className={cn("px-2 py-1.5 text-sm font-medium data-[inset]:pl-8", className)}
+      className={cn(
+        "px-[var(--dropdown-menu-label-padding-x,0.5rem)] py-[var(--dropdown-menu-label-padding-y,0.375rem)] text-[length:var(--dropdown-menu-label-font-size,0.875rem)]/[var(--dropdown-menu-label-line-height,calc(1.25/0.875))] font-[number:var(--dropdown-menu-label-font-weight,500)] data-[inset]:pl-8",
+        className,
+      )}
       {...props}
     />
   );
@@ -149,7 +152,10 @@ function DropdownMenuSeparator({
   return (
     <DropdownMenuPrimitive.Separator
       data-slot="dropdown-menu-separator"
-      className={cn("bg-border -mx-1 my-1 h-px", className)}
+      className={cn(
+        "bg-[color:var(--dropdown-menu-separator-bg,var(--border))] -mx-1 my-1 h-px",
+        className,
+      )}
       {...props}
     />
   );
@@ -159,7 +165,10 @@ function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<"spa
   return (
     <span
       data-slot="dropdown-menu-shortcut"
-      className={cn("text-muted-foreground ml-auto text-xs tracking-widest", className)}
+      className={cn(
+        "text-[color:var(--dropdown-menu-shortcut-color,var(--muted-foreground))] ml-auto text-[length:var(--dropdown-menu-shortcut-font-size,0.75rem)]/[var(--dropdown-menu-shortcut-line-height,calc(1/0.75))] tracking-widest",
+        className,
+      )}
       {...props}
     />
   );
@@ -182,7 +191,7 @@ function DropdownMenuSubTrigger({
       data-slot="dropdown-menu-sub-trigger"
       data-inset={inset}
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[inset]:pl-8",
+        "focus:bg-[color:var(--dropdown-menu-sub-trigger-bg-focus,var(--accent))] focus:text-[color:var(--dropdown-menu-sub-trigger-color-focus,var(--accent-foreground))] data-[state=open]:bg-[color:var(--dropdown-menu-sub-trigger-bg-open,var(--accent))] data-[state=open]:text-[color:var(--dropdown-menu-sub-trigger-color-open,var(--accent-foreground))] flex cursor-default items-center rounded-[var(--dropdown-menu-sub-trigger-radius,calc(var(--radius)_-_4px))] px-[var(--dropdown-menu-sub-trigger-padding-x,0.5rem)] py-[var(--dropdown-menu-sub-trigger-padding-y,0.375rem)] text-[length:var(--dropdown-menu-sub-trigger-font-size,0.875rem)]/[var(--dropdown-menu-sub-trigger-line-height,calc(1.25/0.875))] outline-hidden select-none data-[inset]:pl-8",
         className,
       )}
       {...props}
@@ -201,7 +210,7 @@ function DropdownMenuSubContent({
     <DropdownMenuPrimitive.SubContent
       data-slot="dropdown-menu-sub-content"
       className={cn(
-        "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-md border p-1 shadow-lg",
+        "bg-[color:var(--dropdown-menu-sub-content-bg,var(--popover))] text-[color:var(--dropdown-menu-sub-content-color,var(--popover-foreground))] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[var(--dropdown-menu-sub-content-min-width,8rem)] origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-[var(--dropdown-menu-sub-content-radius,calc(var(--radius)_-_2px))] border-[length:var(--dropdown-menu-sub-content-border-width,1px)] p-[var(--dropdown-menu-sub-content-padding,0.25rem)] shadow-lg",
         className,
       )}
       {...props}
