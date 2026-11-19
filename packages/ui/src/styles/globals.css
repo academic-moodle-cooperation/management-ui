@@ -180,6 +180,50 @@
   --card-radius: calc(var(--radius) + 4px);
   --card-border-width: 1px;
   --card-title-font-weight: 600;
+
+  /* Component variables: one layer of variables per component, on top of the
+     shared ones above.
+
+     Name:  --<part>-<property>[-<variant>][-<size>][-<state>]
+
+       part      the part's `data-slot` (button, input, checkbox,
+                 checkbox-indicator); a piece without a slot is named after
+                 what it is (button-icon)
+       property  height, size (a square), padding-x, padding-y, gap, radius,
+                 border-width, border-color, bg, color, font-size, line-height,
+                 font-weight, opacity, ring-width, ring-color, text-decoration
+       variant   a value of `data-variant` (default, outline, link, …)
+       size      a value of `data-size` (sm, lg, icon)
+       state     hover, focus, disabled, checked, invalid, placeholder; `icon`
+                 for "has an icon". Dark is not a state: set the variable
+                 inside `.dark`.
+
+     Rules:
+
+     1. A component variable is declared nowhere. The component reads it as
+        `var(--button-height, var(--control-height))`: the fallback is the
+        value the component has always had, or the shared variable it has
+        always read. So nothing changes until a theme sets the variable, and
+        a shared variable set on a part (`[data-slot="input"] {
+        --control-height: … }`) keeps working. A declaration on the root
+        would freeze the shared value at the root. (The older metrics above
+        are still declared here; they have no shared variable to follow.)
+     2. Only what a component already declares becomes a variable. A
+        component gets no new rule for a state it has no rule for: such a
+        rule would out-rank a class of the caller. For such a state a theme
+        sets the resting variable on the part in that state
+        (`[data-slot="checkbox"]:disabled { --checkbox-bg: … }`).
+     3. A class of the caller wins over every variable: the variable sits
+        inside the component's own utility, which tailwind-merge drops as
+        soon as the caller passes one for the same property and state.
+
+     Two shared variables are read through the same rule and are declared
+     nowhere either: `--focus-ring-color` (fallback: the ring colour at 50%)
+     and `--control-opacity-disabled` (fallback 0.5).
+
+     `apps/playground/scripts/list-component-variables.mjs` prints every
+     variable with its fallback; `check-component-variables.mjs` measures
+     each one against a class of the caller. */
 }
 
 .dark {

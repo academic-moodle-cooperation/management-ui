@@ -1,6 +1,7 @@
 import { Toaster } from "@oc-mui/ui/components";
 
 import { BadgeSection, ButtonSection } from "./sections/actions";
+import { ComponentVariablesSection } from "./sections/component-variables";
 import { DataTableSection } from "./sections/composite";
 import {
   AccordionSection,
@@ -45,8 +46,11 @@ import type { ReactNode } from "react";
  * One entry per file in `packages/ui/src/components/ui/`, keyed by the file
  * name, followed by the composite components. Add the section here when a
  * base component is added there.
+ *
+ * A section marked `fixtureOnly` is a measuring fixture: it is rendered only
+ * when asked for by `?only=<id>` and never on the full page.
  */
-const SECTIONS: { id: string; render: (open: boolean) => ReactNode }[] = [
+const SECTIONS: { id: string; render: (open: boolean) => ReactNode; fixtureOnly?: boolean }[] = [
   { id: "button", render: () => <ButtonSection /> },
   { id: "badge", render: () => <BadgeSection /> },
   { id: "input", render: () => <InputSection /> },
@@ -79,6 +83,7 @@ const SECTIONS: { id: string; render: (open: boolean) => ReactNode }[] = [
   { id: "sidebar", render: () => <SidebarSection /> },
   { id: "data-table", render: () => <DataTableSection /> },
   { id: "precedence", render: () => <PrecedenceSection /> },
+  { id: "component-variables", render: () => <ComponentVariablesSection />, fixtureOnly: true },
 ];
 
 export function Gallery() {
@@ -87,7 +92,7 @@ export function Gallery() {
 
   const sections = settings.only
     ? SECTIONS.filter((section) => section.id === settings.only)
-    : SECTIONS;
+    : SECTIONS.filter((section) => !section.fixtureOnly);
 
   return (
     <div className="bg-background text-foreground min-h-svh">
@@ -96,7 +101,7 @@ export function Gallery() {
         {settings.chrome && !settings.only ? (
           <nav className="sticky top-16 hidden h-[calc(100svh-4rem)] w-40 shrink-0 overflow-y-auto py-8 text-sm lg:block">
             <ul className="flex flex-col gap-1">
-              {SECTIONS.map((section) => (
+              {SECTIONS.filter((section) => !section.fixtureOnly).map((section) => (
                 <li key={section.id}>
                   <a
                     className="text-muted-foreground hover:text-foreground"

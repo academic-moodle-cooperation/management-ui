@@ -18,29 +18,101 @@ export type ButtonVariantProps = {
 // an inferred literal union by internal type id (creation order), which varies
 // between machines, and API Extractor compares the printed text — the inferred
 // signature made `etc/ui-components.api.md` drift between local and CI runs.
-// Sizes, paddings, radius and weight are read from the component metrics in
-// `styles/globals.css` (bracket syntax, which the installed tailwind-merge
-// still resolves against a caller's plain utility).
+// Every value of the look is read from a component variable (naming scheme
+// and fallback rule: "Component variables" in `styles/globals.css`). The
+// fallback inside each `var()` is the value the button has always had, so
+// nothing changes while no theme sets the variable. Bracket syntax with a type
+// hint (`[color:…]`, `[length:…]`), because the installed tailwind-merge
+// resolves that form against a caller's plain utility; the short form
+// `h-(--x)` it does not. Every class is written out in full: Tailwind finds
+// class names by scanning this text and cannot see a composed one.
 const buttonVariants: (props?: ButtonVariantProps & ClassProp) => string = cva(
-  "inline-flex items-center justify-center gap-[var(--button-gap)] whitespace-nowrap rounded-[var(--control-radius)] text-[length:var(--control-font-size)] leading-[var(--control-line-height)] font-[number:var(--button-font-weight)] transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[length:var(--focus-ring-width)] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  [
+    "inline-flex items-center justify-center whitespace-nowrap transition-all shrink-0 outline-none",
+    "disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0",
+    "gap-[var(--button-gap)]",
+    "rounded-[var(--button-radius,var(--control-radius))]",
+    "text-[length:var(--button-font-size,var(--control-font-size))]",
+    "leading-[var(--button-line-height,var(--control-line-height))]",
+    "font-[number:var(--button-font-weight)]",
+    "[&_svg:not([class*='size-'])]:size-[var(--button-icon-size,1rem)]",
+    "disabled:opacity-[var(--button-opacity-disabled,var(--control-opacity-disabled,0.5))]",
+    "focus-visible:border-[color:var(--button-border-color-focus,var(--ring))]",
+    "focus-visible:ring-[color:var(--button-ring-color-focus,var(--focus-ring-color,color-mix(in_oklab,var(--ring)_50%,transparent)))]",
+    "focus-visible:ring-[length:var(--button-ring-width-focus,var(--focus-ring-width))]",
+    "aria-invalid:border-[color:var(--button-border-color-invalid,var(--destructive))]",
+    "aria-invalid:ring-[color:var(--button-ring-color-invalid,color-mix(in_oklab,var(--destructive)_20%,transparent))]",
+    "dark:aria-invalid:ring-[color:var(--button-ring-color-invalid,color-mix(in_oklab,var(--destructive)_40%,transparent))]",
+  ],
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-        outline:
-          "border-[length:var(--control-border-width)] bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
-        secondary: "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
+        default: [
+          "shadow-xs",
+          "bg-[color:var(--button-bg-default,var(--primary))]",
+          "text-[color:var(--button-color-default,var(--primary-foreground))]",
+          "hover:bg-[color:var(--button-bg-default-hover,color-mix(in_oklab,var(--button-bg-default,var(--primary))_90%,transparent))]",
+        ],
+        destructive: [
+          "shadow-xs",
+          "bg-[color:var(--button-bg-destructive,var(--destructive))]",
+          "dark:bg-[color:var(--button-bg-destructive,color-mix(in_oklab,var(--destructive)_60%,transparent))]",
+          "text-[color:var(--button-color-destructive,white)]",
+          "hover:bg-[color:var(--button-bg-destructive-hover,color-mix(in_oklab,var(--button-bg-destructive,var(--destructive))_90%,transparent))]",
+          "focus-visible:ring-[color:var(--button-ring-color-destructive-focus,color-mix(in_oklab,var(--destructive)_20%,transparent))]",
+          "dark:focus-visible:ring-[color:var(--button-ring-color-destructive-focus,color-mix(in_oklab,var(--destructive)_40%,transparent))]",
+        ],
+        outline: [
+          "shadow-xs",
+          "border-[length:var(--button-border-width-outline,var(--control-border-width))]",
+          "border-[color:var(--button-border-color-outline,var(--border))]",
+          "dark:border-[color:var(--button-border-color-outline,var(--input))]",
+          "bg-[color:var(--button-bg-outline,var(--background))]",
+          "dark:bg-[color:var(--button-bg-outline,color-mix(in_oklab,var(--input)_30%,transparent))]",
+          "hover:bg-[color:var(--button-bg-outline-hover,var(--accent))]",
+          "dark:hover:bg-[color:var(--button-bg-outline-hover,color-mix(in_oklab,var(--input)_50%,transparent))]",
+          "hover:text-[color:var(--button-color-outline-hover,var(--accent-foreground))]",
+        ],
+        secondary: [
+          "shadow-xs",
+          "bg-[color:var(--button-bg-secondary,var(--secondary))]",
+          "text-[color:var(--button-color-secondary,var(--secondary-foreground))]",
+          "hover:bg-[color:var(--button-bg-secondary-hover,color-mix(in_oklab,var(--button-bg-secondary,var(--secondary))_80%,transparent))]",
+        ],
+        ghost: [
+          "hover:bg-[color:var(--button-bg-ghost-hover,var(--accent))]",
+          "dark:hover:bg-[color:var(--button-bg-ghost-hover,color-mix(in_oklab,var(--accent)_50%,transparent))]",
+          "hover:text-[color:var(--button-color-ghost-hover,var(--accent-foreground))]",
+        ],
+        link: [
+          "underline-offset-4 hover:underline",
+          "text-[color:var(--button-color-link,var(--primary))]",
+          "[text-decoration-line:var(--button-text-decoration-link,none)]",
+        ],
       },
       size: {
-        default:
-          "h-[var(--control-height)] px-[var(--button-padding-x)] py-2 has-[>svg]:px-[var(--button-padding-x-icon)]",
-        sm: "h-[var(--control-height-sm)] rounded-[var(--control-radius)] gap-[var(--button-gap-sm)] px-[var(--button-padding-x-sm)] has-[>svg]:px-[var(--button-padding-x-sm-icon)]",
-        lg: "h-[var(--control-height-lg)] rounded-[var(--control-radius)] px-[var(--button-padding-x-lg)] has-[>svg]:px-[var(--button-padding-x-lg-icon)]",
-        icon: "size-[var(--control-height)]",
+        default: [
+          "h-[var(--button-height,var(--control-height))]",
+          "px-[var(--button-padding-x)]",
+          "py-[var(--button-padding-y,0.5rem)]",
+          "has-[>svg]:px-[var(--button-padding-x-icon)]",
+        ],
+        sm: [
+          "h-[var(--button-height-sm,var(--control-height-sm))]",
+          "rounded-[var(--button-radius-sm,var(--button-radius,var(--control-radius)))]",
+          "gap-[var(--button-gap-sm)]",
+          "px-[var(--button-padding-x-sm)]",
+          "has-[>svg]:px-[var(--button-padding-x-sm-icon)]",
+          "[&_svg:not([class*='size-'])]:size-[var(--button-icon-size-sm,var(--button-icon-size,1rem))]",
+        ],
+        lg: [
+          "h-[var(--button-height-lg,var(--control-height-lg))]",
+          "rounded-[var(--button-radius-lg,var(--button-radius,var(--control-radius)))]",
+          "px-[var(--button-padding-x-lg)]",
+          "has-[>svg]:px-[var(--button-padding-x-lg-icon)]",
+          "[&_svg:not([class*='size-'])]:size-[var(--button-icon-size-lg,var(--button-icon-size,1rem))]",
+        ],
+        icon: "size-[var(--button-height-icon,var(--control-height))]",
       },
     },
     defaultVariants: {
