@@ -22,6 +22,7 @@ import {
   SwitchSection,
   TextareaSection,
 } from "./sections/forms";
+import { LayerBSection } from "./sections/layer-b";
 import { BreadcrumbSection, SidebarSection, TabsSection } from "./sections/navigation";
 import {
   AlertDialogSection,
@@ -88,6 +89,7 @@ const SECTIONS: { id: string; render: (open: boolean) => ReactNode; fixtureOnly?
     render: (open) => <ComponentVariablesSection open={open} />,
     fixtureOnly: true,
   },
+  { id: "layer-b", render: () => <LayerBSection />, fixtureOnly: true },
 ];
 
 export function Gallery() {

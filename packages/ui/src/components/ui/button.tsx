@@ -1,9 +1,9 @@
 import { Slot } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
-import type { ClassProp } from "class-variance-authority/types";
 import * as React from "react";
 
 import { cn } from "../../lib/utils";
+
+import type { ClassProp } from "class-variance-authority/types";
 
 export type ButtonVariant = "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
 export type ButtonSize = "default" | "sm" | "lg" | "icon";
@@ -14,115 +14,21 @@ export type ButtonVariantProps = {
   size?: ButtonSize | null | undefined;
 };
 
-// Typed explicitly, not inferred from `cva`: TypeScript orders the members of
-// an inferred literal union by internal type id (creation order), which varies
-// between machines, and API Extractor compares the printed text — the inferred
-// signature made `etc/ui-components.api.md` drift between local and CI runs.
-// Every value of the look is read from a component variable (naming scheme
-// and fallback rule: "Component variables" in `styles/globals.css`). The
-// fallback inside each `var()` is the value the button has always had, so
-// nothing changes while no theme sets the variable. Bracket syntax with a type
-// hint (`[color:…]`, `[length:…]`), because the installed tailwind-merge
-// resolves that form against a caller's plain utility; the short form
-// `h-(--x)` it does not. Every class is written out in full: Tailwind finds
-// class names by scanning this text and cannot see a composed one.
-const buttonVariants: (props?: ButtonVariantProps & ClassProp) => string = cva(
-  [
-    "inline-flex items-center justify-center whitespace-nowrap transition-all shrink-0 outline-none",
-    "disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0",
-    "gap-[var(--button-gap,0.5rem)]",
-    "rounded-[var(--button-radius,var(--control-radius,calc(var(--radius)_-_2px)))]",
-    // Size and line height in one class, as `text-sm` sets both: a caller's
-    // `text-xs` then replaces both, as it always did.
-    "text-[length:var(--button-font-size,var(--control-font-size,0.875rem))]/[var(--button-line-height,var(--control-line-height,calc(1.25/0.875)))]",
-    "font-[number:var(--button-font-weight,500)]",
-    "[&_svg:not([class*='size-'])]:size-[var(--button-icon-size,1rem)]",
-    "disabled:opacity-[var(--button-opacity-disabled,var(--control-opacity-disabled,0.5))]",
-    "focus-visible:border-[color:var(--button-border-color-focus,var(--ring))]",
-    "focus-visible:ring-[color:var(--button-ring-color-focus,var(--focus-ring-color,color-mix(in_oklab,var(--ring)_50%,transparent)))]",
-    "focus-visible:ring-[length:var(--button-ring-width-focus,var(--focus-ring-width,3px))]",
-    "aria-invalid:border-[color:var(--button-border-color-invalid,var(--destructive))]",
-    "aria-invalid:ring-[color:var(--button-ring-color-invalid,color-mix(in_oklab,var(--destructive)_20%,transparent))]",
-    "dark:aria-invalid:ring-[color:var(--button-ring-color-invalid,color-mix(in_oklab,var(--destructive)_40%,transparent))]",
-  ],
-  {
-    variants: {
-      variant: {
-        default: [
-          "shadow-xs",
-          "bg-[color:var(--button-bg-default,var(--primary))]",
-          "text-[color:var(--button-color-default,var(--primary-foreground))]",
-          "hover:bg-[color:var(--button-bg-default-hover,color-mix(in_oklab,var(--button-bg-default,var(--primary))_90%,transparent))]",
-        ],
-        destructive: [
-          "shadow-xs",
-          "bg-[color:var(--button-bg-destructive,var(--destructive))]",
-          "dark:bg-[color:var(--button-bg-destructive,color-mix(in_oklab,var(--destructive)_60%,transparent))]",
-          "text-[color:var(--button-color-destructive,white)]",
-          "hover:bg-[color:var(--button-bg-destructive-hover,color-mix(in_oklab,var(--button-bg-destructive,var(--destructive))_90%,transparent))]",
-          "focus-visible:ring-[color:var(--button-ring-color-destructive-focus,color-mix(in_oklab,var(--destructive)_20%,transparent))]",
-          "dark:focus-visible:ring-[color:var(--button-ring-color-destructive-focus,color-mix(in_oklab,var(--destructive)_40%,transparent))]",
-        ],
-        outline: [
-          "shadow-xs",
-          "border-[length:var(--button-border-width-outline,var(--control-border-width,1px))]",
-          "border-[color:var(--button-border-color-outline,var(--border))]",
-          "dark:border-[color:var(--button-border-color-outline,var(--input))]",
-          "bg-[color:var(--button-bg-outline,var(--background))]",
-          "dark:bg-[color:var(--button-bg-outline,color-mix(in_oklab,var(--input)_30%,transparent))]",
-          "hover:bg-[color:var(--button-bg-outline-hover,var(--accent))]",
-          "dark:hover:bg-[color:var(--button-bg-outline-hover,color-mix(in_oklab,var(--input)_50%,transparent))]",
-          "hover:text-[color:var(--button-color-outline-hover,var(--accent-foreground))]",
-        ],
-        secondary: [
-          "shadow-xs",
-          "bg-[color:var(--button-bg-secondary,var(--secondary))]",
-          "text-[color:var(--button-color-secondary,var(--secondary-foreground))]",
-          "hover:bg-[color:var(--button-bg-secondary-hover,color-mix(in_oklab,var(--button-bg-secondary,var(--secondary))_80%,transparent))]",
-        ],
-        ghost: [
-          "hover:bg-[color:var(--button-bg-ghost-hover,var(--accent))]",
-          "dark:hover:bg-[color:var(--button-bg-ghost-hover,color-mix(in_oklab,var(--accent)_50%,transparent))]",
-          "hover:text-[color:var(--button-color-ghost-hover,var(--accent-foreground))]",
-        ],
-        link: [
-          "underline-offset-4",
-          "hover:[text-decoration-line:var(--button-text-decoration-link-hover,underline)]",
-          "text-[color:var(--button-color-link,var(--primary))]",
-          "[text-decoration-line:var(--button-text-decoration-link,none)]",
-        ],
-      },
-      size: {
-        default: [
-          "h-[var(--button-height,var(--control-height,2.25rem))]",
-          "px-[var(--button-padding-x,1rem)]",
-          "py-[var(--button-padding-y,0.5rem)]",
-          "has-[>svg]:px-[var(--button-padding-x-has-icon,0.75rem)]",
-        ],
-        sm: [
-          "h-[var(--button-height-sm,var(--control-height-sm,2rem))]",
-          "rounded-[var(--button-radius-sm,var(--button-radius,var(--control-radius,calc(var(--radius)_-_2px))))]",
-          "gap-[var(--button-gap-sm,0.375rem)]",
-          "px-[var(--button-padding-x-sm,0.75rem)]",
-          "has-[>svg]:px-[var(--button-padding-x-sm-has-icon,0.625rem)]",
-          "[&_svg:not([class*='size-'])]:size-[var(--button-icon-size-sm,var(--button-icon-size,1rem))]",
-        ],
-        lg: [
-          "h-[var(--button-height-lg,var(--control-height-lg,2.5rem))]",
-          "rounded-[var(--button-radius-lg,var(--button-radius,var(--control-radius,calc(var(--radius)_-_2px))))]",
-          "px-[var(--button-padding-x-lg,1.5rem)]",
-          "has-[>svg]:px-[var(--button-padding-x-lg-has-icon,1rem)]",
-          "[&_svg:not([class*='size-'])]:size-[var(--button-icon-size-lg,var(--button-icon-size,1rem))]",
-        ],
-        icon: "size-[var(--button-height-icon,var(--control-height,2.25rem))]",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
-  },
-);
+// Layout and behaviour only. The look (sizes, colours, radius, shadow, focus
+// ring, every state) is ordinary CSS on the button's marks, in
+// `styles/parts/button.css`, in the cascade layer `ui`: below a theme's rules
+// (`ui-theme`) and below every utility class, so a class of the caller wins.
+const BUTTON_STRUCTURE =
+  "inline-flex shrink-0 items-center justify-center whitespace-nowrap disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0";
+
+/**
+ * The button's layout classes. Variant and size are no longer classes: they
+ * are the marks `data-variant` and `data-size`, which `Button` sets. An
+ * element that uses `buttonVariants()` directly gets the button look only if
+ * it also carries `data-ui-button`, `data-variant` and `data-size`.
+ */
+const buttonVariants: (props?: ButtonVariantProps & ClassProp) => string = (props) =>
+  cn(BUTTON_STRUCTURE, props?.class, props?.className);
 
 function Button({
   className,
@@ -131,24 +37,26 @@ function Button({
   asChild = false,
   ...props
 }: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
+  ButtonVariantProps & {
     asChild?: boolean;
   }) {
   const Comp = asChild ? Slot : "button";
 
-  // Fixed marks for theme CSS. `data-slot` is lost when a wrapper renders the
-  // button through `asChild` (`<DialogTrigger asChild><Button />`): the
-  // wrapper's own `data-slot` arrives in `props` and replaces it. No wrapper
-  // sets `data-ui-button`, so that mark stays on every element that is a
-  // button. A wrapper with its own variant or size (a dropdown menu item, a
-  // sidebar menu button) still wins `data-variant` / `data-size`, as before.
+  // Fixed marks; the stylesheet and a theme select on them. `data-slot` is
+  // lost when a wrapper renders the button through `asChild`
+  // (`<DialogTrigger asChild><Button />`): the wrapper's own `data-slot`
+  // arrives in `props` and replaces it. No wrapper sets `data-ui-button`, so
+  // that mark stays on every element that is a button. A wrapper with its own
+  // variant or size (a dropdown menu item, a sidebar menu button) still wins
+  // `data-variant` / `data-size`, as before; with the look on the marks, the
+  // button then takes the look of the wrapper's value.
   return (
     <Comp
       data-slot="button"
       data-ui-button=""
       data-variant={variant ?? "default"}
       data-size={size ?? "default"}
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={buttonVariants({ className })}
       {...props}
     />
   );

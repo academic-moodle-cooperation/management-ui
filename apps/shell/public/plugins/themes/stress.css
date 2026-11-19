@@ -55,15 +55,6 @@
   --control-line-height: 1.5rem;
   --control-border-width: 2px;
   --focus-ring-width: 4px;
-  --button-font-weight: 700;
-  --button-gap: 0.75rem;
-  --button-gap-sm: 0.5rem;
-  --button-padding-x: 1.75rem;
-  --button-padding-x-has-icon: 1.25rem;
-  --button-padding-x-sm: 1.25rem;
-  --button-padding-x-sm-has-icon: 1rem;
-  --button-padding-x-lg: 2.25rem;
-  --button-padding-x-lg-has-icon: 1.75rem;
   --input-padding-x: 1rem;
   --card-spacing: 2rem;
   --card-header-gap: 0.5rem;
@@ -326,4 +317,46 @@ a:not([data-slot]),
   text-decoration: underline;
   text-decoration-thickness: 2px;
   text-underline-offset: 0.2em;
+}
+
+/* ------------------------------------------------------------------ */
+/* Part 3 — rules in the theme layer (parts with their look in a sheet) */
+/* ------------------------------------------------------------------ */
+
+/* The button keeps its look in a stylesheet in the cascade layer `ui`
+   (`packages/ui/src/styles/parts/button.css`) and reads no variable of its
+   own any more. What part 1 said with `--button-*` variables is said here as
+   rules on the button's marks, in the layer `ui-theme`: above the button's
+   own sheet, below every class of a caller.
+
+   The statement of the order comes first, so the order also holds if this
+   file is parsed before the application's stylesheet (the first statement
+   wins). A rule here beats the button's sheet in every state, so the padding
+   is given again for "has an icon". */
+@layer theme, base, ui, ui-theme, plugins, components, utilities;
+
+@layer ui-theme {
+  [data-ui-button] {
+    font-weight: 700;
+    gap: 0.75rem;
+  }
+  [data-ui-button][data-size="default"] {
+    padding-inline: 1.75rem;
+  }
+  [data-ui-button][data-size="default"]:has(> svg) {
+    padding-inline: 1.25rem;
+  }
+  [data-ui-button][data-size="sm"] {
+    gap: 0.5rem;
+    padding-inline: 1.25rem;
+  }
+  [data-ui-button][data-size="sm"]:has(> svg) {
+    padding-inline: 1rem;
+  }
+  [data-ui-button][data-size="lg"] {
+    padding-inline: 2.25rem;
+  }
+  [data-ui-button][data-size="lg"]:has(> svg) {
+    padding-inline: 1.75rem;
+  }
 }

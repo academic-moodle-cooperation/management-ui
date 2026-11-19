@@ -25,5 +25,5 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   onSuccess:
-    "mkdir -p dist/styles && cp src/styles/globals.css dist/styles/globals.css && cp -r src/styles/fonts dist/styles/fonts",
+    "mkdir -p dist/styles && cp src/styles/globals.css dist/styles/globals.css && cp -r src/styles/fonts dist/styles/fonts && cp -r src/styles/parts dist/styles/parts",
 });

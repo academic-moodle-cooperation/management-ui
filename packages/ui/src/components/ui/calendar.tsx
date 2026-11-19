@@ -102,6 +102,14 @@ export interface CalendarProps {
  * keeps the outlined buttons of the earlier calendar, so the look did not
  * change with the library upgrade.
  */
+// The month navigation: an outline button, smaller, without padding, and
+// see-through at rest in light. The outline look sits in a lower cascade
+// layer than these classes, so `bg-transparent` alone would also remove the
+// fill the outline button shows under the pointer and in dark. Those states
+// are therefore given again here, with the outline button's own values.
+const NAV_BUTTON =
+  "size-7 bg-transparent p-0 opacity-50 select-none hover:bg-accent hover:opacity-100 dark:bg-input/30 dark:hover:bg-input/50";
+
 function Calendar({
   selected,
   onSelect,
@@ -138,12 +146,12 @@ function Calendar({
         ),
         button_previous: cn(
           buttonVariants({ variant: "outline" }),
-          "size-7 bg-transparent p-0 opacity-50 select-none hover:opacity-100",
+          NAV_BUTTON,
           defaultClassNames.button_previous,
         ),
         button_next: cn(
           buttonVariants({ variant: "outline" }),
-          "size-7 bg-transparent p-0 opacity-50 select-none hover:opacity-100",
+          NAV_BUTTON,
           defaultClassNames.button_next,
         ),
         month_caption: cn(

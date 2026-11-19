@@ -29,10 +29,37 @@
    stay in an unlayered `:root {}` below — unlayered declarations beat every
    cascade layer, so the host theme survives even though a plugin ships its own
    default Tailwind theme into `@layer plugins`. Move them into `@theme`/a layer
-   and a plugin's defaults would start overriding the host's. */
-@layer theme, base, plugins, components, utilities;
+   and a plugin's defaults would start overriding the host's.
+
+   EXPERIMENT (look in a stylesheet): two more layers, `ui` and `ui-theme`,
+   between `base` and `plugins`.
+
+   - `ui` holds the look of a part as ordinary CSS on its fixed marks
+     (`styles/parts/*.css`). The part itself carries layout, behaviour and
+     marks only.
+   - `ui-theme` is where a theme puts its rules on the same marks
+     (`@layer ui-theme { [data-ui-button] { … } }` in the theme file). A
+     theme's VARIABLES stay unlayered, see the invariant above.
+
+   Wanted precedence: part, then theme, then a class of the caller. Both
+   layers sit below `plugins` and `utilities`, so a class from the host's
+   build and a class or a scoped rule from a plugin's sheet both win over
+   part and theme, in every state (a layer beats specificity).
+
+   The price of sitting below `plugins`: a plugin sheet that ships Tailwind's
+   preflight (`button { background-color: transparent; border-radius: 0 }`,
+   `* { padding: 0; border: 0 solid }`) resets the look of every part in
+   `ui`. A plugin sheet must therefore not ship a preflight; the documented
+   entry (theme + utilities, see docs/extend/styling.md) does not. */
+@layer theme, base, ui, ui-theme, plugins, components, utilities;
 
 @import "tailwindcss";
+
+/* The look of the parts that keep it in a stylesheet (see the comment on the
+   layers `ui` and `ui-theme` above). `ui.parts` holds one file per part,
+   `ui.style` the rules of a style such as "compact". */
+@import "./parts/button.css" layer(ui.parts);
+@import "./parts/compact.css" layer(ui.style);
 @plugin "tailwindcss-animate";
 
 /* Scan THIS library's own files for the utility classes its components use.
@@ -261,7 +288,11 @@
 /* Style "compact": dense and flat. A style is a named set of values for the
    shared and component variables, picked with `data-style` on the root element and independent of
    the theme, which supplies the colours. It comes after `.dark` on purpose,
-   so its shadow values also hold in dark mode. */
+   so its shadow values also hold in dark mode.
+
+   A part that keeps its look in a stylesheet (the button) reads only the
+   shared variables below; what the style changes on that part alone is a
+   rule in `parts/compact.css`. */
 [data-style="compact"] {
   --control-height: 2rem;
   --control-height-sm: 1.75rem;
@@ -272,14 +303,6 @@
   --focus-ring-width: 2px;
   --shadow-xs: 0 0 #0000;
   --shadow-sm: 0 0 #0000;
-  --button-gap: 0.375rem;
-  --button-gap-sm: 0.25rem;
-  --button-padding-x: 0.75rem;
-  --button-padding-x-has-icon: 0.625rem;
-  --button-padding-x-sm: 0.625rem;
-  --button-padding-x-sm-has-icon: 0.5rem;
-  --button-padding-x-lg: 1rem;
-  --button-padding-x-lg-has-icon: 0.75rem;
   --input-padding-x: 0.625rem;
   --card-spacing: 1rem;
   --card-header-gap: 0.25rem;
