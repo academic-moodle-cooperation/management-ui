@@ -28,7 +28,7 @@ const badgeVariants: (props?: BadgeVariantProps & ClassProp) => string = cva(
     "[&>svg]:size-[var(--badge-icon-size,0.75rem)]",
     "focus-visible:border-[color:var(--badge-border-color-focus,var(--ring))]",
     "focus-visible:ring-[color:var(--badge-ring-color-focus,var(--focus-ring-color,color-mix(in_oklab,var(--ring)_50%,transparent)))]",
-    "focus-visible:ring-[length:var(--badge-ring-width-focus,3px)]",
+    "focus-visible:ring-[length:var(--badge-ring-width-focus,var(--focus-ring-width,3px))]",
     "aria-invalid:border-[color:var(--badge-border-color-invalid,var(--destructive))]",
     "aria-invalid:ring-[color:var(--badge-ring-color-invalid,color-mix(in_oklab,var(--destructive)_20%,transparent))]",
     "dark:aria-invalid:ring-[color:var(--badge-ring-color-invalid,color-mix(in_oklab,var(--destructive)_40%,transparent))]",

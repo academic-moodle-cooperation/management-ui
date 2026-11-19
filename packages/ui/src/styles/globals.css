@@ -183,6 +183,9 @@
      `--control-font-size`, `--control-line-height`,
      `--control-border-width`, `--control-opacity-disabled`,
      `--focus-ring-width`, `--focus-ring-color`, `--card-spacing`.
+     Every focus ring follows `--focus-ring-width`; where a part's own ring
+     is 2px wide instead of 3px (side navigation, the close buttons of dialog
+     and sheet) that only shows as long as no theme sets the variable.
 
      Rules:
 

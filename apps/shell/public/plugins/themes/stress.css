@@ -313,7 +313,7 @@ h3 {
 }
 
 /* A loud focus frame on everything focusable. The ring width is a variable
-   for three components; an outline with an offset is not expressible. */
+   every component follows; an outline with an offset is not expressible. */
 [data-slot]:focus-visible {
   outline: 4px solid var(--ring);
   outline-offset: 3px;

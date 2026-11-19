@@ -59,7 +59,7 @@ function DialogContent({
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            className="ring-offset-background focus:ring-[color:var(--dialog-close-ring-color-focus,var(--ring))] data-[state=open]:bg-[color:var(--dialog-close-bg-open,var(--accent))] data-[state=open]:text-[color:var(--dialog-close-color-open,var(--muted-foreground))] absolute top-4 right-4 rounded-[var(--dialog-close-radius,0.125rem)] opacity-[var(--dialog-close-opacity,0.7)] transition-opacity hover:opacity-[var(--dialog-close-opacity-hover,1)] focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-[var(--dialog-close-icon-size,1rem)]"
+            className="ring-offset-background focus:ring-[color:var(--dialog-close-ring-color-focus,var(--ring))] data-[state=open]:bg-[color:var(--dialog-close-bg-open,var(--accent))] data-[state=open]:text-[color:var(--dialog-close-color-open,var(--muted-foreground))] absolute top-4 right-4 rounded-[var(--dialog-close-radius,0.125rem)] opacity-[var(--dialog-close-opacity,0.7)] transition-opacity hover:opacity-[var(--dialog-close-opacity-hover,1)] focus:ring-[length:var(--dialog-close-ring-width-focus,var(--focus-ring-width,2px))] focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-[var(--dialog-close-icon-size,1rem)]"
           >
             <XIcon />
             <span className="sr-only">Close</span>

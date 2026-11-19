@@ -16,7 +16,7 @@ function ScrollArea({
     >
       <ScrollAreaPrimitive.Viewport
         data-slot="scroll-area-viewport"
-        className="focus-visible:ring-[color:var(--scroll-area-viewport-ring-color-focus,var(--focus-ring-color,color-mix(in_oklab,var(--ring)_50%,transparent)))] size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[length:var(--scroll-area-viewport-ring-width-focus,3px)] focus-visible:outline-1"
+        className="focus-visible:ring-[color:var(--scroll-area-viewport-ring-color-focus,var(--focus-ring-color,color-mix(in_oklab,var(--ring)_50%,transparent)))] size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[length:var(--scroll-area-viewport-ring-width-focus,var(--focus-ring-width,3px))] focus-visible:outline-1"
       >
         {children}
       </ScrollAreaPrimitive.Viewport>
