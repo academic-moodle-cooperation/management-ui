@@ -1,0 +1,337 @@
+/**
+ * Pilot — a theme built after the design system of a real second
+ * organisation, used as a test fixture.
+ *
+ * It asks: does the theme contract carry a real corporate design, and where
+ * does it stop? The contract:
+ *
+ *   - variables for everything a component sets itself;
+ *   - theme CSS only for properties no component sets;
+ *   - a class of the caller or of a plugin always wins;
+ *   - the theme does not change the library.
+ *
+ * The file has three parts.
+ *
+ *   Part 1  Variables on the root: the design system's own layers (brand,
+ *           semantic colours light and dark) and their mapping onto the
+ *           library's tokens and component metrics.
+ *   Part 2  Variables set on a fixed mark (`data-slot`, `data-variant`,
+ *           `data-ui-button`, the toast's class names). The component keeps
+ *           every utility it has and only reads another value there, so a
+ *           caller's class still wins. Needed wherever two parts share one
+ *           token but the design gives them different values.
+ *   Part 3  Theme CSS for properties no component sets.
+ *
+ * `apps/playground/scripts/check-theme-spec.mjs` measures each requirement
+ * and guards part 3: a rule there must give the same result when it sits in
+ * `@layer components`, below every utility.
+ *
+ * The typeface of the design system is licensed. "Barlow" (SIL Open Font
+ * License) is the free stand-in; no font file ships with this fixture, so a
+ * machine without Barlow shows the fallback.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Part 1 — variables on the root                                      */
+/* ------------------------------------------------------------------ */
+:root {
+  --theme-name: "Pilot";
+
+  /* The brand colour. THE ONE SWITCH: change this number and every coloured
+     part follows.
+       0 blue · 1 petrol · 2 green · 3 bronze · 4 red · 5 purple · 6 grey */
+  --brand: 0;
+
+  /* Lookup of the two given tones per brand colour (100 and 120). Each line
+     is "this colour if --brand is my number, else the rest of the chain". */
+  --pick-0: calc(100% * (1 - min(1, max(var(--brand) - 0, 0 - var(--brand)))));
+  --pick-1: calc(100% * (1 - min(1, max(var(--brand) - 1, 1 - var(--brand)))));
+  --pick-2: calc(100% * (1 - min(1, max(var(--brand) - 2, 2 - var(--brand)))));
+  --pick-3: calc(100% * (1 - min(1, max(var(--brand) - 3, 3 - var(--brand)))));
+  --pick-4: calc(100% * (1 - min(1, max(var(--brand) - 4, 4 - var(--brand)))));
+  --pick-5: calc(100% * (1 - min(1, max(var(--brand) - 5, 5 - var(--brand)))));
+  --brand-100: color-mix(in srgb, #215caf var(--pick-0),
+    color-mix(in srgb, #007894 var(--pick-1),
+    color-mix(in srgb, #627313 var(--pick-2),
+    color-mix(in srgb, #8e6713 var(--pick-3),
+    color-mix(in srgb, #b7352d var(--pick-4),
+    color-mix(in srgb, #a7117a var(--pick-5), #6f6f6f))))));
+  --brand-120: color-mix(in srgb, #08407e var(--pick-0),
+    color-mix(in srgb, #00596d var(--pick-1),
+    color-mix(in srgb, #365213 var(--pick-2),
+    color-mix(in srgb, #704f12 var(--pick-3),
+    color-mix(in srgb, #96272d var(--pick-4),
+    color-mix(in srgb, #8c0a59 var(--pick-5), #575757))))));
+  /* The lighter steps are mixes of the 100 tone with white. That reproduces
+     the given values exactly for five brand colours and within two levels
+     per channel for petrol and purple. */
+  --brand-40: color-mix(in srgb, var(--brand-100) 40%, #fff);
+  --brand-10: color-mix(in srgb, var(--brand-100) 10%, #fff);
+
+  /* Semantic colours, light. `.dark` below replaces exactly this block. */
+  --cd-background: #fff;
+  --cd-background-muted: #f6f6f6;
+  --cd-background-interactive: #222;
+  --cd-background-strong: #000;
+  --cd-foreground: #000;
+  --cd-foreground-muted: rgb(34 34 34 / 0.48);
+  --cd-accent: var(--brand-100);
+  --cd-accent-muted: var(--brand-40);
+  --cd-accent-strong: var(--brand-120);
+  --cd-text-secondary: rgb(0 0 0 / 0.6);
+  --cd-text-inverse: #fff;
+  --cd-error: #e2001a;
+  --cd-warning: #fda726;
+  --cd-success: #2e7b32;
+  --cd-on-status: #fff;
+  --cd-interactive: rgb(0 0 0 / 0.6);
+  --cd-interactive-hover: #000;
+  --cd-interactive-muted: rgb(34 34 34 / 0.2);
+  --cd-border: #000;
+  --cd-border-muted: #8c8c8c;
+  /* Read from single components, not from the semantic layer. */
+  --cd-rule: #e2e2e2;
+  --cd-rule-soft: #f1f1f1;
+  --cd-option: #6f6f6f;
+  --cd-switch-off: rgb(34 34 34 / 0.096);
+
+  /* The button family. Coloured is the default here; the neutral family is
+     `var(--cd-background-interactive)` and `var(--cd-interactive-hover)`. */
+  --cd-button: var(--cd-accent);
+  --cd-button-hover: var(--cd-accent-strong);
+
+  /* ---- mapping onto the library's tokens ---- */
+  --background: var(--cd-background);
+  --foreground: var(--cd-foreground);
+  --card: var(--cd-background);
+  --card-foreground: var(--cd-foreground);
+  --popover: var(--cd-background);
+  --popover-foreground: var(--cd-foreground);
+  --primary: var(--cd-button);
+  --primary-foreground: var(--cd-text-inverse);
+  --secondary: var(--cd-background-muted);
+  --secondary-foreground: var(--cd-foreground);
+  --muted: var(--cd-background-muted);
+  --muted-foreground: var(--cd-text-secondary);
+  --accent: var(--cd-background-muted);
+  --accent-foreground: var(--cd-foreground);
+  --destructive: var(--cd-error);
+  --destructive-foreground: var(--cd-error);
+  --border: var(--cd-rule);
+  --input: var(--cd-border-muted);
+  --ring: var(--cd-border);
+  --ok: var(--cd-success);
+  --ok-foreground: var(--cd-on-status);
+  --warning: var(--cd-warning);
+  --warning-foreground: #000;
+  --error: var(--cd-error);
+  --error-foreground: var(--cd-on-status);
+
+  /* Side navigation: no surface of its own, the active entry shows through
+     colour (and the weight the component already sets). */
+  --sidebar: var(--cd-background);
+  --sidebar-foreground: var(--cd-foreground);
+  --sidebar-primary: var(--cd-accent);
+  --sidebar-primary-foreground: var(--cd-text-inverse);
+  --sidebar-accent: transparent;
+  --sidebar-accent-foreground: var(--cd-accent);
+  --sidebar-border: var(--cd-interactive-muted);
+  --sidebar-ring: var(--cd-border);
+  --color-footer: var(--cd-background-muted);
+
+  /* Type, radius, shadows */
+  --font-sans: "Barlow", Arial, "Helvetica Neue", Helvetica, "Liberation Sans", sans-serif;
+  --font-heading: var(--font-sans);
+  --radius: 0.375rem; /* menus use radius - 2px = 4px */
+  --shadow-xs: 0 0 #0000;
+  --shadow-sm: 0 0 12px rgb(0 0 0 / 0.04), 0 1px 2px rgb(0 0 0 / 0.12);
+  --shadow-card: 0 0 12px rgb(0 0 0 / 0.04), 0 1px 2px rgb(0 0 0 / 0.12);
+  --shadow-md: 0 3px 15px rgb(34 34 34 / 0.1), 0 0 4px rgb(34 34 34 / 0.1);
+  --shadow-lg: 0 2px 24px rgb(0 0 0 / 0.08), 0 1px 4px rgb(0 0 0 / 0.16);
+  --shadow-sidebar: 0 0 #0000;
+
+  /* Component metrics. The control values are the button's; the text field
+     shares these variables and gets its own values in part 2. */
+  --control-height: 3rem;
+  --control-height-sm: 2rem;
+  --control-height-lg: 3rem;
+  --control-radius: 2px;
+  --control-font-size: 1rem;
+  --control-line-height: 1.2;
+  --control-border-width: 1px;
+  --focus-ring-width: 2px;
+  --button-font-weight: 500;
+  --button-gap: 0.625rem;
+  --button-gap-sm: 0.625rem;
+  --button-padding-x: 2rem;
+  --button-padding-x-icon: 2rem;
+  --button-padding-x-sm: 1rem;
+  --button-padding-x-sm-icon: 1rem;
+  --button-padding-x-lg: 2rem;
+  --button-padding-x-lg-icon: 2rem;
+  --input-padding-x: 0.75rem;
+  --card-radius: 0.75rem;
+}
+
+.dark {
+  /* On dark surfaces the accent is white, not the brand colour. */
+  --cd-background: #222;
+  --cd-background-muted: rgb(255 255 255 / 0.3);
+  --cd-background-interactive: #fff;
+  --cd-background-strong: #fff;
+  --cd-foreground: #fff;
+  --cd-foreground-muted: rgb(255 255 255 / 0.4);
+  --cd-accent: rgb(255 255 255 / 0.92);
+  --cd-accent-muted: rgb(255 255 255 / 0.4);
+  --cd-accent-strong: #fff;
+  --cd-text-secondary: rgb(255 255 255 / 0.92);
+  --cd-text-inverse: #000;
+  --cd-error: #fef2f4;
+  --cd-warning: #fff6e9;
+  --cd-success: #f2f7f3;
+  --cd-on-status: #000;
+  --cd-interactive: rgb(255 255 255 / 0.92);
+  --cd-interactive-hover: #fff;
+  --cd-interactive-muted: rgb(255 255 255 / 0.3);
+  --cd-border: #fff;
+  --cd-border-muted: rgb(255 255 255 / 0.92);
+  /* Not drawn in dark in the design system; taken from the semantic layer. */
+  --cd-rule: rgb(255 255 255 / 0.3);
+  --cd-rule-soft: rgb(255 255 255 / 0.3);
+  --cd-option: rgb(255 255 255 / 0.92);
+  --cd-switch-off: rgb(255 255 255 / 0.3);
+
+  --shadow-md: 0 1px 7px rgb(255 255 255 / 0.54), 0 1px 4px rgb(255 255 255 / 0.1);
+}
+
+/* ------------------------------------------------------------------ */
+/* Part 2 — variables on a fixed mark                                  */
+/* ------------------------------------------------------------------ */
+
+/* Primary button: hover is the strong tone. The component paints hover as
+   "primary at 90%", so this lands at 90% of the strong tone, not on it. */
+[data-ui-button][data-variant="default"]:hover {
+  --primary: var(--cd-button-hover);
+}
+
+/* Secondary button (variant outline): no fill, a line that darkens on hover,
+   no hover surface. */
+[data-ui-button][data-variant="outline"] {
+  --background: transparent;
+  --border: var(--cd-interactive-muted);
+  --input: var(--cd-interactive-muted);
+  --accent: transparent;
+  --accent-foreground: var(--cd-foreground);
+}
+[data-ui-button][data-variant="outline"]:hover {
+  --border: var(--cd-interactive-hover);
+}
+
+/* The destructive button keeps a red surface in dark; the error token turns
+   into a light tint there, which is meant for lines and text. */
+[data-ui-button][data-variant="destructive"],
+[data-slot="badge"][data-variant="destructive"] {
+  --destructive: #e2001a;
+}
+
+/* Link: text in the text colour, not in the brand colour; muted on hover. */
+[data-ui-button][data-variant="link"] {
+  --primary: var(--cd-foreground);
+}
+[data-ui-button][data-variant="link"]:hover {
+  --primary: var(--cd-interactive);
+}
+
+/* Text field: lower than the button, smaller type, darker line on hover,
+   heavier line when invalid. */
+[data-slot="input"] {
+  --control-height: 2.3125rem;
+  --control-font-size: 0.875rem;
+  --control-line-height: 1.5;
+}
+[data-slot="input"]:hover:not(:disabled),
+[data-slot="textarea"]:hover:not(:disabled),
+[data-slot="select-trigger"]:hover:not(:disabled),
+[data-slot="checkbox"]:hover:not(:disabled) {
+  --input: var(--cd-border);
+}
+[data-slot="input"][aria-invalid="true"] {
+  --control-border-width: 2px;
+}
+
+/* Checkbox and switch are neutral when on, never brand-coloured. */
+[data-slot="checkbox"],
+[data-slot="switch"] {
+  --primary: var(--cd-background-interactive);
+  --primary-foreground: var(--cd-text-inverse);
+}
+[data-slot="switch"] {
+  --input: var(--cd-switch-off);
+}
+
+/* Options list of the dropdown: grey entries, black under the pointer, no
+   hover surface. */
+[data-slot="select-content"] {
+  --popover-foreground: var(--cd-option);
+  --accent: transparent;
+  --accent-foreground: var(--cd-foreground);
+}
+
+/* Context menu: muted entries, its own shadow, a faint separator. */
+[data-slot="dropdown-menu-content"] {
+  --popover-foreground: var(--cd-interactive);
+  --shadow-md: 0 1px 40px rgb(0 0 0 / 0.16), 0 1px 2px rgb(0 0 0 / 0.24);
+  --border: var(--cd-background-muted);
+}
+
+/* Breadcrumb: its own grey for the ancestors. */
+[data-slot="breadcrumb-list"] {
+  --muted-foreground: var(--cd-option);
+}
+
+/* Notification: one solid surface per status, no visible frame. The values
+   go into the toast library's own variables; the status comes from the toast
+   library's own `data-type` attribute, there is no fixed mark for it. */
+.sonner-toast {
+  --border-radius: 8px;
+  --normal-bg: var(--cd-background-strong);
+  --normal-text: var(--cd-text-inverse);
+  --normal-border: var(--cd-background-strong);
+}
+.sonner-toast[data-type="success"] {
+  --normal-bg: #2e7b32;
+  --normal-text: #fff;
+  --normal-border: #2e7b32;
+}
+.sonner-toast[data-type="warning"] {
+  --normal-bg: #fda726;
+  --normal-text: #000;
+  --normal-border: #fda726;
+}
+.sonner-toast[data-type="error"] {
+  --normal-bg: #e2001a;
+  --normal-text: #fff;
+  --normal-border: #e2001a;
+}
+
+/* ------------------------------------------------------------------ */
+/* Part 3 — theme CSS for properties no component sets                 */
+/* ------------------------------------------------------------------ */
+/* check-theme-spec: layered-from-here */
+
+/* Link: where the component draws its line (on hover), the line is thin and
+   in the brand colour. */
+[data-ui-button][data-variant="link"] {
+  text-decoration-color: var(--cd-accent);
+  text-decoration-thickness: 1px;
+}
+
+/* Side navigation: a line under every entry. */
+[data-slot="sidebar-menu-item"] {
+  border-bottom: 1px solid var(--cd-interactive-muted);
+}
+
+/* Options list: a faint line under every entry. */
+[data-slot="select-item"] {
+  border-bottom: 1px solid var(--cd-rule-soft);
+}

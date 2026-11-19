@@ -49,6 +49,12 @@
       "author": "Management UI Core"
     },
     {
+      "id": "pilot",
+      "name": "Pilot",
+      "tagline": "Test fixture: a real second corporate design",
+      "author": "Management UI Core"
+    },
+    {
       "id": "press",
       "name": "Press",
       "tagline": "Editorial, high-contrast, flat",
