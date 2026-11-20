@@ -55,6 +55,18 @@
       "author": "Management UI Core"
     },
     {
+      "id": "pilot2",
+      "name": "Pilot 2",
+      "tagline": "Test fixture: a token system with base values and roles",
+      "author": "Management UI Core"
+    },
+    {
+      "id": "pilot3",
+      "name": "Pilot 3",
+      "tagline": "Test fixture: rules for applications, dark side navigation",
+      "author": "Management UI Core"
+    },
+    {
       "id": "press",
       "name": "Press",
       "tagline": "Editorial, high-contrast, flat",

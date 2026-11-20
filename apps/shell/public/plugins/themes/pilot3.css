@@ -1,0 +1,128 @@
+/**
+ * Pilot 3 — a theme built after a set of rules for applications: type,
+ * surfaces, a dark side navigation with a bar at the active entry, footer.
+ * A test fixture like pilot.css, same contract.
+ *
+ * The source says nothing about buttons, fields, radii, focus, hover, dark
+ * mode or status colours; those keep the library's defaults. No dark block:
+ * in dark mode this file sets the same values.
+ *
+ *   Part 1  Variables on the root.
+ *   Part 2  Variables set on a fixed mark.
+ *   Part 3  Theme CSS for properties no component sets. One rule there uses
+ *           a bare element (body): the library has no part for it.
+ *
+ * The two typefaces are named in the font stacks only; no font file ships
+ * with this fixture.
+ *
+ * Requirements: apps/playground/scripts/theme-spec-pilot3.mjs.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Part 1 — variables on the root                                      */
+/* ------------------------------------------------------------------ */
+:root {
+  --theme-name: "Pilot 3";
+
+  --p3-brand: #006699;
+  --p3-text: #000000;
+  --p3-text-grey: #676767;
+  --p3-text-dark-grey: #373737;
+  --p3-content: #f6f6f6;
+  --p3-box: #ffffff;
+  --p3-box-line: #e6e6e6;
+  --p3-nav: #373737;
+  --p3-nav-text: #c6c6c6;
+  --p3-nav-active: #1e1e1e;
+
+  --font-sans: "Roboto", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  --font-heading: "PT Sans", "Trebuchet MS", Arial, sans-serif;
+
+  /* ---- mapping onto the library's tokens ---- */
+  /* The content area is grey, the boxes on it white. The application header
+     reads the same token as the content area and turns grey with it. */
+  --background: var(--p3-content);
+  --foreground: var(--p3-text);
+  --card: var(--p3-box);
+  --card-foreground: var(--p3-text);
+  --popover: var(--p3-box);
+  --popover-foreground: var(--p3-text);
+  --primary: var(--p3-brand);
+  --primary-foreground: #ffffff;
+  --muted-foreground: var(--p3-text-grey);
+  --ring: var(--p3-brand);
+
+  /* Side navigation: dark in a light theme. The source gives no hover look;
+     hover and active share one token here, so hover takes the active surface. */
+  --sidebar: var(--p3-nav);
+  --sidebar-foreground: var(--p3-nav-text);
+  --sidebar-accent: var(--p3-nav-active);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-primary: var(--p3-brand);
+  --sidebar-primary-foreground: #ffffff;
+
+  --color-footer: var(--p3-brand);
+
+  /* ---- component variables ---- */
+
+  /* Breadcrumb. The link has no resting colour of its own and inherits the
+     list's, so the list carries the link colour and the page the text colour. */
+  --breadcrumb-list-font-size: 1rem;
+  --breadcrumb-list-line-height: 1.2;
+  --breadcrumb-list-color: var(--p3-text-dark-grey);
+  --breadcrumb-page-color: var(--p3-text-grey);
+
+  /* Box (card): no frame; heading 19/28 bold. */
+  --card-border-width: 0px;
+  --card-title-line-height: 28px;
+  --card-title-font-weight: 700;
+}
+
+/* ------------------------------------------------------------------ */
+/* Part 2 — variables on a fixed mark                                  */
+/* ------------------------------------------------------------------ */
+
+/* Box: a line at the bottom only. The card's line width is one variable for
+   all four sides, so the line is drawn as a shadow: the shadow token, set on
+   the card alone. It is not a border and takes no space. */
+[data-slot="card"] {
+  --shadow-sm: 0 3px 0 0 var(--p3-box-line);
+}
+
+/* Active entry of the side navigation: the bar (part 3) takes the place of
+   the left padding, so the entry's content does not move. */
+[data-slot="sidebar-menu-button"][data-active="true"] {
+  --sidebar-menu-button-padding: 0.5rem 0.5rem 0.5rem 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Part 3 — theme CSS for properties no component sets                 */
+/* ------------------------------------------------------------------ */
+/* check-theme-spec: layered-from-here */
+
+/* Not here: a rule for headings (h1 to h4, own face and brand colour) and one
+   for the text of a box. Both would work, and both beat a class that a page
+   or a plugin wrote on the same element; the contract guard counts those
+   cases. The library has no heading part and no size variable for the card's
+   content. */
+
+/* Body text 17/30. Reaches only text without a size utility of its own. */
+body {
+  font-size: 17px;
+  line-height: 30px;
+}
+
+/* Box heading. */
+[data-slot="card-title"] {
+  font-family: var(--font-heading);
+  font-size: 19px;
+  color: var(--p3-brand);
+}
+
+/* Side navigation: white title, bar at the active entry. */
+[data-slot="sidebar-header"] {
+  color: #ffffff;
+}
+[data-slot="sidebar-menu-button"][data-active="true"] {
+  border-left: 8px solid var(--p3-brand);
+}

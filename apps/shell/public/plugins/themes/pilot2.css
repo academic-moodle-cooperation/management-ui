@@ -1,0 +1,255 @@
+/**
+ * Pilot 2 — a theme built after a token system with two tiers (base values,
+ * roles) whose own parts read roles only. A test fixture like pilot.css.
+ *
+ * It asks: how many names does such a theme set here, and how many of them
+ * are roles rather than variables of a single part? The contract is the one
+ * of pilot.css:
+ *
+ *   - variables for everything a component sets itself;
+ *   - theme CSS only for properties no component sets;
+ *   - a class of the caller or of a plugin always wins;
+ *   - the theme does not change the library.
+ *
+ *   Part 1  Variables on the root: the source's two tiers, their mapping onto
+ *           the library's tokens and shared variables, component variables.
+ *   Part 2  Variables set on a fixed mark, nearly always in a state the
+ *           component has no rule for (pressed, hover of a checked box,
+ *           disabled with its own colour).
+ *   Part 3  Theme CSS for properties no component sets.
+ *
+ * The source describes a light look only and three parts (button, checkbox,
+ * spinner). No dark block: in dark mode this file sets the same values.
+ *
+ * The typeface is named in the font stack only; no font file ships with this
+ * fixture, so a machine without it shows the fallback.
+ *
+ * Requirements: apps/playground/scripts/theme-spec-pilot2.mjs.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Part 1 — variables on the root                                      */
+/* ------------------------------------------------------------------ */
+:root {
+  --theme-name: "Pilot 2";
+
+  /* ---- tier 1: base values ---- */
+  --base-brand: #0063a6;
+  --base-brand-dark: #004c80;
+  --base-brand-darker: #003d66;
+  --base-brand-soft: #4c91c0;
+  --base-brand-pale: #b2d0e4;
+  --base-brand-tint: #e5eff6;
+  --base-brand-tint-strong: #cce0ed;
+  --base-white: #ffffff;
+  --base-grey-50: #f8f9fa;
+  --base-grey-100: #f0f2f5;
+  --base-grey-200: #dee2e6;
+  --base-grey-300: #ced4da;
+  --base-grey-400: #adb5bd;
+  --base-grey-600: #666666;
+  --base-grey-800: #333333;
+  --base-focus: #94c154;
+
+  /* ---- tier 2: roles ---- */
+  --role-surface: var(--base-white);
+  --role-surface-muted: var(--base-grey-100);
+  --role-surface-inverse: var(--base-grey-800);
+  --role-text: var(--base-grey-800);
+  --role-text-muted: var(--base-grey-600);
+  --role-text-inverse: var(--base-white);
+  --role-text-link: var(--base-brand);
+  --role-text-link-hover: var(--base-brand-dark);
+  --role-text-disabled: var(--base-grey-400);
+  --role-border: var(--base-grey-300);
+  --role-border-subtle: var(--base-grey-200);
+  --role-focus-ring: var(--base-focus);
+  --role-action-primary-bg: var(--base-brand);
+  --role-action-primary-bg-hover: var(--base-brand-dark);
+  --role-action-primary-bg-active: var(--base-brand-darker);
+  --role-action-primary-bg-disabled: var(--base-brand-soft);
+  --role-action-primary-text: var(--base-white);
+  --role-action-secondary-bg: var(--base-white);
+  --role-action-secondary-border: var(--base-brand);
+  --role-action-text: var(--base-brand);
+  --role-action-bg-hover: var(--base-brand-tint);
+  --role-action-bg-active: var(--base-brand-tint-strong);
+  --role-selected-bg: var(--base-brand);
+  --role-selected-bg-hover: var(--base-brand-dark);
+  --role-selected-bg-disabled: var(--base-brand-pale);
+  /* Without a part that reads them here: a second neutral surface
+     (--base-grey-50), a strong line (--base-grey-400), four audience colours,
+     motion steps. */
+
+  /* ---- mapping onto the library's tokens ---- */
+  --background: var(--role-surface);
+  --foreground: var(--role-text);
+  --card: var(--role-surface);
+  --card-foreground: var(--role-text);
+  --popover: var(--role-surface);
+  --popover-foreground: var(--role-text);
+  --primary: var(--role-action-primary-bg);
+  --primary-foreground: var(--role-action-primary-text);
+  --muted: var(--role-surface-muted);
+  --muted-foreground: var(--role-text-muted);
+  /* The hover surface of the secondary and tertiary button. The library's
+     token for it is shared with menu entries and other hover surfaces. */
+  --accent: var(--role-action-bg-hover);
+  --accent-foreground: var(--role-action-text);
+  --border: var(--role-border-subtle);
+  --input: var(--role-border);
+  --ring: var(--role-focus-ring);
+  --destructive: #bc0909;
+  --ok: #5c8006;
+  --error: #bc0909;
+  --info: #de8006;
+
+  --font-sans: "Source Sans 3", "Source Sans Pro", "Segoe UI", Arial, sans-serif;
+
+  /* ---- shared variables of the components ---- */
+  --control-height: 2.5rem;
+  --control-height-sm: 2rem;
+  --control-height-lg: 3rem;
+  --control-radius: 4px;
+  --control-opacity-disabled: 1;
+  --focus-ring-width: 2px;
+  --focus-ring-color: var(--role-focus-ring);
+
+  /* ---- component variables ---- */
+
+  /* Button. Its heights are not the control heights: in the source they
+     follow from padding and line height. */
+  --button-height: 41px;
+  --button-height-sm: 35.5px;
+  --button-height-lg: 48px;
+  --button-line-height: 1.5;
+  --button-padding-x-has-icon: 1rem;
+  --button-padding-x-sm: 14px;
+  --button-padding-x-sm-has-icon: 14px;
+  --button-padding-x-lg: 20px;
+  --button-padding-x-lg-has-icon: 20px;
+  --button-bg-default-hover: var(--role-action-primary-bg-hover);
+  --button-bg-outline: var(--role-action-secondary-bg);
+  --button-border-color-outline: var(--role-action-secondary-border);
+
+  /* Checkbox */
+  --checkbox-size: 20px;
+  --checkbox-border-width: 2px;
+  --checkbox-bg: var(--role-surface);
+  --checkbox-indicator-size: 1rem;
+
+  /* The line of a part keeps its colour with focus; the ring alone shows
+     it. Each part has its own variable for that line. */
+  --button-border-color-focus: var(--role-action-secondary-border);
+  --checkbox-border-color-focus: var(--role-border);
+  --input-border-color-focus: var(--role-border);
+  --textarea-border-color-focus: var(--role-border);
+  --select-trigger-border-color-focus: var(--role-border);
+  --badge-border-color-focus: transparent;
+  --accordion-trigger-border-color-focus: transparent;
+  --tabs-trigger-border-color-focus: transparent;
+  --switch-border-color-focus: transparent;
+
+  /* Inverse surface: the tooltip. */
+  --tooltip-content-bg: var(--role-surface-inverse);
+  --tooltip-content-color: var(--role-text-inverse);
+}
+
+/* ------------------------------------------------------------------ */
+/* Part 2 — variables on a fixed mark                                  */
+/* ------------------------------------------------------------------ */
+
+/* The small and the large button have their own label size; the button has
+   one font-size variable for all sizes. */
+[data-ui-button][data-size="sm"] {
+  --button-font-size: 13px;
+}
+[data-ui-button][data-size="lg"] {
+  --button-font-size: 1rem;
+}
+
+/* Pressed. The button has no rule for that state, so the resting and the
+   hover variable are set while it is pressed. */
+[data-ui-button][data-variant="default"]:active:not(:disabled) {
+  --button-bg-default: var(--role-action-primary-bg-active);
+  --button-bg-default-hover: var(--role-action-primary-bg-active);
+}
+[data-ui-button][data-variant="outline"]:active:not(:disabled) {
+  --button-bg-outline: var(--role-action-bg-active);
+  --button-bg-outline-hover: var(--role-action-bg-active);
+}
+/* The ghost variant has no resting fill to set: pressed shows only while the
+   pointer is over it. */
+[data-ui-button][data-variant="ghost"]:active:not(:disabled) {
+  --button-bg-ghost-hover: var(--role-action-bg-active);
+}
+
+/* Disabled: a colour of its own, no fade (the fade is off on the root). */
+[data-ui-button][data-variant="default"]:disabled {
+  --button-bg-default: var(--role-action-primary-bg-disabled);
+}
+
+/* Link button under the pointer. */
+[data-ui-button][data-variant="link"]:hover:not(:disabled) {
+  --button-color-link: var(--role-text-link-hover);
+}
+
+/* Checkbox: darker under the pointer while checked; own colours when
+   disabled; indeterminate looks like checked. */
+[data-slot="checkbox"][data-state="checked"]:hover:not(:disabled) {
+  --checkbox-bg-checked: var(--role-selected-bg-hover);
+  --checkbox-border-color-checked: var(--role-selected-bg-hover);
+}
+[data-slot="checkbox"]:disabled {
+  --checkbox-border-color: var(--role-border-subtle);
+  --checkbox-bg: var(--role-surface-muted);
+  --checkbox-bg-checked: var(--role-selected-bg-disabled);
+  --checkbox-border-color-checked: var(--role-selected-bg-disabled);
+}
+[data-slot="checkbox"][data-state="indeterminate"]:not(:disabled) {
+  --checkbox-bg: var(--role-selected-bg);
+  --checkbox-border-color: var(--role-selected-bg);
+}
+
+/* The label next to a checkbox is larger than a field label. There is no
+   mark for "label of a checkbox"; this follows the order of the elements. */
+[data-slot="checkbox"] + [data-slot="label"] {
+  --label-font-size: 1rem;
+  --label-font-weight: 400;
+}
+
+/* Notification: soft surface, line and text per status, through the toast
+   library's own variables and its own `data-type` attribute. */
+.sonner-toast[data-type="success"] {
+  --normal-bg: #eef2e5;
+  --normal-border: #5c8006;
+  --normal-text: #333333;
+}
+.sonner-toast[data-type="info"] {
+  --normal-bg: #fcf2e5;
+  --normal-border: #de8006;
+  --normal-text: #333333;
+}
+.sonner-toast[data-type="error"] {
+  --normal-bg: #f8e5e5;
+  --normal-border: #bc0909;
+  --normal-text: #333333;
+}
+
+/* ------------------------------------------------------------------ */
+/* Part 3 — theme CSS for properties no component sets                 */
+/* ------------------------------------------------------------------ */
+/* check-theme-spec: layered-from-here */
+
+/* Secondary and tertiary button: the label in the action colour. Neither
+   variant sets a text colour at rest. */
+[data-ui-button]:is([data-variant="outline"], [data-variant="ghost"]) {
+  color: var(--role-action-text);
+}
+[data-ui-button]:is([data-variant="outline"], [data-variant="ghost"]):disabled {
+  color: var(--role-text-disabled);
+}
+/* Indeterminate checkbox: the mark in the inverse colour. */
+[data-slot="checkbox"][data-state="indeterminate"] {
+  color: var(--role-text-inverse);
+}
