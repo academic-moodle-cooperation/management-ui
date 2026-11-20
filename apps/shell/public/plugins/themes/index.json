@@ -61,6 +61,12 @@
       "author": "Management UI Core"
     },
     {
+      "id": "pilot2-b",
+      "name": "Pilot 2 (Weg B)",
+      "tagline": "Test fixture: a token system with base values and roles, as rules",
+      "author": "Management UI Core"
+    },
+    {
       "id": "press",
       "name": "Press",
       "tagline": "Editorial, high-contrast, flat",

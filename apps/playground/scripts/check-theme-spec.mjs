@@ -8,7 +8,7 @@
  *
  * Part 1, requirements. Every entry of the spec file with a `check` is
  * measured in the gallery as a computed value, light and dark, at rest or
- * under the pointer or with keyboard focus. An entry the theme claims to meet
+ * under the pointer, pressed or with keyboard focus. An entry the theme claims to meet
  * (how D, V, VM, C) must match; an entry marked N documents the miss and is
  * reported when it unexpectedly matches.
  *
@@ -121,8 +121,14 @@ for (const entry of SPEC) {
       if (entry.how !== "N") failures += 1;
       continue;
     }
+    // A state the gallery does not show: a short script sets it up.
+    if (check.script) await page.evaluate(check.script);
     if (check.settle) await page.mouse.move(2, 2);
     if (check.state === "hover") await locator.hover();
+    if (check.state === "active") {
+      await locator.hover();
+      await page.mouse.down();
+    }
     if (check.state === "focus") {
       await page.keyboard.press("Tab");
       await locator.focus();
@@ -153,6 +159,7 @@ for (const entry of SPEC) {
     }
     result.measured[mode] = { want, got, ok };
     if (entry.how !== "N" && !ok) failures += 1;
+    if (check.state === "active") await page.mouse.up();
     await page.mouse.move(2, 2);
   }
 }
@@ -174,6 +181,7 @@ if (markerAt >= 0) {
   const LONGHANDS = {
     "border-bottom": ["border-bottom-width", "border-bottom-style", "border-bottom-color"],
     "border-top": ["border-top-width", "border-top-style", "border-top-color"],
+    "border-left": ["border-left-width", "border-left-style", "border-left-color"],
     border: ["border-top-width", "border-top-style", "border-top-color", "border-bottom-width", "border-left-width", "border-right-width"],
     margin: ["margin-top", "margin-right", "margin-bottom", "margin-left"],
     "margin-block": ["margin-top", "margin-bottom"],
@@ -268,7 +276,7 @@ const summary = {
   guard: { properties: guard.properties, differences: guard.differences.length },
 };
 
-const HOW = { D: "already so", V: "variable", VM: "variable on a mark", C: "theme CSS", N: "not possible" };
+const HOW = { D: "already so", V: "variable", VM: "variable on a mark", C: "theme CSS", N: "not possible", "?": "no value in the source" };
 const cell = (text) => String(text ?? "").replace(/\|/g, "\\|");
 const measuredText = (entry) =>
   Object.entries(entry.measured)
