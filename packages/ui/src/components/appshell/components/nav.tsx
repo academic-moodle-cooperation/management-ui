@@ -26,7 +26,8 @@ export function Nav({ links, isCollapsed }: NavProps) {
               <TooltipTrigger asChild>
                 <a
                   href="#"
-                  data-ui-button=""
+                  data-ui-button={link.variant}
+                  data-ui-button-size="icon"
                   data-variant={link.variant}
                   data-size="icon"
                   className={cn(
@@ -49,7 +50,8 @@ export function Nav({ links, isCollapsed }: NavProps) {
             <a
               key={index}
               href="#"
-              data-ui-button=""
+              data-ui-button={link.variant}
+              data-ui-button-size="sm"
               data-variant={link.variant}
               data-size="sm"
               className={cn(

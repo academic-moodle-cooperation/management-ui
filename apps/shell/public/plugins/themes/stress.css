@@ -55,6 +55,7 @@
   --control-line-height: 1.5rem;
   --control-border-width: 2px;
   --focus-ring-width: 4px;
+  /* Read by this file's own rule for the dropdown trigger and the text area. */
   --input-padding-x: 1rem;
   --card-spacing: 2rem;
   --card-header-gap: 0.5rem;
@@ -146,12 +147,12 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
-[data-ui-button][data-size="sm"] {
+[data-ui-button-size="sm"] {
   letter-spacing: 0.04em;
 }
 
 /* The link variant, underlined like every other link. */
-[data-ui-button][data-variant="link"] {
+[data-ui-button="link"] {
   text-decoration: underline;
   text-decoration-thickness: 2px;
   text-underline-offset: 0.2em;
@@ -323,9 +324,10 @@ a:not([data-slot]),
 /* Part 3 — rules in the theme layer (parts with their look in a sheet) */
 /* ------------------------------------------------------------------ */
 
-/* The button keeps its look in a stylesheet in the cascade layer `ui`
-   (`packages/ui/src/styles/parts/button.css`) and reads no variable of its
-   own any more. What part 1 said with `--button-*` variables is said here as
+/* Button, text field and checkbox keep their look in stylesheets in the
+   cascade layer `ui` (`packages/ui/src/styles/parts/*.css`) and read no
+   variable of their own any more. What part 1 said with `--button-*` and
+   `--input-*` variables is said here as
    rules on the button's marks, in the layer `ui-theme`: above the button's
    own sheet, below every class of a caller.
 
@@ -333,30 +335,33 @@ a:not([data-slot]),
    file is parsed before the application's stylesheet (the first statement
    wins). A rule here beats the button's sheet in every state, so the padding
    is given again for "has an icon". */
-@layer theme, base, ui, ui-theme, plugins, components, utilities;
+@layer theme, base, ui, ui-theme, ui-states, plugins, components, utilities;
 
 @layer ui-theme {
+  [data-ui-input] {
+    padding-inline: var(--input-padding-x);
+  }
   [data-ui-button] {
     font-weight: 700;
     gap: 0.75rem;
   }
-  [data-ui-button][data-size="default"] {
+  [data-ui-button-size="default"] {
     padding-inline: 1.75rem;
   }
-  [data-ui-button][data-size="default"]:has(> svg) {
+  [data-ui-button-size="default"]:has(> svg) {
     padding-inline: 1.25rem;
   }
-  [data-ui-button][data-size="sm"] {
+  [data-ui-button-size="sm"] {
     gap: 0.5rem;
     padding-inline: 1.25rem;
   }
-  [data-ui-button][data-size="sm"]:has(> svg) {
+  [data-ui-button-size="sm"]:has(> svg) {
     padding-inline: 1rem;
   }
-  [data-ui-button][data-size="lg"] {
+  [data-ui-button-size="lg"] {
     padding-inline: 2.25rem;
   }
-  [data-ui-button][data-size="lg"]:has(> svg) {
+  [data-ui-button-size="lg"]:has(> svg) {
     padding-inline: 1.75rem;
   }
 }

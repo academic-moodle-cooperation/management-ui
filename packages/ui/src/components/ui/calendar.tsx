@@ -43,7 +43,8 @@ function withMarks<P extends object>(
 /** The month navigation uses the outline button look, see `classNames` below. */
 const NAV_BUTTON_MARKS = {
   "data-slot": "calendar-nav-button",
-  "data-ui-button": "",
+  "data-ui-button": "outline",
+  "data-ui-button-size": "default",
   "data-variant": "outline",
   "data-size": "default",
 } as const;

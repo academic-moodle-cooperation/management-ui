@@ -120,7 +120,8 @@ function AlertDialogAction({
   return (
     <AlertDialogPrimitive.Action
       data-slot="alert-dialog-action"
-      data-ui-button=""
+      data-ui-button="default"
+      data-ui-button-size="default"
       data-variant="default"
       data-size="default"
       className={cn(buttonVariants(), className)}
@@ -136,7 +137,8 @@ function AlertDialogCancel({
   return (
     <AlertDialogPrimitive.Cancel
       data-slot="alert-dialog-cancel"
-      data-ui-button=""
+      data-ui-button="outline"
+      data-ui-button-size="default"
       data-variant="outline"
       data-size="default"
       className={cn(buttonVariants({ variant: "outline" }), className)}

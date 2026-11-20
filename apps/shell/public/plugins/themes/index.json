@@ -55,6 +55,12 @@
       "author": "Management UI Core"
     },
     {
+      "id": "pilot-b",
+      "name": "Pilot B",
+      "tagline": "Test fixture: the pilot design as rules in the theme layer",
+      "author": "Management UI Core"
+    },
+    {
       "id": "press",
       "name": "Press",
       "tagline": "Editorial, high-contrast, flat",

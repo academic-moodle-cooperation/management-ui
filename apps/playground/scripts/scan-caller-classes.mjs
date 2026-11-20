@@ -19,6 +19,9 @@
  *             it does not replace (the class and the state are named)
  *   icon      an icon inside a button sized with w-/h- classes other than
  *             16px (today the button forces 16px unless the class is `size-*`)
+ *   icon16    an icon inside a button sized with w-4 / h-4: no change by
+ *             itself, but a theme's icon size no longer reaches it (the
+ *             class wins; today the button's own size wins)
  *   font      a text field with a font-size class (today the field's own
  *             size from the `md` breakpoint up wins)
  *   relabel   a Button rendered through `asChild` by a wrapper that sets its
@@ -185,8 +188,9 @@ for (const root of roots) {
                 const cls = attribute(childOpening, "className");
                 const text = cls ? strings(cls.initializer && ts.isJsxExpression(cls.initializer) ? cls.initializer.expression : cls.initializer).texts.join(" ") : "";
                 const sized = text.split(/\s+/).filter((token) => /^(w|h)-/.test(token) && !hasVariant(token));
-                if (sized.length && !/(^|\s)size-/.test(text) && sized.some((token) => !/^(w|h)-4$/.test(token))) {
-                  add(childOpening, "icon", `${childOpening.tagName.getText()} ${sized.join(" ")}`);
+                if (sized.length && !/(^|\s)size-/.test(text)) {
+                  const sixteen = sized.every((token) => /^(w|h)-4$/.test(token));
+                  add(childOpening, sixteen ? "icon16" : "icon", `${childOpening.tagName.getText()} ${sized.join(" ")}`);
                 }
               }
               ts.forEachChild(child, icons);

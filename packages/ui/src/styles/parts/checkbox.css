@@ -1,0 +1,76 @@
+/*
+ * Checkbox — the look.
+ *
+ * The component (`components/ui/checkbox.tsx`) carries layout, behaviour and
+ * marks only. The look is ordinary CSS on `[data-slot="checkbox"]` and its
+ * states: `[data-state="checked"]`, `:focus-visible`, `:disabled`,
+ * `[aria-invalid="true"]`. No wrapper replaces the checkbox's slot, so it
+ * needs no mark of its own.
+ *
+ * Cascade layer `ui` (see `globals.css`): below a theme's rules and below
+ * every utility class.
+ *
+ * The order of the rules is part of the look: "checked" comes after focus
+ * and invalid, so a checked box keeps its own line colour in both.
+ */
+
+[data-slot="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  border-style: solid;
+  border-width: 1px;
+  border-color: var(--input);
+  border-radius: 4px;
+  background-color: transparent;
+  outline-style: none;
+  transition-property: box-shadow;
+  transition-timing-function: var(--default-transition-timing-function);
+  transition-duration: var(--default-transition-duration);
+  --tw-shadow: var(--shadow-xs);
+  box-shadow:
+    var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow, 0 0 #0000),
+    var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
+    var(--tw-shadow, 0 0 #0000);
+}
+
+[data-slot="checkbox-indicator"] svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+[data-slot="checkbox"]:disabled {
+  opacity: var(--control-opacity-disabled, 0.5);
+}
+
+[data-slot="checkbox"]:focus-visible {
+  border-color: var(--ring);
+  --tw-ring-color: var(--focus-ring-color, color-mix(in oklab, var(--ring) 50%, transparent));
+  --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0
+    calc(var(--focus-ring-width, 3px) + var(--tw-ring-offset-width, 0px))
+    var(--tw-ring-color, currentcolor);
+  box-shadow:
+    var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow, 0 0 #0000),
+    var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
+    var(--tw-shadow, 0 0 #0000);
+}
+
+[data-slot="checkbox"][aria-invalid="true"] {
+  border-color: var(--destructive);
+  --tw-ring-color: color-mix(in oklab, var(--destructive) 20%, transparent);
+}
+
+[data-slot="checkbox"][data-state="checked"] {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+[data-slot="checkbox"]:is(.dark *) {
+  background-color: color-mix(in oklab, var(--input) 30%, transparent);
+}
+[data-slot="checkbox"]:is(.dark *)[data-state="checked"] {
+  background-color: var(--primary);
+}
+[data-slot="checkbox"]:is(.dark *)[aria-invalid="true"] {
+  --tw-ring-color: color-mix(in oklab, var(--destructive) 40%, transparent);
+}

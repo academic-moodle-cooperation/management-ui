@@ -28,7 +28,7 @@ const { values, positionals } = parseArgs({
     selector: {
       type: "string",
       default:
-        "[data-ui-button], [data-slot=button], [data-slot=input], [data-slot=checkbox], [data-slot=calendar-day-button]",
+        "[data-ui-button], [data-slot=button], [data-ui-input], [data-slot=input], [data-slot=sidebar-input], [data-slot=checkbox], [data-slot=calendar-day-button]",
     },
     theme: { type: "string", default: "default" },
     style: { type: "string", default: "default" },

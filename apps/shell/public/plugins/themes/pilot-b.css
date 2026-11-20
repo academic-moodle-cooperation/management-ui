@@ -1,0 +1,561 @@
+/**
+ * Pilot B — the same design as `pilot.css`, for a library in which button,
+ * text field and checkbox keep their look in a stylesheet (cascade layer
+ * `ui`) instead of reading a variable per value.
+ *
+ * For those three parts the theme writes ordinary CSS on their fixed marks,
+ * in the cascade layer `ui-theme` (part 3): above the part's own sheet, below
+ * every class of a caller or a plugin. Everything else is unchanged from
+ * `pilot.css` and still goes through variables (parts 1, 2 and 4).
+ *
+ * A rule in `ui-theme` beats the part's sheet in EVERY state, also where the
+ * part has a rule for hover, focus or invalid. A declaration that only gives
+ * back what the part did in such a state is marked `forced`.
+ *
+ * The typeface of the design system is licensed. "Barlow" (SIL Open Font
+ * License) is the free stand-in; no font file ships with this fixture.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Part 1 — variables on the root                                      */
+/* ------------------------------------------------------------------ */
+:root {
+  --theme-name: "Pilot B";
+
+  /* The brand colour. THE ONE SWITCH: change this number and every coloured
+     part follows.
+       0 blue · 1 petrol · 2 green · 3 bronze · 4 red · 5 purple · 6 grey */
+  --brand: 0;
+
+  /* Lookup of the two given tones per brand colour (100 and 120). Each line
+     is "this colour if --brand is my number, else the rest of the chain". */
+  --pick-0: calc(100% * (1 - min(1, max(var(--brand) - 0, 0 - var(--brand)))));
+  --pick-1: calc(100% * (1 - min(1, max(var(--brand) - 1, 1 - var(--brand)))));
+  --pick-2: calc(100% * (1 - min(1, max(var(--brand) - 2, 2 - var(--brand)))));
+  --pick-3: calc(100% * (1 - min(1, max(var(--brand) - 3, 3 - var(--brand)))));
+  --pick-4: calc(100% * (1 - min(1, max(var(--brand) - 4, 4 - var(--brand)))));
+  --pick-5: calc(100% * (1 - min(1, max(var(--brand) - 5, 5 - var(--brand)))));
+  --brand-100: color-mix(
+    in srgb,
+    #215caf var(--pick-0),
+    color-mix(
+      in srgb,
+      #007894 var(--pick-1),
+      color-mix(
+        in srgb,
+        #627313 var(--pick-2),
+        color-mix(
+          in srgb,
+          #8e6713 var(--pick-3),
+          color-mix(
+            in srgb,
+            #b7352d var(--pick-4),
+            color-mix(in srgb, #a7117a var(--pick-5), #6f6f6f)
+          )
+        )
+      )
+    )
+  );
+  --brand-120: color-mix(
+    in srgb,
+    #08407e var(--pick-0),
+    color-mix(
+      in srgb,
+      #00596d var(--pick-1),
+      color-mix(
+        in srgb,
+        #365213 var(--pick-2),
+        color-mix(
+          in srgb,
+          #704f12 var(--pick-3),
+          color-mix(
+            in srgb,
+            #96272d var(--pick-4),
+            color-mix(in srgb, #8c0a59 var(--pick-5), #575757)
+          )
+        )
+      )
+    )
+  );
+  /* The lighter steps are mixes of the 100 tone with white. That reproduces
+     the given values exactly for five brand colours and within two levels
+     per channel for petrol and purple. */
+  --brand-40: color-mix(in srgb, var(--brand-100) 40%, #fff);
+  --brand-10: color-mix(in srgb, var(--brand-100) 10%, #fff);
+
+  /* Semantic colours, light. `.dark` below replaces exactly this block. */
+  --cd-background: #fff;
+  --cd-background-muted: #f6f6f6;
+  --cd-background-interactive: #222;
+  --cd-background-strong: #000;
+  --cd-foreground: #000;
+  --cd-foreground-muted: rgb(34 34 34 / 0.48);
+  --cd-accent: var(--brand-100);
+  --cd-accent-muted: var(--brand-40);
+  --cd-accent-strong: var(--brand-120);
+  --cd-text-secondary: rgb(0 0 0 / 0.6);
+  --cd-text-inverse: #fff;
+  --cd-error: #e2001a;
+  --cd-warning: #fda726;
+  --cd-success: #2e7b32;
+  --cd-on-status: #fff;
+  --cd-interactive: rgb(0 0 0 / 0.6);
+  --cd-interactive-hover: #000;
+  --cd-interactive-muted: rgb(34 34 34 / 0.2);
+  --cd-border: #000;
+  --cd-border-muted: #8c8c8c;
+  --cd-border-disabled: rgb(34 34 34 / 0.2);
+  /* Read from single components, not from the semantic layer. */
+  --cd-rule: #e2e2e2;
+  --cd-rule-soft: #f1f1f1;
+  --cd-option: #6f6f6f;
+  --cd-switch-off: rgb(34 34 34 / 0.096);
+
+  /* The button family. Coloured is the default here; the neutral family is
+     `var(--cd-background-interactive)` and `var(--cd-interactive-hover)`. */
+  --cd-button: var(--cd-accent);
+  --cd-button-hover: var(--cd-accent-strong);
+
+  /* ---- mapping onto the library's tokens ---- */
+  --background: var(--cd-background);
+  --foreground: var(--cd-foreground);
+  --card: var(--cd-background);
+  --card-foreground: var(--cd-foreground);
+  --popover: var(--cd-background);
+  --popover-foreground: var(--cd-foreground);
+  --primary: var(--cd-button);
+  --primary-foreground: var(--cd-text-inverse);
+  --secondary: var(--cd-background-muted);
+  --secondary-foreground: var(--cd-foreground);
+  --muted: var(--cd-background-muted);
+  --muted-foreground: var(--cd-text-secondary);
+  --accent: var(--cd-background-muted);
+  --accent-foreground: var(--cd-foreground);
+  --destructive: var(--cd-error);
+  --destructive-foreground: var(--cd-error);
+  --border: var(--cd-rule);
+  --input: var(--cd-border-muted);
+  --ring: var(--cd-border);
+  --ok: var(--cd-success);
+  --ok-foreground: var(--cd-on-status);
+  --warning: var(--cd-warning);
+  --warning-foreground: #000;
+  --error: var(--cd-error);
+  --error-foreground: var(--cd-on-status);
+
+  /* Side navigation: no surface of its own, the active entry shows through
+     colour (and the weight the component already sets). */
+  --sidebar: var(--cd-background);
+  --sidebar-foreground: var(--cd-foreground);
+  --sidebar-primary: var(--cd-accent);
+  --sidebar-primary-foreground: var(--cd-text-inverse);
+  --sidebar-accent: transparent;
+  --sidebar-accent-foreground: var(--cd-accent);
+  --sidebar-border: var(--cd-interactive-muted);
+  --sidebar-ring: var(--cd-border);
+  --color-footer: var(--cd-background-muted);
+
+  /* Type, radius, shadows */
+  --font-sans: "Barlow", Arial, "Helvetica Neue", Helvetica, "Liberation Sans", sans-serif;
+  --font-heading: var(--font-sans);
+  --radius: 0.375rem; /* menus use radius - 2px = 4px */
+  --shadow-xs: 0 0 #0000;
+  --shadow-sm: 0 0 12px rgb(0 0 0 / 0.04), 0 1px 2px rgb(0 0 0 / 0.12);
+  --shadow-card: 0 0 12px rgb(0 0 0 / 0.04), 0 1px 2px rgb(0 0 0 / 0.12);
+  --shadow-md: 0 3px 15px rgb(34 34 34 / 0.1), 0 0 4px rgb(34 34 34 / 0.1);
+  --shadow-lg: 0 2px 24px rgb(0 0 0 / 0.08), 0 1px 4px rgb(0 0 0 / 0.16);
+  --shadow-sidebar: 0 0 #0000;
+
+  /* ---- shared variables of the components ---- */
+  --control-radius: 2px;
+  --control-border-width: 1px;
+  --focus-ring-width: 2px;
+  /* The focus line is solid, not a half-transparent ring. */
+  --focus-ring-color: var(--ring);
+
+  /* ---- component variables ---- */
+
+  /* The destructive parts keep a red surface in dark; the error token turns
+     into a light tint there, which is meant for lines and text. */
+  --badge-bg-destructive: #e2001a;
+  /* Disabled entries are not faded; they get their own colour in part 4. */
+  --select-item-opacity-disabled: 1;
+
+  /* Text field, text area, dropdown trigger, label */
+  --textarea-radius: 2px;
+  --textarea-line-height: 1.5;
+  --select-trigger-radius: 2px;
+  --select-trigger-height: 2.3125rem;
+  --select-trigger-line-height: 1.5;
+  --label-font-weight: 400;
+  --label-line-height: 1.5;
+
+  /* Options list of the dropdown: grey entries, black under the pointer and
+     no hover surface; entries 50 high. */
+  --select-content-color: var(--cd-option);
+  --select-content-padding: 0.25rem 1rem;
+  --select-item-bg-focus: transparent;
+  --select-item-color-focus: var(--cd-foreground);
+  --select-item-line-height: 1.5;
+  --select-item-padding-y: 0.875rem;
+
+  /* Switch: neutral when on, never brand-coloured. */
+  --switch-width: 2.5rem;
+  --switch-height: 1rem;
+  --switch-bg-checked: var(--cd-background-interactive);
+  --switch-bg-unchecked: var(--cd-switch-off);
+  /* The knob stands over the track: 24 on a 16 high track, 14 to travel. */
+  --switch-thumb-size: 1.5rem;
+  --switch-thumb-offset-checked: 14px;
+  --switch-thumb-bg: #fff;
+  --switch-thumb-shadow: 0 2px 24px rgb(0 0 0 / 0.08), 0 1px 4px rgb(0 0 0 / 0.16);
+  --switch-thumb-ring-width: 0.5px;
+  --switch-thumb-ring-color: var(--cd-border-muted);
+
+  /* Tag */
+  --badge-radius: 999px;
+
+  /* Notification: no shadow, larger text and icon. */
+  --sonner-toast-shadow: 0 0 #0000;
+  --sonner-toast-font-size: 1rem;
+  --sonner-toast-gap: 10px;
+  --sonner-icon-size: 1.5rem;
+  /* `inherit` cannot travel in a variable; the current colour is the same. */
+  --sonner-description-color: currentColor;
+  --sonner-description-line-height: 1.5;
+
+  /* Breadcrumb */
+  --breadcrumb-list-gap: 4px;
+  --breadcrumb-item-gap: 4px;
+  --breadcrumb-list-line-height: 1.5;
+  --breadcrumb-list-color: var(--cd-option);
+
+  /* Side navigation */
+  --sidebar-wrapper-width: 15rem;
+  --sidebar-menu-button-font-size: 1rem;
+  --sidebar-menu-button-line-height: 1.2;
+  --sidebar-menu-button-height: auto;
+  --sidebar-menu-button-padding: 0.75rem 0;
+  --sidebar-menu-button-radius: 0px;
+
+  /* Context menu */
+  --dropdown-menu-content-color: var(--cd-interactive);
+  --dropdown-menu-content-padding: 1.25rem 1rem;
+  --dropdown-menu-separator-bg: var(--cd-background-muted);
+  --dropdown-menu-item-font-size: 1rem;
+  --dropdown-menu-item-line-height: 1.2;
+  --dropdown-menu-item-padding-x: 0px;
+  --dropdown-menu-item-padding-y: 0.625rem;
+
+  --card-radius: 0.75rem;
+}
+
+/* Small screens: the design system's "Mobile" type sizes and its smaller
+   spacing step, set on the same variables. The breakpoint is an assumption;
+   the design files name the modes, not the width. The text field keeps the
+   library's 16px below this width (it prevents the zoom on phones). */
+@media (max-width: 767px) {
+  :root {
+    --sidebar-menu-button-font-size: 0.875rem;
+    --dropdown-menu-item-font-size: 0.875rem;
+    --sonner-toast-font-size: 0.875rem;
+    --label-font-size: 0.75rem;
+    --select-trigger-font-size: 0.75rem;
+    /* The breadcrumb is hidden on phones. */
+    --breadcrumb-display: none;
+  }
+}
+
+.dark {
+  /* On dark surfaces the accent is white, not the brand colour. */
+  --cd-background: #222;
+  --cd-background-muted: rgb(255 255 255 / 0.3);
+  --cd-background-interactive: #fff;
+  --cd-background-strong: #fff;
+  --cd-foreground: #fff;
+  --cd-foreground-muted: rgb(255 255 255 / 0.4);
+  --cd-accent: rgb(255 255 255 / 0.92);
+  --cd-accent-muted: rgb(255 255 255 / 0.4);
+  --cd-accent-strong: #fff;
+  --cd-text-secondary: rgb(255 255 255 / 0.92);
+  --cd-text-inverse: #000;
+  --cd-error: #fef2f4;
+  --cd-warning: #fff6e9;
+  --cd-success: #f2f7f3;
+  --cd-on-status: #000;
+  --cd-interactive: rgb(255 255 255 / 0.92);
+  --cd-interactive-hover: #fff;
+  --cd-interactive-muted: rgb(255 255 255 / 0.3);
+  --cd-border: #fff;
+  --cd-border-muted: rgb(255 255 255 / 0.92);
+  --cd-border-disabled: rgb(255 255 255 / 0.4);
+  /* Not drawn in dark in the design system; taken from the semantic layer. */
+  --cd-rule: rgb(255 255 255 / 0.3);
+  --cd-rule-soft: rgb(255 255 255 / 0.3);
+  --cd-option: rgb(255 255 255 / 0.92);
+  --cd-switch-off: rgb(255 255 255 / 0.3);
+
+  --shadow-md: 0 1px 7px rgb(255 255 255 / 0.54), 0 1px 4px rgb(255 255 255 / 0.1);
+}
+
+/* ------------------------------------------------------------------ */
+/* Part 2 — variables on a fixed mark                                  */
+/* ------------------------------------------------------------------ */
+
+/* Text area and dropdown trigger: darker line under the pointer. */
+[data-slot="textarea"]:hover:not(:disabled),
+[data-slot="select-trigger"]:hover:not(:disabled) {
+  --input: var(--cd-border);
+}
+
+/* Rule: room above and below the horizontal line only. */
+[data-slot="separator"][data-orientation="horizontal"] {
+  --separator-margin-y: 12px;
+}
+
+/* Context menu: its own, deeper shadow. Shadows are theme tokens shared by
+   all floating surfaces, so this one is set on the part. */
+[data-slot="dropdown-menu-content"] {
+  --shadow-md: 0 1px 40px rgb(0 0 0 / 0.16), 0 1px 2px rgb(0 0 0 / 0.24);
+}
+
+/* Notification: one solid surface per status, no visible frame. The values
+   go into the toast library's own variables; the status comes from the toast
+   library's own `data-type` attribute, there is no fixed mark for it. */
+.sonner-toast {
+  --border-radius: 8px;
+  --normal-bg: var(--cd-background-strong);
+  --normal-text: var(--cd-text-inverse);
+  --normal-border: var(--cd-background-strong);
+}
+.sonner-toast[data-type="success"] {
+  --normal-bg: #2e7b32;
+  --normal-text: #fff;
+  --normal-border: #2e7b32;
+}
+.sonner-toast[data-type="warning"] {
+  --normal-bg: #fda726;
+  --normal-text: #000;
+  --normal-border: #fda726;
+}
+.sonner-toast[data-type="error"] {
+  --normal-bg: #e2001a;
+  --normal-text: #fff;
+  --normal-border: #e2001a;
+}
+
+/* ------------------------------------------------------------------ */
+/* Part 3 — rules in the theme layer: button, link, text field, checkbox */
+/* ------------------------------------------------------------------ */
+
+/* The order comes first, so it also holds if this file is parsed before the
+   application's stylesheet (the first statement wins). */
+@layer theme, base, ui, ui-theme, ui-states, plugins, components, utilities;
+
+@layer ui-theme {
+  /* ---- Button ---- */
+
+  /* Label 16px / 120%, also in the small size; gap 10. */
+  [data-ui-button] {
+    font-size: 1rem;
+    line-height: 1.2;
+    gap: 0.625rem;
+  }
+  /* Icon 20px, 16px in the small size. */
+  [data-ui-button] svg:not([class*="size-"]) {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  [data-ui-button-size="sm"] svg:not([class*="size-"]) {
+    width: 1rem;
+    height: 1rem;
+  }
+  /* 48 high with 32 padding; small 32 with 16; icon-only square 48. The same
+     padding with and without an icon: the rule wins over the part's
+     "has an icon" rule by itself. */
+  [data-ui-button-size="default"],
+  [data-ui-button-size="lg"] {
+    height: 3rem;
+    padding-inline: 2rem;
+  }
+  [data-ui-button-size="sm"] {
+    height: 2rem;
+    padding-inline: 1rem;
+  }
+  [data-ui-button-size="icon"] {
+    width: 3rem;
+    height: 3rem;
+  }
+  /* Small screens: the "Mobile" type size and the smaller spacing step (the
+     breakpoint is an assumption). */
+  @media (max-width: 767px) {
+    [data-ui-button] {
+      font-size: 0.875rem;
+    }
+    [data-ui-button-size="default"],
+    [data-ui-button-size="lg"] {
+      padding-inline: 1.5rem;
+    }
+  }
+
+  /* Primary: under the pointer the strong tone, fully opaque. */
+  [data-ui-button="default"]:hover {
+    background-color: var(--cd-button-hover);
+  }
+
+  /* Secondary (variant outline): no fill and no hover surface, in light and
+     dark, and its own line colour. One rule: it also wins over the part's
+     hover and dark fills. */
+  [data-ui-button="outline"] {
+    background-color: transparent;
+    border-color: var(--cd-interactive-muted);
+  }
+  [data-ui-button="outline"]:hover {
+    border-color: var(--cd-interactive-hover);
+  }
+  [data-ui-button="outline"]:focus-visible {
+    border-color: var(--ring); /* forced */
+  }
+  [data-ui-button="outline"][aria-invalid="true"] {
+    border-color: var(--destructive); /* forced */
+  }
+
+  /* The destructive button keeps a red surface in dark; the error token is a
+     light tint there, meant for lines and text. */
+  [data-ui-button="destructive"] {
+    background-color: #e2001a;
+  }
+  [data-ui-button="destructive"]:hover {
+    background-color: color-mix(in oklab, #e2001a 90%, transparent); /* forced */
+  }
+
+  /* Link: text colour instead of the brand colour, no button box, and a thin
+     bottom border in the brand colour instead of a text decoration (the rule
+     also wins over the part's underline under the pointer). After the size
+     rules on purpose. */
+  [data-ui-button="link"] {
+    height: auto;
+    padding: 0;
+    border-radius: 0;
+    border-bottom: 1px solid var(--cd-accent);
+    color: var(--cd-foreground);
+    text-decoration-line: none;
+  }
+  [data-ui-button="link"]:hover {
+    color: var(--cd-interactive);
+  }
+
+  /* Disabled: muted fill and text instead of the fade. */
+  [data-ui-button]:disabled {
+    opacity: 1;
+    color: var(--cd-foreground-muted);
+  }
+  :is([data-ui-button="default"], [data-ui-button="secondary"], [data-ui-button="destructive"]):disabled {
+    background-color: var(--cd-background-muted);
+  }
+  [data-ui-button="outline"]:disabled {
+    border-color: var(--cd-border-disabled);
+  }
+
+  /* ---- Text field ---- */
+
+  /* 37 high, text 14px / 150%. */
+  [data-ui-input] {
+    height: 2.3125rem;
+    line-height: 1.5;
+  }
+  /* Darker line under the pointer. `:where()` keeps the rule as light as the
+     rules for invalid and disabled below, so their order decides. */
+  [data-ui-input]:hover:where(:not(:disabled)) {
+    border-color: var(--cd-border);
+  }
+  /* Invalid: a heavier line. */
+  [data-ui-input][aria-invalid="true"] {
+    border-width: 2px;
+    border-color: var(--destructive); /* forced */
+  }
+  /* Disabled: light line, light text and muted surface instead of the fade. */
+  [data-ui-input]:disabled {
+    opacity: 1;
+    border-color: var(--cd-border-disabled);
+    background-color: var(--cd-background-muted);
+    color: var(--cd-foreground-muted);
+  }
+
+  /* ---- Checkbox ---- */
+
+  /* 24 x 24, radius 2, a 16px check. */
+  [data-slot="checkbox"] {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 2px;
+  }
+  [data-slot="checkbox-indicator"] svg {
+    width: 1rem;
+    height: 1rem;
+  }
+  /* Darker line under the pointer. */
+  [data-slot="checkbox"]:hover:where(:not(:disabled)) {
+    border-color: var(--cd-border);
+  }
+  [data-slot="checkbox"][aria-invalid="true"] {
+    border-color: var(--destructive); /* forced */
+  }
+  /* Checked: neutral, never brand-coloured. */
+  [data-slot="checkbox"][data-state="checked"] {
+    background-color: var(--cd-background-interactive);
+    border-color: var(--cd-background-interactive);
+    color: var(--cd-text-inverse);
+  }
+  /* Invalid and checked: error fill. */
+  [data-slot="checkbox"][aria-invalid="true"][data-state="checked"] {
+    background-color: var(--cd-error);
+    border-color: var(--cd-error);
+  }
+  /* Disabled: light grey line and fill instead of the fade. */
+  [data-slot="checkbox"]:disabled {
+    opacity: 1;
+    border-color: var(--cd-border-disabled);
+    background-color: var(--cd-background-muted);
+  }
+  [data-slot="checkbox"]:disabled[data-state="checked"] {
+    background-color: var(--cd-border-disabled);
+    border-color: transparent;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Part 4 — theme CSS for properties no component sets                 */
+/* ------------------------------------------------------------------ */
+/* check-theme-spec: layered-from-here */
+
+/* Disabled entry of the options list: its own colour instead of the fade. */
+[data-slot="select-item"][data-disabled] {
+  color: var(--cd-foreground-muted);
+}
+
+/* Options list: a faint line under every entry; the chosen entry in the
+   text colour. */
+[data-slot="select-item"] {
+  border-bottom: 1px solid var(--cd-rule-soft);
+}
+[data-slot="select-item"][data-state="checked"] {
+  color: var(--cd-foreground);
+}
+
+/* Breadcrumb: the collapsed middle and the parent right before the current
+   page in a second, darker grey. */
+[data-slot="breadcrumb-ellipsis"],
+[data-slot="breadcrumb-item"]:has(
+    + [data-slot="breadcrumb-separator"]
+      + [data-slot="breadcrumb-item"]
+      > [data-slot="breadcrumb-page"]
+  )
+  > [data-slot="breadcrumb-link"] {
+  color: var(--cd-interactive);
+}
+
+/* Side navigation: a line under every entry. */
+[data-slot="sidebar-menu-item"] {
+  border-bottom: 1px solid var(--cd-interactive-muted);
+}

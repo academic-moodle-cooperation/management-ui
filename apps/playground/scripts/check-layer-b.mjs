@@ -14,6 +14,8 @@
  *                  "none" loads it unlayered, the way a theme file is loaded today
  *   --layers       a full `@layer a, b, c;` order to declare before any
  *                  stylesheet loads (the first declaration fixes the order)
+ *   --root-attr    `name=value`, set on the root element before the page
+ *                  renders (for example `data-ui-states=above`)
  *   --plugin       what the fixture's plugin sheet ships besides its
  *                  utilities: "plain" (default), "preflight" (Tailwind's
  *                  reset in its `base` layer) or "copy" (the reset plus a
@@ -34,6 +36,7 @@ const { values } = parseArgs({
     "theme-layer": { type: "string", default: "ui-theme" },
     layers: { type: "string" },
     plugin: { type: "string", default: "plain" },
+    "root-attr": { type: "string" },
   },
 });
 
@@ -74,7 +77,7 @@ function pluginExtraCss() {
           .map((name) => readFileSync(path.join(dir, name), "utf8"))
       : [];
     // The library's own order statement, as the plugin's build would carry it.
-    css = `@layer theme, base, ui, ui-theme, plugins, components, utilities;\n${css}@layer ui {\n${parts.join("\n")}\n}\n`;
+    css = `@layer theme, base, ui, ui-theme, ui-states, plugins, components, utilities;\n${css}@layer ui {\n${parts.join("\n")}\n}\n`;
   }
   return css;
 }
@@ -108,6 +111,10 @@ for (const mode of ["light", "dark"]) {
   if (mode === "dark") query.set("mode", "dark");
   await page.goto(`${values.url}/?${query}`, { waitUntil: "networkidle" });
   await page.waitForSelector("style[data-layer-b-fixture]", { state: "attached" });
+  if (values["root-attr"]) {
+    const [name, value] = values["root-attr"].split("=");
+    await page.evaluate(([n, v]) => document.documentElement.setAttribute(n, v ?? ""), [name, value]);
+  }
   await page.waitForTimeout(400); // the plugin sheet is an @import of a blob URL
   await page.addStyleTag({ content: "*, *::before, *::after { transition: none !important; }" });
 

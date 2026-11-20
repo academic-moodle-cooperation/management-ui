@@ -31,8 +31,9 @@
    default Tailwind theme into `@layer plugins`. Move them into `@theme`/a layer
    and a plugin's defaults would start overriding the host's.
 
-   EXPERIMENT (look in a stylesheet): two more layers, `ui` and `ui-theme`,
-   between `base` and `plugins`.
+   EXPERIMENT (look in a stylesheet): the layers `ui` and `ui-theme` (and
+   `ui-states`, an alternative under test that is empty by default) between
+   `base` and `plugins`.
 
    - `ui` holds the look of a part as ordinary CSS on its fixed marks
      (`styles/parts/*.css`). The part itself carries layout, behaviour and
@@ -51,7 +52,7 @@
    `* { padding: 0; border: 0 solid }`) resets the look of every part in
    `ui`. A plugin sheet must therefore not ship a preflight; the documented
    entry (theme + utilities, see docs/extend/styling.md) does not. */
-@layer theme, base, ui, ui-theme, plugins, components, utilities;
+@layer theme, base, ui, ui-theme, ui-states, plugins, components, utilities;
 
 @import "tailwindcss";
 
@@ -59,7 +60,12 @@
    layers `ui` and `ui-theme` above). `ui.parts` holds one file per part,
    `ui.style` the rules of a style such as "compact". */
 @import "./parts/button.css" layer(ui.parts);
+@import "./parts/input.css" layer(ui.parts);
+@import "./parts/checkbox.css" layer(ui.parts);
 @import "./parts/compact.css" layer(ui.style);
+/* An alternative under test, inert without `data-ui-states="above"` on the
+   root element: see the file. */
+@import "./parts/button-states.css" layer(ui-states);
 @plugin "tailwindcss-animate";
 
 /* Scan THIS library's own files for the utility classes its components use.
@@ -290,7 +296,7 @@
    the theme, which supplies the colours. It comes after `.dark` on purpose,
    so its shadow values also hold in dark mode.
 
-   A part that keeps its look in a stylesheet (the button) reads only the
+   A part that keeps its look in a stylesheet (button, text field, checkbox) reads only the
    shared variables below; what the style changes on that part alone is a
    rule in `parts/compact.css`. */
 [data-style="compact"] {
@@ -303,7 +309,6 @@
   --focus-ring-width: 2px;
   --shadow-xs: 0 0 #0000;
   --shadow-sm: 0 0 #0000;
-  --input-padding-x: 0.625rem;
   --card-spacing: 1rem;
   --card-header-gap: 0.25rem;
   --card-radius: var(--radius);

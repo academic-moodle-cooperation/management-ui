@@ -1,0 +1,23 @@
+/*
+ * Button — ALTERNATIVE, off by default: the state lines above the theme.
+ *
+ * The problem it answers: a theme rule for the resting look
+ * (`[data-ui-button="outline"] { border-color: … }`) sits in a higher layer
+ * than the button's sheet and therefore also beats the button's line colour
+ * with keyboard focus and when invalid. The theme has to give both back.
+ *
+ * Here those two declarations are repeated in the cascade layer `ui-states`,
+ * which sits ABOVE `ui-theme` and still below every class of a caller. A
+ * theme's resting rule no longer removes them. A theme that wants its own
+ * focus or error line writes that rule into `ui-states` as well.
+ *
+ * Only for the button, and only while the root element carries
+ * `data-ui-states="above"`; without the attribute nothing here applies.
+ * No variable is involved.
+ */
+:where([data-ui-states="above"]) :is([data-ui-button], [data-slot="calendar-day-button"]):focus-visible {
+  border-color: var(--ring);
+}
+:where([data-ui-states="above"]) :is([data-ui-button], [data-slot="calendar-day-button"])[aria-invalid="true"] {
+  border-color: var(--destructive);
+}

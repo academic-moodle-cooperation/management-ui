@@ -8,25 +8,28 @@
  * parts and below a theme. Like a theme, a rule here wins over the part in
  * every state, so a padding has to be given again for "has an icon".
  */
+[data-style="compact"] [data-ui-input] {
+  padding-inline: 0.625rem;
+}
 [data-style="compact"] [data-ui-button] {
   gap: 0.375rem;
 }
-[data-style="compact"] [data-ui-button][data-size="default"] {
+[data-style="compact"] [data-ui-button-size="default"] {
   padding-inline: 0.75rem;
 }
-[data-style="compact"] [data-ui-button][data-size="default"]:has(> svg) {
+[data-style="compact"] [data-ui-button-size="default"]:has(> svg) {
   padding-inline: 0.625rem;
 }
-[data-style="compact"] [data-ui-button][data-size="sm"] {
+[data-style="compact"] [data-ui-button-size="sm"] {
   gap: 0.25rem;
   padding-inline: 0.625rem;
 }
-[data-style="compact"] [data-ui-button][data-size="sm"]:has(> svg) {
+[data-style="compact"] [data-ui-button-size="sm"]:has(> svg) {
   padding-inline: 0.5rem;
 }
-[data-style="compact"] [data-ui-button][data-size="lg"] {
+[data-style="compact"] [data-ui-button-size="lg"] {
   padding-inline: 1rem;
 }
-[data-style="compact"] [data-ui-button][data-size="lg"]:has(> svg) {
+[data-style="compact"] [data-ui-button-size="lg"]:has(> svg) {
   padding-inline: 0.75rem;
 }

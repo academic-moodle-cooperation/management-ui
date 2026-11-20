@@ -25,7 +25,8 @@ const BUTTON_STRUCTURE =
  * The button's layout classes. Variant and size are no longer classes: they
  * are the marks `data-variant` and `data-size`, which `Button` sets. An
  * element that uses `buttonVariants()` directly gets the button look only if
- * it also carries `data-ui-button`, `data-variant` and `data-size`.
+ * it also carries `data-ui-button="<variant>"` and
+ * `data-ui-button-size="<size>"`.
  */
 const buttonVariants: (props?: ButtonVariantProps & ClassProp) => string = (props) =>
   cn(BUTTON_STRUCTURE, props?.class, props?.className);
@@ -42,18 +43,20 @@ function Button({
   }) {
   const Comp = asChild ? Slot : "button";
 
-  // Fixed marks; the stylesheet and a theme select on them. `data-slot` is
-  // lost when a wrapper renders the button through `asChild`
-  // (`<DialogTrigger asChild><Button />`): the wrapper's own `data-slot`
-  // arrives in `props` and replaces it. No wrapper sets `data-ui-button`, so
-  // that mark stays on every element that is a button. A wrapper with its own
-  // variant or size (a dropdown menu item, a sidebar menu button) still wins
-  // `data-variant` / `data-size`, as before; with the look on the marks, the
-  // button then takes the look of the wrapper's value.
+  // Fixed marks; the stylesheet and a theme select on them.
+  //
+  // `data-ui-button` carries the variant and `data-ui-button-size` the size.
+  // They are the button's own: no wrapper sets them, so they survive
+  // `asChild`. `data-slot`, `data-variant` and `data-size` do not: a wrapper's
+  // values arrive in `props` and replace them (`<DialogTrigger asChild>`
+  // replaces the slot, a dropdown menu item or a sidebar menu button also
+  // variant and size, and their own rules depend on that). Those three stay
+  // for whoever reads them, but the look hangs on the button's own marks only.
   return (
     <Comp
       data-slot="button"
-      data-ui-button=""
+      data-ui-button={variant ?? "default"}
+      data-ui-button-size={size ?? "default"}
       data-variant={variant ?? "default"}
       data-size={size ?? "default"}
       className={buttonVariants({ className })}

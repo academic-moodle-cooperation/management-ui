@@ -3,10 +3,13 @@ import { useEffect, type ReactNode } from "react";
 import {
   Button,
   buttonVariants,
+  Checkbox,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Input,
+  SidebarInput,
   type ButtonVariant,
 } from "@oc-mui/ui/components";
 
@@ -62,8 +65,13 @@ export const THEME_REST = {
   "box-shadow": "rgb(13, 23, 33) 0px 0px 0px 1px",
 };
 
+// The three parts under test. The text field is named twice: by the mark that
+// survives a wrapper and by its slot, so the same sheet also measures a state
+// of the library in which the field has no such mark yet.
+const PART = ':is([data-ui-button], [data-ui-input], [data-slot="input"], [data-slot="checkbox"])';
+
 const THEME_CSS = `
-[data-fx-theme="rest"] [data-ui-button] {
+[data-fx-theme="rest"] ${PART} {
   background-color: rgb(10, 20, 30);
   color: rgb(11, 21, 31);
   border-color: rgb(12, 22, 32);
@@ -76,27 +84,30 @@ const THEME_CSS = `
   opacity: 0.9;
   box-shadow: 0 0 0 1px rgb(13, 23, 33);
 }
-[data-fx-theme="states"] [data-ui-button] {
+[data-fx-theme="states"] ${PART} {
   background-color: rgb(10, 20, 30);
   color: rgb(11, 21, 31);
   border-color: rgb(12, 22, 32);
 }
-[data-fx-theme="states"] [data-ui-button]:hover {
+[data-fx-theme="states"] ${PART}:hover {
   background-color: rgb(40, 50, 60);
   color: rgb(41, 51, 61);
 }
-[data-fx-theme="states"] [data-ui-button]:focus-visible {
+[data-fx-theme="states"] ${PART}:focus-visible {
   border-color: rgb(42, 52, 62);
   box-shadow: 0 0 0 2px rgb(43, 53, 63);
 }
-[data-fx-theme="states"] [data-ui-button]:active {
+[data-fx-theme="states"] ${PART}:active {
   background-color: rgb(44, 54, 64);
 }
-[data-fx-theme="states"] [data-ui-button]:disabled {
+[data-fx-theme="states"] ${PART}[data-state="checked"] {
+  background-color: rgb(47, 57, 67);
+}
+[data-fx-theme="states"] ${PART}:disabled {
   opacity: 0.7;
   background-color: rgb(45, 55, 65);
 }
-[data-fx-theme="states"] [data-ui-button][aria-invalid="true"] {
+[data-fx-theme="states"] ${PART}[aria-invalid="true"] {
   border-color: rgb(46, 56, 66);
 }
 `;
@@ -145,14 +156,14 @@ ${window.__layerB?.pluginExtraCss ?? ""}
 ${PLUGIN_RULES.map(([selector, declarations]) => `  ${selector} { ${declarations} }`).join("\n")}
 }
 @layer plugin-overrides {
-  .fx-plugin-scope [data-ui-button] {
+  .fx-plugin-scope ${PART} {
     background-color: rgb(121, 122, 123);
     height: 55px;
   }
-  .fx-plugin-scope [data-ui-button]:hover {
+  .fx-plugin-scope ${PART}:hover {
     background-color: rgb(124, 125, 126);
   }
-  .fx-plugin-scope-important [data-ui-button] {
+  .fx-plugin-scope-important ${PART} {
     background-color: rgb(131, 132, 133) !important;
     height: 57px !important;
   }
@@ -190,14 +201,15 @@ function useFixtureSheets() {
 type Want = Record<string, string>;
 
 /**
- * One case, three times: plain, disabled, invalid. `want` is what the caller
- * asked for (computed property → value); `who` names the contender whose
- * values these are.
+ * One case, several times: plain, disabled, invalid, and for a checkbox also
+ * checked. `want` is what the contender asked for (computed property →
+ * value); `who` names the contender whose values these are.
  */
 function Case({
   id,
   who,
   want,
+  kind = "button",
   variant,
   size,
   className,
@@ -207,32 +219,189 @@ function Case({
   id: string;
   who: "caller" | "plugin" | "none";
   want?: Want;
+  kind?: "button" | "input" | "checkbox";
   variant?: ButtonVariant;
   size?: "default" | "sm" | "lg" | "icon";
   className?: string;
   icon?: boolean;
   iconClassName?: string;
 }) {
-  const render = (suffix: string, extra: Record<string, unknown>): ReactNode => (
-    <Button
-      key={suffix}
-      data-case={`${id}${suffix}`}
-      data-who={who}
-      data-want={JSON.stringify(want ?? {})}
-      variant={variant}
-      size={size}
-      className={className}
-      {...extra}
-    >
-      {icon ? <PlusIcon className={iconClassName} /> : null}
-      {id}
-    </Button>
-  );
+  const render = (suffix: string, extra: Record<string, unknown>): ReactNode => {
+    const marks = {
+      "data-case": `${id}${suffix}`,
+      "data-who": who,
+      "data-want": JSON.stringify(want ?? {}),
+    };
+    if (kind === "input") {
+      return <Input key={suffix} {...marks} className={className} placeholder={id} {...extra} />;
+    }
+    if (kind === "checkbox") {
+      return <Checkbox key={suffix} {...marks} className={className} aria-label={id} {...extra} />;
+    }
+    return (
+      <Button key={suffix} {...marks} variant={variant} size={size} className={className} {...extra}>
+        {icon ? <PlusIcon className={iconClassName} /> : null}
+        {id}
+      </Button>
+    );
+  };
   return (
     <>
       {render("", {})}
       {render("|disabled", { disabled: true })}
       {render("|invalid", { "aria-invalid": true })}
+      {kind === "checkbox" ? render("|checked", { checked: true }) : null}
+    </>
+  );
+}
+
+/** The text field's and the checkbox's cases; the same questions as for the button. */
+function FieldCases({ prefix }: { prefix: string }) {
+  return (
+    <>
+      <Row label="Text field: no class, caller, plugin sheet">
+        <Case id={`${prefix}plain-input`} who="none" kind="input" />
+        <Case
+          id={`${prefix}caller-input-border`}
+          who="caller"
+          kind="input"
+          className="border-[rgb(3,4,5)]"
+          want={{ "border-top-color": "rgb(3, 4, 5)" }}
+        />
+        <Case
+          id={`${prefix}caller-input-bg`}
+          who="caller"
+          kind="input"
+          className="bg-[rgb(1,2,3)]"
+          want={{ "background-color": "rgb(1, 2, 3)" }}
+        />
+        <Case
+          id={`${prefix}caller-input-opacity`}
+          who="caller"
+          kind="input"
+          className="opacity-[0.93]"
+          want={{ opacity: "0.93" }}
+        />
+        <Case
+          id={`${prefix}caller-input-font`}
+          who="caller"
+          kind="input"
+          className="text-[19px]"
+          want={{ "font-size": "19px" }}
+        />
+        <Case
+          id={`${prefix}caller-input-metrics`}
+          who="caller"
+          kind="input"
+          className="h-[41px] rounded-[9px] px-[21px]"
+          want={{ height: "41px", "border-top-left-radius": "9px", "padding-left": "21px" }}
+        />
+        <Case id={`${prefix}caller-input-shadow-none`} who="caller" kind="input" className="shadow-none" />
+        <Case
+          id={`${prefix}caller-input-own-focus`}
+          who="caller"
+          kind="input"
+          className="focus-visible:border-[rgb(6,7,8)]"
+          want={{ "border-top-color@focus-visible": "rgb(6, 7, 8)" }}
+        />
+        <Case
+          id={`${prefix}plugin-input-colors`}
+          who="plugin"
+          kind="input"
+          className={`${P.bg} ${P.border}`}
+          want={{ "background-color": "rgb(101, 102, 103)", "border-top-color": "rgb(107, 108, 109)" }}
+        />
+        <Case
+          id={`${prefix}plugin-input-metrics`}
+          who="plugin"
+          kind="input"
+          className={`${P.h} ${P.px} ${P.rounded}`}
+          want={{ height: "51px", "padding-left": "37px", "border-top-left-radius": "3px" }}
+        />
+        <Case
+          id={`${prefix}plugin-input-important`}
+          who="plugin"
+          kind="input"
+          className={`${P.bgImportant} ${P.hImportant}`}
+          want={{ "background-color": "rgb(111, 112, 113)", height: "53px" }}
+        />
+        <span className="fx-plugin-scope contents">
+          <Case
+            id={`${prefix}plugin-input-rule`}
+            who="plugin"
+            kind="input"
+            want={{
+              "background-color": "rgb(121, 122, 123)",
+              "background-color@hover": "rgb(124, 125, 126)",
+              height: "55px",
+            }}
+          />
+        </span>
+      </Row>
+      <Row label="Checkbox: no class, caller, plugin sheet">
+        <Case id={`${prefix}plain-checkbox`} who="none" kind="checkbox" />
+        <Case
+          id={`${prefix}caller-checkbox-border`}
+          who="caller"
+          kind="checkbox"
+          className="border-[rgb(3,4,5)]"
+          want={{ "border-top-color": "rgb(3, 4, 5)" }}
+        />
+        <Case
+          id={`${prefix}caller-checkbox-bg`}
+          who="caller"
+          kind="checkbox"
+          className="bg-[rgb(1,2,3)]"
+          want={{ "background-color": "rgb(1, 2, 3)" }}
+        />
+        <Case
+          id={`${prefix}caller-checkbox-color`}
+          who="caller"
+          kind="checkbox"
+          className="text-[rgb(2,3,4)]"
+          want={{ color: "rgb(2, 3, 4)" }}
+        />
+        <Case
+          id={`${prefix}caller-checkbox-opacity`}
+          who="caller"
+          kind="checkbox"
+          className="opacity-[0.93]"
+          want={{ opacity: "0.93" }}
+        />
+        <Case
+          id={`${prefix}caller-checkbox-metrics`}
+          who="caller"
+          kind="checkbox"
+          className="size-[23px] rounded-[9px]"
+          want={{ height: "23px", "border-top-left-radius": "9px" }}
+        />
+        <Case
+          id={`${prefix}plugin-checkbox-colors`}
+          who="plugin"
+          kind="checkbox"
+          className={`${P.bg} ${P.border}`}
+          want={{ "background-color": "rgb(101, 102, 103)", "border-top-color": "rgb(107, 108, 109)" }}
+        />
+        <Case
+          id={`${prefix}plugin-checkbox-important`}
+          who="plugin"
+          kind="checkbox"
+          className={`${P.bgImportant} ${P.hImportant}`}
+          want={{ "background-color": "rgb(111, 112, 113)", height: "53px" }}
+        />
+        <span className="fx-plugin-scope contents">
+          <Case
+            id={`${prefix}plugin-checkbox-rule`}
+            who="plugin"
+            kind="checkbox"
+            want={{
+              "background-color": "rgb(121, 122, 123)",
+              "background-color@hover": "rgb(124, 125, 126)",
+              height: "55px",
+            }}
+          />
+        </span>
+      </Row>
     </>
   );
 }
@@ -514,7 +683,7 @@ function PlainCases({ prefix }: { prefix: string }) {
  */
 function MarkCases() {
   return (
-    <Row label="Marks: a button relabelled by a wrapper, and buttonVariants() on a bare element">
+    <Row label="Marks: a part relabelled by a wrapper, and buttonVariants() on a bare element">
       <DropdownMenu open modal={false}>
         <DropdownMenuTrigger asChild>
           <Button data-case="marks-trigger" data-who="none" data-want="{}" variant="outline">
@@ -543,6 +712,13 @@ function MarkCases() {
       >
         buttonVariants() on a link
       </a>
+      <Input data-case="marks-input" data-who="none" data-want="{}" placeholder="text field" />
+      <SidebarInput
+        data-case="marks-sidebar-input"
+        data-who="none"
+        data-want="{}"
+        placeholder="text field relabelled by the sidebar"
+      />
     </Row>
   );
 }
@@ -556,6 +732,7 @@ export function LayerBSection() {
       <PlainCases prefix="" />
       <CallerCases prefix="" />
       <PluginCases prefix="" />
+      <FieldCases prefix="" />
       <MarkCases />
 
       <h3 className="text-sm font-medium">Theme sets the resting look only</h3>
@@ -563,6 +740,7 @@ export function LayerBSection() {
         <PlainCases prefix="rest/" />
         <CallerCases prefix="rest/" />
         <PluginCases prefix="rest/" />
+        <FieldCases prefix="rest/" />
       </div>
 
       <h3 className="text-sm font-medium">Theme sets the resting look and every state</h3>
@@ -570,6 +748,7 @@ export function LayerBSection() {
         <PlainCases prefix="states/" />
         <CallerCases prefix="states/" />
         <PluginCases prefix="states/" />
+        <FieldCases prefix="states/" />
       </div>
     </Section>
   );
