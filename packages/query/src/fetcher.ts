@@ -19,6 +19,20 @@ const isNullBubbling = (error: GraphQLErrorShape): boolean =>
   /declared as a non null type.*returned a null value/i.test(error.message ?? "");
 
 /**
+ * An error whose path runs through a list index (`nodes/2/publications/0/uri`)
+ * belongs to one record: graphql-java nulls the failing field and returns
+ * everything else. A resolver that throws on one event's publication URI, for
+ * instance, must leave the rest of the table intact. An error without a list
+ * index in its path (an authorization failure on `currentUser`, say) concerns
+ * the request as a whole and still fails it.
+ */
+const isRecordScoped = (error: GraphQLErrorShape): boolean =>
+  error.path?.some((segment) => typeof segment === "number") ?? false;
+
+const isTolerable = (error: GraphQLErrorShape): boolean =>
+  isNullBubbling(error) || isRecordScoped(error);
+
+/**
  * Matches stub fragments: "fragment PluginXxxFields on TypeName { __typename }".
  * Convention: core defines one such stub per extensible type (Event, Series, …);
  * at runtime each is replaced with merged plugin fragments for that type.
@@ -58,9 +72,9 @@ export const fetchData = <TData, TVariables>(
     const json = await response.json();
 
     const errors: GraphQLErrorShape[] = Array.isArray(json.errors) ? json.errors : [];
-    if (errors.length > 0 && json.data != null && errors.every(isNullBubbling)) {
-      logger.warn("GraphQL response has null entries where the schema promises values; continuing with partial data", {
-        paths: errors.map((e) => e.path?.join("/") ?? "?"),
+    if (errors.length > 0 && json.data != null && errors.every(isTolerable)) {
+      logger.warn("GraphQL response has errors on individual records; continuing with partial data", {
+        errors: errors.map((e) => `${e.path?.join("/") ?? "?"}: ${e.message ?? "unknown error"}`),
       });
       return json.data;
     }

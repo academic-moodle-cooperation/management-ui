@@ -88,6 +88,69 @@ describe("fetcher", () => {
       await expect(fetchData("query { test }")()).rejects.toThrow("non null type");
     });
 
+    it("returns partial data when a field of one list entry fails to resolve", async () => {
+      // A resolver threw on one event's publication URI; graphql-java nulls the
+      // field and returns every event.
+      const data = {
+        currentUser: {
+          myEvents: {
+            nodes: [
+              { id: "a", publications: [] },
+              { id: "b", publications: [{ uri: null, tracks: [] }] },
+            ],
+          },
+        },
+      };
+      const mockResponse = {
+        json: vi.fn().mockResolvedValue({
+          data,
+          errors: [
+            {
+              message: "Internal server error",
+              path: ["currentUser", "myEvents", "nodes", 1, "publications", 0, "uri"],
+              extensions: { classification: "InternalError" },
+            },
+          ],
+        }),
+      };
+      vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
+
+      await expect(fetchData("query { test }")()).resolves.toEqual(data);
+    });
+
+    it("still fails when an error is not tied to a list entry", async () => {
+      const mockResponse = {
+        json: vi.fn().mockResolvedValue({
+          data: { currentUser: { myEvents: null } },
+          errors: [
+            {
+              message: "Internal server error",
+              path: ["currentUser", "myEvents"],
+              extensions: { classification: "InternalError" },
+            },
+          ],
+        }),
+      };
+      vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
+
+      await expect(fetchData("query { test }")()).rejects.toThrow("Internal server error");
+    });
+
+    it("still fails when a record-level error comes with a request-level one", async () => {
+      const mockResponse = {
+        json: vi.fn().mockResolvedValue({
+          data: { currentUser: null },
+          errors: [
+            { message: "Internal server error", path: ["currentUser", "myEvents", "nodes", 0, "title"] },
+            { message: "The current user is not authorized", path: ["currentUser"] },
+          ],
+        }),
+      };
+      vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
+
+      await expect(fetchData("query { test }")()).rejects.toThrow("Internal server error");
+    });
+
     it("should pass variables to request", async () => {
       const mockData = { test: "data" };
       const variables = { id: "123" };
