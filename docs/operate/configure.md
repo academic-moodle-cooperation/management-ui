@@ -23,7 +23,7 @@ Switch the deployment to the shipped `forest-sage` theme and drop the upload fea
 
 Save, reload: the colours change and **Upload** disappears from the sidebar. Why it looks like this:
 
-- **`app.theme`** names a theme; the shell loads `<name>.css` on top of the always-present `default` baseline. Shipped in the core bundle: `aurora`, `ember`, `forest-sage`, `heritage-burgundy`, `modern`, `modern-slate`, `oxford-navy`, `press`, plus `example` — which is a sample, not a design. Light/dark is a separate toggle in the header, not a theme; an organization's own theme comes from a theme plugin.
+- **`app.theme`** names a theme; the shell loads `<name>.css` on top of the always-present `default` baseline. Shipped in the core bundle: `aurora`, `ember`, `forest-sage`, `heritage-burgundy`, `modern`, `modern-slate`, `oxford-navy`, `press`, plus `example` — which is a sample, not a design. Light/dark is a separate toggle in the header, not a theme (turn it off with `app.darkMode`, below); an organization's own theme comes from a theme plugin.
 - **`app.enabledPlugins` replaces the default list wholesale** — arrays never merge item by item, so disabling one plugin means listing all the others. The default is `["core", "episodes", "series", "upload", "admin", "config"]`; this drops `upload`. Always keep `core` and `config`. **Mind the naming:** these are namespaces, not sidebar labels — the entry a user sees as **Videos** is the `episodes` namespace, and there is no `videos` key anywhere.
 - Everything unnamed — locale, auth, branding, plugin slices — is omitted and stays at its default. Keep whatever your file already carries; this shows a deployment whose *only* customizations are these two.
 
@@ -50,6 +50,7 @@ All under `app.*` and applied at runtime once the config loads, so a deployment 
 - **`logoUrl` / `orgLogoUrl`** — the app logo and an optional organization logo (empty by default).
 - **`faviconUrl`** — default `assets/favicon/favicon.svg`, a *relative* URL resolved against the app's base path. The shell drops any existing favicon links and injects the configured SVG plus an `.ico` link derived from it (`.svg` → `.ico`) for browsers without SVG-favicon support, so ship both files side by side.
 - **`locale`** — the active language. Plugins ship their own translations.
+- **`darkMode`** — default `true`. Set it to `false` when your theme has no dark variant: the UI then always uses the light appearance and the Light/Dark/System toggle disappears from the header. A user's earlier choice is kept in their browser, so it comes back if you switch dark mode on again. A user whose OS or earlier choice is dark may still see the loading screen in dark for a moment, because the shell cannot read `config.json` until after the first paint.
 
 ## Look it up
 

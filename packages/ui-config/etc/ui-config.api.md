@@ -23,6 +23,7 @@ export interface AppConfig {
         orgLogoUrl?: string;
         faviconUrl?: string;
         theme: string;
+        darkMode?: boolean;
         enabledPlugins: string[];
     };
     // (undocumented)

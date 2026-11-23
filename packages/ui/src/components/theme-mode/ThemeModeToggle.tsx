@@ -18,10 +18,13 @@ import { useThemeMode } from "./theme-mode-context";
  * The trigger shows a sun in light mode and a moon in dark mode (cross-faded
  * via the `dark:` variant). Selecting an option persists it through
  * `ThemeModeProvider` (host-only, `@oc-mui/ui/internal`); "System" follows the OS preference.
+ * Renders nothing when the deployment has turned dark mode off.
  */
 export function ThemeModeToggle() {
-  const { setTheme } = useThemeMode();
+  const { setTheme, darkModeEnabled } = useThemeMode();
   const { t } = useTranslation();
+
+  if (!darkModeEnabled) return null;
 
   return (
     <DropdownMenu>

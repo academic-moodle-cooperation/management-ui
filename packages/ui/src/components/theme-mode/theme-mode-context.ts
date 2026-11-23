@@ -29,7 +29,16 @@ export interface ThemeModeContextValue {
   resolvedTheme: ResolvedThemeMode;
   /** The OS preference, regardless of `theme`. */
   systemTheme: ResolvedThemeMode;
-  /** Change the choice; it is persisted under {@link THEME_MODE_STORAGE_KEY}. */
+  /**
+   * Whether the deployment allows dark mode (`app.darkMode` in the shell's
+   * config). When `false`, `theme` and `resolvedTheme` are always `"light"`
+   * and `setTheme` does nothing.
+   */
+  darkModeEnabled: boolean;
+  /**
+   * Change the choice; it is persisted under {@link THEME_MODE_STORAGE_KEY}.
+   * Does nothing while `darkModeEnabled` is `false`.
+   */
   setTheme: (theme: ThemeMode) => void;
 }
 
@@ -48,6 +57,7 @@ const FALLBACK: ThemeModeContextValue = {
   theme: "system",
   resolvedTheme: "light",
   systemTheme: "light",
+  darkModeEnabled: true,
   setTheme: () => {},
 };
 

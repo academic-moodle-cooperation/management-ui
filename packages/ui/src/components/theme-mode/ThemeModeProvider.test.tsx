@@ -3,6 +3,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { THEME_MODE_STORAGE_KEY, useThemeMode } from "./theme-mode-context";
 import { ThemeModeProvider } from "./ThemeModeProvider";
+import { ThemeModeToggle } from "./ThemeModeToggle";
+
+// The toggle only needs labels; a real i18n instance would suspend the render.
+vi.mock("@oc-mui/i18n", () => ({
+  useTranslation: () => ({ t: (key: string) => key }),
+}));
 
 const DARK_QUERY = "(prefers-color-scheme: dark)";
 
@@ -160,6 +166,55 @@ describe("ThemeModeProvider", () => {
     // component" — the reason the next-themes wrapper was replaced.
     const { container } = render(<ThemeModeProvider>{null}</ThemeModeProvider>);
     expect(container.querySelector("script")).toBeNull();
+  });
+
+  describe("with darkMode={false}", () => {
+    it("applies light whatever the stored choice and the OS prefer", () => {
+      osPrefersDark = true;
+      localStorage.setItem(THEME_MODE_STORAGE_KEY, "dark");
+      render(
+        <ThemeModeProvider darkMode={false}>
+          <Probe />
+        </ThemeModeProvider>,
+      );
+      expect(screen.getByRole("status").textContent).toBe("light/light/dark");
+      expect(htmlClass()).toBe("light");
+      expect(document.documentElement.style.colorScheme).toBe("light");
+    });
+
+    it("ignores setTheme and keeps the stored choice for later", () => {
+      localStorage.setItem(THEME_MODE_STORAGE_KEY, "system");
+      const { result } = renderHook(() => useThemeMode(), {
+        wrapper: ({ children }) => (
+          <ThemeModeProvider darkMode={false}>{children}</ThemeModeProvider>
+        ),
+      });
+      expect(result.current.darkModeEnabled).toBe(false);
+
+      act(() => result.current.setTheme("dark"));
+
+      expect(result.current.resolvedTheme).toBe("light");
+      expect(htmlClass()).toBe("light");
+      expect(localStorage.getItem(THEME_MODE_STORAGE_KEY)).toBe("system");
+    });
+
+    it("hides the appearance toggle", () => {
+      const { container } = render(
+        <ThemeModeProvider darkMode={false}>
+          <ThemeModeToggle />
+        </ThemeModeProvider>,
+      );
+      expect(container.querySelector("button")).toBeNull();
+    });
+  });
+
+  it("shows the appearance toggle by default", () => {
+    render(
+      <ThemeModeProvider>
+        <ThemeModeToggle />
+      </ThemeModeProvider>,
+    );
+    expect(screen.getByRole("button")).toBeTruthy();
   });
 
   it("useThemeMode is safe without a provider", () => {

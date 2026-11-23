@@ -2600,6 +2600,7 @@ export function useAppConfig(): {
     orgLogoUrl?: string;
     faviconUrl?: string;
     theme: string;
+    darkMode?: boolean;
     enabledPlugins: string[];
     };
     auth: {

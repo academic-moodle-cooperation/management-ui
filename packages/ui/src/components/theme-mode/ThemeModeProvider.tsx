@@ -89,12 +89,25 @@ function applyResolvedTheme(resolved: ResolvedThemeMode): void {
  * - Transitions are suppressed while the tokens swap, so toggling does not
  *   cross-fade every surface.
  *
+ * - `darkMode={false}` turns dark mode off for the deployment: the light
+ *   appearance is applied whatever the user or the OS prefers, `setTheme` does
+ *   nothing, and `ThemeModeToggle` renders nothing. The stored choice is left
+ *   alone, so turning dark mode back on restores it.
+ *
  * No `<script>` is rendered inside the React tree (React ≥ 19.2 logs an error
  * for that), which is why this replaced the earlier `next-themes` wrapper.
  */
-export function ThemeModeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeMode>(readStoredTheme);
+export function ThemeModeProvider({
+  children,
+  darkMode = true,
+}: {
+  children: ReactNode;
+  /** Whether dark mode is available at all. Defaults to `true`. */
+  darkMode?: boolean;
+}) {
+  const [storedTheme, setThemeState] = useState<ThemeMode>(readStoredTheme);
   const [systemTheme, setSystemTheme] = useState<ResolvedThemeMode>(readSystemTheme);
+  const theme: ThemeMode = darkMode ? storedTheme : "light";
   const resolvedTheme: ResolvedThemeMode = theme === "system" ? systemTheme : theme;
 
   useLayoutEffect(() => {
@@ -123,18 +136,22 @@ export function ThemeModeProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  const setTheme = useCallback((next: ThemeMode) => {
-    setThemeState(next);
-    try {
-      window.localStorage.setItem(THEME_MODE_STORAGE_KEY, next);
-    } catch {
-      // Storage unavailable: the choice still holds for this page's lifetime.
-    }
-  }, []);
+  const setTheme = useCallback(
+    (next: ThemeMode) => {
+      if (!darkMode) return;
+      setThemeState(next);
+      try {
+        window.localStorage.setItem(THEME_MODE_STORAGE_KEY, next);
+      } catch {
+        // Storage unavailable: the choice still holds for this page's lifetime.
+      }
+    },
+    [darkMode],
+  );
 
   const value = useMemo<ThemeModeContextValue>(
-    () => ({ theme, resolvedTheme, systemTheme, setTheme }),
-    [theme, resolvedTheme, systemTheme, setTheme],
+    () => ({ theme, resolvedTheme, systemTheme, darkModeEnabled: darkMode, setTheme }),
+    [theme, resolvedTheme, systemTheme, darkMode, setTheme],
   );
 
   return <ThemeModeContext.Provider value={value}>{children}</ThemeModeContext.Provider>;
