@@ -192,23 +192,41 @@ const AppWithConfig = () => {
     };
   }, [themeName]);
 
+  // `app.darkMode: false` pins the light appearance and hides the header
+  // toggle. The provider sits here rather than at the root because it needs
+  // the config; until the config loads it allows dark mode, matching the
+  // `index.html` bootstrap.
+  const darkMode = config.app.darkMode !== false;
+
   // If config is not ready, show a loading state
-  if (isLoading) return <AppLoader>Loading configuration...</AppLoader>;
+  if (isLoading) {
+    return (
+      <ThemeModeProvider darkMode={darkMode}>
+        <AppLoader>Loading configuration...</AppLoader>
+      </ThemeModeProvider>
+    );
+  }
 
   // If the config fetch failed, render a screen explaining what went wrong
   // instead of an indefinite loading spinner. The dev path tells you
   // exactly which env var fixes it; the prod path is a generic
   // "contact your admin". See ConfigLoadError for the messaging.
   if (isError) {
-    return <ConfigLoadError error={error} configUrl={configUrl} onRetry={() => refetch()} />;
+    return (
+      <ThemeModeProvider darkMode={darkMode}>
+        <ConfigLoadError error={error} configUrl={configUrl} onRetry={() => refetch()} />
+      </ThemeModeProvider>
+    );
   }
 
   return (
-    <PluginInitializer config={config}>
-      <DynamicRouterProvider>
-        {(router: AnyRouter) => <AppProviders router={router} />}
-      </DynamicRouterProvider>
-    </PluginInitializer>
+    <ThemeModeProvider darkMode={darkMode}>
+      <PluginInitializer config={config}>
+        <DynamicRouterProvider>
+          {(router: AnyRouter) => <AppProviders router={router} />}
+        </DynamicRouterProvider>
+      </PluginInitializer>
+    </ThemeModeProvider>
   );
 };
 
@@ -225,10 +243,8 @@ export const AppContainer = () => {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ThemeModeProvider>
-      <UiRouterProvider value={uiRouterPrimitives}>
-        <AppContainer />
-      </UiRouterProvider>
-    </ThemeModeProvider>
+    <UiRouterProvider value={uiRouterPrimitives}>
+      <AppContainer />
+    </UiRouterProvider>
   </React.StrictMode>,
 );

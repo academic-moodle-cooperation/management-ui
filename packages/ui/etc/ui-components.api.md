@@ -1034,6 +1034,7 @@ export type ThemeMode = "light" | "dark" | "system";
 
 // @public
 export interface ThemeModeContextValue {
+    darkModeEnabled: boolean;
     resolvedTheme: ResolvedThemeMode;
     setTheme: (theme: ThemeMode) => void;
     systemTheme: ResolvedThemeMode;
@@ -1041,7 +1042,7 @@ export interface ThemeModeContextValue {
 }
 
 // @public
-export function ThemeModeToggle(): JSX.Element;
+export function ThemeModeToggle(): JSX.Element | null;
 
 // Warning: (ae-forgotten-export) The symbol "TimeFieldProps" needs to be exported by the entry point index.d.ts
 //

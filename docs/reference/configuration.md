@@ -38,6 +38,9 @@ interface AppConfig {
     orgLogoUrl?: string;
     faviconUrl?: string;
     theme: string;
+    // `false` pins the light appearance and hides the header's
+    // Light/Dark/System toggle. Default `true`.
+    darkMode?: boolean;
 
     // Ship filter — only plugins whose namespace is listed here are
     // allowed to load at all. The default ships the OSS core plus two
@@ -85,7 +88,7 @@ interface AppConfig {
 | `downloadBaseUrl` | Optional base URL for media downloads.                                                                                                                                                                                                       |
 | `matomo` | Matomo analytics settings (`enabled: false` by default).                                                                                                                                                                                     |
 | `api` | API endpoints: `baseUrl`, `graphqlEndpoint`.                                                                                                                                                                                                 |
-| `app.*` | Shell settings: `channel`,`tags` for setting the download channels in Opencast, `theme`, `locale`, the `enabledPlugins` ship filter, and the branding keys `HtmlDocumentTitle`, `logoUrl`, `orgLogoUrl`, `faviconUrl`.                       |
+| `app.*` | Shell settings: `channel`,`tags` for setting the download channels in Opencast, `theme`, `darkMode`, `locale`, the `enabledPlugins` ship filter, and the branding keys `HtmlDocumentTitle`, `logoUrl`, `orgLogoUrl`, `faviconUrl`.                       |
 | `auth.*` | Where the shell sends users to log in / out — see below.                                                                                                                                                                                     |
 | `plugins[id]` | A per-plugin slice, owned by that plugin.                                                                                                                                                                                                    |
 

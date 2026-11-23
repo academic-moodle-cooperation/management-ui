@@ -29,6 +29,7 @@ export const defaultConfig: AppConfig = {
     orgLogoUrl: "",
     faviconUrl: "assets/favicon/favicon.svg",
     theme: "default",
+    darkMode: true,
     // Core OSS plugins that ship with the shell plus the two integration
     // hooks:
     //  - `admin`  → admin-marketplace plugin (bundled)

@@ -67,6 +67,12 @@ export interface AppConfig {
     faviconUrl?: string;
     theme: string;
     /**
+     * Whether users may switch to dark mode. `false` always shows the light
+     * appearance and hides the Light/Dark/System toggle in the header.
+     * Defaults to `true`.
+     */
+    darkMode?: boolean;
+    /**
      * Flat list of plugin namespaces the shell is allowed to load at all
      * (ship/load filter). Default covers the OSS core: `core`, `episodes`,
      * `series`, `upload`, `admin` (marketplace), and the `config`
