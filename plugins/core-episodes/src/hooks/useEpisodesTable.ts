@@ -17,6 +17,7 @@ import { useSidebarStore } from "../stores/sidebarStore";
 import { useEventFilterParams } from "./useEventFilterParams";
 import { useTableState } from "./useTableState";
 
+import type { EpisodesLayout } from "../episodesTableConfig";
 import type { TableBaseState } from "./useTableState";
 
 export type EpisodesUpdateData = {
@@ -95,14 +96,20 @@ function episodesTableReducer(
 
 
 /**
- * Custom hook for managing episodes table state and data fetching
+ * Custom hook for managing episodes table state and data fetching.
+ *
+ * `layout` selects which view's column visibility is read and written: the
+ * list and gallery layouts show different column sets, so each remembers its
+ * own show/hide choices. The list keeps the original storage key so existing
+ * choices survive.
  */
-export function useEpisodesTable(seriesId?: string) {
+export function useEpisodesTable(seriesId?: string, layout: EpisodesLayout = "list") {
   // Use the general table state hook
   const tableState = useTableState<EpisodesTableState, EpisodesTableAction>(
     initialState,
     episodesTableReducer,
     "episodes",
+    layout === "gallery" ? "gallery" : undefined,
   );
   const eventFilterParams = useEventFilterParams();
 

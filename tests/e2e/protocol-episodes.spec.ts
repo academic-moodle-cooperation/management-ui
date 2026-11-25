@@ -96,6 +96,26 @@ test("[VID-16] column visibility survives paging to the next page", async ({ pag
   await expect(page.getByRole("columnheader", { name: /^description$/i })).toHaveCount(0);
 });
 
+test("[VID-16b] list and gallery remember their column visibility separately", async ({
+  page,
+}) => {
+  // Series is a column of both layouts: hiding it in the list must not hide
+  // it in the gallery, and the list must still have it hidden on the way back.
+  await installMockBackend(page, { events: [makeEvent()] });
+  await page.goto("/management-ui/episodes");
+
+  const seriesHeader = page.getByRole("columnheader", { name: /^series$/i });
+  await expect(seriesHeader).toBeVisible({ timeout: 15_000 });
+  await toggleColumn(page, /^series$/i);
+  await expect(seriesHeader).toHaveCount(0);
+
+  await page.getByRole("button", { name: /switch to gallery view/i }).click();
+  await expect(seriesHeader).toBeVisible();
+
+  await page.getByRole("button", { name: /switch to list view/i }).click();
+  await expect(seriesHeader).toHaveCount(0);
+});
+
 test("[VID-19] long titles and special characters round-trip without error", async ({ page }) => {
   // Same agreed intent as [SER-11]: no length or character limit, and neither
   // may cause misbehaviour.

@@ -25,7 +25,7 @@ Sorting also runs on the server, so it orders every recording rather than shuffl
 
 ## Choose columns
 
-**View** opens **Show/Hide Columns**, one checkbox per column. The menu stays open so you can toggle several in a row, and your choice is remembered in this browser for your next visit. *Hide* in a column's own menu does the same for that one column.
+**View** opens **Show/Hide Columns**, one checkbox per column. The menu stays open so you can toggle several in a row, and your choice is remembered in this browser for your next visit. List and gallery view each keep their own choice, so hiding a column in one leaves the other alone. *Hide* in a column's own menu does the same for that one column.
 
 ## Page through the list
 
@@ -33,7 +33,7 @@ Sorting also runs on the server, so it orders every recording rather than shuffl
 
 ## List or gallery
 
-If your deployment enabled it, a grid button left of *View* swaps the table for a gallery of thumbnails showing title, series, presenter, date, and location. Search, sorting, and paging work the same. The choice is not remembered — a reload puts you back in the list.
+If your deployment enabled it, a grid button left of *View* swaps the table for a gallery of thumbnails showing title, series, presenter, date, and location. Search, sorting, and paging work the same. Your choice is remembered in this browser for your next visit. Until you pick one, the table opens in the view your deployment chose as its default (usually the list).
 
 ## The videos of one series
 

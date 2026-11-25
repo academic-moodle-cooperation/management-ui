@@ -260,6 +260,7 @@ Both table plugins read a per-column config from their slice. The full shape, us
   "episodes": {
     "episodesTable": {
       "columns": [ /* shared — applies to BOTH views when set */ ],
+      "defaultLayout": "list",          // "list" | "gallery" — the view shown until the user picks one
       "views": {
         "list":    { "columns": [ /* list-only override */ ] },
         "gallery": { "enabled": true, "columns": [ /* gallery-only override */ ] }
@@ -271,7 +272,8 @@ Both table plugins read a per-column config from their slice. The full shape, us
 
 Each entry is `{ "<columnId>": { "show": bool, "label"?: string, "labelKey"?: string } }`. The semantics:
 
-- **Order + default visibility, never removal.** The config's order wins for the columns it names; `show` is the *default* visibility, and once a config lists any column, unlisted ones start hidden. Every column stays in the table's View menu, where the user's own toggles win over the config defaults and persist.
+- **Order + default visibility, never removal.** The config's order wins for the columns it names; `show` is the *default* visibility, and once a config lists any column, unlisted ones start hidden. Every column stays in the table's View menu, where the user's own toggles win over the config defaults and persist — separately per view, so the episodes list and gallery each remember their own.
+- **Default layout.** `defaultLayout` (`"list"` or `"gallery"`, default `"list"`) picks the view the episodes table opens in. Once a user switches views, their choice is stored in the browser (`episodes_layout`) and wins over the config. While `views.gallery.enabled` is `false` the table always shows the list, whatever `defaultLayout` or the stored choice says.
 - **Labels.** `label` is a literal caption; `labelKey` is a translation key resolved at render time — an org plugin's own namespace works, its locale files are loaded on demand.
 - **Column ids** are the ids the table defines. List view (episodes): `title`, `seriesName`, `description`, `eventStatus`, `contributors`, `creator`, `created`, `duration`, `location`, `presenters`, `startDate`, `actions`. Series: `title`, `created`, `description`, `creator`, `contributors`, `events`, `actions`.
 

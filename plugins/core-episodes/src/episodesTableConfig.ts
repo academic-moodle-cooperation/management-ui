@@ -41,6 +41,7 @@ export const getEpisodesTableConfig = (config: AppConfig | undefined) => {
   const tableConfig = episodesConfig.read(config).episodesTable;
 
   return {
+    defaultLayout: (tableConfig?.defaultLayout ?? "list") as EpisodesLayout,
     list: resolveEpisodesViewConfig(tableConfig, "list"),
     gallery: resolveEpisodesViewConfig(tableConfig, "gallery"),
   };
