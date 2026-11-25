@@ -271,7 +271,7 @@ Both table plugins read a per-column config from their slice. The full shape, us
 
 Each entry is `{ "<columnId>": { "show": bool, "label"?: string, "labelKey"?: string } }`. The semantics:
 
-- **Order + default visibility, never removal.** The config's order wins for the columns it names; `show` is the *default* visibility, and once a config lists any column, unlisted ones start hidden. Every column stays in the table's View menu, where the user's own toggles win over the config defaults and persist.
+- **Order + default visibility, never removal.** The config's order wins for the columns it names; `show` is the *default* visibility, and once a config lists any column, unlisted ones start hidden. Every column stays in the table's View menu, where the user's own toggles win over the config defaults and persist — separately per view, so the episodes list and gallery each remember their own.
 - **Labels.** `label` is a literal caption; `labelKey` is a translation key resolved at render time — an org plugin's own namespace works, its locale files are loaded on demand.
 - **Column ids** are the ids the table defines. List view (episodes): `title`, `seriesName`, `description`, `eventStatus`, `contributors`, `creator`, `created`, `duration`, `location`, `presenters`, `startDate`, `actions`. Series: `title`, `created`, `description`, `creator`, `contributors`, `events`, `actions`.
 

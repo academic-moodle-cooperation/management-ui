@@ -17,19 +17,26 @@ export interface TableAction {
 }
 
 /**
- * Hook to manage table pagination and filtering state
+ * Hook to manage table pagination and filtering state.
+ *
+ * `columnVisibilityScope` keeps the user's show/hide choices apart per view
+ * (e.g. the episodes list and gallery layouts each remember their own). It is
+ * appended to the storage key; leaving it out keeps the unscoped key.
  */
 export function useTableState<State extends TableBaseState, Action extends TableAction>(
   initialState: State,
   reducer: (state: State, action: Action) => State,
   appName: string,
+  columnVisibilityScope?: string,
 ) {
   // Initialize state with reducer
   const [state, dispatch] = useReducer(reducer, initialState);
 
   // Define atoms for persistent sorting and column visibility
   const sortingAtomKey = `${appName}_sorting`;
-  const columnVisibilityAtomKey = `${appName}_columnVisibility`;
+  const columnVisibilityAtomKey = columnVisibilityScope
+    ? `${appName}_${columnVisibilityScope}_columnVisibility`
+    : `${appName}_columnVisibility`;
 
   // Create atoms for storage. The visibility atom starts EMPTY on purpose:
   // its value is merged over the config's per-view visibility defaults as

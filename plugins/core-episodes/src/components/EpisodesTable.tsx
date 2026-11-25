@@ -67,7 +67,12 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     setLayout,
   } = useSidebarStore();
 
-  // Use the custom hook for table functionality
+  const episodesTableConfig = useMemo(() => getEpisodesTableConfig(config), [config]);
+  const galleryEnabled = episodesTableConfig.gallery.enabled;
+  const effectiveLayout = galleryEnabled ? layout : "list";
+
+  // Use the custom hook for table functionality — keyed by layout so list
+  // and gallery keep separate show/hide column choices.
   const {
     state,
     episodesQuery,
@@ -83,15 +88,12 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     textCopied,
     setTextCopied,
     refetchMetadata,
-  } = useEpisodesTable(seriesId);
+  } = useEpisodesTable(seriesId, effectiveLayout);
 
   const { data, isLoading, error, refetch } = episodesQuery;
 
   const { pageIndex, pageSize, queryFilter } = state;
 
-  const episodesTableConfig = useMemo(() => getEpisodesTableConfig(config), [config]);
-  const galleryEnabled = episodesTableConfig.gallery.enabled;
-  const effectiveLayout = galleryEnabled ? layout : "list";
   const activeViewConfig = episodesTableConfig[effectiveLayout];
   const columnLabelOverrides = useMemo(
     () => getEpisodesColumnLabelOverrides(activeViewConfig.columns),
