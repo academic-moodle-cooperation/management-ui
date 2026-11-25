@@ -11,7 +11,6 @@ interface EpisodesSidebarState {
   selectedId: string;
   episodesUpdateData?: EpisodesUpdateData;
   updateField: string;
-  layout: "list" | "gallery";
 
   // Actions
   openSidebar: (id: string) => void;
@@ -20,8 +19,6 @@ interface EpisodesSidebarState {
   setEpisodesUpdateData: (data: EpisodesUpdateData | undefined) => void;
   setUpdateField: (field: string) => void;
   resetUpdateFields: () => void;
-  setLayout: (layout: "list" | "gallery") => void;
-  toggleLayout: () => void;
 
   // Updated function to accept inputFields directly
   openSidebarWithData: (id: string, editing: boolean, inputFields: Record<string, unknown>) => void;
@@ -36,7 +33,6 @@ export const useSidebarStore = create<EpisodesSidebarState>(
       selectedId: "",
       episodesUpdateData: undefined as EpisodesUpdateData | undefined,
       updateField: "",
-      layout: "list",
 
       // Actions
       openSidebar: (id) => set({ isOpen: true, selectedId: id }),
@@ -51,11 +47,6 @@ export const useSidebarStore = create<EpisodesSidebarState>(
           updateField: "",
           isEditing: false,
         } as Partial<EpisodesSidebarState>),
-      setLayout: (layout) => set({ layout }),
-      toggleLayout: () =>
-        set((state) => ({
-          layout: state.layout === "list" ? "gallery" : "list",
-        })),
 
       // Updated implementation that handles data loading within the store function
       openSidebarWithData: (id, editing, inputFields) => {

@@ -141,6 +141,55 @@ test("§6.2 a separated gallery config renders single columns instead of the com
   await expect(page.getByRole("columnheader", { name: /^video$/i })).toHaveCount(0);
 });
 
+const withEpisodesTable = (episodesTable: Record<string, unknown>) => ({
+  ...defaultConfig,
+  plugins: { ...defaultConfig.plugins, episodes: { episodesTable } },
+});
+
+test("§6.2 episodesTable.defaultLayout opens the gallery first", async ({ page }) => {
+  const config = withEpisodesTable({ defaultLayout: "gallery" });
+  await installMockBackend(page, { config, events: [makeEvent({ title: "Galerie" })] });
+  await page.goto("/management-ui/episodes");
+
+  // The toggle names the TARGET state (#254), so "to list" means we are in the gallery.
+  await expect(page.getByRole("button", { name: "Switch to list view" })).toBeVisible({
+    timeout: 15_000,
+  });
+});
+
+test("§6.2 the user's layout choice beats defaultLayout and survives a reload", async ({
+  page,
+}) => {
+  const config = withEpisodesTable({ defaultLayout: "gallery" });
+  await installMockBackend(page, { config, events: [makeEvent({ title: "Merken" })] });
+  await page.goto("/management-ui/episodes");
+
+  await page.getByRole("button", { name: "Switch to list view" }).click({ timeout: 15_000 });
+  await expect(page.getByRole("button", { name: "Switch to gallery view" })).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem("episodes_layout"))).toBe('"list"');
+
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Switch to gallery view" })).toBeVisible({
+    timeout: 15_000,
+  });
+});
+
+test("§6.2 defaultLayout gallery falls back to the list when the gallery is disabled", async ({
+  page,
+}) => {
+  const config = withEpisodesTable({
+    defaultLayout: "gallery",
+    views: { gallery: { enabled: false } },
+  });
+  await installMockBackend(page, { config, events: [makeEvent({ title: "Nur Liste" })] });
+  await page.goto("/management-ui/episodes");
+
+  await expect(page.getByRole("columnheader", { name: /^title$/i })).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(page.getByRole("button", { name: /switch to (gallery|list) view/i })).toHaveCount(0);
+});
+
 test("§6.2 the series empty state points at the create button when there is one", async ({
   page,
 }) => {

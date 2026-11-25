@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 
+import type { AppConfig } from "@oc-mui/ui-config";
+
 import {
   getEpisodesColumnLabelOverrides,
+  getEpisodesTableConfig,
   getEpisodesVisibilityDefaults,
   resolveColumnLabel,
   resolveColumnMeta,
@@ -11,6 +14,16 @@ import {
 import type { EpisodesTable as EpisodesTableConfig } from "./config";
 
 describe("episodesTableConfig", () => {
+  it("resolves defaultLayout, falling back to the list", () => {
+    const withTable = (episodesTable: EpisodesTableConfig) =>
+      ({ plugins: { episodes: { episodesTable } } }) as unknown as AppConfig;
+
+    expect(getEpisodesTableConfig(withTable({})).defaultLayout).toBe("list");
+    expect(getEpisodesTableConfig(withTable({ defaultLayout: "gallery" })).defaultLayout).toBe(
+      "gallery",
+    );
+  });
+
   it("reuses legacy columns config for both list and gallery views", () => {
     const tableConfig: EpisodesTableConfig = {
       columns: [

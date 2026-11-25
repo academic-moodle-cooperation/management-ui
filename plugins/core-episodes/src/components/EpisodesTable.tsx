@@ -27,7 +27,7 @@ import {
   getEpisodesVisibilityDefaults,
   getEpisodesTableConfig,
 } from "../episodesTableConfig";
-import { useEpisodesTable } from "../hooks";
+import { useEpisodesLayout, useEpisodesTable } from "../hooks";
 import { useSidebarStore } from "../stores/sidebarStore";
 
 import { EpisodesEmptyState } from "./EpisodesEmptyState";
@@ -56,20 +56,22 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     selectedId,
     episodesUpdateData,
     updateField,
-    layout,
     openSidebar,
     closeSidebar,
     setIsEditing,
     resetUpdateFields,
     setEpisodesUpdateData,
     setUpdateField,
-    toggleLayout,
-    setLayout,
   } = useSidebarStore();
 
   const episodesTableConfig = useMemo(() => getEpisodesTableConfig(config), [config]);
   const galleryEnabled = episodesTableConfig.gallery.enabled;
-  const effectiveLayout = galleryEnabled ? layout : "list";
+  // The user's stored choice, else the configured default; always the list
+  // while the gallery is disabled.
+  const { layout: effectiveLayout, toggleLayout } = useEpisodesLayout({
+    defaultLayout: episodesTableConfig.defaultLayout,
+    galleryEnabled,
+  });
 
   // Use the custom hook for table functionality — keyed by layout so list
   // and gallery keep separate show/hide column choices.
@@ -164,12 +166,6 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
 
   const metadata: MetadataItem[] = episodesConfig.use().episodeInfo?.metadata ?? [];
   const { isReadOnly } = createMetadataHelpers(metadata);
-
-  useEffect(() => {
-    if (!galleryEnabled && layout === "gallery") {
-      setLayout("list");
-    }
-  }, [galleryEnabled, layout, setLayout]);
 
   // Create a mechanism to ensure data is loaded when the sidebar is opened from the edit button
   useEffect(() => {

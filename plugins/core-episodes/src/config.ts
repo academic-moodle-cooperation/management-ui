@@ -52,6 +52,8 @@ export const episodesConfigSchema = z.object({
   episodesTable: z
     .object({
       columns: z.array(tableColumnItemSchema).optional(),
+      /** Layout shown until the user picks one (falls back to list while the gallery is disabled). */
+      defaultLayout: z.enum(["list", "gallery"]).optional(),
       views: z
         .object({
           list: tableViewConfigSchema.optional(),
