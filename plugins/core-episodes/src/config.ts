@@ -51,6 +51,14 @@ export const episodesConfigSchema = z.object({
     .optional(),
   episodesTable: z
     .object({
+      /**
+       * Whether events that are still SCHEDULED (not recorded yet) appear in
+       * the table. `false` hides them — for deployments that list upcoming
+       * recordings elsewhere. Filtered per page in the browser: Opencast has
+       * no server-side "exclude status" filter, so a page can show fewer rows
+       * than the page size and the total still counts scheduled events.
+       */
+      showScheduled: z.boolean().optional(),
       columns: z.array(tableColumnItemSchema).optional(),
       views: z
         .object({
@@ -99,6 +107,7 @@ export const episodesConfigDefaults: EpisodesConfig = {
     ],
   },
   episodesTable: {
+    showScheduled: false,
     views: {
       list: { enabled: true },
       gallery: {

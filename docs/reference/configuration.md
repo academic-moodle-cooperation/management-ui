@@ -301,6 +301,20 @@ The gallery's column pool contains **both** presentations. Two combined cells �
 
 The combined cells sort by their primary content (`video` → title, `dateAndLocation` → start date); `thumbnail` is not sortable.
 
+### Hiding scheduled events (episodes)
+
+`plugins.episodes.episodesTable.showScheduled` (default `true`) controls whether events that are still scheduled — not recorded yet — appear in the episodes table. Set it to `false` for a deployment that lists upcoming recordings somewhere else, for example in an organization plugin:
+
+```jsonc
+"plugins": {
+  "episodes": {
+    "episodesTable": { "showScheduled": false }
+  }
+}
+```
+
+It applies to both the full list and a series' episode list. Only events with status `SCHEDULED` are hidden; recording, processing, failed and processed events stay. Opencast's GraphQL API has no server-side filter that excludes a status, so the rows are filtered per page in the browser: a page that contained scheduled events shows fewer rows than the page size, and the total count still includes them.
+
 ## `enabledPlugins` vs. `config.plugins[id].enabled`
 
 The two switches do different things on purpose:
