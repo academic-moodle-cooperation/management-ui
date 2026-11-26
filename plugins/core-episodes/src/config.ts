@@ -107,7 +107,7 @@ export const episodesConfigDefaults: EpisodesConfig = {
     ],
   },
   episodesTable: {
-    showScheduled: false,
+    showScheduled: true,
     views: {
       list: { enabled: true },
       gallery: {
