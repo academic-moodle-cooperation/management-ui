@@ -43,8 +43,23 @@ export const getEpisodesTableConfig = (config: AppConfig | undefined) => {
   return {
     list: resolveEpisodesViewConfig(tableConfig, "list"),
     gallery: resolveEpisodesViewConfig(tableConfig, "gallery"),
+    showScheduled: tableConfig?.showScheduled ?? true,
   };
 };
+
+/** `"…EventStatus.SCHEDULED"` → true; any other status (or none) → false. */
+const isScheduled = (event: { eventStatus?: string | null }) =>
+  event.eventStatus?.split(".").pop()?.toUpperCase() === "SCHEDULED";
+
+/**
+ * Applies `episodesTable.showScheduled`: with `false`, events that are still
+ * scheduled (not recorded yet) are dropped from the rows. Returns the input
+ * unchanged otherwise.
+ */
+export const filterScheduledEpisodes = <T extends { eventStatus?: string | null }>(
+  events: T[],
+  showScheduled: boolean,
+): T[] => (showScheduled ? events : events.filter((event) => !isScheduled(event)));
 
 export const getEpisodesColumnLabelOverrides = getColumnLabelOverrides;
 export const getEpisodesVisibilityDefaults = getColumnVisibilityDefaults;

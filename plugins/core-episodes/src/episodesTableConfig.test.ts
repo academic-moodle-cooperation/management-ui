@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 
+import type { AppConfig } from "@oc-mui/ui-config";
+
 import {
+  filterScheduledEpisodes,
   getEpisodesColumnLabelOverrides,
+  getEpisodesTableConfig,
   getEpisodesVisibilityDefaults,
   resolveColumnLabel,
   resolveColumnMeta,
@@ -113,5 +117,39 @@ describe("getEpisodesVisibilityDefaults", () => {
 
   it("yields no defaults for an empty column config", () => {
     expect(getEpisodesVisibilityDefaults([])).toEqual({});
+  });
+});
+
+describe("showScheduled", () => {
+  const events = [
+    { id: "a", eventStatus: "EVENTS.EVENTS.STATUS.SCHEDULED" },
+    { id: "b", eventStatus: "EVENTS.EVENTS.STATUS.PROCESSED" },
+    { id: "c", eventStatus: "EVENTS.EVENTS.STATUS.PROCESSING_FAILURE" },
+    { id: "d", eventStatus: "EVENTS.EVENTS.STATUS.RECORDING" },
+    { id: "e", eventStatus: null },
+  ];
+
+  it("defaults to showing scheduled events", () => {
+    expect(getEpisodesTableConfig(undefined).showScheduled).toBe(true);
+  });
+
+  it("reads the configured value", () => {
+    const config = {
+      plugins: { episodes: { episodesTable: { showScheduled: false } } },
+    } as unknown as AppConfig;
+    expect(getEpisodesTableConfig(config).showScheduled).toBe(false);
+  });
+
+  it("keeps every event when scheduled events are shown", () => {
+    expect(filterScheduledEpisodes(events, true)).toBe(events);
+  });
+
+  it("drops only SCHEDULED events when they are hidden", () => {
+    expect(filterScheduledEpisodes(events, false).map((e) => e.id)).toEqual([
+      "b",
+      "c",
+      "d",
+      "e",
+    ]);
   });
 });

@@ -23,6 +23,7 @@ import { logger } from "@oc-mui/utils";
 import { createColumns } from "../columns";
 import { episodesConfig } from "../config";
 import {
+  filterScheduledEpisodes,
   getEpisodesColumnLabelOverrides,
   getEpisodesVisibilityDefaults,
   getEpisodesTableConfig,
@@ -251,18 +252,21 @@ const EpisodesTable = ({ seriesId }: EpisodesTableProps) => {
     closeSidebar();
   }, [resetUpdateFields, closeSidebar]);
 
-  // Prepare table data - filter out any null values
+  // Prepare table data - filter out any null values, and scheduled events
+  // when `episodesTable.showScheduled` is false
+  const { showScheduled } = episodesTableConfig;
   const episodesData = useMemo(() => {
-    if (seriesId) {
-      // When filtering by series, data comes from seriesById.events
-      const seriesData = data as MuiEventsFromSeriesQuery | undefined;
-      return seriesData?.seriesById?.events.nodes.filter(Boolean) as MuiEventsDataFragment[];
-    } else {
-      // When showing all events, data comes from currentUser.myEvents
-      const eventsData = data as MuiGetMyEventsQuery | undefined;
-      return eventsData?.currentUser?.myEvents.nodes.filter(Boolean) as MuiEventsDataFragment[];
-    }
-  }, [data, seriesId]);
+    const nodes = seriesId
+      ? // When filtering by series, data comes from seriesById.events
+        (data as MuiEventsFromSeriesQuery | undefined)?.seriesById?.events.nodes
+      : // When showing all events, data comes from currentUser.myEvents
+        (data as MuiGetMyEventsQuery | undefined)?.currentUser?.myEvents.nodes;
+    if (!nodes) return undefined;
+    return filterScheduledEpisodes(
+      nodes.filter(Boolean) as MuiEventsDataFragment[],
+      showScheduled,
+    );
+  }, [data, seriesId, showScheduled]);
 
   // Get total count based on query type
   const totalCount = useMemo(() => {

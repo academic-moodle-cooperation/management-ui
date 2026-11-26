@@ -28,7 +28,7 @@ import { episodesConfig } from "./config";
 const { episodesTable } = episodesConfig.use();
 ```
 
-The slice's top-level keys are `episodeInfo` (metadata field visibility), `episodesTable` (columns + list/gallery views), and `protection`.
+The slice's top-level keys are `episodeInfo` (metadata field visibility), `episodesTable` (columns + list/gallery views, and `showScheduled` to hide not-yet-recorded events), and `protection`.
 
 The full merge order (`app:config:defaults` ⊕ base ⊕ `app:config`) lives in [`docs/reference/configuration.md`](../../docs/reference/configuration.md).
 
